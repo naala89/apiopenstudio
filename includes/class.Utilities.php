@@ -1,0 +1,226 @@
+<?php
+
+class Utilities
+{
+
+  public static $lower_case = 'abcdefghijklmnopqrstuvwxyz';
+  public static $upper_case = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  public static $number = '0123456789';
+  public static $non_alphanum = '!@#$%^&*()';
+
+  /**
+   * Returns system time in micro secs.\
+   *
+   * @return float
+   **/
+  public static function get_microtime()
+  {
+    list($usec, $sec) = explode(" ", microtime());
+    return ((float)$usec + (float)$sec);
+  }
+
+  /**
+   * Creates a random string, of a specified length.
+   *
+   * Contents of string specified by $lower, $upper, $number and $non_alphanum.
+   *
+   * @param integer $length
+   *  length of the string
+   * @param boolean $lower
+   *  include lower case alpha
+   * @param boolean $upper
+   *  include upper case alpha
+   * @param boolean $number
+   *  include integers
+   * @param boolean $non_alphanum
+   *  include non alpha numeric characters
+   *
+   * @return string
+   *  random string
+   **/
+  public static function random_string($length = 8, $lower = true, $upper = true, $number = true, $non_alphanum = false)
+  {
+    $chars = '';
+    if ($lower)
+      $chars .= self::$lower_case;
+    if ($upper)
+      $chars .= self::$upper_case;
+    if ($number)
+      $chars .= self::$number;
+    if ($non_alphanum)
+      $chars .= self::$non_alphanum;
+
+    $str = '';
+    $count = strlen($chars) - 1;
+
+    for ($i = 0; $i < $length; $i++)
+      $str .= $chars[rand(0, $count - 1)];
+
+    return $str;
+  }
+
+  /**
+   * Converts php date to standard mysql date
+   *
+   * @param date $phpdate
+   *  date time stamp
+   *
+   * @return date
+   *  mysql formatted datetime
+   **/
+  public static function date_php2mysql($phpdate)
+  {
+    return date('Y-m-d H:i:s', $phpdate);
+  }
+
+  /**
+   * Converts mysql date to standard php date.
+   *
+   * @param date $mysqldate
+   *  mysql formatted datetime
+   *
+   * @return date
+   *  php timestamp
+   **/
+  public static function date_mysql2php($mysqldate)
+  {
+    return strtotime($mysqldate);
+  }
+
+  /**
+   * create current standard mysql date
+   *
+   * @return date
+   *  mysql formatted datetime
+   */
+  public static function mysqlNow()
+  {
+    return self::date_php2mysql(time());
+  }
+
+  /**
+   * Check to see if $m_array is an associative array.
+   *
+   * @param mixed $m_array
+   *  mixed array
+   *
+   * @return boolean
+   *  is the array associative
+   **/
+  public static function is_assoc($m_array)
+  {
+    return (is_array($m_array) && 0 !== count(array_diff_key($m_array, array_keys(array_keys($m_array)))));
+  }
+
+  /**
+   * Obtain user IP even if they're under a proxy.
+   *
+   * @return string ip address
+   *  IP address of the user
+   */
+  public static function getUserIP()
+  {
+    $ip = $_SERVER["REMOTE_ADDR"];
+    $proxy = $_SERVER["HTTP_X_FORWARDED_FOR"];
+    if (preg_match("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$", $proxy))
+      $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+    return $ip;
+  }
+
+  /**
+   * Get the current URL
+   *
+   * @param bool $array
+   *  return in array format
+   *
+   * @return array|string
+   *  current URL
+   */
+  public static function selfURL($array = false)
+  {
+    $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
+    $protocol = self::strleft(strtolower($_SERVER["SERVER_PROTOCOL"]), "/") . $s;
+    $port = (($_SERVER["SERVER_PORT"] == 80) ? '' : ':' . $_SERVER["SERVER_PORT"]);
+    $address = $_SERVER['SERVER_NAME'];
+    $uri = $_SERVER['REQUEST_URI'];
+
+    if (!$array)
+      return $protocol . '://' . $address . (($port == 80) ? '' : ":$port") . $uri;
+    $ret_array = array('protocol' => $protocol, 'port' => $port, 'address' => $address, 'uri' => $uri);
+    return $ret_array;
+  }
+
+  /**
+   * Return the character left of a substring win a string.
+   *
+   * @param string $s1
+   *  string
+   * @param string $s2
+   *  substring
+   *
+   * @return string
+   *  substring left of $s2
+   */
+  public static function strleft($s1, $s2)
+  {
+    return substr($s1, 0, strpos($s1, $s2));
+  }
+
+  /**
+   * Redirect to current url under https, if under http.
+   */
+  public static function make_url_secure()
+  {
+    $a_selfURL = self::selfURL(true);
+    if ($a_selfURL['protocol'] == 'http') {
+      header('Location: ' . $a_selfURL['protocol'] . 's://' . $a_selfURL['address'] . $a_selfURL['port'] . $a_selfURL['uri']);
+      exit();
+    }
+  }
+
+  /**
+   * Redirect to current url under http, if under https.
+   */
+  public static function make_url_insecure()
+  {
+    $a_selfURL = self::selfURL(true);
+    if ($a_selfURL['protocol'] == 'https') {
+      header('Location: http://' . $a_selfURL['address'] . $a_selfURL['uri']);
+      exit();
+    }
+  }
+
+  /**
+   * Check if a url exists.
+   *
+   * @param $url
+   *  the URL
+   *
+   * @return bool
+   *  does it exist
+   */
+  public static function doesUrlExist($url)
+  {
+    $headers = @get_headers($url);
+    if (strpos($headers[0], '200') === false) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Check if current url is https.
+   *
+   * @return bool
+   */
+  public static function isSecure()
+  {
+    $isSecure = FALSE;
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+      $isSecure = TRUE;
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
+      $isSecure = TRUE;
+    }
+    return $isSecure;
+  }
+}
