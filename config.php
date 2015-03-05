@@ -5,10 +5,15 @@ class Config
   /**
    * Add your server names to the appropriate arrays.
    */
-  static private $_production = array('production');
-  static private $_staging = array('api.naala.com.au');
-  static private $_development = array('localhost', '127.0.0.1', 'datagator.local');
-
+  static private $_server = array(
+    'production' => 'production',
+    'api.naala.com.au' => 'staging',
+    'vmh17284.hosting24.com.au' => 'staging',
+    'localhost' => 'development',
+    '127.0.0.1' => 'development',
+    'swellnet_api.local' => 'development',
+    'johns-MBP' => 'development'
+  );
   static private $_allow_override;
 
   /**
@@ -30,8 +35,14 @@ class Config
    */
   static public $dirRoot;
   static public $dirPublic;
+  static public $dirWams;
   static public $dirIncludes;
-  static public $dirApi;
+
+  /**
+   * Command locations
+   */
+  static public $convert;
+  static public $ffmpeg;
 
   /**
    * debug
@@ -46,8 +57,19 @@ class Config
    * api
    */
   static public $defaultFormat;
-  static public $swellnetUrl;
   static public $tokenLife;
+
+  /**
+   * swellnet
+   */
+  static public $swellnetClientId;
+  static public $weatherzoneForecastUri;
+  static public $forecastRangeFull;
+  static public $forecastRangeLimited;
+  static public $swellnetWamsVideoSize;
+  static public $swellnetWamsVideoDelay;
+  static public $swellnetWamsVideoMorph;
+  static public $swellnetWamsStandardImageFormat;
 
   /**
    * setup the initial config
@@ -58,25 +80,13 @@ class Config
     if (empty($serverName)) {
       $serverName = self::whereAmI($serverName);
     }
+    if (!$serverName || !method_exists('Config', $serverName)) {
+      die('Where am I? (You need to setup your server names in class.config.php) reported: ' . $serverName);
+    }
 
     self::everywhere();
-    if (!$serverName) {
-      die('Where am I? (You need to setup your server names in class.config.php) reported: ' . $serverName);
-    } else {
-      switch ($serverName) {
-        case 'development':
-          self::development();
-          break;
-        case 'staging':
-          self::staging();
-          break;
-        case 'production':
-          self::production();
-          break;
-      }
-    }
-    ini_set('error_log', self::$errorLog);
-    self::override($serverName);
+    self::$serverName();
+    self::override();
   }
 
   /**
@@ -93,15 +103,7 @@ class Config
         $serverName = system('echo $HOSTNAME');
       }
     }
-    if (in_array($serverName, self::$_production)) {
-      return 'production';
-    } elseif (in_array($serverName, self::$_staging)) {
-      return 'staging';
-    } elseif (in_array($serverName, self::$_development)) {
-      return 'development';
-    } else {
-      return FALSE;
-    }
+    return self::$_server[$serverName];
   }
 
   /**
@@ -111,11 +113,20 @@ class Config
   {
     self::$dirRoot = pathinfo(__FILE__, PATHINFO_DIRNAME) . '/';
     self::$dirPublic = self::$dirRoot . 'html/';
+    self::$dirWams = self::$dirRoot . 'wams/';
     self::$dirIncludes = self::$dirRoot . 'includes/';
 
     self::$defaultFormat = 'json';
-    self::$swellnetUrl = 'http://swellnet.com.au';
     self::$tokenLife = '+1 day';
+
+    self::$swellnetClientId = 999;
+    self::$weatherzoneForecastUri = 'api/v1/get-forecast/%locId%/latest/?verbose=1&currentday=1';
+    self::$forecastRangeFull = 16;
+    self::$forecastRangeLimited = 5;
+    self::$swellnetWamsVideoSize = '200x200';
+    self::$swellnetWamsVideoDelay = '10';
+    self::$swellnetWamsVideoMorph = '10';
+    self::$swellnetWamsStandardImageFormat = 'png';
   }
 
   /**
@@ -123,26 +134,29 @@ class Config
    */
   static private function development()
   {
-    self::$debugDb = 0;
+    self::$debugDb =4;
     self::$debug = 4;
-    self::$debugCLI = 0;
+    self::$debugCLI = 4;
     self::$_allow_override = TRUE;
-
     self::$debugInterface = 'HTML';
-    self::$errorLog = '/var/log/apache2/swellnet_api.error.log';
 
     self::$cache = FALSE;
 
     self::$dbhost = 'localhost';
-    self::$dbname = 'api_new';
-    self::$dbuser = 'api_new';
+    self::$dbname = 'swellnet_api';
+    self::$dbuser = 'swellnet_api';
     self::$dbpass = 'MyR9A4SdfgqcEzY8';
     self::$dbpersistent = FALSE;
 
-    date_default_timezone_set('UTC');
+    self::$errorLog = '/var/log/apache2/swellnet_api-error.log';
+    self::$convert = '/usr/local/bin/convert';
+    self::$ffmpeg = '/usr/local/bin/ffmpeg';
+    date_default_timezone_set('Australia/Sydney');
+
+    ini_set('display_errors', 'on');
+    ini_set('log_errors','On');
     ini_set('error_reporting', E_ALL);
-    error_reporting(E_ALL | E_STRICT);
-    ini_set('display_errors', TRUE);
+    ini_set('error_log', self::$errorLog);
   }
 
   /**
@@ -150,25 +164,29 @@ class Config
    */
   static private function staging()
   {
-    self::$debugDb = 0;
-    self::$debug = 0;
-    self::$debugCLI = 0;
+    self::$debugDb = 4;
+    self::$debug = 4;
+    self::$debugCLI = 4;
     self::$_allow_override = TRUE;
-
     self::$debugInterface = 'LOG';
-    self::$errorLog = '/var/log/apache2/swellnet_api.error.log';
 
     self::$cache = FALSE;
 
     self::$dbhost = 'localhost';
-    self::$dbname = 'naalacom_api';
-    self::$dbuser = 'naalacom_api';
-    self::$dbpass = 'PmFNu1I_[48P';
+    self::$dbname = 'apinaala_api';
+    self::$dbuser = 'apinaala_api';
+    self::$dbpass = '_DN2~o-s';
     self::$dbpersistent = FALSE;
 
+    self::$errorLog = '/home/apinaalacom/logs/api-error.log';
+    self::$convert = '/usr/bin/convert';
+    self::$ffmpeg = '/usr/bin/ffmpeg';
+    date_default_timezone_set('UTC');
+
+    ini_set('display_errors', 'on');
+    ini_set('log_errors','On');
     ini_set('error_reporting', E_ALL);
-    error_reporting(E_ALL | E_STRICT);
-    ini_set('display_errors', FALSE);
+    ini_set('error_log', self::$errorLog);
   }
 
   /**
@@ -180,7 +198,6 @@ class Config
     self::$debug = 0;
     self::$debugCLI = 0;
     self::$_allow_override = FALSE;
-
     self::$debugInterface = 'LOG';
     self::$errorLog = '/var/log/apache2/swellnet_api.error.log';
 
@@ -196,10 +213,9 @@ class Config
   }
 
   /**
-   * override configurations based on request vars
-   * @param $serverName
+   * Override configurations based on request vars.
    */
-  static private function override($serverName)
+  static private function override()
   {
     if (!self::$_allow_override) {
       return;

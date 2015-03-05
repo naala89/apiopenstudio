@@ -5,6 +5,7 @@
  *
  * allow storing values in the cache.
  *
+ * @TODO: separate memcache and apc into separate classes
  */
 class Cache
 {
@@ -19,14 +20,14 @@ class Cache
   /**
    * Constructor
    *
-   * @param bool $type
-   *    cache type
-   *    False means first available cache on the system
-   *
+   * @param mixed $cache - cache type
+   *    False means do not cache
+   *    True means select first available caching system
+   *    String means select the specified caching system
    */
-  public function Cache($type=FALSE)
+  public function Cache($cache=TRUE)
   {
-    $this->setup($type);
+    $this->setup($cache);
   }
 
   /**
@@ -37,12 +38,12 @@ class Cache
    * @return bool
    *    setup state
    */
-  public function setup($type=FALSE)
+  public function setup($cache=TRUE)
   {
-    Debug::variable($type, 'cache setup with', 4);
+    Debug::variable($cache, 'cache setup request', 4);
     $this->cacheActive = FALSE;
 
-    if (!$type) {
+    if ($cache === TRUE || $cache == 1) {
       $caches = $this->caches;
       while (!$this->cacheActive && $cache = array_shift($caches)) {
         $func = 'setup' . ucfirst($cache);
@@ -51,15 +52,20 @@ class Cache
           $this->$func();
         }
       }
+    } elseif ($cache === FALSE || $cache == 0) {
+      Debug::message('Cache is off', 4);
+      return $this->cacheActive;
     } else {
-      $func = 'setup' . ucfirst(trim($type));
+      $func = 'setup' . ucfirst(trim($cache));
       Debug::variable($func, 'looking for function', 4);
       if (method_exists($this, $func)) {
         $this->$func();
+      } else {
+        Debug::variable($func, 'function not defined');
       }
     }
 
-    Debug::variable($this->cacheType, 'cache type', 2);
+    Debug::variable($this->cacheType, 'cache type enbled', 2);
     Debug::variable($this->cacheActive, 'cache status', 2);
 
     return $this->cacheActive;
@@ -113,6 +119,25 @@ class Cache
     return NULL;
   }
 
+  public function clear()
+  {
+    Debug::message('clearing cache');
+    if (!$this->cacheActive) {
+      Debug::message('could not clear cache - inactive');
+      return FALSE;
+    }
+    $func = 'clear' . ucfirst($this->cacheType);
+    if (method_exists($this, $func)) {
+      return $this->$func();
+    }
+    return NULL;
+  }
+
+  /**
+   * Return the status of cache (active or inactive).
+   *
+   * @return mixed
+   */
   public function cacheActive()
   {
     return $this->cacheActive;
@@ -132,7 +157,7 @@ class Cache
       $this->$cacheObj = new Memcache;
       if ($this->cacheActive = $this->cache->connect($this->host, $this->port)) {
         $this->cacheType = 'memcache';
-        Debug::message('Memchache enabled', 4);
+        Debug::message('memCache enabled', 4);
       } else {
         Debug::message('Could not connect to Memcache', 4);
       }
@@ -151,7 +176,7 @@ class Cache
    * @param $ttl
    * @return bool
    */
-  private function setMemchache($key, $val, $ttl)
+  private function setMemcache($key, $val, $ttl)
   {
     return $this->cacheObj->set($key, $val, $ttl);
   }
@@ -162,9 +187,19 @@ class Cache
    * @param $key
    * @return mixed
    */
-  private function getMemchache($key)
+  private function getMemcache($key)
   {
     return $this->cacheObj->get($key);
+  }
+
+  /**
+   * Clear the MmeCache cache.
+   *
+   * @return bool
+   */
+  private function clearMemcache()
+  {
+    return $this->cacheObj->flush();
   }
 
   /**
@@ -210,5 +245,15 @@ class Cache
   private function getApc($key)
   {
     return apc_fetch($key);
+  }
+
+  /**
+   * Clear the APC cache.
+   *
+   * @return bool
+   */
+  private function clearApc()
+  {
+    return apc_clear_cache();
   }
 }

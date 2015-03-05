@@ -8,94 +8,185 @@
 
 include_once(Config::$dirIncludes . 'class.DB.php');
 include_once(Config::$dirIncludes . 'class.Cache.php');
-include_once(Config::$dirIncludes . 'class.Error.php');
+include_once(Config::$dirIncludes . 'processor/class.Error.php');
 include_once(Config::$dirIncludes . 'processor/class.Processor.php');
 
 //When I tasted WCC for the first time is 1985 I knew for the first time I was in love. Never before had a drink made me feel so.
 //After my Uncle Bill went to jail in 1986, West Coast Cooler was my friend and got me through a really hard time.
 //And now when I taste West Coast Cooler I remember my life and all the good times.
 
-  class Api
-  {
-    private $data;
-    private $status;
-    private $cache;
+class Api
+{
+  private $status;
+  private $cache;
+  private $test = FALSE;
 
-    /**
-     * Constructor
-     *
-     * @param mixed $cache
-    *    null
-    *      set up any cache available to server
-    *    string
-    *      specify the cache to use
-     */
-    public function Api($cache=FALSE)
-    {
-      $this->cache = new Cache($cache);
-    }
-
-    /**
-     * Process the rest request.
+  /**
+   * Constructor
    *
-   * @param string $get
-   *  the uri in array form
+   * @param mixed $cache
+   *  type of cache to use
+   *  @see Cache->setup($type)
+   */
+  public function Api($cache = FALSE)
+  {
+    $this->cache = new Cache($cache);
+  }
+
+  /**
+   * Process the rest request.
+   *
    * @return mixed
    *  the result body
    */
   public function process()
   {
-    $requestData = $this->_getData($_GET);
-    if (($requestData) === false) {
-      $output = $this->_getOutputObj('text', 404, (new Error(-1, 'Invalid request')));
+    $this->status = 200;
+
+    // disseminate the request for processing
+    $request = $this->_getData($_GET);
+    if (($request) === false) {
+      $output = $this->_getOutputObj('json', 404, (new Error(1, NULL, 'invalid request')));
       return $output->process();
     }
 
-    $cacheKey = $this->_cleanData($requestData['method'] . '_' . $requestData['request']);
+    // get the metadata for the processing
+    $meta = new stdClass();
+    $ttl = 0;
+    $meta = $this->getMeta($request, $meta, $ttl);
+    if ($this->status != 200) {
+      $output = $this->_getOutputObj($request->outFormat, 406, $meta);
+      return $output->process();
+    }
+
+    // validate user for the call, if required
+    $validation = $this->getValidation($meta, $request);
+    if ($this->status != 200) {
+      $output = $this->_getOutputObj($request->outFormat, $this->status, $validation);
+      return $output->process();
+    }
+
+    // fetch the cache of the call, if it is not stale
+    $cache = $this->getCache($request);
+    if ($cache !== FALSE) {
+      return $cache;
+    }
+
+    // process the call
+    $processor = new Processor($meta, $request);
+    $data = $processor->process();
+    $this->status = $processor->status;
+
+    // store the results in cache for next time
+    if (is_object($data) && get_class($data) == 'Error') {
+      Debug::message('Not caching, result is error object');
+    } else {
+      $cacheData = array('status' => $this->status, 'data' => $data);
+      $this->cache->set($this->getCacheKey($request), $cacheData, $ttl);
+    }
+
+    // translate output into the correct format
+    $output = $this->_getOutputObj($request->outFormat, $this->status, $data);
+
+    return $output->process();
+  }
+
+  /**
+   * Check cache for any results.
+   *
+   * @param $request
+   * @return bool
+   */
+  private function getCache($request)
+  {
+    if (!$this->cache->cacheActive()) {
+      Debug::message('not searching for cache - inactive', 4);
+      return FALSE;
+    }
+
+    $cacheKey = $this->getCacheKey($request);
     Debug::variable($cacheKey, 'cache key', 4);
     // TODO: implement input normalization
     $cacheData = $this->cache->get($cacheKey);
+
     if (!empty($cacheData)) {
       Debug::variable($cacheData, 'from cache', 4);
-      $output = $this->_getOutputObj($requestData['outFormat'], $cacheData['status'], $cacheData['data']);
+      $output = $this->_getOutputObj($request->outFormat, $cacheData['status'], $cacheData['data']);
       return $output->process();
-    } else {
-      Debug::message('no cache', 4);
     }
 
-    $db = new DB();
-    $result = $db->select(array('meta', 'ttl'))
-      ->from('resource')
-      ->where(array('client', $requestData['client']))
-      ->where(array('resource', $requestData['identifier']))
-      ->execute();
+    Debug::message('no cache entry found', 4);
+    return FALSE;
+  }
 
-    if (!$result || $result->num_rows < 1) {
-      $error = new Error(-1, 'Resource or client not defined');
-      $output = $this->_getOutputObj($requestData['outFormat'], 404, $error);
-      $cacheData = array('status' => $output->status, 'data' => $error->process());
-      $this->cache->set($cacheKey, $cacheData, 60);
-      $result = $output->process();
-      return $result;
-    } else {
-      //$dbObj = new stdClass();
-      //$dbObj->ttl = 300;
-      //$dbObj->meta = json_encode($this->test6());
+  private function getCacheKey($request)
+  {
+    return $this->_cleanData($request->method . '_' . $request->request);
+  }
 
+  /**
+   * Fetch resource metadata.
+   * nH8yOD_NS6uVurQtDajPsmAXFWmOC4JWF1e84BfkHnk
+   * @param $request
+   * @return mixed
+   */
+  private function getMeta($request, &$meta, &$ttl)
+  {
+    $request->db = new DB(Config::$debugDb);
+    if (is_bool($this->test)) {
+      $result = $request->db
+          ->select(array('meta', 'ttl'))
+          ->from('resources')
+          ->where(array('client', $request->client))
+          ->where(array('resource', $request->identifier))
+          ->execute();
+
+      if (!$result || $result->num_rows < 1) {
+        $this->status = 404;
+        return new Error(1, NULL, 'resource or client not defined');
+      }
       $dbObj = $result->fetch_object();
+    } else {
+      $dbObj = new stdClass();
+      $dbObj->ttl = 300;
 
-      Debug::variable($dbObj->meta, 'JSON from DB', 4);
-      $processor = new Processor(json_decode($dbObj->meta), $requestData);
-      $this->data = $processor->process();
-      $this->status = $processor->status;
+      $class = ucfirst($this->test);
+      $filename = 'class.' . $class . '.php';
+      $filepath = Config::$dirIncludes . 'test/' . $filename;
 
-      $cacheData = array('status' => $this->status, 'data' => $this->data);
-      $this->cache->set($cacheKey, $cacheData, $dbObj->ttl);
+      if (!file_exists($filepath)) {
+        return new Error(-1, NULL, "invalid test object: $class");
+      }
 
-      $output = $this->_getOutputObj($requestData['outFormat'], $this->status, $this->data);
+      include_once($filepath);
+      $obj = new $class();
+
+      $dbObj->meta = json_encode($obj->get());
     }
+    Debug::variable($dbObj->meta, 'request JSON');
+    $meta = json_decode($dbObj->meta);
+    $ttl = $dbObj->ttl;
+    Debug::variable($ttl, 'TTL');
+    return $meta;
+  }
 
-    return $output->process();
+  /**
+   * Perform auth if defined in the meta.
+   *
+   * @param $meta
+   * @return array|bool|Error
+   */
+  private function getValidation($meta, $request)
+  {
+    if (empty($meta->validation)) {
+      return TRUE;
+    }
+    $validator = new Processor($meta->validation, $request);
+    $validation = $validator->process();
+    if ($validation!== TRUE) {
+      $this->status = $validator->status;
+    }
+    return $validation;
   }
 
   /**
@@ -118,52 +209,53 @@ include_once(Config::$dirIncludes . 'processor/class.Processor.php');
     $filepath = Config::$dirIncludes . 'output/' . $filename;
 
     if (!file_exists($filepath) || $class == 'Output') {
-      $error = new Error(-1, "Invalid or no output format defined ($format)");
+      $error = new Error(1, NULL, "invalid or no output format defined");
       return $this->_getOutputObj('text', 417, $error);
     }
 
     include_once($filepath);
-    return (new $class($status, $data));
+    return new $class($status, $data);
   }
 
   /**
-   * Process the request and request header into a meaningful array object
+   * Process the request and request header into a meaningful array object.
    *
-   * @param array $request
+   * @param $get
    * @return array
+   * @throws Exception
    */
   private function _getData($get)
   {
-    if (!$get['request']) {
-      return false;
+    if (empty($get['request'])) {
+      return FALSE;
     }
 
-    $requestData = array();
-    $requestData['request'] = $get['request'];
-    $args = explode('/', trim($requestData['request'], '/'));
+    $request = new stdClass();
+    $request->request = $get['request'];
+    $args = explode('/', trim($request->request, '/'));
     if (sizeof($args) < 2) {
-      return false;
+      return FALSE;
     }
-
-    $requestData['method'] = $this->_getMethod();
-    $requestData['client'] = array_shift($args);
-    $requestData['resource'] = array_shift($args);
-    $requestData['action'] = array_shift($args);
-    $requestData['identifier'] = $requestData['resource'] . $requestData['action'];
-    $requestData['args'] = $args;
     $header = getallheaders();
-    $requestData['inFormat'] = $this->_parseType(isset($header['Content-Type']) ? $header['Content-Type'] : NULL);
-    $requestData['outFormat'] = $this->_parseType(isset($header['Accept']) ? $header['Accept'] : NULL);
 
-    $requestData['vars'] = array_diff_assoc($get, array('request' => $requestData['request']));
-    $requestData['vars'] = $requestData['vars'] + $_POST;
+    $request->method = $this->_getMethod();
+    $request->client = array_shift($args);
+    $request->resource = array_shift($args);
+    $request->action = array_shift($args);
+    $request->identifier = $request->resource . $request->action;
+    $request->args = $args;
+    $request->inFormat = $this->_parseType($header, 'Content-Type');
+    $request->outFormat = $this->_parseType($header, 'Accept', 'json');
+
+    $request->vars = array_diff_assoc($get, array('request' => $request->request));
+    $request->vars = $request->vars + $_POST;
     $body = file_get_contents('php://input');
-    if ($requestData['inFormat'] == 'json') {
-      $requestData['vars'] = $requestData['vars'] + json_decode($body, TRUE);
+    if ($request->inFormat == 'json') {
+      $request->vars = $request->vars + json_decode($body, TRUE);
     }
-    Debug::variable($requestData, 'Request data', 4);
+    Debug::variable($request, 'Request data', 4);
 
-    return $requestData;
+    return $request;
   }
 
   /**
@@ -189,28 +281,37 @@ include_once(Config::$dirIncludes . 'processor/class.Processor.php');
   }
 
   /**
-   * Calculate a format from string of header Content-Type or Accept
-   * @param $str
-   *    header format type string
-   * @return bool|string
+   * Calculate a format from string of header Content-Type or Accept.
+   *
+   * @param $array
+   * @param $key
+   * @param $default
+   * @return string
    *    format or false on not identified
    */
-  private function _parseType($str)
+  private function _parseType($array, $key, $default=FALSE)
   {
-    switch ($str) {
-      case 'application/json':
-        $result = 'json';
-        break;
-      case 'application/xml':
-        $result = 'xml';
-        break;
-      case 'application/text':
-        $result = 'text';
-        break;
-      default:
-        $result = FALSE;
-        break;
+    $result = $default;
+
+    if (isset($array[$key])) {
+      $parts = preg_split('/\,|\;/', $array[$key]);
+      foreach ($parts as $part) {
+        $part = trim($part);
+        if (strpos($part, 'image') === 0) {
+          $result = 'image';
+          break;
+        }
+        if (strpos($part, '*') === 0) {
+          $result = $default;
+          break;
+        }
+        if (strpos($part, 'text') === 0 || strpos($part, 'text') === 0) {
+          $result = substr($part, strpos($part, '/') + 1);
+          break;
+        }
+      }
     }
+
     return $result;
   }
 
@@ -233,108 +334,5 @@ include_once(Config::$dirIncludes . 'processor/class.Processor.php');
       $cleaned = trim(strip_tags($data));
     }
     return $cleaned;
-  }
-
-  /**
-   * Test to simulate json for a string
-   * @return array
-   */
-  private function test1()
-  {
-    return array(
-      'type' => 'string',
-      'meta' => array(
-        'string' => 'hello im static'
-      )
-    );
-  }
-
-  /**
-   * Test to simulate json for a string with a substring replacement
-   * @return array
-   */
-  private function test2()
-  {
-    return array(
-      'type' => 'stringTransform',
-      'meta' => array(
-        'transformType' => 'replace',
-        'source' => $this->test1(),
-        'data' => array(
-          'static' => 'dynamic'
-        )
-      )
-    );
-  }
-
-  /**
-   * Test to simulate json for a string with a substring replacement into a url input
-   * @return array
-   */
-  private function test3()
-  {
-    return array(
-      'type' => 'inputUrl',
-      'meta' => array(
-        'method' => 'get',
-        'source' => $this->test2(),
-        'curlOpt' => array(),
-      ),
-    );
-  }
-
-  /**
-   * test a merge of two sources
-   */
-  private function test4()
-  {
-    return array(
-      'type' => 'merge',
-      'meta' => array(
-        'mergeType' =>'union',
-        'sources' => array(
-          $this->test2(),
-          $this->test1()
-          )
-        )
-    );
-  }
-
-  /**
-   * test a filter of drop
-   */
-  private function test5()
-  {
-    return array(
-      'type' => 'filter',
-      'meta' => array(
-        'filterType' => 'drop',
-        'source' => $this->test4(),
-        'data' => array(
-          '1'
-        )
-      )
-    );
-  }
-
-  /**
-   * swellnet dev login
-   */
-  private function test6()
-  {
-    return array(
-      'type' => 'inputUrl',
-      'meta' => array(
-        'source' => 'swellnet.local/api/anon/user/login',
-        'method' => 'get',
-        'auth' => array(
-          'type' => 'userpass',
-        ),
-        'curlOpt' => array(
-          'CURLOPT_SSL_VERIFYPEER' => false,
-          'CURLOPT_FOLLOWLOCATION' => true
-        )
-      )
-    );
   }
 }

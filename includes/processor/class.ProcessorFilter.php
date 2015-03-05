@@ -18,19 +18,12 @@ include_once(Config::$dirIncludes . 'processor/class.Processor.php');
 
 class ProcessorFilter extends Processor
 {
-
-  public function ProcessorFilter($meta, $args, $extra=NULL)
-  {
-    parent::Processor($meta, $args, $extra);
-  }
-
   public function process()
   {
-    $this->status = 200;
     Debug::variable($this->meta, 'processorFilter', 4);
-    if (empty($this->meta->source)) {
-      $this->status = 417;
-      return new Error(1, 'Invalid or empty filter source.');
+    $required = $this->validateRequired();
+    if ($required !== TRUE) {
+      return $required;
     }
 
     $processor = $this->getProcessor($this->meta->source);
@@ -49,20 +42,22 @@ class ProcessorFilter extends Processor
       $result = $this->$method($source, $this->meta->data);
     } else {
       $this->status = 407;
-      $result = new Error(407, "Invalid filterType: $type");
+      $result = new Error(3, $this->id, "invalid filterType: $type");
     }
 
     return $result;
   }
 
-  private function _filterAdd($source, $data) {
+  private function _filterAdd($source, $data)
+  {
     foreach ($data as $key => $value) {
       $source[$key] = $value;
     }
     return $source;
   }
 
-  private function _filterDrop($source, $data) {
+  private function _filterDrop($source, $data)
+  {
     foreach ($data as $key => $value) {
       if (isset($source[$key])) {
         unset($source[$key]);

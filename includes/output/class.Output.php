@@ -3,7 +3,7 @@
 abstract class Output
 {
   public $status;
-  public $data;
+  protected $data;
 
   public function Output($status, $data)
   {
@@ -24,8 +24,22 @@ abstract class Output
 
   protected function setError()
   {
-    if (is_object($this->data) && get_class($this->data) == 'Error') {
+    if ($this->isError()) {
       $this->data = $this->data->process();
     }
+  }
+
+  protected function isError()
+  {
+    return (is_object($this->data) && get_class($this->data) == 'Error');
+  }
+
+  protected function isJson($string)
+  {
+    if (!is_string($string)) {
+      return FALSE;
+    }
+    json_decode($string);
+    return (json_last_error() == JSON_ERROR_NONE);
   }
 }

@@ -4,16 +4,22 @@ include_once(Config::$dirIncludes . 'output/class.Output.php');
 
 class OutputJson extends Output
 {
-
-  public function OutputJson($status, $data)
-  {
-    parent::__construct($status, $data);
-    header('Content-Type:application/json');
-  }
-
   public function process()
   {
     parent::process();
-    return json_encode($this->data);
+    if (Config::$debugInterface == 'LOG' || (Config::$debug < 1 && Config::$debugDb < 1)) {
+      header('Content-Type: text/json');
+    }
+    $data = $this->data;
+
+    if ($this->isJson($this->data)) {
+      return $data;
+    }
+
+    if (is_object($data)) {
+      $data = (array) $data;
+    }
+
+    return json_encode($data);
   }
 }

@@ -2,21 +2,25 @@
 
 class Error
 {
-  public $code;
-  public $message;
+  private $id;
+  private $code;
+  private $message;
 
   /**
    * Constructor, that populate the error object
    *
-   * @param mixed $code
+   * @param integer $code
    *  The error code ID
+   * @param mixed $id
+   *  The processor ID
    * @param string $message
    *  The error message
    */
-  public function Error($code, $message)
+  public function Error($code, $id, $message)
   {
     $this->code = $code;
     $this->message = $message;
+    $this->id = $id;
   }
 
   /**
@@ -26,11 +30,15 @@ class Error
    */
   public function process()
   {
-    return array(
+    $result = array(
       'error' => array(
         'code' => $this->code,
-        'message' => $this->message,
+        'message' => (!empty($this->message) ? ucfirst($this->message) . '.' : 'Unidentified error.'),
       ),
     );
+    if (!empty($this->id)) {
+      $result['error']['id'] = $this->id;
+    }
+    return $result;
   }
 }

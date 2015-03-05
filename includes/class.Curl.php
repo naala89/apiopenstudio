@@ -6,13 +6,24 @@ class Curl
   public $curlStatus;
   public $errorMsg;
   public $type;
-  public $options = array();
+  public $options = array(CURLOPT_RETURNTRANSFER => TRUE);
   public $url;
-
-  public function __construct()
-  {
-    $this->options[CURLOPT_RETURNTRANSFER] = TRUE;
-  }
+  /**
+   * Curl constants
+   *
+   * 13     CURLOPT_TIMEOUT
+   * 47     CURLOPT_POST
+   * 52     CURLOPT_FOLLOWLOCATION
+   * 64     CURLOPT_SSL_VERIFYPEER
+   * 78     CURLOPT_CONNECTTIMEOUT
+   * 80     CURLOPT_HTTPGET
+   * 10001  CURLOPT_FILE
+   * 10002  CURLOPT_URL
+   * 10005  CURLOPT_USERPWD
+   * 10015  CURLOPT_POSTFIELDS
+   * 10022  CURLOPT_COOKIE
+   * 19913  CURLOPT_RETURNTRANSFER
+   */
 
   /**
    * Send a GET request using cURL.
@@ -24,7 +35,7 @@ class Curl
    *
    * @return string
    */
-  public function get($url, array $options = array())
+  public function get($url, array $options=array())
   {
     $options[CURLOPT_HTTPGET] = TRUE;
     return $this->_exec($url, $options);
@@ -33,22 +44,16 @@ class Curl
   /**
    * Send a POST request using cURL.
    *
-   * @param string $url
+   * @param $url
    *  url for the curl call
-   * @param array $post
-   *  values to send
    * @param array $options
-   *  additional options
+   *  additional options. This includes the post vars.
    *
    * @return string
    */
-  public function post($url, array $post = array(), array $options = array())
+  public function post($url, array $options=array())
   {
     $options[CURLOPT_POST] = TRUE;
-    if (!empty($post)) {
-      $options[CURLOPT_POSTFIELDS] = $post;
-    }
-
     return $this->_exec($url, $options);
   }
 
@@ -63,9 +68,9 @@ class Curl
    * @return array
    *  array of options
    */
-  private function getCurlOptions($url, $options)
+  private function _getCurlOptions($url, array $options=array())
   {
-    return $this->options + $options + array(CURLOPT_URL => $url);
+    return $this->options + array(CURLOPT_URL => $url) + $options;
   }
 
   /**
@@ -78,20 +83,18 @@ class Curl
    *
    * @return string
    */
-  private function _exec($url, array $options = array())
+  private function _exec($url, array $options=array())
   {
-    $options = $this->getCurlOptions($url, $options);
+    $options = $this->_getCurlOptions($url, $options);
     Debug::variable($options, 'Curl options', 4);
 
     $ch = curl_init();
     curl_setopt_array($ch, $options);
-
     $response = curl_exec($ch);
     $this->httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $this->type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
     $this->curlStatus = curl_errno($ch);
     $this->errorMsg = curl_error($ch);
-
     curl_close($ch);
 
     return $response;
