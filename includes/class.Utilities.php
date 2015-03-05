@@ -223,4 +223,40 @@ class Utilities
     }
     return $isSecure;
   }
+
+  /**
+   * Recursively set access rights on a directory.
+   *
+   * @param $dir
+   * @param int $dirAccess
+   * @param int $fileAccess
+   * @param array $nomask
+   */
+  public static function setAccessRights($dir, $dirAccess = 0777, $fileAccess = 0666, $nomask = array('.', '..')) {
+    //error_log("Make writable: $dir");
+    if (is_dir($dir)) {
+      // Try to make each directory world writable.
+      if (@chmod($dir, $dirAccess)) {
+        error_log("Make writable: $dir");
+      }
+    }
+    if (is_dir($dir) && $handle = opendir($dir)) {
+      while (false !== ($file = readdir($handle))) {
+        if (!in_array($file, $nomask) && $file[0] != '.') {
+          if (is_dir("$dir/$file")) {
+            // Recurse into subdirectories
+            self::setAccessRights("$dir/$file", $dirAccess, $fileAccess,  $nomask);
+          }
+          else {
+            $filename = "$dir/$file";
+            // Try to make each file world writable.
+            if (@chmod($filename, $fileAccess)) {
+              error_log("Make writable: $filename");
+            }
+          }
+        }
+      }
+      closedir($handle);
+    }
+  }
 }

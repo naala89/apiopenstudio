@@ -31,16 +31,13 @@ class DB
   public function DB($debug = NULL, $sid = NULL)
   {
     $this->debug = isset($debug) ? $debug : (class_exists('Config') && isset(Config::$debugDb) ? Config::$debugDb : 0);
-    if ($this->debug > 0) {
-      echo "<style type='text/css'>div.debug {background-color: #FFE7E7; border: solid #FF0000 1px;}</style>\n";
-    }
 
-    if (session_status() == PHP_SESSION_NONE) {
-      if (!empty($sid)) {
-        session_id($sid);
-      }
-      session_start();
-    }
+    //if (session_status() == PHP_SESSION_NONE) {
+    //  if (!empty($sid)) {
+    //    session_id($sid);
+    //  }
+    //  session_start();
+    //}
 
     if (empty($this->db) && class_exists('Config')) {
       $this->db = $this->connect(Config::$dbhost, Config::$dbname, Config::$dbuser, Config::$dbpass, Config::$dbpersistent);
@@ -67,7 +64,7 @@ class DB
    *
    * @param string $host
    *  database host identifier
-   * @param string $name
+   * @param string $db
    *  database name
    * @param string $user
    *  db user
@@ -78,17 +75,21 @@ class DB
    *
    * @return handle
    */
-  public function connect($host, $name, $user, $pass, $persistent)
+  public function connect($host, $db, $user, $pass, $persistent)
   {
     if ($persistent) {
       $host = "p:$host";
     }
-    $dbh = new mysqli($host, $user, $pass, $name);
+    if (!function_exists('mysqli_connect')) {
+      Debug::message('ERROR: Could not find mysqli', 1, $this->debug);
+      die('Could not open DB connection');
+    }
+    $dbh = new mysqli($host, $user, $pass, $db);
     if ($dbh->connect_errno) {
       Debug::message('ERROR: Connection to mysql failed', 1, $this->debug);
       Debug::variable($host, 'host', 2, $this->debug);
       Debug::variable($user, 'user', 2, $this->debug);
-      die("Failed to connect to MySQL: " . $dbh->connect_error());
+      die("Failed to connect to MySQL: " . $dbh->connect_error);
     }
     return $dbh;
   }
@@ -103,6 +104,16 @@ class DB
     if (!empty($this->db)) {
       $this->db->close();
     }
+  }
+
+  /**
+   * Get the DB handle
+   *
+   * @return handle
+   */
+  public function escape($str)
+  {
+    return $this->db->real_escape_string($str);
   }
 
   /**
@@ -133,7 +144,7 @@ class DB
     if (empty($sql)) {
       switch ($this->_sql->type) {
         case 'SELECT':
-          $sql = "{$this->_sql->type} {$this->_sql->cols} {$this->_sql->tables} {$this->_sql->where} {$this->_sql->orderBy} {$this->_sql->limit}";
+          $sql = "{$this->_sql->type} {$this->_sql->cols} {$this->_sql->tables} {$this->_sql->joins} {$this->_sql->where} {$this->_sql->orderBy} {$this->_sql->limit}";
           break;
         case 'INSERT':
           $sql = "{$this->_sql->type} {$this->_sql->tables} {$this->_sql->set} {$this->_sql->onDuplicate} {$this->_sql->where} {$this->_sql->orderBy} {$this->_sql->limit}";
@@ -187,6 +198,16 @@ class DB
   }
 
   /**
+   * Fetch the insert ID of the last insert statement.
+   *
+   * @return mixed
+   */
+  public function insertId()
+  {
+    return $this->db->insert_id;
+  }
+
+  /**
    * Create a select statement, with the columns required.
    *
    * select('col1')
@@ -200,7 +221,7 @@ class DB
    *
    * @return this
    */
-  public function select($cols=NULL)
+  public function select($cols = NULL)
   {
     $this->_sql->type = 'SELECT';
 
@@ -385,7 +406,7 @@ class DB
     return $this;
   }
 
-  private function getWhere($where)
+  protected function getWhere($where)
   {
     $str = '';
     if (!is_array($where)) {
@@ -514,21 +535,31 @@ class DB
    */
   public function onDuplicate($onDup)
   {
+    Debug::variable($onDup, '$onDup');
+    $str = '';
     if (!is_array($onDup)) {
-      $this->_sql->onDuplicate = "ON DUPLICATE KEY UPDATE $onDup";
-    } else {
+      // literal string
+      $str = $onDup;
+    } elseif (isset($onDup[0]) && is_array($onDup[0])) {
+      // array of array of columns and values
       $newDup = array();
-      foreach ($onDup as $od) {
-        if (is_array($od)) {
-          $col = $od[0];
-          $val = empty($od[1]) ? 'NULL' : '"' . $od[1] . '"';
-          $newDup[] = "$col=$val";
+      foreach ($onDup as $dp) {
+        if (sizeof($dp) == 2) {
+          //$newDup[] = mysql_real_escape_string($dp[0]) . '="' . mysql_real_escape_string($dp[1]) . '"';
+          $newDup[] = $dp[0] . '="' . $dp[1] . '"';
         } else {
-          $newDup[] = $od;
+          Debug::message('error calculating ON DUPLICATE clause in SQL');
         }
       }
-      $this->_sql->onDuplicate = 'ON DUPLICATE KEY UPDATE ' . implode(', ', $newDup);
+      $str = implode(',', $newDup);
+    } elseif (sizeof($onDup) == 2) {
+      // we have an array of a single column and a value
+      $str = mysql_real_escape_string($onDup[0]) . '="' . mysql_real_escape_string($onDup[1]) . '"';
+    } else {
+      Debug::message('error calculating ON DUPLICATE clause in SQL');
     }
+
+    $this->_sql->onDuplicate = "ON DUPLICATE KEY UPDATE $str";
 
     return $this;
   }

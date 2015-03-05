@@ -21,30 +21,25 @@ include_once(Config::$dirIncludes . 'processor/class.Processor.php');
 class ProcessorMerge extends Processor
 {
   private $_defaultType = 'union';
-
-  public function ProcessorInput($meta, $args, $extra=NULL)
-  {
-    parent::__construct($meta, $args, $extra);
-  }
+  protected $required = array('sources');
 
   public function process()
   {
-    $this->status = 200;
     Debug::variable($this->meta, 'processorMerge', 4);
-    if (empty($this->meta->sources)) {
-      $this->status = 417;
-      return new Error(1, 'Invalid or empty merge sources.');
+    $required = $this->validateRequired();
+    if ($required !== TRUE) {
+      return $required;
     }
 
     $sources = $this->meta->sources;
-    $values  = array();
+    $values = array();
     foreach ($sources as $source) {
       $processor = $this->getProcessor($source);
       if ($this->status != 200) {
         return $processor;
       }
       $data = $processor->process();
-      if ($processor->status != 200 ) {
+      if ($processor->status != 200) {
         $this->status = $processor->status;
         return $data;
       }
@@ -58,7 +53,7 @@ class ProcessorMerge extends Processor
       $result = $this->$method($values);
     } else {
       $this->status = 407;
-      $result = new Error(407, "Invalid mergeType: $type");
+      $result = new Error(3, $this->id, "invalid mergeType: $type");
     }
 
     return $result;

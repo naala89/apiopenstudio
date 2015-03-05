@@ -2,10 +2,9 @@
 
 class Debug
 {
-
   private static $_level;
   private static $_interface;
-  private static $_logFile;
+  private static $_logFile; // for some reason, error_log always goes to error_log
 
   const HTML = 1;
   const LOG = 2;
@@ -88,20 +87,20 @@ class Debug
    * @param int $_level
    *  [optional] debug level. Default is 1
    * @param string $_logFile
-   *  [optional] full logfile path an name. Default is '/var/log/apache/syslog'
+   *  [optional] full logfile path an name. Default is '' (which will go to default system logfile)
    */
-  public static function setup($_interface = self::HTML, $_level = 1, $_logFile = '/var/log/apache/syslog')
+  public static function setup($_interface = self::HTML, $_level = 1, $_logFile = '')
   {
     self::$_interface = $_interface;
     self::$_level = $_level;
     self::$_logFile = $_logFile;
-    if ($_level > 0) {
+    if (self::$_level > 0 && self::$_interface == self::HTML) {
       echo "<style type='text/css'>div.debug {background-color: #FFE7E7; border: solid #FF0000 1px;}</style>\n";
     }
   }
 
   /**
-   * _display a debug message.
+   * Display a debug message.
    *
    * The default debug level can be overridden for separate debug, like DB.
    *
@@ -119,11 +118,11 @@ class Debug
     if (!self::_shouldDebug($lvl, $_level)) {
       return;
     }
-    if (empty($_interface)) {
-      $_interface = self::$_interface;
-    }
+    $_interface = is_null($_interface) ? self::$_interface : $_interface;
     if ($_interface == self::HTML) {
       $msg = htmlspecialchars($msg, ENT_QUOTES);
+    } else {
+      $msg = self::_timestampString() . $msg;
     }
     self::_display($msg, $_interface);
   }
@@ -149,18 +148,30 @@ class Debug
     if (!self::_shouldDebug($lvl, $_level)) {
       return;
     }
-    if (empty($_interface)) {
-      $_interface = self::$_interface;
-    }
+    $_interface = is_null($_interface) ? self::$_interface : $_interface;
     if ($_interface == self::HTML) {
-      $msg = '<b>' . htmlspecialchars($msg, ENT_QUOTES) . ':</b> ';
-      if (is_array($var)) {
+      $msg = '<b>' . htmlspecialchars($msg, ENT_QUOTES) . ':</b>';
+      if (is_array($var) || is_object($var)) {
         $var = self::_htmlspecialchars_array($var);
-      } elseif (is_string($var)) {
+      } else {
         $var = htmlspecialchars($var, ENT_QUOTES);
       }
+      $msg .= (is_array($var) || is_object($var) ? "<pre>\n" . print_r($var, TRUE) . '</pre>' : print_r($var, TRUE));
+    } else {
+      $msg = self::_timestampString() . $msg . ': ' . print_r($var, TRUE);
     }
-    self::_display($msg . (is_array($var) ? '<pre>'.print_r($var, TRUE).'</pre>' : print_r($var, TRUE)), $_interface);
+    self::_display($msg, $_interface);
+  }
+
+  /**
+   * get standard logging timestamp formatted string
+   *
+   * @return string
+   */
+  private static function _timestampString()
+  {
+    $date = new DateTime('now');
+    return '[' . $date->format('D M d h:i:s') . substr((string)microtime(), 1, 6) . $date->format(' Y') . '] ';
   }
 
   /**
@@ -175,7 +186,7 @@ class Debug
    */
   private static function _shouldDebug($lvl, $_level = NULL)
   {
-    return $lvl <= (isset($_level) ? $_level : self::$_level);
+    return $lvl <= (is_null($_level) ? self::$_level : $_level);
   }
 
   /**
@@ -185,6 +196,8 @@ class Debug
    *  text to output
    * @param int $_interface
    *  output interface - uses const HTML & LOG
+   *
+   * @TODO: The problem of not writing to specified logs appears to be here. the commented out code does not write to $_logfile, regardless.
    */
   private static function _display($str, $_interface)
   {
@@ -194,7 +207,11 @@ class Debug
         break;
       case self::LOG:
       default:
-        error_log(self::_beginLine($_interface) . $str . self::_endLine($_interface));
+        if (empty(self::$_logFile)) {
+          error_log(self::_beginLine($_interface) . $str . self::_endLine($_interface));
+        } else {
+          error_log(self::_beginLine($_interface) . $str . self::_endLine($_interface), 3, self::$_logFile);
+        }
         break;
     }
   }
@@ -211,16 +228,7 @@ class Debug
    */
   private static function _beginLine($_interface)
   {
-    switch ($_interface) {
-      case self::HTML:
-        $str = "<div class='debug'>";
-        break;
-      case self::LOG:
-      default:
-        $str = '';
-        break;
-    }
-    return $str;
+    return $_interface === self::HTML ? "<div class='debug'>" : '';
   }
 
   /**
@@ -235,16 +243,7 @@ class Debug
    */
   private static function _endLine($_interface)
   {
-    switch ($_interface) {
-      case self::HTML:
-        $str = "</div>\n";
-        break;
-      case self::LOG:
-      default:
-        $str = '';
-        break;
-    }
-    return $str;
+    return $_interface === self::HTML ? "</div>\n" : '';
   }
 
   /**
@@ -261,7 +260,7 @@ class Debug
   {
     $str = array();
     while (list($key, $val) = each($arr)) {
-      if (is_array($val))
+      if (is_array($val) || is_object($val))
         $str[$key] = self::_htmlspecialchars_array($val);
       elseif (is_resource($val))
         $str[$key] = $val;
