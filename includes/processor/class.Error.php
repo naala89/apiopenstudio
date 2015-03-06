@@ -30,10 +30,11 @@ class Error
    */
   public function process()
   {
+    $message = !empty($this->message) ? ucfirst($this->message) . (substr($this->message, -1) !== '.' ? '.' : '') : 'Unidentified error.';
     $result = array(
       'error' => array(
         'code' => $this->code,
-        'message' => (!empty($this->message) ? ucfirst($this->message) . '.' : 'Unidentified error.'),
+        'message' => $message,
       ),
     );
     if (!empty($this->id)) {
