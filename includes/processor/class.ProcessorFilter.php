@@ -41,8 +41,7 @@ class ProcessorFilter extends Processor
     if (method_exists($this, $method)) {
       $result = $this->$method($source, $this->meta->data);
     } else {
-      $this->status = 407;
-      $result = new Error(3, $this->id, "invalid filterType: $type");
+      throw new ApiException("invalid filterType: $type", 3, $this->id, 417);
     }
 
     return $result;

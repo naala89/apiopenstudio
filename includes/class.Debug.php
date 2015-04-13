@@ -122,7 +122,7 @@ class Debug
     if ($_interface == self::HTML) {
       $msg = htmlspecialchars($msg, ENT_QUOTES);
     } else {
-      $msg = self::_timestampString() . $msg;
+      $msg = self::_timestampString() . "$msg\n";
     }
     self::_display($msg, $_interface);
   }
@@ -159,6 +159,7 @@ class Debug
       $msg .= (is_array($var) || is_object($var) ? "<pre>\n" . print_r($var, TRUE) . '</pre>' : print_r($var, TRUE));
     } else {
       $msg = self::_timestampString() . $msg . ': ' . print_r($var, TRUE);
+      $msg .= !is_array($var) && !is_object($var) ? "\n" : '';
     }
     self::_display($msg, $_interface);
   }

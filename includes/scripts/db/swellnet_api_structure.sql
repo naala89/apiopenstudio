@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Feb 21, 2015 at 06:44 AM
+-- Generation Time: Apr 05, 2015 at 11:35 PM
 -- Server version: 5.6.21
 -- PHP Version: 5.5.14
 
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `session_name` varchar(256) DEFAULT NULL COMMENT 'session name',
   `session_id` varchar(256) DEFAULT NULL COMMENT 'session id',
   `stale_time` datetime DEFAULT NULL COMMENT 'time for token and session to last (seconds)'
-) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS `user_roles` (
 `id` int(11) NOT NULL COMMENT 'user-role ID',
   `uid` int(11) NOT NULL COMMENT 'User ID',
   `rid` int(11) NOT NULL COMMENT 'Role ID'
-) ENGINE=InnoDB AUTO_INCREMENT=178 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=208 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -155,12 +155,12 @@ MODIFY `rid` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Role ID',AUTO_INCREMENT=4;
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id of an individual user',AUTO_INCREMENT=90;
+MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id of an individual user',AUTO_INCREMENT=100;
 --
 -- AUTO_INCREMENT for table `user_roles`
 --
 ALTER TABLE `user_roles`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'user-role ID',AUTO_INCREMENT=178;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'user-role ID',AUTO_INCREMENT=208;
 --
 -- AUTO_INCREMENT for table `vars`
 --

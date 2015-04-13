@@ -46,8 +46,7 @@ class ProcessorVarUri extends ProcessorVar
     }
 
     if (!isset($this->request->args[$index])) {
-      $this->status = 417;
-      return new Error(1, $this->id, 'URI index "' . $index . '" does not exist');
+      throw new ApiException('URI index "' . $index . '" does not exist', 1, $this->id, 417);
     }
 
     return urldecode($this->request->args[$index]);

@@ -21,6 +21,10 @@ class ProcessorValidateToken extends Processor
 {
   protected $required = array('token');
 
+  /**
+   * @return array|bool|\Error
+   * @throws \ApiException
+   */
   public function process()
   {
     Debug::variable($this->meta, 'ProcessorValidateToken');
@@ -42,9 +46,7 @@ class ProcessorValidateToken extends Processor
         ->execute();
 
     if ($result->num_rows < 1) {
-      // TODO: we need to turn off caching here.
-      $this->status = 403;
-      return new Error(4, $this->id, 'invalid token');
+      throw new ApiException('invalid token', 4, $this->id, 403);
     }
 
     return TRUE;

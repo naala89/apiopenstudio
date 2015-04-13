@@ -67,7 +67,7 @@ class ProcessorVarStore extends ProcessorVar
       return $operation;
     }
     if (!in_array($operation, $this->ops)) {
-      return new Error(1, $this->id, "invalid operation: $operation");
+      throw new ApiException("invalid operation: $operation", 1, $this->id, 417);
     }
 
     $method = "_$operation";
@@ -82,8 +82,7 @@ class ProcessorVarStore extends ProcessorVar
     }
     $result = $this->_delete($client, $var);
     if (!$result) {
-      $this->status = 417;
-      return new Error(2, $this->id, 'there was an error deleting old duplicate vars');
+      throw new ApiException('there was an error deleting old duplicate vars', 2, $this->id, 417);
     }
     $result = $this->request->db
         ->insert('vars')
@@ -94,8 +93,7 @@ class ProcessorVarStore extends ProcessorVar
         ))
         ->execute();
     if (!$result) {
-      $this->status = 417;
-      return new Error(2, $this->id, 'there was an error inserting vars');
+      throw new ApiException('there was an error inserting vars', 2, $this->id, 417);
     }
     return $result;
   }
@@ -118,6 +116,6 @@ class ProcessorVarStore extends ProcessorVar
         ->where(array('name', $var))
         ->execute();
     $row = $result->fetch_object();
-    return $row->val;
+    return !empty($row->val) ? $row->val : FALSE;
   }
 }
