@@ -57,8 +57,7 @@ class ProcessorDrupalSession extends Processor
           ->where('external_id = "' . $this->request->db->escape($externalId) . '"')
           ->execute();
     } else {
-      $this->status = 417;
-      return new Error(3, $this->id, 'empty externalId or token found');
+      throw new ApiException('empty externalId or token found', 3, $this->id, 417);
     }
 
     $dbObj = $result->fetch_object();

@@ -9,8 +9,7 @@ class ProcessorSystem extends Processor
   public function process()
   {
     if ($this->request->client != 7) {
-      $this->status = 307;
-      return new Error(4, $this->id, 'permission denied');
+      throw new ApiException('permission denied', 4, $this->id, 307);
     }
     return TRUE;
   }

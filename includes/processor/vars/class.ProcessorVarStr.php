@@ -35,8 +35,7 @@ class ProcessorVarStr extends ProcessorVar
     $result = parent::process();
 
     if (!is_string($result)) {
-      $this->status = 417;
-      $result = new Error(5, $this->id, 'invalid string');
+      throw new ApiException('invalid string', 5, $this->id, 417);
     }
 
     return $result;

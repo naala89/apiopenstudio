@@ -38,8 +38,7 @@ class ProcessorVarRequest extends ProcessorVar
     }
 
     if (empty($_REQUEST[$varName])) {
-      $this->status = 417;
-      return new Error(5, $this->id, "request variable ($varName) does not exist");
+      throw new ApiException("request variable ($varName) does not exist", 5, $this->id, 417);
     } else {
       $result = $_REQUEST[$varName];
     }

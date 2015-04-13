@@ -11,7 +11,7 @@ class Config
     'vmh17284.hosting24.com.au' => 'staging',
     'localhost' => 'development',
     '127.0.0.1' => 'development',
-    'swellnet_api.local' => 'development',
+    'datagator.local' => 'development',
     'johns-MBP' => 'development'
   );
   static private $_allow_override;
@@ -138,7 +138,7 @@ class Config
     self::$debug = 4;
     self::$debugCLI = 4;
     self::$_allow_override = TRUE;
-    self::$debugInterface = 'HTML';
+    self::$debugInterface = 'LOG';
 
     self::$cache = FALSE;
 

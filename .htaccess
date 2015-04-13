@@ -1,7 +1,10 @@
+IndexIgnore *
+
+Header add Access-Control-Allow-Origin "*"
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  # RewriteRule ^api/([a-zA-Z-9\/]*)$ /html/index.php?request=$1 [QSA,NC,P]
-  RewriteRule ^api/([a-zA-Z-9\/]*)$ /html/index.php?request=$1 [L]
+  RewriteRule ^api/([a-zA-Z0-9\/\-_\%\.]*)$ /html/index.php?request=$1 [QSA,NC]
 </IfModule>

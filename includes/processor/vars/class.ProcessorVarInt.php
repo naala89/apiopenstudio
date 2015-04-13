@@ -35,8 +35,7 @@ class ProcessorVarInt extends ProcessorVar
     $result = parent::process();
 
     if (!is_integer($result)) {
-      $this->status = 417;
-      return new Error(5, $this->id, 'invalid integer');
+      throw new ApiException('invalid integer', 5, $this->id, 417);
     }
 
     return $result;

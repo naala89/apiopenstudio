@@ -52,8 +52,7 @@ class ProcessorMerge extends Processor
     if (method_exists($this, $method)) {
       $result = $this->$method($values);
     } else {
-      $this->status = 407;
-      $result = new Error(3, $this->id, "invalid mergeType: $type");
+      throw new ApiException("invalid mergeType: $type", 3, $this->id, 407);
     }
 
     return $result;

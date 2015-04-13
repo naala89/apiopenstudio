@@ -36,8 +36,8 @@ class Api
   /**
    * Process the rest request.
    *
-   * @return mixed
-   *  the result body
+   * @return bool
+   * @throws \ApiException
    */
   public function process()
   {
@@ -45,26 +45,14 @@ class Api
 
     // disseminate the request for processing
     $request = $this->_getData($_GET);
-    if (($request) === false) {
-      $output = $this->_getOutputObj('json', 404, (new Error(1, NULL, 'invalid request')));
-      return $output->process();
-    }
 
     // get the metadata for the processing
     $meta = new stdClass();
     $ttl = 0;
     $meta = $this->getMeta($request, $meta, $ttl);
-    if ($this->status != 200) {
-      $output = $this->_getOutputObj($request->outFormat, 406, $meta);
-      return $output->process();
-    }
 
     // validate user for the call, if required
     $validation = $this->getValidation($meta, $request);
-    if ($this->status != 200) {
-      $output = $this->_getOutputObj($request->outFormat, $this->status, $validation);
-      return $output->process();
-    }
 
     // fetch the cache of the call, if it is not stale
     $cache = $this->getCache($request);
@@ -86,7 +74,7 @@ class Api
     }
 
     // translate output into the correct format
-    $output = $this->_getOutputObj($request->outFormat, $this->status, $data);
+    $output = $this->getOutputObj($request->outFormat, $this->status, $data);
 
     return $output->process();
   }
@@ -126,9 +114,12 @@ class Api
 
   /**
    * Fetch resource metadata.
-   * nH8yOD_NS6uVurQtDajPsmAXFWmOC4JWF1e84BfkHnk
+   *
    * @param $request
+   * @param $meta
+   * @param $ttl
    * @return mixed
+   * @throws \ApiException
    */
   private function getMeta($request, &$meta, &$ttl)
   {
@@ -142,8 +133,7 @@ class Api
           ->execute();
 
       if (!$result || $result->num_rows < 1) {
-        $this->status = 404;
-        return new Error(1, NULL, 'resource or client not defined');
+        throw new ApiException('resource or client not defined',1 , -1, 404);
       }
       $dbObj = $result->fetch_object();
     } else {
@@ -155,7 +145,7 @@ class Api
       $filepath = Config::$dirIncludes . 'test/' . $filename;
 
       if (!file_exists($filepath)) {
-        return new Error(-1, NULL, "invalid test object: $class");
+        throw new ApiException("invalid test object: $class", -1 , -1, 400);
       }
 
       include_once($filepath);
@@ -163,10 +153,8 @@ class Api
 
       $dbObj->meta = json_encode($obj->get());
     }
-    Debug::variable($dbObj->meta, 'request JSON');
     $meta = json_decode($dbObj->meta);
     $ttl = $dbObj->ttl;
-    Debug::variable($ttl, 'TTL');
     return $meta;
   }
 
@@ -183,9 +171,6 @@ class Api
     }
     $validator = new Processor($meta->validation, $request);
     $validation = $validator->process();
-    if ($validation!== TRUE) {
-      $this->status = $validator->status;
-    }
     return $validation;
   }
 
@@ -194,23 +179,20 @@ class Api
    *
    * This will create an output class, based on format string, and process through that.
    *
-   * @param string $format
-   *    Output format
-   * @param integer $status
-   *    header status
-   * @param mixed $data
-   *    results data
+   * @param $format
+   * @param $status
+   * @param $data
    * @return mixed
+   * @throws \ApiException
    */
-  private function _getOutputObj($format, $status, $data)
+  public function getOutputObj($format, $status, $data)
   {
     $class = 'Output' . ucfirst($this->_cleanData($format));
     $filename = 'class.' . $class . '.php';
     $filepath = Config::$dirIncludes . 'output/' . $filename;
 
     if (!file_exists($filepath) || $class == 'Output') {
-      $error = new Error(1, NULL, "invalid or no output format defined");
-      return $this->_getOutputObj('text', 417, $error);
+      throw new ApiException('invalid or no output format defined', 1, -1, 417);
     }
 
     include_once($filepath);
@@ -234,7 +216,7 @@ class Api
     $request->request = $get['request'];
     $args = explode('/', trim($request->request, '/'));
     if (sizeof($args) < 2) {
-      return FALSE;
+      throw new ApiException('invalid request');
     }
     $header = getallheaders();
 
@@ -244,8 +226,8 @@ class Api
     $request->action = array_shift($args);
     $request->identifier = $request->resource . $request->action;
     $request->args = $args;
-    $request->inFormat = $this->_parseType($header, 'Content-Type');
-    $request->outFormat = $this->_parseType($header, 'Accept', 'json');
+    $request->inFormat = $this->parseType($header, 'Content-Type');
+    $request->outFormat = $this->parseType($header, 'Accept', 'json');
 
     $request->vars = array_diff_assoc($get, array('request' => $request->request));
     $request->vars = $request->vars + $_POST;
@@ -289,7 +271,7 @@ class Api
    * @return string
    *    format or false on not identified
    */
-  private function _parseType($array, $key, $default=FALSE)
+  public function parseType($array, $key, $default=FALSE)
   {
     $result = $default;
 
@@ -311,6 +293,8 @@ class Api
         }
       }
     }
+
+    Debug::variable($result);
 
     return $result;
   }

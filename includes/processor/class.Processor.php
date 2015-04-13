@@ -1,6 +1,7 @@
 <?php
 
 include_once(Config::$dirIncludes . 'processor/class.Error.php');
+//include_once(Config::$dirIncludes . 'class.apiException.php');
 
 /**
  * Class Processor
@@ -123,15 +124,7 @@ class Processor
   {
     // TODO: A better way to use getProcessor.
     $processor = $this->getProcessor($this->meta);
-    if ($this->status != 200) {
-      return $processor;
-    }
-    $result = $processor->process();
-    if ($processor->status != 200) {
-      $this->status = $processor->status;
-    }
-
-    return $result;
+    return $processor->process();
   }
 
   /**
@@ -147,8 +140,8 @@ class Processor
   /**
    * Validate that the required fields are in the metadata
    *
-   * @TODO: rename to validateRequiredFields()
-   * @return bool|Error
+   * @return bool
+   * @throws \ApiException
    */
   protected function validateRequired()
   {
@@ -161,8 +154,7 @@ class Processor
     if (empty($result)) {
       return TRUE;
     }
-    $this->status = 417;
-    return new Error(-1, $this->id, 'missing required meta: ' . implode(', ', $result));
+    throw new ApiException('missing required meta: ' . implode(', ', $result), -1, $this->id, 417);
   }
 
   /**
@@ -183,10 +175,12 @@ class Processor
    * If the object is a processor, then it will process that down to a final return value,
    * or if the obj is a simple value, then it will return that. Anything else will return an error object.
    *
-   * @param $obj
-   * @return array|Error
-   *
    * TODO: Add validation of var type result. This can be declared in $this->required
+   * TODO: Much more elegant to throw an exception and catch it elsewhere. Then we do not need to test for status === 200 every time we call this function
+   *
+   * @param $obj
+   * @return array|\Error|Object
+   * @throws \ApiException
    */
   protected function getVar($obj)
   {
@@ -202,10 +196,20 @@ class Processor
       if ($processor->status != 200) {
         $this->status = $processor->status;
       }
+
+    } elseif (is_array($obj)) {
+      // this is an array of processors or values
+      $result = array();
+      foreach ($obj as $o) {
+        $val = $this->getVar($o);
+        if ($this->status != 200) {
+          return $val;
+        }
+        $result[] = $val;
+      }
     } elseif (!is_string($obj) && !is_numeric($obj) && !is_bool($obj)) {
       // this is an invalid value
-      $this->status = 417;
-      $result = new Error(-1, $this->id, 'invalid var value');
+      throw new ApiException('invalid var value', -1, $this->id, 417);
     }
 
     return $result;
@@ -213,55 +217,33 @@ class Processor
 
   /**
    * Fetch the processor defined in the obj (from meta), or return an error.
-   *
+   * 
    * @param bool $obj
-   * @param string $dir
+   * @param null $dir
    * @param string $prefix
    * @param string $suffix
-   * @return Error|Object
+   * @return mixed
+   * @throws \ApiException
    */
   protected function getProcessor($obj = FALSE, $dir = NULL, $prefix = 'Processor', $suffix = '.php')
   {
     $dir = (empty($dir) ? Config::$dirIncludes . 'processor/' : $dir);
     $obj = ($obj === FALSE ? $this->meta : $obj);
     if (!$this->isProcessor($obj)) {
-      $this->status = 417;
-      return new Error(-1, $this->id, 'invalid object');
+      throw new ApiException('invalid object', -1, $this->id, 417);
     }
 
     $classname = $prefix . ucfirst(trim($obj->type));
     $filepaths = shell_exec("find $dir -name 'class.$classname.php'");
     $filepaths = preg_split('/\r\n|[\r\n]/', trim($filepaths));
     if (sizeof($filepaths) > 1) {
-      $this->status = 417;
-      return new Error(-1, $this->id, "multiple processors defined ($classname)");
+      throw new ApiException("multiple processors defined ($classname)", -1, $this->id, 417);
     }
     if (empty($filepaths) || empty($filepaths[0])) {
-      $this->status = 417;
-      return new Error(-1, $this->id, "invalid or no processor defined ($classname)");
+      throw new ApiException("invalid or no processor defined ($classname)", -1, $this->id, 417);
     }
 
     include_once($filepaths[0]);
     return new $classname($obj->meta, $this->request);
-  }
-
-  /**
-   * Wrap a string, array or object and error code into an Error object.
-   *
-   * Used for instances where the return value from a processor is known to be an error,
-   * but the actual data is not an Error object.
-   *
-   * @param $code
-   * @param $error
-   * @return Error
-   *
-   * @see Error
-   * @see ProcessorInputUrl
-   */
-  protected function wrapError($code, $error) {
-    if (is_object($error) || is_array(($error))) {
-      $error = serialize($error);
-    }
-    return new Error($code, $this->id, $error);
   }
 }

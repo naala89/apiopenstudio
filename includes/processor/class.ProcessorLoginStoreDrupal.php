@@ -32,8 +32,7 @@ class ProcessorLoginStoreDrupal extends Processor
     }
     $source = json_decode($source);
     if (empty($source->token) || empty($source->user) || empty($source->user->uid)) {
-      $this->status = 419;
-      return new Error(3, $this->id, 'login failed, no token received');
+      throw new ApiException('login failed, no token received', 3, $this->id, 419);
     }
 
     $token = $this->request->db->escape($source->token);
@@ -46,13 +45,11 @@ class ProcessorLoginStoreDrupal extends Processor
 
     $result = $this->_deleteUser($client, $externalId);
     if (!$result) {
-      $this->status = 400;
-      return new Error(2, $this->id, 'an error occurred while deleting a user login');
+      throw new ApiException('an error occurred while deleting a user login', 2, $this->id, 400);
     }
     $result = $this->_insertUser($client, $externalId, $roles, $token, $sessionName, $sessionId, $staleTime);
     if (!$result) {
-      $this->status = 400;
-      return new Error(2, $this->id, 'DB error occurred storing login');
+      throw new ApiException('DB error occurred storing login', 2, $this->id, 400);
     }
 
     return $source;
@@ -74,14 +71,12 @@ class ProcessorLoginStoreDrupal extends Processor
 
       $deleteUserRoles = $this->_dbDeleteUserRoles($uid);
       if (!$deleteUserRoles) {
-        $this->status = 400;
-        return new Error(2, $this->id, 'an error occurred while deleting a users roles');
+        throw new ApiException('an error occurred while deleting a users roles', 2, $this->id, 400);
       }
 
       $deleteUser = $this->_dbDeleteUser($uid);
       if (!$deleteUser) {
-        $this->status = 400;
-        return new Error(2, $this->id, 'an error occurred while deleting a users login');
+        throw new ApiException('an error occurred while deleting a users login', 2, $this->id, 400);
       }
     }
 

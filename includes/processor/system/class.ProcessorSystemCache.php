@@ -37,7 +37,7 @@ class ProcessorSystemCache extends ProcessorSystem
     $cache = new Cache(Config::$cache);
     $result = $cache->clear();
     if (!$result) {
-      $result = new Error(-1, $this->id, 'could not clear the cache');
+      throw new ApiException('could not clear the cache', -1, $this->id, 307);
     }
     return $result;
   }

@@ -45,8 +45,7 @@ class ProcessorInputUrl extends Processor
     }
     $method = strtolower($method);
     if (!in_array($method, array('get', 'post'))) {
-      $this->status = 417;
-      return new Error(1, $this->id, 'empty or invalid HTTP method');
+      throw new ApiException('empty or invalid HTTP method', 1, $this->id, 417);
     }
 
     //get URL
@@ -94,12 +93,11 @@ class ProcessorInputUrl extends Processor
     $curl = new Curl();
     $result = $curl->{strtolower($this->meta->method)}($url, $curlOpts);
     if ($result === false) {
-      $result = new Error($curl->curlStatus, $this->id, 'could not get response from remote server: ' . $curl->errorMsg);
+      throw new ApiException('could not get response from remote server: ' . $curl->errorMsg, $curl->curlStatus, $this->id, $this->status);
     }
     //TODO: use $curl->type to convert all inputUrl results into a standard format
-    $this->status = $curl->httpStatus;
-    if ($this->status != 200) {
-      $result = $this->wrapError(3, $result);
+    if ($curl->httpStatus != 200) {
+      throw new ApiException($result, 3, $this->id, $curl->httpStatus);
     }
 
     return $result;

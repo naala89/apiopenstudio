@@ -35,8 +35,7 @@ class ProcessorVarNum extends ProcessorVar
     $result = parent::process();
 
     if (!is_numeric($result)) {
-      $this->status = 417;
-      $result = new Error(5, $this->id, 'invalid number');
+      throw new ApiException('invalid number', 5, $this->id, 417);
     }
 
     return $result;

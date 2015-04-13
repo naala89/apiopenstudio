@@ -34,14 +34,12 @@ class User
 
       $deleteUserRoles = $this->_dbDeleteUserRoles($uid);
       if (!$deleteUserRoles) {
-        $this->status = 400;
-        return new Error(2, $this->id, 'an error occurred while deleting a users roles');
+        throw new ApiException('an error occurred while deleting a users roles', 2, $this->id, 400);
       }
 
       $deleteUser = $this->_dbDeleteUser($uid);
       if (!$deleteUser) {
-        $this->status = 400;
-        return new Error(2, $this->id, 'an error occurred while deleting a users login');
+        throw new ApiException('an error occurred while deleting a users login', 2, $this->id, 400);
       }
     }
 
