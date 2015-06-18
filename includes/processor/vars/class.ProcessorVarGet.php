@@ -34,11 +34,9 @@ class ProcessorVarGet extends ProcessorVar
   {
     Debug::message('ProcessorVarGet');
     $varName = parent::process();
-    if ($this->status != 200) {
-      return $varName;
-    }
 
     Debug::variable($this->request);
+    Debug::variable($varName);
 
     if (empty($this->request->vars[$varName])) {
       throw new ApiException("get variable ($varName) does not exist", 5, $this->id, 417);

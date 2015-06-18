@@ -32,9 +32,6 @@ class ProcessorVarPost extends ProcessorVar
   {
     Debug::message('ProcessorVarPost');
     $varName = parent::process();
-    if ($this->status != 200) {
-      return $varName;
-    }
 
     if (empty($this->request->vars[$varName])) {
       throw new ApiException("post variable ($varName) does not exist", 5, $this->id, 417);

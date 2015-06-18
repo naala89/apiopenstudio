@@ -38,21 +38,13 @@ class ProcessorInputUrl extends Processor
       return $required;
     }
 
-    //get method
     $method = $this->getVar($this->meta->method);
-    if ($this->status != 200) {
-      return $method;
-    }
     $method = strtolower($method);
     if (!in_array($method, array('get', 'post'))) {
       throw new ApiException('empty or invalid HTTP method', 1, $this->id, 417);
     }
 
-    //get URL
     $url = $this->getVar($this->meta->source);
-    if ($this->status != 200) {
-      return $url;
-    }
 
     //get static curl options for this call
     $curlOpts = array();
@@ -66,10 +58,6 @@ class ProcessorInputUrl extends Processor
     if (!empty($this->meta->auth)) {
       $authenticator = $this->getProcessor($this->meta->auth, Config::$dirIncludes . '/processor/input/auth', $prefix = 'Auth', $suffix = '.php');
       $authentication = $authenticator->process();
-      if ($authenticator->status != 200) {
-        $this->status = $authenticator->status;
-        return $authentication;
-      }
       $curlOpts += $authentication;
     }
 

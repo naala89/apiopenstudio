@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Apr 05, 2015 at 11:35 PM
+-- Generation Time: Jun 02, 2015 at 02:19 AM
 -- Server version: 5.6.21
--- PHP Version: 5.5.14
+-- PHP Version: 5.5.20
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -28,6 +28,22 @@ CREATE TABLE IF NOT EXISTS `blacklist` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `log`
+--
+
+DROP TABLE IF EXISTS `log`;
+CREATE TABLE IF NOT EXISTS `log` (
+`id` int(10) unsigned NOT NULL,
+  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `user` varchar(256) DEFAULT NULL,
+  `ip` varchar(11) DEFAULT NULL,
+  `type` varchar(64) NOT NULL,
+  `text` varchar(1024) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `resources`
 --
 
@@ -38,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `resources` (
   `resource` varchar(64) NOT NULL COMMENT 'identifier of the api call',
   `meta` varchar(16384) NOT NULL COMMENT 'all of the actions taken by the call',
   `ttl` int(10) unsigned NOT NULL DEFAULT '300' COMMENT 'time to cache the results (seconds)'
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -68,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `session_name` varchar(256) DEFAULT NULL COMMENT 'session name',
   `session_id` varchar(256) DEFAULT NULL COMMENT 'session id',
   `stale_time` datetime DEFAULT NULL COMMENT 'time for token and session to last (seconds)'
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=300 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -81,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `user_roles` (
 `id` int(11) NOT NULL COMMENT 'user-role ID',
   `uid` int(11) NOT NULL COMMENT 'User ID',
   `rid` int(11) NOT NULL COMMENT 'Role ID'
-) ENGINE=InnoDB AUTO_INCREMENT=208 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=804 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -106,6 +122,12 @@ CREATE TABLE IF NOT EXISTS `vars` (
 --
 ALTER TABLE `blacklist`
  ADD PRIMARY KEY (`username`);
+
+--
+-- Indexes for table `log`
+--
+ALTER TABLE `log`
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `resources`
@@ -142,10 +164,15 @@ ALTER TABLE `vars`
 --
 
 --
+-- AUTO_INCREMENT for table `log`
+--
+ALTER TABLE `log`
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=24;
+--
 -- AUTO_INCREMENT for table `resources`
 --
 ALTER TABLE `resources`
-MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'resource id',AUTO_INCREMENT=18;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'resource id',AUTO_INCREMENT=20;
 --
 -- AUTO_INCREMENT for table `roles`
 --
@@ -155,12 +182,12 @@ MODIFY `rid` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Role ID',AUTO_INCREMENT=4;
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id of an individual user',AUTO_INCREMENT=100;
+MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id of an individual user',AUTO_INCREMENT=300;
 --
 -- AUTO_INCREMENT for table `user_roles`
 --
 ALTER TABLE `user_roles`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'user-role ID',AUTO_INCREMENT=208;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'user-role ID',AUTO_INCREMENT=804;
 --
 -- AUTO_INCREMENT for table `vars`
 --

@@ -34,7 +34,7 @@ class ProcessorVarBool extends ProcessorVar
     Debug::message('ProcessorVarBool');
     $result = parent::process();
 
-    if ($this->status == 200 && !is_bool($result)) {
+    if (!is_bool($result)) {
       throw new ApiException('invalid boolean', 5, $this->id, 417);
     }
 

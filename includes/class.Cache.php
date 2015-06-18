@@ -18,27 +18,15 @@ class Cache
   public $port = '11211';
 
   /**
-   * Constructor
+   * Constructor.
    *
-   * @param mixed $cache - cache type
+   * @param bool $cache
    *    False means do not cache
    *    True means select first available caching system
    *    String means select the specified caching system
+   * @return bool
    */
   public function Cache($cache=TRUE)
-  {
-    $this->setup($cache);
-  }
-
-  /**
-   * Setup cache
-   *
-   * @param bool $type
-   *    Type of cache to setup
-   * @return bool
-   *    setup state
-   */
-  public function setup($cache=TRUE)
   {
     Debug::variable($cache, 'cache setup request', 4);
     $this->cacheActive = FALSE;
@@ -54,7 +42,7 @@ class Cache
       }
     } elseif ($cache === FALSE || $cache == 0) {
       Debug::message('Cache is off', 4);
-      return $this->cacheActive;
+      return FALSE;
     } else {
       $func = 'setup' . ucfirst(trim($cache));
       Debug::variable($func, 'looking for function', 4);

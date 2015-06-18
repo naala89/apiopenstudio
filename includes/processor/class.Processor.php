@@ -176,7 +176,6 @@ class Processor
    * or if the obj is a simple value, then it will return that. Anything else will return an error object.
    *
    * TODO: Add validation of var type result. This can be declared in $this->required
-   * TODO: Much more elegant to throw an exception and catch it elsewhere. Then we do not need to test for status === 200 every time we call this function
    *
    * @param $obj
    * @return array|\Error|Object
@@ -189,22 +188,13 @@ class Processor
     if ($this->isProcessor($obj)) {
       // this is a processor
       $processor = $this->getProcessor($obj);
-      if ($this->status != 200) {
-        return $processor;
-      }
       $result = $processor->process();
-      if ($processor->status != 200) {
-        $this->status = $processor->status;
-      }
 
     } elseif (is_array($obj)) {
       // this is an array of processors or values
       $result = array();
       foreach ($obj as $o) {
         $val = $this->getVar($o);
-        if ($this->status != 200) {
-          return $val;
-        }
         $result[] = $val;
       }
     } elseif (!is_string($obj) && !is_numeric($obj) && !is_bool($obj)) {

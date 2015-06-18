@@ -22,7 +22,7 @@ class OutputImage extends Output
       return $xml->process();
     }
     if (empty($this->data)) {
-      header('Content-Type:test/json');
+      header('Content-Type:application/json');
       return 'image empty';
     }
 

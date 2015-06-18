@@ -164,9 +164,9 @@ class Config
    */
   static private function staging()
   {
-    self::$debugDb = 4;
-    self::$debug = 4;
-    self::$debugCLI = 4;
+    self::$debugDb = 1;
+    self::$debug = 1;
+    self::$debugCLI = 1;
     self::$_allow_override = TRUE;
     self::$debugInterface = 'LOG';
 

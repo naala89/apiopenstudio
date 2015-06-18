@@ -33,9 +33,6 @@ class ProcessorVarRequest extends ProcessorVar
   {
     Debug::message('ProcessorVarRequest');
     $varName = parent::process();
-    if ($this->status != 200) {
-      return $varName;
-    }
 
     if (empty($_REQUEST[$varName])) {
       throw new ApiException("request variable ($varName) does not exist", 5, $this->id, 417);

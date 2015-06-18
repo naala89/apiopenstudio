@@ -34,7 +34,7 @@ class ProcessorVarFloat extends ProcessorVar
     Debug::message('ProcessorVarFloat');
     $result = parent::process();
 
-    if ($this->status == 200 && !is_float($result)) {
+    if (!is_float($result)) {
       throw new ApiException('invalid float', 5, $this->id, 417);
     }
 

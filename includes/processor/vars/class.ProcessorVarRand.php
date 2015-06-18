@@ -58,34 +58,13 @@ class ProcessorVarRand extends ProcessorVar
   public function process()
   {
     Debug::message('ProcessorVarRand', 4);
-    $required = $this->validateRequired();
-    if ($required !== TRUE) {
-      return $required;
-    }
+    $this->validateRequired();
+
     $length = $this->getVar($this->meta->length);
-    if ($this->status != 200) {
-      return $length;
-    }
     $lower = $this->getVar($this->meta->lower);
-    if ($this->status != 200) {
-      $this->status = 200;
-      $lower = FALSE;
-    }
     $upper = $this->getVar($this->meta->upper);
-    if ($this->status != 200) {
-      $this->status = 200;
-      $upper = FALSE;
-    }
     $number = $this->getVar($this->meta->number);
-    if ($this->status != 200) {
-      $this->status = 200;
-      $number = FALSE;
-    }
     $nonAlphanum = $this->getVar($this->meta->nonAlphanum);
-    if ($this->status != 200) {
-      $this->status = 200;
-      $nonAlphanum = FALSE;
-    }
 
     return Utilities::random_string($length, $lower, $upper, $number, $nonAlphanum);
   }

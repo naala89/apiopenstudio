@@ -59,13 +59,7 @@ class ProcessorVarStore extends ProcessorVar
       return $required;
     }
     $var = $this->getVar($this->meta->var);
-    if ($this->status != 200) {
-      return $var;
-    }
     $operation = $this->getVar($this->meta->operation);
-    if ($this->status != 200) {
-      return $operation;
-    }
     if (!in_array($operation, $this->ops)) {
       throw new ApiException("invalid operation: $operation", 1, $this->id, 417);
     }
@@ -77,9 +71,6 @@ class ProcessorVarStore extends ProcessorVar
   private function _insert($client, $var)
   {
     $val = $this->getVar($this->meta->val);
-    if ($this->status != 200) {
-      return $val;
-    }
     $result = $this->_delete($client, $var);
     if (!$result) {
       throw new ApiException('there was an error deleting old duplicate vars', 2, $this->id, 417);

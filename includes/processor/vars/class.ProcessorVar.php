@@ -36,12 +36,8 @@ class ProcessorVar extends Processor
 
   public function process()
   {
-    Debug::variable($this->meta, 'ProcessorVar', 4);
-    $required = $this->validateRequired();
-    if ($required !== TRUE) {
-      return $required;
-    }
-
+    Debug::message('ProcessorVar');
+    $this->validateRequired();
     return $this->getVar($this->meta->var);
   }
 }
