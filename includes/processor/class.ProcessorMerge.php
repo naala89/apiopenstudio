@@ -26,23 +26,13 @@ class ProcessorMerge extends Processor
   public function process()
   {
     Debug::variable($this->meta, 'processorMerge', 4);
-    $required = $this->validateRequired();
-    if ($required !== TRUE) {
-      return $required;
-    }
+    $this->validateRequired();
 
     $sources = $this->meta->sources;
     $values = array();
     foreach ($sources as $source) {
       $processor = $this->getProcessor($source);
-      if ($this->status != 200) {
-        return $processor;
-      }
       $data = $processor->process();
-      if ($processor->status != 200) {
-        $this->status = $processor->status;
-        return $data;
-      }
       $values[] = $data;
     }
 

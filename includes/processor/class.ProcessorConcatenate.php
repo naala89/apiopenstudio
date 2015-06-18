@@ -37,17 +37,11 @@ class ProcessorConcatenate extends Processor
   public function process()
   {
     Debug::variable($this->meta, 'ProcessorConcatenate', 4);
-    $required = $this->validateRequired();
-    if ($required !== TRUE) {
-      return $required;
-    }
+    $this->validateRequired();
 
     $result = '';
     foreach ($this->meta->sources as $source) {
       $val = $this->getVar($source);
-      if ($this->status != 200) {
-        return $val;
-      }
       $result .= $val;
     }
     Debug::variable($result, 'concatenation result');

@@ -27,9 +27,6 @@ class ProcessorLoginStoreDrupal extends Processor
     Debug::variable($this->meta, 'ProcessorLoginStoreDrupal', 4);
 
     $source = $this->getVar($this->meta->source);
-    if ($this->status != 200) {
-      return $source;
-    }
     $source = json_decode($source);
     if (empty($source->token) || empty($source->user) || empty($source->user->uid)) {
       throw new ApiException('login failed, no token received', 3, $this->id, 419);

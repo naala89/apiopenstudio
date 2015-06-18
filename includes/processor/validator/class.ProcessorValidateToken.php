@@ -17,38 +17,27 @@
 
 include_once(Config::$dirIncludes . 'processor/class.Processor.php');
 
-class ProcessorValidateToken extends Processor
-{
+class ProcessorValidateToken extends Processor {
   protected $required = array('token');
 
   /**
    * @return array|bool|\Error
    * @throws \ApiException
    */
-  public function process()
-  {
+  public function process() {
     Debug::variable($this->meta, 'ProcessorValidateToken');
-    $required = $this->validateRequired();
-    if ($required !== TRUE) {
-      return $required;
-    }
+    $this->validateRequired();
 
     $token = $this->getVar($this->meta->token);
-    if ($this->status != 200) {
-      return $token;
-    }
 
     $result = $this->request->db
-        ->select()
-        ->from('users', 'stale_time')
-        ->where(array('token', $this->request->db->escape($token)))
-        ->where('(now() < stale_time OR stale_time IS NULL)')
-        ->execute();
+      ->select()
+      ->from('users', 'stale_time')
+      ->where(array('client', $this->request->client))
+      ->where(array('token', $this->request->db->escape($token)))
+      ->where('(now() < stale_time OR stale_time IS NULL)')
+      ->execute();
 
-    if ($result->num_rows < 1) {
-      throw new ApiException('invalid token', 4, $this->id, 403);
-    }
-
-    return TRUE;
+    return $result->num_rows > 0;
   }
 }

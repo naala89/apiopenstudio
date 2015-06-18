@@ -30,9 +30,6 @@ class AuthCookie extends Processor
     }
 
     $cookie = $this->getVar($this->meta->cookie);
-    if ($this->status != 200) {
-      return $cookie;
-    }
 
     return array(CURLOPT_COOKIE => $cookie);
   }

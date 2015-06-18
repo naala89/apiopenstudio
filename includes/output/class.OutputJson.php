@@ -8,7 +8,7 @@ class OutputJson extends Output
   {
     parent::process();
     if (Config::$debugInterface == 'LOG' || (Config::$debug < 1 && Config::$debugDb < 1)) {
-      header('Content-Type: text/json');
+      header('Content-Type: application/json');
     }
     $data = $this->data;
 

@@ -41,9 +41,6 @@ class ProcessorVarUri extends ProcessorVar
     }
 
     $index = $this->getVar($this->meta->index);
-    if ($this->status != 200) {
-      return $index;
-    }
 
     if (!isset($this->request->args[$index])) {
       throw new ApiException('URI index "' . $index . '" does not exist', 1, $this->id, 417);

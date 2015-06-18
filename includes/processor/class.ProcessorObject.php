@@ -41,9 +41,6 @@ class ProcessorObject extends Processor
     $attributes = $this->getVar($this->meta->attributes);
     foreach ($attributes as $attribute) {
       $val = $this->isProcessor($attribute) ? $this->getVar($attribute) : $attribute;
-      if ($this->status != 200) {
-        return $val;
-      }
       $result[] = $val;
     }
 

@@ -7,7 +7,7 @@ class OutputPlain extends OutputText
   public function process()
   {
     parent::process();
-    header('Content:text/plain');
+    header('Content-Type:text/plain');
     return $this->data;
   }
 }

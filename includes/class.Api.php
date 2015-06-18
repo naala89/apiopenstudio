@@ -6,6 +6,9 @@
  * then calls the process() function on that class
  */
 
+include_once(Config::$dirIncludes . 'class.Debug.php');
+Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Config::$debug, Config::$errorLog);
+include_once(Config::$dirIncludes . 'class.ApiException.php');
 include_once(Config::$dirIncludes . 'class.DB.php');
 include_once(Config::$dirIncludes . 'class.Cache.php');
 include_once(Config::$dirIncludes . 'processor/class.Error.php');
@@ -28,7 +31,7 @@ class Api
    *  type of cache to use
    *  @see Cache->setup($type)
    */
-  public function Api($cache = FALSE)
+  public function Api($cache=FALSE)
   {
     $this->cache = new Cache($cache);
   }
@@ -52,7 +55,7 @@ class Api
     $meta = $this->getMeta($request, $meta, $ttl);
 
     // validate user for the call, if required
-    $validation = $this->getValidation($meta, $request);
+    $this->getValidation($meta, $request);
 
     // fetch the cache of the call, if it is not stale
     $cache = $this->getCache($request);
@@ -152,6 +155,7 @@ class Api
       $obj = new $class();
 
       $dbObj->meta = json_encode($obj->get());
+      Debug::variable($dbObj->meta, 'META');
     }
     $meta = json_decode($dbObj->meta);
     $ttl = $dbObj->ttl;
@@ -162,7 +166,9 @@ class Api
    * Perform auth if defined in the meta.
    *
    * @param $meta
-   * @return array|bool|Error
+   * @param $request
+   * @return bool
+   * @throws \ApiException
    */
   private function getValidation($meta, $request)
   {
@@ -170,8 +176,10 @@ class Api
       return TRUE;
     }
     $validator = new Processor($meta->validation, $request);
-    $validation = $validator->process();
-    return $validation;
+    if (!$validator->process()) {
+      throw new ApiException('unauthorized', $meta->validation->meta->id, -1, 401);
+    }
+    return TRUE;
   }
 
   /**
@@ -220,7 +228,12 @@ class Api
     }
     $header = getallheaders();
 
+    $request->ip = $_SERVER['REMOTE_ADDR'];
     $request->method = $this->_getMethod();
+    if($request->method == 'options') {
+      //this is a preflight request - respond with 200 and empty payload
+      die();
+    }
     $request->client = array_shift($args);
     $request->resource = array_shift($args);
     $request->action = array_shift($args);
@@ -228,7 +241,6 @@ class Api
     $request->args = $args;
     $request->inFormat = $this->parseType($header, 'Content-Type');
     $request->outFormat = $this->parseType($header, 'Accept', 'json');
-
     $request->vars = array_diff_assoc($get, array('request' => $request->request));
     $request->vars = $request->vars + $_POST;
     $body = file_get_contents('php://input');

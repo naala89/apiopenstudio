@@ -32,13 +32,7 @@ class AuthBasicAuth extends Processor
     }
 
     $username = $this->getVar($this->meta->username);
-    if ($this->status !== 200) {
-      return $username;
-    }
     $password = $this->getVar($this->meta->password);
-    if ($this->status !== 200) {
-      return $password;
-    }
 
     return array(CURLOPT_HTTPHEADER => array("Authorization: Basic " . base64_encode("$username:$password")));
   }

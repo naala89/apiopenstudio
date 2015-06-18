@@ -7,7 +7,7 @@ class OutputText extends Output
   public function process()
   {
     parent::process();
-    header('Content:text/text');
+    header('Content-Type:text/text');
     return $this->data;
   }
 

@@ -38,19 +38,10 @@ class ProcessorField extends Processor
   public function process()
   {
     Debug::message('ProcessorField');
-    $required = $this->validateRequired();
-    if ($required !== TRUE) {
-      return $required;
-    }
+    $this->validateRequired();
 
     $name = $this->getVar($this->meta->name);
-    if ($this->status != 200) {
-      return $name;
-    }
     $value = $this->getVar($this->meta->value);
-    if ($this->status != 200) {
-      return $value;
-    }
 
     return array($name => $value);
   }
