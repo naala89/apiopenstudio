@@ -14,7 +14,6 @@
  *    }
  *  }
  *
- * @TODO: Rename class ProcessorVar to ProcessorVarMixed.
  * @TODO: Add check in pace to ensure clients cannot flood the system by saving too many vars.
  */
 
@@ -51,6 +50,10 @@ class ProcessorVarStore extends ProcessorVar
   );
   private $ops = array('insert', 'delete', 'fetch');
 
+  /**
+   * @return bool
+   * @throws \ApiException
+   */
   public function process()
   {
     Debug::variable($this->meta, 'ProcessorVarStore');
@@ -68,6 +71,14 @@ class ProcessorVarStore extends ProcessorVar
     return $this->$method($this->request->client, $var);
   }
 
+  /**
+   * Create a new stored var.
+   *
+   * @param $client
+   * @param $var
+   * @return bool
+   * @throws \ApiException
+   */
   private function _insert($client, $var)
   {
     $val = $this->getVar($this->meta->val);
@@ -75,38 +86,43 @@ class ProcessorVarStore extends ProcessorVar
     if (!$result) {
       throw new ApiException('there was an error deleting old duplicate vars', 2, $this->id, 417);
     }
-    $result = $this->request->db
-        ->insert('vars')
-        ->set(array(
-            array('client', $client),
-            array('name', $var),
-            array('val', $val),
-        ))
-        ->execute();
-    if (!$result) {
+    $sql = 'INSERT INTO val ("client", "name", "val") VALUES (?, ?, ?)';
+    $recordSet = $this->request->db->Execute($sql, array($client, $var, $val));
+    if ($recordSet->Affected_Rows() == 0) {
       throw new ApiException('there was an error inserting vars', 2, $this->id, 417);
     }
     return $result;
   }
 
+  /**
+   * Delete a stored var.
+   *
+   * @param $client
+   * @param $var
+   * @return bool
+   */
   private function _delete($client, $var)
   {
-    return $this->request->db
-        ->delete('vars')
-        ->where(array('client', $client))
-        ->where(array('name', $var))
-        ->execute();
+    $sql = 'DELETE FROM vars WHERE client=? AND name=?';
+    $recordSet = $this->request->db->Execute($sql, array($client, $var));
+    return $recordSet->Affected_Rows() > 0;
   }
 
+  /**
+   * Fetch a stored var.
+   *
+   * @param $client
+   * @param $var
+   * @return mixed
+   * @throws \ApiException
+   */
   private function _fetch($client, $var)
   {
-    $result = $this->request->db
-        ->select('val')
-        ->from('vars')
-        ->where(array('client', $client))
-        ->where(array('name', $var))
-        ->execute();
-    $row = $result->fetch_object();
-    return !empty($row->val) ? $row->val : FALSE;
+    $sql = 'SELECT val FROM vars WHERE client=? AND name=?';
+    $recordSet = $this->request->db->Execute($sql, array($client, $var));
+    if ($recordSet->RecordCount() < 1) {
+      throw new ApiException('there was an error fetching ' . $var, 2, $this->id, 417);
+    }
+    return $recordSet->fields['val'];
   }
 }

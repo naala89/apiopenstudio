@@ -30,14 +30,8 @@ class ProcessorValidateToken extends Processor {
 
     $token = $this->getVar($this->meta->token);
 
-    $result = $this->request->db
-      ->select()
-      ->from('users', 'stale_time')
-      ->where(array('client', $this->request->client))
-      ->where(array('token', $this->request->db->escape($token)))
-      ->where('(now() < stale_time OR stale_time IS NULL)')
-      ->execute();
-
-    return $result->num_rows > 0;
+    $sql = 'SELECT * FROM users WHERE client=? AND token=? AND (stale_time > now() OR stale_time IS NULL)';
+    $recordSet = $this->request->db->Execute($sql, array($this->request->client, $token));
+    return $recordSet->RecordCount() > 0;
   }
 }
