@@ -30,31 +30,17 @@ class ProcessorDrupalSession extends Processor
     $this->status = 200;
 
     if (!empty($this->meta->token)) {
-
       $token = $this->getVar($this->meta->token);
-
-      $token = $this->request->db->escape($token);
-      $result = $this->request->db
-          ->select()
-          ->from('user')
-          ->where('token = "' . $token . '"')
-          ->execute();
-
+      $sql = 'SELECT * FROM user WHERE token=?';
+      $recordSet = $this->request->db->Execute($sql, array($token));
     } elseif (!empty($this->meta->externalId)) {
-
       $externalId = $this->getVar($this->meta->externalId);
-
-      $result = $this->request->db
-          ->select()
-          ->from('user')
-          ->where('external_id = "' . $this->request->db->escape($externalId) . '"')
-          ->execute();
-    } else {
-      throw new ApiException('empty externalId or token found', 3, $this->id, 417);
+      $sql = 'SELECT * FROM user WHERE external_id=?';
+      $recordSet = $this->request->db->Execute($sql, array($externalId));
     }
-
-    $dbObj = $result->fetch_object();
-
-    return $dbObj->session_name . '=' . $dbObj->session_id;
+    if ($recordSet->RecordCount() < 1) {
+      throw new ApiException('Invalid token', 3, $this->id, 417);
+    }
+    return $recordSet->fields['session_name'] . '=' . $recordSet->fields['session_id'];
   }
 }

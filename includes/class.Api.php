@@ -9,7 +9,7 @@
 include_once(Config::$dirIncludes . 'class.Debug.php');
 Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Config::$debug, Config::$errorLog);
 include_once(Config::$dirIncludes . 'class.ApiException.php');
-include_once(Config::$dirIncludes . 'class.DB.php');
+include_once(Config::$dirIncludes . 'adodb5/adodb.inc.php');
 include_once(Config::$dirIncludes . 'class.Cache.php');
 include_once(Config::$dirIncludes . 'processor/class.Error.php');
 include_once(Config::$dirIncludes . 'processor/class.Processor.php');
@@ -126,19 +126,29 @@ class Api
    */
   private function getMeta($request, &$meta, &$ttl)
   {
-    $request->db = new DB(Config::$debugDb);
-    if (is_bool($this->test)) {
-      $result = $request->db
-          ->select(array('meta', 'ttl'))
-          ->from('resources')
-          ->where(array('client', $request->client))
-          ->where(array('resource', $request->identifier))
-          ->execute();
+    $dsnOptions = '';
+    if (sizeof(Config::$dboptions) > 0) {
+      foreach (Config::$dboptions as $k => $v) {
+        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
+        $dsnOptions .= "$k=$v";
+      }
+    }
+    $dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptions) : '';
+    $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
+    $request->db = ADONewConnection($dsn);
+    if (!$request->db) {
+      throw new ApiException('DB connection failed',1 , -1, 404);
+    }
+    $request->db->debug = Config::$debugDb;
 
-      if (!$result || $result->num_rows < 1) {
+    if (is_bool($this->test)) {
+      $sql = 'SELECT meta, ttl FROM resources WHERE client=? AND resource=?';
+      $recordSet = $request->db->Execute($sql, array($request->client, $request->identifier));
+
+      if (!$recordSet || $recordSet->RecordCount() < 1) {
         throw new ApiException('resource or client not defined',1 , -1, 404);
       }
-      $dbObj = $result->fetch_object();
+      $dbObj = $recordSet->fields;
     } else {
       $dbObj = new stdClass();
       $dbObj->ttl = 300;
@@ -157,8 +167,8 @@ class Api
       $dbObj->meta = json_encode($obj->get());
       Debug::variable($dbObj->meta, 'META');
     }
-    $meta = json_decode($dbObj->meta);
-    $ttl = $dbObj->ttl;
+    $meta = json_decode($dbObj['meta']);
+    $ttl = $dbObj['ttl'];
     return $meta;
   }
 

@@ -19,11 +19,12 @@ class Config
   /**
    * database
    */
+  static public $dbdriver;
   static public $dbhost;
   static public $dbname;
   static public $dbuser;
   static public $dbpass;
-  static public $dbpersistent;
+  static public $dboptions;
 
   /**
    * cache
@@ -134,7 +135,6 @@ class Config
    */
   static private function development()
   {
-    self::$debugDb =4;
     self::$debug = 4;
     self::$debugCLI = 4;
     self::$_allow_override = TRUE;
@@ -142,11 +142,13 @@ class Config
 
     self::$cache = FALSE;
 
+    self::$dbdriver = 'mysqli';
     self::$dbhost = 'localhost';
     self::$dbname = 'swellnet_api';
     self::$dbuser = 'swellnet_api';
     self::$dbpass = 'MyR9A4SdfgqcEzY8';
-    self::$dbpersistent = FALSE;
+    self::$dboptions = array();
+    self::$debugDb = FALSE;
 
     self::$errorLog = '/var/log/apache2/swellnet_api-error.log';
     self::$convert = '/usr/local/bin/convert';
@@ -164,7 +166,6 @@ class Config
    */
   static private function staging()
   {
-    self::$debugDb = 1;
     self::$debug = 1;
     self::$debugCLI = 1;
     self::$_allow_override = TRUE;
@@ -172,11 +173,13 @@ class Config
 
     self::$cache = FALSE;
 
+    self::$dbdriver = 'mysqli';
     self::$dbhost = 'localhost';
     self::$dbname = 'apinaala_api';
     self::$dbuser = 'apinaala_api';
     self::$dbpass = '_DN2~o-s';
-    self::$dbpersistent = FALSE;
+    self::$dboptions = array('persist' => 0);
+    self::$debugDb = FALSE;
 
     self::$errorLog = '/home/apinaalacom/logs/api-error.log';
     self::$convert = '/usr/bin/convert';
@@ -194,7 +197,6 @@ class Config
    */
   static private function production()
   {
-    self::$debugDb = 0;
     self::$debug = 0;
     self::$debugCLI = 0;
     self::$_allow_override = FALSE;
@@ -203,11 +205,13 @@ class Config
 
     self::$cache = TRUE;
 
+    self::$dbdriver = 'mysqli';
     self::$dbhost = 'localhost';
     self::$dbname = 'swellnet_api';
     self::$dbuser = 'swellnet_api';
     self::$dbpass = 'MyR9A4SqcxjCEzY8';
-    self::$dbpersistent = TRUE;
+    self::$dboptions = array('persist' => 0);
+    self::$debugDb = FALSE;
 
     ini_set('display_errors', FALSE);
   }
