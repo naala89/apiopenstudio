@@ -138,16 +138,15 @@ class User
   }
 
   /**
-   * Fetch user by client and uid.
+   * Fetch user by uid.
    *
-   * @param $client
    * @param $uid
    * @return mixed
    */
-  private function _dbGetUser($client, $uid)
+  private function _dbGetUser($uid)
   {
-    $sql = 'SELECT * FROM users WHERE client=? AND uid=?';
-    $recordSet = $this->db->Execute($sql, array($client, $uid));
+    $sql = 'SELECT * FROM users WHERE uid=?';
+    $recordSet = $this->db->Execute($sql, array($uid));
     return $recordSet;
   }
 
