@@ -50,12 +50,12 @@ class Api
     $request = $this->_getData($_GET);
 
     // get the metadata for the processing
-    $meta = new stdClass();
+    $resource = new stdClass();
     $ttl = 0;
-    $meta = $this->_getResource($request, $meta, $ttl);
+    $this->_getResource($request, $resource, $ttl);
 
     // validate user for the call, if required
-    $this->_getValidation($meta, $request);
+    $this->_getValidation($resource, $request);
 
     // fetch the cache of the call, if it is not stale
     $cache = $this->_getCache($request);
@@ -64,7 +64,7 @@ class Api
     }
 
     // process the call
-    $processor = new Processor($meta, $request);
+    $processor = new Processor($resource, $request);
     $data = $processor->process();
     $this->status = $processor->status;
 
@@ -77,7 +77,7 @@ class Api
     }
 
     // translate output into the correct format
-    $output = $this->_getOutputObj($request->outFormat, $this->status, $data);
+    $output = $this->getOutputObj($request->outFormat, $this->status, $data);
 
     return $output->process();
   }
@@ -102,7 +102,7 @@ class Api
 
     if (!empty($cacheData)) {
       Debug::variable($cacheData, 'from cache', 4);
-      $output = $this->_getOutputObj($request->outFormat, $cacheData['status'], $cacheData['data']);
+      $output = $this->getOutputObj($request->outFormat, $cacheData['status'], $cacheData['data']);
       return $output->process();
     }
 
@@ -142,16 +142,16 @@ class Api
     $request->db->debug = Config::$debugDb;
 
     if (is_bool($this->test)) {
-      $sql = 'SELECT meta, ttl FROM resources WHERE client=? AND resource=?';
-      $recordSet = $request->db->Execute($sql, array($request->client, $request->identifier));
+      $sql = 'SELECT meta, ttl FROM resources WHERE client=? AND method=? AND resource=?';
+      $recordSet = $request->db->Execute($sql, array($request->client, $request->method, $request->identifier));
 
       if (!$recordSet || $recordSet->RecordCount() < 1) {
         throw new ApiException('resource or client not defined',1 , -1, 404);
       }
-      $dbObj = $recordSet->fields;
+      $row = $recordSet->fields;
     } else {
-      $dbObj = new stdClass();
-      $dbObj->ttl = 300;
+      $row = new stdClass();
+      $row->ttl = 300;
 
       $class = ucfirst($this->test);
       $filename = 'class.' . $class . '.php';
@@ -164,11 +164,11 @@ class Api
       include_once($filepath);
       $obj = new $class();
 
-      $dbObj->meta = json_encode($obj->get());
-      Debug::variable($dbObj->meta, 'META');
+      $row->meta = json_encode($obj->get());
+      Debug::variable($row->meta, 'META');
     }
-    $meta = json_decode($dbObj['meta']);
-    $ttl = $dbObj['ttl'];
+    $meta = json_decode($row['meta']);
+    $ttl = $row['ttl'];
     return $meta;
   }
 
@@ -203,7 +203,7 @@ class Api
    * @return mixed
    * @throws \ApiException
    */
-  public function _getOutputObj($format, $status, $data)
+  public function getOutputObj($format, $status, $data)
   {
     $class = 'Output' . ucfirst($this->_cleanData($format));
     $filename = 'class.' . $class . '.php';
@@ -249,8 +249,8 @@ class Api
     $request->action = array_shift($args);
     $request->identifier = $request->resource . $request->action;
     $request->args = $args;
-    $request->inFormat = $this->_parseType($header, 'Content-Type');
-    $request->outFormat = $this->_parseType($header, 'Accept', 'json');
+    $request->inFormat = $this->parseType($header, 'Content-Type');
+    $request->outFormat = $this->parseType($header, 'Accept', 'json');
     $request->vars = array_diff_assoc($get, array('request' => $request->request));
     $request->vars = $request->vars + $_POST;
     $body = file_get_contents('php://input');
@@ -293,7 +293,7 @@ class Api
    * @return string
    *    format or false on not identified
    */
-  private function _parseType($array, $key, $default=FALSE)
+  public function parseType($array, $key, $default=FALSE)
   {
     $result = $default;
 
