@@ -52,13 +52,13 @@ class Api
     // get the metadata for the processing
     $meta = new stdClass();
     $ttl = 0;
-    $meta = $this->getMeta($request, $meta, $ttl);
+    $meta = $this->_getResource($request, $meta, $ttl);
 
     // validate user for the call, if required
-    $this->getValidation($meta, $request);
+    $this->_getValidation($meta, $request);
 
     // fetch the cache of the call, if it is not stale
-    $cache = $this->getCache($request);
+    $cache = $this->_getCache($request);
     if ($cache !== FALSE) {
       return $cache;
     }
@@ -73,11 +73,11 @@ class Api
       Debug::message('Not caching, result is error object');
     } else {
       $cacheData = array('status' => $this->status, 'data' => $data);
-      $this->cache->set($this->getCacheKey($request), $cacheData, $ttl);
+      $this->cache->set($this->_getCacheKey($request), $cacheData, $ttl);
     }
 
     // translate output into the correct format
-    $output = $this->getOutputObj($request->outFormat, $this->status, $data);
+    $output = $this->_getOutputObj($request->outFormat, $this->status, $data);
 
     return $output->process();
   }
@@ -88,14 +88,14 @@ class Api
    * @param $request
    * @return bool
    */
-  private function getCache($request)
+  private function _getCache($request)
   {
     if (!$this->cache->cacheActive()) {
       Debug::message('not searching for cache - inactive', 4);
       return FALSE;
     }
 
-    $cacheKey = $this->getCacheKey($request);
+    $cacheKey = $this->_getCacheKey($request);
     Debug::variable($cacheKey, 'cache key', 4);
     // TODO: implement input normalization
     $cacheData = $this->cache->get($cacheKey);
@@ -110,7 +110,7 @@ class Api
     return FALSE;
   }
 
-  private function getCacheKey($request)
+  private function _getCacheKey($request)
   {
     return $this->_cleanData($request->method . '_' . $request->request);
   }
@@ -124,7 +124,7 @@ class Api
    * @return mixed
    * @throws \ApiException
    */
-  private function getMeta($request, &$meta, &$ttl)
+  private function _getResource($request, &$meta, &$ttl)
   {
     $dsnOptions = '';
     if (sizeof(Config::$dboptions) > 0) {
@@ -180,7 +180,7 @@ class Api
    * @return bool
    * @throws \ApiException
    */
-  private function getValidation($meta, $request)
+  private function _getValidation($meta, $request)
   {
     if (empty($meta->validation)) {
       return TRUE;
@@ -203,7 +203,7 @@ class Api
    * @return mixed
    * @throws \ApiException
    */
-  public function getOutputObj($format, $status, $data)
+  public function _getOutputObj($format, $status, $data)
   {
     $class = 'Output' . ucfirst($this->_cleanData($format));
     $filename = 'class.' . $class . '.php';
@@ -249,8 +249,8 @@ class Api
     $request->action = array_shift($args);
     $request->identifier = $request->resource . $request->action;
     $request->args = $args;
-    $request->inFormat = $this->parseType($header, 'Content-Type');
-    $request->outFormat = $this->parseType($header, 'Accept', 'json');
+    $request->inFormat = $this->_parseType($header, 'Content-Type');
+    $request->outFormat = $this->_parseType($header, 'Accept', 'json');
     $request->vars = array_diff_assoc($get, array('request' => $request->request));
     $request->vars = $request->vars + $_POST;
     $body = file_get_contents('php://input');
@@ -293,7 +293,7 @@ class Api
    * @return string
    *    format or false on not identified
    */
-  public function parseType($array, $key, $default=FALSE)
+  private function _parseType($array, $key, $default=FALSE)
   {
     $result = $default;
 
