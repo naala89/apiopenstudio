@@ -81,7 +81,7 @@ class ProcessorInputUrl extends Processor
     $curl = new Curl();
     $result = $curl->{strtolower($this->meta->method)}($url, $curlOpts);
     if ($result === false) {
-      throw new ApiException('could not get response from remote server: ' . $curl->errorMsg, $curl->curlStatus, $this->id, $this->status);
+      throw new ApiException('could not get response from remote server: ' . $curl->errorMsg, $curl->curlStatus, $this->id, $curl->httpStatus);
     }
     //TODO: use $curl->type to convert all inputUrl results into a standard format
     if ($curl->httpStatus != 200) {

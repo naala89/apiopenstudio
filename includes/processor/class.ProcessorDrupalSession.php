@@ -27,8 +27,6 @@ class ProcessorDrupalSession extends Processor
       throw new ApiException('externalId or token not defined', 3, $this->id, 417);
     }
 
-    $this->status = 200;
-
     if (!empty($this->meta->token)) {
       $token = $this->getVar($this->meta->token);
       $sql = 'SELECT * FROM user WHERE token=?';
