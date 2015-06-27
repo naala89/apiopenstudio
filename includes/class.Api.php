@@ -20,7 +20,6 @@ include_once(Config::$dirIncludes . 'processor/class.Processor.php');
 
 class Api
 {
-  private $status;
   private $cache;
   private $test = FALSE;
 
@@ -44,15 +43,12 @@ class Api
    */
   public function process()
   {
-    $this->status = 200;
-
     // disseminate the request for processing
     $request = $this->_getData($_GET);
 
-    // get the metadata for the processing
-    $resource = new stdClass();
+    // get the resource for the processing
     $ttl = 0;
-    $this->_getResource($request, $resource, $ttl);
+    $resource = $this->_getResource($request, $ttl);
 
     // validate user for the call, if required
     $this->_getValidation($resource, $request);
@@ -66,18 +62,17 @@ class Api
     // process the call
     $processor = new Processor($resource, $request);
     $data = $processor->process();
-    $this->status = $processor->status;
 
     // store the results in cache for next time
     if (is_object($data) && get_class($data) == 'Error') {
       Debug::message('Not caching, result is error object');
     } else {
-      $cacheData = array('status' => $this->status, 'data' => $data);
+      $cacheData = array('data' => $data);
       $this->cache->set($this->_getCacheKey($request), $cacheData, $ttl);
     }
 
     // translate output into the correct format
-    $output = $this->getOutputObj($request->outFormat, $this->status, $data);
+    $output = $this->getOutputObj($request->outFormat, $data, 200);
 
     return $output->process();
   }
@@ -118,13 +113,12 @@ class Api
   /**
    * Fetch resource metadata.
    *
-   * @param $request
-   * @param $meta
+   * @param $request\
    * @param $ttl
    * @return mixed
    * @throws \ApiException
    */
-  private function _getResource($request, &$meta, &$ttl)
+  private function _getResource($request, &$ttl)
   {
     $dsnOptions = '';
     if (sizeof(Config::$dboptions) > 0) {
@@ -167,9 +161,8 @@ class Api
       $row->meta = json_encode($obj->get());
       Debug::variable($row->meta, 'META');
     }
-    $meta = json_decode($row['meta']);
     $ttl = $row['ttl'];
-    return $meta;
+    return json_decode($row['meta']);
   }
 
   /**
@@ -198,12 +191,12 @@ class Api
    * This will create an output class, based on format string, and process through that.
    *
    * @param $format
-   * @param $status
    * @param $data
+   * @param $status
    * @return mixed
    * @throws \ApiException
    */
-  public function getOutputObj($format, $status, $data)
+  public function getOutputObj($format, $data, $status)
   {
     $class = 'Output' . ucfirst($this->_cleanData($format));
     $filename = 'class.' . $class . '.php';

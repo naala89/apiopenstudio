@@ -12,12 +12,6 @@ include_once(Config::$dirIncludes . 'processor/class.Error.php');
 class Processor
 {
   /**
-   * Status of the call.
-   *
-   * @var integer
-   */
-  public $status = 200;
-  /**
    * Display the processor on the frontend.
    *
    * FALSE if you never want a processor to appear in the frontend.
