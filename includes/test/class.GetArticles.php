@@ -23,48 +23,50 @@ class GetArticles
              ),
           ),
        ),
-       'type' => 'inputUrl',
-       'meta' => array(
+      'process' => array(
+        'type' => 'inputUrl',
+        'meta' => array(
           'id' => 3,
           'standardError' => true,
           'method' => 'get',
           'source' => array(
-             'type' => 'concatenate',
-             'meta' => array(
-                'id' => 4,
-                'sources' => array(
-                   array(
-                      'type' => 'varStore',
-                      'meta' => array(
-                         'id' => 5,
-                         'operation' => 'fetch',
-                         'var' => 'drupalUrl',
-                      ),
-                   ),
-                   'api/anon/article/latest/',
-                   array(
-                      'type' => 'varUri',
-                      'meta' => array(
-                         'id' => 6,
-                         'index' => 0,
-                      ),
-                   ),
-                   '/',
-                   array(
-                      'type' => 'varUri',
-                      'meta' => array(
-                         'id' => 7,
-                         'index' => 1,
-                      ),
-                   ),
+            'type' => 'concatenate',
+            'meta' => array(
+              'id' => 4,
+              'sources' => array(
+                array(
+                  'type' => 'varStore',
+                  'meta' => array(
+                    'id' => 5,
+                    'operation' => 'fetch',
+                    'var' => 'drupalUrl',
+                  ),
                 ),
-             ),
+                'api/anon/article/latest/',
+                array(
+                  'type' => 'varUri',
+                  'meta' => array(
+                    'id' => 6,
+                    'index' => 0,
+                  ),
+                ),
+                '/',
+                array(
+                  'type' => 'varUri',
+                  'meta' => array(
+                    'id' => 7,
+                    'index' => 1,
+                  ),
+                ),
+              ),
+            ),
           ),
           'curlOpts' => array(
-             'CURLOPT_SSL_VERIFYPEER' => 0,
-             'CURLOPT_FOLLOWLOCATION' => 1,
+            'CURLOPT_SSL_VERIFYPEER' => 0,
+            'CURLOPT_FOLLOWLOCATION' => 1,
           ),
-       ),
+        ),
+      ),
     );
   }
 }
