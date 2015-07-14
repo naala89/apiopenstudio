@@ -1,0 +1,29 @@
+Description: API Resource
+
+DataType:
+
+  Processor:
+
+    Name:
+      Type: String
+      Description: Name of the Processor
+
+    Meta: {
+      Name: String,
+      Value: String::Processor
+    }
+
+Structure:
+
+  UserId:
+    Type: Integer
+    Description: User ID Number
+
+  Process:
+
+    ProcessType:
+      Type: String
+      Description: Name of the Processor
+
+    ProcessorMeta:
+      Type: String::Processor

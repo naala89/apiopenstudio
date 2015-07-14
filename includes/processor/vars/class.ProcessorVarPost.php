@@ -24,9 +24,11 @@ class ProcessorVarPost extends ProcessorVar
       'var' => array(
         'description' => 'The name of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'boolean')),
+        'accepts' => array('processor', 'mixed')),
     ),
   );
+
+
 
   public function process()
   {

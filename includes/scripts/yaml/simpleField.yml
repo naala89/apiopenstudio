@@ -1,0 +1,46 @@
+---
+
+User: 999
+# User ID
+
+Uri: foo/bar
+# URI resource indicator
+
+Validation: FALSE
+# No validation required for the call
+
+Process:
+  Processor: field  # Processor of type Field
+  Meta:
+    Name:
+      Processor: varStore # Processor of type VarStore
+      Meta:
+        Operation: fetch
+        Var: myVarName
+    Value:
+      Processor: varUri # Processor of type VarUri
+      Meta:
+        Index: 1
+
+Output:
+# If output not defined, then default is return results in the response (see -response)
+  - response
+  # Output to be in the response, format declared in the header
+  # This is the default
+  - email
+  # Additional output to be sent to the emails listed in Destination, format in Format
+  Format: json
+  Destination:
+    - john@naala.com.au
+    - foo@bar.com
+  # Additional output in the form of XML to be sent to the URLs listed in Destination
+  - xml
+  Destination:
+    -www.foo.com
+    -www.bar.com
+  - json
+  # Additional output in the form of JSON to be sent to the URLs listed in Destination
+  Destination:
+    - www.wotnot.com
+
+...
