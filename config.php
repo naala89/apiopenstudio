@@ -82,7 +82,7 @@ class Config
       $serverName = self::whereAmI($serverName);
     }
     if (!$serverName || !method_exists('Config', $serverName)) {
-      die('Where am I? (You need to setup your server names in class.config.php) reported: ' . $serverName);
+      die('Where am I? You need to create server index in config::$_server ' . $serverName);
     }
 
     self::everywhere();
@@ -138,19 +138,19 @@ class Config
     self::$debug = 4;
     self::$debugCLI = 4;
     self::$_allow_override = TRUE;
-    self::$debugInterface = 'LOG';
+    self::$debugInterface = 'HTML';
 
     self::$cache = FALSE;
 
     self::$dbdriver = 'mysqli';
     self::$dbhost = 'localhost';
-    self::$dbname = 'swellnet_api';
-    self::$dbuser = 'swellnet_api';
-    self::$dbpass = 'MyR9A4SdfgqcEzY8';
+    self::$dbname = 'datagator';
+    self::$dbuser = 'datagator';
+    self::$dbpass = 'datagator';
     self::$dboptions = array();
     self::$debugDb = FALSE;
 
-    self::$errorLog = '/var/log/apache2/swellnet_api-error.log';
+    self::$errorLog = '/var/log/apache2/datagator.error.log';
     self::$convert = '/usr/local/bin/convert';
     self::$ffmpeg = '/usr/local/bin/ffmpeg';
     date_default_timezone_set('Australia/Sydney');
@@ -175,13 +175,13 @@ class Config
 
     self::$dbdriver = 'mysqli';
     self::$dbhost = 'localhost';
-    self::$dbname = 'apinaala_api';
-    self::$dbuser = 'apinaala_api';
-    self::$dbpass = '_DN2~o-s';
+    self::$dbname = 'datagator';
+    self::$dbuser = '';
+    self::$dbpass = '';
     self::$dboptions = array('persist' => 0);
     self::$debugDb = FALSE;
 
-    self::$errorLog = '/home/apinaalacom/logs/api-error.log';
+    self::$errorLog = '/home/apinaalacom/logs/datagator.error.log';
     self::$convert = '/usr/bin/convert';
     self::$ffmpeg = '/usr/bin/ffmpeg';
     date_default_timezone_set('UTC');
@@ -201,15 +201,15 @@ class Config
     self::$debugCLI = 0;
     self::$_allow_override = FALSE;
     self::$debugInterface = 'LOG';
-    self::$errorLog = '/var/log/apache2/swellnet_api.error.log';
+    self::$errorLog = '/var/log/apache2/datagator.error.log';
 
     self::$cache = TRUE;
 
     self::$dbdriver = 'mysqli';
     self::$dbhost = 'localhost';
-    self::$dbname = 'swellnet_api';
-    self::$dbuser = 'swellnet_api';
-    self::$dbpass = 'MyR9A4SqcxjCEzY8';
+    self::$dbname = 'datagator';
+    self::$dbuser = '';
+    self::$dbpass = '';
     self::$dboptions = array('persist' => 0);
     self::$debugDb = FALSE;
 
