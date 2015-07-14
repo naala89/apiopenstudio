@@ -21,7 +21,7 @@ include_once(Config::$dirIncludes . 'processor/class.Processor.php');
 class Api
 {
   private $cache;
-  private $test = FALSE;
+  private $test = 'getArticles'; // FALSE or name of test class
 
   /**
    * Constructor
@@ -60,7 +60,7 @@ class Api
     }
 
     // process the call
-    $processor = new Processor($resource, $request);
+    $processor = new Processor($resource->process, $request);
     $data = $processor->process();
 
     // store the results in cache for next time
@@ -135,7 +135,7 @@ class Api
     }
     $request->db->debug = Config::$debugDb;
 
-    if (is_bool($this->test)) {
+    if (!$this->test) {
       $sql = 'SELECT meta, ttl FROM resources WHERE client=? AND method=? AND resource=?';
       $recordSet = $request->db->Execute($sql, array($request->client, $request->method, $request->identifier));
 
@@ -161,8 +161,9 @@ class Api
       $row->meta = json_encode($obj->get());
       Debug::variable($row->meta, 'META');
     }
-    $ttl = $row['ttl'];
-    return json_decode($row['meta']);
+    $meta = json_decode($row->meta);
+    $ttl = $row->ttl;
+    return $meta;
   }
 
   /**
