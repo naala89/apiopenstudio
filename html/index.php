@@ -16,14 +16,14 @@ try {
 } catch (ApiException $e) {
   $output = $api->getOutputObj(
     $api->parseType(getallheaders(), 'Accept', 'json'),
-    $e->getHtmlCode(),
-    new Error($e->getCode(), $e->getProcessor(), $e->getMessage())
+    new Error($e->getCode(), $e->getProcessor(), $e->getMessage()),
+    $e->getHtmlCode()
   );
   echo $output->process();
   ob_end_flush();
   exit();
 } catch (Exception $e) {
-  echo 'Error: ' . $e->getCode() . ': ' . $e->getMessage();
+  echo 'Error: ' . $e->getCode() . ' - ' . $e->getMessage();
   ob_end_flush();
   exit();
 }
