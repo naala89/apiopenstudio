@@ -1,65 +1,79 @@
 <?php
 
-include_once(Config::$dirIncludes . 'spyc/spyc.php');
-
 /**
- * Yam; import and export
- *
- * This will usually take ana array of processorType. However, you can also have literals or processors.
+ * Resource import and export.@global
+ * Allowed inputs are yaml files or yaml strings.
  *
  * METADATA
  * {
  *    "type":"object",
  *    "meta":{
- *      "attributes":[
- *        <processor|var|literal>,
- *      ]
+ *      "id": <mixed>,
+ *      "yaml": <string>,
+ *      "method": <"get"|"post">,
+ *      "resource": <mixed>,
+ *      "action": <mixed>
  *    }
  *  }
  */
 
-include_once(Config::$dirIncludes . 'processor/class.Processor.php');
+include_once(Config::$dirIncludes . 'processor/class.ProcessorResource.php');
+include_once(Config::$dirIncludes . 'spyc/spyc.php');
 
-class ProcessorYaml extends Processor
+class ProcessorYaml extends ProcessorResource
 {
   protected $details = array(
     'name' => 'Yaml',
     'description' => 'Create a custom API resource for your organisation.',
     'menu' => 'basic',
     'input' => array(
-      'func' => array(
-        'description' => 'What to do with the Yaml.',
-        'cardinality' => array(1, 1),
-        'accepts' => array('input', 'output', 'delete')
-      ),
       'yaml' => array(
         'description' => 'The yaml string.',
+        'cardinality' => array(0, 1),
+        'accepts' => array('string')
+      ),
+      'method' => array(
+        'description' => 'The http delivery method.',
+        'cardinality' => array(0, 1),
+        'accepts' => array('string')
+      ),
+      'resource' => array(
+        'description' => 'The rest query resource (aka noun).',
+        'cardinality' => array(0, 1),
+        'accepts' => array('string')
+      ),
+      'action' => array(
+        'description' => 'The rest query action (aka verb).',
         'cardinality' => array(0, 1),
         'accepts' => array('string')
       )
     )
   );
 
-  protected $required = array('func');
+  protected $required = array();
 
   public function process()
   {
     Debug::message('ProcessorYaml');
+    Debug::message(Config::$dirIncludes . 'Yaml/Yaml.php');
     $this->validateRequired();
 
     switch ($this->request->method) {
       case 'post':
-        $this->yamlIn();
+        $result = $this->_yamlIn();
         break;
       case 'get':
-        $this->yamlOut();
+        $result = $this->_yamlOut();
         break;
       case 'delete':
-        $this->yamlByeBye();
+        $result = $this->_yamlDelete();
         break;
       default:
+        throw new ApiException('unknown method', -1, $this->id);
         break;
     }
+
+    return $result;
   }
 
   /**
@@ -67,28 +81,46 @@ class ProcessorYaml extends Processor
    * The Yaml is either post string 'yaml', or file 'yaml'.
    * File takes precedence over the string if both present.
    */
-  private function yamlIn()
+  private function _yamlIn()
   {
-    $yaml = FALSE;
+    $yaml = '';
     if (!empty($_FILES['yaml'])) {
       $yaml = $_FILES['yaml'];
     } else {
       $yaml = $this->getVar($this->meta->yaml);
     }
-    if (!$yaml) {
+    if (empty($yaml)) {
       throw new ApiException('no yaml supplied', -1, $this->id);
     }
 
-r
+    // @TODO: try/catch?
+    $yaml = Spyc::YAMLLoad($yaml);
+    $clientId = $this->request->client;
+    $method = $yaml['method'];
+    $resource = strtolower($yaml['resource']) . strtolower($yaml['action']);
+    $meta = array_merge($yaml['Validation'], $yaml['process'], $yaml['output']);
+    $ttl = $yaml['ttl'];
+
+    return $this->insertResource($clientId, $method, $resource, $meta, $ttl);
   }
 
-  private function yamlOut()
+  private function _yamlOut()
   {
-
   }
 
-  private function yamlByeBye()
+  private function _yamlDelete()
   {
 
+    $method = $this->getVar('method');
+    $noun = $this->getVar('resource');
+    $verb = $this->getVar('action');
+    $clientId = $this->request->client;
+
+    return $this->deleteResource(
+      $clientId,
+      $method,
+      $noun,
+      $verb
+    );
   }
 }
