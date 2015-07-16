@@ -24,9 +24,8 @@ class ProcessorResource extends Processor
 
   private function _selectRow($clientId, $method, $resource)
   {
-    $sql = 'SELECT * FROM resources WHERE `client` = ? AND `method` = ? AND `resource` = ?';
+    $sql = 'SELECT * FROM resources WHERE `client`=? AND `method`=? AND `resource`=?';
     $bindParams = array($clientId, $method, $resource);
-    $this->request->db->debug = TRUE;
     return $this->request->db->Execute($sql, $bindParams);
   }
 
@@ -34,21 +33,24 @@ class ProcessorResource extends Processor
   {
     $sql = "INSERT INTO resources (`client`, `method`, `resource`, `meta`, `ttl`) VALUES (?, ?, ?, ?, ?)";
     $bindParams = array($clientId, $method, $resource, $meta, $ttl);
-    return $this->request->db->Execute($sql, $bindParams);
+    $this->request->db->Execute($sql, $bindParams);
+    return $this->request->db->Affected_Rows();
   }
 
   private function _updateRow($clientId, $method, $resource, $meta, $ttl)
   {
-    $sql = "UPDATE resources SET `meta` = ?, `ttl` = ? WHERE `client` = ? AND `method` = ? AND `resource` = ?";
+    $sql = "UPDATE resources SET `meta`=?, `ttl`=? WHERE `client`=? AND `method`=? AND `resource`=?";
     $bindParams = array($meta, $ttl, $clientId, $method, $resource);
-    return $this->request->db->Execute($sql, $bindParams);
+    $this->request->db->Execute($sql, $bindParams);
+    return $this->request->db->Affected_Rows();
   }
 
   private function _deleteRow($clientId, $method, $resource)
   {
-    $sql = "DELETE FROM resources WHERE `client` = ? AND `method` = ? AND `resource` = ?";
+    $sql = "DELETE FROM resources WHERE `client`=? AND `method`=? AND `resource`=?";
     $bindParams = array($clientId, $method, $resource);
-    return $this->request->db->Execute($sql, $bindParams);
+    $this->request->db->Execute($sql, $bindParams);
+    return $this->request->db->Affected_Rows();
   }
 
   protected function insertResource($clientId, $method, $resource, $meta, $ttl)
@@ -61,7 +63,7 @@ class ProcessorResource extends Processor
       $result = $this->_updateRow($clientId, $method, $resource, $meta, $ttl);
     }
     if (!$result) {
-      throw new ApiException('there was an error inserting resource', 2, $this->id, 417);
+      throw new ApiException('there was an error inserting/updating resource', 2, $this->id, 417);
     }
     return TRUE;
   }
@@ -75,6 +77,9 @@ class ProcessorResource extends Processor
   protected function deleteResource($clientId, $method, $resource)
   {
     $result = $this->_deleteRow($clientId, $method, $resource);
-    return $result->numOfRows > 0;
+    if ($result == 0) {
+      throw new ApiException('there was an error deleting resource', 2, $this->id, 417);
+    }
+    return TRUE;
   }
 }
