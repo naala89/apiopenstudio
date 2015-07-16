@@ -21,7 +21,7 @@ include_once(Config::$dirIncludes . 'processor/class.Processor.php');
 class Api
 {
   private $cache;
-  private $test = 'yamlImport'; // FALSE or name of test class
+  private $test = 'YamlExport'; // FALSE or name of test class
 
   /**
    * Constructor

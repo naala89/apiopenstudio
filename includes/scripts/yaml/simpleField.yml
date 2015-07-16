@@ -1,49 +1,45 @@
----
-
-Uri:
+uri:
 # URI resource indicator
   resource: foo
   action: bar
 
-Method: get # http delivery method
+method: get # http delivery method
 
-Ttl: 300 # cache ttl in seconds
+ttl: 300 # cache ttl in seconds
 
-Validation: FALSE
+validation: FALSE
 # No validation required for the call
 
-Process:
-  Processor: field  # Processor of type Field
-  Meta:
-    Name:
-      Processor: varStore # Processor of type VarStore
-      Meta:
-        Operation: fetch
-        Var: myVarName
-    Value:
-      Processor: varUri # Processor of type VarUri
-      Meta:
-        Index: 1
+process:
+  processor: field  # Processor of type Field
+  meta:
+    name:
+      processor: varStore # Processor of type VarStore
+      meta:
+        operation: fetch
+        var: myVarName
+    value:
+      processor: varUri # Processor of type VarUri
+      meta:
+        index: 1
 
-Output:
+output:
 # If output not defined, then default is return results in the response (see -response)
   - response
   # Output to be in the response, format declared in the header
   # This is the default
   - email:
   # Additional output to be sent to the emails listed in Destination, format in Format
-    Format: json
-    Destination:
+    format: json
+    destination:
       - john@naala.com.au
       - foo@bar.com
   - xml:
   # Additional output in the form of XML to be sent to the URLs listed in Destination
-    Destination:
+    destination:
       -www.foo.com
       -www.bar.com
   - json:
   # Additional output in the form of JSON to be sent to the URLs listed in Destination
-    Destination:
+    destination:
       - www.wotnot.com
-
-...
