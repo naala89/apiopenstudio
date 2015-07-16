@@ -183,7 +183,6 @@ class Processor
       // this is a processor
       $processor = $this->getProcessor($obj);
       $result = $processor->process();
-
     } elseif (is_array($obj)) {
       // this is an array of processors or values
       $result = array();
