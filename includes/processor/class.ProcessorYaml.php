@@ -50,12 +50,9 @@ class ProcessorYaml extends ProcessorResource
     )
   );
 
-  protected $required = array();
-
   public function process()
   {
     Debug::message('ProcessorYaml');
-    Debug::message(Config::$dirIncludes . 'Yaml/Yaml.php');
     $this->validateRequired();
 
     switch ($this->request->method) {
@@ -85,20 +82,24 @@ class ProcessorYaml extends ProcessorResource
   {
     $yaml = '';
     if (!empty($_FILES['yaml'])) {
-      $yaml = $_FILES['yaml'];
+      $yaml = Spyc::YAMLLoad($_FILES['yaml']['tmp_name']);
     } else {
-      $yaml = $this->getVar($this->meta->yaml);
+      $yaml = urldecode($this->getVar($this->meta->yaml));
+      $yaml = Spyc::YAMLLoadString($yaml);
     }
     if (empty($yaml)) {
-      throw new ApiException('no yaml supplied', -1, $this->id);
+      throw new ApiException('invalid or no yaml supplied', -1, $this->id, 417);
     }
 
-    // @TODO: try/catch?
-    $yaml = Spyc::YAMLLoad($yaml);
+    Debug::variable($yaml, '$yaml');
     $clientId = $this->request->client;
     $method = $yaml['method'];
-    $resource = strtolower($yaml['resource']) . strtolower($yaml['action']);
-    $meta = array_merge($yaml['Validation'], $yaml['process'], $yaml['output']);
+    $resource = strtolower($yaml['uri']['resource']) . strtolower($yaml['uri']['action']);
+    $meta = json_encode(array(
+      'validation' => $yaml['validation'],
+      'process' => $yaml['process'],
+      'output' => $yaml['output']
+    ));
     $ttl = $yaml['ttl'];
 
     return $this->insertResource($clientId, $method, $resource, $meta, $ttl);
@@ -106,21 +107,50 @@ class ProcessorYaml extends ProcessorResource
 
   private function _yamlOut()
   {
+    $clientId = $this->request->client;
+    $method = $this->getVar($this->meta->method);
+    if (empty($method)) {
+      throw new ApiException('missing get var method', -1, $this->id, 400);
+    }
+    $resource = $this->getVar($this->meta->resource);
+    if (empty($resource)) {
+      throw new ApiException('missing get var resource', -1, $this->id, 400);
+    }
+    $action = $this->getVar($this->meta->action);
+    if (empty($action)) {
+      throw new ApiException('missing get var action', -1, $this->id, 400);
+    }
+    $resource = strtolower($resource) . strtolower($action);
+
+    $columns = $this->fetchResource($clientId, $method, $resource);
+    $array = json_decode($columns['meta'], TRUE);
+    $array['uri'] = array(
+      'resource' => $resource,
+      'action' => $action
+    );
+    $array['method'] = $method;
+    $array['ttl'] = $columns['ttl'];
+
+    return Spyc::YAMLDump($array);
   }
 
   private function _yamlDelete()
   {
-
-    $method = $this->getVar('method');
-    $noun = $this->getVar('resource');
-    $verb = $this->getVar('action');
     $clientId = $this->request->client;
+    $method = $this->getVar($this->meta->method);
+    if (empty($method)) {
+      throw new ApiException('missing get var method', -1, $this->id, 400);
+    }
+    $resource = $this->getVar($this->meta->resource);
+    if (empty($resource)) {
+      throw new ApiException('missing get var resource', -1, $this->id, 400);
+    }
+    $action = $this->getVar($this->meta->action);
+    if (empty($action)) {
+      throw new ApiException('missing get var action', -1, $this->id, 400);
+    }
+    $resource = strtolower($resource) . strtolower($action);
 
-    return $this->deleteResource(
-      $clientId,
-      $method,
-      $noun,
-      $verb
-    );
+    return $this->deleteResource($clientId, $method, $resource);
   }
 }
