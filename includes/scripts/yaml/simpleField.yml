@@ -1,10 +1,13 @@
 ---
 
-User: 999
-# User ID
-
-Uri: foo/bar
+Uri:
 # URI resource indicator
+  resource: foo
+  action: bar
+
+Method: get # http delivery method
+
+Ttl: 300 # cache ttl in seconds
 
 Validation: FALSE
 # No validation required for the call
@@ -27,20 +30,20 @@ Output:
   - response
   # Output to be in the response, format declared in the header
   # This is the default
-  - email
+  - email:
   # Additional output to be sent to the emails listed in Destination, format in Format
-  Format: json
-  Destination:
-    - john@naala.com.au
-    - foo@bar.com
+    Format: json
+    Destination:
+      - john@naala.com.au
+      - foo@bar.com
+  - xml:
   # Additional output in the form of XML to be sent to the URLs listed in Destination
-  - xml
-  Destination:
-    -www.foo.com
-    -www.bar.com
-  - json
+    Destination:
+      -www.foo.com
+      -www.bar.com
+  - json:
   # Additional output in the form of JSON to be sent to the URLs listed in Destination
-  Destination:
-    - www.wotnot.com
+    Destination:
+      - www.wotnot.com
 
 ...
