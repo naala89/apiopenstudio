@@ -21,7 +21,7 @@ include_once(Config::$dirIncludes . 'processor/class.Processor.php');
 class Api
 {
   private $cache;
-  private $test = 'YamlDelete'; // FALSE or name of test class
+  private $test = FALSE; // FALSE or name of test class
 
   /**
    * Constructor
