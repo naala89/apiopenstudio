@@ -1,13 +1,14 @@
 <?php
 
-namespace includes\json;
+namespace Datagator\Outputs;
+use Datagator;
 
-class Json extends \includes\output
+class Json extends Output
 {
   public function process()
   {
     parent::process();
-    if (Config::$debugInterface == 'LOG' || (Config::$debug < 1 && Config::$debugDb < 1)) {
+    if (Datagator\Config::$debugInterface == 'LOG' || (Datagator\Config::$debug < 1 && Datagator\Config::$debugDb < 1)) {
       header('Content-Type: application/json');
     }
     $data = $this->data;

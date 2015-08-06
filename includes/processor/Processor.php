@@ -203,7 +203,7 @@ class Processor
   {
     Core\Debug::variable($obj);
     $obj = ($obj === FALSE ? $this->meta : $obj);
-    $class = 'Processors\\' . ucfirst(trim($obj->type));
+    $class = 'Datagator\\Processors\\' . ucfirst(trim($obj->type));
     return new $class($obj->meta, $this->request);
   }
 }

@@ -18,8 +18,9 @@
  */
 
 namespace Datagator\Processors;
+use Datagator\Core;
 
-class VariableStore extends \Processor
+class VarStore extends Processor
 {
   protected $required = array(
     'var',
@@ -52,11 +53,11 @@ class VariableStore extends \Processor
 
   /**
    * @return bool
-   * @throws \ApiException
+   * @throws \Datagator\Core\ApiException
    */
   public function process()
   {
-    Debug::variable($this->meta, 'ProcessorVarStore');
+    Core\Debug::variable($this->meta, 'ProcessorVarStore');
     $required = $this->validateRequired();
     if ($required !== TRUE) {
       return $required;
@@ -64,7 +65,7 @@ class VariableStore extends \Processor
     $var = $this->getVar($this->meta->var);
     $operation = $this->getVar($this->meta->operation);
     if (!in_array($operation, $this->ops)) {
-      throw new \Datagator\includes\ApiException("invalid operation: $operation", 1, $this->id, 417);
+      throw new Core\ApiException("invalid operation: $operation", 1, $this->id, 417);
     }
 
     $method = "_$operation";
@@ -77,19 +78,19 @@ class VariableStore extends \Processor
    * @param $client
    * @param $var
    * @return bool
-   * @throws \ApiException
+   * @throws \Datagator\Core\ApiException
    */
   private function _insert($client, $var)
   {
     $val = $this->getVar($this->meta->val);
     $result = $this->_delete($client, $var);
     if (!$result) {
-      throw new \Datagator\includes\ApiException('there was an error deleting old duplicate vars', 2, $this->id, 417);
+      throw new Core\ApiException('there was an error deleting old duplicate vars', 2, $this->id, 417);
     }
     $sql = 'INSERT INTO val ("client", "name", "val") VALUES (?, ?, ?)';
     $recordSet = $this->request->db->Execute($sql, array($client, $var, $val));
     if ($recordSet->Affected_Rows() == 0) {
-      throw new \Datagator\includes\ApiException('there was an error inserting vars', 2, $this->id, 417);
+      throw new Core\ApiException('there was an error inserting vars', 2, $this->id, 417);
     }
     return $result;
   }
@@ -114,14 +115,14 @@ class VariableStore extends \Processor
    * @param $client
    * @param $var
    * @return mixed
-   * @throws \ApiException
+   * @throws \Datagator\Core\ApiException
    */
   private function _fetch($client, $var)
   {
     $sql = 'SELECT val FROM vars WHERE client=? AND name=?';
     $recordSet = $this->request->db->Execute($sql, array($client, $var));
     if ($recordSet->RecordCount() < 1) {
-      throw new \Datagator\includes\ApiException('there was an error fetching ' . $var, 2, $this->id, 417);
+      throw new Core\ApiException('there was an error fetching ' . $var, 2, $this->id, 417);
     }
     return $recordSet->fields['val'];
   }

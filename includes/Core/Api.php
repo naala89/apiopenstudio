@@ -188,7 +188,7 @@ class Api
    */
   public function getOutputObj($format, $data, $status)
   {
-    $class = 'Output\\' . ucfirst($this->_cleanData($format));
+    $class = 'Datagator\\Outputs\\' . ucfirst($this->_cleanData($format));
     return new $class($status, $data);
   }
 
