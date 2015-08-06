@@ -48,8 +48,8 @@ class Api
 
     // get the resource for the processing
     $ttl = 0;
-    $resource = $this->_getResource($request, $ttl);
-    Debug::variable($resource, 'new resource');
+    $resource = array();
+    $this->_getResource($request, $resource, $ttl);
 
     // validate user for the call, if required
     $this->_getValidation($resource, $request);
@@ -61,7 +61,7 @@ class Api
     }
 
     // process the call
-    $processor = new Processors\Processor($resource->process, $request);
+    $processor = new Processors\ProcessorBase($resource->process, $request);
     $data = $processor->process();
 
     // store the results in cache for next time
@@ -117,7 +117,7 @@ class Api
    * @return mixed
    * @throws \Datagator\Core\ApiException
    */
-  private function _getResource($request, &$ttl)
+  private function _getResource($request, &$resource, &$ttl)
   {
     $dsnOptions = '';
     if (sizeof(Config::$dboptions) > 0) {
@@ -153,7 +153,6 @@ class Api
     }
     Debug::variable($resource, 'resource', 4);
     Debug::variable($ttl, 'ttl', 4);
-    return $resource;
   }
 
   /**

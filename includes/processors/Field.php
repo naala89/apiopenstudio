@@ -16,7 +16,7 @@
 namespace Datagator\Processors;
 use Datagator\Core;
 
-class Field extends Processor
+class Field extends ProcessorBase
 {
   protected $details = array(
     'name' => 'Field',
@@ -38,7 +38,7 @@ class Field extends Processor
 
   public function process()
   {
-    Core\Debug::message('ProcessorField', 4);
+    Core\Debug::message('Processor Field', 4);
     $this->validateRequired();
 
     $name = $this->getVar($this->meta->name);
