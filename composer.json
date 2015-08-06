@@ -8,7 +8,7 @@
       "Datagator\\": "includes/",
       "Datagator\\Core\\": "includes/core/",
       "Datagator\\Outputs\\": "includes/output/",
-      "Datagator\\Processors\\": "includes/processor/",
+      "Datagator\\Processors\\": "includes/processors/",
       "Datagator\\Yaml\\": "includes/yaml/"
     }
   }

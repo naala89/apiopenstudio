@@ -10,7 +10,7 @@
 namespace Datagator\Processors;
 use Datagator\Core;
 
-class Processor
+class ProcessorBase
 {
   /**
    * Processor ID.
@@ -88,9 +88,6 @@ class Processor
    */
   public function __construct($meta, $request)
   {
-    Core\Debug::message('Processor base class loaded', 4);
-    Core\Debug::variable($meta);
-
     $this->meta = $meta;
     $this->request = $request;
     if (isset($meta->id)) {
@@ -112,7 +109,6 @@ class Processor
   {
     Core\Debug::message('Processor');
     $processor = $this->getProcessor($this->meta);
-    Core\Debug::message('hi');
     return $processor->process();
   }
 
@@ -201,7 +197,6 @@ class Processor
    */
   protected function getProcessor($obj = FALSE)
   {
-    Core\Debug::variable($obj);
     $obj = ($obj === FALSE ? $this->meta : $obj);
     $class = 'Datagator\\Processors\\' . ucfirst(trim($obj->type));
     return new $class($obj->meta, $this->request);

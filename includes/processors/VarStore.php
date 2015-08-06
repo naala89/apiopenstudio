@@ -20,7 +20,7 @@
 namespace Datagator\Processors;
 use Datagator\Core;
 
-class VarStore extends Processor
+class VarStore extends ProcessorBase
 {
   protected $required = array(
     'var',
