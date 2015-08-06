@@ -1,9 +1,12 @@
 <?php
 
-ob_start();
+require_once dirname(__DIR__) . '/vendor/autoload.php';
+use Datagator\Config;
+use Datagator\Core;
 
-include_once(pathinfo(__FILE__, PATHINFO_DIRNAME) . '/../config.php');
-include_once(Config::$dirIncludes . 'class.Api.php');
+Config::load();
+
+ob_start();
 
 // Requests from the same server don't have a HTTP_ORIGIN header
 if (!array_key_exists('HTTP_ORIGIN', $_SERVER)) {
@@ -11,12 +14,12 @@ if (!array_key_exists('HTTP_ORIGIN', $_SERVER)) {
 }
 
 try {
-  $api = new Api(Config::$cache);
+  $api = new Core\Api(Config::$cache);
   $result = $api->process();
 } catch (ApiException $e) {
   $output = $api->getOutputObj(
     $api->parseType(getallheaders(), 'Accept', 'json'),
-    new Error($e->getCode(), $e->getProcessor(), $e->getMessage()),
+    new Core\Error($e->getCode(), $e->getProcessor(), $e->getMessage()),
     $e->getHtmlCode()
   );
   echo $output->process();
