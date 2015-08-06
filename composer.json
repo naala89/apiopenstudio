@@ -1,0 +1,15 @@
+{
+  "require": {
+    "adodb/adodb-php": "5.19",
+    "mustangostang/spyc": "^0.5.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Datagator\\": "includes/",
+      "Datagator\\Core\\": "includes/core/",
+      "Datagator\\Outputs\\": "includes/output/",
+      "Datagator\\Processors\\": "includes/processor/",
+      "Datagator\\Yaml\\": "includes/yaml/"
+    }
+  }
+}
