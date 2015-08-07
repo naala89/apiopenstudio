@@ -14,11 +14,11 @@
  */
 
 namespace Datagator\Processors;
+use Datagator\Core;
 
-class VariableUri extends Processor
+class VarUri extends ProcessorBase
 {
   protected $required = array('index');
-
   protected $details = array(
     'name' => 'Var (URI)',
     'description' => 'A value from the request URI. It fetches the value of a particular param in the URI, based on the index value.',
@@ -34,7 +34,7 @@ class VariableUri extends Processor
 
   public function process()
   {
-    Debug::variable($this->meta, 'ProcessorVarUri');
+    Core\Debug::variable($this->meta, 'Processor VarUri');
     $required = $this->validateRequired();
     if ($required !== TRUE) {
       return $required;
@@ -43,7 +43,7 @@ class VariableUri extends Processor
     $index = $this->getVar($this->meta->index);
 
     if (!isset($this->request->args[$index])) {
-      throw new \Datagator\includes\ApiException('URI index "' . $index . '" does not exist', 1, $this->id, 417);
+      throw new Core\ApiException('URI index "' . $index . '" does not exist', 1, $this->id, 417);
     }
 
     return urldecode($this->request->args[$index]);

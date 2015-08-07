@@ -8,15 +8,17 @@
  *    "type":"getVar",
  *    "meta":{
  *      "id":<integer>,
- *      "var":<processor|mixed>,
+ *      "var":<processor|literal>,
  *    }
  *  }
  */
 
 namespace Datagator\Processors;
+use Datagator\Core;
 
-class VariablerGet extends \Processor
+class VarGet extends ProcessorBase
 {
+  protected $required = array('var');
   protected $details = array(
     'name' => 'Var (Get)',
     'description' => 'A "get" variable. It fetches a variable from the get request.',
@@ -25,25 +27,20 @@ class VariablerGet extends \Processor
       'var' => array(
         'description' => 'The name of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'mixed')
+        'accepts' => array('processor', 'literal')
       ),
     ),
   );
 
   public function process()
   {
-    Debug::message('ProcessorVarGet');
-    $varName = parent::process();
-
-    Debug::variable($this->request);
-    Debug::variable($varName);
+    Core\Debug::message('Processor VarGet');
+    $varName = $this->getVar($this->meta->var);
 
     if (empty($this->request->vars[$varName])) {
-      throw new \Datagator\includes\ApiException("get variable ($varName) does not exist", 5, $this->id, 417);
-    } else {
-      $result = $this->request->vars[$varName];
+      throw new Core\ApiException("get variable ($varName) does not exist", 5, $this->id, 417);
     }
 
-    return $result;
+    return $this->request->vars[$varName];
   }
 }
