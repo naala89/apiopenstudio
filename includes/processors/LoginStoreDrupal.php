@@ -19,7 +19,7 @@
 namespace Datagator\Processors;
 use Datagator\Core;
 
-class LoginStoreDrupal extends \Processor
+class LoginStoreDrupal extends ProcessorBase
 {
   private $user;
 
@@ -27,10 +27,10 @@ class LoginStoreDrupal extends \Processor
    * @param $meta
    * @param $request
    */
-  public function ProcessorLoginStoreDrupal ($meta, $request)
+  public function __construct($meta, $request)
   {
     $this->user = new User($request->db);
-    parent::Processor($meta, $request);
+    parent::__construct($meta, $request);
   }
 
   /**
@@ -39,12 +39,12 @@ class LoginStoreDrupal extends \Processor
    */
   public function process()
   {
-    Debug::variable($this->meta, 'ProcessorLoginStoreDrupal', 4);
+    Core\Debug::variable($this->meta, 'Processor LoginStoreDrupal', 4);
 
     $source = $this->getVar($this->meta->source);
     $source = json_decode($source);
     if (empty($source->token) || empty($source->user) || empty($source->user->uid)) {
-      throw new \Datagator\includes\ApiException('login failed, no token received', 3, $this->id, 419);
+      throw new Core\ApiException('login failed, no token received', 3, $this->id, 419);
     }
 
     $token = $source->token;

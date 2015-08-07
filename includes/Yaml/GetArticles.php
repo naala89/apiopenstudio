@@ -10,7 +10,6 @@ class GetArticles {
    */
   public function get() {
     return array(
-      /*
       'validation' => array(
          'type' => 'validateToken',
          'meta' => array(
@@ -24,7 +23,6 @@ class GetArticles {
             ),
          ),
       ),
-      */
       'process' => array(
         'type' => 'inputUrl',
         'meta' => array(

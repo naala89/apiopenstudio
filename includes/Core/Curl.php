@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Wrapper of the Curl function.
+ */
+
+namespace Datagator\Core;
+
 class Curl
 {
   public $httpStatus;

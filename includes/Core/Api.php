@@ -9,6 +9,7 @@
 namespace Datagator\Core;
 use Datagator\Config;
 use Datagator\Processors;
+use Datagator\Validators;
 use Datagator\Yaml;
 
 Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Config::$debug, Config::$errorLog);
@@ -20,7 +21,7 @@ Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Con
 class Api
 {
   private $cache;
-  private $test = 'field'; // FALSE or name of test class
+  private $test = FALSE; // FALSE or name of test class
 
   /**
    * Constructor
@@ -43,13 +44,12 @@ class Api
   public function process()
   {
     // disseminate the request for processing
-    $request = new \stdClass();
-    $this->_getData($request, $_GET);
+    $request = $this->_getData($_GET);
 
     // get the resource for the processing
-    $ttl = 0;
-    $resource = array();
-    $this->_getResource($request, $resource, $ttl);
+    $result = $this->_getResource($request);
+    $resource = $result->r;
+    $ttl = $result->ttl;
 
     // validate user for the call, if required
     $this->_getValidation($resource, $request);
@@ -61,6 +61,9 @@ class Api
     }
 
     // process the call
+    if (empty($resource->process)) {
+      throw new ApiException('invalid resource - process missing');
+    }
     $processor = new Processors\ProcessorBase($resource->process, $request);
     $data = $processor->process();
 
@@ -112,12 +115,13 @@ class Api
   }
 
   /**
+   * Get the requested resource and TTL from the DB.
+   *
    * @param $request
-   * @param $ttl
    * @return mixed
    * @throws \Datagator\Core\ApiException
    */
-  private function _getResource($request, &$resource, &$ttl)
+  private function _getResource($request)
   {
     $dsnOptions = '';
     if (sizeof(Config::$dboptions) > 0) {
@@ -134,6 +138,7 @@ class Api
     }
     $request->db->debug = Config::$debugDb;
 
+    $resource = new \stdClass();
     if (!$this->test) {
       $sql = 'SELECT meta, ttl FROM resources WHERE client=? AND method=? AND resource=?';
       $recordSet = $request->db->Execute($sql, array($request->client, $request->method, $request->identifier));
@@ -142,42 +147,44 @@ class Api
         throw new ApiException('resource or client not defined',1 , -1, 404);
       }
       $row = $recordSet->fields;
-      $resource = $row->meta;
-      $ttl = $row->ttl;
+      $resource->r = json_decode($row['meta']);
+      $resource->ttl = $row['ttl'];
     } else {
       // @TODO: update Test/*.php classes to be resource Yaml documents that are translated here.
       $class = 'Datagator\\Yaml\\' . ucfirst($this->test);
       $obj = new $class();
-      $ttl = 300;
-      $resource = json_decode(json_encode($obj->get()));
+      $resource->r = json_decode(json_encode($obj->get()));
+      $resource->ttl = 300;
     }
-    Debug::variable($resource, 'resource', 4);
-    Debug::variable($ttl, 'ttl', 4);
+
+    Debug::variable($resource, 'resource');
+
+    return $resource;
   }
 
   /**
-   * Perform auth if defined in the meta.
+   * Perform api request auth if defined in the meta.
    *
-   * @param $meta
+   * @param $resource
    * @param $request
    * @return bool
    * @throws \Datagator\Core\ApiException
    */
-  private function _getValidation($meta, $request)
+  private function _getValidation($resource, $request)
   {
-    if (empty($meta->validation)) {
-      return TRUE;
+    if (empty($resource->validation)) {
+      return;
     }
-    $validator = new Processor($meta->validation, $request);
+    $class = 'Datagator\\Validators\\' . ucfirst($this->_cleanData($resource->validation->type));
+    $validator = new $class($resource->validation->meta, $request);
     if (!$validator->process()) {
-      throw new ApiException('unauthorized', $meta->validation->meta->id, -1, 401);
+      throw new ApiException('unauthorized', $resource->validation->meta->id, -1, 401);
     }
-    return TRUE;
+    return;
   }
 
   /**
    * Get the results object.
-   *
    * This will create an output class, based on format string, and process through that.
    *
    * @param $format
@@ -199,12 +206,13 @@ class Api
    * @throws \Datagator\Core\ApiException
    * @throws \Datagator\Core\Exception
    */
-  private function _getData(&$request, $get)
+  private function _getData($get)
   {
     if (empty($get['request'])) {
       return FALSE;
     }
 
+    $request = new \stdClass();
     $request->request = $get['request'];
     $args = explode('/', trim($request->request, '/'));
     if (sizeof($args) < 2) {
@@ -215,7 +223,7 @@ class Api
     $request->ip = $_SERVER['REMOTE_ADDR'];
     $request->method = $this->_getMethod();
     if($request->method == 'options') {
-      //this is a preflight request - respond with 200 and empty payload
+      // this is a preflight request - respond with 200 and empty payload
       die();
     }
     $request->client = array_shift($args);
@@ -231,8 +239,8 @@ class Api
     if ($request->inFormat == 'json') {
       $request->vars = $request->vars + json_decode($body, TRUE);
     }
-    Debug::variable($request, 'Request data', 4);
 
+    Debug::variable($request, 'Request data', 4);
     return $request;
   }
 

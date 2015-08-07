@@ -17,11 +17,11 @@
  */
 
 namespace Datagator\Processors;
+use Datagator\Core;
 
-class Concatenate extends \Processor
+class Concatenate extends ProcessorBase
 {
   protected $required = array('sources');
-
   protected $details = array(
     'name' => 'Concatenate',
     'description' => 'Concatenate a series of strings or numbers into a single value.',
@@ -29,14 +29,15 @@ class Concatenate extends \Processor
     'input' => array(
       'sources' => array(
         'description' => 'The values to concatenate',
-        'cardinality' => array(1, '*'),
-        'accepts' => array('processor', 'mixed')),
+        'cardinality' => array(2, '*'),
+        'accepts' => array('processor', 'var', 'literal'),
+      ),
     ),
   );
 
   public function process()
   {
-    Debug::variable($this->meta, 'ProcessorConcatenate', 4);
+    Core\Debug::variable($this->meta, 'Processor Concatenate', 4);
     $this->validateRequired();
 
     $result = '';
@@ -44,7 +45,7 @@ class Concatenate extends \Processor
       $val = $this->getVar($source);
       $result .= $val;
     }
-    Debug::variable($result, 'concatenation result');
+    Core\Debug::variable($result, 'concatenation result', 4);
 
     return $result;
   }

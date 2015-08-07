@@ -56,7 +56,6 @@ class ProcessorResource extends Processor
   protected function insertResource($clientId, $method, $resource, $meta, $ttl)
   {
     $recordSet = $this->_selectRow($clientId, $method, $resource);
-    $result = FALSE;
     if ($recordSet->RecordCount() < 1) {
       $result = $this->_insertRow($clientId, $method, $resource, $meta, $ttl);
     } else {

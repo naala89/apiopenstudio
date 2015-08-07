@@ -17,22 +17,39 @@
  * }
  */
 
-include_once(Config::$dirIncludes . 'processor/class.Processor.php');
-include_once(Config::$dirIncludes . 'processor/class.Error.php');
-include_once(Config::$dirIncludes . 'class.Curl.php');
+namespace Datagator\Processors;
+use Datagator\Core;
 
-class ProcessorInputUrl extends Processor
+class InputUrl extends ProcessorBase
 {
   protected $required = array('method', 'source');
+  protected $details = array(
+    'name' => 'InputUrl',
+    'description' => 'Fetch the result form an external URL.',
+    'menu' => 'internet',
+    'input' => array(
+      'method' => array(
+        'description' => 'The HTTP method.',
+        'cardinality' => array(1, 1),
+        'accepts' => array('processor', '"get"', '"post"'),
+      ),
+      'source' => array(
+        'description' => 'Th source URL.',
+        'cardinality' => array(1, 1),
+        'accepts' => array('processor', 'var', 'literal'),
+      ),
+    ),
+  );
 
   /**
-   * retrieve data from an endpoint URL
+   * Retrieve data from an endpoint URL.
    *
-   * @return array|Error
+   * @return bool
+   * @throws \Datagator\Core\ApiException
    */
   public function process()
   {
-    Debug::variable($this->meta, 'processorInputUrl', 4);
+    Core\Debug::variable($this->meta, 'processor InputUrl', 4);
     $required = $this->validateRequired();
     if ($required !== TRUE) {
       return $required;
@@ -41,7 +58,7 @@ class ProcessorInputUrl extends Processor
     $method = $this->getVar($this->meta->method);
     $method = strtolower($method);
     if (!in_array($method, array('get', 'post'))) {
-      throw new \Datagator\includes\ApiException('empty or invalid HTTP method', 1, $this->id, 417);
+      throw new Core\ApiException('empty or invalid HTTP method', 1, $this->id, 417);
     }
 
     $url = $this->getVar($this->meta->source);
@@ -78,14 +95,14 @@ class ProcessorInputUrl extends Processor
     }
 
     //send request
-    $curl = new Curl();
+    $curl = new Core\Curl();
     $result = $curl->{strtolower($this->meta->method)}($url, $curlOpts);
     if ($result === false) {
-      throw new \Datagator\includes\ApiException('could not get response from remote server: ' . $curl->errorMsg, $curl->curlStatus, $this->id, $curl->httpStatus);
+      throw new Core\ApiException('could not get response from remote server: ' . $curl->errorMsg, $curl->curlStatus, $this->id, $curl->httpStatus);
     }
     //TODO: use $curl->type to convert all inputUrl results into a standard format
     if ($curl->httpStatus != 200) {
-      throw new \Datagator\includes\ApiException($result, 3, $this->id, $curl->httpStatus);
+      throw new Core\ApiException($result, 3, $this->id, $curl->httpStatus);
     }
 
     return $result;

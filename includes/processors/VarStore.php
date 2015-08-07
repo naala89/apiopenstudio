@@ -22,11 +22,7 @@ use Datagator\Core;
 
 class VarStore extends ProcessorBase
 {
-  protected $required = array(
-    'var',
-    'operation'
-  );
-
+  protected $required = array('var', 'operation');
   protected $details = array(
     'name' => 'Var (Store)',
     'description' => 'A stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time.',
@@ -57,7 +53,7 @@ class VarStore extends ProcessorBase
    */
   public function process()
   {
-    Core\Debug::variable($this->meta, 'ProcessorVarStore');
+    Core\Debug::variable($this->meta, 'Processor VarStore');
     $required = $this->validateRequired();
     if ($required !== TRUE) {
       return $required;
@@ -84,7 +80,7 @@ class VarStore extends ProcessorBase
   {
     $val = $this->getVar($this->meta->val);
     $result = $this->_delete($client, $var);
-    if (!$result) {
+    if ($result === FALSE) {
       throw new Core\ApiException('there was an error deleting old duplicate vars', 2, $this->id, 417);
     }
     $sql = 'INSERT INTO val ("client", "name", "val") VALUES (?, ?, ?)';

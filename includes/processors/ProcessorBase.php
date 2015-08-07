@@ -107,7 +107,6 @@ class ProcessorBase
    */
   public function process()
   {
-    Core\Debug::message('Processor');
     $processor = $this->getProcessor($this->meta);
     return $processor->process();
   }
@@ -192,13 +191,17 @@ class ProcessorBase
   /**
    * Fetch the processor defined in the obj (from meta), or return an error.
    *
-   * @param bool|FALSE $obj
+   * @param null $obj
    * @return mixed
+   * @throws \Datagator\Core\ApiException
    */
-  protected function getProcessor($obj = FALSE)
+  protected function getProcessor($obj = NUll)
   {
-    $obj = ($obj === FALSE ? $this->meta : $obj);
+    $obj = ($obj === NULL ? $this->meta : $obj);
     $class = 'Datagator\\Processors\\' . ucfirst(trim($obj->type));
+    if (!class_exists($class)) {
+      throw new Core\ApiException('Processor undefined: ' . $obj->type);
+    }
     return new $class($obj->meta, $this->request);
   }
 }
