@@ -27,6 +27,7 @@ class InputUrl extends ProcessorBase
     'name' => 'InputUrl',
     'description' => 'Fetch the result form an external URL.',
     'menu' => 'internet',
+    'client' => 'all',
     'input' => array(
       'method' => array(
         'description' => 'The HTTP method.',

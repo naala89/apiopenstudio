@@ -13,8 +13,9 @@
  */
 
 namespace Datagator\Processors;
+use Datagator\Core;
 
-class VariableStr extends \Processor
+class VarStr extends VarMixed
 {
   protected $details = array(
     'name' => 'Var (String)',
@@ -31,13 +32,13 @@ class VariableStr extends \Processor
 
   public function process()
   {
-    Debug::message('ProcessorVarStr', 4);
-    $result = parent::process();
+    Core\Debug::message('ProcessorVarStr', 4);
+    $var = parent::process();
 
-    if (!is_string($result)) {
-      throw new \Datagator\includes\ApiException('invalid string', 5, $this->id, 417);
+    if (!is_string($var)) {
+      throw new Core\ApiException('invalid string', 5, $this->id, 417);
     }
 
-    return $result;
+    return $var;
   }
 }

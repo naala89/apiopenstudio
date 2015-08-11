@@ -13,8 +13,9 @@
  */
 
 namespace Datagator\Processors;
+use Datagator\Core;
 
-class VariableNum extends \Processor
+class VarNum extends VarMixed
 {
   protected $details = array(
     'name' => 'Var (Number)',
@@ -31,13 +32,13 @@ class VariableNum extends \Processor
 
   public function process()
   {
-    Debug::message('ProcessorVarNum');
-    $result = parent::process();
+    Core\Debug::message('Processor VarNum', 4);
+    $var = parent::process();
 
-    if (!is_numeric($result)) {
-      throw new \Datagator\includes\ApiException('invalid number', 5, $this->id, 417);
+    if (!is_numeric($var)) {
+      throw new Core\ApiException('invalid number', 5, $this->id, 417);
     }
 
-    return $result;
+    return $var;
   }
 }

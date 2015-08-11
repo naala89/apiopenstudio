@@ -13,8 +13,9 @@
  */
 
 namespace Datagator\Processors;
+use Datagator\Core;
 
-class VariablerBool extends \Processor
+class VarBool extends VarMixed
 {
   protected $details = array(
     'name' => 'Var (Boolean)',
@@ -31,13 +32,13 @@ class VariablerBool extends \Processor
 
   public function process()
   {
-    Debug::message('ProcessorVarBool');
-    $result = parent::process();
+    Core\Debug::message('Processor VarBool', 4);
+    $var = parent::process();
 
-    if (!is_bool($result)) {
-      throw new \Datagator\includes\ApiException('invalid boolean', 5, $this->id, 417);
+    if (!is_bool($var)) {
+      throw new Core\ApiException('invalid boolean', 5, $this->id, 417);
     }
 
-    return $result;
+    return $var;
   }
 }

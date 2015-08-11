@@ -2,17 +2,22 @@
 
 namespace Datagator\Processors;
 
-class AllProcessors extends \Processor
+class AllProcessors extends ProcessorBase
 {
   public $displayFrontend = FALSE;
+  protected $details = array(
+    'name' => 'All processors',
+    'description' => 'Fetch data on all public and client processors available.',
+    'menu' => 'system',
+    'input' => array()
+  );
 
+  /**
+   * @return array
+   */
   public function process()
   {
-    Debug::variable($this->meta, 'ProcessorProcessors');
-    $required = $this->validateRequired();
-    if ($required !== TRUE) {
-      return $required;
-    }
+    Debug::variable($this->meta, 'Processor AllProcessors');
 
     $processors = $this->_getProcessors();
     $details = $this->_getDetails($processors);
@@ -21,15 +26,14 @@ class AllProcessors extends \Processor
   }
 
   /**
-   * @param string $dir
+   * Get list of processors.
+   *
    * @return array
    */
-  private function _getProcessors($dir='processor')
+  private function _getProcessors()
   {
-    $path = Config::$dirIncludes . $dir;
-
-    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
-    $objects = new RegexIterator($iterator, '/class\.processor[a-z0-9]+\.php/i', RecursiveRegexIterator::GET_MATCH);
+    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__));
+    $objects = new RegexIterator($iterator, '/[a-z0-9]+\.php/i', RecursiveRegexIterator::GET_MATCH);
 
     $result = array();
     foreach($objects as $name => $object){
@@ -40,6 +44,8 @@ class AllProcessors extends \Processor
   }
 
   /**
+   * Get details of all processors in an array.
+   *
    * @param array $processors
    * @return array
    */
@@ -48,12 +54,11 @@ class AllProcessors extends \Processor
     $result = array();
 
     foreach ($processors as $processor) {
-      preg_match('/class\.(.+)\.php$/i', $processor, $className);
+      preg_match('/(.+)\.php$/i', $processor, $className);
       $className = $className[1];
-      include_once($processor);
       $obj = new $className($this->meta, $this->request);
       if ($this->_display($obj)) {
-        preg_match('/processor(.+)/i', $className, $index);
+        preg_match('/(.+)/i', $className, $index);
         $result[$index[1]] = $obj->details();
       }
     }

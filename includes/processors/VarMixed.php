@@ -18,7 +18,7 @@
 namespace Datagator\Processors;
 use Datagator\Core;
 
-class Variable extends ProcessorBase
+class VarMixed extends ProcessorBase
 {
   protected $required = array('var');
   protected $details = array(
@@ -36,7 +36,7 @@ class Variable extends ProcessorBase
 
   public function process()
   {
-    Core\Debug::message('Processor Var', 4);
+    Core\Debug::message('Processor VarMixed', 4);
     return $this->getVar($this->meta->var);
   }
 }

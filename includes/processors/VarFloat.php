@@ -13,8 +13,9 @@
  */
 
 namespace Datagator\Processors;
+use Datagator\Core;
 
-class VariableFloat extends \Processor
+class VarFloat extends VarMixed
 {
   protected $details = array(
     'name' => 'Var (Float)',
@@ -31,13 +32,13 @@ class VariableFloat extends \Processor
 
   public function process()
   {
-    Debug::message('ProcessorVarFloat');
-    $result = parent::process();
+    Core\Debug::message('Processor VarFloat, 4');
+    $var = parent::process();
 
-    if (!is_float($result)) {
-      throw new \Datagator\includes\ApiException('invalid float', 5, $this->id, 417);
+    if (!is_float($var)) {
+      throw new Core\ApiException('invalid float', 5, $this->id, 417);
     }
 
-    return $result;
+    return $var;
   }
 }

@@ -28,6 +28,7 @@ class LoginStoreDrupal extends ProcessorBase
     'name' => 'LoginStoreDrupal',
     'description' => 'Stores the access details from a users login to a remote drupal site for future use.',
     'menu' => 'drupal',
+    'client' => 'all',
     'input' => array(
       'source' => array(
         'description' => 'The results of a login attempt to the remote site. i.e. Processor InputUrl.',
