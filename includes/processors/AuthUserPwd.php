@@ -17,15 +17,33 @@
  *    }
  */
 
-include_once(Config::$dirIncludes . 'processor/class.Processor.php');
+namespace Datagator\Processors;
+use Datagator\Core;
 
 class AuthUserPwd extends Processor
 {
   protected $required = array('username', 'password');
+  protected $details = array(
+    'name' => 'Auth (User/Pass)',
+    'description' => 'Authentication for remote server, using username/password.',
+    'menu' => 'authentication',
+    'input' => array(
+      'username' => array(
+        'description' => 'The username.',
+        'cardinality' => array(1, 1),
+        'accepts' => array('processor', 'literal'),
+      ),
+      'password' => array(
+        'description' => 'The password.',
+        'cardinality' => array(1, 1),
+        'accepts' => array('processor', 'literal'),
+      ),
+    ),
+  );
 
   public function process()
   {
-    Debug::variable($this->meta, 'AuthUserPwd', 4);
+    Core\Debug::variable($this->meta, 'AuthUserPwd', 4);
     $required = $this->validateRequired();
     if ($required !== TRUE) {
       return $required;

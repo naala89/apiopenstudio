@@ -20,8 +20,9 @@
 namespace Datagator\Processors;
 use Datagator\Core;
 
-class VarStore extends ProcessorBase
+class VarStore extends Variable
 {
+  private $ops = array('insert', 'delete', 'fetch');
   protected $required = array('var', 'operation');
   protected $details = array(
     'name' => 'Var (Store)',
@@ -45,19 +46,16 @@ class VarStore extends ProcessorBase
       ),
     ),
   );
-  private $ops = array('insert', 'delete', 'fetch');
 
   /**
-   * @return bool
+   * @return mixed
    * @throws \Datagator\Core\ApiException
+   * @throws \Datagator\Processors\ApiException
    */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarStore');
-    $required = $this->validateRequired();
-    if ($required !== TRUE) {
-      return $required;
-    }
+
     $var = $this->getVar($this->meta->var);
     $operation = $this->getVar($this->meta->operation);
     if (!in_array($operation, $this->ops)) {
@@ -75,6 +73,7 @@ class VarStore extends ProcessorBase
    * @param $var
    * @return bool
    * @throws \Datagator\Core\ApiException
+   * @throws \Datagator\Processors\ApiException
    */
   private function _insert($client, $var)
   {
@@ -111,7 +110,7 @@ class VarStore extends ProcessorBase
    * @param $client
    * @param $var
    * @return mixed
-   * @throws \Datagator\Core\ApiException
+   * @throws \Datagator\Processors\ApiException
    */
   private function _fetch($client, $var)
   {

@@ -5,23 +5,42 @@
  *
  * Takes the input of a login event and stores the token if successful
  *
+ *
  * METADATA
  * {
  *  "type":"tokenStoreDrupal",
  *  "meta": {
  *    "id":<integer>,
  *    "source":<processor>
- *    "staleTime":<string> (defaults to "+1 day")
  *  }
  * }
  */
 
 namespace Datagator\Processors;
 use Datagator\Core;
+use Datagator\Db;
 
 class LoginStoreDrupal extends ProcessorBase
 {
   private $user;
+  protected $required = array('source');
+  protected $details = array(
+    'name' => 'LoginStoreDrupal',
+    'description' => 'Stores the access details from a users login to a remote drupal site for future use.',
+    'menu' => 'drupal',
+    'input' => array(
+      'source' => array(
+        'description' => 'The results of a login attempt to the remote site. i.e. Processor InputUrl.',
+        'cardinality' => array(1, 1),
+        'accepts' => array('processor')
+      ),
+      'externalEntity' => array(
+        'description' => 'The name of the external entity this user is tied to (default is "drupal" - use custom names if you access more than one drupal site).',
+        'cardinality' => array(0, 1),
+        'accepts' => array('processor', 'literal')
+      ),
+    ),
+  );
 
   /**
    * @param $meta
@@ -29,13 +48,14 @@ class LoginStoreDrupal extends ProcessorBase
    */
   public function __construct($meta, $request)
   {
-    $this->user = new User($request->db);
     parent::__construct($meta, $request);
+    $this->user = new Db\ExternalUserMapper($request->db);
   }
 
   /**
-   * @return array|\Error|mixed|Object
-   * @throws \ApiException
+   * @return array|mixed
+   * @throws \Datagator\Core\ApiException
+   * @throws \Datagator\Processors\ApiException
    */
   public function process()
   {
@@ -46,17 +66,22 @@ class LoginStoreDrupal extends ProcessorBase
     if (empty($source->token) || empty($source->user) || empty($source->user->uid)) {
       throw new Core\ApiException('login failed, no token received', 3, $this->id, 419);
     }
-
-    $token = $source->token;
-    $sessionName = $source->session_name;
-    $sessionId = $source->sessid;
+    $externalEntity = !empty($this->meta->externalEntity) ? $this->getVar($this->meta->externalEntity) : 'drupal';
     $externalId = $source->user->uid;
-    $roles = $source->user->roles;
-    $staleTime = !empty($source->staleTime) ? $source->staleTime : Config::$tokenLife;
-    $client = $this->request->client;
+    $cid = $this->request->client;
 
-    $this->user->deleteUser($client, $externalId);
-    $this->user->insertUser($client, $externalId, $roles, $token, $sessionName, $sessionId, $staleTime);
+    $userMapper = new Db\ExternalUserMapper($this->request->db);
+    $user = $userMapper->findByCidEntityExternalId($cid, $externalEntity, $externalId);
+    if ($user->getUid() === NULL) {
+      $user->setCid($cid);
+      $user->setExternalEntity($externalEntity);
+      $user->setExternalId($externalId);
+    }
+    $user->setDataField1($source->token);
+    $user->setDataField2($source->session_name);
+    $user->setDataField3($source->sessid);
+
+    $userMapper->save($user);
 
     return $source;
   }

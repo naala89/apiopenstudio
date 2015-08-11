@@ -26,7 +26,7 @@ class UserPass extends Processors\ProcessorBase {
     'menu' => 'validator',
     'input' => array(
       'user' => array(
-        'description' => 'The username to validate.',
+        'description' => 'The username to validate (this is hte users email).',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'literal'),
       ),
@@ -50,7 +50,7 @@ class UserPass extends Processors\ProcessorBase {
     $pass = $this->getVar($this->meta->pass);
     $cid = $this->request->client;
 
-    $sql = 'SELECT * FROM users WHERE cid=? AND username=? AND password=? AND active=1';
+    $sql = 'SELECT * FROM users WHERE cid=? AND email=? AND password=? AND active=1';
     $bindParams = array($cid, $user, $pass);
     $recordSet = $this->request->db->Execute($sql, $bindParams);
     return $recordSet && $recordSet->RecordCount() > 0;

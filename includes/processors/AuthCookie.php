@@ -15,15 +15,28 @@
  *    }
  */
 
-include_once(Config::$dirIncludes . 'processor/class.Processor.php');
+namespace Datagator\Processors;
+use Datagator\Core;
 
 class AuthCookie extends Processor
 {
   protected $required = array('cookie');
+  protected $details = array(
+    'name' => 'Auth (Cookie)',
+    'description' => 'Authentication for remote server, using a cookie.',
+    'menu' => 'authentication',
+    'input' => array(
+      'cookie' => array(
+        'description' => 'The cookie.',
+        'cardinality' => array(1, 1),
+        'accepts' => array('processor', 'literal'),
+      ),
+    ),
+  );
 
   public function process()
   {
-    Debug::variable($this->meta, 'AuthCookie');
+    Core\Debug::variable($this->meta, 'AuthCookie');
     $required = $this->validateRequired();
     if ($required !== TRUE) {
       return $required;

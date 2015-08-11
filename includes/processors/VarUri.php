@@ -35,11 +35,6 @@ class VarUri extends ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarUri');
-    $required = $this->validateRequired();
-    if ($required !== TRUE) {
-      return $required;
-    }
-
     $index = $this->getVar($this->meta->index);
 
     if (!isset($this->request->args[$index])) {
