@@ -17,15 +17,16 @@
  */
 
 namespace Datagator\Processors;
+use Datagator\Core;
 
-class Merge extends \Processor
+class Merge extends ProcessorBase
 {
   private $_defaultType = 'union';
   protected $required = array('sources');
 
   public function process()
   {
-    Debug::variable($this->meta, 'processorMerge', 4);
+    Core\Debug::variable($this->meta, 'processor Merge', 4);
     $this->validateRequired();
 
     $sources = $this->meta->sources;
@@ -42,7 +43,7 @@ class Merge extends \Processor
     if (method_exists($this, $method)) {
       $result = $this->$method($values);
     } else {
-      throw new \Datagator\includes\ApiException("invalid mergeType: $type", 3, $this->id, 407);
+      throw new Core\ApiException("invalid mergeType: $type", 3, $this->id, 407);
     }
 
     return $result;

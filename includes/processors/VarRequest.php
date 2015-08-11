@@ -21,11 +21,12 @@ class VarRequest extends VarMixed
     'name' => 'Var (Request)',
     'description' => 'A "get" or "post" variable. It fetches a variable from the get or post requests.',
     'menu' => 'variables',
+    'client' => 'all',
     'input' => array(
       'var' => array(
         'description' => 'The name of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'mixed')
+        'accepts' => array('processor', 'literal')
       ),
     ),
   );

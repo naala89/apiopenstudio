@@ -37,7 +37,7 @@ class InputUrl extends ProcessorBase
       'source' => array(
         'description' => 'Th source URL.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'var', 'literal'),
+        'accepts' => array('processor', 'literal'),
       ),
     ),
   );
