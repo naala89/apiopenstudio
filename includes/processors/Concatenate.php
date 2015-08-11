@@ -38,7 +38,6 @@ class Concatenate extends ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor Concatenate', 4);
-    $this->validateRequired();
 
     $result = '';
     foreach ($this->meta->sources as $source) {

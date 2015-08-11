@@ -5,24 +5,20 @@
  */
 
 namespace Datagator\Core;
-use Datagator\Adodb;
-
 
 class User
 {
   const STALE_TIME = "+12 hour";
-  private $dbUser;
-  private $dbRole;
+  private $db;
 
   /**
    * Constructor.
    *
    * @param $db
    */
-  public function User($db)
+  public function __construct($db)
   {
-    $this->dbUser = new DB\create($db, 'Users');
-    $this->dbRole = new DB\create($db, 'Roles');
+    $this->db = $db;
   }
 
   /**
@@ -33,7 +29,7 @@ class User
    * @param $clientId
    * @param $roles
    * @return bool
-   * @throws \Datagator\includes\ApiException
+   * @throws \Datagator\Core\ApiException
    */
   public function create($email, $password, $clientId, $roles)
   {
@@ -42,20 +38,20 @@ class User
     $result = $this->_dbGetUserByEmail($email);
     if ($result->RecordCount() > 0) {
       $this->db->FailTrans();
-      throw new \Datagator\includes\ApiException('user already exists', -1, $this->id, 417);
+      throw new ApiException('user already exists', -1, $this->id, 417);
     }
     //check client exists
     $result = $this->_dbGetClientById($clientId);
     if ($result->RecordCount() != 1) {
       $this->db->FailTrans();
-      throw new \Datagator\includes\ApiException("client ($clientId) does not exist", -1, $this->id, 417);
+      throw new ApiException("client ($clientId) does not exist", -1, $this->id, 417);
     }
     //check roles exist
     foreach ($roles as $role) {
       $result = $this->_dbGetRoleByRid($role);
       if ($result->RecordCount() != 1) {
         $this->db->FailTrans();
-        throw new \Datagator\includes\ApiException("role ($role) does not exist", -1, $this->id, 417);
+        throw new ApiException("role ($role) does not exist", -1, $this->id, 417);
       }
     }
 
@@ -63,7 +59,7 @@ class User
     $result = $this->_dbInsertUser($email, $password, $clientId);
     if ($result->affectedRows() < 1) {
       $this->db->FailTrans();
-      throw new \Datagator\includes\ApiException('failed to insert user', -1, $this->id, 500);
+      throw new ApiException('failed to insert user', -1, $this->id, 500);
     }
     $user = $this->_dbGetUserByEmail($email);
     // insert user roles
@@ -71,7 +67,7 @@ class User
       $result = $this->_dbInsertUserRole($user->fields['uid'], $role);
       if ($result->affectedRows() < 1) {
         $this->db->FailTrans();
-        throw new \Datagator\includes\ApiException("failed to insert user role ($role)", -1, $this->id, 500);
+        throw new ApiException("failed to insert user role ($role)", -1, $this->id, 500);
       }
     }
     $this->db->CompleteTrans();
@@ -109,14 +105,30 @@ class User
 
   /**
    * Delete a user and its roles bu UID.
+   *
    * @param $uid
-   * @throws \ApiException
+   * @throws \Datagator\Core\ApiException
    */
   public function deleteByUid($uid)
   {
     $result = $this->_dbGetUserByUid($uid);
     if ($result->RecordCount() < 1) {
-      throw new \Datagator\includes\ApiException("no such user", -1, $this->id, 417);
+      throw new ApiException("no such user", -1, $this->id, 417);
+    }
+    $this->_delete($uid);
+  }
+
+  /**
+   * Delete a user and its roles by cliend and external ID.
+   *
+   * @param $uid
+   * @throws \Datagator\Core\ApiException
+   */
+  public function deleteByClientExternalId($uid)
+  {
+    $result = $this->_dbGetUserByUid($uid);
+    if ($result->RecordCount() < 1) {
+      throw new ApiException("no such user", -1, $this->id, 417);
     }
     $this->_delete($uid);
   }
@@ -125,13 +137,13 @@ class User
    * Delete a user and its roles bu UID.
    *
    * @param $email
-   * @throws \ApiException
+   * @throws \Datagator\Core\ApiException
    */
   public function deleteByEmail($email)
   {
     $result = $this->_dbGetClientByEmail($email);
     if ($result->RecordCount() < 1) {
-      throw new \Datagator\includes\ApiException("no such user", -1, $this->id, 417);
+      throw new ApiException("no such user", -1, $this->id, 417);
     }
     $this->_delete($result->fields['uid']);
   }
@@ -140,7 +152,7 @@ class User
    * Utility function to delete a user.
    *
    * @param $uid
-   * @throws \ApiException
+   * @throws \Datagator\Core\ApiException
    */
   private function _delete($uid)
   {
@@ -148,13 +160,13 @@ class User
     $roles = $this->_dbGetRoleByUid($uid);
     if (!$roles) {
       $this->db->FailTrans();
-      throw new \Datagator\includes\ApiException("error fetching roles", -1, $this->id, 417);
+      throw new ApiException("error fetching roles", -1, $this->id, 417);
     }
     while (!$roles->EOF) {
       $result = $this->deleteRole($uid, $roles->fields['rid']);
       if ($result->affectedRows() < 1) {
         $this->db->FailTrans();
-        throw new \Datagator\includes\ApiException("error deleting roles", -1, $this->id, 417);
+        throw new ApiException("error deleting roles", -1, $this->id, 417);
       }
       $roles->MoveNext();
     }
@@ -164,6 +176,7 @@ class User
 
   /**
    * Delete a role for a user.
+   *
    * @param $uid
    * @param $rid
    * @return mixed
@@ -179,13 +192,13 @@ class User
    * @param $email
    * @param $password
    * @return string
-   * @throws \ApiException
+   * @throws \Datagator\Core\ApiException
    */
   public function login($email, $password)
   {
     $result = $this->_dbGetUserByEmailPassword($email, $password);
     if ($result->RecordCount() != 1) {
-      throw new \Datagator\includes\ApiException("access denied", -1, $this->id, 401);
+      throw new ApiException("access denied", -1, $this->id, 401);
     }
 
     $uid = $result->fields['uid'];
@@ -195,7 +208,7 @@ class User
     $result = $this->_dbInsertToken($uid, $token);
     if ($result->affectedRows() < 1) {
       $this->db->FailTrans();
-      throw new \Datagator\includes\ApiException('failed to generate token', -1, $this->id, 417);
+      throw new ApiException('failed to generate token', -1, $this->id, 417);
     }
     $this->db->CompleteTrans();
 
@@ -294,6 +307,19 @@ class User
   private function _dbGetUserByUid($uid)
   {
     $sql = 'SELECT * FROM users WHERE `uid` = ?';
+    $bindParams = array($uid);
+    return $this->db->Execute($sql, $bindParams);
+  }
+
+  /**
+   * Fetch a User DB row by UID.
+   *
+   * @param $uid
+   * @return mixed
+   */
+  private function _dbGetUserByClientExternalID($clientId, $externalId)
+  {
+    $sql = 'SELECT * FROM users WHERE `cid` = ? AND ';
     $bindParams = array($uid);
     return $this->db->Execute($sql, $bindParams);
   }

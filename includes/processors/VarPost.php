@@ -13,8 +13,9 @@
  */
 
 namespace Datagator\Processors;
+use Datagator\Core;
 
-class VariablePost extends \Processor
+class VarPost extends Variable
 {
   protected $details = array(
     'name' => 'Var (Get)',
@@ -28,15 +29,18 @@ class VariablePost extends \Processor
     ),
   );
 
-
-
+  /**
+   * @return mixed
+   * @throws \Datagator\Core\ApiException
+   * @throws \Datagator\Processors\ApiException
+   */
   public function process()
   {
-    Debug::message('ProcessorVarPost');
-    $varName = parent::process();
+    Core\Debug::message('Processor VarPost');
+    $varName = $this->getVar($this->meta->var);
 
     if (empty($this->request->vars[$varName])) {
-      throw new \Datagator\includes\ApiException("post variable ($varName) does not exist", 5, $this->id, 417);
+      throw new Core\ApiException("post variable ($varName) does not exist", 5, $this->id, 417);
     } else {
       $result = $this->request->vars[$varName];
     }

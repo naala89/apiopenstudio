@@ -7,6 +7,7 @@
     "psr-4": {
       "Datagator\\": "includes/",
       "Datagator\\Core\\": "includes/core/",
+      "Datagator\\Db\\": "includes/db/",
       "Datagator\\Outputs\\": "includes/output/",
       "Datagator\\Processors\\": "includes/processors/",
       "Datagator\\Validators\\": "includes/validators/",

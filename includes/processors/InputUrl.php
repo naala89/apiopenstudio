@@ -44,16 +44,13 @@ class InputUrl extends ProcessorBase
   /**
    * Retrieve data from an endpoint URL.
    *
-   * @return bool
+   * @return mixed
    * @throws \Datagator\Core\ApiException
+   * @throws \Datagator\Processors\ApiException
    */
   public function process()
   {
     Core\Debug::variable($this->meta, 'processor InputUrl', 4);
-    $required = $this->validateRequired();
-    if ($required !== TRUE) {
-      return $required;
-    }
 
     $method = $this->getVar($this->meta->method);
     $method = strtolower($method);
@@ -73,7 +70,11 @@ class InputUrl extends ProcessorBase
 
     //get auth
     if (!empty($this->meta->auth)) {
-      $authenticator = $this->getProcessor($this->meta->auth, Config::$dirIncludes . '/processor/input/auth', $prefix = 'Auth', $suffix = '.php');
+      $class = 'Datagator\\Processors\\Auth' . ucfirst(trim($this->meta->auth));
+      if (!class_exists($class)) {
+        throw new Core\ApiException('invalid Auth: ' . $this->meta->auth);
+      }
+      $authenticator = new $class($this->meta->auth, $this->request);
       $authentication = $authenticator->process();
       $curlOpts += $authentication;
     }

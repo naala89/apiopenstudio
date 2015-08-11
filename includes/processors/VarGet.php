@@ -16,9 +16,8 @@
 namespace Datagator\Processors;
 use Datagator\Core;
 
-class VarGet extends ProcessorBase
+class VarGet extends Variable
 {
-  protected $required = array('var');
   protected $details = array(
     'name' => 'Var (Get)',
     'description' => 'A "get" variable. It fetches a variable from the get request.',
