@@ -18,8 +18,9 @@
  */
 
 namespace Datagator\Processors;
+use Datagator\Core;
 
-class VariableRand extends \Processor
+class VareRand extends ProcessorBase
 {
   protected $details = array(
     'name' => 'Var (Rand)',
@@ -57,7 +58,7 @@ class VariableRand extends \Processor
 
   public function process()
   {
-    Debug::message('ProcessorVarRand', 4);
+    Core\Debug::message('Processor VarRand', 4);
     $this->validateRequired();
 
     $length = $this->getVar($this->meta->length);
@@ -66,6 +67,6 @@ class VariableRand extends \Processor
     $number = $this->getVar($this->meta->number);
     $nonAlphanum = $this->getVar($this->meta->nonAlphanum);
 
-    return Utilities::random_string($length, $lower, $upper, $number, $nonAlphanum);
+    return Core\Utilities::random_string($length, $lower, $upper, $number, $nonAlphanum);
   }
 }

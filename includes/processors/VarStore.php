@@ -20,7 +20,7 @@
 namespace Datagator\Processors;
 use Datagator\Core;
 
-class VarStore extends Variable
+class VarStore extends VarMixed
 {
   private $ops = array('insert', 'delete', 'fetch');
   protected $required = array('var', 'operation');
@@ -110,7 +110,7 @@ class VarStore extends Variable
    * @param $client
    * @param $var
    * @return mixed
-   * @throws \Datagator\Processors\ApiException
+   * @throws \Datagator\Core\ApiException
    */
   private function _fetch($client, $var)
   {

@@ -16,7 +16,7 @@
 namespace Datagator\Processors;
 use Datagator\Core;
 
-class VarGet extends Variable
+class VarGet extends VarMixed
 {
   protected $details = array(
     'name' => 'Var (Get)',

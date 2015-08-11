@@ -13,8 +13,9 @@
  */
 
 namespace Datagator\Processors;
+use Datagator\Core;
 
-class VariableRequest extends \Processor
+class VarRequest extends VarMixed
 {
   protected $details = array(
     'name' => 'Var (Request)',
@@ -31,15 +32,13 @@ class VariableRequest extends \Processor
 
   public function process()
   {
-    Debug::message('ProcessorVarRequest');
-    $varName = parent::process();
+    Core\Debug::message('ProcessorVarRequest');
+    $var = parent::process();
 
-    if (empty($_REQUEST[$varName])) {
-      throw new \Datagator\includes\ApiException("request variable ($varName) does not exist", 5, $this->id, 417);
-    } else {
-      $result = $_REQUEST[$varName];
+    if (empty($_REQUEST[$var])) {
+      throw new Core\ApiException("request variable ($var) does not exist", 5, $this->id, 417);
     }
 
-    return $result;
+    return $_REQUEST[$var];
   }
 }
