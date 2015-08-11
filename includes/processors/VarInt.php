@@ -21,6 +21,7 @@ class VarInt extends VarMixed
     'name' => 'Var (Integer)',
     'description' => 'An integer variable. It validates the input and returns an error if it is not a integer.',
     'menu' => 'variables',
+    'client' => 'all',
     'input' => array(
       'var' => array(
         'description' => 'The value of the variable.',

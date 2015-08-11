@@ -22,6 +22,7 @@ class VarGet extends VarMixed
     'name' => 'Var (Get)',
     'description' => 'A "get" variable. It fetches a variable from the get request.',
     'menu' => 'variables',
+    'client' => 'all',
     'input' => array(
       'var' => array(
         'description' => 'The name of the variable.',

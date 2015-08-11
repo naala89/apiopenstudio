@@ -25,11 +25,12 @@ class VarMixed extends ProcessorBase
     'name' => 'Var (Mixed)',
     'description' => 'A variable of any type.',
     'menu' => 'variables',
+    'client' => 'all',
     'input' => array(
       'var' => array(
         'description' => 'The value of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'mixed')
+        'accepts' => array('processor', 'literal')
       ),
     ),
   );

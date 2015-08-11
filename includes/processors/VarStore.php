@@ -28,6 +28,7 @@ class VarStore extends VarMixed
     'name' => 'Var (Store)',
     'description' => 'A stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time.',
     'menu' => 'variables',
+    'client' => 'all',
     'input' => array(
       'operation' => array(
         'description' => 'The operation to be performed on the variable.',
@@ -37,12 +38,12 @@ class VarStore extends VarMixed
       'var' => array(
         'description' => 'The name of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'mixed')
+        'accepts' => array('processor', 'literal')
       ),
       'val' => array(
         'description' => 'The value of the variable. This input is only used in insert operations.',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'mixed')
+        'accepts' => array('processor', 'literal')
       ),
     ),
   );
