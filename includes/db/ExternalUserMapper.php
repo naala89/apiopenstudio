@@ -5,8 +5,7 @@
  */
 
 namespace Datagator\Db;
-use Datagator\Core\ApiException;
-use Datagator\Core\Debug;
+use Datagator\Core;
 
 class ExternalUserMapper
 {
@@ -28,9 +27,9 @@ class ExternalUserMapper
   public function save(ExternalUser $user)
   {
     if ($user->getUid() == NULL) {
-      $sql = 'INSERT INTO external_user (`cid`, `external_id`, `external_entity`, `data_field_1`, `data_field_2`, `data_field_3`) VALUES (?, ?, ?, ?, ?, ?)';
+      $sql = 'INSERT INTO external_user (`appid`, `external_id`, `external_entity`, `data_field_1`, `data_field_2`, `data_field_3`) VALUES (?, ?, ?, ?, ?, ?)';
       $bindParams = array(
-        $user->getCid(),
+        $user->getAppId(),
         $user->getExternalId(),
         $user->getExternalEntity(),
         $user->getDataField1(),
@@ -38,13 +37,10 @@ class ExternalUserMapper
         $user->getDataField3()
       );
       $result = $this->db->Execute($sql, $bindParams);
-      if (!$result) {
-        throw new ApiException('error inserting external user');
-      }
     } else {
-      $sql = 'UPDATE external_user SET `cid` = ?, `external_id` = ?, `external_entity` = ?, `data_field_1` = ?, `data_field_2` = ?, `data_field_3` = ? WHERE `uid` = ?';
+      $sql = 'UPDATE external_user SET `appid` = ?, `external_id` = ?, `external_entity` = ?, `data_field_1` = ?, `data_field_2` = ?, `data_field_3` = ? WHERE `uid` = ?';
       $bindParams = array(
-        $user->getCid(),
+        $user->getAppId(),
         $user->getExternalId(),
         $user->getExternalEntity(),
         $user->getDataField1(),
@@ -53,9 +49,9 @@ class ExternalUserMapper
         $user->getUid()
       );
       $result = $this->db->Execute($sql, $bindParams);
-      if (!$result) {
-        throw new ApiException($this->db->ErrorMsg());
-      }
+    }
+    if (!$result) {
+      throw new Core\ApiException($this->db->ErrorMsg());
     }
     return TRUE;
   }
@@ -73,27 +69,27 @@ class ExternalUserMapper
   }
 
   /**
-   * @param $cid
+   * @param $appId
    * @param $externalEntity
    * @param $externalId
    * @return \Datagator\Db\ExternalUser
    */
-  public function findByCidEntityExternalId($cid, $externalEntity, $externalId)
+  public function findByAppIdEntityExternalId($appId, $externalEntity, $externalId)
   {
-    $sql = 'SELECT * FROM external_user WHERE `cid` = ? AND `external_entity` = ? AND `external_id` = ?';
-    $bindParams = array($cid, $externalEntity, $externalId);
+    $sql = 'SELECT * FROM external_user WHERE `appid` = ? AND `external_entity` = ? AND `external_id` = ?';
+    $bindParams = array($appId, $externalEntity, $externalId);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
   }
 
   /**
-   * @param $cid
+   * @param $appId
    * @return array
    */
-  public function findByCid($cid)
+  public function findByCid($appId)
   {
-    $sql = 'SELECT * FROM external_user WHERE `cid` = ?';
-    $bindParams = array($cid);
+    $sql = 'SELECT * FROM external_user WHERE `appid` = ?';
+    $bindParams = array($appId);
     $recordSet = $this->db->Execute($sql, $bindParams);
 
     $entries   = array();
@@ -107,14 +103,13 @@ class ExternalUserMapper
   /**
    * @param array $row
    * @return \Datagator\Db\ExternalUser
-   * @throws \Datagator\Core\ApiException
    */
   protected function mapArray(array $row)
   {
     $user = new ExternalUser();
 
     $user->setUid(!empty($row['uid']) ? $row['uid'] : NULL);
-    $user->setCid(!empty($row['cid']) ? $row['cid'] : NULL);
+    $user->setAppId(!empty($row['appid']) ? $row['appid'] : NULL);
     $user->setExternalId(!empty($row['external_id']) ? $row['external_id'] : NULL);
     $user->setExternalEntity(!empty($row['external_entity']) ? $row['external_entity'] : NULL);
     $user->setDataField1(!empty($row['data_field_1']) ? $row['data_field_1'] : NULL);

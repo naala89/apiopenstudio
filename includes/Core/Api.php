@@ -9,6 +9,7 @@
 namespace Datagator\Core;
 use Datagator\Config;
 use Datagator\Processors;
+use Datagator\Db;
 use Datagator\Validators;
 use Datagator\Yaml;
 
@@ -118,7 +119,7 @@ class Api
    * Get the requested resource and TTL from the DB.
    *
    * @param $request
-   * @return mixed
+   * @return \stdClass
    * @throws \Datagator\Core\ApiException
    */
   private function _getResource($request)
@@ -137,29 +138,29 @@ class Api
       throw new ApiException('DB connection failed',1 , -1, 404);
     }
     $request->db->debug = Config::$debugDb;
+    $mapper = new Db\ResourceMapper($request->db);
 
-    $resource = new \stdClass();
+    $result = new \stdClass();
     if (!$this->test) {
-      $sql = 'SELECT meta, ttl FROM resources WHERE client=? AND method=? AND resource=?';
-      $recordSet = $request->db->Execute($sql, array($request->client, $request->method, $request->identifier));
+      $resource = $mapper->findByAppIdMethodIdentifier($request->appId, $request->method, $request->identifier);
 
-      if (!$recordSet || $recordSet->RecordCount() < 1) {
+      if ($resource->getId() === NULL) {
         throw new ApiException('resource or client not defined',1 , -1, 404);
       }
-      $row = $recordSet->fields;
-      $resource->r = json_decode($row['meta']);
-      $resource->ttl = $row['ttl'];
+      //$row = $recordSet->fields;
+      $result->r = json_decode($resource->getMeta());
+      $result->ttl = $resource->getTtl();
     } else {
       // @TODO: update Test/*.php classes to be resource Yaml documents that are translated here.
       $class = 'Datagator\\Yaml\\' . ucfirst($this->test);
       $obj = new $class();
-      $resource->r = json_decode(json_encode($obj->get()));
-      $resource->ttl = 300;
+      $result->r = json_decode(json_encode($obj->get()));
+      $result->ttl = 300;
     }
 
-    Debug::variable($resource, 'resource');
+    Debug::variable($result, 'resource');
 
-    return $resource;
+    return $result;
   }
 
   /**
@@ -226,7 +227,7 @@ class Api
       // this is a preflight request - respond with 200 and empty payload
       die();
     }
-    $request->client = array_shift($args);
+    $request->appId = array_shift($args);
     $request->resource = array_shift($args);
     $request->action = array_shift($args);
     $request->identifier = $request->resource . $request->action;
