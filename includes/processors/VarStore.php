@@ -9,7 +9,7 @@
  *    "meta":{
  *      "id":<integer>,
  *      "operation":"insert|delete|fetch",
- *      "var":<processor|mixed>,
+ *      "name":<processor|mixed>,
  *      "val":<processor|mixed>, [optional - if operation is insert]
  *    }
  *  }
@@ -19,11 +19,11 @@
 
 namespace Datagator\Processors;
 use Datagator\Core;
+use Datagator\Db;
 
 class VarStore extends VarMixed
 {
-  private $ops = array('insert', 'delete', 'fetch');
-  protected $required = array('var', 'operation');
+  protected $required = array('name', 'operation');
   protected $details = array(
     'name' => 'Var (Store)',
     'description' => 'A stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time.',
@@ -33,15 +33,15 @@ class VarStore extends VarMixed
       'operation' => array(
         'description' => 'The operation to be performed on the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"insert"', '"delete"', '"fetch"')
+        'accepts' => array('processor', '"save"', '"delete"', '"fetch"')
       ),
-      'var' => array(
+      'name' => array(
         'description' => 'The name of the variable.',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'literal')
       ),
       'val' => array(
-        'description' => 'The value of the variable. This input is only used in insert operations.',
+        'description' => 'The value of the variable. This input is only used in save operations.',
         'cardinality' => array(0, 1),
         'accepts' => array('processor', 'literal')
       ),
@@ -49,77 +49,38 @@ class VarStore extends VarMixed
   );
 
   /**
-   * @return mixed
+   * @return bool|string
    * @throws \Datagator\Core\ApiException
-   * @throws \Datagator\Processors\ApiException
    */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarStore');
 
-    $var = $this->getVar($this->meta->var);
+    $name = $this->getVar($this->meta->name);
     $operation = $this->getVar($this->meta->operation);
-    if (!in_array($operation, $this->ops)) {
-      throw new Core\ApiException("invalid operation: $operation", 1, $this->id, 417);
-    }
+    $mapper = new Db\VarsMapper($this->request->db);
+    $var = $mapper->findByAppIdName($this->request->appId, $name);
 
-    $method = "_$operation";
-    return $this->$method($this->request->client, $var);
-  }
-
-  /**
-   * Create a new stored var.
-   *
-   * @param $client
-   * @param $var
-   * @return bool
-   * @throws \Datagator\Core\ApiException
-   * @throws \Datagator\Processors\ApiException
-   */
-  private function _insert($client, $var)
-  {
-    $val = $this->getVar($this->meta->val);
-    $result = $this->_delete($client, $var);
-    if ($result === FALSE) {
-      throw new Core\ApiException('there was an error deleting old duplicate vars', 2, $this->id, 417);
+    switch($name) {
+      case 'save':
+        $val = $this->getVar($this->meta->val);
+        if ($var->getId() === NULL) {
+          $var->setName($name);
+          $var->setAppId($this->request->appId);
+        }
+        $var->setVal($val);
+        return TRUE;
+        break;
+      case 'delete':
+        if ($var->getId() === NULL) {
+          throw new Core\ApiException('could not delete variable, does not exist');
+        }
+        return $mapper->delete($var);
+        break;
+      case 'fetch':
+        return $var->getVal();
+        break;
     }
-    $sql = 'INSERT INTO val ("client", "name", "val") VALUES (?, ?, ?)';
-    $recordSet = $this->request->db->Execute($sql, array($client, $var, $val));
-    if ($recordSet->Affected_Rows() == 0) {
-      throw new Core\ApiException('there was an error inserting vars', 2, $this->id, 417);
-    }
-    return $result;
-  }
-
-  /**
-   * Delete a stored var.
-   *
-   * @param $client
-   * @param $var
-   * @return bool
-   */
-  private function _delete($client, $var)
-  {
-    $sql = 'DELETE FROM vars WHERE client=? AND name=?';
-    $recordSet = $this->request->db->Execute($sql, array($client, $var));
-    return $recordSet->Affected_Rows() > 0;
-  }
-
-  /**
-   * Fetch a stored var.
-   *
-   * @param $client
-   * @param $var
-   * @return mixed
-   * @throws \Datagator\Core\ApiException
-   */
-  private function _fetch($client, $var)
-  {
-    $sql = 'SELECT val FROM vars WHERE client=? AND name=?';
-    $recordSet = $this->request->db->Execute($sql, array($client, $var));
-    if ($recordSet->RecordCount() < 1) {
-      throw new Core\ApiException('there was an error fetching ' . $var, 2, $this->id, 417);
-    }
-    return $recordSet->fields['val'];
+    throw new Core\ApiException("invalid operation: $operation", 1, $this->id, 417);
   }
 }

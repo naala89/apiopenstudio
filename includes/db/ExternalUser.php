@@ -10,7 +10,7 @@ use Datagator\Core;
 class ExternalUser
 {
   protected $uid;
-  protected $cid;
+  protected $appid;
   protected $externalId;
   protected $externalEntity;
   protected $dataField1;
@@ -19,17 +19,17 @@ class ExternalUser
 
   /**
    * @param null $uid
-   * @param null $cid
+   * @param null $appid
    * @param null $externalId
    * @param null $externalEntity
    * @param null $dataField1
    * @param null $dataField2
    * @param null $dataField3
    */
-  public function __construct($uid=NULL, $cid=NULL, $externalId=NULL, $externalEntity=NULL, $dataField1=NULL, $dataField2=NULL, $dataField3=NULL)
+  public function __construct($uid=NULL, $appid=NULL, $externalId=NULL, $externalEntity=NULL, $dataField1=NULL, $dataField2=NULL, $dataField3=NULL)
   {
     $this->uid = $uid;
-    $this->cid = $cid;
+    $this->appid = $appid;
     $this->externalId = $externalId;
     $this->externalEntity = $externalEntity;
     $this->dataField1 = $dataField1;
@@ -46,27 +46,27 @@ class ExternalUser
   }
 
   /**
-   * @param $uid
+   * @param $val
    */
-  public function setUid($uid)
+  public function setUid($val)
   {
-    $this->uid = $uid;
+    $this->uid = $val;
   }
 
   /**
-   * @return int cid
+   * @return int appid
    */
-  public function getCid()
+  public function getAppId()
   {
     return $this->cid;
   }
 
   /**
-   * @param $cid
+   * @param $val
    */
-  public function setCid($cid)
+  public function setAppId($val)
   {
-    $this->cid = $cid;
+    $this->appid = $val;
   }
 
   /**
@@ -78,11 +78,11 @@ class ExternalUser
   }
 
   /**
-   * @param $externalId
+   * @param $val
    */
-  public function setExternalId($externalId)
+  public function setExternalId($val)
   {
-    $this->externalId = $externalId;
+    $this->externalId = $val;
   }
 
   /**
@@ -94,11 +94,11 @@ class ExternalUser
   }
 
   /**
-   * @param $externalEntity
+   * @param $val
    */
-  public function setExternalEntity($externalEntity)
+  public function setExternalEntity($val)
   {
-    $this->externalEntity = $externalEntity;
+    $this->externalEntity = $val;
   }
 
   /**
@@ -110,11 +110,11 @@ class ExternalUser
   }
 
   /**
-   * @param $dataField1
+   * @param $val
    */
-  public function setDataField1($dataField1)
+  public function setDataField1($val)
   {
-    $this->dataField1 = $dataField1;
+    $this->dataField1 = $val;
   }
 
   /**
@@ -126,11 +126,11 @@ class ExternalUser
   }
 
   /**
-   * @param $dataField2
+   * @param $val
    */
-  public function setDataField2($dataField2)
+  public function setDataField2($val)
   {
-    $this->dataField2 = $dataField2;
+    $this->dataField2 = $val;
   }
 
   /**
@@ -142,11 +142,11 @@ class ExternalUser
   }
 
   /**
-   * @param $dataField3
+   * @param $val
    */
-  public function setDataField3($dataField3)
+  public function setDataField3($val)
   {
-    $this->dataField3 = $dataField3;
+    $this->dataField3 = $val;
   }
 
   /**
@@ -155,7 +155,7 @@ class ExternalUser
   public function debug()
   {
     Core\Debug::variable($this->uid, 'uid');
-    Core\Debug::variable($this->cid, 'cid');
+    Core\Debug::variable($this->appid, 'appId');
     Core\Debug::variable($this->externalId, 'externalId');
     Core\Debug::variable($this->externalEntity, 'externalEntity');
     Core\Debug::variable($this->dataField1, '$dataField1');
