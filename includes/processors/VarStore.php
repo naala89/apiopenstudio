@@ -21,7 +21,7 @@ namespace Datagator\Processors;
 use Datagator\Core;
 use Datagator\Db;
 
-class VarStore extends VarMixed
+class VarStore extends ProcessorBase
 {
   protected $required = array('name', 'operation');
   protected $details = array(
@@ -54,14 +54,15 @@ class VarStore extends VarMixed
    */
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor VarStore');
+    Core\Debug::variable($this->meta, 'Processor VarStore', 4);
+    $this->validateRequired();
 
     $name = $this->getVar($this->meta->name);
     $operation = $this->getVar($this->meta->operation);
     $mapper = new Db\VarsMapper($this->request->db);
     $var = $mapper->findByAppIdName($this->request->appId, $name);
 
-    switch($name) {
+    switch($operation) {
       case 'save':
         $val = $this->getVar($this->meta->val);
         if ($var->getId() === NULL) {
@@ -80,7 +81,9 @@ class VarStore extends VarMixed
       case 'fetch':
         return $var->getVal();
         break;
+      default:
+        throw new Core\ApiException("invalid operation: $operation", 1, $this->id, 417);
+        break;
     }
-    throw new Core\ApiException("invalid operation: $operation", 1, $this->id, 417);
   }
 }

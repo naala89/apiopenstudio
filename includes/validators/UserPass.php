@@ -48,10 +48,10 @@ class UserPass extends Processors\ProcessorBase {
 
     $user = $this->getVar($this->meta->user);
     $pass = $this->getVar($this->meta->pass);
-    $cid = $this->request->client;
+    $appId = $this->request->appId;
 
     $sql = 'SELECT * FROM users WHERE cid=? AND email=? AND password=? AND active=1';
-    $bindParams = array($cid, $user, $pass);
+    $bindParams = array($appId, $user, $pass);
     $recordSet = $this->request->db->Execute($sql, $bindParams);
     return $recordSet && $recordSet->RecordCount() > 0;
   }

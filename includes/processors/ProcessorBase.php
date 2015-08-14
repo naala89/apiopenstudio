@@ -93,7 +93,6 @@ class ProcessorBase
     if (isset($meta->id)) {
       $this->id = $meta->id;
     }
-    $this->validateRequired();
   }
 
   /**

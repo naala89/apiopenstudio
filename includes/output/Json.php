@@ -11,16 +11,12 @@ class Json extends Output
     if (Datagator\Config::$debugInterface == 'LOG' || (Datagator\Config::$debug < 1 && Datagator\Config::$debugDb < 1)) {
       header('Content-Type: application/json');
     }
-    $data = $this->data;
-
     if ($this->isJson($this->data)) {
-      return $data;
+      return $this->data;
     }
-
-    if (is_object($data)) {
-      $data = (array) $data;
+    if (is_object($this->data)) {
+      $this->data = (array) $this->data;
     }
-
-    return json_encode($data);
+    return json_encode($this->data);
   }
 }

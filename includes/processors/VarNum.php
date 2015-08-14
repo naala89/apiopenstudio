@@ -33,7 +33,7 @@ class VarNum extends VarMixed
 
   public function process()
   {
-    Core\Debug::message('Processor VarNum', 4);
+    Core\Debug::variable($this->meta, 'Processor VarNum', 4);
     $var = parent::process();
 
     if (!is_numeric($var)) {

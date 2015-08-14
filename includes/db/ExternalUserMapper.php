@@ -26,7 +26,7 @@ class ExternalUserMapper
    */
   public function save(ExternalUser $user)
   {
-    if ($user->getUid() == NULL) {
+    if ($user->getId() == NULL) {
       $sql = 'INSERT INTO external_user (`appid`, `external_id`, `external_entity`, `data_field_1`, `data_field_2`, `data_field_3`) VALUES (?, ?, ?, ?, ?, ?)';
       $bindParams = array(
         $user->getAppId(),
@@ -38,7 +38,7 @@ class ExternalUserMapper
       );
       $result = $this->db->Execute($sql, $bindParams);
     } else {
-      $sql = 'UPDATE external_user SET `appid` = ?, `external_id` = ?, `external_entity` = ?, `data_field_1` = ?, `data_field_2` = ?, `data_field_3` = ? WHERE `uid` = ?';
+      $sql = 'UPDATE external_user SET `appid` = ?, `external_id` = ?, `external_entity` = ?, `data_field_1` = ?, `data_field_2` = ?, `data_field_3` = ? WHERE `id` = ?';
       $bindParams = array(
         $user->getAppId(),
         $user->getExternalId(),
@@ -46,7 +46,7 @@ class ExternalUserMapper
         $user->getDataField1(),
         $user->getDataField2(),
         $user->getDataField3(),
-        $user->getUid()
+        $user->getId()
       );
       $result = $this->db->Execute($sql, $bindParams);
     }
@@ -57,13 +57,13 @@ class ExternalUserMapper
   }
 
   /**
-   * @param $uid
+   * @param $id
    * @return \Datagator\Db\ExternalUser
    */
-  public function findByUid($uid)
+  public function findById($id)
   {
-    $sql = 'SELECT * FROM external_user WHERE `uid` = ?';
-    $bindParams = array($uid);
+    $sql = 'SELECT * FROM external_user WHERE `id` = ?';
+    $bindParams = array($id);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
   }
@@ -108,7 +108,7 @@ class ExternalUserMapper
   {
     $user = new ExternalUser();
 
-    $user->setUid(!empty($row['uid']) ? $row['uid'] : NULL);
+    $user->setId(!empty($row['id']) ? $row['id'] : NULL);
     $user->setAppId(!empty($row['appid']) ? $row['appid'] : NULL);
     $user->setExternalId(!empty($row['external_id']) ? $row['external_id'] : NULL);
     $user->setExternalEntity(!empty($row['external_entity']) ? $row['external_entity'] : NULL);

@@ -59,7 +59,7 @@ class VareRand extends ProcessorBase
 
   public function process()
   {
-    Core\Debug::message('Processor VarRand', 4);
+    Core\Debug::variable($this->meta, 'Processor VarRand', 4);
     $this->validateRequired();
 
     $length = $this->getVar($this->meta->length);
