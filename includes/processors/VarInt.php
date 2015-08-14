@@ -33,7 +33,7 @@ class VarInt extends VarMixed
 
   public function process()
   {
-    Core\Debug::message('Processor VarInt', 4);
+    Core\Debug::variable($this->meta, 'Processor VarInt', 4);
     $var = parent::process();
 
     if (!is_integer($var)) {

@@ -35,7 +35,7 @@ class VarUri extends ProcessorBase
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor VarUri');
+    Core\Debug::variable($this->meta, 'Processor VarUri', 4);
     $index = $this->getVar($this->meta->index);
 
     if (!isset($this->request->args[$index])) {

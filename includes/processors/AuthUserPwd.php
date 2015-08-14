@@ -44,7 +44,7 @@ class AuthUserPwd extends Processor
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'AuthUserPwd', 4);
+    Core\Debug::variable($this->meta, 'Auth UserPwd', 4);
     $required = $this->validateRequired();
     if ($required !== TRUE) {
       return $required;

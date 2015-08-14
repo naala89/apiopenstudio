@@ -33,7 +33,7 @@ class VarBool extends VarMixed
 
   public function process()
   {
-    Core\Debug::message('Processor VarBool', 4);
+    Core\Debug::variable($this->meta, 'Processor VarBool', 4);
     $var = parent::process();
 
     if (!is_bool($var)) {

@@ -37,7 +37,8 @@ class VarMixed extends ProcessorBase
 
   public function process()
   {
-    Core\Debug::message('Processor VarMixed', 4);
+    Core\Debug::variable($this->meta, 'Processor VarMixed', 4);
+    $this->validateRequired();
     return $this->getVar($this->meta->var);
   }
 }

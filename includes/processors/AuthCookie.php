@@ -37,7 +37,7 @@ class AuthCookie extends Processor
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'AuthCookie');
+    Core\Debug::variable($this->meta, 'Auth Cookie', 4);
     $required = $this->validateRequired();
     if ($required !== TRUE) {
       return $required;

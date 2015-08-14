@@ -33,7 +33,7 @@ class VarRequest extends VarMixed
 
   public function process()
   {
-    Core\Debug::message('ProcessorVarRequest');
+    Core\Debug::variable($this->meta, 'ProcessorVarRequest');
     $var = parent::process();
 
     if (empty($_REQUEST[$var])) {

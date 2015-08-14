@@ -77,8 +77,8 @@ class AllProcessors extends ProcessorBase
       return $val;
     }
     if (is_array($val)) {
-      return in_array($this->request->client, $val);
+      return in_array($this->request->appId, $val);
     }
-    return $this->request->client == $val;
+    return $this->request->appId == $val;
   }
 }

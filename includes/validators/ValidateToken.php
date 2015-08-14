@@ -45,10 +45,10 @@ class ValidateToken extends Processors\ProcessorBase {
     if (empty($token)) {
       return FALSE;
     }
-    $cid = $this->request->client;
+    $appId = $this->request->appId;
 
     $sql = 'SELECT * FROM users WHERE client=? AND token=? AND (stale_time > now() OR stale_time IS NULL) AND active=1';
-    $bindParams = array($cid, $token);
+    $bindParams = array($appId, $token);
     $recordSet = $this->request->db->Execute($sql, $bindParams);
     return $recordSet && $recordSet->RecordCount() > 0;
   }

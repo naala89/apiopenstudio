@@ -88,7 +88,7 @@ class VarsMapper
    */
   public function findByAppIdName($appId, $name)
   {
-    $sql = 'SELECT * FROM vars WHERE `appid` AND `name` = ?';
+    $sql = 'SELECT * FROM vars WHERE `appid` = ? AND `name` = ?';
     $bindParams = array($appId, $name);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);

@@ -33,7 +33,7 @@ class VarFloat extends VarMixed
 
   public function process()
   {
-    Core\Debug::message('Processor VarFloat, 4');
+    Core\Debug::variable($this->meta, 'Processor VarFloat, 4');
     $var = parent::process();
 
     if (!is_float($var)) {

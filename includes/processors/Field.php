@@ -40,7 +40,8 @@ class Field extends ProcessorBase
 
   public function process()
   {
-    Core\Debug::message('Processor Field', 4);
+    Core\Debug::variable($this->meta, 'Processor Field', 4);
+    $this->validateRequired();
 
     $name = $this->getVar($this->meta->name);
     $value = $this->getVar($this->meta->value);

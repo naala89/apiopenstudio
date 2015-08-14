@@ -52,6 +52,7 @@ class InputUrl extends ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'processor InputUrl', 4);
+    $this->validateRequired();
 
     $method = $this->getVar($this->meta->method);
     $method = strtolower($method);

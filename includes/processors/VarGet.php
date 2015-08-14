@@ -34,8 +34,8 @@ class VarGet extends VarMixed
 
   public function process()
   {
-    Core\Debug::message('Processor VarGet');
-    $varName = $this->getVar($this->meta->var);
+    Core\Debug::variable($this->meta, 'Processor VarGet');
+    $varName = parent::process();
 
     if (empty($this->request->vars[$varName])) {
       throw new Core\ApiException("get variable ($varName) does not exist", 5, $this->id, 417);

@@ -23,6 +23,7 @@ use Datagator\Db;
 class LoginStoreDrupal extends ProcessorBase
 {
   private $user;
+  private $defaultEntity = 'drupal';
   protected $required = array('source');
   protected $details = array(
     'name' => 'LoginStoreDrupal',
@@ -61,20 +62,21 @@ class LoginStoreDrupal extends ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor LoginStoreDrupal', 4);
+    $this->validateRequired();
 
     $source = $this->getVar($this->meta->source);
     $source = json_decode($source);
     if (empty($source->token) || empty($source->user) || empty($source->user->uid)) {
       throw new Core\ApiException('login failed, no token received', 3, $this->id, 419);
     }
-    $externalEntity = !empty($this->meta->externalEntity) ? $this->getVar($this->meta->externalEntity) : 'drupal';
+    $externalEntity = !empty($this->meta->externalEntity) ? $this->getVar($this->meta->externalEntity) : $this->defaultEntity;
     $externalId = $source->user->uid;
-    $cid = $this->request->client;
+    $appid = $this->request->appId;
 
     $userMapper = new Db\ExternalUserMapper($this->request->db);
-    $user = $userMapper->findByCidEntityExternalId($cid, $externalEntity, $externalId);
-    if ($user->getUid() === NULL) {
-      $user->setCid($cid);
+    $user = $userMapper->findByAppIdEntityExternalId($appid, $externalEntity, $externalId);
+    if ($user->getId() == NULL) {
+      $user->setAppId($appid);
       $user->setExternalEntity($externalEntity);
       $user->setExternalId($externalId);
     }
@@ -83,6 +85,8 @@ class LoginStoreDrupal extends ProcessorBase
     $user->setDataField3($source->sessid);
 
     $userMapper->save($user);
+
+    var_dump($source); exit;
 
     return $source;
   }

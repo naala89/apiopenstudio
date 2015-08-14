@@ -101,10 +101,6 @@ class Curl
     $this->type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
     $this->curlStatus = curl_errno($ch);
     $this->errorMsg = curl_error($ch);
-    Debug::variable(curl_getinfo($ch, CURLINFO_HTTP_CODE), 'http status');
-    Debug::variable(curl_getinfo($ch, CURLINFO_CONTENT_TYPE), 'type');
-    Debug::variable(curl_errno($ch), 'curl status');
-    Debug::variable(curl_error($ch), 'curl error text');
     curl_close($ch);
 
     return $response;

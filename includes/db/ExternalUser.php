@@ -9,8 +9,8 @@ use Datagator\Core;
 
 class ExternalUser
 {
-  protected $uid;
-  protected $appid;
+  protected $id;
+  protected $appId;
   protected $externalId;
   protected $externalEntity;
   protected $dataField1;
@@ -18,7 +18,7 @@ class ExternalUser
   protected $dataField3;
 
   /**
-   * @param null $uid
+   * @param null $id
    * @param null $appid
    * @param null $externalId
    * @param null $externalEntity
@@ -26,9 +26,9 @@ class ExternalUser
    * @param null $dataField2
    * @param null $dataField3
    */
-  public function __construct($uid=NULL, $appid=NULL, $externalId=NULL, $externalEntity=NULL, $dataField1=NULL, $dataField2=NULL, $dataField3=NULL)
+  public function __construct($id=NULL, $appid=NULL, $externalId=NULL, $externalEntity=NULL, $dataField1=NULL, $dataField2=NULL, $dataField3=NULL)
   {
-    $this->uid = $uid;
+    $this->id = $id;
     $this->appid = $appid;
     $this->externalId = $externalId;
     $this->externalEntity = $externalEntity;
@@ -38,19 +38,19 @@ class ExternalUser
   }
 
   /**
-   * @return int uid
+   * @return int id
    */
-  public function getUid()
+  public function getId()
   {
-    return $this->uid;
+    return $this->id;
   }
 
   /**
    * @param $val
    */
-  public function setUid($val)
+  public function setId($val)
   {
-    $this->uid = $val;
+    $this->id = $val;
   }
 
   /**
@@ -58,7 +58,7 @@ class ExternalUser
    */
   public function getAppId()
   {
-    return $this->cid;
+    return $this->appid;
   }
 
   /**
