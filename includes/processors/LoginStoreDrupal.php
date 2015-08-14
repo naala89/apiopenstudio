@@ -86,8 +86,6 @@ class LoginStoreDrupal extends ProcessorBase
 
     $userMapper->save($user);
 
-    var_dump($source); exit;
-
     return $source;
   }
 }
