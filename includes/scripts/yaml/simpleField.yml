@@ -1,7 +1,7 @@
 uri:
 # URI resource indicator
-  resource: foo
-  action: bar
+  noun: foo
+  verb: bar
 
 method: get # http delivery method
 
