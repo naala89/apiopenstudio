@@ -17,8 +17,9 @@
  */
 
 namespace Datagator\Processors;
+use Datagator\Core;
 
-class Object extends Processor
+class Object extends ProcessorBase
 {
   protected $details = array(
     'name' => 'Object',
@@ -28,14 +29,14 @@ class Object extends Processor
       'attributes' => array(
         'description' => 'The value of the variable.',
         'cardinality' => array(0, '*'),
-        'accepts' => array('processor', 'literal', 'var'),
+        'accepts' => array('processor', 'literal'),
       ),
     ),
   );
 
   public function process()
   {
-    Debug::message('ProcessorObject');
+    Core\Debug::variable($this->meta, 'Processor Object', 4);
 
     $result = array();
     $attributes = $this->getVar($this->meta->attributes);
