@@ -7,10 +7,10 @@
  * This will return the actual image, not the URL.
  */
 
-//include_once(Config::$dirIncludes . 'output/class.Output.php');
-//include_once(Config::$dirIncludes . 'class.Curl.php');
+namespace Datagator\Outputs;
+use Datagator\Core;
 
-class Image extends \Output
+class Image extends Output
 {
   public function process()
   {
@@ -18,7 +18,7 @@ class Image extends \Output
 
     if (!is_string($this->data)) {
       //include_once(Config::$dirIncludes . 'output/class.OutputJson.php');
-      $xml = new \Json($this->status, $this->data);
+      $xml = new Json($this->status, $this->data);
       return $xml->process();
     }
     if (empty($this->data)) {
@@ -27,7 +27,7 @@ class Image extends \Output
     }
 
     if (substr($this->data, 0, 4 ) === "http") {
-      $curl = new \Curl();
+      $curl = new Core\Curl();
       $image = $curl->get($this->data, array('CURLOPT_SSL_VERIFYPEER' => 0, 'CURLOPT_FOLLOWLOCATION' => 1));
       header('Content-Type:' . $curl->type);
       return $image;

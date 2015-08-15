@@ -5,9 +5,9 @@
  * @see http://pastebin.com/pYuXQWee
  */
 
-//include_once(Config::$dirIncludes . 'output/class.Output.php');
+namespace Datagator\Outputs;
 
-class Xml extends \Output
+class Xml extends Output
 {
   public function process()
   {
