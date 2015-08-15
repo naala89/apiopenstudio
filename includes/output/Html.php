@@ -1,7 +1,7 @@
 <?php
 
-//include_once(Config::$dirIncludes . 'output/class.OutputXml.php');
+namespace Datagator\Outputs;
 
-class Html extends \Xml
+class Html extends Xml
 {
 }

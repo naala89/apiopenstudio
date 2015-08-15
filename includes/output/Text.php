@@ -1,8 +1,8 @@
 <?php
 
-//include_once(Config::$dirIncludes . 'output/class.Output.php');
+namespace Datagator\Outputs;
 
-class Text extends \Output
+class Text extends Output
 {
   public function process()
   {

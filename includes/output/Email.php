@@ -4,8 +4,8 @@
  * TODO: Define outputEmail
  */
 
-//include_once(Config::$dirIncludes . 'output/class.Output.php');
+namespace Datagator\Email;
 
-class Email extends \Output
+class Email extends Output
 {
 }
