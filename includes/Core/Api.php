@@ -13,6 +13,7 @@ use Datagator\Db;
 use Datagator\Validators;
 use Datagator\Yaml;
 use Datagator\Outputs\Output;
+use Spyc;
 
 Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Config::$debug, Config::$errorLog);
 
@@ -23,7 +24,7 @@ Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Con
 class Api
 {
   private $cache;
-  private $test = FALSE; // FALSE or name of test class
+  private $test = 'testTemplate1'; // FALSE or name of test class
 
   /**
    * Constructor
@@ -123,7 +124,7 @@ class Api
    * @return \stdClass
    * @throws \Datagator\Core\ApiException
    */
-  private function _getResource($request)
+  private function _getResource(&$request)
   {
     $dsnOptions = '';
     if (sizeof(Config::$dboptions) > 0) {
@@ -146,17 +147,29 @@ class Api
       $resource = $mapper->findByAppIdMethodIdentifier($request->appId, $request->method, $request->identifier);
 
       if ($resource->getId() === NULL) {
-        throw new ApiException('resource or client not defined',1 , -1, 404);
+        throw new ApiException('resource or client not defined', 1, -1, 404);
       }
-      //$row = $recordSet->fields;
+
       $result->r = json_decode($resource->getMeta());
       $result->ttl = $resource->getTtl();
     } else {
-      // @TODO: update Test/*.php classes to be resource Yaml documents that are translated here.
-      $class = 'Datagator\\Yaml\\' . ucfirst($this->test);
-      $obj = new $class();
-      $result->r = json_decode(json_encode($obj->get()));
-      $result->ttl = 300;
+      $filepath = $_SERVER["DOCUMENT_ROOT"] . '/includes/yaml/' . ucfirst($this->test) . '.yaml';
+      if (!file_exists($filepath)) {
+        throw new ApiException("invalid test yaml: $filepath", -1 , -1, 400);
+      }
+      $array = Spyc::YAMLLoad($filepath);
+      $result = new \stdClass();
+      $result->r = new \stdClass();
+      $result->r->process = $this->_arrayToObject($array['process']);
+      if (!empty($array['validation'])) {
+        $result->r->validation = $this->_arrayToObject($array['validation']);
+      }
+      if (!empty($array['output'])) {
+        $result->r->output = $this->_arrayToObject($array['output']);
+      }
+      $result->ttl = $array['ttl'];
+      $request->method = $array['method'];
+      $request->identifier = strtolower($array['uri']['noun']) . strtolower($array['uri']['verb']);
     }
 
     Debug::variable($result, 'resource');
@@ -320,5 +333,12 @@ class Api
       $cleaned = trim(strip_tags($data));
     }
     return $cleaned;
+  }
+
+  private function _arrayToObject($array)
+  {
+    $json = json_encode($array);
+    $object = json_decode($json);
+    return $object;
   }
 }

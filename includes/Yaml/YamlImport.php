@@ -1,29 +1,37 @@
-<?php
+uri:
+noun: foo
+verb: bar
 
-namespace Datagator\Yaml;
+method: get
 
-class YamlImport {
-  /**
-   * get articles
-   *
-   * {"process":{"type":"yaml","meta":{"id":1,"func":"import","yaml":{"type":"varPost","meta":{"id":2,"var":"yaml"}}}}}
-   */
-  public function get() {
-    return array(
-      'process' => array(
-        'type' => 'yaml',
-        'meta' => array(
-          'id' => 1,
-          'func' => 'import',
-          'yaml' => array(
-            'type' => 'varPost',
-            'meta' => array(
-              'id' => 2,
-              'var' => 'yaml'
-            )
-          )
-        )
-      )
-    );
-  }
-}
+ttl: 300
+
+validation: FALSE
+
+process:
+processor: field
+meta:
+name:
+processor: varStore
+meta:
+operation: fetch
+var: myVarName
+value:
+processor: varUri
+meta:
+index: 1
+
+output:
+- response
+- email:
+format: json
+destination:
+- john@naala.com.au
+- foo@bar.com
+- xml:
+destination:
+-www.foo.com
+-www.bar.com
+- json:
+destination:
+- www.wotnot.com
