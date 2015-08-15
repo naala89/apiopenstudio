@@ -108,7 +108,8 @@ class ProcessorBase
   public function process()
   {
     $processor = $this->getProcessor($this->meta);
-    return $processor->process();
+    $result =  $processor->process();
+    return $result;
   }
 
   /**

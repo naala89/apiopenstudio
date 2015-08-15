@@ -7,7 +7,7 @@ abstract class Output
   public $status;
   protected $data;
 
-  public function Output($status, $data)
+  public function __construct($status, $data)
   {
     $this->status = $status;
     $this->data = $data;

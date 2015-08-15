@@ -12,6 +12,7 @@ use Datagator\Processors;
 use Datagator\Db;
 use Datagator\Validators;
 use Datagator\Yaml;
+use Datagator\Outputs\Output;
 
 Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Config::$debug, Config::$errorLog);
 
