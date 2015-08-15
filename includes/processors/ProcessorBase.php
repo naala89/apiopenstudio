@@ -199,9 +199,9 @@ class ProcessorBase
   protected function getProcessor($obj = NUll)
   {
     $obj = ($obj === NULL ? $this->meta : $obj);
-    $class = 'Datagator\\Processors\\' . ucfirst(trim($obj->type));
+    $class = 'Datagator\\Processors\\' . ucfirst(trim($obj->processor));
     if (!class_exists($class)) {
-      throw new Core\ApiException('Processor undefined: ' . $obj->type);
+      throw new Core\ApiException('Processor undefined: ' . $obj->processor);
     }
     return new $class($obj->meta, $this->request);
   }

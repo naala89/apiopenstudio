@@ -61,6 +61,7 @@ class Config
     'johns-MBP' => 'development'
   );
   static private $_allow_override;
+  static public $dirVendor;
 
   /**
    * database
@@ -140,6 +141,7 @@ class Config
   {
     self::$defaultFormat = 'json';
     self::$tokenLife = '+1 day';
+    self::$dirVendor = $_SERVER["DOCUMENT_ROOT"] . '/vendor/';
   }
 
   /**

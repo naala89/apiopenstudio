@@ -20,7 +20,6 @@
 namespace Datagator\Processors;
 use Datagator\Core;
 use Datagator\Db;
-use Spyc;
 
 class ResourceYaml extends ProcessorBase
 {
@@ -94,10 +93,10 @@ class ResourceYaml extends ProcessorBase
   {
     $yaml = '';
     if (!empty($_FILES['yaml'])) {
-      $yaml = Spyc::YAMLLoad($_FILES['yaml']['tmp_name']);
+      $yaml = \Spyc::YAMLLoad($_FILES['yaml']['tmp_name']);
     } else {
       $yaml = urldecode($this->getVar($this->meta->yaml));
-      $yaml = Spyc::YAMLLoadString($yaml);
+      $yaml = \Spyc::YAMLLoadString($yaml);
     }
     if (empty($yaml)) {
       throw new Core\ApiException('invalid or no yaml supplied', -1, $this->id, 417);
@@ -106,7 +105,7 @@ class ResourceYaml extends ProcessorBase
     Core\Debug::variable($yaml, '$yaml');
     $appId = $this->request->appId;
     $method = $yaml['method'];
-    $identifier = strtolower($yaml['uri']['resource']) . strtolower($yaml['uri']['action']);
+    $identifier = strtolower($yaml['uri']['noun']) . strtolower($yaml['uri']['verb']);
     $meta = json_encode(array(
       'validation' => $yaml['validation'],
       'process' => $yaml['process'],
@@ -118,7 +117,7 @@ class ResourceYaml extends ProcessorBase
     $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
     if ($resource->getId() == NULL) {
       $resource->setAppId($appId);
-      $resource->setMethod($appId);
+      $resource->setMethod($method);
       $resource->setIdentifier($identifier);
     }
     $resource->setMeta($meta);
@@ -167,7 +166,7 @@ class ResourceYaml extends ProcessorBase
     $result['method'] = $resource->getMethod();
     $result['ttl'] = $resource->getTtl();
 
-    return Spyc::YAMLDump($result);
+    return \Spyc::YAMLDump($result);
   }
 
   /**

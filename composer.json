@@ -1,4 +1,5 @@
 {
+  "name": "naala/datagator",
   "require": {
     "adodb/adodb-php": "5.19",
     "mustangostang/spyc": "^0.5.1"
