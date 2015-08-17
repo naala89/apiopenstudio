@@ -1,0 +1,27 @@
+uri:
+  noun: sysyemCache
+  verb: test
+
+method: get
+
+ttl: 300
+
+validation:
+  processor: validateToken
+  meta:
+    id: 1
+    token:
+      processor: varGet
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: systemCache
+  meta:
+    id: 3
+    operation:
+      processor: varUri
+      meta:
+        id: 4
+        index: 0

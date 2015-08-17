@@ -1,0 +1,34 @@
+uri:
+  noun: object
+  verb: test
+
+method: get
+
+ttl: 300
+
+validation: FALSE
+
+process:
+  processor: object
+  meta:
+    id: 1
+    attributes:
+      - processor: field
+        meta:
+          id: 2
+          name: name1
+          value:
+            processor: varGet
+            meta:
+              id: 3
+              var: token
+      - processor: field
+        meta:
+          id: 4
+          name: name2
+          value: value'
+      - processor: field
+        meta:
+          id: 5
+          name: name3
+          value: value

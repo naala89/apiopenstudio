@@ -1,0 +1,14 @@
+uri:
+  noun: yamlImport
+  verb: test
+
+method: post
+
+ttl: 300
+
+validation: FALSE
+
+process:
+  processor: resourceYaml
+  meta:
+    id: 1
