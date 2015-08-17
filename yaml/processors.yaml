@@ -1,0 +1,14 @@
+uri:
+  noun: processors
+  verb: test
+
+method: get
+
+ttl: 300
+
+validation: FALSE
+
+process:
+  processor: allProcessors
+  meta:
+    id: 1

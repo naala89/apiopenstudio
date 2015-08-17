@@ -11,8 +11,7 @@
       "Datagator\\Db\\": "includes/db/",
       "Datagator\\Outputs\\": "includes/output/",
       "Datagator\\Processors\\": "includes/processors/",
-      "Datagator\\Validators\\": "includes/validators/",
-      "Datagator\\Yaml\\": "includes/yaml/"
+      "Datagator\\Validators\\": "includes/validators/"
     }
   }
 }

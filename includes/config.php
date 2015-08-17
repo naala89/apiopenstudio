@@ -62,6 +62,7 @@ class Config
   );
   static private $_allow_override;
   static public $dirVendor;
+  static public $dirYaml;
 
   /**
    * database
@@ -142,6 +143,7 @@ class Config
     self::$defaultFormat = 'json';
     self::$tokenLife = '+1 day';
     self::$dirVendor = $_SERVER["DOCUMENT_ROOT"] . '/vendor/';
+    self::$dirYaml = $_SERVER["DOCUMENT_ROOT"] . '/yaml/';
   }
 
   /**

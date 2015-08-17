@@ -1,0 +1,24 @@
+uri:
+  noun: swellnetVersion
+  verb: test
+
+method: get
+
+ttl: 300
+
+validation:
+  processor: validateToken
+  meta:
+    id: 1
+    token:
+      processor: varGet
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: varStore
+  meta:
+    id: 3
+    operation: fetch
+    name: version

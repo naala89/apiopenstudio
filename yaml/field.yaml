@@ -1,0 +1,21 @@
+uri:
+  noun: field
+  verb: test
+
+method: get
+
+ttl: 300
+
+validation: FALSE
+
+process:
+  processor: field
+  meta:
+    id: 1
+    name:
+      processor: varStore
+      meta:
+        id: 2
+        operation: fetch
+        name: drupalUrl
+    value: value

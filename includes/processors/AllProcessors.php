@@ -1,6 +1,7 @@
 <?php
 
 namespace Datagator\Processors;
+use Datagator\Core;
 
 class AllProcessors extends ProcessorBase
 {
@@ -17,7 +18,7 @@ class AllProcessors extends ProcessorBase
    */
   public function process()
   {
-    Debug::variable($this->meta, 'Processor AllProcessors');
+    Core\Debug::variable($this->meta, 'Processor AllProcessors');
 
     $processors = $this->_getProcessors();
     $details = $this->_getDetails($processors);

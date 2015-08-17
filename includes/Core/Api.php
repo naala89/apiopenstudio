@@ -11,7 +11,6 @@ use Datagator\Config;
 use Datagator\Processors;
 use Datagator\Db;
 use Datagator\Validators;
-use Datagator\Yaml;
 use Datagator\Outputs\Output;
 use Spyc;
 
@@ -24,7 +23,7 @@ Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Con
 class Api
 {
   private $cache;
-  private $test = 'testTemplate1'; // FALSE or name of test class
+  private $test = 'swellnetSurfcams'; // FALSE or name of yaml file in includes/yaml
 
   /**
    * Constructor
@@ -143,7 +142,7 @@ class Api
     $mapper = new Db\ResourceMapper($request->db);
 
     $result = new \stdClass();
-    if (!$this->test) {
+    if ($request->identifier === FALSE) {
       $resource = $mapper->findByAppIdMethodIdentifier($request->appId, $request->method, $request->identifier);
 
       if ($resource->getId() === NULL) {
@@ -153,7 +152,7 @@ class Api
       $result->r = json_decode($resource->getMeta());
       $result->ttl = $resource->getTtl();
     } else {
-      $filepath = $_SERVER["DOCUMENT_ROOT"] . '/includes/yaml/' . ucfirst($this->test) . '.yaml';
+      $filepath = Config::$dirYaml . $this->test . '.yaml';
       if (!file_exists($filepath)) {
         throw new ApiException("invalid test yaml: $filepath", -1 , -1, 400);
       }

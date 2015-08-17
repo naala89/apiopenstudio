@@ -1,0 +1,17 @@
+uri:
+  noun: yamlDelete
+  verb: test
+
+method: delete
+
+ttl: 300
+
+validation: FALSE
+
+process:
+  processor: resourceYaml
+  meta:
+    id: 1
+    method: get
+    identifierNoun: myResource
+    identifierVerb: test
