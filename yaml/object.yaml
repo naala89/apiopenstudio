@@ -21,7 +21,7 @@ process:
             processor: varGet
             meta:
               id: 3
-              var: token
+              name: token
       - processor: field
         meta:
           id: 4
