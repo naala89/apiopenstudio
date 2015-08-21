@@ -27,9 +27,15 @@ class UserMapper
   public function save(User $user)
   {
     if (empty($user->getUid())) {
-      $sql = 'INSERT INTO `user` (`active`, `honorific`, `name_first`, `name_last`, `company`, `website`, `address_street`, `address_suburb`, `address_city`, `address_state`, `address_postcode`, `phone_mobile`, `phone_work`, `email`, `salt`, `hash`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      $sql = 'INSERT INTO `user` (`active`, `username`, `salt`, `hash`, `token`, `token_ttl`, `email`, `honorific`, `name_first`, `name_last`, `company`, `website`, `address_street`, `address_suburb`, `address_city`, `address_state`, `address_postcode`, `phone_mobile`, `phone_work`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
       $bindParams = array(
         $user->getActive(),
+        $user->getUsername(),
+        $user->getSalt(),
+        $user->getHash(),
+        $user->getToken(),
+        $user->getTokenTtl(),
+        $user->getEmail(),
         $user->getHonorific(),
         $user->getNameFirst(),
         $user->getNameLast(),
@@ -41,16 +47,19 @@ class UserMapper
         $user->getAddressState(),
         $user->getAddressPostcode(),
         $user->getPhoneMobile(),
-        $user->getPhoneWork(),
-        $user->getEmail(),
-        $user->getSalt(),
-        $user->getHash()
+        $user->getPhoneWork()
       );
       $result = $this->db->Execute($sql, $bindParams);
     } else {
-      $sql = 'UPDATE `user` SET `active`=?, `honorific`=?, `name_first`=?, `name_last`=?, `company`=?, `website`=?, `address_street`=?, `address_suburb`=?, `address_city`=?, `address_state`=?, `address_postcode`=?, `phone_mobile`=?, `phone_work`=?, `email`=?, `salt`=?, `hash`=?  WHERE `uid`=?';
+      $sql = 'UPDATE `user` SET `active`=?, `username`=?, `salt`=?, `hash`=?, `token`=?, `token_ttl`=?, `email`=?, `honorific`=?, `name_first`=?, `name_last`=?, `company`=?, `website`=?, `address_street`=?, `address_suburb`=?, `address_city`=?, `address_state`=?, `address_postcode`=?, `phone_mobile`=?, `phone_work`=?  WHERE `uid`=?';
       $bindParams = array(
         $user->getActive(),
+        $user->getUsername(),
+        $user->getSalt(),
+        $user->getHash(),
+        $user->getToken(),
+        $user->getTokenTtl(),
+        $user->getEmail(),
         $user->getHonorific(),
         $user->getNameFirst(),
         $user->getNameLast(),
@@ -63,9 +72,6 @@ class UserMapper
         $user->getAddressPostcode(),
         $user->getPhoneMobile(),
         $user->getPhoneWork(),
-        $user->getEmail(),
-        $user->getSalt(),
-        $user->getHash(),
         $user->getUid()
       );
       $result = $this->db->Execute($sql, $bindParams);

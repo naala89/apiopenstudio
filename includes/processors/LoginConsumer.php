@@ -66,7 +66,7 @@ class LoginConsumer extends ProcessorBase {
     $tokenString = time() . $user->getUsername();
     $token = md5($tokenString);
     $user->setToken($token);
-    $user->setTokenTtl(Core\Utilities::date_php2mysql(time() + Config::$tokenLife));
+    $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime(Config::$tokenLife)));
     $userObj->setUser($user);
     $userObj->save();
 
