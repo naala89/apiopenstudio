@@ -23,7 +23,7 @@ Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Con
 class Api
 {
   private $cache;
-  private $test = 'field'; // FALSE or name of yaml file in includes/yaml
+  private $test = false; // FALSE or name of yaml file in includes/yaml
 
   /**
    * Constructor
