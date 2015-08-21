@@ -1,6 +1,6 @@
 uri:
-  noun: login
-  verb: consumer
+  noun: consumer
+  verb: login
 
 method: post
 
@@ -12,5 +12,13 @@ process:
   processor: LoginConsumer
   meta:
     id: 1
-    username: john
-    password: testpass
+    username:
+      processor: VarPost
+      meta:
+        id: 1
+        name: username
+    password:
+      processor: VarPost
+      meta:
+        id: 2
+        name: password
