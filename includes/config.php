@@ -141,10 +141,9 @@ class Config
   static private function everywhere()
   {
     self::$defaultFormat = 'json';
-    self::$tokenLife = '+1 day';
+    self::$tokenLife = '+1 hour';
     self::$dirVendor = $_SERVER["DOCUMENT_ROOT"] . '/vendor/';
     self::$dirYaml = $_SERVER["DOCUMENT_ROOT"] . '/yaml/';
-    self::$tokenLife = '500';
   }
 
   /**
