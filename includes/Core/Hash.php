@@ -12,12 +12,11 @@ class Hash
 
   /**
    * @param $password
-   * @param null $salt
+   * @param $salt
    * @return mixed|string
    */
-  public static function generateHash($password, $salt=NULL)
+  public static function generateHash($password, $salt)
   {
-    $salt = empty($salt) ? self::generateSalt() : $salt;
     return hash_pbkdf2('sha256', $password, $salt, self::$iterations, 32);
   }
 
