@@ -43,7 +43,7 @@ class Token extends Processors\ProcessorBase {
 
     $appId = $this->request->appId;
     $token = $this->getVar($this->meta->token);
-    $userObj = new Core\User();
+    $userObj = new Core\User($this->request->db);
 
     $user = $userObj->findByToken($token);
     if (empty($user->getUid()) || !$user->getActive()) {

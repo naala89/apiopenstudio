@@ -6,7 +6,15 @@ method: get
 
 ttl: 300
 
-validation: FALSE
+validation:
+  processor: Token
+  meta:
+    id: 1
+    token:
+      processor: varGet
+      meta:
+        id: 2
+        name: token
 
 process:
   processor: field

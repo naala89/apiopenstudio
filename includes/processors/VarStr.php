@@ -23,7 +23,7 @@ class VarStr extends VarMixed
     'menu' => 'variables',
     'client' => 'all',
     'input' => array(
-      'var' => array(
+      'value' => array(
         'description' => 'The value of the variable.',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'str')
@@ -34,12 +34,12 @@ class VarStr extends VarMixed
   public function process()
   {
     Core\Debug::variable($this->meta, 'ProcessorVarStr', 4);
-    $var = parent::process();
+    $value = parent::process();
 
-    if (!is_string($var)) {
+    if (!is_string($value)) {
       throw new Core\ApiException('invalid string', 5, $this->id, 417);
     }
 
-    return $var;
+    return $value;
   }
 }

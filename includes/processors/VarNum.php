@@ -23,7 +23,7 @@ class VarNum extends VarMixed
     'menu' => 'variables',
     'client' => 'all',
     'input' => array(
-      'var' => array(
+      'value' => array(
         'description' => 'The value of the variable.',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'num')
@@ -34,12 +34,12 @@ class VarNum extends VarMixed
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarNum', 4);
-    $var = parent::process();
+    $value = parent::process();
 
-    if (!is_numeric($var)) {
+    if (!is_numeric($value)) {
       throw new Core\ApiException('invalid number', 5, $this->id, 417);
     }
 
-    return $var;
+    return $value;
   }
 }

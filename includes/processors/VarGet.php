@@ -18,13 +18,14 @@ use Datagator\Core;
 
 class VarGet extends VarMixed
 {
+  protected $required = array('name');
   protected $details = array(
     'name' => 'Var (Get)',
     'description' => 'A "get" variable. It fetches a variable from the get request.',
     'menu' => 'variables',
     'client' => 'all',
     'input' => array(
-      'var' => array(
+      'name' => array(
         'description' => 'The name of the variable.',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'literal')
@@ -35,12 +36,12 @@ class VarGet extends VarMixed
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarGet');
-    $varName = parent::process();
+    $name = $this->getVar($this->meta->name);
 
-    if (empty($this->request->vars[$varName])) {
-      throw new Core\ApiException("get variable ($varName) does not exist", 5, $this->id, 417);
+    if (empty($this->request->vars[$name])) {
+      throw new Core\ApiException("get variable ($name) does not exist", 5, $this->id, 417);
     }
 
-    return $this->request->vars[$varName];
+    return $this->request->vars[$name];
   }
 }

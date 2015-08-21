@@ -23,7 +23,7 @@ Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Con
 class Api
 {
   private $cache;
-  private $test = 'login'; // FALSE or name of yaml file in includes/yaml
+  private $test = 'field'; // FALSE or name of yaml file in includes/yaml
 
   /**
    * Constructor
@@ -189,7 +189,7 @@ class Api
     if (empty($resource->validation)) {
       return;
     }
-    $class = 'Datagator\\Validators\\' . ucfirst($this->_cleanData($resource->validation->type));
+    $class = 'Datagator\\Validators\\' . ucfirst($this->_cleanData($resource->validation->processor));
     $validator = new $class($resource->validation->meta, $request);
     if (!$validator->process()) {
       throw new ApiException('unauthorized', $resource->validation->meta->id, -1, 401);
