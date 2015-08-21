@@ -124,7 +124,7 @@ class UserMapper
    */
   public function findBytoken($token)
   {
-    $sql = 'SELECT * FROM `user` WHERE `token` = ? AND token_ttl < ?';
+    $sql = 'SELECT * FROM `user` WHERE `token` = ? AND token_ttl > ?';
     $bindParams = array($token, Core\Utilities::mysqlNow());
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -138,8 +138,10 @@ class UserMapper
    */
   public function hasRole($uid, $appId, $roleName)
   {
-    $sql = 'SELECT `u.*` FROM `user` AS u INNER JOIN `user_role` AS ur ON `u.uid` = ur.uid INNER JOIN `role` AS r ON `ur.rid` = `r.rid` WHERE `u.uid` = ? AND ur.appid = ? AND `r.name` = ?';
+    $sql = 'SELECT u.* FROM `user` AS u INNER JOIN `user_role` AS ur ON u.`uid`=ur.`uid` INNER JOIN `role` AS r ON ur.`rid`=r.`rid` WHERE u.`uid`=? AND ur.`appid`=? AND r.`name`=?';
     $bindParams = array($uid, $appId, $roleName);
+    Core\Debug::variable($sql);
+    Core\Debug::variable($bindParams);
     $row = $this->db->GetRow($sql, $bindParams);
     return !empty($row['uid']);
   }

@@ -23,7 +23,7 @@ class VarBool extends VarMixed
     'menu' => 'variables',
     'client' => 'all',
     'input' => array(
-      'var' => array(
+      'value' => array(
         'description' => 'The value of the variable.',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'bool')
@@ -34,12 +34,12 @@ class VarBool extends VarMixed
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarBool', 4);
-    $var = parent::process();
+    $value = parent::process();
 
-    if (!is_bool($var)) {
+    if (!is_bool($value)) {
       throw new Core\ApiException('invalid boolean', 5, $this->id, 417);
     }
 
-    return $var;
+    return $value;
   }
 }

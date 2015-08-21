@@ -23,7 +23,7 @@ class VarInt extends VarMixed
     'menu' => 'variables',
     'client' => 'all',
     'input' => array(
-      'var' => array(
+      'value' => array(
         'description' => 'The value of the variable.',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'int')
@@ -34,12 +34,12 @@ class VarInt extends VarMixed
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarInt', 4);
-    $var = parent::process();
+    $value = parent::process();
 
-    if (!is_integer($var)) {
+    if (!is_integer($value)) {
       throw new Core\ApiException('invalid integer', 5, $this->id, 417);
     }
 
-    return $var;
+    return $value;
   }
 }
