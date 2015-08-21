@@ -15,3 +15,9 @@ Install
   3. set other desired values in the region function you defined in $_server.
 6. run includes/scripts/db/structure.sql.
 7. run includes/scripts/db/data.sql.
+
+Requirements
+============
+1. php >= 5.3
+2. mcrpyt
+3. composer

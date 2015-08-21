@@ -61,8 +61,6 @@ class Config
     'johns-MBP' => 'development'
   );
   static private $_allow_override;
-  static public $dirVendor;
-  static public $dirYaml;
 
   /**
    * database
@@ -99,6 +97,8 @@ class Config
    */
   static public $defaultFormat;
   static public $tokenLife;
+  static public $dirYaml;
+  static public $dirVendor;
 
   /**
    * setup the initial config
@@ -144,6 +144,7 @@ class Config
     self::$tokenLife = '+1 day';
     self::$dirVendor = $_SERVER["DOCUMENT_ROOT"] . '/vendor/';
     self::$dirYaml = $_SERVER["DOCUMENT_ROOT"] . '/yaml/';
+    self::$tokenLife = '500';
   }
 
   /**
