@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e83b49314b129c9e5966362ccf2d8b1e",
+    "hash": "125320734048701bbadb99bf9809c2e7",
     "packages": [
         {
             "name": "adodb/adodb-php",
@@ -51,6 +51,57 @@
                 "database"
             ],
             "time": "2014-04-23 14:37:03"
+        },
+        {
+            "name": "eloquent/pbkdf2-compat",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/eloquent/pbkdf2-compat.git",
+                "reference": "1f08847b909244c02b80dfdcd9ea8e2bf149f5df"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/eloquent/pbkdf2-compat/zipball/1f08847b909244c02b80dfdcd9ea8e2bf149f5df",
+                "reference": "1f08847b909244c02b80dfdcd9ea8e2bf149f5df",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "icecave/archer": "~1"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/hash_pbkdf2.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Erin Millard",
+                    "email": "ezzatron@gmail.com",
+                    "homepage": "http://ezzatron.com/"
+                }
+            ],
+            "description": "A compatibility library for the PHP 5.5 function hash_pbkdf2().",
+            "homepage": "https://github.com/eloquent/pbkdf2-compat",
+            "keywords": [
+                "compat",
+                "compatibility",
+                "hash",
+                "hash_pbkdf2",
+                "pbkdf",
+                "pbkdf2",
+                "pkcs",
+                "pkcs5"
+            ],
+            "time": "2014-02-13 12:35:03"
         },
         {
             "name": "mustangostang/spyc",

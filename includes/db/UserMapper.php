@@ -26,8 +26,8 @@ class UserMapper
    */
   public function save(User $user)
   {
-    if ($user->getUid() == NULL) {
-      $sql = 'INSERT INTO `user` (`active`, `honorific`, `name_first`, `name_last`, `company`, `website`, `address_street`, `address_suburb`, `address_city`, `address_state`, `address_postcode`, `phone_mobile`, `phone_work`, `email`, `password`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, )';
+    if (empty($user->getUid())) {
+      $sql = 'INSERT INTO `user` (`active`, `honorific`, `name_first`, `name_last`, `company`, `website`, `address_street`, `address_suburb`, `address_city`, `address_state`, `address_postcode`, `phone_mobile`, `phone_work`, `email`, `salt`, `hash`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
       $bindParams = array(
         $user->getActive(),
         $user->getHonorific(),
@@ -43,11 +43,12 @@ class UserMapper
         $user->getPhoneMobile(),
         $user->getPhoneWork(),
         $user->getEmail(),
-        $user->getPassword()
+        $user->getSalt(),
+        $user->getHash()
       );
       $result = $this->db->Execute($sql, $bindParams);
     } else {
-      $sql = 'UPDATE `user` SET `active`=?, `honorific`=?, `name_first`=?, `name_last`=?, `company`=?, `website`=?, `address_street`=?, `address_suburb`=?, `address_city`=?, `address_state`=?, `address_postcode`=?, `phone_mobile`=?, `phone_work`=?, `email`=?, `password`=?)  WHERE `uid`=?)';
+      $sql = 'UPDATE `user` SET `active`=?, `honorific`=?, `name_first`=?, `name_last`=?, `company`=?, `website`=?, `address_street`=?, `address_suburb`=?, `address_city`=?, `address_state`=?, `address_postcode`=?, `phone_mobile`=?, `phone_work`=?, `email`=?, `salt`=?, `hash`=?  WHERE `uid`=?';
       $bindParams = array(
         $user->getActive(),
         $user->getHonorific(),
@@ -63,7 +64,8 @@ class UserMapper
         $user->getPhoneMobile(),
         $user->getPhoneWork(),
         $user->getEmail(),
-        $user->getPassword(),
+        $user->getSalt(),
+        $user->getHash(),
         $user->getUid()
       );
       $result = $this->db->Execute($sql, $bindParams);
@@ -92,25 +94,79 @@ class UserMapper
    */
   public function findByEmail($email)
   {
-    $sql = 'SELECT * FROM `users` WHERE `email` = ?';
+    $sql = 'SELECT * FROM `user` WHERE `email` = ?';
     $bindParams = array($email);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
   }
 
   /**
+   * @param $username
+   * @return \Datagator\Db\User
+   */
+  public function findByUsername($username)
+  {
+    $sql = 'SELECT * FROM `user` WHERE `username` = ?';
+    $bindParams = array($username);
+    $row = $this->db->GetRow($sql, $bindParams);
+    return $this->mapArray($row);
+  }
+
+  /**
+   * @param $token
+   * @return \Datagator\Db\User
+   */
+  public function findBytoken($token)
+  {
+    $sql = 'SELECT * FROM `user` WHERE `token` = ? AND token_ttl < ?';
+    $bindParams = array($token, Core\Utilities::mysqlNow());
+    $row = $this->db->GetRow($sql, $bindParams);
+    return $this->mapArray($row);
+  }
+
+  /**
+   * @param $uid
+   * @param $appId
+   * @param $roleName
+   * @return bool
+   */
+  public function hasRole($uid, $appId, $roleName)
+  {
+    $sql = 'SELECT `u.*` FROM `user` AS u INNER JOIN `user_role` AS ur ON `u.uid` = ur.uid INNER JOIN `role` AS r ON `ur.rid` = `r.rid` WHERE `u.uid` = ? AND ur.appid = ? AND `r.name` = ?';
+    $bindParams = array($uid, $appId, $roleName);
+    $row = $this->db->GetRow($sql, $bindParams);
+    return !empty($row['uid']);
+  }
+
+  /**
    * @param array $row
    * @return \Datagator\Db\User
    */
-  protected function mapArray(array $row)
+  protected function mapArray($row)
   {
     $user = new User();
-
+    //Core\Debug::variable($row);
     $user->setUid(!empty($row['uid']) ? $row['uid'] : NULL);
-    $user->setCid(!empty($row['cid']) ? $row['cid'] : NULL);
-    $user->setEmail(!empty($row['email']) ? $row['email'] : NULL);
-    $user->setPassword(!empty($row['password']) ? $row['password'] : NULL);
     $user->setActive(!empty($row['active']) ? $row['active'] : NULL);
+    $user->setUsername(!empty($row['username']) ? $row['username'] : NULL);
+    $user->setSalt(!empty($row['salt']) ? $row['salt'] : NULL);
+    $user->setHash(!empty($row['hash']) ? $row['hash'] : NULL);
+    $user->setToken(!empty($row['token']) ? $row['uid'] : NULL);
+    $user->setTokenTtl(!empty($row['token_ttl']) ? $row['token_ttl'] : NULL);
+    $user->setEmail(!empty($row['email']) ? $row['email'] : NULL);
+    $user->setHonorific(!empty($row['honorific']) ? $row['honorific'] : NULL);
+    $user->setNameFirst(!empty($row['name_first']) ? $row['name_first'] : NULL);
+    $user->setNameLast(!empty($row['name_last']) ? $row['name_last'] : NULL);
+    $user->setCompany(!empty($row['company']) ? $row['company'] : NULL);
+    $user->setWebsite(!empty($row['website']) ? $row['website'] : NULL);
+    $user->setAddressStreet(!empty($row['address_street']) ? $row['address_street'] : NULL);
+    $user->setAddressSuburb(!empty($row['address_suburb']) ? $row['address_suburb'] : NULL);
+    $user->setAddressCity(!empty($row['address_city']) ? $row['address_city'] : NULL);
+    $user->setAddressState(!empty($row['address_state']) ? $row['address_state'] : NULL);
+    $user->setAddressPostcode(!empty($row['address_postcode']) ? $row['address_postcode'] : NULL);
+    $user->setPhoneMobile(!empty($row['phone_mobile']) ? $row['phone_mobile'] : NULL);
+    $user->setPhoneWork(!empty($row['phone_work']) ? $row['phone_work'] : NULL);
+    //Core\Debug::variable($user->debug());
 
     return $user;
   }

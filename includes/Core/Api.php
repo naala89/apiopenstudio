@@ -23,7 +23,7 @@ Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Con
 class Api
 {
   private $cache;
-  private $test = 'swellnetSurfcams'; // FALSE or name of yaml file in includes/yaml
+  private $test = 'login'; // FALSE or name of yaml file in includes/yaml
 
   /**
    * Constructor

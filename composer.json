@@ -1,8 +1,9 @@
 {
   "name": "naala/datagator",
   "require": {
-    "adodb/adodb-php": "5.19",
-    "mustangostang/spyc": "^0.5.1"
+    "adodb/adodb-php": "^5.19",
+    "mustangostang/spyc": "^0.5.1",
+    "eloquent/pbkdf2-compat": "^1.0.1"
   },
   "autoload": {
     "psr-4": {

@@ -72,12 +72,12 @@ class UserRoleMapper
     $bindParams = array($uid);
     $recordSet = $this->db->Execute($sql, $bindParams);
 
-    $entries   = array();
+    $roles   = array();
     while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
+      $roles[] = $this->mapArray($recordSet->fields);
     }
 
-    return $entries;
+    return $roles;
   }
 
   /**

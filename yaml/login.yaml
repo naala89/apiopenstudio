@@ -1,0 +1,16 @@
+uri:
+  noun: login
+  verb: consumer
+
+method: post
+
+ttl: 300
+
+validation: FALSE
+
+process:
+  processor: LoginConsumer
+  meta:
+    id: 1
+    username: john
+    password: testpass
