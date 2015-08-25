@@ -17,7 +17,7 @@ process:
       processor: varStore # Processor of type VarStore
       meta:
         operation: fetch
-        var: myVarName
+        name: myVarName
     value:
       processor: varUri # Processor of type VarUri
       meta:
@@ -40,6 +40,6 @@ output:
       -www.foo.com
       -www.bar.com
   - json:
-  # Additional output in the form of JSON to be sent to the URLs listed in Destination
+  # Additional output in the form of HTTP POST with JSON to be sent to the URLs listed in Destination
     destination:
       - www.wotnot.com
