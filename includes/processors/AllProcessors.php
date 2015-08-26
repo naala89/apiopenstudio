@@ -5,11 +5,11 @@ use Datagator\Core;
 
 class AllProcessors extends ProcessorBase
 {
-  public $displayFrontend = FALSE;
   protected $details = array(
     'name' => 'All processors',
     'description' => 'Fetch data on all public and client processors available.',
     'menu' => 'system',
+    'application' => 'All',
     'input' => array()
   );
 

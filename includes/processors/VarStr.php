@@ -21,7 +21,7 @@ class VarStr extends VarMixed
     'name' => 'Var (String)',
     'description' => 'A string variable. It validates the input and returns an error if it is not a string.',
     'menu' => 'variables',
-    'client' => 'all',
+    'application' => 'All',
     'input' => array(
       'value' => array(
         'description' => 'The value of the variable.',

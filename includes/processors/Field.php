@@ -23,7 +23,7 @@ class Field extends ProcessorBase
     'name' => 'Field',
     'description' => 'Create a name value pair. This is primarily for use as a field in object.',
     'menu' => 'basic',
-    'client' => 'all',
+    'application' => 'All',
     'input' => array(
       'name' => array(
         'description' => 'The name of the nvp.',

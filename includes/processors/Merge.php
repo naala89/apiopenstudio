@@ -23,6 +23,24 @@ class Merge extends ProcessorBase
 {
   private $_defaultType = 'union';
   protected $required = array('sources');
+  protected $details = array(
+    'name' => 'Merge',
+    'description' => 'Merge 2 fields.',
+    'menu' => 'fields',
+    'application' => 'All',
+    'input' => array(
+      'sources' => array(
+        'description' => 'The values to perform the merge on.',
+        'cardinality' => array(1, '*'),
+        'accepts' => array('processor', 'literal')
+      ),
+      'mergeType' => array(
+        'description' => 'The merge operation to perform.',
+        'cardinality' => array(1, 1),
+        'accepts' => array('processor', '"negate"', '"intersect"', '"union"')
+      ),
+    ),
+  );
 
   public function process()
   {

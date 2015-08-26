@@ -25,7 +25,7 @@ class VarMixed extends ProcessorBase
     'name' => 'Var (Mixed)',
     'description' => 'A variable of any type.',
     'menu' => 'variables',
-    'client' => 'all',
+    'application' => 'All',
     'input' => array(
       'value' => array(
         'description' => 'The value of the variable.',

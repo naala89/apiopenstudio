@@ -28,7 +28,7 @@ class VarStore extends ProcessorBase
     'name' => 'Var (Store)',
     'description' => 'A stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time.',
     'menu' => 'variables',
-    'client' => 'all',
+    'application' => 'All',
     'input' => array(
       'operation' => array(
         'description' => 'The operation to be performed on the variable.',
