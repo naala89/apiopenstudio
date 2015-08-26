@@ -25,7 +25,7 @@ class Concatenate extends ProcessorBase
   protected $details = array(
     'name' => 'Concatenate',
     'description' => 'Concatenate a series of strings or numbers into a single value.',
-    'menu' => 'processes',
+    'menu' => 'Operation',
     'application' => 'All',
     'input' => array(
       'sources' => array(

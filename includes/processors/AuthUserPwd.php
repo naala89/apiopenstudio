@@ -25,8 +25,8 @@ class AuthUserPwd extends Processor
   protected $required = array('username', 'password');
   protected $details = array(
     'name' => 'Auth (User/Pass)',
-    'description' => 'Authentication for remote server, using username/password.',
-    'menu' => 'authentication',
+    'description' => 'Authentication for remote server, using username/password. Used by InputUrl Processor.',
+    'menu' => 'Authentication',
     'application' => 'All',
     'input' => array(
       'username' => array(

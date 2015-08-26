@@ -20,7 +20,7 @@ class VarStr extends VarMixed
   protected $details = array(
     'name' => 'Var (String)',
     'description' => 'A string variable. It validates the input and returns an error if it is not a string.',
-    'menu' => 'variables',
+    'menu' => 'Primitive',
     'application' => 'All',
     'input' => array(
       'value' => array(

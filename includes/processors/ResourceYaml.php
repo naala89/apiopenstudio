@@ -29,7 +29,7 @@ class ResourceYaml extends ProcessorBase
   protected $details = array(
     'name' => 'Resource (Yaml)',
     'description' => 'Create or fetch a custom API resource for the application in YAML form.',
-    'menu' => 'resource',
+    'menu' => 'Resource',
     'application' => 'All',
     'input' => array(
       'method' => array(

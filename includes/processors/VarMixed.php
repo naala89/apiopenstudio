@@ -24,7 +24,7 @@ class VarMixed extends ProcessorBase
   protected $details = array(
     'name' => 'Var (Mixed)',
     'description' => 'A variable of any type.',
-    'menu' => 'variables',
+    'menu' => 'Primitive',
     'application' => 'All',
     'input' => array(
       'value' => array(

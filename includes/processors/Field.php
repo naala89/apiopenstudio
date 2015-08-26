@@ -22,7 +22,7 @@ class Field extends ProcessorBase
   protected $details = array(
     'name' => 'Field',
     'description' => 'Create a name value pair. This is primarily for use as a field in object.',
-    'menu' => 'basic',
+    'menu' => 'Primitive',
     'application' => 'All',
     'input' => array(
       'name' => array(
