@@ -88,7 +88,7 @@ class ResourceMapper
    */
   public function findByAppIdMethodIdentifier($appId, $method, $identifier)
   {
-    $sql = 'SELECT * FROM `resource` WHERE `appid` = ? AND `method` = ? AND `identifier` = ?';
+    $sql = 'SELECT r.* FROM `resource` AS r INNER JOIN `application` AS a ON r.`appid`=a.`appid` WHERE (r.`appid` = ? OR a.`name` = "All") AND r.`method` = ? AND r.`identifier` = ?';
     $bindParams = array($appId, $method, $identifier);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
