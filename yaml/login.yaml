@@ -1,5 +1,5 @@
 uri:
-  noun: consumer
+  noun: user
   verb: login
 
 application: All
@@ -11,7 +11,7 @@ ttl: 300
 validation: FALSE
 
 process:
-  processor: LoginConsumer
+  processor: UserLogin
   meta:
     id: 1
     username:
