@@ -21,7 +21,7 @@ class VarNum extends VarMixed
     'name' => 'Var (Number)',
     'description' => 'A number variable. It validates the input and returns an error if it is not a real number.',
     'menu' => 'variables',
-    'client' => 'all',
+    'application' => 'All',
     'input' => array(
       'value' => array(
         'description' => 'The value of the variable.',

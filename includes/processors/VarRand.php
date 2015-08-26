@@ -27,7 +27,7 @@ class VareRand extends ProcessorBase
     'name' => 'Var (Rand)',
     'description' => 'A random variable. It produces a random variable of any specified length or mix of character types.',
     'menu' => 'variables',
-    'client' => 'all',
+    'application' => 'All',
     'input' => array(
       'length' => array(
         'description' => 'The length of the variable.',

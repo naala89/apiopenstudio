@@ -22,7 +22,7 @@ class VarPost extends VarMixed
     'name' => 'Var (Get)',
     'description' => 'A "post" variable. It fetches a variable from the post request.',
     'menu' => 'variables',
-    'client' => 'all',
+    'application' => 'All',
     'input' => array(
       'name' => array(
         'description' => 'The name of the variable.',

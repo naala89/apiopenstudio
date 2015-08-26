@@ -27,7 +27,7 @@ class ResourceYaml extends ProcessorBase
     'name' => 'Resource (Yaml)',
     'description' => 'Create or fetch a custom API resource for the application in YAML form.',
     'menu' => 'resource',
-    'client' => 'all',
+    'application' => 'All',
     'input' => array(
       'method' => array(
         'description' => 'The HTTP method of the resource (only used if fetching or deleting a resource).',

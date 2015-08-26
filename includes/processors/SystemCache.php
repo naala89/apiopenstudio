@@ -15,7 +15,7 @@ class SystemCache extends ProcessorBase
     'name' => 'System Cache)',
     'description' => 'Perform cache operations on the system.',
     'menu' => 'system',
-    'client' => '1',
+    'application' => 'System',
     'input' => array(
       'operation' => array(
         'description' => 'The cache operation to perform.',

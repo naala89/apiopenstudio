@@ -24,6 +24,7 @@ class LoginConsumer extends ProcessorBase {
     'name' => 'LoginConsumer',
     'description' => 'Login as a user with role "consumer" for token-based API access.',
     'menu' => 'api access',
+    'application' => 'All',
     'input' => array(
       'username' => array(
         'description' => 'Users username.',

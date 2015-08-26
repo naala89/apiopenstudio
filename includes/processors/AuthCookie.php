@@ -25,7 +25,7 @@ class AuthCookie extends Processor
     'name' => 'Auth (Cookie)',
     'description' => 'Authentication for remote server, using a cookie.',
     'menu' => 'authentication',
-    'client' => 'all',
+    'application' => 'All',
     'input' => array(
       'cookie' => array(
         'description' => 'The cookie.',
