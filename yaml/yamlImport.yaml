@@ -2,6 +2,8 @@ uri:
   noun: resource
   verb: yaml
 
+application: All
+
 appId: 0
 
 method: post
