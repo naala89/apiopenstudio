@@ -2,6 +2,8 @@ uri:
   noun: swellnetVersion
   verb: test
 
+application: Swellnet
+
 method: get
 
 ttl: 300

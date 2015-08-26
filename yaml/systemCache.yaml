@@ -2,6 +2,8 @@ uri:
   noun: sysyemCache
   verb: test
 
+application: System
+
 method: get
 
 ttl: 300

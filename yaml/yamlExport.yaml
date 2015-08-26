@@ -2,6 +2,8 @@ uri:
   noun: yamlExport
   verb: test
 
+application: All
+
 method: get
 
 ttl: 300

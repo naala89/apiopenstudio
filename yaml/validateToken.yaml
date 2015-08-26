@@ -2,6 +2,8 @@ uri:
   noun: validateToken
   verb: test
 
+application: All
+
 method: get
 
 ttl: 300
