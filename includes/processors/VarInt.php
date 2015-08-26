@@ -20,7 +20,7 @@ class VarInt extends VarMixed
   protected $details = array(
     'name' => 'Var (Integer)',
     'description' => 'An integer variable. It validates the input and returns an error if it is not a integer.',
-    'menu' => 'variables',
+    'menu' => 'Primitive',
     'application' => 'All',
     'input' => array(
       'value' => array(

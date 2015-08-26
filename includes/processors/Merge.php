@@ -26,7 +26,7 @@ class Merge extends ProcessorBase
   protected $details = array(
     'name' => 'Merge',
     'description' => 'Merge 2 fields.',
-    'menu' => 'fields',
+    'menu' => 'Operation',
     'application' => 'All',
     'input' => array(
       'sources' => array(

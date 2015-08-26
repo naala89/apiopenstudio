@@ -20,7 +20,7 @@ class VarFloat extends VarMixed
   protected $details = array(
     'name' => 'Var (Float)',
     'description' => 'A float variable. It validates the input and returns an error if it is not a float.',
-    'menu' => 'variables',
+    'menu' => 'Primitive',
     'application' => 'All',
     'input' => array(
       'value' => array(

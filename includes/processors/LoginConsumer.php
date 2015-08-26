@@ -23,7 +23,7 @@ class LoginConsumer extends ProcessorBase {
   protected $details = array(
     'name' => 'LoginConsumer',
     'description' => 'Login as a user with role "consumer" for token-based API access.',
-    'menu' => 'api access',
+    'menu' => 'External',
     'application' => 'All',
     'input' => array(
       'username' => array(

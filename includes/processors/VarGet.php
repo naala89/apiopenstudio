@@ -22,7 +22,7 @@ class VarGet extends VarMixed
   protected $details = array(
     'name' => 'Var (Get)',
     'description' => 'A "get" variable. It fetches a variable from the get request.',
-    'menu' => 'variables',
+    'menu' => 'Primitive',
     'application' => 'All',
     'input' => array(
       'name' => array(

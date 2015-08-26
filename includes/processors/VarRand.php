@@ -26,7 +26,7 @@ class VareRand extends ProcessorBase
   protected $details = array(
     'name' => 'Var (Rand)',
     'description' => 'A random variable. It produces a random variable of any specified length or mix of character types.',
-    'menu' => 'variables',
+    'menu' => 'Primitive',
     'application' => 'All',
     'input' => array(
       'length' => array(

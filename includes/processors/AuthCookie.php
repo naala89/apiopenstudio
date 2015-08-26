@@ -23,8 +23,8 @@ class AuthCookie extends Processor
   protected $required = array('cookie');
   protected $details = array(
     'name' => 'Auth (Cookie)',
-    'description' => 'Authentication for remote server, using a cookie.',
-    'menu' => 'authentication',
+    'description' => 'Authentication for remote server, using a cookie. Used by InputUrl Processor.',
+    'menu' => 'Authentication',
     'application' => 'All',
     'input' => array(
       'cookie' => array(

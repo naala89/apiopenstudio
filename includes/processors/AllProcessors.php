@@ -8,7 +8,7 @@ class AllProcessors extends ProcessorBase
   protected $details = array(
     'name' => 'All processors',
     'description' => 'Fetch data on all public and client processors available.',
-    'menu' => 'system',
+    'menu' => 'System',
     'application' => 'All',
     'input' => array()
   );
