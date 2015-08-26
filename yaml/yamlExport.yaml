@@ -6,12 +6,20 @@ method: get
 
 ttl: 300
 
-validation: FALSE
+validation:
+  processor: Token
+  meta:
+    id: 1
+    token:
+      processor: varGet
+      meta:
+        id: 2
+        name: token
 
 process:
   processor: resourceYaml
   meta:
-    id: 1
+    id: 3
     method: get
     identifierNoun: myResource
     identifierVerb: test
