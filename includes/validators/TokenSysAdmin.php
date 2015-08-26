@@ -24,7 +24,7 @@ class Token extends Processors\ProcessorBase {
     'name' => 'Token Sys-admin',
     'description' => 'Validate the request, based on a token and ensure user has sys-admin role access.',
     'menu' => 'validator',
-    'client' => 'all',
+    'client' => '1',
     'input' => array(
       'token' => array(
         'description' => 'The token.',
