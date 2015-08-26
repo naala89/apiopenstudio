@@ -7,7 +7,7 @@ method: get
 ttl: 300
 
 validation:
-  processor: validateToken
+  processor: TokenSysAdmin
   meta:
     id: 1
     token:

@@ -1,14 +1,24 @@
 uri:
-  noun: yamlImport
-  verb: test
+  noun: resource
+  verb: yaml
+
+appId: 0
 
 method: post
 
 ttl: 300
 
-validation: FALSE
+validation:
+  processor: Token
+  meta:
+    id: 1
+    token:
+      processor: varGet
+      meta:
+        id: 2
+        name: token
 
 process:
   processor: resourceYaml
   meta:
-    id: 1
+    id: 3
