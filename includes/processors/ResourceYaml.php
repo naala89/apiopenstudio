@@ -65,7 +65,7 @@ class ResourceYaml extends ProcessorBase
     Core\Debug::message('Processor ResourceYaml');
     $this->validateRequired();
 
-    // get uid from token
+    // get uid from token to check correct access to application and role
     $token = $this->request->vars['token'];
     $mapper = new Db\UserMapper($this->request->db);
     $user = $mapper->findBytoken($token);
