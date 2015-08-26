@@ -24,6 +24,7 @@ class Token extends Processors\ProcessorBase {
     'name' => 'Token',
     'description' => 'Validate the request, based on a token.',
     'menu' => 'validator',
+    'client' => '2',
     'input' => array(
       'token' => array(
         'description' => 'The token.',
