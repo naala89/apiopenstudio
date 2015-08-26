@@ -39,7 +39,7 @@ class VarPost extends VarMixed
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarPost', 4);
-    $name = parent::process();
+    $name = $this->getVar($this->meta->name);
 
     if (empty($this->request->vars[$name])) {
       throw new Core\ApiException("post variable ($name) does not exist", 5, $this->id, 417);
