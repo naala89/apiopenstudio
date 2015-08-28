@@ -47,10 +47,7 @@ class Token extends Processors\ProcessorBase {
     $userObj = new Core\User($this->request->db);
 
     $user = $userObj->findByToken($token);
-    if (empty($user->getUid()) || !$user->getActive()) {
-      throw new Core\ApiException('permission denied', -1, $this->id, 401);
-    }
-    if (!$userObj->hasRole($appId, 'sys-admin')) {
+    if (empty($user->getUid()) || !$user->getActive() || !$userObj->hasRole($appId, 'sys-admin')) {
       throw new Core\ApiException('permission denied', -1, $this->id, 401);
     }
 
