@@ -1,6 +1,6 @@
 uri:
-  noun: yamlDelete
-  verb: test
+  noun: resource
+  verb: yaml
 
 application: All
 
@@ -22,6 +22,18 @@ process:
   processor: resourceYaml
   meta:
     id: 3
-    method: get
-    identifierNoun: myResource
-    identifierVerb: test
+    method:
+      processor: varGet
+      meta:
+        id: 4
+        name: method
+    noun:
+      processor: varGet
+      meta:
+        id: 5
+        name: noun
+    verb:
+      processor: varGet
+      meta:
+        id: 6
+        name: verb
