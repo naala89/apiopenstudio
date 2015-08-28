@@ -157,6 +157,7 @@ class Config
     self::$debugInterface = 'HTML';
 
     self::$cache = FALSE;
+    self::$tokenLife = '+1 day';
 
     self::$dbdriver = 'mysqli';
     self::$dbhost = 'localhost';
@@ -243,7 +244,7 @@ class Config
     $get = $_GET;
     foreach ($get as $k => $v) {
       if (property_exists('Config', $k)) {
-        self::$$k = $v;
+        self::$$k = urldecode($v);
       }
     }
   }
