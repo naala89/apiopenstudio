@@ -54,10 +54,15 @@ class ResourceMapper
     return TRUE;
   }
 
-  public function delete($resource)
+  /**
+   * @param \Datagator\Db\Resource $resource
+   * @return bool
+   * @throws \Datagator\Core\ApiException
+   */
+  public function delete(Resource $resource)
   {
     if ($resource->getId() == NULL) {
-      throw new Core\ApiException('could not delete resource, empty id');
+      throw new Core\ApiException('could not delete resource, not found');
     }
     $sql = 'DELETE FROM `resource` WHERE `id` = ?';
     $bindParams = array($resource->getId());
