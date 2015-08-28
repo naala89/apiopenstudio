@@ -4,8 +4,6 @@ uri:
 
 application: All
 
-appId: 0
-
 method: post
 
 ttl: 300
