@@ -24,7 +24,7 @@ use Datagator\Db;
 class ResourceYaml extends ProcessorBase
 {
   protected $requiredElements = array(
-    'uri', 'application', 'appId', 'method', 'ttl', 'validation', 'process'
+    'uri', 'application', 'method', 'ttl', 'validation', 'process'
   );
   protected $details = array(
     'name' => 'Resource (Yaml)',
@@ -62,24 +62,23 @@ class ResourceYaml extends ProcessorBase
    */
   public function process()
   {
+    Core\Debug::variable($this->request->method, '$this->request->method');
     Core\Debug::message('Processor ResourceYaml');
     $this->validateRequired();
 
-    // get uid from token to check correct access to application and role
-    $token = $this->request->vars['token'];
-    $mapper = new Db\UserMapper($this->request->db);
-    $user = $mapper->findBytoken($token);
-    $uid = $user->getUid();
+    // get user by token to check correct access to application and role
+    $user = new Core\User($this->request->db);
+    $user->findByToken($this->request->vars['token']);
 
     switch ($this->request->method) {
       case 'post':
-        $result = $this->_save($uid);
+        $result = $this->_save($user);
         break;
       case 'get':
-        $result = $this->_fetch($uid);
+        $result = $this->_fetch($user);
         break;
       case 'delete':
-        $result = $this->_delete($uid);
+        $result = $this->_delete($user);
         break;
       default:
         throw new Core\ApiException('unknown method', -1, $this->id);
@@ -94,11 +93,11 @@ class ResourceYaml extends ProcessorBase
    * The Yaml is either post string 'yaml', or file 'yaml'.
    * File takes precedence over the string if both present.
    *
-   * @param $uid
-   * @return bool
+   * @param \Datagator\Core\User $user
+   * @return mixed
    * @throws \Datagator\Core\ApiException
    */
-  private function _save($uid)
+  private function _save(Core\User $user)
   {
     $yaml = '';
     if (!empty($_FILES['yaml'])) {
@@ -117,13 +116,8 @@ class ResourceYaml extends ProcessorBase
     }
 
     Core\Debug::variable($yaml, '$yaml');
-    $appId = $this->request->appId;
 
-    // check user has role developer for the application and
-    // check the app name in the yaml matches the appid in the request
-    $userRoleMapper = new Db\UserRoleMapper($this->request->db);
-    $userRole = $userRoleMapper->findByUidAppNameRole($uid, $yaml['application'], 'developer');
-    if (empty($userRole->getId()) || $userRole->getAppId() != $appId) {
+    if (!$user->hasRole($this->request->appId, 'developer')) {
       throw new Core\ApiException('permission denied', -1, $this->id, 401);
     }
 
@@ -131,15 +125,17 @@ class ResourceYaml extends ProcessorBase
     $identifier = strtolower($yaml['uri']['noun']) . strtolower($yaml['uri']['verb']);
     $meta = json_encode(array(
       'validation' => $yaml['validation'],
-      'process' => $yaml['process'],
-      'output' => $yaml['output']
+      'process' => $yaml['process']
     ));
+    if (!empty($yaml['output'])) {
+      $meta['output'] = $yaml['output'];
+    }
     $ttl = $yaml['ttl'];
 
     $mapper = new Db\ResourceMapper($this->request->db);
-    $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
+    $resource = $mapper->findByAppIdMethodIdentifier($this->request->appId, $method, $identifier);
     if ($resource->getId() == NULL) {
-      $resource->setAppId($appId);
+      $resource->setAppId($this->request->appId);
       $resource->setMethod($method);
       $resource->setIdentifier($identifier);
     }
@@ -157,37 +153,34 @@ class ResourceYaml extends ProcessorBase
    *  noun
    *  verb.
    *
-   * @param $uid
+   * @param \Datagator\Core\User $user
    * @return string
    * @throws \Datagator\Core\ApiException
    */
-  private function _fetch($uid)
+  private function _fetch(Core\User $user)
   {
-    $appId = $this->request->appId;
-
-    // check user has role developer for the application and
-    $userRoleMapper = new Db\UserRoleMapper($this->request->db);
-    $userRole = $userRoleMapper->findByUidAppidRole($uid, $appId, 'developer');
-    if (empty($userRole->getId()) || $userRole->getAppId() != $appId) {
+    if (!$user->hasRole($this->request->appId, 'developer')) {
       throw new Core\ApiException('permission denied', -1, $this->id, 401);
     }
-
-    $method = $this->getVar($this->meta->method);
-    if (empty($method)) {
+    if (empty($this->request->vars['method'])) {
       throw new Core\ApiException('missing method parameter', -1, $this->id, 400);
     }
-    $noun = $this->getVar($this->meta->identifierNoun);
-    if (empty($identifier)) {
-      throw new Core\ApiException('missing noun identifier parameter', -1, $this->id, 400);
+    if (empty($this->request->vars['noun'])) {
+      throw new Core\ApiException('missing noun parameter', -1, $this->id, 400);
     }
-    $verb = $this->getVar($this->meta->identifierVerb);
-    if (empty($identifier)) {
-      throw new Core\ApiException('missing verb identifier parameter', -1, $this->id, 400);
+    if (empty($this->request->vars['verb'])) {
+      throw new Core\ApiException('missing verb parameter', -1, $this->id, 400);
     }
+    $method = $this->request->vars['method'];
+    $noun = $this->request->vars['noun'];
+    $verb = $this->request->vars['verb'];
     $identifier = strtolower($noun) . strtolower($verb);
 
     $mapper = new Db\ResourceMapper($this->request->db);
-    $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
+    $resource = $mapper->findByAppIdMethodIdentifier($this->request->appId, $method, $identifier);
+    if (empty($resource->getId())) {
+      throw new Core\ApiException('Resource not found', -1, $this->id, 200);
+    }
 
     $result = json_decode($resource->getMeta(), TRUE);
     $result['uri'] = array(
@@ -203,42 +196,36 @@ class ResourceYaml extends ProcessorBase
   /**
    * Delete a resource.
    *
-   * Uses inputs:
+   * GET vars:
    *  method
    *  noun
    *  verb.
    *
-   * @param $uid
-   * @return bool
+   * @param \Datagator\Core\User $user
+   * @return mixed
    * @throws \Datagator\Core\ApiException
    */
-  private function _delete($uid)
+  private function _delete(Core\User $user)
   {
-    $appId = $this->request->appId;
-
-    // check user has role developer for the application and
-    $userRoleMapper = new Db\UserRoleMapper($this->request->db);
-    $userRole = $userRoleMapper->findByUidAppidRole($uid, $appId, 'developer');
-    if (empty($userRole->getId()) || $userRole->getAppId() != $appId) {
+    if (!$user->hasRole($this->request->appId, 'developer')) {
       throw new Core\ApiException('permission denied', -1, $this->id, 401);
     }
-
-    $method = $this->getVar($this->meta->method);
-    if (empty($method)) {
+    if (empty($this->request->vars['method'])) {
       throw new Core\ApiException('missing method parameter', -1, $this->id, 400);
     }
-    $noun = $this->getVar($this->meta->identifierNoun);
-    if (empty($identifier)) {
-      throw new Core\ApiException('missing noun identifier parameter', -1, $this->id, 400);
+    if (empty($this->request->vars['noun'])) {
+      throw new Core\ApiException('missing noun parameter', -1, $this->id, 400);
     }
-    $verb = $this->getVar($this->meta->identifierVerb);
-    if (empty($identifier)) {
-      throw new Core\ApiException('missing verb identifier parameter', -1, $this->id, 400);
+    if (empty($this->request->vars['verb'])) {
+      throw new Core\ApiException('missing verb parameter', -1, $this->id, 400);
     }
+    $method = $this->request->vars['method'];
+    $noun = $this->request->vars['noun'];
+    $verb = $this->request->vars['verb'];
     $identifier = strtolower($noun) . strtolower($verb);
 
     $mapper = new Db\ResourceMapper($this->request->db);
-    $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
+    $resource = $mapper->findByAppIdMethodIdentifier($this->request->appId, $method, $identifier);
     return $mapper->delete($resource);
   }
 }
