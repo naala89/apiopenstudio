@@ -139,11 +139,6 @@ class ResourceYaml extends ProcessorBase
     $method = $yaml['method'];
     $identifier = strtolower($yaml['uri']['noun']) . strtolower($yaml['uri']['verb']);
 
-    $meta = array();
-    $meta['process'] = $yaml['process'];
-    if (!empty($yaml['output'])) {
-      $meta['output'] = $yaml['output'];
-    }
     // only allow no validation for sys-admin role
     if (empty($yaml['validation'])) {
       if (!$user->hasRole(1, 'sys-admin')) {
@@ -151,6 +146,11 @@ class ResourceYaml extends ProcessorBase
       }
     } else {
       $meta['validation'] = $yaml['validation'];
+    }
+    $meta = array();
+    $meta['process'] = $yaml['process'];
+    if (!empty($yaml['output'])) {
+      $meta['output'] = $yaml['output'];
     }
     $ttl = !empty($yaml['ttl']) ? $yaml['ttl'] : 0;
 
