@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Resource import and export.@global
+ * Resource import and export.
  * Allowed inputs are yaml files or yaml strings.
  *
  * METADATA
@@ -53,7 +53,7 @@ class ResourceYaml extends ProcessorBase
         'accepts' => array('string')
       ),
       'yaml' => array(
-        'description' => 'The yaml string or file. This can be a form POST or a urlencoded GET var (this is only used if you are creating or updating a resource).',
+        'description' => 'The yaml string or file. This can be a form file or a urlencoded GET var (this is only used if you are creating or updating a resource).',
         'cardinality' => array(0, 1),
         'accepts' => array('string', 'file')
       )
@@ -144,7 +144,12 @@ class ResourceYaml extends ProcessorBase
     if (!empty($yaml['output'])) {
       $meta['output'] = $yaml['output'];
     }
-    if (!empty($yaml['validation'])) {
+    // only allow no validation for sys-admin role
+    if (empty($yaml['validation'])) {
+      if (!$user->hasRole(1, 'sys-admin')) {
+        throw new Core\ApiException('invalid resource - no Authentication defined');
+      }
+    } else {
       $meta['validation'] = $yaml['validation'];
     }
     $ttl = !empty($yaml['ttl']) ? $yaml['ttl'] : 0;
