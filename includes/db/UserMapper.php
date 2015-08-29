@@ -140,8 +140,6 @@ class UserMapper
   {
     $sql = 'SELECT u.* FROM `user` AS u INNER JOIN `user_role` AS ur ON u.`uid`=ur.`uid` INNER JOIN `role` AS r ON ur.`rid`=r.`rid` WHERE u.`uid`=? AND ur.`appid`=? AND r.`name`=?';
     $bindParams = array($uid, $appId, $roleName);
-    Core\Debug::variable($sql);
-    Core\Debug::variable($bindParams);
     $row = $this->db->GetRow($sql, $bindParams);
     return !empty($row['uid']);
   }
@@ -153,7 +151,6 @@ class UserMapper
   protected function mapArray($row)
   {
     $user = new User();
-    //Core\Debug::variable($row);
     $user->setUid(!empty($row['uid']) ? $row['uid'] : NULL);
     $user->setActive(!empty($row['active']) ? $row['active'] : NULL);
     $user->setUsername(!empty($row['username']) ? $row['username'] : NULL);
@@ -174,8 +171,6 @@ class UserMapper
     $user->setAddressPostcode(!empty($row['address_postcode']) ? $row['address_postcode'] : NULL);
     $user->setPhoneMobile(!empty($row['phone_mobile']) ? $row['phone_mobile'] : NULL);
     $user->setPhoneWork(!empty($row['phone_work']) ? $row['phone_work'] : NULL);
-    //Core\Debug::variable($user->debug());
-
     return $user;
   }
 }
