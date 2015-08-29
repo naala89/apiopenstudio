@@ -148,8 +148,15 @@ class ResourceYaml extends ProcessorBase
     }
     $ttl = $yaml['ttl'];
 
-    $resource = new Db\Resource(null, $appId, $method, $identifier, $meta, $ttl);
     $mapper = new Db\ResourceMapper($this->request->db);
+    $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
+    if (empty($resource->getId())) {
+      $resource->setAppId($appId);
+      $resource->setMethod($method);
+      $resource->setIdentifier($identifier);
+    }
+    $resource->setMeta($meta);
+    $resource->setTtl($ttl);
     return $mapper->save($resource);
   }
 
