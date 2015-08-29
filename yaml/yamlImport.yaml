@@ -9,7 +9,7 @@ method: post
 ttl: 300
 
 validation:
-  processor: Token
+  processor: TokenDeveloper
   meta:
     id: 1
     token:
