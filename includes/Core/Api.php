@@ -23,7 +23,7 @@ Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Con
 class Api
 {
   private $cache;
-  private $test = false; // FALSE or name of yaml file in includes/yaml
+  private $test = false; // FALSE or name of yaml file in /yaml
 
   /**
    * Constructor
@@ -57,7 +57,7 @@ class Api
     $this->_getValidation($resource, $request);
 
     // fetch the cache of the call, if it is not stale
-    $cache = $this->_getCache($request);
+    $cache = $this->_getCache($resource, $request);
     if ($cache !== FALSE) {
       return $cache;
     }
@@ -77,19 +77,37 @@ class Api
       $this->cache->set($this->_getCacheKey($request), $cacheData, $ttl);
     }
 
-    // translate output into the correct format
-    $output = $this->getOutputObj($request->outFormat, $data, 200);
+    return $this->_getOutput($resource, $request, $data);
+  }
 
-    return $output->process();
+  private function _getOutput($resource, $request, $data)
+  {
+    // default to response output if no output defined
+    $outputs = empty($resource->output) ? array('response') : $resource->output;
+    $result = '';
+    foreach ($outputs as $type => $meta) {
+      if ($type == 'response') {
+        //translate the output to the correct format as requested in header and return in the response
+        $class = 'Datagator\\Outputs\\' . ucfirst($this->_cleanData($request->outFormat));
+        $obj = new $class($data, 200);
+        $result = $obj->process();
+      } else {
+        $class = 'Datagator\\Outputs\\' . ucfirst($this->_cleanData($type));
+        $obj = new $class($data, 200, $meta);
+        $obj->process();
+      }
+    }
+    return $result;
   }
 
   /**
    * Check cache for any results.
    *
+   * @param $resource
    * @param $request
    * @return bool
    */
-  private function _getCache($request)
+  private function _getCache($resource, $request)
   {
     if (!$this->cache->cacheActive()) {
       Debug::message('not searching for cache - inactive', 4);
@@ -98,13 +116,11 @@ class Api
 
     $cacheKey = $this->_getCacheKey($request);
     Debug::variable($cacheKey, 'cache key', 4);
-    // TODO: implement input normalization
-    $cacheData = $this->cache->get($cacheKey);
+    $data = $this->cache->get($cacheKey);
 
-    if (!empty($cacheData)) {
-      Debug::variable($cacheData, 'from cache', 4);
-      $output = $this->getOutputObj($request->outFormat, $cacheData['status'], $cacheData['data']);
-      return $output->process();
+    if (!empty($data)) {
+      Debug::variable($data, 'from cache', 4);
+      return $this->_getOutput($resource, $request, $data);
     }
 
     Debug::message('no cache entry found', 4);
@@ -142,7 +158,7 @@ class Api
     $mapper = new Db\ResourceMapper($request->db);
 
     $result = new \stdClass();
-    if ($request->identifier === FALSE) {
+    if (!$this->test) {
       $resource = $mapper->findByAppIdMethodIdentifier($request->appId, $request->method, $request->identifier);
 
       if ($resource->getId() === NULL) {
@@ -195,21 +211,6 @@ class Api
       throw new ApiException('unauthorized', $resource->validation->meta->id, -1, 401);
     }
     return;
-  }
-
-  /**
-   * Get the results object.
-   * This will create an output class, based on format string, and process through that.
-   *
-   * @param $format
-   * @param $data
-   * @param $status
-   * @return mixed
-   */
-  public function getOutputObj($format, $data, $status)
-  {
-    $class = 'Datagator\\Outputs\\' . ucfirst($this->_cleanData($format));
-    return new $class($status, $data);
   }
 
   /**
