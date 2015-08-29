@@ -71,8 +71,7 @@ class User
    */
   public function hasRole($appId, $roleName)
   {
-    $uid = $this->user->getUid();
-    if (empty($uid)) {
+    if (empty($uid = $this->user->getUid())) {
       return FALSE;
     }
     $mapper = new Db\UserMapper($this->db);
