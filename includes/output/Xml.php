@@ -16,13 +16,13 @@ class Xml extends Output
 
     $payload = $this->dataToXml();
 
-    if (!empty($this->destination)) {
-      foreach ($this->destination as $destination) {
+    if (!empty($this->meta)) {
+      $options = !empty($this->meta->options) ? $this->meta->options : array();
+      foreach ($this->meta->destination as $destination) {
         $curl = new Curl();
-        $curl->post($destination, array(
-          'CURLOPT_POSTFIELDS' => $payload
-        ));
-        $this->sendToUrl($destination, $payload, $this->status);
+        $curl->post($destination, $options + array(
+            'CURLOPT_POSTFIELDS' => $payload
+          ));
       }
     }
 
