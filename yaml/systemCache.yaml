@@ -1,19 +1,17 @@
 uri:
-  noun: sysyemCache
-  verb: test
+  noun: system
+  verb: cache
 
 application: System
 
-method: get
-
-ttl: 300
+method: post
 
 validation:
   processor: TokenSysAdmin
   meta:
     id: 1
     token:
-      processor: varGet
+      processor: varPost
       meta:
         id: 2
         name: token

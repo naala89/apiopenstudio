@@ -1,6 +1,6 @@
 uri:
-  noun: swellnetWams
-  verb: test
+  noun: swellnet
+  verb: wams
 
 application: Swellnet
 
@@ -9,7 +9,7 @@ method: get
 ttl: 300
 
 validation:
-  processor: validateToken
+  processor: validateConsumer
   meta:
     id: 1
     token:

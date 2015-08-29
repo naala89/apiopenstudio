@@ -24,7 +24,7 @@ use Datagator\Db;
 class ResourceYaml extends ProcessorBase
 {
   protected $requiredElements = array(
-    'uri', 'application', 'method', 'ttl', 'validation', 'process'
+    'uri', 'application', 'method', 'process'
   );
   protected $details = array(
     'name' => 'Resource (Yaml)',
@@ -139,14 +139,15 @@ class ResourceYaml extends ProcessorBase
     $method = $yaml['method'];
     $identifier = strtolower($yaml['uri']['noun']) . strtolower($yaml['uri']['verb']);
 
-    $meta = json_encode(array(
-      'validation' => $yaml['validation'],
-      'process' => $yaml['process']
-    ));
+    $meta = array();
+    $meta['process'] = $yaml['process'];
     if (!empty($yaml['output'])) {
       $meta['output'] = $yaml['output'];
     }
-    $ttl = $yaml['ttl'];
+    if (!empty($yaml['validation'])) {
+      $meta['validation'] = $yaml['validation'];
+    }
+    $ttl = !empty($yaml['ttl']) ? $yaml['ttl'] : 0;
 
     $mapper = new Db\ResourceMapper($this->request->db);
     $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
@@ -155,7 +156,7 @@ class ResourceYaml extends ProcessorBase
       $resource->setMethod($method);
       $resource->setIdentifier($identifier);
     }
-    $resource->setMeta($meta);
+    $resource->setMeta(json_encode($meta));
     $resource->setTtl($ttl);
     return $mapper->save($resource);
   }

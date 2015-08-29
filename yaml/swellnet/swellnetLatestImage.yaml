@@ -1,0 +1,30 @@
+uri:
+  noun: swellnet
+  verb: latestImage
+
+application: Swellnet
+
+method: get
+
+ttl: 300
+
+validation:
+  processor: validateConsumer
+  meta:
+    id: 1
+    token:
+      processor: varGet
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: swellnetImage
+  meta:
+    id: 3
+    path:
+      processor: varStore
+      meta:
+        id: 4
+        operation: fetch
+        name: dropbox

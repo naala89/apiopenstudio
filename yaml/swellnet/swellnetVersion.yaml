@@ -1,6 +1,6 @@
 uri:
-  noun: swellnetLatestImage
-  verb: test
+  noun: swellnet
+  verb: version
 
 application: Swellnet
 
@@ -19,12 +19,8 @@ validation:
         name: token
 
 process:
-  processor: swellnetImage
+  processor: varStore
   meta:
     id: 3
-    path:
-      processor: varStore
-      meta:
-        id: 4
-        operation: fetch
-        name: dropbox
+    operation: fetch
+    name: version

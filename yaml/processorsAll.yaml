@@ -1,15 +1,15 @@
 uri:
-  noun: swellnetVersion
-  verb: test
-
-application: Swellnet
+  noun: processors
+  verb: all
 
 method: get
 
-ttl: 300
+application: All
+
+ttl: 3600
 
 validation:
-  processor: validateToken
+  processor: TokenDeveloper
   meta:
     id: 1
     token:
@@ -19,8 +19,6 @@ validation:
         name: token
 
 process:
-  processor: varStore
+  processor: ProcessorsAll
   meta:
     id: 3
-    operation: fetch
-    name: version
