@@ -62,38 +62,26 @@ class ApplicationMapper
 
   /**
    * @param $accId
-   * @return array
+   * @return \Datagator\Db\Application
    */
   public function findByAccId($accId)
   {
     $sql = 'SELECT * FROM application WHERE `accid` = ?';
     $bindParams = array($accId);
-    $recordSet = $this->db->Execute($sql, $bindParams);
-
-    $entries   = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-    }
-
-    return $entries;
+    $row = $this->db->GetRow($sql, $bindParams);
+    return $this->mapArray($row);
   }
 
   /**
    * @param $name
-   * @return array
+   * @return \Datagator\Db\Application
    */
   public function findByName($name)
   {
     $sql = 'SELECT * FROM application WHERE `name` = ?';
     $bindParams = array($name);
-    $recordSet = $this->db->Execute($sql, $bindParams);
-
-    $entries   = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-    }
-
-    return $entries;
+    $row = $this->db->GetRow($sql, $bindParams);
+    return $this->mapArray($row);
   }
 
   /**
