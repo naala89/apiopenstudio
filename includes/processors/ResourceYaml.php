@@ -37,6 +37,11 @@ class ResourceYaml extends ProcessorBase
         'cardinality' => array(0, 1),
         'accepts' => array('string')
       ),
+      'appid' => array(
+        'description' => 'The application ID the resource is associated with (only used if fetching or deleting a resource).',
+        'cardinality' => array(0, 1),
+        'accepts' => array('integer')
+      ),
       'noun' => array(
         'description' => 'The noun identifier of the resource (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
@@ -99,7 +104,8 @@ class ResourceYaml extends ProcessorBase
    */
   private function _save(Core\User $user)
   {
-    $yaml = '';
+    // extract yaml
+    $yaml = array();
     if (!empty($_FILES['yaml'])) {
       $yaml = \Spyc::YAMLLoad($_FILES['yaml']['tmp_name']);
     } else {
@@ -109,20 +115,30 @@ class ResourceYaml extends ProcessorBase
     if (empty($yaml)) {
       throw new Core\ApiException('invalid or no yaml supplied', -1, $this->id, 417);
     }
+    Core\Debug::variable($yaml, 'YAML', 4);
+
+    // check required elements in yaml exist
     foreach ($this->requiredElements as $requiredElement) {
       if (empty($yaml[$requiredElement])) {
         throw new Core\ApiException("missing $requiredElement in yaml", -1, $this->id, 417);
       }
     }
 
-    Core\Debug::variable($yaml, '$yaml');
+    // check application defined in yaml exists
+    $mapper = new Db\ApplicationMapper($this->request->db);
+    $application = $mapper->findByName($yaml['application']);
+    if (empty($appId = $application->getAppId())) {
+      throw new Core\ApiException('invalid application', -1, $this->id, 401);
+    }
 
-    if (!$user->hasRole($this->request->appId, 'developer')) {
-      throw new Core\ApiException('permission denied', -1, $this->id, 401);
+    // check user has correct dev permission for application in yaml
+    if (!$user->hasRole($appId, 'developer')) {
+      throw new Core\ApiException("permission denied", -1, $this->id, 401);
     }
 
     $method = $yaml['method'];
     $identifier = strtolower($yaml['uri']['noun']) . strtolower($yaml['uri']['verb']);
+
     $meta = json_encode(array(
       'validation' => $yaml['validation'],
       'process' => $yaml['process']
@@ -132,16 +148,8 @@ class ResourceYaml extends ProcessorBase
     }
     $ttl = $yaml['ttl'];
 
+    $resource = new Db\Resource(null, $appId, $method, $identifier, $meta, $ttl);
     $mapper = new Db\ResourceMapper($this->request->db);
-    $resource = $mapper->findByAppIdMethodIdentifier($this->request->appId, $method, $identifier);
-    if ($resource->getId() == NULL) {
-      $resource->setAppId($this->request->appId);
-      $resource->setMethod($method);
-      $resource->setIdentifier($identifier);
-    }
-    $resource->setMeta($meta);
-    $resource->setTtl($ttl);
-
     return $mapper->save($resource);
   }
 
@@ -150,6 +158,7 @@ class ResourceYaml extends ProcessorBase
    *
    * Uses inputs:
    *  method
+   *  appid
    *  noun
    *  verb.
    *
@@ -159,25 +168,25 @@ class ResourceYaml extends ProcessorBase
    */
   private function _fetch(Core\User $user)
   {
-    if (!$user->hasRole($this->request->appId, 'developer')) {
+    if (empty($appId = $this->request->vars['appid'])) {
+      throw new Core\ApiException('missing appid parameter', -1, $this->id, 400);
+    }
+    if (!$user->hasRole($appId, 'developer')) {
       throw new Core\ApiException('permission denied', -1, $this->id, 401);
     }
-    if (empty($this->request->vars['method'])) {
+    if (empty($method = $this->request->vars['method'])) {
       throw new Core\ApiException('missing method parameter', -1, $this->id, 400);
     }
-    if (empty($this->request->vars['noun'])) {
+    if (empty($noun = $this->request->vars['noun'])) {
       throw new Core\ApiException('missing noun parameter', -1, $this->id, 400);
     }
-    if (empty($this->request->vars['verb'])) {
+    if (empty($verb = $this->request->vars['verb'])) {
       throw new Core\ApiException('missing verb parameter', -1, $this->id, 400);
     }
-    $method = $this->request->vars['method'];
-    $noun = $this->request->vars['noun'];
-    $verb = $this->request->vars['verb'];
     $identifier = strtolower($noun) . strtolower($verb);
 
     $mapper = new Db\ResourceMapper($this->request->db);
-    $resource = $mapper->findByAppIdMethodIdentifier($this->request->appId, $method, $identifier);
+    $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
     if (empty($resource->getId())) {
       throw new Core\ApiException('Resource not found', -1, $this->id, 200);
     }
@@ -198,8 +207,9 @@ class ResourceYaml extends ProcessorBase
    *
    * GET vars:
    *  method
+   *  appid
    *  noun
-   *  verb.
+   *  verb
    *
    * @param \Datagator\Core\User $user
    * @return mixed
@@ -207,25 +217,25 @@ class ResourceYaml extends ProcessorBase
    */
   private function _delete(Core\User $user)
   {
-    if (!$user->hasRole($this->request->appId, 'developer')) {
+    if (empty($appId = $this->request->vars['appid'])) {
+      throw new Core\ApiException('missing appid parameter', -1, $this->id, 400);
+    }
+    if (!$user->hasRole($appId, 'developer')) {
       throw new Core\ApiException('permission denied', -1, $this->id, 401);
     }
-    if (empty($this->request->vars['method'])) {
+    if (empty($method = $this->request->vars['method'])) {
       throw new Core\ApiException('missing method parameter', -1, $this->id, 400);
     }
-    if (empty($this->request->vars['noun'])) {
+    if (empty($noun = $this->request->vars['noun'])) {
       throw new Core\ApiException('missing noun parameter', -1, $this->id, 400);
     }
-    if (empty($this->request->vars['verb'])) {
+    if (empty($verb = $this->request->vars['verb'])) {
       throw new Core\ApiException('missing verb parameter', -1, $this->id, 400);
     }
-    $method = $this->request->vars['method'];
-    $noun = $this->request->vars['noun'];
-    $verb = $this->request->vars['verb'];
     $identifier = strtolower($noun) . strtolower($verb);
 
     $mapper = new Db\ResourceMapper($this->request->db);
-    $resource = $mapper->findByAppIdMethodIdentifier($this->request->appId, $method, $identifier);
+    $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
     return $mapper->delete($resource);
   }
 }
