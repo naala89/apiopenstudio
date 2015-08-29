@@ -11,12 +11,19 @@ class Json extends Output
     if (Datagator\Config::$debugInterface == 'LOG' || (Datagator\Config::$debug < 1 && Datagator\Config::$debugDb < 1)) {
       header('Content-Type: application/json');
     }
-    if ($this->isJson($this->data)) {
-      return $this->data;
+
+    $payload = $this->dataToJson();
+
+    if (!empty($this->meta)) {
+      $options = !empty($this->meta->options) ? $this->meta->options : array();
+      foreach ($this->meta->destination as $destination) {
+        $curl = new Curl();
+        $curl->post($destination, $options + array(
+          'CURLOPT_POSTFIELDS' => $payload
+        ));
+      }
     }
-    if (is_object($this->data)) {
-      $this->data = (array) $this->data;
-    }
-    return json_encode($this->data);
+
+    return $payload;
   }
 }
