@@ -24,7 +24,7 @@ use Datagator\Db;
 class VarStore extends ProcessorBase
 {
   protected $required = array('name', 'operation');
-  protected $details = array(
+  public $details = array(
     'name' => 'Var (Store)',
     'description' => 'A stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time.',
     'menu' => 'Primitive',

@@ -23,7 +23,7 @@ class Merge extends ProcessorBase
 {
   private $_defaultType = 'union';
   protected $required = array('sources');
-  protected $details = array(
+  public $details = array(
     'name' => 'Merge',
     'description' => 'Merge 2 fields.',
     'menu' => 'Operation',

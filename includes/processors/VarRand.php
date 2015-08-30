@@ -20,10 +20,10 @@
 namespace Datagator\Processors;
 use Datagator\Core;
 
-class VareRand extends ProcessorBase
+class VarRand extends ProcessorBase
 {
   protected $required = array('length');
-  protected $details = array(
+  public $details = array(
     'name' => 'Var (Rand)',
     'description' => 'A random variable. It produces a random variable of any specified length or mix of character types.',
     'menu' => 'Primitive',

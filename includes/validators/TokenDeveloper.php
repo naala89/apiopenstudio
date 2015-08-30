@@ -20,7 +20,7 @@ use Datagator\Processors;
 class TokenDeveloper extends Processors\ProcessorBase {
 
   protected $required = array('token');
-  protected $details = array(
+  public $details = array(
     'name' => 'Token',
     'description' => 'Validate the request, based on a token and ensure user has developer role access.',
     'menu' => 'validator',
@@ -39,10 +39,10 @@ class TokenDeveloper extends Processors\ProcessorBase {
    * @throws \Datagator\Core\ApiException
    */
   public function process() {
-    Core\Debug::message('Validator Token', 4);
+    Core\Debug::message('Validator TokenDeveloper', 4);
     $this->validateRequired();
 
-    $appId = $this->request->appId;
+    $appId = (int) $this->request->appId;
     $token = $this->getVar($this->meta->token);
     $userObj = new Core\User($this->request->db);
 

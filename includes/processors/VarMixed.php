@@ -21,7 +21,7 @@ use Datagator\Core;
 class VarMixed extends ProcessorBase
 {
   protected $required = array('value');
-  protected $details = array(
+  public $details = array(
     'name' => 'Var (Mixed)',
     'description' => 'A variable of any type.',
     'menu' => 'Primitive',

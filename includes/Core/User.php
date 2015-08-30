@@ -65,16 +65,33 @@ class User
   }
 
   /**
+   * Check to see if the user has a specific role with the application
+   * $app can be application name or appid
+   * $role can be role name or rid
+   *
    * @param $appId
-   * @param $roleName
+   * @param $rid
    * @return bool
    */
-  public function hasRole($appId, $roleName)
+  public function hasRole($appId, $rid)
   {
+    // not a valid user
     if (empty($uid = $this->user->getUid())) {
-      return FALSE;
+      return false;
     }
-    $mapper = new Db\UserMapper($this->db);
-    return $mapper->hasRole($uid, $appId, $roleName);
+    // convert app name to app Id
+    if (!is_int($appId)) {
+      $appMapper = new Db\ApplicationMapper($this->db);
+      $app = $appMapper->findByName($appId);
+      $appId = $app->getAppId();
+    }
+    // convert role name to role id
+    if (!is_int($rid)) {
+      $roleMapper = new Db\RoleMapper($this->db);
+      $row = $roleMapper->findByName($rid);
+      $role = $row->getRid();
+    }
+    $userMapper = new Db\UserMapper($this->db);
+    return $userMapper->hasRole($uid, $appId, $role);
   }
 }

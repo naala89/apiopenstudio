@@ -17,7 +17,7 @@ use Datagator\Core;
 
 class VarBool extends VarMixed
 {
-  protected $details = array(
+  public $details = array(
     'name' => 'Var (Boolean)',
     'description' => 'A boolean variable. It validates the input and returns an error if it is not a boolean.',
     'menu' => 'Primitive',

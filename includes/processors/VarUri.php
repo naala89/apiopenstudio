@@ -19,7 +19,7 @@ use Datagator\Core;
 class VarUri extends ProcessorBase
 {
   protected $required = array('index');
-  protected $details = array(
+  public $details = array(
     'name' => 'Var (URI)',
     'description' => 'A value from the request URI. It fetches the value of a particular param in the URI, based on the index value.',
     'menu' => 'Primitive',

@@ -20,7 +20,7 @@ use Datagator\Processors;
 class TokenConsumer extends Processors\ProcessorBase {
 
   protected $required = array('token');
-  protected $details = array(
+  public $details = array(
     'name' => 'Token',
     'description' => 'Validate the request, based on a token.',
     'menu' => 'validator',
