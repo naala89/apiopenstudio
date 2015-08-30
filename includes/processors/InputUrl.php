@@ -23,7 +23,7 @@ use Datagator\Core;
 class InputUrl extends ProcessorBase
 {
   protected $required = array('method', 'source');
-  protected $details = array(
+  public $details = array(
     'name' => 'External',
     'description' => 'Fetch the result form an external URL.',
     'menu' => 'internet',

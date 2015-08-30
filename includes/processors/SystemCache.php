@@ -11,7 +11,7 @@ use Datagator\Core;
 class SystemCache extends ProcessorBase
 {
   protected $required = array('operation');
-  protected $details = array(
+  public $details = array(
     'name' => 'System Cache)',
     'description' => 'Perform cache operations on the system.',
     'menu' => 'system',

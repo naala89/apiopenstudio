@@ -22,7 +22,7 @@ use Datagator\Core;
 
 class ResourceYaml extends ResourceBase
 {
-  protected $details = array(
+  public $details = array(
     'name' => 'Resource (Yaml)',
     'description' => 'Create or fetch a custom API resource for the application in YAML form.',
     'menu' => 'Resource',

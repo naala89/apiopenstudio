@@ -133,13 +133,13 @@ class UserMapper
   /**
    * @param $uid
    * @param $appId
-   * @param $roleName
+   * @param $rid
    * @return bool
    */
-  public function hasRole($uid, $appId, $roleName)
+  public function hasRole($uid, $appId, $rid)
   {
-    $sql = 'SELECT u.* FROM `user` AS u INNER JOIN `user_role` AS ur ON u.`uid`=ur.`uid` INNER JOIN `role` AS r ON ur.`rid`=r.`rid` WHERE u.`uid`=? AND ur.`appid`=? AND r.`name`=?';
-    $bindParams = array($uid, $appId, $roleName);
+    $sql = 'SELECT u.* FROM `user` AS u INNER JOIN `user_role` AS ur ON u.`uid`=ur.`uid` WHERE u.`uid`=? AND ur.`appid`=? AND ur.`rid`=?';
+    $bindParams = array($uid, $appId, $rid);
     $row = $this->db->GetRow($sql, $bindParams);
     return !empty($row['uid']);
   }

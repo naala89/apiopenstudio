@@ -18,10 +18,10 @@
 namespace Datagator\Processors;
 use Datagator\Core;
 
-class AuthCookie extends Processor
+class AuthCookie extends ProcessorBase
 {
   protected $required = array('cookie');
-  protected $details = array(
+  public $details = array(
     'name' => 'Auth (Cookie)',
     'description' => 'Authentication for remote server, using a cookie. Used by InputUrl Processor.',
     'menu' => 'Authentication',

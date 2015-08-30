@@ -48,11 +48,11 @@ class RoleMapper
 
   /**
    * @param $rid
-   * @return \Datagator\Db\ExternalUser
+   * @return \Datagator\Db\Role
    */
   public function findByRid($rid)
   {
-    $sql = 'SELECT * FROM external_user WHERE `rid` = ?';
+    $sql = 'SELECT * FROM role WHERE `rid` = ?';
     $bindParams = array($rid);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -60,11 +60,11 @@ class RoleMapper
 
   /**
    * @param $name
-   * @return \Datagator\Db\ExternalUser
+   * @return \Datagator\Db\Role
    */
   public function findByName($name)
   {
-    $sql = 'SELECT * FROM external_user WHERE `name` = ?';
+    $sql = 'SELECT * FROM role WHERE `name` = ?';
     $bindParams = array($name);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -74,7 +74,7 @@ class RoleMapper
    * @param array $row
    * @return \Datagator\Db\Role
    */
-  protected function mapArray(array $row)
+  protected function mapArray($row)
   {
     $role = new Role();
 

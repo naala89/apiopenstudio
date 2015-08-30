@@ -18,7 +18,7 @@ use Datagator\Core;
 class VarPost extends VarMixed
 {
   protected $required = array('name');
-  protected $details = array(
+  public $details = array(
     'name' => 'Var (Get)',
     'description' => 'A "post" variable. It fetches a variable from the post request.',
     'menu' => 'Primitive',

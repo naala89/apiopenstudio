@@ -20,7 +20,7 @@ use Datagator\Processors;
 class Token extends Processors\ProcessorBase {
 
   protected $required = array('token');
-  protected $details = array(
+  public $details = array(
     'name' => 'Token Sys-admin',
     'description' => 'Validate the request, based on a token and ensure user has sys-admin role access.',
     'menu' => 'validator',

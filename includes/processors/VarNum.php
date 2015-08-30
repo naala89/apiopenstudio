@@ -17,7 +17,7 @@ use Datagator\Core;
 
 class VarNum extends VarMixed
 {
-  protected $details = array(
+  public $details = array(
     'name' => 'Var (Number)',
     'description' => 'A number variable. It validates the input and returns an error if it is not a real number.',
     'menu' => 'Primitive',
