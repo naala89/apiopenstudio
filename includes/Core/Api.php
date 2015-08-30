@@ -11,7 +11,7 @@ use Datagator\Config;
 use Datagator\Processors;
 use Datagator\Db;
 use Datagator\Validators;
-use Datagator\Outputs\Output;
+use Datagator\Outputs;
 use Spyc;
 
 Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Config::$debug, Config::$errorLog);
