@@ -39,7 +39,16 @@ abstract class ResourceBase extends ProcessorBase
     return $result;
   }
 
-  abstract protected function _extractData();
+  /**
+   * @return mixed
+   */
+  abstract protected function _importData();
+
+  /**
+   * @param array $array
+   * @return mixed
+   */
+  abstract protected function _exportData(array $array);
 
   /**
    * Create or update a resource from YAML.
@@ -152,7 +161,7 @@ abstract class ResourceBase extends ProcessorBase
     $result['method'] = $resource->getMethod();
     $result['ttl'] = $resource->getTtl();
 
-    return \Spyc::YAMLDump($result);
+    return $this->_exportData($result);
   }
 
   /**

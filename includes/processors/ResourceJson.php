@@ -60,7 +60,7 @@ class ResourceJson extends ResourceBase
    * @return mixed|string
    * @throws \Datagator\Core\ApiException
    */
-  protected function _extractData()
+  protected function _importData()
   {
     // extract json
     $json = '';
@@ -80,5 +80,14 @@ class ResourceJson extends ResourceBase
       throw new Core\ApiException('invalid or no json supplied', -1, $this->id, 417);
     }
     return json_decode(json_encode($json), true);
+  }
+
+  /**
+   * @param array $array
+   * @return string
+   */
+  protected function _exportData(array $array)
+  {
+    return json_encode($array);
   }
 }

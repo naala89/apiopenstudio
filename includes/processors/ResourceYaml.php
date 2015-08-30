@@ -60,7 +60,7 @@ class ResourceYaml extends ResourceBase
    * @return array|string
    * @throws \Datagator\Core\ApiException
    */
-  protected function _extractData()
+  protected function _importData()
   {
     // extract yaml
     $yaml = '';
@@ -79,5 +79,14 @@ class ResourceYaml extends ResourceBase
       throw new Core\ApiException('invalid or no yaml supplied', -1, $this->id, 417);
     }
     return $yaml;
+  }
+
+  /**
+   * @param array $array
+   * @return string
+   */
+  protected function _exportData(array $array)
+  {
+    return \Spyc::YAMLDump($array);
   }
 }
