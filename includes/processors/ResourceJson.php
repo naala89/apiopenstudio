@@ -2,14 +2,14 @@
 
 /**
  * Resource import and export.
- * Allowed inputs are yaml files or yaml strings.
+ * Allowed inputs are json files or json strings.
  *
  * METADATA
  * {
  *    "type":"object",
  *    "meta":{
  *      "id": <mixed>,
- *      "yaml": <string>,
+ *      "json": <string>,
  *      "method": <"get"|"post">,
  *      "resource": <mixed>,
  *      "action": <mixed>
@@ -20,11 +20,11 @@
 namespace Datagator\Processors;
 use Datagator\Core;
 
-class ResourceYaml extends ResourceBase
+class ResourceJson extends ResourceBase
 {
   protected $details = array(
-    'name' => 'Resource (Yaml)',
-    'description' => 'Create or fetch a custom API resource for the application in YAML form.',
+    'name' => 'Resource (Json)',
+    'description' => 'Create or fetch a custom API resource for the application in JSON form.',
     'menu' => 'Resource',
     'application' => 'All',
     'input' => array(
@@ -48,8 +48,8 @@ class ResourceYaml extends ResourceBase
         'cardinality' => array(0, 1),
         'accepts' => array('string')
       ),
-      'yaml' => array(
-        'description' => 'The yaml string or file. This can be a form file or a urlencoded GET var (this is only used if you are creating or updating a resource).',
+      'json' => array(
+        'description' => 'The json string or file. This can be a form file or a urlencoded GET var (this is only used if you are creating or updating a resource).',
         'cardinality' => array(0, 1),
         'accepts' => array('string', 'file')
       )
@@ -57,27 +57,28 @@ class ResourceYaml extends ResourceBase
   );
 
   /**
-   * @return array|string
+   * @return mixed|string
    * @throws \Datagator\Core\ApiException
    */
   protected function _extractData()
   {
-    // extract yaml
-    $yaml = '';
+    // extract json
+    $json = '';
+    Core\Debug::variable($_FILES);
     if (sizeof($_FILES) > 1) {
       throw new Core\ApiException('multiple files received');
     }
     if (!empty($_FILES)) {
       foreach ($_FILES as $file) {
-        $yaml = \Spyc::YAMLLoad($file['tmp_name']);
+        $json = json_decode(file_get_contents($file['tmp_name']));
       }
     } else {
-      $yaml = urldecode($this->getVar($this->meta->yaml));
-      $yaml = \Spyc::YAMLLoadString($yaml);
+      $json = urldecode($this->getVar($this->meta->json));
+      $json = json_decode($json);
     }
-    if (empty($yaml)) {
-      throw new Core\ApiException('invalid or no yaml supplied', -1, $this->id, 417);
+    if (empty($json)) {
+      throw new Core\ApiException('invalid or no json supplied', -1, $this->id, 417);
     }
-    return $yaml;
+    return json_decode(json_encode($json), true);
   }
 }

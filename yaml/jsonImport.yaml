@@ -1,0 +1,24 @@
+uri:
+  noun: resource
+  verb: json
+
+application: All
+
+method: post
+
+ttl: 300
+
+validation:
+  processor: TokenDeveloper
+  meta:
+    id: 1
+    token:
+      processor: varGet
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: resourceJson
+  meta:
+    id: 3
