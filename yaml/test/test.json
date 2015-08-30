@@ -1,0 +1,14 @@
+{
+  "uri": {
+    "noun": "my",
+    "verb": "test"
+  },
+  "method": "delete",
+  "application": "All",
+  "process": {
+    "processor": "field",
+    "meta": {
+      "id": 1
+    }
+  }
+}
