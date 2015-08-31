@@ -38,11 +38,18 @@ abstract class Output
     }
   }
 
+  /**
+   * @return bool
+   */
   protected function isError()
   {
     return (is_object($this->data) && get_class($this->data) == 'Error');
   }
 
+  /**
+   * @param $string
+   * @return bool
+   */
   protected function isJson($string)
   {
     if (!is_string($string)) {
@@ -52,7 +59,11 @@ abstract class Output
     return (json_last_error() == JSON_ERROR_NONE);
   }
 
-  protected function dataToJson($data=null)
+  /**
+   * @param null $data
+   * @return array|null|string
+   */
+  protected function toJson($data=null)
   {
     $data = empty($data) ? $this->data : $data;
     if (is_object($data)) {
@@ -64,7 +75,11 @@ abstract class Output
     return $data;
   }
 
-  protected function dataToXml($data = null) {
+  /**
+   * @param null $data
+   * @return \Datagator\Outputs\SimpleXMLElement|string
+   */
+  protected function toXml($data = null) {
     $data = empty($data) ? $this->data : $data;
     if (is_object($data)) {
       $data = get_object_vars($data);
@@ -80,6 +95,10 @@ abstract class Output
     return $xml;
   }
 
+  /**
+   * @param $array
+   * @param $xml
+   */
   private function _arrayToXml($array, &$xml)
   {
     foreach($array as $key => $value) {

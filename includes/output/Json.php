@@ -12,7 +12,7 @@ class Json extends Output
       header('Content-Type: application/json');
     }
 
-    $payload = $this->dataToJson();
+    $payload = $this->toJson();
 
     if (!empty($this->meta)) {
       $options = !empty($this->meta->options) ? $this->meta->options : array();
