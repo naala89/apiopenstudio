@@ -92,15 +92,13 @@ class User
   public function hasRole($appId, $rid)
   {
     // convert app name to app Id
-    $isInt = filter_var($appId, FILTER_VALIDATE_INT);
-    if (!$isInt) {
+    if (!filter_var($appId, FILTER_VALIDATE_INT)) {
       $appMapper = new Db\ApplicationMapper($this->db);
       $app = $appMapper->findByName($appId);
       $appId = $app->getAppId();
     }
     // convert role name to role id
-    $isInt = filter_var($rid, FILTER_VALIDATE_INT);
-    if (!$isInt) {
+    if (!filter_var($rid, FILTER_VALIDATE_INT)) {
       $roleMapper = new Db\RoleMapper($this->db);
       $row = $roleMapper->findByName($rid);
       $rid = $row->getRid();
