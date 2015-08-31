@@ -16,17 +16,15 @@ if (!array_key_exists('HTTP_ORIGIN', $_SERVER)) {
 try {
   $api = new Core\Api(Config::$cache);
   $result = $api->process();
-} catch (ApiException $e) {
-  $output = $api->getOutputObj(
-    $api->parseType(getallheaders(), 'Accept', 'json'),
-    new Core\Error($e->getCode(), $e->getProcessor(), $e->getMessage()),
-    $e->getHtmlCode()
-  );
+} catch (Core\ApiException $e) {
+  $error = new Core\Error($e->getCode(), $e->getProcessor(), $e->getMessage());
+  $class = 'Datagator\\Outputs\\' . ucfirst($api->parseType(getallheaders(), 'Accept', 'json'));
+  $output = new $class($error->process(), $e->getHtmlCode());
   echo $output->process();
   ob_end_flush();
   exit();
 } catch (Exception $e) {
-  echo 'Error: ' . $e->getCode() . ' - ' . $e->getMessage();
+  echo 'Error: ' . $e->getCode() . '. ' . $e->getMessage();
   ob_end_flush();
   exit();
 }
