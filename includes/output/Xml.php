@@ -9,13 +9,14 @@ namespace Datagator\Outputs;
 
 class Xml extends Output
 {
-  public function process()
+  protected $header = 'Content-Type:text/html';
+
+  /**
+   * @return array|null|string
+   */
+  protected function getData()
   {
-    parent::process();
-    header('Content-Type:text/html');
-
     $payload = $this->toXml();
-
     if (!empty($this->meta)) {
       $options = !empty($this->meta->options) ? $this->meta->options : array();
       foreach ($this->meta->destination as $destination) {
@@ -25,7 +26,44 @@ class Xml extends Output
           ));
       }
     }
-
     return $payload;
+  }
+
+  /**
+   * @param null $data
+   * @return \Datagator\Outputs\SimpleXMLElement|string
+   */
+  protected function toXml($data = null) {
+    $data = empty($data) ? $this->data : $data;
+    if (is_object($data)) {
+      $data = get_object_vars($data);
+    }
+    if (is_array($data)) {
+      $xml = new \SimpleXMLElement('<?xml version="1.0"?><wrapper></wrapper>');
+      $this->_arrayToXml($data, $xml);
+      $xml = $xml->asXML();
+    }
+    else {
+      $xml = "<?xml version=\"1.0\"?><wrapper>$data</wrapper>";
+    }
+    return $xml;
+  }
+
+  /**
+   * @param $array
+   * @param $xml
+   */
+  private function _arrayToXml($array, &$xml)
+  {
+    foreach($array as $key => $value) {
+      if(is_array($value) || is_object($value)) {
+        $key = is_numeric($key) ? "item$key" : $key;
+        $subnode = $xml->addChild("$key");
+        $this->_arrayToXml($value, $subnode);
+      } else {
+        $key = is_numeric($key) ? "item$key" : $key;
+        $xml->addChild("$key","$value");
+      }
+    }
   }
 }

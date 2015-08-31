@@ -4,22 +4,39 @@ namespace Datagator\Outputs;
 
 class Text extends Output
 {
-  public function process()
-  {
-    parent::process();
-    header('Content-Type:text/text');
-    return $this->data;
-  }
+  protected $header = 'Content-Type:text/text';
 
-  protected function setError()
+  /**
+   * @return array|null|string
+   */
+  protected function getData()
   {
-    if (is_object($this->data) && get_class($this->data) == 'Error') {
-      $result = $this->data->process();
-      $this->data = 'Error (' . $result['error']['code'] . '): ' . $result['error']['message'];
-
-      if (!empty($result['error']['id'])) {
-        $this->data .= ' Processor ' . $result['error']['id'];
+    $payload = $this->toText();
+    if (!empty($this->meta)) {
+      $options = !empty($this->meta->options) ? $this->meta->options : array();
+      foreach ($this->meta->destination as $destination) {
+        $curl = new Curl();
+        $curl->post($destination, $options + array(
+            'CURLOPT_POSTFIELDS' => $payload
+          ));
       }
     }
+    return $payload;
+  }
+
+  /**
+   * @param null $data
+   * @return array|null|string
+   */
+  protected function toText($data=null)
+  {
+    $data = empty($data) ? $this->data : $data;
+    if (is_object($data)) {
+      $data = (array) $data;
+    }
+    if (is_array($data)) {
+      $data = serialize($data);
+    }
+    return $data;
   }
 }
