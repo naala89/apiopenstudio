@@ -17,9 +17,9 @@ namespace Datagator\Validators;
 use Datagator\Core;
 use Datagator\Processors;
 
-class TokenSysAdmin extends Processors\ProcessorBase {
+class TokenSysAdmin extends Token {
 
-  protected $required = array('token');
+  protected $role = 'sys-admin';
   public $details = array(
     'name' => 'Token Sys-admin',
     'description' => 'Validate the request, based on a token and ensure user has sys-admin role access.',
@@ -33,24 +33,4 @@ class TokenSysAdmin extends Processors\ProcessorBase {
       ),
     ),
   );
-
-  /**
-   * @return bool
-   * @throws \Datagator\Core\ApiException
-   */
-  public function process() {
-    Core\Debug::variable($this->meta, 'Validator TokenSysAdmin', 4);
-    $this->validateRequired();
-
-    $appId = $this->request->appId;
-    $token = $this->getVar($this->meta->token);
-    $userObj = new Core\User($this->request->db);
-
-    $user = $userObj->findByToken($token);
-    if (empty($user->getUid()) || !$user->getActive() || !$userObj->hasRole($appId, 'sys-admin')) {
-      throw new Core\ApiException('permission denied', -1, $this->id, 401);
-    }
-
-    return TRUE;
-  }
 }

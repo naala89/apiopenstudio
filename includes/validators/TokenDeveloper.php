@@ -17,9 +17,9 @@ namespace Datagator\Validators;
 use Datagator\Core;
 use Datagator\Processors;
 
-class TokenDeveloper extends Processors\ProcessorBase {
+class TokenDeveloper extends Token {
 
-  protected $required = array('token');
+  protected $role = 'developer';
   public $details = array(
     'name' => 'Token',
     'description' => 'Validate the request, based on a token and ensure user has developer role access.',
@@ -33,24 +33,4 @@ class TokenDeveloper extends Processors\ProcessorBase {
       ),
     ),
   );
-
-  /**
-   * @return bool
-   * @throws \Datagator\Core\ApiException
-   */
-  public function process() {
-    Core\Debug::variable($this->meta, 'Validator TokenDeveloper', 4);
-    $this->validateRequired();
-
-    $appId = (int) $this->request->appId;
-    $token = $this->getVar($this->meta->token);
-    $userObj = new Core\User($this->request->db);
-
-    $user = $userObj->findByToken($token);
-    if (empty($user->getUid()) || !$user->getActive() || !$userObj->hasRole($appId, 'developer')) {
-      throw new Core\ApiException('permission denied', -1, $this->id, 401);
-    }
-
-    return TRUE;
-  }
 }
