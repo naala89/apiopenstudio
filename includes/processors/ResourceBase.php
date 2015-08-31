@@ -18,6 +18,7 @@ abstract class ResourceBase extends ProcessorBase
    */
   public function process()
   {
+    Core\Debug::variable($this->meta, 'Processor ResourceBase', 4);
     // get user by token to check correct access to application and role
     $user = new Core\User($this->request->db);
     $user->findByToken($this->request->vars['token']);
