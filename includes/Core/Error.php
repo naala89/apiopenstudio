@@ -1,5 +1,7 @@
 <?php
 
+namespace Datagator\Core;
+
 class Error
 {
   private $id;
@@ -7,16 +9,11 @@ class Error
   private $message;
 
   /**
-   * Constructor, that populate the error object
-   *
-   * @param integer $code
-   *  The error code ID
-   * @param mixed $id
-   *  The processor ID
-   * @param string $message
-   *  The error message
+   * @param $code
+   * @param $id
+   * @param $message
    */
-  public function Error($code, $id, $message)
+  public function __construct($code, $id, $message)
   {
     $this->code = $code;
     $this->message = $message;
