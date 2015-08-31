@@ -43,6 +43,22 @@ class User
   }
 
   /**
+   * @return bool
+   */
+  public function isActive()
+  {
+    return $this->user->getActive() == 1;
+  }
+
+  /**
+   * @return bool
+   */
+  public function exists()
+  {
+    return !empty($this->user->getUid());
+  }
+
+  /**
    * @param $token
    * @return \Datagator\Db\User
    */
@@ -75,23 +91,21 @@ class User
    */
   public function hasRole($appId, $rid)
   {
-    // not a valid user
-    if (empty($uid = $this->user->getUid())) {
-      return false;
-    }
     // convert app name to app Id
-    if (!is_int($appId)) {
+    $isInt = filter_var($appId, FILTER_VALIDATE_INT);
+    if (!$isInt) {
       $appMapper = new Db\ApplicationMapper($this->db);
       $app = $appMapper->findByName($appId);
       $appId = $app->getAppId();
     }
     // convert role name to role id
-    if (!is_int($rid)) {
+    $isInt = filter_var($rid, FILTER_VALIDATE_INT);
+    if (!$isInt) {
       $roleMapper = new Db\RoleMapper($this->db);
       $row = $roleMapper->findByName($rid);
-      $role = $row->getRid();
+      $rid = $row->getRid();
     }
     $userMapper = new Db\UserMapper($this->db);
-    return $userMapper->hasRole($uid, $appId, $role);
+    return $userMapper->hasRole($this->user->getUid(), $appId, $rid);
   }
 }

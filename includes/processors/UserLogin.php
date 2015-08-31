@@ -47,30 +47,31 @@ class UserLogin extends ProcessorBase {
     Core\Debug::variable($this->meta, 'Processor UserLogin', 4);
     $this->validateRequired();
 
-    $username = $this->getVar($this->meta->username);
-    $password = $this->getVar($this->meta->password);
-    $userObj = new Core\User($this->request->db);
-
-    $user = $userObj->findByUsername($username);
-    if (empty($user->getUid()) || !$user->getActive()) {
+    // validate username and active status
+    $user = $this->request->user->findByUsername($this->getVar($this->meta->username));
+    if (!$this->request->user->exists() || !$this->request->user->isActive()) {
       throw new Core\ApiException('permission denied', -1, $this->id, 401);
     }
+
+    // set up salt if not defined
     if ($user->getSalt() == null) {
       $user->setSalt(Core\Hash::generateSalt());
     }
-    $hash = Core\Hash::generateHash($password, $user->getSalt());
+
+    // generate hash and compare
+    $hash = Core\Hash::generateHash($this->getVar($this->meta->password), $user->getSalt());
     if ($user->getHash() != null && $user->getHash() != $hash) {
       throw new Core\ApiException('permission denied', -1, $this->id, 401);
     }
 
+    //perform login and return token
     $user->setHash($hash);
     $tokenString = time() . $user->getUsername();
     $token = md5($tokenString);
     $user->setToken($token);
     $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime(Config::$tokenLife)));
-    $userObj->setUser($user);
-    $userObj->save();
-
+    $this->request->user->setUser($user);
+    $this->request->user->save();
     return $token;
   }
 }

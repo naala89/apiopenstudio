@@ -20,10 +20,8 @@ class ProcessorsAll extends ProcessorBase
   {
     Core\Debug::variable($this->meta, 'Processor ProcessorsAll');
 
-    $user = new Core\User($this->request->db);
-    $user->findByToken($this->request->vars['token']);
     $processors = $this->_getProcessors();
-    $details = $this->_getDetails($processors, $user);
+    $details = $this->_getDetails($processors);
 
     return $details;
   }
@@ -48,10 +46,9 @@ class ProcessorsAll extends ProcessorBase
    * Get details of all processors in an array.
    *
    * @param array $processors
-   * @param \Datagator\Core\User $user
    * @return array
    */
-  private function _getDetails(array $processors, Core\User $user)
+  private function _getDetails(array $processors)
   {
     $result = array();
 
@@ -61,7 +58,7 @@ class ProcessorsAll extends ProcessorBase
       $abstractClass = new \ReflectionClass($class);
       if (!$abstractClass->isAbstract()) {
         $obj = new $class($this->meta, $this->request);
-        if (!empty($obj->details) && !empty($obj->details['application']) && $user->hasRole($obj->details['application'], 'developer')) {
+        if (!empty($obj->details) && !empty($obj->details['application']) && $this->request->user->hasRole($obj->details['application'], 'developer')) {
           $result[] = $obj->details();
         }
       }

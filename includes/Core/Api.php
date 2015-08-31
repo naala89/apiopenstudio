@@ -23,7 +23,7 @@ Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Con
 class Api
 {
   private $cache;
-  private $test = 'processorsAll'; // FALSE or name of yaml file in /yaml
+  private $test = false; // FALSE or name of yaml file in /yaml
 
   /**
    * Constructor
@@ -141,20 +141,6 @@ class Api
    */
   private function _getResource(&$request)
   {
-    $dsnOptions = '';
-    if (sizeof(Config::$dboptions) > 0) {
-      foreach (Config::$dboptions as $k => $v) {
-        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
-        $dsnOptions .= "$k=$v";
-      }
-    }
-    $dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptions) : '';
-    $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
-    $request->db = \ADONewConnection($dsn);
-    if (!$request->db) {
-      throw new ApiException('DB connection failed',1 , -1, 404);
-    }
-    $request->db->debug = Config::$debugDb;
     $mapper = new Db\ResourceMapper($request->db);
 
     $result = new \stdClass();
@@ -231,31 +217,53 @@ class Api
     $request->request = $get['request'];
     $args = explode('/', trim($request->request, '/'));
     if (sizeof($args) < 2) {
+      // need at least noun and verb
       throw new ApiException('invalid request');
     }
-    $header = getallheaders();
 
+    //get request method
     $request->ip = $_SERVER['REMOTE_ADDR'];
     $request->method = $this->_getMethod();
     if($request->method == 'options') {
       // this is a preflight request - respond with 200 and empty payload
       die();
     }
+
+    // set up DB interface
+    $dsnOptions = '';
+    if (sizeof(Config::$dboptions) > 0) {
+      foreach (Config::$dboptions as $k => $v) {
+        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
+        $dsnOptions .= "$k=$v";
+      }
+    }
+    $dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptions) : '';
+    $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
+    $request->db = \ADONewConnection($dsn);
+    if (!$request->db) {
+      throw new ApiException('DB connection failed',1 , -1, 404);
+    }
+    $request->db->debug = Config::$debugDb;
+
     $request->appId = array_shift($args);
-    $request->resource = array_shift($args);
-    $request->action = array_shift($args);
-    $request->identifier = $request->resource . $request->action;
+    $request->noun = array_shift($args);
+    $request->verb = array_shift($args);
+    $request->identifier = $request->noun . $request->verb;
     $request->args = $args;
+    $header = getallheaders();
     $request->inFormat = $this->parseType($header, 'Content-Type');
     $request->outFormat = $this->parseType($header, 'Accept', 'json');
     $request->vars = array_diff_assoc($get, array('request' => $request->request));
     $request->vars = $request->vars + $_POST;
+    $request->user = new User($request->db);
+    if (isset($request->vars['token'])) {
+      $request->user->findByToken($request->vars['token']);
+    }
     $body = file_get_contents('php://input');
     if ($request->inFormat == 'json') {
       $request->vars = $request->vars + json_decode($body, TRUE);
     }
 
-    Debug::variable($request, 'Request data', 4);
     return $request;
   }
 

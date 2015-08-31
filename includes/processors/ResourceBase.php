@@ -19,19 +19,16 @@ abstract class ResourceBase extends ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ResourceBase', 4);
-    // get user by token to check correct access to application and role
-    $user = new Core\User($this->request->db);
-    $user->findByToken($this->request->vars['token']);
 
     switch ($this->request->method) {
       case 'post':
-        $result = $this->save($user);
+        $result = $this->save();
         break;
       case 'get':
-        $result = $this->fetch($user);
+        $result = $this->fetch();
         break;
       case 'delete':
-        $result = $this->delete($user);
+        $result = $this->delete();
         break;
       default:
         throw new Core\ApiException('unknown method', -1, $this->id);
@@ -57,11 +54,10 @@ abstract class ResourceBase extends ProcessorBase
    * The Yaml is either post string 'yaml', or file 'yaml'.
    * File takes precedence over the string if both present.
    *
-   * @param \Datagator\Core\User $user
-   * @return mixed
+   * @return bool
    * @throws \Datagator\Core\ApiException
    */
-  protected function save(Core\User $user)
+  protected function save()
   {
     $data = $this->_extractData();
     Core\Debug::variable($data, 'data', 4);
@@ -81,13 +77,13 @@ abstract class ResourceBase extends ProcessorBase
     }
 
     // check user has correct dev permission for application in yaml
-    if (!$user->hasRole($appId, 'developer')) {
+    if (!$this->request->user->hasRole($appId, 'developer')) {
       throw new Core\ApiException("permission denied", -1, $this->id, 401);
     }
 
     // only allow no validation for sys-admin role
     if (empty($data['validation'])) {
-      if (!$user->hasRole(1, 'sys-admin')) {
+      if (!$this->request->user->hasRole(1, 'sys-admin')) {
         throw new Core\ApiException('invalid resource - no Authentication defined');
       }
     } else {
@@ -126,16 +122,15 @@ abstract class ResourceBase extends ProcessorBase
    *  noun
    *  verb.
    *
-   * @param \Datagator\Core\User $user
-   * @return string
+   * @return mixed
    * @throws \Datagator\Core\ApiException
    */
-  protected function fetch(Core\User $user)
+  protected function fetch()
   {
     if (empty($appId = $this->request->vars['appid'])) {
       throw new Core\ApiException('missing appid parameter', -1, $this->id, 400);
     }
-    if (!$user->hasRole($appId, 'developer')) {
+    if (!$this->request->user->hasRole($appId, 'developer')) {
       throw new Core\ApiException('permission denied', -1, $this->id, 401);
     }
     if (empty($method = $this->request->vars['method'])) {
@@ -175,16 +170,15 @@ abstract class ResourceBase extends ProcessorBase
    *  noun
    *  verb
    *
-   * @param \Datagator\Core\User $user
-   * @return mixed
+   * @return bool
    * @throws \Datagator\Core\ApiException
    */
-  protected function delete(Core\User $user)
+  protected function delete()
   {
     if (empty($appId = $this->request->vars['appid'])) {
       throw new Core\ApiException('missing appid parameter', -1, $this->id, 400);
     }
-    if (!$user->hasRole($appId, 'developer')) {
+    if (!$this->request->user->hasRole($appId, 'developer')) {
       throw new Core\ApiException('permission denied', -1, $this->id, 401);
     }
     if (empty($method = $this->request->vars['method'])) {
