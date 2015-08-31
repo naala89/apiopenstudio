@@ -80,56 +80,73 @@ class Api
     return $this->_getOutput($resource, $request, $data);
   }
 
-  private function _getOutput($resource, $request, $data)
-  {
-    // default to response output if no output defined
-    $outputs = empty($resource->output) ? array('response') : $resource->output;
-    $result = '';
-    foreach ($outputs as $type => $meta) {
-      if ($type == 'response') {
-        //translate the output to the correct format as requested in header and return in the response
-        $class = 'Datagator\\Outputs\\' . ucfirst($this->_cleanData($request->outFormat));
-        $obj = new $class($data, 200);
-        $result = $obj->process();
-      } else {
-        $class = 'Datagator\\Outputs\\' . ucfirst($this->_cleanData($type));
-        $obj = new $class($data, 200, $meta);
-        $obj->process();
-      }
-    }
-    return $result;
-  }
-
   /**
-   * Check cache for any results.
+   * Process the request and request header into a meaningful array object.
    *
-   * @param $resource
-   * @param $request
-   * @return bool
+   * @param $get
+   * @return bool|\stdClass
+   * @throws \Datagator\Core\ApiException
+   * @throws \Datagator\Core\Exception
    */
-  private function _getCache($resource, $request)
+  private function _getData($get)
   {
-    if (!$this->cache->cacheActive()) {
-      Debug::message('not searching for cache - inactive', 4);
+    if (empty($get['request'])) {
       return FALSE;
     }
 
-    $cacheKey = $this->_getCacheKey($request);
-    Debug::variable($cacheKey, 'cache key', 4);
-    $data = $this->cache->get($cacheKey);
-
-    if (!empty($data)) {
-      Debug::variable($data, 'from cache', 4);
-      return $this->_getOutput($resource, $request, $data);
+    $request = new \stdClass();
+    $request->request = $get['request'];
+    $args = explode('/', trim($request->request, '/'));
+    if (sizeof($args) < 2) {
+      // need at least noun and verb
+      throw new ApiException('invalid request');
     }
 
-    Debug::message('no cache entry found', 4);
-    return FALSE;
-  }
+    //get request method
+    $request->ip = $_SERVER['REMOTE_ADDR'];
+    $request->method = $this->_getMethod();
+    if($request->method == 'options') {
+      // this is a preflight request - respond with 200 and empty payload
+      die();
+    }
 
-  private function _getCacheKey($request)
-  {
-    return $this->_cleanData($request->method . '_' . $request->request);
+    // set up DB interface
+    $dsnOptions = '';
+    if (sizeof(Config::$dboptions) > 0) {
+      foreach (Config::$dboptions as $k => $v) {
+        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
+        $dsnOptions .= "$k=$v";
+      }
+    }
+    $dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptions) : '';
+    $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
+    $request->db = \ADONewConnection($dsn);
+    if (!$request->db) {
+      throw new ApiException('DB connection failed',1 , -1, 500);
+    }
+    $request->db->debug = Config::$debugDb;
+
+    $request->appId = array_shift($args);
+    $request->noun = array_shift($args);
+    $request->verb = array_shift($args);
+    $request->identifier = $request->noun . $request->verb;
+    $request->args = $args;
+    $header = getallheaders();
+    $request->inFormat = $this->parseType($header, 'Content-Type');
+    $request->outFormat = $this->parseType($header, 'Accept', 'json');
+    $request->vars = array_diff_assoc($get, array('request' => $request->request));
+    $request->vars = $request->vars + $_POST;
+    $request->user = new User($request->db);
+    if (isset($request->vars['token'])) {
+      $request->user->findByToken($request->vars['token']);
+    }
+    $body = file_get_contents('php://input');
+    if ($request->inFormat == 'json') {
+      $request->vars = $request->vars + json_decode($body, TRUE);
+    }
+    Debug::variable($request, 'request', 4);
+
+    return $request;
   }
 
   /**
@@ -173,7 +190,7 @@ class Api
       $request->identifier = strtolower($array['uri']['noun']) . strtolower($array['uri']['verb']);
     }
 
-    Debug::variable($result, 'resource');
+    Debug::variable($result, 'resource', 3);
 
     return $result;
   }
@@ -200,78 +217,72 @@ class Api
   }
 
   /**
-   * Process the request and request header into a meaningful array object.
+   * Check cache for any results.
    *
-   * @param $get
-   * @return bool|\stdClass
-   * @throws \Datagator\Core\ApiException
-   * @throws \Datagator\Core\Exception
+   * @param $resource
+   * @param $request
+   * @return bool
    */
-  private function _getData($get)
+  private function _getCache($resource, $request)
   {
-    if (empty($get['request'])) {
+    if (!$this->cache->cacheActive()) {
+      Debug::message('not searching for cache - inactive', 3);
       return FALSE;
     }
 
-    $request = new \stdClass();
-    $request->request = $get['request'];
-    $args = explode('/', trim($request->request, '/'));
-    if (sizeof($args) < 2) {
-      // need at least noun and verb
-      throw new ApiException('invalid request');
+    $cacheKey = $this->_getCacheKey($request);
+    Debug::variable($cacheKey, 'cache key', 4);
+    $data = $this->cache->get($cacheKey);
+
+    if (!empty($data)) {
+      Debug::variable($data, 'from cache', 4);
+      return $this->_getOutput($resource, $request, $data);
     }
 
-    //get request method
-    $request->ip = $_SERVER['REMOTE_ADDR'];
-    $request->method = $this->_getMethod();
-    if($request->method == 'options') {
-      // this is a preflight request - respond with 200 and empty payload
-      die();
-    }
+    Debug::message('no cache entry found', 3);
+    return FALSE;
+  }
 
-    // set up DB interface
-    $dsnOptions = '';
-    if (sizeof(Config::$dboptions) > 0) {
-      foreach (Config::$dboptions as $k => $v) {
-        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
-        $dsnOptions .= "$k=$v";
+  /**
+   * @param $request
+   * @return array|string
+   */
+  private function _getCacheKey($request)
+  {
+    return $this->_cleanData($request->method . '_' . $request->request);
+  }
+
+  /**
+   * @param $resource
+   * @param $request
+   * @param $data
+   * @return string
+   */
+  private function _getOutput($resource, $request, $data)
+  {
+    // default to response output if no output defined
+    $outputs = empty($resource->output) ? array('response') : $resource->output;
+    $result = '';
+    foreach ($outputs as $type => $meta) {
+      if ($type == 'response') {
+        //translate the output to the correct format as requested in header and return in the response
+        $class = 'Datagator\\Outputs\\' . ucfirst($this->_cleanData($request->outFormat));
+        $obj = new $class($data, 200);
+        $result = $obj->process();
+      } else {
+        $class = 'Datagator\\Outputs\\' . ucfirst($this->_cleanData($type));
+        $obj = new $class($data, 200, $meta);
+        $obj->process();
       }
     }
-    $dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptions) : '';
-    $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
-    $request->db = \ADONewConnection($dsn);
-    if (!$request->db) {
-      throw new ApiException('DB connection failed',1 , -1, 404);
-    }
-    $request->db->debug = Config::$debugDb;
-
-    $request->appId = array_shift($args);
-    $request->noun = array_shift($args);
-    $request->verb = array_shift($args);
-    $request->identifier = $request->noun . $request->verb;
-    $request->args = $args;
-    $header = getallheaders();
-    $request->inFormat = $this->parseType($header, 'Content-Type');
-    $request->outFormat = $this->parseType($header, 'Accept', 'json');
-    $request->vars = array_diff_assoc($get, array('request' => $request->request));
-    $request->vars = $request->vars + $_POST;
-    $request->user = new User($request->db);
-    if (isset($request->vars['token'])) {
-      $request->user->findByToken($request->vars['token']);
-    }
-    $body = file_get_contents('php://input');
-    if ($request->inFormat == 'json') {
-      $request->vars = $request->vars + json_decode($body, TRUE);
-    }
-
-    return $request;
+    return $result;
   }
 
   /**
    * Utility function to get the REST method from the $_SERVER var.
    *
    * @return string
-   * @throws \Datagator\Core\Exception
+   * @throws \Datagator\Core\ApiException
    */
   private function _getMethod()
   {
@@ -282,7 +293,7 @@ class Api
       } else if ($_SERVER['HTTP_X_HTTP_METHOD'] == 'PUT') {
         $method = 'put';
       } else {
-        throw new Exception("Unexpected Header");
+        throw new ApiException("unexpected header", 0, -1, 406);
       }
     }
     return $method;
@@ -296,32 +307,17 @@ class Api
    * @param bool|FALSE $default
    * @return bool|string
    */
-  public function parseType($array, $key, $default=FALSE)
+  public function parseType($array, $key, $default=null)
   {
     $result = $default;
-
-    if (isset($array[$key])) {
+    if (!empty($array[$key])) {
       $parts = preg_split('/\,|\;/', $array[$key]);
       foreach ($parts as $part) {
-        $part = trim($part);
-        if (strpos($part, 'image') === 0) {
-          $result = 'image';
-          break;
-        }
-        if (strpos($part, '*') === 0) {
-          $result = $default;
-          break;
-        }
-        if (strpos($part, 'text') === 0 || strpos($part, 'text') === 0) {
-          $result = substr($part, strpos($part, '/') + 1);
-          break;
-        }
+        $result = preg_replace("/(application||text)\//i",'',$part);
+        $result = trim($result);
       }
     }
-
-    Debug::variable($result, $key, 4);
-
-    return $result;
+    return $result == '*' ? $default : $result;
   }
 
   /**
