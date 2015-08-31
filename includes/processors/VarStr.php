@@ -33,7 +33,7 @@ class VarStr extends VarMixed
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'ProcessorVarStr', 4);
+    Core\Debug::variable($this->meta, 'Processor VarStr', 4);
     $value = parent::process();
 
     if (!is_string($value)) {

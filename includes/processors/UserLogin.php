@@ -44,7 +44,7 @@ class UserLogin extends ProcessorBase {
    * @throws \Datagator\Core\ApiException
    */
   public function process() {
-    Core\Debug::message('Processor UserLogin', 4);
+    Core\Debug::variable($this->meta, 'Processor UserLogin', 4);
     $this->validateRequired();
 
     $username = $this->getVar($this->meta->username);
