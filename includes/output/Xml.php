@@ -14,7 +14,7 @@ class Xml extends Output
     parent::process();
     header('Content-Type:text/html');
 
-    $payload = $this->dataToXml();
+    $payload = $this->toXml();
 
     if (!empty($this->meta)) {
       $options = !empty($this->meta->options) ? $this->meta->options : array();
