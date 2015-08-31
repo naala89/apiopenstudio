@@ -39,7 +39,7 @@ class TokenConsumer extends Processors\ProcessorBase {
    * @throws \Datagator\Core\ApiException
    */
   public function process() {
-    Core\Debug::message('Validator Token', 4);
+    Core\Debug::variable($this->meta, 'Validator TokenConsumer', 4);
     $this->validateRequired();
 
     $appId = $this->request->appId;

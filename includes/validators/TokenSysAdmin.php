@@ -17,7 +17,7 @@ namespace Datagator\Validators;
 use Datagator\Core;
 use Datagator\Processors;
 
-class Token extends Processors\ProcessorBase {
+class TokenSysAdmin extends Processors\ProcessorBase {
 
   protected $required = array('token');
   public $details = array(
@@ -39,7 +39,7 @@ class Token extends Processors\ProcessorBase {
    * @throws \Datagator\Core\ApiException
    */
   public function process() {
-    Core\Debug::message('Validator Token', 4);
+    Core\Debug::variable($this->meta, 'Validator TokenSysAdmin', 4);
     $this->validateRequired();
 
     $appId = $this->request->appId;
