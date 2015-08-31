@@ -5,25 +5,52 @@ use Datagator;
 
 class Json extends Output
 {
-  public function process()
+  protected $header = 'Content-Type: application/json';
+
+  /**
+   * @return array|null|string
+   */
+  protected function getData()
   {
-    parent::process();
-    if (Datagator\Config::$debugInterface == 'LOG' || (Datagator\Config::$debug < 1 && Datagator\Config::$debugDb < 1)) {
-      header('Content-Type: application/json');
-    }
-
     $payload = $this->toJson();
-
     if (!empty($this->meta)) {
       $options = !empty($this->meta->options) ? $this->meta->options : array();
       foreach ($this->meta->destination as $destination) {
         $curl = new Curl();
         $curl->post($destination, $options + array(
-          'CURLOPT_POSTFIELDS' => $payload
-        ));
+            'CURLOPT_POSTFIELDS' => $payload
+          ));
       }
     }
-
     return $payload;
+  }
+
+  /**
+   * @param null $data
+   * @return array|null|string
+   */
+  protected function toJson($data=null)
+  {
+    $data = empty($data) ? $this->data : $data;
+    if (is_object($data)) {
+      $data = (array) $data;
+    }
+    if (!$this->isJson($data)) {
+      $data = json_encode($data);
+    }
+    return $data;
+  }
+
+  /**
+   * @param $string
+   * @return bool
+   */
+  protected function isJson($string)
+  {
+    if (!is_string($string)) {
+      return FALSE;
+    }
+    json_decode($string);
+    return (json_last_error() == JSON_ERROR_NONE);
   }
 }

@@ -2,12 +2,7 @@
 
 namespace Datagator\Outputs;
 
-class Plain extends Output
+class Plain extends Text
 {
-  public function process()
-  {
-    parent::process();
-    header('Content-Type:text/plain');
-    return $this->data;
-  }
+  protected $header = 'Content-Type:text/plain';
 }
