@@ -39,7 +39,7 @@ class TokenDeveloper extends Processors\ProcessorBase {
    * @throws \Datagator\Core\ApiException
    */
   public function process() {
-    Core\Debug::message('Validator TokenDeveloper', 4);
+    Core\Debug::variable($this->meta, 'Validator TokenDeveloper', 4);
     $this->validateRequired();
 
     $appId = (int) $this->request->appId;
