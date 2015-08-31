@@ -15,9 +15,9 @@ class ApiException extends \Exception
    * @param \Exception|NULL $previous
    */
   public function __construct($message, $code = 0, $processor = -1, $htmlCode = 400, \Exception $previous = null) {
-    parent::__construct($message, $code, $previous);
     $this->processor = $processor;
     $this->htmlCode = $htmlCode;
+    parent::__construct($message, $code, $previous);
   }
 
   public function getProcessor()
