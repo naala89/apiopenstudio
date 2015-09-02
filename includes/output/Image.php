@@ -12,12 +12,16 @@ use Datagator\Core;
 
 class Image extends Output
 {
+  protected function getData()
+  {
+
+  }
+
   public function process()
   {
     parent::process();
 
     if (!is_string($this->data)) {
-      //include_once(Config::$dirIncludes . 'output/class.OutputJson.php');
       $xml = new Json($this->status, $this->data);
       return $xml->process();
     }

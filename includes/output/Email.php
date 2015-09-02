@@ -4,8 +4,12 @@
  * TODO: Define outputEmail
  */
 
-namespace Datagator\Email;
+namespace Datagator\Output;
 
 class Email extends Output
 {
+  protected function getData()
+  {
+
+  }
 }
