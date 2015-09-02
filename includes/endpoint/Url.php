@@ -17,16 +17,17 @@
  * }
  */
 
-namespace Datagator\Processor;
+namespace Datagator\Endpoint;
+use Datagator\Processor;
 use Datagator\Core;
 
-class InputUrl extends ProcessorBase
+class Url extends Processor\ProcessorBase
 {
   protected $required = array('method', 'source');
   public $details = array(
-    'name' => 'External',
+    'name' => 'Url',
     'description' => 'Fetch the result form an external URL.',
-    'menu' => 'internet',
+    'menu' => 'Endpoint',
     'application' => 'All',
     'input' => array(
       'method' => array(
@@ -38,6 +39,11 @@ class InputUrl extends ProcessorBase
         'description' => 'Th source URL.',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'literal'),
+      ),
+      'auth' => array(
+        'description' => 'The remote authentication process.',
+        'cardinality' => array(1, 1),
+        'accepts' => array('processor'),
       ),
     ),
   );
@@ -51,7 +57,7 @@ class InputUrl extends ProcessorBase
    */
   public function process()
   {
-    Core\Debug::variable($this->meta, 'processor InputUrl', 4);
+    Core\Debug::variable($this->meta, 'processor Url', 4);
     $this->validateRequired();
 
     $method = $this->getVar($this->meta->method);
@@ -72,7 +78,7 @@ class InputUrl extends ProcessorBase
 
     //get auth
     if (!empty($this->meta->auth)) {
-      $class = 'Datagator\\Processor\\Auth' . ucfirst(trim($this->meta->auth));
+      $class = 'Datagator\\Endpoint\\Auth' . ucfirst(trim($this->meta->auth));
       if (!class_exists($class)) {
         throw new Core\ApiException('invalid Auth: ' . $this->meta->auth);
       }

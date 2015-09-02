@@ -15,15 +15,16 @@
  *    }
  */
 
-namespace Datagator\Processor;
+namespace Datagator\Endpoint;
+use Datagator\Processor;
 use Datagator\Core;
 
-class AuthCookie extends ProcessorBase
+class AuthCookie extends Processor\ProcessorBase
 {
   protected $required = array('cookie');
   public $details = array(
     'name' => 'Auth (Cookie)',
-    'description' => 'Authentication for remote server, using a cookie. Used by InputUrl Processor.',
+    'description' => 'Authentication for remote server, using a cookie. Used by Url Endpoint.',
     'menu' => 'Authentication',
     'application' => 'All',
     'input' => array(

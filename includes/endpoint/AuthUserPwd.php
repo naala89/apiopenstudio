@@ -17,15 +17,16 @@
  *    }
  */
 
-namespace Datagator\Processor;
+namespace Datagator\Endpoint;
+use Datagator\Processor;
 use Datagator\Core;
 
-class AuthUserPwd extends ProcessorBase
+class AuthUserPwd extends Processor\ProcessorBase
 {
   protected $required = array('username', 'password');
   public $details = array(
     'name' => 'Auth (User/Pass)',
-    'description' => 'Authentication for remote server, using username/password. Used by InputUrl Processor.',
+    'description' => 'Authentication for remote server, using username/password. Used by Url Endpoint.',
     'menu' => 'Authentication',
     'application' => 'All',
     'input' => array(

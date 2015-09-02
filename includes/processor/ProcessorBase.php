@@ -204,7 +204,10 @@ class ProcessorBase
     }
     $class = 'Datagator\\Processor\\' . ucfirst(trim($obj->processor));
     if (!class_exists($class)) {
-      throw new Core\ApiException('Processor undefined: ' . $obj->processor);
+      $class = 'Datagator\\Endpoint\\' . ucfirst(trim($obj->processor));
+      if (!class_exists($class)) {
+        throw new Core\ApiException('Processor undefined: ' . $obj->processor);
+      }
     }
     return new $class($obj->meta, $this->request);
   }
