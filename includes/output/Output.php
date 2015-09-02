@@ -1,6 +1,6 @@
 <?php
 
-namespace Datagator\Outputs;
+namespace Datagator\Output;
 use Datagator\Config;
 
 abstract class Output

@@ -8,10 +8,10 @@
 
 namespace Datagator\Core;
 use Datagator\Config;
-use Datagator\Processors;
+use Datagator\Processor;
 use Datagator\Db;
-use Datagator\Validators;
-use Datagator\Outputs;
+use Datagator\Validator;
+use Datagator\Output;
 use Spyc;
 
 Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Config::$debug, Config::$errorLog);
@@ -66,7 +66,7 @@ class Api
     if (empty($resource->process)) {
       throw new ApiException('invalid resource - process missing');
     }
-    $processor = new Processors\ProcessorBase($resource->process, $request);
+    $processor = new Processor\ProcessorBase($resource->process, $request);
     $data = $processor->process();
 
     // store the results in cache for next time
@@ -208,7 +208,7 @@ class Api
     if (empty($resource->validation)) {
       return;
     }
-    $class = 'Datagator\\Validators\\' . ucfirst($this->_cleanData($resource->validation->processor));
+    $class = 'Datagator\\Validator\\' . ucfirst($this->_cleanData($resource->validation->processor));
     $validator = new $class($resource->validation->meta, $request);
     if (!$validator->process()) {
       throw new ApiException('unauthorized', $resource->validation->meta->id, -1, 401);
@@ -266,11 +266,11 @@ class Api
     foreach ($outputs as $type => $meta) {
       if ($type == 'response') {
         //translate the output to the correct format as requested in header and return in the response
-        $class = 'Datagator\\Outputs\\' . ucfirst($this->_cleanData($request->outFormat));
+        $class = 'Datagator\\Output\\' . ucfirst($this->_cleanData($request->outFormat));
         $obj = new $class($data, 200);
         $result = $obj->process();
       } else {
-        $class = 'Datagator\\Outputs\\' . ucfirst($this->_cleanData($type));
+        $class = 'Datagator\\Output\\' . ucfirst($this->_cleanData($type));
         $obj = new $class($data, 200, $meta);
         $obj->process();
       }

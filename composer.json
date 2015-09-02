@@ -10,9 +10,9 @@
       "Datagator\\": "includes/",
       "Datagator\\Core\\": "includes/core/",
       "Datagator\\Db\\": "includes/db/",
-      "Datagator\\Outputs\\": "includes/output/",
-      "Datagator\\Processors\\": "includes/processors/",
-      "Datagator\\Validators\\": "includes/validators/"
+      "Datagator\\Output\\": "includes/output/",
+      "Datagator\\Processor\\": "includes/processor/",
+      "Datagator\\Validator\\": "includes/validator/"
     }
   }
 }

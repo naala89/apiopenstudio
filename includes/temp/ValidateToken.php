@@ -13,7 +13,7 @@
  *    }
  */
 
-namespace Datagator\Processors;
+namespace Datagator\Processor;
 use Datagator\Core;
 
 class ValidateToken extends Processor {

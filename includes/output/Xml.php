@@ -5,7 +5,7 @@
  * @see http://pastebin.com/pYuXQWee
  */
 
-namespace Datagator\Outputs;
+namespace Datagator\Output;
 
 class Xml extends Output
 {
@@ -31,7 +31,7 @@ class Xml extends Output
 
   /**
    * @param null $data
-   * @return \Datagator\Outputs\SimpleXMLElement|string
+   * @return \Datagator\Output\SimpleXMLElement|string
    */
   protected function toXml($data = null) {
     $data = empty($data) ? $this->data : $data;
