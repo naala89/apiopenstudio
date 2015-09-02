@@ -16,7 +16,7 @@
  *  }
  */
 
-namespace Datagator\Processors;
+namespace Datagator\Processor;
 
 class DrupalSession extends \Processor
 {

@@ -14,7 +14,7 @@
  * }
  */
 
-namespace Datagator\Processors;
+namespace Datagator\Processor;
 
 class Filter extends \Processor
 {
