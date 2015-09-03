@@ -6,7 +6,6 @@
 
 namespace Datagator\Endpoint;
 use Datagator\Core\ApiException;
-use Datagator\Core\Debug;
 
 class Normalise
 {
@@ -50,7 +49,6 @@ class Normalise
   public function toStdClass()
   {
     $format = !$this->format ? $this->_calcFormat() : $this->_getFormat();
-    Debug::variable($format, 'received format');
     switch ($format) {
       case 'xml':
         $data = $this->_xmlToStdClass();
@@ -87,7 +85,6 @@ class Normalise
   private function _parseContentType($str)
   {
     $result = '';
-    Debug::variable($str);
     if (preg_match('/text\/|application\//', $str) == 1) {
       return preg_replace('/text\/|application\//', '', $str);
     }

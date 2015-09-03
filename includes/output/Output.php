@@ -5,10 +5,12 @@ use Datagator\Config;
 
 abstract class Output
 {
-  public $status;
   protected $data;
   protected $meta;
   protected $header = '';
+  protected $required = array();
+  public $details = array();
+  public $status;
 
   /**
    * @param $data

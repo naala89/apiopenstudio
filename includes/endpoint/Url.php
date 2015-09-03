@@ -23,7 +23,7 @@ use Datagator\Core;
 
 class Url extends Processor\ProcessorBase
 {
-  protected $required = array('method', 'source');
+  protected $required = array('method', 'source', 'reportError');
   public $details = array(
     'name' => 'Url',
     'description' => 'Fetch the result form an external URL.',
@@ -44,6 +44,11 @@ class Url extends Processor\ProcessorBase
         'description' => 'The remote authentication process.',
         'cardinality' => array(1, 1),
         'accepts' => array('processor'),
+      ),
+      'reportError' => array(
+        'description' => 'Stop processing if the remote source responds with an error.',
+        'cardinality' => array(1, 1),
+        'accepts' => array('processor', '"0"', '"1"'),
       ),
     ),
   );
@@ -67,6 +72,7 @@ class Url extends Processor\ProcessorBase
     }
 
     $url = $this->getVar($this->meta->source);
+    $reportError = $this->getVar($this->meta->reportError);
 
     //get static curl options for this call
     $curlOpts = array();
@@ -111,8 +117,8 @@ class Url extends Processor\ProcessorBase
     }
 
     $normalise = new Normalise($result, $curl->type);
-    $result = $normalise->toStdClass();
-    if ($curl->httpStatus != 200) {
+    $result = $normalise->toArray();
+    if ($reportError && $curl->httpStatus != 200) {
       throw new Core\ApiException(json_encode($result), 3, $this->id, $curl->httpStatus);
     }
 
