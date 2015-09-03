@@ -5,6 +5,8 @@
  *
  * Accepts filepath, or remote URL.
  * This will return the actual image, not the URL.
+ *
+ * TODO: define this new Image class
  */
 
 namespace Datagator\Output;

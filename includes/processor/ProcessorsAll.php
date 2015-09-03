@@ -78,7 +78,7 @@ class ProcessorsAll extends ProcessorBase
       if (!$abstractClass->isAbstract()) {
         $obj = new $processor($this->meta, $this->request);
         if (!empty($obj->details) && !empty($obj->details['application']) && $this->request->user->hasRole($obj->details['application'], 'developer')) {
-          $result[] = $obj->details();
+          $result[] = $obj->details;
         }
       }
     }

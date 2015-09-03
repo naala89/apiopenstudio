@@ -1,6 +1,7 @@
 <?php
 
 namespace Datagator\Output;
+use Datagator\Core;
 use Datagator\Config;
 
 abstract class Output
@@ -38,5 +39,25 @@ abstract class Output
   protected function setStatus()
   {
     http_response_code($this->status);
+  }
+
+  /**
+   * Validate that the required fields are in the metadata
+   *
+   * @return bool
+   * @throws \Datagator\Core\ApiException
+   */
+  protected function validateRequired()
+  {
+    $result = array();
+    foreach ($this->required as $required) {
+      if (!isset($this->meta->$required)) {
+        $result[] = $required;
+      }
+    }
+    if (empty($result)) {
+      return TRUE;
+    }
+    throw new Core\ApiException('missing required meta: ' . implode(', ', $result), -1, $this->id, 417);
   }
 }

@@ -8,22 +8,22 @@ namespace Datagator\Output;
 
 class Email extends Output
 {
-  protected $required = array();
+  protected $required = array('destination', 'format');
   public $details = array(
-    'name' => 'User Login',
-    'description' => 'Login a user for token-based API access.',
-    'menu' => 'Validator',
+    'name' => 'Email',
+    'description' => 'Output in email format.',
+    'menu' => 'Output',
     'application' => 'All',
     'input' => array(
-      'username' => array(
-        'description' => 'Users username.',
-        'cardinality' => array(1, 1),
+      'destination' => array(
+        'description' => 'List of URLs to send to (other than response).',
+        'cardinality' => array(1, '*'),
         'accepts' => array('processor', 'literal'),
       ),
-      'password' => array(
-        'description' => 'Users password.',
+      'format' => array(
+        'description' => 'How to format the data when its placed in the email body.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('processor', '"xml"', '"html"', '"json"','"text"', '"plain"', '"image"'),
       ),
     ),
   );

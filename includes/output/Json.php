@@ -6,6 +6,19 @@ use Datagator;
 class Json extends Output
 {
   protected $header = 'Content-Type: application/json';
+  public $details = array(
+    'name' => 'Json',
+    'description' => 'Output in JSON format.',
+    'menu' => 'Output',
+    'application' => 'All',
+    'input' => array(
+      'destination' => array(
+        'description' => 'List of URLs to send to (other than response).',
+        'cardinality' => array(0, '*'),
+        'accepts' => array('processor', 'literal'),
+      ),
+    ),
+  );
 
   /**
    * @return array|null|string
