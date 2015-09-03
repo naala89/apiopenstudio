@@ -63,7 +63,7 @@ class Url extends Processor\ProcessorBase
     $method = $this->getVar($this->meta->method);
     $method = strtolower($method);
     if (!in_array($method, array('get', 'post'))) {
-      throw new Core\ApiException('empty or invalid HTTP method', 1, $this->id, 417);
+      throw new Core\ApiException('invalid method', 1, $this->id, 417);
     }
 
     $url = $this->getVar($this->meta->source);
@@ -109,9 +109,11 @@ class Url extends Processor\ProcessorBase
     if ($result === false) {
       throw new Core\ApiException('could not get response from remote server: ' . $curl->errorMsg, $curl->curlStatus, $this->id, $curl->httpStatus);
     }
-    //TODO: use $curl->type to convert all inputUrl results into a standard format
+
+    $normalise = new Normalise($result, $curl->type);
+    $result = $normalise->toStdClass();
     if ($curl->httpStatus != 200) {
-      throw new Core\ApiException($result, 3, $this->id, $curl->httpStatus);
+      throw new Core\ApiException(json_encode($result), 3, $this->id, $curl->httpStatus);
     }
 
     return $result;

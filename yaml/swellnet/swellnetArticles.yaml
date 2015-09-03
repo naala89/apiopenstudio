@@ -9,7 +9,7 @@ method: get
 ttl: 300
 
 validation:
-  processor: validateConsumer
+  processor: tokenConsumer
   meta:
     id: 1
     token:
@@ -19,7 +19,7 @@ validation:
         name: token
 
 process:
-  processor: inputUrl
+  processor: url
   meta:
     id: 3
     standardError: TRUE
