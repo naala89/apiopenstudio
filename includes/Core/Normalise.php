@@ -4,8 +4,7 @@
  *
  */
 
-namespace Datagator\Endpoint;
-use Datagator\Core\ApiException;
+namespace Datagator\Core;
 
 class Normalise
 {
