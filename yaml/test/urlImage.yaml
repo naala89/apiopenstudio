@@ -1,0 +1,16 @@
+uri:
+  noun: url
+  verb: xml
+
+application: All
+
+method: get
+
+ttl: 300
+
+process:
+  processor: url
+  meta:
+    id: 1
+    method: get
+    source: "http://imgsv.imaging.nikon.com/lineup/lens/zoom/normalzoom/af-s_dx_18-140mmf_35-56g_ed_vr/img/sample/sample1_l.jpg"

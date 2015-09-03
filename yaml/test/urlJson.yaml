@@ -1,0 +1,16 @@
+uri:
+  noun: url
+  verb: xml
+
+application: All
+
+method: get
+
+ttl: 300
+
+process:
+  processor: url
+  meta:
+    id: 1
+    method: get
+    source: "http://rest.db.ripe.net/ripe/inetnum/34.54.212.4.json"

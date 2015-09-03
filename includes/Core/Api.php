@@ -23,7 +23,7 @@ Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Con
 class Api
 {
   private $cache;
-  private $test = false; // FALSE or name of yaml file in /yaml
+  private $test = 'urlJson'; // FALSE or name of yaml file
 
   /**
    * Constructor
@@ -132,7 +132,7 @@ class Api
     $request->identifier = $request->noun . $request->verb;
     $request->args = $args;
     $header = getallheaders();
-    $request->inFormat = $this->parseType($header, 'Content-Type');
+    //$request->inFormat = $this->parseType($header, 'Content-Type');
     $request->outFormat = $this->parseType($header, 'Accept', 'json');
     $request->vars = array_diff_assoc($get, array('request' => $request->request));
     $request->vars = $request->vars + $_POST;
@@ -141,9 +141,9 @@ class Api
       $request->user->findByToken($request->vars['token']);
     }
     $body = file_get_contents('php://input');
-    if ($request->inFormat == 'json') {
-      $request->vars = $request->vars + json_decode($body, TRUE);
-    }
+    //if ($request->inFormat == 'json') {
+    //  $request->vars = $request->vars + json_decode($body, TRUE);
+    //}
     Debug::variable($request, 'request', 4);
 
     return $request;
