@@ -116,7 +116,7 @@ class Url extends Processor\ProcessorBase
       throw new Core\ApiException('could not get response from remote server: ' . $curl->errorMsg, $curl->curlStatus, $this->id, $curl->httpStatus);
     }
 
-    $normalise = new Normalise($result, $curl->type);
+    $normalise = new Core\Normalise($result, $curl->type);
     $result = $normalise->toArray();
     if ($reportError && $curl->httpStatus != 200) {
       throw new Core\ApiException(json_encode($result), 3, $this->id, $curl->httpStatus);
