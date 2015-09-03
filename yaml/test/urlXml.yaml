@@ -14,3 +14,4 @@ process:
     id: 1
     method: get
     source: "http://www.xmlfiles.com/examples/cd_catalog.xml"
+    reportError: 1

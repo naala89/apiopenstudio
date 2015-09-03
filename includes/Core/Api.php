@@ -23,7 +23,7 @@ Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Con
 class Api
 {
   private $cache;
-  private $test = 'urlJson'; // FALSE or name of yaml file
+  private $test = false; // FALSE or name of yaml file
 
   /**
    * Constructor
