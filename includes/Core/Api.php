@@ -132,7 +132,6 @@ class Api
     $request->identifier = $request->noun . $request->verb;
     $request->args = $args;
     $header = getallheaders();
-    //$request->inFormat = $this->parseType($header, 'Content-Type');
     $request->outFormat = $this->parseType($header, 'Accept', 'json');
     $request->vars = array_diff_assoc($get, array('request' => $request->request));
     $request->vars = $request->vars + $_POST;
@@ -140,7 +139,8 @@ class Api
     if (isset($request->vars['token'])) {
       $request->user->findByToken($request->vars['token']);
     }
-    $body = file_get_contents('php://input');
+    //$request->inFormat = $this->parseType($header, 'Content-Type');
+    //$body = file_get_contents('php://input');
     //if ($request->inFormat == 'json') {
     //  $request->vars = $request->vars + json_decode($body, TRUE);
     //}
@@ -272,6 +272,7 @@ class Api
       } else {
         $class = 'Datagator\\Output\\' . ucfirst($this->_cleanData($type));
         $obj = new $class($data, 200, $meta);
+        $obj->validateRequired();
         $obj->process();
       }
     }
