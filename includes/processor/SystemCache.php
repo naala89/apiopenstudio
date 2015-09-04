@@ -12,7 +12,7 @@ class SystemCache extends ProcessorBase
 {
   protected $required = array('operation');
   public $details = array(
-    'name' => 'System Cache)',
+    'name' => 'System (Cache)',
     'description' => 'Perform cache operations on the system.',
     'menu' => 'system',
     'application' => 'System',
