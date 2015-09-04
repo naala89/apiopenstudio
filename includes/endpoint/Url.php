@@ -117,7 +117,7 @@ class Url extends Processor\ProcessorBase
     }
 
     $normalise = new Core\Normalise($result, $curl->type);
-    $result = $normalise->toArray();
+    $result = $normalise->normalise();
     if ($reportError && $curl->httpStatus != 200) {
       throw new Core\ApiException(json_encode($result), 3, $this->id, $curl->httpStatus);
     }

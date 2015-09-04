@@ -10,6 +10,7 @@ class Normalise
 {
   private $data;
   private $format;
+  public $normaliseFunc = 'toArray';
 
   /**
    * @param $data
@@ -19,6 +20,11 @@ class Normalise
   {
     $this->data = $data;
     $this->format = $format;
+  }
+
+  public function normalise()
+  {
+    return $this->{$this->normaliseFunc}();
   }
 
   /**
