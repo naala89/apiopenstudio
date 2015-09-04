@@ -1,0 +1,19 @@
+uri:
+  noun: facebook
+  verb: login
+
+application: All
+
+method: post
+
+ttl: 300
+
+process:
+  processor: Facebook
+  meta:
+    id: 1
+    graphVersion: 2.4
+    appId: 891814270867424
+    appSecret: 0b451c391b33ca34006f797adc25ba37
+    accessToken: CAAMrGbDSFZBABABThVdrgatASgHQpxsWjjHJIKgCIXSu99zR6COEnXaZCNL00pJXGBiW7ZC4ACBbaObTaTQXJPAA4enAPwcTIqhZCeR3jzU8gHjZC86d3NZB6YqV1zImCbJXrVbLrsGRcJqrRMz5UZCn4MlNKojuLNyxkAI5Lsw3ocDFRVDZC4hPa9novGfsUyzUoyrnUBFTJgZDZD
+    query: me
