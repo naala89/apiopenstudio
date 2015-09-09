@@ -24,9 +24,9 @@ use Datagator\Core;
 class AuthUserPwd extends Processor\ProcessorBase
 {
   protected $required = array('username', 'password');
-  public $details = array(
+  protected $details = array(
     'name' => 'Auth (User/Pass)',
-    'description' => 'Authentication for remote server, using username/password. Used by Url Endpoint.',
+    'description' => 'Authentication for remote server, using username/password.',
     'menu' => 'Authentication',
     'application' => 'All',
     'input' => array(

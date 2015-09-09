@@ -12,8 +12,8 @@ use Facebook\Exceptions;
 
 class Facebook extends Processor\ProcessorBase
 {
-  protected $required = array('appId', 'appSecret');
-  public $details = array(
+  protected $required = array('appId', 'appSecret', 'graphVersion', 'accessToken', 'query');
+  protected $details = array(
     'name' => 'Facebook',
     'description' => 'Fetch results from facebook Graph API.',
     'menu' => 'Endpoint',
@@ -73,9 +73,9 @@ class Facebook extends Processor\ProcessorBase
 
     try {
       $response = $fb->get($query, $accessToken);
-    } catch(\Facebook\Exceptions\FacebookResponseException $e) {
+    } catch(Exceptions\FacebookResponseException $e) {
       throw new Core\ApiException('graph returned an error: ' . $e->getMessage(), -1, $this->id);
-    } catch(\Facebook\Exceptions\FacebookSDKException $e) {
+    } catch(Exceptions\FacebookSDKException $e) {
       throw new Core\ApiException('facebook SDK returned an error: ' . $e->getMessage(), -1, $this->id);
     }
 
