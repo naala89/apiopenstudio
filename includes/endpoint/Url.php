@@ -24,7 +24,7 @@ use Datagator\Core;
 class Url extends Processor\ProcessorBase
 {
   protected $required = array('method', 'source', 'reportError');
-  public $details = array(
+  protected $details = array(
     'name' => 'Url',
     'description' => 'Fetch the result form an external URL.',
     'menu' => 'Endpoint',
