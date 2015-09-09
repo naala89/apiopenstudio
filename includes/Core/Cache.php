@@ -6,8 +6,6 @@ namespace Datagator\Core;
  * Class Cache
  *
  * allow storing values in the cache.
- *
- * @TODO: separate memcache and apc into separate classes
  */
 class Cache
 {
