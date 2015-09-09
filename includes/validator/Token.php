@@ -20,18 +20,13 @@ use Datagator\Processor;
 class Token extends Processor\ProcessorBase {
   protected $role = false;
   protected $required = array('token');
-  public $details = array(
+  protected $details = array(
     'name' => 'Token',
-    'description' => 'Validate the request, based on a token.',
-    'menu' => 'validator',
+    'description' => 'Validate the request, the user having a valid token.',
+    'menu' => 'Validator',
     'client' => 'All',
-    'input' => array(
-      'token' => array(
-        'description' => 'The token.',
-        'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
-      ),
-    ),
+    'application' => 'All',
+    'input' => array(),
   );
 
   /**
@@ -40,7 +35,6 @@ class Token extends Processor\ProcessorBase {
    */
   public function process() {
     Core\Debug::variable($this->meta, 'Validator TokenConsumer', 4);
-    $this->validateRequired();
 
     $this->request->user->findByToken($this->getVar($this->meta->token));
     if (!$this->request->user->exists()
