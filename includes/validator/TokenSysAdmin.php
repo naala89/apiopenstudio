@@ -20,17 +20,12 @@ use Datagator\Processor;
 class TokenSysAdmin extends Token {
 
   protected $role = 'sys-admin';
-  public $details = array(
+  protected $details = array(
     'name' => 'Token Sys-admin',
-    'description' => 'Validate the request, based on a token and ensure user has sys-admin role access.',
+    'description' => 'Validate the request, the user having a role of sys-admin.',
     'menu' => 'validator',
     'client' => 'System',
-    'input' => array(
-      'token' => array(
-        'description' => 'The token.',
-        'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
-      ),
-    ),
+    'application' => 'All',
+    'input' => array(),
   );
 }

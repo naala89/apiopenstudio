@@ -20,17 +20,12 @@ use Datagator\Processor;
 class TokenConsumer extends Token {
 
   protected $role = 'consumer';
-  public $details = array(
+  protected $details = array(
     'name' => 'Token',
-    'description' => 'Validate the request, based on a token.',
+    'description' => 'Validate the request, the user having a role of consumer.',
     'menu' => 'validator',
     'client' => 'All',
-    'input' => array(
-      'token' => array(
-        'description' => 'The token.',
-        'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
-      ),
-    ),
+    'application' => 'All',
+    'input' => array(),
   );
 }
