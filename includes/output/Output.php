@@ -2,15 +2,14 @@
 
 namespace Datagator\Output;
 use Datagator\Core;
+use Datagator\Processor;
 use Datagator\Config;
 
-abstract class Output
+abstract class Output extends Processor\ProcessorBase
 {
   protected $data;
   protected $meta;
   protected $header = '';
-  protected $required = array();
-  public $details = array();
   public $status;
 
   /**
@@ -25,6 +24,9 @@ abstract class Output
     $this->meta = $meta;
   }
 
+  /**
+   * @return mixed
+   */
   public function process()
   {
     $this->setStatus();
@@ -34,6 +36,12 @@ abstract class Output
     return $this->getData();
   }
 
+  /**
+   * This function returns the payload that will be sent on the response.
+   * It must convert the data into the expected format (e.g. XML or JSON strings).
+   *
+   * @return mixed
+   */
   abstract protected function getData();
 
   protected function setStatus()

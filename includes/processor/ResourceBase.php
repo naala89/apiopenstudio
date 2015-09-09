@@ -9,7 +9,7 @@ abstract class ResourceBase extends ProcessorBase
   protected $requiredElements = array(
     'uri', 'application', 'method', 'process'
   );
-  public $details = array();
+  protected $details = array();
 
   /**
    * @return bool|string

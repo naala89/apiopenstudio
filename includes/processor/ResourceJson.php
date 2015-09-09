@@ -22,7 +22,7 @@ use Datagator\Core;
 
 class ResourceJson extends ResourceBase
 {
-  public $details = array(
+  protected $details = array(
     'name' => 'Resource (Json)',
     'description' => 'Create or fetch a custom API resource for the application in JSON form.',
     'menu' => 'Resource',
