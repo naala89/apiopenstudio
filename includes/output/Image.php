@@ -14,9 +14,10 @@ use Datagator\Core;
 
 class Image extends Output
 {
+  protected $details = array('application' => 'all');
+
   protected function getData()
   {
-
   }
 
   public function process()

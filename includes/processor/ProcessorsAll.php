@@ -5,7 +5,7 @@ use Datagator\Core;
 
 class ProcessorsAll extends ProcessorBase
 {
-  public $details = array(
+  protected $details = array(
     'name' => 'processors (all)',
     'description' => 'Fetch data on all processors available to your application.',
     'menu' => 'System',
@@ -48,22 +48,6 @@ class ProcessorsAll extends ProcessorBase
   }
 
   /**
-   * Get list of processors.
-   *
-   * @return array
-   */
-  private function _getProcessors()
-  {
-    $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(__DIR__));
-    $objects = new \RegexIterator($iterator, '/[a-z0-9]+\.php/i', \RecursiveRegexIterator::GET_MATCH);
-    $result = array();
-    foreach($objects as $name => $object){
-      $result[] = $name;
-    }
-    return $result;
-  }
-
-  /**
    * Get details of all processors in an array.
    *
    * @param array $processors
@@ -77,8 +61,10 @@ class ProcessorsAll extends ProcessorBase
       $abstractClass = new \ReflectionClass($processor);
       if (!$abstractClass->isAbstract()) {
         $obj = new $processor($this->meta, $this->request);
-        if (!empty($obj->details) && !empty($obj->details['application']) && $this->request->user->hasRole($obj->details['application'], 'developer')) {
-          $result[] = $obj->details;
+        $details = $obj->details();
+        Core\Debug::variable($processor);
+        if (!empty($details['application']) && $this->request->user->hasRole($details['application'], 'developer')) {
+          $result[] = $details;
         }
       }
     }

@@ -76,7 +76,7 @@ class ProcessorBase
    *
    * @var array
    */
-  public $details = array();
+  protected $details = array();
 
   /**
    * Constructor. Store processor metadata and request data in object.
@@ -113,9 +113,9 @@ class ProcessorBase
   }
 
   /**
-   * Return details for processor, for frontend application.
+   * Return details for processor.
    *
-   * @return mixed
+   * @return array
    */
   public function details()
   {

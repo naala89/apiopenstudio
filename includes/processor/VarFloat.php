@@ -17,7 +17,7 @@ use Datagator\Core;
 
 class VarFloat extends VarMixed
 {
-  public $details = array(
+  protected $details = array(
     'name' => 'Var (Float)',
     'description' => 'A float variable. It validates the input and returns an error if it is not a float.',
     'menu' => 'Primitive',

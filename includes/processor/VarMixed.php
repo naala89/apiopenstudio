@@ -11,8 +11,6 @@
  *      "var":<processor|mixed>,
  *    }
  *  }
- *
- * @TODO: rename class ProcessorVar to ProcessorVarMixed
  */
 
 namespace Datagator\Processor;
@@ -21,7 +19,7 @@ use Datagator\Core;
 class VarMixed extends ProcessorBase
 {
   protected $required = array('value');
-  public $details = array(
+  protected $details = array(
     'name' => 'Var (Mixed)',
     'description' => 'A variable of any type.',
     'menu' => 'Primitive',
