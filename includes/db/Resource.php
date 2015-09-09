@@ -43,11 +43,11 @@ class Resource
   }
 
   /**
-   * @param $val
+   * @param $id
    */
-  public function setId($val)
+  public function setId($id)
   {
-    $this->id = $val;
+    $this->id = $id;
   }
 
   /**
@@ -59,11 +59,11 @@ class Resource
   }
 
   /**
-   * @param $val
+   * @param $appId
    */
-  public function setAppId($val)
+  public function setAppId($appId)
   {
-    $this->appId = $val;
+    $this->appId = $appId;
   }
 
   /**
@@ -75,11 +75,11 @@ class Resource
   }
 
   /**
-   * @param $val
+   * @param $method
    */
-  public function setMethod($val)
+  public function setMethod($method)
   {
-    $this->method = $val;
+    $this->method = $method;
   }
 
   /**
@@ -91,11 +91,11 @@ class Resource
   }
 
   /**
-   * @param $val
+   * @param $identifier
    */
-  public function setIdentifier($val)
+  public function setIdentifier($identifier)
   {
-    $this->identifier = $val;
+    $this->identifier = $identifier;
   }
 
   /**
@@ -107,11 +107,11 @@ class Resource
   }
 
   /**
-   * @param $val
+   * @param $meta
    */
-  public function setMeta($val)
+  public function setMeta($meta)
   {
-    $this->meta = $val;
+    $this->meta = $meta;
   }
 
   /**
@@ -123,11 +123,11 @@ class Resource
   }
 
   /**
-   * @param $val
+   * @param $ttl
    */
-  public function setTtl($val)
+  public function setTtl($ttl)
   {
-    $this->ttl = $val;
+    $this->ttl = $ttl;
   }
 
   /**

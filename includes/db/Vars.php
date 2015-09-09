@@ -37,11 +37,11 @@ class Vars
   }
 
   /**
-   * @param $val
+   * @param $id
    */
-  public function setId($val)
+  public function setId($id)
   {
-    $this->id = $val;
+    $this->id = $id;
   }
 
   /**
@@ -53,11 +53,11 @@ class Vars
   }
 
   /**
-   * @param $val
+   * @param $appId
    */
-  public function setAppId($val)
+  public function setAppId($appId)
   {
-    $this->appId = $val;
+    $this->appId = $appId;
   }
 
   /**
@@ -69,11 +69,11 @@ class Vars
   }
 
   /**
-   * @param $val
+   * @param $name
    */
-  public function setName($val)
+  public function setName($name)
   {
-    $this->name = $val;
+    $this->name = $name;
   }
 
   /**

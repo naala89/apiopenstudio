@@ -31,11 +31,11 @@ class Role
   }
 
   /**
-   * @param $val
+   * @param $rid
    */
-  public function setRid($val)
+  public function setRid($rid)
   {
-    $this->rid = $val;
+    $this->rid = $rid;
   }
 
   /**
@@ -47,11 +47,11 @@ class Role
   }
 
   /**
-   * @param $val
+   * @param $name
    */
-  public function setName($val)
+  public function setName($name)
   {
-    $this->name = $val;
+    $this->name = $name;
   }
 
   /**

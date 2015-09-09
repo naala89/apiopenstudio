@@ -46,11 +46,11 @@ class ExternalUser
   }
 
   /**
-   * @param $val
+   * @param $id
    */
-  public function setId($val)
+  public function setId($id)
   {
-    $this->id = $val;
+    $this->id = $id;
   }
 
   /**
@@ -62,11 +62,11 @@ class ExternalUser
   }
 
   /**
-   * @param $val
+   * @param $appId
    */
-  public function setAppId($val)
+  public function setAppId($appId)
   {
-    $this->appid = $val;
+    $this->appid = $appId;
   }
 
   /**
@@ -78,11 +78,11 @@ class ExternalUser
   }
 
   /**
-   * @param $val
+   * @param $externalId
    */
-  public function setExternalId($val)
+  public function setExternalId($externalId)
   {
-    $this->externalId = $val;
+    $this->externalId = $externalId;
   }
 
   /**
@@ -94,11 +94,11 @@ class ExternalUser
   }
 
   /**
-   * @param $val
+   * @param $externalEntity
    */
-  public function setExternalEntity($val)
+  public function setExternalEntity($externalEntity)
   {
-    $this->externalEntity = $val;
+    $this->externalEntity = $externalEntity;
   }
 
   /**
@@ -110,11 +110,11 @@ class ExternalUser
   }
 
   /**
-   * @param $val
+   * @param $dataField1
    */
-  public function setDataField1($val)
+  public function setDataField1($dataField1)
   {
-    $this->dataField1 = $val;
+    $this->dataField1 = $dataField1;
   }
 
   /**
@@ -126,11 +126,11 @@ class ExternalUser
   }
 
   /**
-   * @param $val
+   * @param $dataField2
    */
-  public function setDataField2($val)
+  public function setDataField2($dataField2)
   {
-    $this->dataField2 = $val;
+    $this->dataField2 = $dataField2;
   }
 
   /**
@@ -142,11 +142,11 @@ class ExternalUser
   }
 
   /**
-   * @param $val
+   * @param $dataField3
    */
-  public function setDataField3($val)
+  public function setDataField3($dataField3)
   {
-    $this->dataField3 = $val;
+    $this->dataField3 = $dataField3;
   }
 
   /**
