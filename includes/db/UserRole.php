@@ -37,11 +37,11 @@ class UserRole
   }
 
   /**
-   * @param $val
+   * @param $id
    */
-  public function setId($val)
+  public function setId($id)
   {
-    $this->id = $val;
+    $this->id = $id;
   }
 
   /**
@@ -53,11 +53,11 @@ class UserRole
   }
 
   /**
-   * @param $val
+   * @param $uid
    */
-  public function setUid($val)
+  public function setUid($uid)
   {
-    $this->uid = $val;
+    $this->uid = $uid;
   }
 
   /**
@@ -69,11 +69,11 @@ class UserRole
   }
 
   /**
-   * @param $val
+   * @param $rid
    */
-  public function setRid($val)
+  public function setRid($rid)
   {
-    $this->rid = $val;
+    $this->rid = $rid;
   }
 
   /**
@@ -85,11 +85,11 @@ class UserRole
   }
 
   /**
-   * @param $val
+   * @param $appId
    */
-  public function setAppId($val)
+  public function setAppId($appId)
   {
-    $this->appId = $val;
+    $this->appId = $appId;
   }
 
   /**

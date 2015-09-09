@@ -34,11 +34,11 @@ class Application
   }
 
   /**
-   * @param $val
+   * @param $appId
    */
-  public function setAppId($val)
+  public function setAppId($appId)
   {
-    $this->appId = $val;
+    $this->appId = $appId;
   }
 
   /**
@@ -50,11 +50,11 @@ class Application
   }
 
   /**
-   * @param $val
+   * @param $accId
    */
-  public function setAccId($val)
+  public function setAccId($accId)
   {
-    $this->accId = $val;
+    $this->accId = $accId;
   }
 
   /**
@@ -66,11 +66,11 @@ class Application
   }
 
   /**
-   * @param $val
+   * @param $name
    */
-  public function setName($val)
+  public function setName($name)
   {
-    $this->name = $val;
+    $this->name = $name;
   }
 
   /**

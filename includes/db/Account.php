@@ -34,11 +34,11 @@ class Account
   }
 
   /**
-   * @param $val
+   * @param $accId
    */
-  public function setAccId($val)
+  public function setAccId($accId)
   {
-    $this->accId = $val;
+    $this->accId = $accId;
   }
 
   /**
@@ -50,11 +50,11 @@ class Account
   }
 
   /**
-   * @param $val
+   * @param $uid
    */
-  public function setUid($val)
+  public function setUid($uid)
   {
-    $this->uid = $val;
+    $this->uid = $uid;
   }
 
   /**
@@ -66,11 +66,11 @@ class Account
   }
 
   /**
-   * @param $val
+   * @param $name
    */
-  public function setName($val)
+  public function setName($name)
   {
-    $this->name = $val;
+    $this->name = $name;
   }
 
   /**
