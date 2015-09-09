@@ -52,8 +52,9 @@ class TokenUser extends Token {
     if (!is_array($usernames)) {
       $usernames = array($usernames);
     }
+    $user = $this->request->user->getUser();
     foreach ($usernames as $username) {
-      if ($username != $this->request->user->getUsername()) {
+      if ($username != $user->getUsername()) {
         throw new Core\ApiException('permission denied', -1, $this->id, 401);
       }
     }
