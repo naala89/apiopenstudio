@@ -142,8 +142,8 @@ class Cache
 
     if (class_exists('memcache')) {
       Debug::message('memcache available', 4);
-      $this->$cacheObj = new Memcache;
-      if ($this->cacheActive = $this->cache->connect($this->host, $this->port)) {
+      $this->cacheObj = new Memcached();
+      if ($this->cacheActive = $this->cacheObj->addServer($this->host, $this->port)) {
         $this->cacheType = 'memcache';
         Debug::message('memCache enabled', 4);
       } else {
