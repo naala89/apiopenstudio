@@ -17,7 +17,11 @@ i. run includes/scripts/db/data.sql.
 
 Requirements
 ============
+*. apache
+*. https
 *. php >= 5.3
-*. mcrpyt
-*. composer
 *. mysql
+*. opcode (Memcache or APC)
+*. composer
+*. mcrpyt
+
