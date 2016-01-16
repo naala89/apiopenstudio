@@ -28,16 +28,16 @@ TODO:
 --- Store call result (error or not)
 --- 5 minute intervals for current hour
 --- Hourly intervals prior to current hour for the current day
---- Daily intervals for current month
+--- Daily intervals for current month (store a years worth)
 
 - Flood defense
 -- New Processor Flood
 --- Processor doesn't sit in the Processor chain, but separate like validator
 --- Array Whitelist
 --- Array Blacklist
---- Int Number calls
---- Int Time range
---- Int Seconds to ban
+--- Int Number calls (default 5)
+--- Int Time range (default 1 min)
+--- Int Seconds to ban (default 1 hour)
 -- New table ban
 --- Store time, IP, rid
 
