@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Provide cookie authentication
+ * Provide OAuth header authentication
  *
  * This class is to be used by ProcessorInput.
  *
@@ -19,16 +19,16 @@ namespace Datagator\Endpoint;
 use Datagator\Processor;
 use Datagator\Core;
 
-class AuthOauth extends Processor\ProcessorBase
+class AuthOAuthHeader extends Processor\ProcessorBase
 {
-  protected $required = array('consumerKey', 'nonce', 'signature', 'signatureMethod', 'accessToken', 'oauthVersion');
+  protected $required = array('key', 'nonce', 'signature', 'signatureMethod', 'oauthVersion');
   protected $details = array(
     'name' => 'Auth (o-auth header)',
-    'description' => 'Authentication for remote server, using o-auth signature in the header.',
+    'description' => 'Authentication for remote server, using OAuth signature in the header.',
     'menu' => 'Authentication',
     'application' => 'All',
     'input' => array(
-      'consumerKey' => array(
+      'key' => array(
         'description' => 'The consumer key.',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'literal'),
@@ -48,11 +48,6 @@ class AuthOauth extends Processor\ProcessorBase
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'literal'),
       ),
-      'accessToken' => array(
-        'description' => 'The access token.',
-        'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
-      ),
       'oauthVersion' => array(
         'description' => 'The o-auth version.',
         'cardinality' => array(1, 1),
@@ -69,8 +64,21 @@ class AuthOauth extends Processor\ProcessorBase
       return $required;
     }
 
-    $cookie = $this->getVar($this->meta->cookie);
+    $key = $this->getVar($this->meta->key);
+    $nonce = $this->getVar($this->meta->nonce);
+    $signature = $this->getVar($this->meta->signature);
+    $signatureMethod = $this->getVar($this->meta->signatureMethod);
+    $timestamp = time();
+    $oauthVersion = $this->getVar($this->meta->oauthVersion);
 
-    return array(CURLOPT_COOKIE => $cookie);
+    $header = 'OAuth ';
+    $header .= !empty($key) ? "oauth_consumer_key=$key" : '';
+    $header .= !empty($nonce) ? "oauth_nonce=$nonce" : '';
+    $header .= !empty($signature) ? "oauth_signature=$signature" : '';
+    $header .= !empty($signatureMethod) ? "oauth_signature_method=$signatureMethod" : '';
+    $header .= !empty($timestamp) ? "oauth_timestamp=$timestamp" : '';
+    $header .= !empty($oauthVersion) ? "oauth_version=$oauthVersion" : '';
+
+    return array('Authorization' => $header);
   }
 }
