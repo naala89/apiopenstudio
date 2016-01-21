@@ -50,7 +50,7 @@ class UserLogin extends ProcessorBase {
     // validate username and active status
     $user = $this->request->user->findByUsername($this->getVar($this->meta->username));
     if (!$this->request->user->exists() || !$this->request->user->isActive()) {
-      throw new Core\ApiException('permission denied', -1, $this->id, 401);
+      throw new Core\ApiException('permission denied', 4, $this->id, 401);
     }
 
     // set up salt if not defined
@@ -61,7 +61,7 @@ class UserLogin extends ProcessorBase {
     // generate hash and compare
     $hash = Core\Hash::generateHash($this->getVar($this->meta->password), $user->getSalt());
     if ($user->getHash() != null && $user->getHash() != $hash) {
-      throw new Core\ApiException('permission denied', -1, $this->id, 401);
+      throw new Core\ApiException('permission denied', 4, $this->id, 401);
     }
 
     //perform login and return token

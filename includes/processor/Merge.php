@@ -61,7 +61,7 @@ class Merge extends ProcessorBase
     if (method_exists($this, $method)) {
       $result = $this->$method($values);
     } else {
-      throw new Core\ApiException("invalid mergeType: $type", 3, $this->id, 407);
+      throw new Core\ApiException("invalid mergeType: $type", 6, $this->id, 407);
     }
 
     return $result;

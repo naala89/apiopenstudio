@@ -39,7 +39,7 @@ class VarUri extends ProcessorBase
     $index = $this->getVar($this->meta->index);
 
     if (!isset($this->request->args[$index])) {
-      throw new Core\ApiException('URI index "' . $index . '" does not exist', 1, $this->id, 417);
+      throw new Core\ApiException('URI index "' . $index . '" does not exist', 6, $this->id, 417);
     }
 
     return urldecode($this->request->args[$index]);

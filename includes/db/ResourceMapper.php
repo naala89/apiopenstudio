@@ -49,7 +49,7 @@ class ResourceMapper
       $result = $this->db->Execute($sql, $bindParams);
     }
     if (!$result) {
-      throw new Core\ApiException($this->db->ErrorMsg());
+      throw new Core\ApiException($this->db->ErrorMsg(), 2);
     }
     return TRUE;
   }
@@ -62,13 +62,13 @@ class ResourceMapper
   public function delete(Resource $resource)
   {
     if ($resource->getId() == NULL) {
-      throw new Core\ApiException('could not delete resource, not found');
+      throw new Core\ApiException('could not delete resource, not found', 2);
     }
     $sql = 'DELETE FROM `resource` WHERE `id` = ?';
     $bindParams = array($resource->getId());
     $result = $this->db->Execute($sql, $bindParams);
     if (!$result) {
-      throw new Core\ApiException($this->db->ErrorMsg());
+      throw new Core\ApiException($this->db->ErrorMsg(), 2);
     }
     return TRUE;
   }

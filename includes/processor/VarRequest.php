@@ -38,7 +38,7 @@ class VarRequest extends VarMixed
     $name = parent::process();
 
     if (empty($_REQUEST[$name])) {
-      throw new Core\ApiException("request variable ($name) does not exist", 5, $this->id, 417);
+      throw new Core\ApiException("request variable ($name) does not exist", 6, $this->id, 417);
     }
 
     return $_REQUEST[$name];

@@ -66,7 +66,7 @@ class ResourceJson extends ResourceBase
     $json = '';
     Core\Debug::variable($_FILES);
     if (sizeof($_FILES) > 1) {
-      throw new Core\ApiException('multiple files received');
+      throw new Core\ApiException('multiple files received', 3);
     }
     if (!empty($_FILES)) {
       foreach ($_FILES as $file) {
@@ -77,7 +77,7 @@ class ResourceJson extends ResourceBase
       $json = json_decode($json);
     }
     if (empty($json)) {
-      throw new Core\ApiException('invalid or no json supplied', -1, $this->id, 417);
+      throw new Core\ApiException('invalid or no json supplied', 6, $this->id, 417);
     }
     return json_decode(json_encode($json), true);
   }

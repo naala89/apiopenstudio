@@ -31,7 +31,7 @@ abstract class ResourceBase extends ProcessorBase
         $result = $this->delete();
         break;
       default:
-        throw new Core\ApiException('unknown method', -1, $this->id);
+        throw new Core\ApiException('unknown method', 3, $this->id);
         break;
     }
 
@@ -65,7 +65,7 @@ abstract class ResourceBase extends ProcessorBase
     // check required elements in data exist
     foreach ($this->requiredElements as $requiredElement) {
       if (empty($data[$requiredElement])) {
-        throw new Core\ApiException("missing $requiredElement in data", -1, $this->id, 417);
+        throw new Core\ApiException("missing $requiredElement in data", 6, $this->id, 417);
       }
     }
 
@@ -73,18 +73,18 @@ abstract class ResourceBase extends ProcessorBase
     $mapper = new Db\ApplicationMapper($this->request->db);
     $application = $mapper->findByName($data['application']);
     if (empty($appId = $application->getAppId())) {
-      throw new Core\ApiException('invalid application', -1, $this->id, 401);
+      throw new Core\ApiException('invalid application', 7, $this->id, 401);
     }
 
     // check user has correct dev permission for application in yaml
     if (!$this->request->user->hasRole($appId, 'developer')) {
-      throw new Core\ApiException("permission denied", -1, $this->id, 401);
+      throw new Core\ApiException("permission denied", 4, $this->id, 401);
     }
 
     // only allow no validation for sys-admin role
     if (empty($data['validation'])) {
       if (!$this->request->user->hasRole(1, 'sys-admin')) {
-        throw new Core\ApiException('invalid resource - no Authentication defined');
+        throw new Core\ApiException('invalid resource - no Authentication defined', 6);
       }
     } else {
       $meta['validation'] = $data['validation'];
@@ -128,26 +128,26 @@ abstract class ResourceBase extends ProcessorBase
   protected function fetch()
   {
     if (empty($appId = $this->request->vars['appid'])) {
-      throw new Core\ApiException('missing appid parameter', -1, $this->id, 400);
+      throw new Core\ApiException('missing appid parameter', 3, $this->id, 400);
     }
     if (!$this->request->user->hasRole($appId, 'developer')) {
-      throw new Core\ApiException('permission denied', -1, $this->id, 401);
+      throw new Core\ApiException('permission denied', 4, $this->id, 401);
     }
     if (empty($method = $this->request->vars['method'])) {
-      throw new Core\ApiException('missing method parameter', -1, $this->id, 400);
+      throw new Core\ApiException('missing method parameter', 1, $this->id, 400);
     }
     if (empty($noun = $this->request->vars['noun'])) {
-      throw new Core\ApiException('missing noun parameter', -1, $this->id, 400);
+      throw new Core\ApiException('missing noun parameter', 1, $this->id, 400);
     }
     if (empty($verb = $this->request->vars['verb'])) {
-      throw new Core\ApiException('missing verb parameter', -1, $this->id, 400);
+      throw new Core\ApiException('missing verb parameter', 1, $this->id, 400);
     }
     $identifier = strtolower($noun) . strtolower($verb);
 
     $mapper = new Db\ResourceMapper($this->request->db);
     $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
     if (empty($resource->getId())) {
-      throw new Core\ApiException('Resource not found', -1, $this->id, 200);
+      throw new Core\ApiException('Resource not found', 1, $this->id, 200);
     }
 
     $result = json_decode($resource->getMeta(), TRUE);
@@ -176,19 +176,19 @@ abstract class ResourceBase extends ProcessorBase
   protected function delete()
   {
     if (empty($appId = $this->request->vars['appid'])) {
-      throw new Core\ApiException('missing appid parameter', -1, $this->id, 400);
+      throw new Core\ApiException('missing appid parameter', 1, $this->id, 400);
     }
     if (!$this->request->user->hasRole($appId, 'developer')) {
-      throw new Core\ApiException('permission denied', -1, $this->id, 401);
+      throw new Core\ApiException('permission denied', 4, $this->id, 401);
     }
     if (empty($method = $this->request->vars['method'])) {
-      throw new Core\ApiException('missing method parameter', -1, $this->id, 400);
+      throw new Core\ApiException('missing method parameter', 1, $this->id, 400);
     }
     if (empty($noun = $this->request->vars['noun'])) {
-      throw new Core\ApiException('missing noun parameter', -1, $this->id, 400);
+      throw new Core\ApiException('missing noun parameter', 1, $this->id, 400);
     }
     if (empty($verb = $this->request->vars['verb'])) {
-      throw new Core\ApiException('missing verb parameter', -1, $this->id, 400);
+      throw new Core\ApiException('missing verb parameter', 1, $this->id, 400);
     }
     $identifier = strtolower($noun) . strtolower($verb);
 

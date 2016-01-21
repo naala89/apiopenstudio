@@ -42,7 +42,7 @@ class VarPost extends VarMixed
     $name = $this->getVar($this->meta->name);
 
     if (empty($this->request->vars[$name])) {
-      throw new Core\ApiException("post variable ($name) does not exist", 5, $this->id, 417);
+      throw new Core\ApiException("post variable ($name) does not exist", 6, $this->id, 417);
     } else {
       $result = $this->request->vars[$name];
     }

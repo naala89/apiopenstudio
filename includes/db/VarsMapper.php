@@ -45,7 +45,7 @@ class VarsMapper
       $result = $this->db->Execute($sql, $bindParams);
     }
     if (!$result) {
-      throw new Core\ApiException($this->db->ErrorMsg());
+      throw new Core\ApiException($this->db->ErrorMsg(), 2);
     }
     return TRUE;
   }
@@ -58,13 +58,13 @@ class VarsMapper
   public function delete(Vars $vars)
   {
     if ($vars->getId() === NULL) {
-      throw new Core\ApiException('cannot delete var - empty ID');
+      throw new Core\ApiException('cannot delete var - empty ID', 2);
     }
     $sql = 'DELETE FROM vars WHERE `id` = ?';
     $bindParams = array($vars->getId());
     $result = $this->db->Execute($sql, $bindParams);
     if (!$result) {
-      throw new Core\ApiException($this->db->ErrorMsg());
+      throw new Core\ApiException($this->db->ErrorMsg(), 2);
     }
     return TRUE;
   }

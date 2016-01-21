@@ -25,3 +25,13 @@ Requirements
 *. composer
 *. mcrpyt
 
+Error codes
+===========
+0 Core error
+1 Processor format error
+2 DB error
+3 Invalid API call
+4 Authorisation error
+5 External error
+6 Invalid processor input
+7 Invalid application

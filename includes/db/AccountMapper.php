@@ -43,7 +43,7 @@ class AccountMapper
       $result = $this->db->Execute($sql, $bindParams);
     }
     if (!$result) {
-      throw new Core\ApiException($this->db->ErrorMsg());
+      throw new Core\ApiException($this->db->ErrorMsg(), 2);
     }
     return TRUE;
   }

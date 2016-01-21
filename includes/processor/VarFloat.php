@@ -37,7 +37,7 @@ class VarFloat extends VarMixed
     $value = parent::process();
 
     if (!is_float($value)) {
-      throw new Core\ApiException('invalid float', 5, $this->id, 417);
+      throw new Core\ApiException('invalid float', 6, $this->id, 417);
     }
 
     return $value;

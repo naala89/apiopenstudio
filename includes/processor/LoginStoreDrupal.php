@@ -67,7 +67,7 @@ class LoginStoreDrupal extends ProcessorBase
     $source = $this->getVar($this->meta->source);
     $source = json_decode($source);
     if (empty($source->token) || empty($source->user) || empty($source->user->uid)) {
-      throw new Core\ApiException('login failed, no token received', 3, $this->id, 419);
+      throw new Core\ApiException('login failed, no token received', 4, $this->id, 419);
     }
     $externalEntity = !empty($this->meta->externalEntity) ? $this->getVar($this->meta->externalEntity) : $this->defaultEntity;
     $externalId = $source->user->uid;

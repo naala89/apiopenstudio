@@ -12,6 +12,8 @@ use Facebook\Exceptions;
 
 class Facebook extends Processor\ProcessorBase
 {
+  private $endpoint = 'https://graph.facebook.com';
+
   protected $required = array('appId', 'appSecret', 'graphVersion', 'accessToken', 'query');
   protected $details = array(
     'name' => 'Facebook',
@@ -33,7 +35,7 @@ class Facebook extends Processor\ProcessorBase
         'description' => 'The version of graph to use (do not prefix with "v", e.g. use "2.4").',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'float'),
-      ),
+      ),/*
       'accessToken' => array(
         'description' => 'The Facebook access token (see https://developers.facebook.com/docs/graph-api/overview for how to get token).',
         'cardinality' => array(1, 1),
@@ -43,7 +45,7 @@ class Facebook extends Processor\ProcessorBase
         'description' => 'The Facebook root node that you want to access (see https://developers.facebook.com/docs/graph-api/reference for reference).',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'literal'),
-      ),
+      ),*/
     ),
   );
 
@@ -74,11 +76,46 @@ class Facebook extends Processor\ProcessorBase
     try {
       $response = $fb->get($query, $accessToken);
     } catch(Exceptions\FacebookResponseException $e) {
-      throw new Core\ApiException('graph returned an error: ' . $e->getMessage(), -1, $this->id);
+      throw new Core\ApiException('graph returned an error: ' . $e->getMessage(), 5, $this->id);
     } catch(Exceptions\FacebookSDKException $e) {
-      throw new Core\ApiException('facebook SDK returned an error: ' . $e->getMessage(), -1, $this->id);
+      throw new Core\ApiException('facebook SDK returned an error: ' . $e->getMessage(), 5, $this->id);
     }
 
     return $response;
+  }
+
+  private function _getToken($appId, $appSecret, $graphVersion)
+  {
+    $fb = new Facebook([
+      'app_id' => $appId,
+      'app_secret' => $appSecret,
+      'default_graph_version' => "v$graphVersion",
+    ]);
+
+    $helper = $fb->getRedirectLoginHelper();
+
+    try {
+      $accessToken = $helper->getAccessToken();
+    } catch(Exceptions\FacebookResponseException $e) {
+      // When Graph returns an error
+      throw new Core\ApiException('Graph returned an error: ' . $e->getMessage(), 5, $this->id);
+    } catch(Exceptions\FacebookSDKException $e) {
+      // When validation fails or other local issues
+      throw new Core\ApiException('Graph SDK returned an error: ' . $e->getMessage(), 5, $this->id);
+    }
+
+    if (! isset($accessToken)) {
+      if ($helper->getError()) {
+        $message = 'Error: ' . $helper->getError();
+        $message .= '. Error Code: ' . $helper->getErrorCode();
+        $message .= '. Error Reason: ' . $helper->getErrorReason();
+        $message .= '. Error Description: ' . $helper->getErrorDescription();
+        throw new Core\ApiException($message, 4, $this->id, 401);
+      } else {
+        header('HTTP/1.0 400 Bad Request');
+        echo 'Bad request';
+      }
+      exit;
+    }
   }
 }

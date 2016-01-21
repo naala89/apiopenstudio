@@ -74,7 +74,7 @@ class VarStore extends ProcessorBase
         break;
       case 'delete':
         if ($var->getId() === NULL) {
-          throw new Core\ApiException('could not delete variable, does not exist');
+          throw new Core\ApiException('could not delete variable, does not exist', 6);
         }
         return $mapper->delete($var);
         break;
@@ -82,7 +82,7 @@ class VarStore extends ProcessorBase
         return $var->getVal();
         break;
       default:
-        throw new Core\ApiException("invalid operation: $operation", 1, $this->id, 417);
+        throw new Core\ApiException("invalid operation: $operation", 6, $this->id, 417);
         break;
     }
   }

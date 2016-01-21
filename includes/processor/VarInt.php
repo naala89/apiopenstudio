@@ -37,7 +37,7 @@ class VarInt extends VarMixed
     $value = parent::process();
 
     if (!is_integer($value)) {
-      throw new Core\ApiException('invalid integer', 5, $this->id, 417);
+      throw new Core\ApiException('invalid integer', 6, $this->id, 417);
     }
 
     return $value;

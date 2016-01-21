@@ -79,7 +79,7 @@ class Twitter extends Processor\ProcessorBase
     // make call
     $method = $this->getVar($this->meta->method);
     if ($method != 'get' && $method != 'post') {
-      throw new Core\ApiException('incorrect method', -1, $this->id);
+      throw new Core\ApiException('incorrect method', 6, $this->id);
     }
     $uri = $this->getVar($this->meta->uri);
     $url = $this->apiUrl . $uri;
@@ -96,7 +96,7 @@ class Twitter extends Processor\ProcessorBase
     $result = $normalise->normalise();
 
     if ($curl->httpStatus != 200) {
-      throw new Core\ApiException($result, $curl->curlStatus, $this->id, $curl->httpStatus);
+      throw new Core\ApiException($result, 5, $this->id, $curl->httpStatus);
     }
 
     return $result;
@@ -127,7 +127,7 @@ class Twitter extends Processor\ProcessorBase
     $normalise = new Core\Normalise($response, $curl->type);
     $response = $normalise->normalise();
     if (empty($response['token_type']) || empty($response['access_token'])) {
-      throw new Core\ApiException($response, -1, $this->id, 403);
+      throw new Core\ApiException($response, 4, $this->id, 403);
     }
     $token = $response['access_token'];
 
