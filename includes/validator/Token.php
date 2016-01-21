@@ -40,7 +40,7 @@ class Token extends Processor\ProcessorBase {
     if (!$this->request->user->exists()
       || !$this->request->user->isActive()
       || ($this->role && !$this->request->user->hasRole($this->request->appId, $this->role))) {
-      throw new Core\ApiException('permission denied', -1, $this->id, 401);
+      throw new Core\ApiException('permission denied', 4, $this->id, 401);
     }
 
     return TRUE;

@@ -45,7 +45,7 @@ class TokenUser extends Token {
     // check user exists
     $this->request->user->findByToken($this->getVar($this->meta->token));
     if (!$this->request->user->exists() || !$this->request->user->isActive()) {
-      throw new Core\ApiException('permission denied', -1, $this->id, 401);
+      throw new Core\ApiException('permission denied', 4, $this->id, 401);
     }
     // check user is in the list of valid users
     $usernames = $this->getVar($this->meta->usernames);
@@ -55,7 +55,7 @@ class TokenUser extends Token {
     $user = $this->request->user->getUser();
     foreach ($usernames as $username) {
       if ($username != $user->getUsername()) {
-        throw new Core\ApiException('permission denied', -1, $this->id, 401);
+        throw new Core\ApiException('permission denied', 4, $this->id, 401);
       }
     }
 

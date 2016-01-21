@@ -64,7 +64,7 @@ class Api
 
     // process the call
     if (empty($resource->process)) {
-      throw new ApiException('invalid resource - process missing');
+      throw new ApiException('invalid resource - process section missing', 1);
     }
     $processor = new Processor\ProcessorBase($resource->process, $request);
     $data = $processor->process();
@@ -99,7 +99,7 @@ class Api
     $args = explode('/', trim($request->request, '/'));
     if (sizeof($args) < 2) {
       // need at least noun and verb
-      throw new ApiException('invalid request');
+      throw new ApiException('invalid request', 3);
     }
 
     //get request method
@@ -122,7 +122,7 @@ class Api
     $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
     $request->db = \ADONewConnection($dsn);
     if (!$request->db) {
-      throw new ApiException('DB connection failed',1 , -1, 500);
+      throw new ApiException('DB connection failed',2 , -1, 500);
     }
     $request->db->debug = Config::$debugDb;
 
@@ -165,7 +165,7 @@ class Api
       $resource = $mapper->findByAppIdMethodIdentifier($request->appId, $request->method, $request->identifier);
 
       if ($resource->getId() === NULL) {
-        throw new ApiException('resource or client not defined', 1, -1, 404);
+        throw new ApiException('resource or client not defined', 3, -1, 404);
       }
 
       $result->r = json_decode($resource->getMeta());
@@ -173,7 +173,7 @@ class Api
     } else {
       $filepath = Config::$dirYaml . $this->test . '.yaml';
       if (!file_exists($filepath)) {
-        throw new ApiException("invalid test yaml: $filepath", -1 , -1, 400);
+        throw new ApiException("invalid test yaml: $filepath", 1 , -1, 400);
       }
       $array = Spyc::YAMLLoad($filepath);
       $result = new \stdClass();
@@ -211,7 +211,7 @@ class Api
     $class = 'Datagator\\Validator\\' . ucfirst($this->_cleanData($resource->validation->processor));
     $validator = new $class($resource->validation->meta, $request);
     if (!$validator->process()) {
-      throw new ApiException('unauthorized', $resource->validation->meta->id, -1, 401);
+      throw new ApiException('unauthorized', 4, $resource->validation->meta->id, 401);
     }
     return;
   }
@@ -294,7 +294,7 @@ class Api
       } else if ($_SERVER['HTTP_X_HTTP_METHOD'] == 'PUT') {
         $method = 'put';
       } else {
-        throw new ApiException("unexpected header", 0, -1, 406);
+        throw new ApiException("unexpected header", 3, -1, 406);
       }
     }
     return $method;

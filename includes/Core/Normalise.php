@@ -94,10 +94,10 @@ class Normalise
       return preg_replace('/text\/|application\//', '', $str);
     }
     if (preg_match('/multipart\//', $str) == 1) {
-      throw new ApiException('invalid response from remote url, cannot disseminate content-type: multipart');
+      throw new ApiException('invalid response from remote url, cannot disseminate content-type: multipart', 3);
     }
     if (preg_match('/message\//', $str) == 1) {
-      throw new ApiException('invalid response from remote url, cannot disseminate content-type: message');
+      throw new ApiException('invalid response from remote url, cannot disseminate content-type: message', 3);
     }
     if (preg_match('/image\//', $str) == 1) {
       return 'image';

@@ -65,7 +65,7 @@ class ResourceYaml extends ResourceBase
     // extract yaml
     $yaml = '';
     if (sizeof($_FILES) > 1) {
-      throw new Core\ApiException('multiple files received');
+      throw new Core\ApiException('multiple files received', 3);
     }
     if (!empty($_FILES)) {
       foreach ($_FILES as $file) {
@@ -76,7 +76,7 @@ class ResourceYaml extends ResourceBase
       $yaml = \Spyc::YAMLLoadString($yaml);
     }
     if (empty($yaml)) {
-      throw new Core\ApiException('invalid or no yaml supplied', -1, $this->id, 417);
+      throw new Core\ApiException('invalid or no yaml supplied', 6, $this->id, 417);
     }
     return $yaml;
   }

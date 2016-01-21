@@ -139,7 +139,7 @@ class ProcessorBase
     if (empty($result)) {
       return TRUE;
     }
-    throw new Core\ApiException('missing required meta: ' . implode(', ', $result), -1, $this->id, 417);
+    throw new Core\ApiException('missing required meta: ' . implode(', ', $result), 6, $this->id, 417);
   }
 
   /**
@@ -183,7 +183,7 @@ class ProcessorBase
       }
     } elseif (!is_string($obj) && !is_numeric($obj) && !is_bool($obj)) {
       // this is an invalid value
-      throw new Core\ApiException('invalid var value', -1, $this->id, 417);
+      throw new Core\ApiException('invalid var value', 6, $this->id, 417);
     }
 
     return $result;
@@ -200,13 +200,13 @@ class ProcessorBase
   {
     $obj = ($obj === NULL ? $this->meta : $obj);
     if (empty($obj->processor)) {
-      throw new Core\ApiException('invalid meta, missing processor attribute: ' . $obj);
+      throw new Core\ApiException('invalid meta, missing processor attribute: ' . $obj, 1);
     }
     $class = 'Datagator\\Processor\\' . ucfirst(trim($obj->processor));
     if (!class_exists($class)) {
       $class = 'Datagator\\Endpoint\\' . ucfirst(trim($obj->processor));
       if (!class_exists($class)) {
-        throw new Core\ApiException('Processor undefined: ' . $obj->processor);
+        throw new Core\ApiException('Processor undefined: ' . $obj->processor, 1);
       }
     }
     return new $class($obj->meta, $this->request);

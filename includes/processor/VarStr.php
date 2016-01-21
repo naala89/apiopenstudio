@@ -37,7 +37,7 @@ class VarStr extends VarMixed
     $value = parent::process();
 
     if (!is_string($value)) {
-      throw new Core\ApiException('invalid string', 5, $this->id, 417);
+      throw new Core\ApiException('invalid string', 6, $this->id, 417);
     }
 
     return $value;

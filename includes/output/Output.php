@@ -66,6 +66,6 @@ abstract class Output extends Processor\ProcessorBase
     if (empty($result)) {
       return TRUE;
     }
-    throw new Core\ApiException('missing required meta: ' . implode(', ', $result), -1, $this->id, 417);
+    throw new Core\ApiException('missing required meta: ' . implode(', ', $result), 6, $this->id, 417);
   }
 }

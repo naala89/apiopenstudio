@@ -45,7 +45,7 @@ class SystemCache extends ProcessorBase
     $cache = new Core\Cache(Config::$cache);
     $result = $cache->clear();
     if (!$result) {
-      throw new Core\ApiExceptionn('could not clear the cache', -1, $this->id, 500);
+      throw new Core\ApiExceptionn('could not clear the cache', 0, $this->id, 500);
     }
     return $result;
   }

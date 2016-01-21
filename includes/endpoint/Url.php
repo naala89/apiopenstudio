@@ -68,7 +68,7 @@ class Url extends Processor\ProcessorBase
     $method = $this->getVar($this->meta->method);
     $method = strtolower($method);
     if (!in_array($method, array('get', 'post'))) {
-      throw new Core\ApiException('invalid method', 1, $this->id, 417);
+      throw new Core\ApiException('invalid method', 6, $this->id, 417);
     }
 
     $url = $this->getVar($this->meta->source);
@@ -86,7 +86,7 @@ class Url extends Processor\ProcessorBase
     if (!empty($this->meta->auth)) {
       $class = 'Datagator\\Endpoint\\Auth' . ucfirst(trim($this->meta->auth));
       if (!class_exists($class)) {
-        throw new Core\ApiException('invalid Auth: ' . $this->meta->auth);
+        throw new Core\ApiException('invalid Auth: ' . $this->meta->auth, 6);
       }
       $authenticator = new $class($this->meta->auth, $this->request);
       $authentication = $authenticator->process();
@@ -113,13 +113,13 @@ class Url extends Processor\ProcessorBase
     $curl = new Core\Curl();
     $result = $curl->{strtolower($this->meta->method)}($url, $curlOpts);
     if ($result === false) {
-      throw new Core\ApiException('could not get response from remote server: ' . $curl->errorMsg, $curl->curlStatus, $this->id, $curl->httpStatus);
+      throw new Core\ApiException('could not get response from remote server: ' . $curl->errorMsg, 5, $this->id, $curl->httpStatus);
     }
 
     $normalise = new Core\Normalise($result, $curl->type);
     $result = $normalise->normalise();
     if ($reportError && $curl->httpStatus != 200) {
-      throw new Core\ApiException(json_encode($result), 3, $this->id, $curl->httpStatus);
+      throw new Core\ApiException(json_encode($result), 5, $this->id, $curl->httpStatus);
     }
 
     return $result;
