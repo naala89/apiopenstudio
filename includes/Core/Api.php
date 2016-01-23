@@ -111,6 +111,18 @@ class Api
       die();
     }
 
+    $request->appId = array_shift($args);
+    $request->noun = array_shift($args);
+    $request->verb = array_shift($args);
+    $request->identifier = $request->noun . $request->verb;
+    $request->args = $args;
+    $header = getallheaders();
+    $request->outFormat = $this->parseType($header, 'Accept', 'json');
+    $request->vars = array_diff_assoc($get, array('request' => $request->request));
+    $request->vars = $request->vars + $_POST;
+
+    Debug::variable($request, 'request', 4);
+
     // set up DB interface
     $dsnOptions = '';
     if (sizeof(Config::$dboptions) > 0) {
@@ -127,24 +139,10 @@ class Api
     }
     $request->db->debug = Config::$debugDb;
 
-    $request->appId = array_shift($args);
-    $request->noun = array_shift($args);
-    $request->verb = array_shift($args);
-    $request->identifier = $request->noun . $request->verb;
-    $request->args = $args;
-    $header = getallheaders();
-    $request->outFormat = $this->parseType($header, 'Accept', 'json');
-    $request->vars = array_diff_assoc($get, array('request' => $request->request));
-    $request->vars = $request->vars + $_POST;
     $request->user = new User($request->db);
     if (isset($request->vars['token'])) {
       $request->user->findByToken($request->vars['token']);
     }
-    //$request->inFormat = $this->parseType($header, 'Content-Type');
-    //$body = file_get_contents('php://input');
-    //if ($request->inFormat == 'json') {
-    //  $request->vars = $request->vars + json_decode($body, TRUE);
-    //}
 
     return $request;
   }
