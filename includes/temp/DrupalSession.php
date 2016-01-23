@@ -23,8 +23,8 @@ class DrupalSession extends \Processor
   public function process()
   {
     Debug::variable($this->meta, 'ProcessorDrupalSession');
-    $token = $this->getVar($this->meta->token);
-    $externalId = $this->getVar($this->meta->externalId);
+    $token = $this->val($this->meta->token);
+    $externalId = $this->val($this->meta->externalId);
 
     if (!empty($token)) {
       $sql = 'SELECT * FROM user WHERE token=?';

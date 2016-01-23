@@ -17,7 +17,6 @@ namespace Datagator\Processor;
 use Datagator\Core;
 
 class ValidateToken extends Processor {
-  protected $required = array('token');
   protected $details = array(
     'name' => 'Validate Token',
     'description' => 'Stores the access details from a users login to a remote drupal site for future use.',
@@ -43,9 +42,8 @@ class ValidateToken extends Processor {
    */
   public function process() {
     Core\Debug::variable($this->meta, 'ProcessorValidateToken');
-    $this->validateRequired();
 
-    $token = $this->getVar($this->meta->token);
+    $token = $this->val($this->meta->token);
 
     $result = $this->request->db
       ->select()

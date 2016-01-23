@@ -10,7 +10,6 @@ use Datagator\Core;
 
 class SystemCache extends ProcessorBase
 {
-  protected $required = array('operation');
   protected $details = array(
     'name' => 'System (Cache)',
     'description' => 'Perform cache operations on the system.',
@@ -28,10 +27,9 @@ class SystemCache extends ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor SystemCache', 4);
-    $this->validateRequired();
     parent::process();
 
-    $op = strtolower($this->getVar($this->meta->operation));
+    $op = strtolower($this->val($this->meta->operation));
 
     if (method_exists($this, $op)) {
       $result = $this->$op();

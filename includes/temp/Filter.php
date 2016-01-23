@@ -16,12 +16,13 @@
 
 namespace Datagator\Processor;
 
+use Datagator\Core\ApiException;
+
 class Filter extends \Processor
 {
   public function process()
   {
-    Debug::variable($this->meta, 'processorFilter', 4);
-    $this->validateRequired();
+    Debug::variable($this->meta, 'processorFilter', 4);\
 
     $processor = $this->getProcessor($this->meta->source);
     $source = $processor->process();
@@ -31,7 +32,7 @@ class Filter extends \Processor
     if (method_exists($this, $method)) {
       $result = $this->$method($source, $this->meta->data);
     } else {
-      throw new \Datagator\includes\ApiException("invalid filterType: $type", 3, $this->id, 417);
+      throw new ApiException("invalid filterType: $type", 3, $this->id, 417);
     }
 
     return $result;

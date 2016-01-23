@@ -6,9 +6,7 @@ use Datagator\Db;
 
 abstract class ResourceBase extends ProcessorBase
 {
-  protected $requiredElements = array(
-    'uri', 'application', 'method', 'process'
-  );
+  protected $requiredElements = array('uri', 'application', 'method', 'process');
   protected $details = array();
 
   /**

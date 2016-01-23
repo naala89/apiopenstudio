@@ -24,14 +24,6 @@ class ProcessorFacebook extends Processor {
 
   const URL = 'https://api.twitter.com/1.1/%s/%s/';
 
-  protected $required = array(
-    'key',
-    'method',
-    'object',
-    'action',
-    'parameters',
-  );
-
   protected $details = array(
     'name' => 'Twitter',
     'description' => 'Facebook end-point.',
@@ -71,16 +63,15 @@ class ProcessorFacebook extends Processor {
    */
   public function process () {
     Debug::variable($this->meta, 'ProcessorTwitter');
-    $this->validateRequired();
 
-    $key = $this->getVar($this->meta->key);
-    $method = $this->getVar($this->meta->method);
+    $key = $this->val($this->meta->key);
+    $method = $this->val($this->meta->method);
     if ($method != 'get' && $method != 'post') {
       throw new \Datagator\includes\ApiException('incorrect twitter method', 1, $this->id, 400);
     }
-    $object = $this->getVar($this->meta->object);
-    $action = $this->getVar($this->meta->action);
-    $parameters = $this->getVar($this->meta->parameters); //json decode?
+    $object = $this->val($this->meta->object);
+    $action = $this->val($this->meta->action);
+    $parameters = $this->val($this->meta->parameters); //json decode?
 
     $curl = new Curl();
 

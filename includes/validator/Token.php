@@ -19,7 +19,6 @@ use Datagator\Processor;
 
 class Token extends Processor\ProcessorBase {
   protected $role = false;
-  protected $required = array('token');
   protected $details = array(
     'name' => 'Token',
     'description' => 'Validate the request, the user having a valid token.',
@@ -36,7 +35,7 @@ class Token extends Processor\ProcessorBase {
   public function process() {
     Core\Debug::variable($this->meta, 'Validator TokenConsumer', 4);
 
-    $this->request->user->findByToken($this->getVar($this->meta->token));
+    $this->request->user->findByToken($this->val($this->meta->token));
     if (!$this->request->user->exists()
       || !$this->request->user->isActive()
       || ($this->role && !$this->request->user->hasRole($this->request->appId, $this->role))) {

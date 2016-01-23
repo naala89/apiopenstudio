@@ -31,12 +31,6 @@ class ProcessorBase
    */
   protected $request;
   /**
-   * Required inputs to the processor.
-   *
-   * @var array
-   */
-  protected $required = array();
-  /**
    * An array of details of the processor, used to configure the frontend GUI and metadata construction.
    *
    * Indexes:
@@ -53,21 +47,24 @@ class ProcessorBase
    *  input: list the input nodes for this processor
    *    This is an array with the following indexes:
    *    description (string): description of what the processor does
-   *    cardinality (array): first value is the min of values that this input will accept, the second os the max. * indicates infinite
+   *    cardinality:
+   *       2, '*': 2 or more
+   *       0, '*': 0 or more
+   *       1, 1: exact number of inputs (1)
    *    type (array): an array of input type this processor will accept (i.e. str, int, processor, float, mixed, etc)
    *
    *    examples:
    *      input => array(
-   *        'sources' => array('description' => 'desc1', 'cardinality' => array(1, '*'), type => array('processor', 'string'))
+   *        'sources' => array('description' => 'desc1', 'cardinality' => 1, type => array('processor', 'string'))
    *      )
    *          This processor has only one input, called sources.
    *          Sources must contain at least one value.
    *          The inputs can only be string or another processor.
    *
    *      input => array(
-   *        'method' => array('description' => 'desc1', 'cardinality' => array(1, 1), 'accepts' => array('string' => array('get', 'post'))),
-   *        'auth' => array('description' => 'desc2', 'cardinality' => array(0, 1), 'accepts' => array('processor'),
-   *        'vars' => array('description' => 'desc3', 'cardinality' => array(1, '*'), type => array('processor', 'integer'))
+   *        'method' => array('description' => 'desc1', 'cardinality' => '?', 'accepts' => array('string' => array('get', 'post'))),
+   *        'auth' => array('description' => 'desc2', 'cardinality' => 5, 'accepts' => array('processor'),
+   *        'vars' => array('description' => 'desc3', 'cardinality' => '*', type => array('processor', 'integer'))
    *      )
    *          This Processor has 3 inputs:
    *          method, which has only one sub-input, of type string, with only 2 possible values ('get' and 'post')
@@ -123,23 +120,32 @@ class ProcessorBase
   }
 
   /**
-   * Validate that the required fields are in the metadata
+   * Ensure result of all inputs match the processor's requirement.
    *
-   * @return bool
    * @throws \Datagator\Core\ApiException
    */
-  protected function validateRequired()
+  public function validateInputs()
   {
-    $result = array();
-    foreach ($this->required as $required) {
-      if (!isset($this->meta->$required)) {
-        $result[] = $required;
+    foreach($this->details['input'] as $key => $input) {
+      if ($input['cardinality'] == '?') {
+        // at least 1
+        if (empty($this->meta->{$key})) {
+          throw new Core\ApiException('need at least 1 input in ' . $this->details['name'], 6, $this->id);
+        }
+      } elseif (is_numeric($input['cardinality'])) {
+        $count = 0;
+        if (!empty($this->meta->{$key})) {
+          if (is_array($this->meta->{$key})) {
+            $count = sizeof($this->meta->{$key});
+          } else {
+            $count = 1;
+          }
+        }
+        if ($count != $input['cardinality']) {
+          throw new Core\ApiException("$count/" . $input['cardinality'] . ' inputs supplied for ' . $this->details['name'], 6, $this->id);
+        }
       }
     }
-    if (empty($result)) {
-      return TRUE;
-    }
-    throw new Core\ApiException('missing required meta: ' . implode(', ', $result), 6, $this->id, 417);
   }
 
   /**
@@ -166,28 +172,26 @@ class ProcessorBase
    * @return array
    * @throws \Datagator\Core\ApiException
    */
-  protected function getVar($obj)
+  protected function val($obj)
   {
     $result = $obj;
 
     if ($this->isProcessor($obj)) {
       // this is a processor
       $processor = $this->getProcessor($obj);
+      $processor->validateInputs();
       $result = $processor->process();
     } elseif (is_array($obj)) {
       // this is an array of processors or values
       $result = array();
       foreach ($obj as $o) {
-        $val = $this->getVar($o);
-        $result[] = $val;
+        $result[] = $this->val($o);
       }
-    } elseif (!is_string($obj) && !is_numeric($obj) && !is_bool($obj)) {
-      // this is an invalid value
-      throw new Core\ApiException('invalid var value', 6, $this->id, 417);
     }
 
     return $result;
   }
+
 
   /**
    * Fetch the processor defined in the obj (from meta), or return an error.

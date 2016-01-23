@@ -4,20 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cd30966707722ed5bd232059864cd3f8",
+    "hash": "f7b39d8f6dd429207c1368ff6313887f",
+    "content-hash": "a54f38ce3ace6c18898499f9c0e77f74",
     "packages": [
         {
             "name": "adodb/adodb-php",
-            "version": "v5.19",
+            "version": "v5.20.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ADOdb/ADOdb.git",
-                "reference": "773bb9b7ccd81b403bf75f7ef476c3f2d7ee04de"
+                "reference": "6b0637c8e87998811a81f6789e20e8ddcc7f19cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ADOdb/ADOdb/zipball/773bb9b7ccd81b403bf75f7ef476c3f2d7ee04de",
-                "reference": "773bb9b7ccd81b403bf75f7ef476c3f2d7ee04de",
+                "url": "https://api.github.com/repos/ADOdb/ADOdb/zipball/6b0637c8e87998811a81f6789e20e8ddcc7f19cb",
+                "reference": "6b0637c8e87998811a81f6789e20e8ddcc7f19cb",
                 "shasum": ""
             },
             "require": {
@@ -31,8 +32,8 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "LGPL-2.1",
-                " BSD-2-Clause"
+                "BSD-3-Clause",
+                "LGPL-2.1"
             ],
             "authors": [
                 {
@@ -43,14 +44,22 @@
                 {
                     "name": "Damien Regad",
                     "role": "Current maintainer"
+                },
+                {
+                    "name": "Mark Newnham",
+                    "role": "Developer"
                 }
             ],
             "description": "ADOdb is a PHP database abstraction layer library",
             "homepage": "http://adodb.sourceforge.net/",
             "keywords": [
-                "database"
+                "abstraction",
+                "database",
+                "layer",
+                "library",
+                "php"
             ],
-            "time": "2014-04-23 14:37:03"
+            "time": "2016-01-01 22:50:00"
         },
         {
             "name": "eloquent/pbkdf2-compat",
@@ -105,16 +114,16 @@
         },
         {
             "name": "facebook/php-sdk-v4",
-            "version": "5.0.0",
+            "version": "5.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facebook/facebook-php-sdk-v4.git",
-                "reference": "b5d7e5c8b85419f9031b08a161e9030dca35f5a1"
+                "reference": "2c42fb3002953355f12d3c6e8003a9fd5af563d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facebook/facebook-php-sdk-v4/zipball/b5d7e5c8b85419f9031b08a161e9030dca35f5a1",
-                "reference": "b5d7e5c8b85419f9031b08a161e9030dca35f5a1",
+                "url": "https://api.github.com/repos/facebook/facebook-php-sdk-v4/zipball/2c42fb3002953355f12d3c6e8003a9fd5af563d9",
+                "reference": "2c42fb3002953355f12d3c6e8003a9fd5af563d9",
                 "shasum": ""
             },
             "require": {
@@ -156,7 +165,7 @@
                 "facebook",
                 "sdk"
             ],
-            "time": "2015-07-08 19:08:57"
+            "time": "2015-11-19 21:07:36"
         },
         {
             "name": "mustangostang/spyc",

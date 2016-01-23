@@ -18,7 +18,6 @@ use Datagator\Core;
 
 class Field extends ProcessorBase
 {
-  protected $required = array('name', 'value');
   protected $details = array(
     'name' => 'Field',
     'description' => 'Create a name value pair. This is primarily for use as a field in object.',
@@ -41,10 +40,9 @@ class Field extends ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor Field', 4);
-    $this->validateRequired();
 
-    $name = $this->getVar($this->meta->name);
-    $value = $this->getVar($this->meta->value);
+    $name = $this->val($this->meta->name);
+    $value = $this->val($this->meta->value);
 
     return array($name => $value);
   }

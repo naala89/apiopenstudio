@@ -22,7 +22,6 @@ use Datagator\Core;
 class Merge extends ProcessorBase
 {
   private $_defaultType = 'union';
-  protected $required = array('sources');
   protected $details = array(
     'name' => 'Merge',
     'description' => 'Merge 2 fields.',
@@ -45,7 +44,6 @@ class Merge extends ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'processor Merge', 4);
-    $this->validateRequired();
 
     $sources = $this->meta->sources;
     $values = array();

@@ -40,9 +40,9 @@ class Object extends ProcessorBase
     Core\Debug::variable($this->meta, 'Processor Object', 4);
 
     $result = array();
-    $attributes = $this->getVar($this->meta->attributes);
+    $attributes = $this->val($this->meta->attributes);
     foreach ($attributes as $attribute) {
-      $val = $this->isProcessor($attribute) ? $this->getVar($attribute) : $attribute;
+      $val = $this->isProcessor($attribute) ? $this->val($attribute) : $attribute;
       $result[] = $val;
     }
 

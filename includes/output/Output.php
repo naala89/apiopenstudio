@@ -48,24 +48,4 @@ abstract class Output extends Processor\ProcessorBase
   {
     http_response_code($this->status);
   }
-
-  /**
-   * Validate that the required fields are in the metadata
-   *
-   * @return bool
-   * @throws \Datagator\Core\ApiException
-   */
-  protected function validateRequired()
-  {
-    $result = array();
-    foreach ($this->required as $required) {
-      if (!isset($this->meta->$required)) {
-        $result[] = $required;
-      }
-    }
-    if (empty($result)) {
-      return TRUE;
-    }
-    throw new Core\ApiException('missing required meta: ' . implode(', ', $result), 6, $this->id, 417);
-  }
 }

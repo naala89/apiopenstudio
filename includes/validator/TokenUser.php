@@ -18,7 +18,6 @@ use Datagator\Core;
 
 class TokenUser extends Token {
   protected $role = false;
-  protected $required = array('token');
   protected $details = array(
     'name' => 'Token User',
     'description' => 'Validate the request, and only allow for a user.',
@@ -40,15 +39,14 @@ class TokenUser extends Token {
    */
   public function process() {
     Core\Debug::variable($this->meta, 'Validator TokenConsumer', 4);
-    $this->validateRequired();
 
     // check user exists
-    $this->request->user->findByToken($this->getVar($this->meta->token));
+    $this->request->user->findByToken($this->val($this->meta->token));
     if (!$this->request->user->exists() || !$this->request->user->isActive()) {
       throw new Core\ApiException('permission denied', 4, $this->id, 401);
     }
     // check user is in the list of valid users
-    $usernames = $this->getVar($this->meta->usernames);
+    $usernames = $this->val($this->meta->usernames);
     if (!is_array($usernames)) {
       $usernames = array($usernames);
     }

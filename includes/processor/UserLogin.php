@@ -17,9 +17,8 @@ namespace Datagator\Processor;
 use Datagator\Config;
 use Datagator\Core;
 
-class UserLogin extends ProcessorBase {
-
-  protected $required = array('username', 'password');
+class UserLogin extends ProcessorBase
+{
   protected $details = array(
     'name' => 'User Login',
     'description' => 'Login a user for token-based API access.',
@@ -45,10 +44,9 @@ class UserLogin extends ProcessorBase {
    */
   public function process() {
     Core\Debug::variable($this->meta, 'Processor UserLogin', 4);
-    $this->validateRequired();
 
     // validate username and active status
-    $user = $this->request->user->findByUsername($this->getVar($this->meta->username));
+    $user = $this->request->user->findByUsername($this->val($this->meta->username));
     if (!$this->request->user->exists() || !$this->request->user->isActive()) {
       throw new Core\ApiException('permission denied', 4, $this->id, 401);
     }
@@ -59,7 +57,7 @@ class UserLogin extends ProcessorBase {
     }
 
     // generate hash and compare
-    $hash = Core\Hash::generateHash($this->getVar($this->meta->password), $user->getSalt());
+    $hash = Core\Hash::generateHash($this->val($this->meta->password), $user->getSalt());
     if ($user->getHash() != null && $user->getHash() != $hash) {
       throw new Core\ApiException('permission denied', 4, $this->id, 401);
     }

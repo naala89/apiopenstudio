@@ -56,9 +56,9 @@ abstract class CLI_Script
       $this->help();
       exit();
     }
-    $this->getArgs($argv);
-    $this->validateOptions();
-    $this->validateFlags();
+    $this->_getArgs($argv);
+    $this->_validateOptions();
+    $this->_validateFlags();
   }
 
   /**
@@ -106,14 +106,14 @@ abstract class CLI_Script
    * @param void
    * @return void
    */
-  private function validateOptions()
+  private function _validateOptions()
   {
-    $this->validateRequired($this->options, 'options');
+    $this->_validateRequired($this->options, 'options');
     foreach ($this->options as $name => $value) {
-      $this->validateAllowed($name, 'options');
-      $this->validateMultiple($name, $value, 'options');
+      $this->_validateAllowed($name, 'options');
+      $this->_validateMultiple($name, $value, 'options');
       if (isset($this->argMap['options'][$name]['permittedValues'])) {
-        $this->validatePermitted($name, $value, 'options');
+        $this->_validatePermitted($name, $value, 'options');
       }
     }
   }
@@ -123,12 +123,12 @@ abstract class CLI_Script
    * @param void
    * @return void
    */
-  private function validateFlags()
+  private function _validateFlags()
   {
     Debug::variable($this->flags, 'flags', 1, Config::$debugCLI, Debug::LOG);
     foreach ($this->flags as $name => $value) {
       Debug::variable($this->argMap['flags'], '$this->argMap[$index]', 1, Config::$debugCLI, Debug::LOG);
-      $this->validateAllowed($name, 'flags');
+      $this->_validateAllowed($name, 'flags');
     }
   }
 
@@ -138,7 +138,7 @@ abstract class CLI_Script
    * @param $index
    * @return void
    */
-  private function validateRequired($opt, $index)
+  private function _validateRequired($opt, $index)
   {
     $error = FALSE;
     $messages = array();
@@ -159,7 +159,7 @@ abstract class CLI_Script
    * @param $index
    * @return void
    */
-  private function validateAllowed($name, $index)
+  private function _validateAllowed($name, $index)
   {
     $error = FALSE;
     $messages = array();
@@ -179,7 +179,7 @@ abstract class CLI_Script
    * @param $index
    * @return void
    */
-  private function validateMultiple($name, $value, $index)
+  private function _validateMultiple($name, $value, $index)
   {
     $error = FALSE;
     $messages = array();
@@ -199,7 +199,7 @@ abstract class CLI_Script
    * @param $index
    * @return void
    */
-  private function validatePermitted($name, $value, $index)
+  private function _validatePermitted($name, $value, $index)
   {
     $error = FALSE;
     $messages = array();
@@ -224,7 +224,7 @@ abstract class CLI_Script
    * @param $args
    * @return void
    */
-  private function getArgs($args)
+  private function _getArgs($args)
   {
     $arguments = $args;
     $this->exec = array_shift($arguments);

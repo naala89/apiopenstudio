@@ -17,7 +17,6 @@ use Datagator\Core;
 
 class VarPost extends VarMixed
 {
-  protected $required = array('name');
   protected $details = array(
     'name' => 'Var (Get)',
     'description' => 'A "post" variable. It fetches a variable from the post request.',
@@ -26,7 +25,7 @@ class VarPost extends VarMixed
     'input' => array(
       'name' => array(
         'description' => 'The name of the variable.',
-        'cardinality' => array(1, 1),
+        'cardinality' => 1,
         'accepts' => array('processor', 'literal')),
     ),
   );
@@ -39,7 +38,7 @@ class VarPost extends VarMixed
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarPost', 4);
-    $name = $this->getVar($this->meta->name);
+    $name = $this->val($this->meta->name);
 
     if (empty($this->request->vars[$name])) {
       throw new Core\ApiException("post variable ($name) does not exist", 6, $this->id, 417);

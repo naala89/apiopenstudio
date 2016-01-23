@@ -18,7 +18,6 @@ use Datagator\Core;
 
 class VarMixed extends ProcessorBase
 {
-  protected $required = array('value');
   protected $details = array(
     'name' => 'Var (Mixed)',
     'description' => 'A variable of any type.',
@@ -36,7 +35,7 @@ class VarMixed extends ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarMixed', 4);
-    $this->validateRequired();
-    return $this->getVar($this->meta->value);
+
+    return $this->val($this->meta->value);
   }
 }

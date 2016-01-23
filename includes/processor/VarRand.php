@@ -22,7 +22,6 @@ use Datagator\Core;
 
 class VarRand extends ProcessorBase
 {
-  protected $required = array('length');
   protected $details = array(
     'name' => 'Var (Rand)',
     'description' => 'A random variable. It produces a random variable of any specified length or mix of character types.',
@@ -61,13 +60,12 @@ class VarRand extends ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarRand', 4);
-    $this->validateRequired();
 
-    $length = $this->getVar($this->meta->length);
-    $lower = $this->getVar($this->meta->lower);
-    $upper = $this->getVar($this->meta->upper);
-    $number = $this->getVar($this->meta->number);
-    $nonAlphanum = $this->getVar($this->meta->nonAlphanum);
+    $length = $this->val($this->meta->length);
+    $lower = $this->val($this->meta->lower);
+    $upper = $this->val($this->meta->upper);
+    $number = $this->val($this->meta->number);
+    $nonAlphanum = $this->val($this->meta->nonAlphanum);
 
     return Core\Utilities::random_string($length, $lower, $upper, $number, $nonAlphanum);
   }

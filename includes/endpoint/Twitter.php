@@ -13,7 +13,6 @@ class Twitter extends Processor\ProcessorBase
 {
   private $apiUrl = 'https://api.twitter.com/';
   private $externalEntity = 'twitter';
-  protected $required = array('key', 'secret', 'twitterId', 'uri');
   protected $details = array(
     'name' => 'Twitter',
     'description' => 'Fetch results from the Twitter API.',
@@ -63,12 +62,11 @@ class Twitter extends Processor\ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Endpoint Twitter', 4);
-    $this->validateRequired();
 
-    $key = $this->getVar($this->meta->key);
-    $secret = $this->getVar($this->meta->secret);
+    $key = $this->val($this->meta->key);
+    $secret = $this->val($this->meta->secret);
     $appId = $this->request->appId;
-    $twitterId = $this->getVar($this->meta->twitterId);
+    $twitterId = $this->val($this->meta->twitterId);
     $twitterId = empty($twitterId) ? 'twitter' : $twitterId;
 
     // get existing token if it exists and if not then fetch a new one
@@ -77,13 +75,13 @@ class Twitter extends Processor\ProcessorBase
     $token = empty($externalUser->getDataField1()) ? $this->_getToken($key, $secret, $appId, $twitterId) : $externalUser->getDataField1();
 
     // make call
-    $method = $this->getVar($this->meta->method);
+    $method = $this->val($this->meta->method);
     if ($method != 'get' && $method != 'post') {
       throw new Core\ApiException('incorrect method', 6, $this->id);
     }
-    $uri = $this->getVar($this->meta->uri);
+    $uri = $this->val($this->meta->uri);
     $url = $this->apiUrl . $uri;
-    $options = $this->getVar($this->meta->options);
+    $options = $this->val($this->meta->options);
     $parameters = array();
     foreach ($options as $option) {
       $parameters[] = $option;

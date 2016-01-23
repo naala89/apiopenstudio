@@ -21,7 +21,6 @@ use Datagator\Core;
 
 class AuthOAuthHeader extends Processor\ProcessorBase
 {
-  protected $required = array('key', 'nonce', 'signature', 'signatureMethod', 'oauthVersion');
   protected $details = array(
     'name' => 'Auth (o-auth header)',
     'description' => 'Authentication for remote server, using OAuth signature in the header.',
@@ -59,17 +58,13 @@ class AuthOAuthHeader extends Processor\ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Auth o-auth(header)', 4);
-    $required = $this->validateRequired();
-    if ($required !== TRUE) {
-      return $required;
-    }
 
-    $key = $this->getVar($this->meta->key);
-    $nonce = $this->getVar($this->meta->nonce);
-    $signature = $this->getVar($this->meta->signature);
-    $signatureMethod = $this->getVar($this->meta->signatureMethod);
+    $key = $this->val($this->meta->key);
+    $nonce = $this->val($this->meta->nonce);
+    $signature = $this->val($this->meta->signature);
+    $signatureMethod = $this->val($this->meta->signatureMethod);
     $timestamp = time();
-    $oauthVersion = $this->getVar($this->meta->oauthVersion);
+    $oauthVersion = $this->val($this->meta->oauthVersion);
 
     $header = 'OAuth ';
     $header .= !empty($key) ? "oauth_consumer_key=$key" : '';
