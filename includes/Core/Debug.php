@@ -91,7 +91,7 @@ class Debug
    * @param string $_logFile
    *  [optional] full logfile path an name. Default is '' (which will go to default system logfile)
    */
-  public static function setup($_interface = self::HTML, $_level = 1, $_logFile = '')
+  public static function setup($_interface=self::HTML, $_level=1, $_logFile='')
   {
     self::$_interface = $_interface;
     self::$_level = $_level;
@@ -115,7 +115,7 @@ class Debug
    * @param null $_interface
    *  [optional] where the debug output is to go. NULL indicates to use stored output interface.
    */
-  public static function message($msg, $lvl = 1, $_level = NULL, $_interface = NULL)
+  public static function message($msg, $lvl=1, $_level=NULL, $_interface=NULL)
   {
     if (!self::_shouldDebug($lvl, $_level)) {
       return;
@@ -145,24 +145,27 @@ class Debug
    * @param null $_interface
    *  [optional] where the debug output is to go. NULL indicates to use stored output interface.
    */
-  public static function variable($var, $msg = 'DEBUG', $lvl = 1, $_level = NULL, $_interface = NULL)
+  public static function variable($var, $msg='DEBUG', $lvl=1, $_level=NULL, $_interface=NULL)
   {
     if (!self::_shouldDebug($lvl, $_level)) {
       return;
     }
+
     $_interface = is_null($_interface) ? self::$_interface : $_interface;
+
     if ($_interface == self::HTML) {
       $msg = '<b>' . htmlspecialchars($msg, ENT_QUOTES) . ':</b>';
       if (is_array($var) || is_object($var)) {
-        $var = self::_htmlspecialchars_array($var);
+        //$var = self::_htmlspecialchars_array($var);
       } else {
         $var = htmlspecialchars($var, ENT_QUOTES);
       }
-      $msg .= (is_array($var) || is_object($var) ? "<pre>\n" . print_r($var, TRUE) . '</pre>' : print_r($var, TRUE));
+      $msg .= (is_array($var) || is_object($var) ? "<pre>\n" . print_r($var, true) . '</pre>' : print_r($var, true));
     } else {
-      $msg = self::_timestampString() . $msg . ': ' . print_r($var, TRUE);
+      $msg = self::_timestampString() . $msg . ': ' . print_r($var, true);
       $msg .= !is_array($var) && !is_object($var) ? "\n" : '';
     }
+
     self::_display($msg, $_interface);
   }
 
@@ -187,7 +190,7 @@ class Debug
    *
    * @return bool
    */
-  private static function _shouldDebug($lvl, $_level = NULL)
+  private static function _shouldDebug($lvl, $_level=NULL)
   {
     return $lvl <= (is_null($_level) ? self::$_level : $_level);
   }

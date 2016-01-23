@@ -46,7 +46,8 @@ class Api
   public function process()
   {
     // disseminate the request for processing
-    $request = $this->_getData($_GET);
+    $get = $_GET;
+    $request = $this->_getData($get);
 
     // get the resource for the processing
     $result = $this->_getResource($request);
@@ -144,7 +145,6 @@ class Api
     //if ($request->inFormat == 'json') {
     //  $request->vars = $request->vars + json_decode($body, TRUE);
     //}
-    Debug::variable($request, 'request', 4);
 
     return $request;
   }
@@ -272,7 +272,6 @@ class Api
       } else {
         $class = 'Datagator\\Output\\' . ucfirst($this->_cleanData($type));
         $obj = new $class($data, 200, $meta);
-        $obj->validateRequired();
         $obj->process();
       }
     }
