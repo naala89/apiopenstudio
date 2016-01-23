@@ -24,7 +24,6 @@ class LoginStoreDrupal extends ProcessorBase
 {
   private $user;
   private $defaultEntity = 'drupal';
-  protected $required = array('source');
   protected $details = array(
     'name' => 'LoginStoreDrupal',
     'description' => 'Stores the access details from a users login to a remote drupal site for future use.',
@@ -62,14 +61,13 @@ class LoginStoreDrupal extends ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor LoginStoreDrupal', 4);
-    $this->validateRequired();
 
-    $source = $this->getVar($this->meta->source);
+    $source = $this->val($this->meta->source);
     $source = json_decode($source);
     if (empty($source->token) || empty($source->user) || empty($source->user->uid)) {
       throw new Core\ApiException('login failed, no token received', 4, $this->id, 419);
     }
-    $externalEntity = !empty($this->meta->externalEntity) ? $this->getVar($this->meta->externalEntity) : $this->defaultEntity;
+    $externalEntity = !empty($this->meta->externalEntity) ? $this->val($this->meta->externalEntity) : $this->defaultEntity;
     $externalId = $source->user->uid;
     $appid = $this->request->appId;
 

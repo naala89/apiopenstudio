@@ -22,6 +22,9 @@ TODO:
 - Validators for oAuth, etc
 - Finish processor data docs
 - Cache processors
+- Implement collections
+- Add validation of var type result. This can be declared in $this->required
+- Add unit tests (Phing or Jenkins?)
 
 - Resource monitoring
 -- Store number number calls per resource history

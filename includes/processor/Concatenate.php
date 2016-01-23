@@ -21,7 +21,6 @@ use Datagator\Core;
 
 class Concatenate extends ProcessorBase
 {
-  protected $required = array('sources');
   protected $details = array(
     'name' => 'Concatenate',
     'description' => 'Concatenate a series of strings or numbers into a single value.',
@@ -39,11 +38,10 @@ class Concatenate extends ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor Concatenate', 4);
-    $this->validateRequired();
 
     $result = '';
     foreach ($this->meta->sources as $source) {
-      $val = $this->getVar($source);
+      $val = $this->val($source);
       $result .= $val;
     }
     Core\Debug::variable($result, 'concatenation result', 4);

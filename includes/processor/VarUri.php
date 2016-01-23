@@ -18,7 +18,6 @@ use Datagator\Core;
 
 class VarUri extends ProcessorBase
 {
-  protected $required = array('index');
   protected $details = array(
     'name' => 'Var (URI)',
     'description' => 'A value from the request URI. It fetches the value of a particular param in the URI, based on the index value.',
@@ -36,7 +35,7 @@ class VarUri extends ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarUri', 4);
-    $index = $this->getVar($this->meta->index);
+    $index = $this->val($this->meta->index);
 
     if (!isset($this->request->args[$index])) {
       throw new Core\ApiException('URI index "' . $index . '" does not exist', 6, $this->id, 417);

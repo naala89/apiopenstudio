@@ -14,7 +14,8 @@
       "Datagator\\Output\\": "includes/output/",
       "Datagator\\Processor\\": "includes/processor/",
       "Datagator\\Validator\\": "includes/validator/",
-      "Datagator\\Endpoint\\": "includes/endpoint/"
+      "Datagator\\Endpoint\\": "includes/endpoint/",
+      "Datagator\\Test\\": "test/"
     }
   }
 }

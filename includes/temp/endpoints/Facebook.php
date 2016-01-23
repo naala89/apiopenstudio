@@ -24,14 +24,6 @@ class ProcessorFacebook extends Processor {
   const GRAPH_URL = 'https://graph.facebook.com/%s/%s?%s&%s';
   const OAUTH_URL = 'https://graph.facebook.com/oauth/access_token?client_id=%s&client_secret=%s&grant_type=client_credentials';
 
-  protected $required = array(
-    'graphId',
-    'nodeType',
-    'appId',
-    'appSecret',
-    'limit'
-  );
-
   protected $details = array(
     'name' => 'Facebook',
     'description' => 'Facebook end-point.',
@@ -71,13 +63,12 @@ class ProcessorFacebook extends Processor {
    */
   public function process () {
     Debug::variable($this->meta, 'ProcessorFacebook');
-    $this->validateRequired();
 
-    $graphid = $this->getVar($this->meta->graphId);
-    $nodetype = $this->getVar($this->meta->nodeType);
-    $appId = $this->getVar($this->meta->appId);
-    $appSecret = $this->getVar($this->meta->appSecret);
-    $limit = $this->getVar($this->meta->limit);
+    $graphid = $this->val($this->meta->graphId);
+    $nodetype = $this->val($this->meta->nodeType);
+    $appId = $this->val($this->meta->appId);
+    $appSecret = $this->val($this->meta->appSecret);
+    $limit = $this->val($this->meta->limit);
 
     $options = array('limit' => $limit);
     $qs = http_build_query($options, '', '&');

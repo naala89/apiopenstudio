@@ -73,7 +73,7 @@ class ResourceJson extends ResourceBase
         $json = json_decode(file_get_contents($file['tmp_name']));
       }
     } else {
-      $json = urldecode($this->getVar($this->meta->json));
+      $json = urldecode($this->val($this->meta->json));
       $json = json_decode($json);
     }
     if (empty($json)) {

@@ -72,7 +72,7 @@ class ResourceYaml extends ResourceBase
         $yaml = \Spyc::YAMLLoad($file['tmp_name']);
       }
     } else {
-      $yaml = urldecode($this->getVar($this->meta->yaml));
+      $yaml = urldecode($this->val($this->meta->yaml));
       $yaml = \Spyc::YAMLLoadString($yaml);
     }
     if (empty($yaml)) {

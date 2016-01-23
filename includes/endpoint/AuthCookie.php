@@ -21,7 +21,6 @@ use Datagator\Core;
 
 class AuthCookie extends Processor\ProcessorBase
 {
-  protected $required = array('cookie');
   protected $details = array(
     'name' => 'Auth (Cookie)',
     'description' => 'Authentication for remote server, using a cookie.',
@@ -39,12 +38,8 @@ class AuthCookie extends Processor\ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Auth Cookie', 4);
-    $required = $this->validateRequired();
-    if ($required !== TRUE) {
-      return $required;
-    }
 
-    $cookie = $this->getVar($this->meta->cookie);
+    $cookie = $this->val($this->meta->cookie);
 
     return array(CURLOPT_COOKIE => $cookie);
   }

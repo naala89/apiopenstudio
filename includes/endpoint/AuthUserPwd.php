@@ -23,7 +23,6 @@ use Datagator\Core;
 
 class AuthUserPwd extends Processor\ProcessorBase
 {
-  protected $required = array('username', 'password');
   protected $details = array(
     'name' => 'Auth (User/Pass)',
     'description' => 'Authentication for remote server, using username/password.',
@@ -46,13 +45,9 @@ class AuthUserPwd extends Processor\ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Auth UserPwd', 4);
-    $required = $this->validateRequired();
-    if ($required !== TRUE) {
-      return $required;
-    }
 
-    $username = $this->getVar($this->meta->username);
-    $password = $this->getVar($this->meta->password);
+    $username = $this->val($this->meta->username);
+    $password = $this->val($this->meta->password);
 
     return array(CURLOPT_USERPWD => "$username:$password");
   }

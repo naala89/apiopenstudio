@@ -23,7 +23,6 @@ use Datagator\Core;
 
 class Url extends Processor\ProcessorBase
 {
-  protected $required = array('method', 'source', 'reportError');
   protected $details = array(
     'name' => 'Url',
     'description' => 'Fetch the result form an external URL.',
@@ -63,16 +62,15 @@ class Url extends Processor\ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'processor Url', 4);
-    $this->validateRequired();
 
-    $method = $this->getVar($this->meta->method);
+    $method = $this->val($this->meta->method);
     $method = strtolower($method);
     if (!in_array($method, array('get', 'post'))) {
       throw new Core\ApiException('invalid method', 6, $this->id, 417);
     }
 
-    $url = $this->getVar($this->meta->source);
-    $reportError = $this->getVar($this->meta->reportError);
+    $url = $this->val($this->meta->source);
+    $reportError = $this->val($this->meta->reportError);
 
     //get static curl options for this call
     $curlOpts = array();
@@ -97,7 +95,7 @@ class Url extends Processor\ProcessorBase
     if (!empty($this->meta->vars)) {
       $vars = array();
       foreach ($this->meta->vars as $key => $val) {
-        $vars[$key] = $this->getVar($val);
+        $vars[$key] = $this->val($val);
       }
       switch ($method) {
         case 'post':

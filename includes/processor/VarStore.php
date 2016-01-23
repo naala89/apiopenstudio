@@ -23,7 +23,6 @@ use Datagator\Db;
 
 class VarStore extends ProcessorBase
 {
-  protected $required = array('name', 'operation');
   protected $details = array(
     'name' => 'Var (Store)',
     'description' => 'A stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time.',
@@ -55,16 +54,15 @@ class VarStore extends ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarStore', 4);
-    $this->validateRequired();
 
-    $name = $this->getVar($this->meta->name);
-    $operation = $this->getVar($this->meta->operation);
+    $name = $this->val($this->meta->name);
+    $operation = $this->val($this->meta->operation);
     $mapper = new Db\VarsMapper($this->request->db);
     $var = $mapper->findByAppIdName($this->request->appId, $name);
 
     switch($operation) {
       case 'save':
-        $val = $this->getVar($this->meta->val);
+        $val = $this->val($this->meta->val);
         if ($var->getId() === NULL) {
           $var->setName($name);
           $var->setAppId($this->request->appId);
