@@ -48,9 +48,9 @@ class ProcessorBase
    *    This is an array with the following indexes:
    *    description (string): description of what the processor does
    *    cardinality:
-   *       2, '*': 2 or more
-   *       0, '*': 0 or more
-   *       1, 1: exact number of inputs (1)
+   *      '*': 0 or more
+   *      '?': 1 or more
+   *       n: exact number of inputs ( e.g. 0, 1, 3, 5, etc)
    *    type (array): an array of input type this processor will accept (i.e. str, int, processor, float, mixed, etc)
    *
    *    examples:
@@ -142,7 +142,7 @@ class ProcessorBase
           }
         }
         if ($count != $input['cardinality']) {
-          throw new Core\ApiException("$count/" . $input['cardinality'] . ' inputs supplied for ' . $this->details['name'], 6, $this->id);
+          throw new Core\ApiException("$count/" . $input['cardinality'] . ' inputs supplied for ' . $key, 6, $this->id);
         }
       }
     }
