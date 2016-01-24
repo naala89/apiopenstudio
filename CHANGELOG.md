@@ -16,15 +16,17 @@ Datagator 0.2.0, Unfinished
 -- Autoload the core classes
 - Implemented data model pattern for DB
 - Fixed Cache class
+- validate inputs now uses details attribute in processors to define cardinality, cardinality changed from [min, max] to '?', '*', n
 
 TODO: 
 - Finish endpoint processors
 - Validators for oAuth, etc
 - Finish processor data docs
-- Cache processors
 - Implement collections
 - Add validation of var type result. This can be declared in $this->required
 - Add unit tests (Phing or Jenkins?)
+- New Relic
+- Datadog
 
 - Resource monitoring
 -- Store number number calls per resource history
