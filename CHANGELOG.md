@@ -5,7 +5,8 @@ Datagator 0.1.0, 1 Dec 2015
 Datagator 0.2.0, Unfinished
 ---------------------------
 - Improved global handling of error object
-- New YAML importer
+- New YAML importer in uploader
+- Infinite loop detector
 - Fixed output classes handling
 - Incorporated Composer
 -- External packages
@@ -18,15 +19,21 @@ Datagator 0.2.0, Unfinished
 - Fixed Cache class
 - validate inputs now uses details attribute in processors to define cardinality, cardinality changed from [min, max] to '?', '*', n
 
-TODO: 
+TODO:
 - Finish endpoint processors
 - Validators for oAuth, etc
 - Finish processor data docs
 - Implement collections
 - Add validation of var type result. This can be declared in $this->required
 - Add unit tests (Phing or Jenkins?)
-- New Relic
-- Datadog
+- New Relic or Datadog
+- Swagger.io 
+-- reformat YAML so get delete put post is direct child if noun/verb 
+-- Add description for each call to DB and meta
+-- Add description to output
+-- Maybe don't bother separating noun and very, just give URL
+-- Maybe add summary
+-- Change Process to Parameters
 
 - Resource monitoring
 -- Store number number calls per resource history
