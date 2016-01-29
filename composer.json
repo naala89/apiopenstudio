@@ -13,7 +13,7 @@
       "Datagator\\Db\\": "includes/db/",
       "Datagator\\Output\\": "includes/output/",
       "Datagator\\Processor\\": "includes/processor/",
-      "Datagator\\Validator\\": "includes/validator/",
+      "Datagator\\Security\\": "includes/security/",
       "Datagator\\Endpoint\\": "includes/endpoint/",
       "Datagator\\Test\\": "test/"
     }

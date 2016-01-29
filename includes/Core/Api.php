@@ -10,7 +10,7 @@ namespace Datagator\Core;
 use Datagator\Config;
 use Datagator\Processor;
 use Datagator\Db;
-use Datagator\Validator;
+use Datagator\Security;
 use Datagator\Output;
 use Spyc;
 
@@ -206,9 +206,9 @@ class Api
     if (empty($resource->validation)) {
       return;
     }
-    $class = 'Datagator\\Validator\\' . ucfirst($this->_cleanData($resource->validation->processor));
-    $validator = new $class($resource->validation->meta, $request);
-    if (!$validator->process()) {
+    $class = 'Datagator\\Security\\' . ucfirst($this->_cleanData($resource->validation->processor));
+    $security = new $class($resource->validation->meta, $request);
+    if (!$security->process()) {
       throw new ApiException('unauthorized', 4, $resource->validation->meta->id, 401);
     }
     return;
