@@ -26,7 +26,7 @@ class Token extends Processor\ProcessorBase {
     'menu' => 'Security',
     'client' => 'All',
     'application' => 'All',
-    'input' => array(
+    'inputs' => array(
       'token' => array(
         'description' => 'The consumers token.',
         'cardinality' => array(1),

@@ -27,7 +27,7 @@ class TokenSysAdmin extends Token {
     'menu' => 'Security',
     'client' => 'System',
     'application' => 'All',
-    'input' => array(
+    'inputs' => array(
       'token' => array(
         'description' => 'The consumers token.',
         'cardinality' => array(1),
