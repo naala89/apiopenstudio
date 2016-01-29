@@ -24,7 +24,7 @@ class ProcessorsAll extends ProcessorBase
     $classes = array_merge($classes, $this->_getClassList('endpoint'));
     $classes = array_merge($classes, $this->_getClassList('output'));
     $classes = array_merge($classes, $this->_getClassList('processor'));
-    $classes = array_merge($classes, $this->_getClassList('validator'));
+    $classes = array_merge($classes, $this->_getClassList('security'));
 
     $result = $this->_getDetails($classes);
 
