@@ -264,11 +264,15 @@ class Api
     foreach ($outputs as $type => $meta) {
       if ($type == 'response') {
         //translate the output to the correct format as requested in header and return in the response
-        $class = 'Datagator\\Output\\' . ucfirst($this->_cleanData($request->outFormat));
+        $outFormat = ucfirst($this->_cleanData($request->outFormat));
+        $outFormat = $outFormat == '**' ? 'Json' : $outFormat;
+        $class = 'Datagator\\Output\\' . $outFormat;
         $obj = new $class($data, 200);
         $result = $obj->process();
       } else {
-        $class = 'Datagator\\Output\\' . ucfirst($this->_cleanData($type));
+        $outFormat = ucfirst($this->_cleanData($request->outFormat));
+        $outFormat = $outFormat == '**' ? 'Json' : $outFormat;
+        $class = 'Datagator\\Output\\' . $outFormat;
         $obj = new $class($data, 200, $meta);
         $obj->process();
       }
@@ -315,7 +319,7 @@ class Api
         $result = trim($result);
       }
     }
-    return $result == '*' ? $default : $result;
+    return ($result == '*' || $result == '**') ? $default : $result;
   }
 
   /**
