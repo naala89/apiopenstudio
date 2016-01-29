@@ -21,11 +21,18 @@ class TokenDeveloper extends Token {
 
   protected $role = 'developer';
   protected $details = array(
-    'name' => 'Token',
-    'description' => 'Validate the request, the user having a role of developer.',
-    'menu' => 'validator',
-    'client' => 'System',
+    'machineName' => 'tokenDeveloper',
+    'name' => 'Token (Developer)',
+    'description' => 'Validate the request, requiring the consumer to have a valid token and a role of developer.',
+    'menu' => 'Security',
+    'client' => 'All',
     'application' => 'All',
-    'input' => array(),
+    'input' => array(
+      'token' => array(
+        'description' => 'The consumers token.',
+        'cardinality' => array(1),
+        'accepts' => array('processor')
+      )
+    ),
   );
 }

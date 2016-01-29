@@ -22,11 +22,17 @@ class Token extends Processor\ProcessorBase {
   protected $details = array(
     'machineName' => 'token',
     'name' => 'Token',
-    'description' => 'Validate the request, requiring the user having a valid token.',
+    'description' => 'Validate the request, requiring the consumer to have a valid token.',
     'menu' => 'Security',
     'client' => 'All',
     'application' => 'All',
-    'input' => array(),
+    'input' => array(
+      'token' => array(
+        'description' => 'The consumers token.',
+        'cardinality' => array(1),
+        'accepts' => array('processor')
+      )
+    ),
   );
 
   /**

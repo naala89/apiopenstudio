@@ -21,11 +21,18 @@ class TokenSysAdmin extends Token {
 
   protected $role = 'sys-admin';
   protected $details = array(
-    'name' => 'Token Sys-admin',
-    'description' => 'Validate the request, the user having a role of sys-admin.',
-    'menu' => 'validator',
+    'machineName' => 'tokenSysAdmin',
+    'name' => 'Token (Sys-Admin)',
+    'description' => 'Validate the request, requiring the consumer to have a valid token and a role of sys-admin.',
+    'menu' => 'Security',
     'client' => 'System',
     'application' => 'All',
-    'input' => array(),
+    'input' => array(
+      'token' => array(
+        'description' => 'The consumers token.',
+        'cardinality' => array(1),
+        'accepts' => array('processor')
+      )
+    ),
   );
 }
