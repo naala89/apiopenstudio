@@ -23,7 +23,7 @@ class TokenUser extends Token {
     'name' => 'Token (User)',
     'description' => 'Validate the request by user and token, only allowing specific users to use the resource.',
     'menu' => 'Security',
-    'client' => 'System',
+    'client' => 'All',
     'application' => 'All',
     'input' => array(
       'token' => array(
