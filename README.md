@@ -1,22 +1,25 @@
 Datagator
 =========
+
 The API project
 
 Installation
--------
+------------
+
 1. $ git clone gitolite@naala.com.au:datagator
-2. install [Composer](https://getcomposer.org/).
+2. Install [Composer](https://getcomposer.org/).
 3. $ composer install
-4. create a database.
-5. update Config.php:
-  1. set server region in the the $_server array (development, staging or production) under the index of the server name that your server uses.
-  2. set database credentials in the region function you defined in $_server.
-  3. set other desired values in the region function you defined in $_server.
+4. Create a database.
+5. Update includes/config.php:
+  1. Set the server role by editing the $_server array so that the LHS values contain the server hostname, and the RHS indicate the server role (development, staging or production).
+  2. Set the database credentials that you created in step 5 in the server role function you defined in step 5.1.
+  3. Set any other desired values you require in the role function you defined in $_server (see Config section for details)
 6. run includes/scripts/db/structure.sql.
 7. run includes/scripts/db/data.sql.
 
 Requirements
 ------------
+
 * apache
 * https
 * php >= 5.3
@@ -25,13 +28,81 @@ Requirements
 * composer
 * mcrpyt
 
+Config
+------
+
+The includes/config.php is set up so that the same file can be used on multiple servers
+### $_server
+This array indicates what a server's role is. A server can only ave one of three possible values:
+* development
+* staging
+* production
+The indexes in the array contain the hostname of the server, and the value contains the value of the role.
+### everywhere()
+The values set in this function apply to all server roles, however, these values can overridden in the role functions (see below) or in the URL if $_allow_override has been set to true (see below).
+#### $defaultFormat
+Sets the default output format for API calls, if no Accept: application/* header value is received
+#### $tokenLife
+Sets the life of API tokens. Use format used by [strtotime](http://php.net/manual/en/function.strtotime.php) (e.g. "+1 day")
+#### $dirVendor
+The directory where composer installs the 3rd party files. You should need to edit this.
+#### $dirYaml
+The directory where you store your yaml files. You should not need to change this.
+### development(), staging() and production()
+#### $debug
+Standard debug level:
+0. None
+1. Low
+2. Medium
+3. High
+4. Everything
+#### $debugDb
+Debug level for any cli scripts:
+0. None
+1. Low
+2. Medium
+3. High
+4. Everything
+#### $debugCLI
+Debug level for Database calls and DB instantiation:
+0. None
+1. Low
+2. Medium
+3. High
+4. Everything
+#### $_allow_override
+if true, an api caller can override any of the config settings by assigning values to them in the URL. This should never be true on production servers.
+#### $debugInterface
+Where the debug data will be output. There are only two possible values:
+* LOG
+* HTML
+#### $cache
+Set to true to enable caching on the server, set to false to disable.
+#### $dbdriver
+The db driver, e.g. 'mysqli'.
+#### $dbhost
+The DB hostname, e.g. 'localhost'.
+#### $dbname
+The DB name.
+#### $dbuser
+The DB user.
+#### $dbpass
+The DB password.
+#### $dboptions
+See [ADOdb documentation](http://phplens.com/lens/adodb/docs-adodb.htm) for possible values.
+#### $errorLog
+Path to the system error log.
+#### Miscellaneous settings
+You can set any server scpecific settings with init_set, date_default_timezone_set, etc within these functions.
+
 Error codes
 -----------
-    0 - Core error
-    1 - Processor format error
-    2 - DB error
-    3 - Invalid API call
-    4 - Authorisation error
-    5 - External error
-    6 - Invalid processor input
-    7 - Invalid application
+
+0. Core error
+1. Processor format error
+2. DB error
+3. Invalid API call
+4. Authorisation error
+5. External error
+6. Invalid processor input
+7. Invalid application
