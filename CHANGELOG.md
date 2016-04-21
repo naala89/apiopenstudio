@@ -20,6 +20,8 @@ Datagator 0.2.0, Unfinished
 - validate inputs now uses details attribute in processors to define cardinality, cardinality changed from [min, max] to '?', '*', n
 
 TODO:
+- change format of processor meta (see frontend)
+- create processor Literal (see frontend)
 - Change all resource meta 'validation' to 'security'
 -- Update API->_getValidation()
 - Finish endpoint processors

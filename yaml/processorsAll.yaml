@@ -8,8 +8,8 @@ application: All
 
 ttl: 3600
 
-validation:
-  processor: TokenDeveloper
+security:
+  processor: tokenDeveloper
   meta:
     id: 1
     token:

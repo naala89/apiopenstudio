@@ -8,8 +8,8 @@ method: delete
 
 ttl: 300
 
-validation:
-  processor: TokenDeveloper
+security:
+  processor: tokenDeveloper
   meta:
     id: 1
     token:

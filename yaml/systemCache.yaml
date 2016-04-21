@@ -6,8 +6,8 @@ application: System
 
 method: post
 
-validation:
-  processor: TokenSysAdmin
+security:
+  processor: tokenSysAdmin
   meta:
     id: 1
     token:
