@@ -9,7 +9,7 @@ Installation
 1. $ git clone gitolite@naala.com.au:datagator
 2. Install [Composer](https://getcomposer.org/).
 3. $ composer install
-4. Create a database.
+4. Create an empty database and user. Give the user full permission for the DB.
 5. Update includes/config.php:
   1. Set the server role by editing the $_server array so that the LHS values contain the server hostname, and the RHS indicate the server role (development, staging or production).
   2. Set the database credentials that you created in step 5 in the server role function you defined in step 5.1.
@@ -94,6 +94,10 @@ See [ADOdb documentation](http://phplens.com/lens/adodb/docs-adodb.htm) for poss
 Path to the system error log.
 #### Miscellaneous settings
 You can set any server scpecific settings with init_set, date_default_timezone_set, etc within these functions.
+
+Caching
+-------
+If you set the $cache setting in config (see above) to true, you need to have installed APC or Memcache. The system will automatically discover which opcode service has been installed and use the correct one.
 
 Error codes
 -----------
