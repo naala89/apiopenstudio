@@ -8,8 +8,8 @@ method: get
 
 ttl: 300
 
-validation:
-  processor: validateConsumer
+security:
+  processor: tokenConsumer
   meta:
     id: 1
     token:
