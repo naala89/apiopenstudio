@@ -2,11 +2,11 @@ Datagator
 =========
 The API project
 
-Install
+Installation
 -------
-1. $git clone gitolite@naala.com.au:datagator
+1. $ git clone gitolite@naala.com.au:datagator
 2. install [Composer](https://getcomposer.org/).
-3. $composer install
+3. $ composer install
 4. create a database.
 5. update Config.php:
   1. set server region in the the $_server array (development, staging or production) under the index of the server name that your server uses.
