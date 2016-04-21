@@ -77,7 +77,9 @@ Where the debug data will be output. There are only two possible values:
 * LOG
 * HTML
 #### $cache
-Set to true to enable caching on the server, set to false to disable.
+Set to true to enable caching on the server (opcode service automatically discovered), set to false to disable.
+
+If you have multiple services available on the server, you instruct Datagator to use a specific opcode by setting this value to 'apc' for APC or memcache for MemCache.
 #### $dbdriver
 The db driver, e.g. 'mysqli'.
 #### $dbhost
@@ -99,8 +101,8 @@ Caching
 -------
 If you set the $cache setting in config (see above) to true, you need to have installed APC or Memcache. The system will automatically discover which opcode service has been installed and use the correct one.
 
-Error codes
------------
+Response error codes
+--------------------
 
 0. Core error
 1. Processor format error
