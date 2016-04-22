@@ -170,8 +170,8 @@ class Config
     self::$errorLog = '/var/log/apache2/datagator.error.log';
     self::$convert = '/usr/local/bin/convert';
     self::$ffmpeg = '/usr/local/bin/ffmpeg';
-    date_default_timezone_set('Australia/Sydney');
 
+    date_default_timezone_set('Australia/Sydney');
     ini_set('display_errors', 'on');
     ini_set('log_errors','On');
     ini_set('error_reporting', E_ALL);
@@ -193,16 +193,14 @@ class Config
     self::$dbdriver = 'mysqli';
     self::$dbhost = 'localhost';
     self::$dbname = 'datagator';
-    self::$dbuser = '';
-    self::$dbpass = '';
+    self::$dbuser = 'datagato_datagat';
+    self::$dbpass = 'V0Y_CIiY';
     self::$dboptions = array('persist' => 0);
     self::$debugDb = FALSE;
 
     self::$errorLog = '/home/apinaalacom/logs/datagator.error.log';
-    self::$convert = '/usr/bin/convert';
-    self::$ffmpeg = '/usr/bin/ffmpeg';
-    date_default_timezone_set('UTC');
 
+    date_default_timezone_set('Australia/Sydney');
     ini_set('display_errors', 'on');
     ini_set('log_errors','On');
     ini_set('error_reporting', E_ALL);
