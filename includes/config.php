@@ -192,7 +192,7 @@ class Config
 
     self::$dbdriver = 'mysqli';
     self::$dbhost = 'localhost';
-    self::$dbname = 'datagator';
+    self::$dbname = 'datagato_api';
     self::$dbuser = 'datagato_datagat';
     self::$dbpass = 'V0Y_CIiY';
     self::$dboptions = array('persist' => 0);
