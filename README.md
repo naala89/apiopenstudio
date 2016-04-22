@@ -99,6 +99,7 @@ You can set any server scpecific settings with init_set, date_default_timezone_s
 
 Caching
 -------
+
 If you set the $cache setting in config (see above) to true, you need to have installed APC or Memcache. The system will automatically discover which opcode service has been installed and use the correct one.
 
 Response error codes

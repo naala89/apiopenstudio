@@ -39,6 +39,13 @@ TODO:
 -- Maybe add summary
 -- Change Process to Parameters
 
+- Processors
+-- Change endpoint Url so that it converts response body into standard array format
+-- Change resourceJson so that it accepts JSON in the body too
+-- Change resourceYaml so that it accepts YAML in the body too
+-- Email processor needs completing
+-- Fix LoginStoreDrupal - how will this be used for validation?
+
 - Resource monitoring
 -- Store number number calls per resource history
 --- Store call result (error or not)
