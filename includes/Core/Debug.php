@@ -176,7 +176,7 @@ class Debug
    */
   private static function _timestampString()
   {
-    $date = new DateTime('now');
+    $date = new \DateTime('now');
     return '[' . $date->format('D M d h:i:s') . substr((string)microtime(), 1, 6) . $date->format(' Y') . '] ';
   }
 
