@@ -54,7 +54,7 @@ class Config
   static private $_server = array(
     'production' => 'production',
     'api.naala.com.au' => 'staging',
-    'vmh17284.hosting24.com.au' => 'staging',
+    'datagator.yourtemp.website' => 'staging',
     'localhost' => 'development',
     '127.0.0.1' => 'development',
     'datagator.local' => 'development',

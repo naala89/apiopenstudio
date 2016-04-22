@@ -1,7 +1,7 @@
 <?php
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
-use Datagator\Config;
+use Datagator\config;
 use Datagator\Core;
 
 Config::load();
