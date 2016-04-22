@@ -198,7 +198,7 @@ class Config
     self::$dboptions = array('persist' => 0);
     self::$debugDb = FALSE;
 
-    self::$errorLog = '/home/apinaalacom/logs/datagator.error.log';
+    self::$errorLog = '/home/datagator/datagator.error.log';
 
     date_default_timezone_set('Australia/Sydney');
     ini_set('display_errors', 'on');
