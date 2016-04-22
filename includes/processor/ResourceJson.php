@@ -24,34 +24,34 @@ class ResourceJson extends ResourceBase
 {
   protected $details = array(
     'name' => 'Resource (Json)',
-    'description' => 'Create or fetch a custom API resource for the application in JSON form.',
+    'description' => 'CRUD for a resource for the in JSON form.',
     'menu' => 'Resource',
     'application' => 'All',
     'input' => array(
       'method' => array(
-        'description' => 'The HTTP method of the resource (only used if fetching or deleting a resource).',
+        'description' => 'The HTTP method for the resource (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('string')
+        'accepts' => array('processor', 'string'),
       ),
       'appid' => array(
-        'description' => 'The application ID the resource is associated with (only used if fetching or deleting a resource).',
+        'description' => 'The application ID for the resource (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('integer')
+        'accepts' => array('processor', 'literal'),
       ),
       'noun' => array(
         'description' => 'The noun identifier of the resource (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('string')
+        'accepts' => array('processor', 'string'),
       ),
       'verb' => array(
         'description' => 'The verb identifier of the resource (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('string')
+        'accepts' => array('processor', 'string'),
       ),
       'json' => array(
-        'description' => 'The json string or file. This can be a form file or a urlencoded GET var (this is only used if you are creating or updating a resource).',
+        'description' => 'The json string or file. This can be a form file or a urlencoded GET var or in the body (this is only used if you are creating or updating a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('string', 'file')
+        'accepts' => array('processor', 'file', 'string'),
       )
     )
   );

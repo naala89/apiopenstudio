@@ -35,13 +35,13 @@ class Url extends Processor\ProcessorBase
         'accepts' => array('processor', '"get"', '"post"'),
       ),
       'source' => array(
-        'description' => 'Th source URL.',
+        'description' => 'The source URL.',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'literal'),
       ),
       'auth' => array(
         'description' => 'The remote authentication process.',
-        'cardinality' => array(1, 1),
+        'cardinality' => array(0, 1),
         'accepts' => array('processor'),
       ),
       'reportError' => array(

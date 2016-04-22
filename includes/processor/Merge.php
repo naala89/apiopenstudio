@@ -30,7 +30,7 @@ class Merge extends ProcessorBase
     'input' => array(
       'sources' => array(
         'description' => 'The values to perform the merge on.',
-        'cardinality' => array(1, '*'),
+        'cardinality' => array(2, '*'),
         'accepts' => array('processor', 'literal')
       ),
       'mergeType' => array(

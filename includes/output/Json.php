@@ -11,13 +11,7 @@ class Json extends Output
     'description' => 'Output in JSON format.',
     'menu' => 'Output',
     'application' => 'All',
-    'input' => array(
-      'destination' => array(
-        'description' => 'List of URLs to send to (other than response).',
-        'cardinality' => array(0, '*'),
-        'accepts' => array('processor', 'literal'),
-      ),
-    ),
+    'input' => array(),
   );
 
   /**
@@ -25,17 +19,7 @@ class Json extends Output
    */
   protected function getData()
   {
-    $payload = $this->toJson();
-    if (!empty($this->meta)) {
-      $options = !empty($this->meta->options) ? $this->meta->options : array();
-      foreach ($this->meta->destination as $destination) {
-        $curl = new Curl();
-        $curl->post($destination, $options + array(
-            'CURLOPT_POSTFIELDS' => $payload
-          ));
-      }
-    }
-    return $payload;
+    return $this->toJson();
   }
 
   /**

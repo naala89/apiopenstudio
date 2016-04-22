@@ -28,7 +28,7 @@ class Object extends ProcessorBase
     'application' => 'All',
     'input' => array(
       'attributes' => array(
-        'description' => 'The value of the variable.',
+        'description' => 'A single attribute value or a Field.',
         'cardinality' => array(0, '*'),
         'accepts' => array('processor', 'literal'),
       ),

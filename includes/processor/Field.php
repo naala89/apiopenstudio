@@ -23,9 +23,9 @@ class Field extends ProcessorBase
     'description' => 'Create a name value pair. This is primarily for use as a field in object.',
     'menu' => 'Primitive',
     'application' => 'All',
-    'input' => array(
-      'name' => array(
-        'description' => 'The name of the nvp.',
+    'key' => array(
+      'key' => array(
+        'description' => 'The key of the nvp.',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'literal'),
       ),
@@ -41,7 +41,7 @@ class Field extends ProcessorBase
   {
     Core\Debug::variable($this->meta, 'Processor Field', 4);
 
-    $name = $this->val($this->meta->name);
+    $name = $this->val($this->meta->key);
     $value = $this->val($this->meta->value);
 
     return array($name => $value);

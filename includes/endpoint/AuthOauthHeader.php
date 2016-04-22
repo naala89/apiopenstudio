@@ -48,7 +48,7 @@ class AuthOAuthHeader extends Processor\ProcessorBase
         'accepts' => array('processor', 'literal'),
       ),
       'oauthVersion' => array(
-        'description' => 'The o-auth version.',
+        'description' => 'The OAuth version.',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'literal'),
       ),

@@ -4,6 +4,7 @@ namespace Datagator\Output;
 
 class Html extends Xml
 {
+  protected $header = 'Content-Type:application/xml';
   protected $details = array(
     'name' => 'Html',
     'description' => 'Output in HTML format.',
@@ -11,8 +12,8 @@ class Html extends Xml
     'application' => 'All',
     'input' => array(
       'destination' => array(
-        'description' => 'List of URLs to send to (other than response).',
-        'cardinality' => array(0, '*'),
+        'description' => 'List of URLs to send to.',
+        'cardinality' => array(1, '*'),
         'accepts' => array('processor', 'literal'),
       ),
     ),

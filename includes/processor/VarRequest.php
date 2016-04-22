@@ -34,7 +34,7 @@ class VarRequest extends VarMixed
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarRequest');
-    $name = parent::process();
+    $name = $this->val($this->meta->name);
 
     if (empty($_REQUEST[$name])) {
       throw new Core\ApiException("request variable ($name) does not exist", 6, $this->id, 417);

@@ -24,17 +24,7 @@ class Text extends Output
    */
   protected function getData()
   {
-    $payload = $this->toText();
-    if (!empty($this->meta)) {
-      $options = !empty($this->meta->options) ? $this->meta->options : array();
-      foreach ($this->meta->destination as $destination) {
-        $curl = new Curl();
-        $curl->post($destination, $options + array(
-            'CURLOPT_POSTFIELDS' => $payload
-          ));
-      }
-    }
-    return $payload;
+    return $this->toText();
   }
 
   /**

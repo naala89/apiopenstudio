@@ -10,7 +10,7 @@
  *      "id":<integer>,
  *      "operation":"insert|delete|fetch",
  *      "name":<processor|mixed>,
- *      "val":<processor|mixed>, [optional - if operation is insert]
+ *      "value":<processor|mixed>, [optional - if operation is insert]
  *    }
  *  }
  *
@@ -29,20 +29,20 @@ class VarStore extends ProcessorBase
     'menu' => 'Primitive',
     'application' => 'All',
     'input' => array(
-      'operation' => array(
-        'description' => 'The operation to be performed on the variable.',
-        'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"save"', '"delete"', '"fetch"')
-      ),
       'name' => array(
         'description' => 'The name of the variable.',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'literal')
       ),
-      'val' => array(
+      'value' => array(
         'description' => 'The value of the variable. This input is only used in save operations.',
         'cardinality' => array(0, 1),
         'accepts' => array('processor', 'literal')
+      ),
+      'operation' => array(
+        'description' => 'The operation to be performed on the variable.',
+        'cardinality' => array(1, 1),
+        'accepts' => array('processor', '"save"', '"delete"', '"fetch"')
       ),
     ),
   );
@@ -62,7 +62,7 @@ class VarStore extends ProcessorBase
 
     switch($operation) {
       case 'save':
-        $val = $this->val($this->meta->val);
+        $val = $this->val($this->meta->value);
         if ($var->getId() === NULL) {
           $var->setName($name);
           $var->setAppId($this->request->appId);
