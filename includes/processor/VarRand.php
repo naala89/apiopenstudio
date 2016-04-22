@@ -11,7 +11,7 @@
  *      "length":<integer>,
  *      "lower":<boolean>,
  *      "upper":<boolean>,
- *      "number":<boolean>,
+ *      "numeric":<boolean>,
  *      "non_alphanum":<boolean>,
  *    }
  *  }
@@ -31,7 +31,7 @@ class VarRand extends ProcessorBase
       'length' => array(
         'description' => 'The length of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'int')
+        'accepts' => array('processor', 'integer')
       ),
       'lower' => array(
         'description' => 'Use lower-case alpha characters.',
@@ -43,12 +43,12 @@ class VarRand extends ProcessorBase
         'cardinality' => array(0, 1),
         'accepts' => array('processor', 'bool')
       ),
-      'number' => array(
+      'numeric' => array(
         'description' => 'Use numeric characters.',
         'cardinality' => array(0, 1),
         'accepts' => array('processor', 'bool')
       ),
-      'non-alphanum' => array(
+      'nonalphanumic' => array(
         'description' => 'Use non-alphanumeric characters.',
         'cardinality' => array(0, 1),
         'accepts' => array('processor', 'bool')
@@ -64,9 +64,9 @@ class VarRand extends ProcessorBase
     $length = $this->val($this->meta->length);
     $lower = $this->val($this->meta->lower);
     $upper = $this->val($this->meta->upper);
-    $number = $this->val($this->meta->number);
+    $numeric = $this->val($this->meta->numeric);
     $nonAlphanum = $this->val($this->meta->nonAlphanum);
 
-    return Core\Utilities::random_string($length, $lower, $upper, $number, $nonAlphanum);
+    return Core\Utilities::random_string($length, $lower, $upper, $numeric, $nonAlphanum);
   }
 }

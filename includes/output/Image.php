@@ -10,11 +10,18 @@
  */
 
 namespace Datagator\Output;
+use Datagator\Config;
 use Datagator\Core;
 
 class Image extends Output
 {
-  protected $details = array('application' => 'all');
+  protected $details = array(
+    'name' => 'Image',
+    'description' => 'Output in image format. The data fed into the output can be a URL (must start with http) or an input filename.',
+    'menu' => 'Output',
+    'application' => 'All',
+    'input' => array(),
+  );
 
   protected function getData()
   {
@@ -25,12 +32,10 @@ class Image extends Output
     parent::process();
 
     if (!is_string($this->data)) {
-      $xml = new Json($this->status, $this->data);
-      return $xml->process();
+      throw new Core\ApiException('data revieved is not an image.', 1, $this->id);
     }
     if (empty($this->data)) {
-      header('Content-Type:application/json');
-      return 'image empty';
+      throw new Core\ApiException('image empty.', 1, $this->id);
     }
 
     if (substr($this->data, 0, 4 ) === "http") {
@@ -46,8 +51,7 @@ class Image extends Output
     } elseif (function_exists('mime_content_type')) {
       $mime = mime_content_type($this->data);
     } else {
-      header('Content-Type:text/plain');
-      return 'Error (-1): Cannot read mime type of image. Please enable filetype extension.';
+      throw new Core\ApiException('Cannot read mime type of image. Please enable filetype extension.', 1, $this->id);
     }
 
     header("Content-Type:$mime");
