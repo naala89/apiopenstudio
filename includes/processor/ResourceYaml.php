@@ -49,7 +49,7 @@ class ResourceYaml extends ResourceBase
         'accepts' => array('string')
       ),
       'yaml' => array(
-        'description' => 'The yaml string or file. This can be a form file or a urlencoded GET var (this is only used if you are creating or updating a resource).',
+        'description' => 'The yaml string or file. This can be a form file or a urlencoded GET var (this input is only used if you are creating or updating a resource).',
         'cardinality' => array(0, 1),
         'accepts' => array('string', 'file')
       )
@@ -72,11 +72,12 @@ class ResourceYaml extends ResourceBase
         $yaml = \Spyc::YAMLLoad($file['tmp_name']);
       }
     } else {
-      $yaml = urldecode($this->val($this->meta->yaml));
+      if (empty($this->request->vars['yaml'])) {
+        throw new Core\ApiException('no yaml supplied', 6, $this->id, 417);
+      }
+      $yaml = $this->val($this->meta->yaml);
+      $yaml = urldecode($yaml);
       $yaml = \Spyc::YAMLLoadString($yaml);
-    }
-    if (empty($yaml)) {
-      throw new Core\ApiException('invalid or no yaml supplied', 6, $this->id, 417);
     }
     return $yaml;
   }
