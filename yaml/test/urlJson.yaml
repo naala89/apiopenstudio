@@ -15,3 +15,4 @@ process:
     method: get
     source: "http://rest.db.ripe.net/ripe/inetnum/34.54.212.4.json"
     reportError: 0
+    normalise: 0

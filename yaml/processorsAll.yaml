@@ -4,8 +4,6 @@ uri:
 
 method: get
 
-application: All
-
 ttl: 3600
 
 security:
