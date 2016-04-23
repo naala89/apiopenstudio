@@ -116,8 +116,8 @@ abstract class ResourceBase extends ProcessorBase
    */
   protected function fetch()
   {
-    if (empty($appId = $this->request->vars['appid'])) {
-      throw new Core\ApiException('missing appid parameter', 3, $this->id, 400);
+    if (empty($appId = $this->request->appId)) {
+      throw new Core\ApiException('missing application ID', 3, $this->id, 400);
     }
     if (empty($method = $this->request->vars['method'])) {
       throw new Core\ApiException('missing method parameter', 1, $this->id, 400);
