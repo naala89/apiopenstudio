@@ -74,11 +74,6 @@ abstract class ResourceBase extends ProcessorBase
       throw new Core\ApiException('invalid application', 7, $this->id, 401);
     }
 
-    // check user has correct dev permission for application in yaml
-    if (!$this->request->user->hasRole($appId, 'developer')) {
-      throw new Core\ApiException("permission denied", 4, $this->id, 401);
-    }
-
     // validation is not mandatory
     if (!empty($data['validation'])) {
       $meta['validation'] = $data['validation'];
@@ -124,9 +119,6 @@ abstract class ResourceBase extends ProcessorBase
     if (empty($appId = $this->request->vars['appid'])) {
       throw new Core\ApiException('missing appid parameter', 3, $this->id, 400);
     }
-    if (!$this->request->user->hasRole($appId, 'developer')) {
-      throw new Core\ApiException('permission denied', 4, $this->id, 401);
-    }
     if (empty($method = $this->request->vars['method'])) {
       throw new Core\ApiException('missing method parameter', 1, $this->id, 400);
     }
@@ -171,9 +163,6 @@ abstract class ResourceBase extends ProcessorBase
   {
     if (empty($appId = $this->request->vars['appid'])) {
       throw new Core\ApiException('missing appid parameter', 1, $this->id, 400);
-    }
-    if (!$this->request->user->hasRole($appId, 'developer')) {
-      throw new Core\ApiException('permission denied', 4, $this->id, 401);
     }
     if (empty($method = $this->request->vars['method'])) {
       throw new Core\ApiException('missing method parameter', 1, $this->id, 400);
