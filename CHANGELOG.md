@@ -18,6 +18,11 @@ Datagator 0.2.0, Unfinished
 - Implemented data model pattern for DB
 - Fixed Cache class
 - validate inputs now uses details attribute in processors to define cardinality, cardinality changed from [min, max] to '?', '*', n
+- added ability to normalise result in Url processor
+- improved Normalise class
+- object processor working
+- import/export/delete json and yaml working
+
 
 TODO:
 - change format of processor meta (see frontend)
@@ -41,11 +46,7 @@ TODO:
 
 - Processors
 -- Should non sysadmins be able to create processors without validation?
--- Change endpoint Url so that it converts response body into standard array format
--- Change resourceJson so that it accepts JSON in the body too
--- Change resourceYaml so that it accepts YAML in the body too
 -- Email processor needs completing
--- Fix LoginStoreDrupal - how will this be used for validation?
 
 - Resource monitoring
 -- Store number number calls per resource history
