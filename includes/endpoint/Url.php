@@ -49,6 +49,11 @@ class Url extends Processor\ProcessorBase
         'cardinality' => array(1, 1),
         'accepts' => array('processor', '"0"', '"1"'),
       ),
+      'normalise' => array(
+        'description' => 'If set to 0, the results will pass though as a raw string. If set to 1, the results will be parsed into a format that can be processed further, i.e. merge, filter, etc.',
+        'cardinality' => array(1, 1),
+        'accepts' => array('processor', '"0"', '"1"'),
+      ),
     ),
   );
 
@@ -114,10 +119,12 @@ class Url extends Processor\ProcessorBase
       throw new Core\ApiException('could not get response from remote server: ' . $curl->errorMsg, 5, $this->id, $curl->httpStatus);
     }
 
-    $normalise = new Core\Normalise($result, $curl->type);
-    $result = $normalise->normalise();
-    if ($reportError && $curl->httpStatus != 200) {
-      throw new Core\ApiException(json_encode($result), 5, $this->id, $curl->httpStatus);
+    if ($this->val($this->meta->normalise)) {
+      $normalise = new Core\Normalise($result, $curl->type);
+      $result = $normalise->normalise();
+      if ($reportError && $curl->httpStatus != 200) {
+        throw new Core\ApiException(json_encode($result), 5, $this->id, $curl->httpStatus);
+      }
     }
 
     return $result;
