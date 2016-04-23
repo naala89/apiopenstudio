@@ -79,12 +79,8 @@ abstract class ResourceBase extends ProcessorBase
       throw new Core\ApiException("permission denied", 4, $this->id, 401);
     }
 
-    // only allow no validation for sys-admin role
-    if (empty($data['validation'])) {
-      if (!$this->request->user->hasRole(1, 'sys-admin')) {
-        throw new Core\ApiException('invalid resource - no Authentication defined', 6);
-      }
-    } else {
+    // validation is not mandatory
+    if (!empty($data['validation'])) {
       $meta['validation'] = $data['validation'];
     }
 
