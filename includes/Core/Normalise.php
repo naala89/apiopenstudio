@@ -136,6 +136,10 @@ class Normalise
   private function _calcFormat()
   {
     $data = $this->data;
+    // test for array
+    if (is_array($data)) {
+      return 'array';
+    }
     // test for JSON
     json_decode($data);
     if (json_last_error() == JSON_ERROR_NONE) {
@@ -144,10 +148,6 @@ class Normalise
     // test for XML
     if (simplexml_load_string($data) !== false) {
       return 'xml';
-    }
-    // test for array
-    if (is_array($data)) {
-      return 'array';
     }
     return 'text';
   }
