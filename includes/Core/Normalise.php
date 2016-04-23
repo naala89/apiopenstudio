@@ -10,20 +10,31 @@ class Normalise
 {
   private $data;
   private $format;
-  public $normaliseFunc = 'toArray';
+  public $defaultNormalise = 'array';
 
   /**
    * @param $data
-   * @param bool|FALSE $format
+   * @param null|string $format
    */
-  public function __construct($data, $format=false)
+  public function __construct($data, $format=NULL)
   {
     $this->data = $data;
     $this->format = $format;
   }
 
-  public function normalise()
+  /**
+   * Call the default normalise function
+   * @param null $into
+   * @return mixed
+   * @throws \Datagator\Core\ApiException
+   */
+  public function normalise($into=NULL)
   {
+    $into = empty($into) ? $this->defaultNormalise : $into;
+    $normaliseFunc = 'to' . ucfirst($into);
+    if (!method_exists($this, $normaliseFunc)) {
+      throw new ApiException("cannot normalise input into $into, this functionality does not exist", 6, $this->id, 417);
+    }
     return $this->{$this->normaliseFunc}();
   }
 
@@ -32,7 +43,7 @@ class Normalise
    */
   public function toArray()
   {
-    $format = !$this->format ? $this->_calcFormat() : $this->_getFormat();
+    $format = empty($this->format) ? $this->_calcFormat() : $this->_getFormat();
     switch ($format) {
       case 'xml':
         $data = $this->_xmlToArray();
@@ -141,14 +152,69 @@ class Normalise
   }
 
   /**
+   * Convert XML string into an array, maintaining attributes and cdata.
+   * @see https://github.com/gaarf/XML-string-to-PHP-array
    * @return array
    */
-  private function _xmlToArray()
-  {
-    $obj = simplexml_load_string($this->data); // Parse XML
-    return json_decode(json_encode($obj), true); // Convert to array
+  function _xmlToArray($xmlstr) {
+    $doc = new DOMDocument();
+    $doc->loadXML($xmlstr);
+    $root = $doc->documentElement;
+    $output = domnode_to_array($root);
+    $output['@root'] = $root->tagName;
+    return $output;
   }
 
+  /**
+   * Convert an XML node into an array attribute.
+   * @param $node
+   * @return array
+   */
+  function domnode_to_array($node) {
+    $output = array();
+    switch ($node->nodeType) {
+
+      case XML_CDATA_SECTION_NODE:
+      case XML_TEXT_NODE:
+        $output = trim($node->textContent);
+        break;
+
+      case XML_ELEMENT_NODE:
+        for ($i=0, $m=$node->childNodes->length; $i<$m; $i++) {
+          $child = $node->childNodes->item($i);
+          $v = domnode_to_array($child);
+          if(isset($child->tagName)) {
+            $t = $child->tagName;
+            if(!isset($output[$t])) {
+              $output[$t] = array();
+            }
+            $output[$t][] = $v;
+          }
+          elseif($v || $v === '0') {
+            $output = (string) $v;
+          }
+        }
+        if($node->attributes->length && !is_array($output)) { //Has attributes but isn't an array
+          $output = array('@content'=>$output); //Change output into an array.
+        }
+        if(is_array($output)) {
+          if($node->attributes->length) {
+            $a = array();
+            foreach($node->attributes as $attrName => $attrNode) {
+              $a[$attrName] = (string) $attrNode->value;
+            }
+            $output['@attributes'] = $a;
+          }
+          foreach ($output as $t => $v) {
+            if(is_array($v) && count($v)==1 && $t!='@attributes') {
+              $output[$t] = $v[0];
+            }
+          }
+        }
+        break;
+    }
+    return $output;
+  }
 
   /**
    * @return array
