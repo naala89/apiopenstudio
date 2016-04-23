@@ -40,6 +40,9 @@ class Normalise
       case 'json':
         $data = $this->_jsonToArray();
         break;
+      case 'array':
+        $data = $this->data;
+        break;
       case 'text':
       default:
         $data = array('data' => $this->data);
@@ -60,6 +63,10 @@ class Normalise
         break;
       case 'json':
         $data = $this->_jsonToStdClass();
+        break;
+      case 'array':
+        $data = new \stdClass();
+        $data->data = (object) $this->data;
         break;
       case 'text':
       default:
@@ -125,6 +132,10 @@ class Normalise
     json_decode($data);
     if (json_last_error() == JSON_ERROR_NONE) {
       return 'json';
+    }
+    // test for array
+    if (is_array($data)) {
+      return 'array';
     }
     return 'text';
   }
