@@ -12,7 +12,8 @@
  *    "auth": <processor>,
  *    "vars": <processor|string|obj>,
  *    "source": <processor|string|obj>,
- *    "curlOpts": <obj>
+ *    "curlOpts": <obj>,
+ *    "normalise": <0|1>
  *  },
  * }
  */
