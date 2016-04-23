@@ -8,8 +8,6 @@ method: get
 
 ttl: 300
 
-validation: FALSE
-
 process:
   processor: object
   meta:
