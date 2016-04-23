@@ -161,7 +161,7 @@ abstract class ResourceBase extends ProcessorBase
    */
   protected function delete()
   {
-    if (empty($appId = $this->request->vars['appid'])) {
+    if (empty($appId = $this->request->appId)) {
       throw new Core\ApiException('missing appid parameter', 1, $this->id, 400);
     }
     if (empty($method = $this->request->vars['method'])) {
