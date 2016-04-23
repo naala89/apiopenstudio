@@ -189,6 +189,7 @@ class Config
     self::$debugInterface = 'LOG';
 
     self::$cache = FALSE;
+    self::$tokenLife = '+1 day';
 
     self::$dbdriver = 'mysqli';
     self::$dbhost = 'localhost';
