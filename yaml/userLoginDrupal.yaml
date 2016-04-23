@@ -2,8 +2,6 @@ uri:
   noun: user
   verb: logindrupal
 
-application: All
-
 method: post
 
 process:

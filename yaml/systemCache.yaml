@@ -4,8 +4,6 @@ uri:
 
 application: System
 
-method: post
-
 security:
   processor: tokenSysAdmin
   meta:

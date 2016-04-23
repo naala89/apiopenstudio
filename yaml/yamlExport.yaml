@@ -2,8 +2,6 @@ uri:
   noun: resource
   verb: yaml
 
-application: All
-
 method: get
 
 ttl: 300
