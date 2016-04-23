@@ -169,7 +169,7 @@ class Api
       $result->r = json_decode($resource->getMeta());
       $result->ttl = $resource->getTtl();
     } else {
-      $filepath = Config::$dirYaml . $this->test . '.yaml';
+      $filepath = Config::$dirYaml . 'test/' . $this->test . '.yaml';
       if (!file_exists($filepath)) {
         throw new ApiException("invalid test yaml: $filepath", 1 , -1, 400);
       }
