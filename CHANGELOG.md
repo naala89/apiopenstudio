@@ -40,6 +40,7 @@ TODO:
 -- Change Process to Parameters
 
 - Processors
+-- Should non sysadmins be able to create processors without validation?
 -- Change endpoint Url so that it converts response body into standard array format
 -- Change resourceJson so that it accepts JSON in the body too
 -- Change resourceYaml so that it accepts YAML in the body too
