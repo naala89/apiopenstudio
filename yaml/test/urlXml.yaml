@@ -2,8 +2,6 @@ uri:
   noun: url
   verb: xml
 
-application: All
-
 method: get
 
 ttl: 300
@@ -15,3 +13,4 @@ process:
     method: get
     source: "http://www.xmlfiles.com/examples/cd_catalog.xml"
     reportError: 1
+    normalise: 0
