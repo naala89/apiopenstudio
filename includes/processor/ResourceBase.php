@@ -57,7 +57,7 @@ abstract class ResourceBase extends ProcessorBase
    */
   protected function save()
   {
-    $data = $this->_extractData();
+    $data = $this->_importData();
     Core\Debug::variable($data, 'data', 4);
 
     // check required elements in data exist
