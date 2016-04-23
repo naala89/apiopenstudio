@@ -48,7 +48,7 @@ class UserLogin extends ProcessorBase
     // validate username and active status
     $user = $this->request->user->findByUsername($this->val($this->meta->username));
     if (!$this->request->user->exists() || !$this->request->user->isActive()) {
-      throw new Core\ApiException('permission denied', 4, $this->id, 401);
+      throw new Core\ApiException('invalid username or password', 4, $this->id, 401);
     }
 
     // set up salt if not defined
@@ -56,16 +56,17 @@ class UserLogin extends ProcessorBase
       $user->setSalt(Core\Hash::generateSalt());
     }
 
-    // generate hash and compare
+    // generate hash and compare to stored hash.
+    // this prevents refreshing token with a fake password.
+    // throw exception if they do not match.
     $hash = Core\Hash::generateHash($this->val($this->meta->password), $user->getSalt());
     if ($user->getHash() != null && $user->getHash() != $hash) {
-      throw new Core\ApiException('permission denied', 4, $this->id, 401);
+      throw new Core\ApiException('invalid username or password', 4, $this->id, 401);
     }
 
     //perform login and return token
     $user->setHash($hash);
-    $tokenString = time() . $user->getUsername();
-    $token = md5($tokenString);
+    $token = md5(time() . $user->getUsername());
     $user->setToken($token);
     $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime(Config::$tokenLife)));
     $this->request->user->setUser($user);
