@@ -120,7 +120,8 @@ class Url extends Processor\ProcessorBase
     }
 
     if ($this->val($this->meta->normalise)) {
-      $normalise = new Core\Normalise($result);
+      $normalise = new Core\Normalise();
+      $normalise->set($result);
       $result = $normalise->normalise();
       if ($reportError && $curl->httpStatus != 200) {
         throw new Core\ApiException(json_encode($result), 5, $this->id, $curl->httpStatus);
