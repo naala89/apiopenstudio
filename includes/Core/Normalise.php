@@ -13,10 +13,11 @@ class Normalise
   public $defaultNormalise = 'array';
 
   /**
+   * Set the data to be processed.
    * @param $data
-   * @param null|string $format
+   * @param null $format
    */
-  public function __construct($data, $format=NULL)
+  public function set($data, $format=NULL)
   {
     $this->data = $data;
     $this->format = $format;
@@ -35,7 +36,7 @@ class Normalise
     if (!method_exists($this, $normaliseFunc)) {
       throw new ApiException("cannot normalise input into $into, this functionality does not exist", 6, $this->id, 417);
     }
-    return $this->{$this->normaliseFunc}();
+    return $this->{$normaliseFunc}();
   }
 
   /**
@@ -46,10 +47,10 @@ class Normalise
     $format = empty($this->format) ? $this->_calcFormat() : $this->_getFormat();
     switch ($format) {
       case 'xml':
-        $data = $this->_xmlToArray();
+        $data = $this->_xmlToArray($this->data);
         break;
       case 'json':
-        $data = $this->_jsonToArray();
+        $data = $this->_jsonToArray($this->data);
         break;
       case 'array':
         $data = $this->data;
@@ -135,14 +136,14 @@ class Normalise
   private function _calcFormat()
   {
     $data = $this->data;
-    // test for XML
-    if (simplexml_load_string($data) !== false) {
-      return 'xml';
-    }
     // test for JSON
     json_decode($data);
     if (json_last_error() == JSON_ERROR_NONE) {
       return 'json';
+    }
+    // test for XML
+    if (simplexml_load_string($data) !== false) {
+      return 'xml';
     }
     // test for array
     if (is_array($data)) {
@@ -156,11 +157,11 @@ class Normalise
    * @see https://github.com/gaarf/XML-string-to-PHP-array
    * @return array
    */
-  function _xmlToArray($xmlstr) {
-    $doc = new DOMDocument();
-    $doc->loadXML($xmlstr);
+  function _xmlToArray() {
+    $doc = new \DOMDocument();
+    $doc->loadXML($this->data);
     $root = $doc->documentElement;
-    $output = domnode_to_array($root);
+    $output = $this->domnode_to_array($root);
     $output['@root'] = $root->tagName;
     return $output;
   }
@@ -182,7 +183,7 @@ class Normalise
       case XML_ELEMENT_NODE:
         for ($i=0, $m=$node->childNodes->length; $i<$m; $i++) {
           $child = $node->childNodes->item($i);
-          $v = domnode_to_array($child);
+          $v = $this->domnode_to_array($child);
           if(isset($child->tagName)) {
             $t = $child->tagName;
             if(!isset($output[$t])) {
