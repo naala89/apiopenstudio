@@ -21,7 +21,7 @@ use Datagator\Core;
 
 class AuthOAuthHeader extends Processor\ProcessorBase
 {
-  protected $details = array(
+  public $details = array(
     'name' => 'Auth (o-auth header)',
     'description' => 'Authentication for remote server, using OAuth signature in the header.',
     'menu' => 'Authentication',

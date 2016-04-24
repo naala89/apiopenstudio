@@ -22,7 +22,7 @@ use Datagator\Core;
 
 class ResourceJson extends ResourceBase
 {
-  protected $details = array(
+  public $details = array(
     'name' => 'Resource (Json)',
     'description' => 'CRUD for a resource for the in JSON form.',
     'menu' => 'Resource',
@@ -31,27 +31,27 @@ class ResourceJson extends ResourceBase
       'method' => array(
         'description' => 'The HTTP method for the resource (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'string'),
+        'accepts' => array('processor', '"get"', '"post"', '"delete"', '"push"'),
       ),
       'appid' => array(
         'description' => 'The application ID for the resource (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('processor', 'integer'),
       ),
       'noun' => array(
         'description' => 'The noun identifier of the resource (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'string'),
+        'accepts' => array('processor', 'literal'),
       ),
       'verb' => array(
         'description' => 'The verb identifier of the resource (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'string'),
+        'accepts' => array('processor', 'literal'),
       ),
       'json' => array(
         'description' => 'The json string or file. This can be a form file or a urlencoded GET var or in the body (this is only used if you are creating or updating a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'file', 'string'),
+        'accepts' => array('file', 'string'),
       )
     )
   );

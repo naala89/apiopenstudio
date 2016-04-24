@@ -52,7 +52,6 @@ class Api
     // get the resource for the processing
     $result = $this->_getResource($request);
     $resource = $result->r;
-    $ttl = $result->ttl;
 
     // validate user for the call, if required
     $this->_getValidation($resource, $request);
@@ -75,6 +74,7 @@ class Api
       Debug::message('Not caching, result is error object');
     } else {
       $cacheData = array('data' => $data);
+      $ttl = empty($result->ttl) ? 0 : $result->ttl;
       $this->cache->set($this->_getCacheKey($request), $cacheData, $ttl);
     }
 

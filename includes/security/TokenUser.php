@@ -18,7 +18,7 @@ use Datagator\Core;
 
 class TokenUser extends Token {
   protected $role = false;
-  protected $details = array(
+  public $details = array(
     'machineName' => 'tokenUser',
     'name' => 'Token (User)',
     'description' => 'Validate the request by user and token, only allowing specific users to use the resource.',

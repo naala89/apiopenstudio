@@ -55,14 +55,14 @@ class ProcessorBase
    *
    *    examples:
    *      input => array(
-   *        'sources' => array('description' => 'desc1', 'cardinality' => 1, type => array('processor', 'string'))
+   *        'sources' => array('description' => 'desc1', 'cardinality' => 1, type => array('processor', 'literal'))
    *      )
    *          This processor has only one input, called sources.
    *          Sources must contain at least one value.
    *          The inputs can only be string or another processor.
    *
    *      input => array(
-   *        'method' => array('description' => 'desc1', 'cardinality' => '?', 'accepts' => array('string' => array('get', 'post'))),
+   *        'method' => array('description' => 'desc1', 'cardinality' => '?', 'accepts' => array('literal' => array('get', 'post'))),
    *        'auth' => array('description' => 'desc2', 'cardinality' => 5, 'accepts' => array('processor'),
    *        'vars' => array('description' => 'desc3', 'cardinality' => '*', type => array('processor', 'integer'))
    *      )
@@ -73,7 +73,7 @@ class ProcessorBase
    *
    * @var array
    */
-  protected $details = array();
+  public $details = array();
 
   /**
    * Constructor. Store processor metadata and request data in object.

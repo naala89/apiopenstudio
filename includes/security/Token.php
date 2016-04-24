@@ -19,7 +19,7 @@ use Datagator\Processor;
 
 class Token extends Processor\ProcessorBase {
   protected $role = false;
-  protected $details = array(
+  public $details = array(
     'machineName' => 'token',
     'name' => 'Token',
     'description' => 'Validate the request, requiring the consumer to have a valid token.',

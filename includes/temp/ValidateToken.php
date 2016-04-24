@@ -17,7 +17,7 @@ namespace Datagator\Processor;
 use Datagator\Core;
 
 class ValidateToken extends Processor {
-  protected $details = array(
+  public $details = array(
     'name' => 'Validate Token',
     'description' => 'Stores the access details from a users login to a remote drupal site for future use.',
     'menu' => 'drupal',

@@ -24,7 +24,7 @@ process:
                   operation: fetch
               - "api/anon/user/login"
         method: post
-        vars
+        vars:
           username:
             processor: varPost
             meta:

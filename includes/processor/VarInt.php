@@ -17,7 +17,7 @@ use Datagator\Core;
 
 class VarInt extends VarMixed
 {
-  protected $details = array(
+  public $details = array(
     'name' => 'Var (Integer)',
     'description' => 'An integer variable. It validates the input and returns an error if it is not a integer.',
     'menu' => 'Primitive',
@@ -26,7 +26,7 @@ class VarInt extends VarMixed
       'value' => array(
         'description' => 'The value of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'int')
+        'accepts' => array('processor', 'integer')
       ),
     ),
   );

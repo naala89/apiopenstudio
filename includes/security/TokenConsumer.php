@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Provide token authentication based on token in DB and the user's role
+ * Provide token authentication based on token in DB
  *
  * Meta:
  *    {
@@ -17,12 +17,13 @@ namespace Datagator\Security;
 use Datagator\Core;
 use Datagator\Processor;
 
-class TokenRole extends Token {
+class TokenConsumer extends Token {
 
-  protected $details = array(
-    'machineName' => 'tokenRole',
-    'name' => 'Token (Role)',
-    'description' => 'Validate the request, requiring the consumer to have a valid token and a declared role.',
+  protected $role = 'consumer';
+  public $details = array(
+    'machineName' => 'tokenConsumer',
+    'name' => 'Token (Consumer)',
+    'description' => 'Validate the request, requiring the consumer to have a valid token and a role of consumer.',
     'menu' => 'Security',
     'client' => 'All',
     'application' => 'All',
@@ -31,21 +32,7 @@ class TokenRole extends Token {
         'description' => 'The consumers token.',
         'cardinality' => array(1),
         'accepts' => array('processor')
-      ),
-      'role' => array(
-        'description' => 'The consumers role.',
-        'cardinality' => array(1),
-        'accepts' => array('processor', 'literal')
       )
     ),
   );
-
-  /**
-   * @return bool
-   * @throws \Datagator\Core\ApiException
-   */
-  public function process() {
-    $this->role = $this->val($this->meta->role);
-    parent::process();
-  }
 }

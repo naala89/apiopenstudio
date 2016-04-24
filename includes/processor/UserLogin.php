@@ -19,7 +19,7 @@ use Datagator\Core;
 
 class UserLogin extends ProcessorBase
 {
-  protected $details = array(
+  public $details = array(
     'name' => 'User Login',
     'description' => 'Login a user for token-based API access.',
     'menu' => 'Validator',
