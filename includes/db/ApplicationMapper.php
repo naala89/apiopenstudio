@@ -54,7 +54,7 @@ class ApplicationMapper
    */
   public function findByAppId($appId)
   {
-    $sql = 'SELECT * FROM application WHERE `accid` = ?';
+    $sql = 'SELECT * FROM application WHERE `appid` = ?';
     $bindParams = array($appId);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
