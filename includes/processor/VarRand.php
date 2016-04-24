@@ -22,7 +22,7 @@ use Datagator\Core;
 
 class VarRand extends ProcessorBase
 {
-  protected $details = array(
+  public $details = array(
     'name' => 'Var (Rand)',
     'description' => 'A random variable. It produces a random variable of any specified length or mix of character types.',
     'menu' => 'Primitive',

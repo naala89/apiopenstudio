@@ -18,7 +18,7 @@ use Datagator\Core;
 
 class VarGet extends VarMixed
 {
-  protected $details = array(
+  public $details = array(
     'name' => 'Var (Get)',
     'description' => 'A "get" variable. It fetches a variable from the get request.',
     'menu' => 'Primitive',
@@ -26,8 +26,8 @@ class VarGet extends VarMixed
     'input' => array(
       'name' => array(
         'description' => 'The name of the variable.',
-        'cardinality' => array(1),
-        'accepts' => array('processor', 'literal')
+        'cardinality' => array(1, 1),
+        'accepts' => array('processor', 'string')
       ),
     ),
   );

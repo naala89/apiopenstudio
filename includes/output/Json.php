@@ -6,7 +6,7 @@ use Datagator;
 class Json extends Output
 {
   protected $header = 'Content-Type: application/json';
-  protected $details = array(
+  public $details = array(
     'name' => 'Json',
     'description' => 'Output in JSON format.',
     'menu' => 'Output',

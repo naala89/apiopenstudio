@@ -22,7 +22,7 @@ use Datagator\Core;
 
 class ResourceYaml extends ResourceBase
 {
-  protected $details = array(
+  public $details = array(
     'name' => 'Resource (Yaml)',
     'description' => 'Create or fetch a custom API resource for the application in YAML form.',
     'menu' => 'Resource',
@@ -31,7 +31,7 @@ class ResourceYaml extends ResourceBase
       'method' => array(
         'description' => 'The HTTP method of the resource (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('string')
+        'accepts' => array('processor', '"get"', '"post"', '"delete"', '"push"'),
       ),
       'appid' => array(
         'description' => 'The application ID the resource is associated with (only used if fetching or deleting a resource).',
@@ -41,12 +41,12 @@ class ResourceYaml extends ResourceBase
       'noun' => array(
         'description' => 'The noun identifier of the resource (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('string')
+        'accepts' => array('literal')
       ),
       'verb' => array(
         'description' => 'The verb identifier of the resource (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('string')
+        'accepts' => array('literal')
       ),
       'yaml' => array(
         'description' => 'The yaml string or file. This can be a form file or a urlencoded GET var (this input is only used if you are creating or updating a resource).',

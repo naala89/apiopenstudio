@@ -20,7 +20,7 @@ use Datagator\Processor;
 class TokenDeveloper extends Token {
 
   protected $role = 'developer';
-  protected $details = array(
+  public $details = array(
     'machineName' => 'tokenDeveloper',
     'name' => 'Token (Developer)',
     'description' => 'Validate the request, requiring the consumer to have a valid token and a role of developer.',

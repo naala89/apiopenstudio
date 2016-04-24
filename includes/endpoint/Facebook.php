@@ -12,7 +12,7 @@ use Facebook\Exceptions;
 
 class Facebook extends Processor\ProcessorBase
 {
-  protected $details = array(
+  public $details = array(
     'name' => 'Facebook',
     'description' => 'Fetch results from facebook Graph API.',
     'menu' => 'Endpoint',

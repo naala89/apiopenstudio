@@ -21,7 +21,7 @@ use Datagator\Core;
 
 class AuthCookie extends Processor\ProcessorBase
 {
-  protected $details = array(
+  public $details = array(
     'name' => 'Auth (Cookie)',
     'description' => 'Authentication for remote server, using a cookie.',
     'menu' => 'Authentication',
