@@ -28,7 +28,7 @@ process:
       - processor: field
         meta:
           id: 4
-          key: name1
+          key:
           value: value1
 
 Description: test broken Resource
