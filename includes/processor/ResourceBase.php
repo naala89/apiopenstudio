@@ -6,7 +6,7 @@ use Datagator\Db;
 
 abstract class ResourceBase extends ProcessorBase
 {
-  protected $requiredElements = array('uri', 'application', 'method', 'process');
+  protected $requiredElements = array('uri', 'method', 'process');
   protected $details = array();
 
   /**
@@ -69,9 +69,9 @@ abstract class ResourceBase extends ProcessorBase
 
     // check application defined in data exists
     $mapper = new Db\ApplicationMapper($this->request->db);
-    $application = $mapper->findByName($data['application']);
-    if (empty($appId = $application->getAppId())) {
-      throw new Core\ApiException('invalid application', 7, $this->id, 401);
+    $application = $mapper->findByAppId($this->request->appId);
+    if ($application->getAppId() == NULL) {
+      throw new Core\ApiException('invalid application: ' . $this->request->appId, 7, $this->id, 401);
     }
 
     // validation is not mandatory
@@ -91,9 +91,9 @@ abstract class ResourceBase extends ProcessorBase
     $ttl = !empty($data['ttl']) ? $data['ttl'] : 0;
 
     $mapper = new Db\ResourceMapper($this->request->db);
-    $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
+    $resource = $mapper->findByAppIdMethodIdentifier($this->request->appId, $method, $identifier);
     if (empty($resource->getId())) {
-      $resource->setAppId($appId);
+      $resource->setAppId($this->request->appId);
       $resource->setMethod($method);
       $resource->setIdentifier($identifier);
     }
@@ -116,16 +116,20 @@ abstract class ResourceBase extends ProcessorBase
    */
   protected function fetch()
   {
-    if (empty($appId = $this->request->appId)) {
+    $appId = $this->request->appId;
+    $method = $this->val($this->meta->method);
+    $noun = $this->val($this->meta->noun);
+    $verb = $this->val($this->meta->verb);
+    if (empty($appId)) {
       throw new Core\ApiException('missing application ID', 3, $this->id, 400);
     }
-    if (empty($method = $this->request->vars['method'])) {
+    if (empty($method)) {
       throw new Core\ApiException('missing method parameter', 1, $this->id, 400);
     }
-    if (empty($noun = $this->request->vars['noun'])) {
+    if (empty($noun)) {
       throw new Core\ApiException('missing noun parameter', 1, $this->id, 400);
     }
-    if (empty($verb = $this->request->vars['verb'])) {
+    if (empty($verb)) {
       throw new Core\ApiException('missing verb parameter', 1, $this->id, 400);
     }
     $identifier = strtolower($noun) . strtolower($verb);
