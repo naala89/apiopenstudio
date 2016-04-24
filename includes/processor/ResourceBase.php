@@ -214,7 +214,7 @@ abstract class ResourceBase extends ProcessorBase
     if (!class_exists($class)) {
       $class = '\\Datagator\\Endpoint\\' . ucfirst(trim($obj['processor']));
       if (!class_exists($class)) {
-        throw new Core\ApiException('unknown processor in new resource: ' . $class, 1);
+        throw new Core\ApiException('unknown processor in new resource: ' . ucfirst(trim($obj['processor'])), 1);
       }
     }
     $processor = new $class($obj['meta'], $this->request);
@@ -226,7 +226,7 @@ abstract class ResourceBase extends ProcessorBase
         if (is_array($obj['meta'][$inputName])) {
           $count = sizeof($obj['meta'][$inputName]);
         }
-        else {
+        elseif (!empty($obj['meta'][$inputName])) {
           $count = 1;
         }
       }
