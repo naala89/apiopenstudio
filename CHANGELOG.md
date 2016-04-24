@@ -2,7 +2,7 @@ Datagator 0.1.0, 1 Dec 2015
 ---------------------------
 - Installed on Swellnet API
 
-Datagator 0.2.0, Unfinished
+Datagator 0.2.0, 24 April 2016
 ---------------------------
 - Improved global handling of error object
 - New YAML importer in uploader
@@ -22,6 +22,9 @@ Datagator 0.2.0, Unfinished
 - improved Normalise class
 - object processor working
 - import/export/delete json and yaml working
+- added normalisation option to the Url endpoint processor
+- changed Object processor, so that if input is not an array, then all the fields and values sit at root
+- import resources now has full error feedback to devs
 
 
 TODO:
