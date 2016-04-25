@@ -47,29 +47,42 @@ class ProcessorBase
    *  input: list the input nodes for this processor
    *    This is an array with the following indexes:
    *    description (string): description of what the processor does
-   *    cardinality:
-   *      '*': 0 or more
-   *      '?': 1 or more
-   *       n: exact number of inputs ( e.g. 0, 1, 3, 5, etc)
-   *    type (array): an array of input type this processor will accept (i.e. str, int, processor, float, mixed, etc)
+   *    cardinality: array(int min, mixed max)
+   *      e.g. array(0, 1)
+   *      max can be integer or '*'. '*' = infinite
+   *    type: (array): an array of input type this processor will accept.
+   *      Possible values:
+   *        processor - any processor
+   *        processor <name> - specific processor
+   *        "predefined string"
+   *        file
+   *        literal
+   *        bool
+   *        numeric
+   *        integer
+   *        string
+   *        float
+   *        bool
    *
    *    examples:
    *      input => array(
-   *        'sources' => array('description' => 'desc1', 'cardinality' => 1, type => array('processor', 'literal'))
+   *        'sources' => array('description' => 'desc1', 'cardinality' => array(1, '*'), type => array('processor', 'literal'))
    *      )
    *          This processor has only one input, called sources.
    *          Sources must contain at least one value.
    *          The inputs can only be string or another processor.
    *
    *      input => array(
-   *        'method' => array('description' => 'desc1', 'cardinality' => '?', 'accepts' => array('literal' => array('get', 'post'))),
-   *        'auth' => array('description' => 'desc2', 'cardinality' => 5, 'accepts' => array('processor'),
-   *        'vars' => array('description' => 'desc3', 'cardinality' => '*', type => array('processor', 'integer'))
+   *        'method' => array('description' => 'desc1', 'cardinality' => array(1, 1), 'accepts' => array('literal' => array('"get"', '"post"'))),
+   *        'auth' => array('description' => 'desc2', 'cardinality' => array(1, 1), 'accepts' => array('processor'),
+   *        'vars' => array('description' => 'desc3', 'cardinality' => array(0, '*'), type => array('processor', 'integer')),
+   *        't' => array('description' => 'desc4', 'cardinality' => array(0, '*'), type => array('processor field', 'string'))
    *      )
    *          This Processor has 3 inputs:
    *          method, which has only one sub-input, of type string, with only 2 possible values ('get' and 'post')
    *          auth, which has only one value, of type processor
-   *          vars, which can contain an infinite number of values, of type processor or integer, with no limit on value.
+   *          vars, which can contain an infinite number of values, of type processor or integer, with no limit on value
+   *          t, which can take or or many input of Processor Field or a string.
    *
    * @var array
    */

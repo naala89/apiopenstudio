@@ -279,6 +279,15 @@ abstract class ResourceBase extends ProcessorBase
         $this->_validateProcessor($element);
         $valid = true;
         break;
+      } elseif (strpos($accept, 'processor ') !== false && isset($element['processor']) && isset($element['meta'])) {
+        $parts = explode(' ', $accept);
+        if (strtolower($element['processor']) == strtolower($parts[1])) {
+          $valid = true;
+          break;
+        }
+      } elseif ($accept == 'file') {
+        $valid = true;
+        break;
       } elseif ($accept == 'literal' && (is_string($element) || is_numeric($element))) {
         $valid = true;
         break;
@@ -298,9 +307,6 @@ abstract class ResourceBase extends ProcessorBase
         $valid = true;
         break;
       } elseif ($accept == 'bool' && is_bool($element)) {
-        $valid = true;
-        break;
-      } elseif ($accept == 'file') {
         $valid = true;
         break;
       } else {
