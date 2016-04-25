@@ -16,7 +16,7 @@ process:
           id: 2
           method: get
           source: "http://rest.db.ripe.net/ripe/inetnum/34.54.212.4.json"
-          reportError: 0
+          reportError: 3
           normalise:
       - processor: url
         meta:

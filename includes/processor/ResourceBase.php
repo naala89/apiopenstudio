@@ -3,7 +3,6 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 use Datagator\Db;
-use Datagator\Endpoint\Twitter;
 
 abstract class ResourceBase extends ProcessorBase
 {
@@ -202,13 +201,14 @@ abstract class ResourceBase extends ProcessorBase
   private function _validateProcessor($obj) {
     // check valid processor structure
     if (empty($obj['processor']) || empty($obj['meta'])) {
-      throw new Core\ApiException("invalid processor structure, missing 'processor' or 'meta' keys in new resource", 6);
+      throw new Core\ApiException("invalid processor structure, missing 'processor' or 'meta' keys in new resource", 6, -1, 406);
     }
 
     // check for ID in meta
     if (empty($obj['meta']['id'])) {
-      throw new Core\ApiException("processor missing an id attribute in the meta in new resource", 6);
+      throw new Core\ApiException("processor missing an id attribute in the meta in new resource", 6, -1, 406);
     }
+
     // validate all inputs
     $class = '\\Datagator\\Processor\\' . ucfirst(trim($obj['processor']));
     if (!class_exists($class)) {
@@ -219,20 +219,17 @@ abstract class ResourceBase extends ProcessorBase
     }
     $processor = new $class($obj['meta'], $this->request);
     foreach($processor->details['input'] as $inputName => $inputDef) {
-
       // validate cardinality
       $count = 0;
-
       if (isset($obj['meta'][$inputName]) && (!empty($obj['meta'][$inputName]) || strlen($obj['meta'][$inputName]))) {
         $count = is_array($obj['meta'][$inputName]) ? sizeof($obj['meta'][$inputName]) : 1;
       }
       if (is_numeric($inputDef['cardinality'][0]) && $count < $inputDef['cardinality'][0]) {
-        throw new Core\ApiException("$count inputs supplied (min " . $inputDef['cardinality'][0] . ') for ' . $inputName, 6, $obj['meta']['id']);
+        throw new Core\ApiException("$count inputs supplied (min " . $inputDef['cardinality'][0] . ') for ' . $inputName, 6, $obj['meta']['id'], 406);
       }
       if (is_numeric($inputDef['cardinality'][1]) && $count > $inputDef['cardinality'][1]) {
-        throw new Core\ApiException("$count inputs supplied (max " . $inputDef['cardinality'][1] . ') for ' . $inputName, 6, $obj['meta']['id']);
+        throw new Core\ApiException("$count inputs supplied (max " . $inputDef['cardinality'][1] . ') for ' . $inputName, 6, $obj['meta']['id'], 406);
       }
-
       // validate type if possible
       if (!empty($obj['meta'][$inputName])) {
         if (is_array($obj['meta'][$inputName])) {
@@ -296,7 +293,7 @@ abstract class ResourceBase extends ProcessorBase
     }
 
     if (!$valid) {
-      throw new Core\ApiException("invalid input for $inputName in new resource. only allowed inputs are: " . implode(', ', $accepts), 6, $element['meta']['id']);
+      throw new Core\ApiException("invalid input ($element) for $inputName in new resource. only allowed inputs are: " . implode(', ', $accepts), 6, $element['id'], 406);
     }
   }
 }
