@@ -17,7 +17,7 @@ use Datagator\Core;
 
 class VarStr extends VarMixed
 {
-  public $details = array(
+  protected $details = array(
     'name' => 'Var (String)',
     'description' => 'A string variable. It validates the input and returns an error if it is not a string.',
     'menu' => 'Primitive',

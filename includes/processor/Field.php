@@ -18,7 +18,7 @@ use Datagator\Core;
 
 class Field extends ProcessorBase
 {
-  public $details = array(
+  protected $details = array(
     'name' => 'Field',
     'description' => 'Create a name value pair. This is primarily for use as a field in object.',
     'menu' => 'Primitive',

@@ -10,7 +10,7 @@ namespace Datagator\Output;
 class Xml extends Output
 {
   protected $header = 'Content-Type:text/html';
-  public $details = array(
+  protected $details = array(
     'name' => 'Xml',
     'description' => 'Output in XML format.',
     'menu' => 'Output',

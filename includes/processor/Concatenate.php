@@ -21,7 +21,7 @@ use Datagator\Core;
 
 class Concatenate extends ProcessorBase
 {
-  public $details = array(
+  protected $details = array(
     'name' => 'Concatenate',
     'description' => 'Concatenate a series of strings or numbers into a single value.',
     'menu' => 'Operation',

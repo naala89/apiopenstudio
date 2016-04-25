@@ -13,7 +13,7 @@ class Twitter extends Processor\ProcessorBase
 {
   private $apiUrl = 'https://api.twitter.com/';
   private $externalEntity = 'twitter';
-  public $details = array(
+  protected $details = array(
     'name' => 'Twitter',
     'description' => 'Fetch results from the Twitter API.',
     'menu' => 'Endpoint',

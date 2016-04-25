@@ -22,7 +22,7 @@ use Datagator\Core;
 class Merge extends ProcessorBase
 {
   private $_defaultType = 'union';
-  public $details = array(
+  protected $details = array(
     'name' => 'Merge',
     'description' => 'Merge 2 fields.',
     'menu' => 'Operation',

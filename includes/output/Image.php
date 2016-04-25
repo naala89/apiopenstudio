@@ -12,7 +12,7 @@ use Datagator\Core;
 
 class Image extends Output
 {
-  public $details = array(
+  protected $details = array(
     'name' => 'Image',
     'description' => 'Output in image format. The data fed into the output can be a URL (must start with http) or an input filename.',
     'menu' => 'Output',

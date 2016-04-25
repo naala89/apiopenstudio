@@ -24,7 +24,7 @@ class ProcessorFacebook extends Processor {
 
   const URL = 'https://api.twitter.com/1.1/%s/%s/';
 
-  public $details = array(
+  protected $details = array(
     'name' => 'Twitter',
     'description' => 'Facebook end-point.',
     'menu' => 'endpoint',
