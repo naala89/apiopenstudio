@@ -42,12 +42,7 @@ class Token extends Processor\ProcessorBase {
   public function process() {
     Core\Debug::variable($this->meta, 'Validator TokenConsumer', 4);
 
-    $this->request->user->findByToken($this->val($this->meta->token));
-    if (!$this->request->user->exists()
-      || !$this->request->user->isActive()
-      || ($this->role && !$this->request->user->hasRole($this->request->appId, $this->role))) {
-      throw new Core\ApiException('permission denied', 4, $this->id, 401);
-    }
+    $this->request->userInterface->validateToken($this->val($this->meta->token));
 
     return TRUE;
   }
