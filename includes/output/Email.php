@@ -4,7 +4,7 @@ namespace Datagator\Output;
 
 class Email extends Output
 {
-  public $details = array(
+  protected $details = array(
     'name' => 'Email',
     'description' => 'Output in email format.',
     'menu' => 'Output',

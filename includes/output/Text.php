@@ -5,7 +5,7 @@ namespace Datagator\Output;
 class Text extends Output
 {
   protected $header = 'Content-Type:text/text';
-  public $details = array(
+  protected $details = array(
     'name' => 'Text',
     'description' => 'Output in text format.',
     'menu' => 'Output',

@@ -6,7 +6,7 @@ use Datagator\Db;
 
 abstract class ResourceBase extends ProcessorBase
 {
-  public $details = array();
+  protected $details = array();
 
   /**
    * @return bool|string
@@ -192,6 +192,12 @@ abstract class ResourceBase extends ProcessorBase
 
     // check input types for processors
     $this->_validateProcessor($data['process']);
+    if (isset($data['output'])) {
+      $this->_validateProcessor($data['output']);
+    }
+    if (isset($data['security'])) {
+      $this->_validateProcessor($data['security']);
+    }
   }
 
   /**
@@ -214,15 +220,27 @@ abstract class ResourceBase extends ProcessorBase
     if (!class_exists($class)) {
       $class = '\\Datagator\\Endpoint\\' . ucfirst(trim($obj['processor']));
       if (!class_exists($class)) {
-        throw new Core\ApiException('unknown processor in new resource: ' . ucfirst(trim($obj['processor'])), 1);
+        $class = '\\Datagator\\Output\\' . ucfirst(trim($obj['processor']));
+        if (!class_exists($class)) {
+          $class = '\\Datagator\\Security\\' . ucfirst(trim($obj['processor']));
+          if (!class_exists($class)) {
+            throw new Core\ApiException('unknown processor in new resource: ' . ucfirst(trim($obj['processor'])), 1);
+          }
+        }
       }
     }
     $processor = new $class($obj['meta'], $this->request);
-    foreach($processor->details['input'] as $inputName => $inputDef) {
+    $processorDetails = $processor->details();
+    foreach($processorDetails['input'] as $inputName => $inputDef) {
       // validate cardinality
       $count = 0;
       if (isset($obj['meta'][$inputName]) && (!empty($obj['meta'][$inputName]) || strlen($obj['meta'][$inputName]))) {
-        $count = is_array($obj['meta'][$inputName]) ? sizeof($obj['meta'][$inputName]) : 1;
+        if (is_array($obj['meta'][$inputName]) && sizeof($obj['meta'][$inputName]) != 2  && !isset($obj['meta'][$inputName]['processor']) && !isset($obj['meta'][$inputName]['meta'])) {
+          // This check is for values that are array of values, but we also have to filter out processors
+          $count = sizeof($obj['meta'][$inputName]);
+        } else {
+          $count = 1;
+        }
       }
       if (is_numeric($inputDef['cardinality'][0]) && $count < $inputDef['cardinality'][0]) {
         throw new Core\ApiException("$count inputs supplied (min " . $inputDef['cardinality'][0] . ') for ' . $inputName, 6, $obj['meta']['id'], 406);
@@ -230,9 +248,10 @@ abstract class ResourceBase extends ProcessorBase
       if (is_numeric($inputDef['cardinality'][1]) && $count > $inputDef['cardinality'][1]) {
         throw new Core\ApiException("$count inputs supplied (max " . $inputDef['cardinality'][1] . ') for ' . $inputName, 6, $obj['meta']['id'], 406);
       }
-      // validate type if possible
+      // validate type
       if (!empty($obj['meta'][$inputName])) {
-        if (is_array($obj['meta'][$inputName])) {
+        if (is_array($obj['meta'][$inputName]) && sizeof($obj['meta'][$inputName]) != 2  && !isset($obj['meta'][$inputName]['processor']) && !isset($obj['meta'][$inputName]['meta'])) {
+          // This check is for values that are array of values, but we also have to filter out processors
           foreach ($obj['meta'][$inputName] as $element) {
             $this->_validateTypeValue($element, $inputDef['accepts'], $inputName);
           }
@@ -279,6 +298,9 @@ abstract class ResourceBase extends ProcessorBase
         $valid = true;
         break;
       } elseif ($accept == 'bool' && is_bool($element)) {
+        $valid = true;
+        break;
+      } elseif ($accept == 'file') {
         $valid = true;
         break;
       } else {

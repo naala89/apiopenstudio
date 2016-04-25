@@ -24,7 +24,7 @@ class ProcessorFacebook extends Processor {
   const GRAPH_URL = 'https://graph.facebook.com/%s/%s?%s&%s';
   const OAUTH_URL = 'https://graph.facebook.com/oauth/access_token?client_id=%s&client_secret=%s&grant_type=client_credentials';
 
-  public $details = array(
+  protected $details = array(
     'name' => 'Facebook',
     'description' => 'Facebook end-point.',
     'menu' => 'endpoint',

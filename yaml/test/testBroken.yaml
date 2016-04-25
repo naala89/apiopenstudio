@@ -16,8 +16,8 @@ process:
           id: 2
           method: get
           source: "http://rest.db.ripe.net/ripe/inetnum/34.54.212.4.json"
-          reportError: 3
-          normalise:
+          reportError: 0
+          normalise: 1
       - processor: url
         meta:
           id: 3
@@ -28,7 +28,7 @@ process:
       - processor: field
         meta:
           id: 4
-          key:
+          key: name1
           value: value1
 
 Description: test broken Resource

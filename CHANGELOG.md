@@ -29,6 +29,8 @@ Datagator 0.2.0, 24 April 2016
 Datagator 0.3.0, Unfinished
 ---------------------------
 - fix validation of required inputs in resourceBase to account for empty value and a correct value of 0
+- reverse previous edit of making details public and use details() instead
+- fix broken _validateTypeValue() with incorrect params when input is a processor
 
 TODO:
 - find way of defining specific processors in processor->details->accepts, e'g' 'Processor VarGet'
