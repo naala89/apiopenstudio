@@ -2,7 +2,7 @@ Datagator 0.1.0, 1 Dec 2015
 ---------------------------
 - Installed on Swellnet API
 
-Datagator 0.2.0, 24 April 2016
+Datagator 0.2.0, 25 April 2016
 ------------------------------
 - Improved global handling of error object
 - New YAML importer in uploader
@@ -28,13 +28,11 @@ Datagator 0.2.0, 24 April 2016
 
 Datagator 0.3.0, Unfinished
 ---------------------------
-- fix validation of required inputs in resourceBase to account for empty value and a correct value of 0
-- reverse previous edit of making details public and use details() instead
-- fix broken _validateTypeValue() with incorrect params when input is a processor
+- added way of defining specific processors in processor->details->accepts, e'g' 'processor varGet'
 
 TODO:
-- find way of defining specific processors in processor->details->accepts, e'g' 'Processor VarGet'
-- rename user objects, having multiple classes with the same name is confusing
+- rename User objects, having multiple classes with the same name is confusing
+- User should not generate a new token when a valid one still exists
 - change format of processor meta (see frontend)
 - create processor Literal (see frontend)
 - Change all resource meta 'validation' to 'security'
