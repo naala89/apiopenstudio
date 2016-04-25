@@ -222,20 +222,15 @@ abstract class ResourceBase extends ProcessorBase
 
       // validate cardinality
       $count = 0;
-      if (isset($obj['meta'][$inputName])) {
-        if (is_array($obj['meta'][$inputName])) {
-          $count = sizeof($obj['meta'][$inputName]);
-        }
-        elseif (!empty($obj['meta'][$inputName])) {
-          $count = 1;
-        }
-      }
 
+      if (isset($obj['meta'][$inputName]) && (!empty($obj['meta'][$inputName]) || strlen($obj['meta'][$inputName]))) {
+        $count = is_array($obj['meta'][$inputName]) ? sizeof($obj['meta'][$inputName]) : 1;
+      }
       if (is_numeric($inputDef['cardinality'][0]) && $count < $inputDef['cardinality'][0]) {
-        throw new Core\ApiException("$count inputs supplied (min " . $inputDef['cardinality'][0] . ') for ' . $inputName, 6, $this->id);
+        throw new Core\ApiException("$count inputs supplied (min " . $inputDef['cardinality'][0] . ') for ' . $inputName, 6, $obj['meta']['id']);
       }
       if (is_numeric($inputDef['cardinality'][1]) && $count > $inputDef['cardinality'][1]) {
-        throw new Core\ApiException("$count inputs supplied (max " . $inputDef['cardinality'][1] . ') for ' . $inputName, 6, $this->id);
+        throw new Core\ApiException("$count inputs supplied (max " . $inputDef['cardinality'][1] . ') for ' . $inputName, 6, $obj['meta']['id']);
       }
 
       // validate type if possible

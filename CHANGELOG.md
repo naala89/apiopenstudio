@@ -28,9 +28,10 @@ Datagator 0.2.0, 24 April 2016
 
 Datagator 0.3.0, Unfinished
 ---------------------------
-
+- fix validation of required inputs in resourceBase to account for empty value and a correct value of 0
 
 TODO:
+- find way of defining specific processors in processor->details->accepts, e'g' 'Processor VarGet'
 - rename user objects, having multiple classes with the same name is confusing
 - change format of processor meta (see frontend)
 - create processor Literal (see frontend)
