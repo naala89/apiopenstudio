@@ -156,7 +156,7 @@ class UserMapper
     $user->setUsername(!empty($row['username']) ? $row['username'] : NULL);
     $user->setSalt(!empty($row['salt']) ? $row['salt'] : NULL);
     $user->setHash(!empty($row['hash']) ? $row['hash'] : NULL);
-    $user->setToken(!empty($row['token']) ? $row['uid'] : NULL);
+    $user->setToken(!empty($row['token']) ? $row['token'] : NULL);
     $user->setTokenTtl(!empty($row['token_ttl']) ? $row['token_ttl'] : NULL);
     $user->setEmail(!empty($row['email']) ? $row['email'] : NULL);
     $user->setHonorific(!empty($row['honorific']) ? $row['honorific'] : NULL);

@@ -46,17 +46,17 @@ class TokenUser extends Token {
   public function process() {
     Core\Debug::variable($this->meta, 'Validator TokenConsumer', 4);
 
+    $token = $this->val($this->meta->token);
+
     // check user exists
-    $this->request->user->findByToken($this->val($this->meta->token));
-    if (!$this->request->user->exists() || !$this->request->user->isActive()) {
-      throw new Core\ApiException('permission denied', 4, $this->id, 401);
-    }
+    $this->request->userInterface->validateToken($token);
+
     // check user is in the list of valid users
     $usernames = $this->val($this->meta->usernames);
     if (!is_array($usernames)) {
       $usernames = array($usernames);
     }
-    $user = $this->request->user->getUser();
+    $user = $this->request->userInterface->getUser();
     foreach ($usernames as $username) {
       if ($username != $user->getUsername()) {
         throw new Core\ApiException('permission denied', 4, $this->id, 401);
