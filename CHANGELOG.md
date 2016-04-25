@@ -3,7 +3,7 @@ Datagator 0.1.0, 1 Dec 2015
 - Installed on Swellnet API
 
 Datagator 0.2.0, 24 April 2016
----------------------------
+------------------------------
 - Improved global handling of error object
 - New YAML importer in uploader
 - Infinite loop detector
@@ -26,8 +26,12 @@ Datagator 0.2.0, 24 April 2016
 - changed Object processor, so that if input is not an array, then all the fields and values sit at root
 - import resources now has full error feedback to devs
 
+Datagator 0.3.0, Unfinished
+---------------------------
+
 
 TODO:
+- rename user objects, having multiple classes with the same name is confusing
 - change format of processor meta (see frontend)
 - create processor Literal (see frontend)
 - Change all resource meta 'validation' to 'security'
@@ -46,6 +50,9 @@ TODO:
 -- Maybe don't bother separating noun and very, just give URL
 -- Maybe add summary
 -- Change Process to Parameters
+- fix problem of not writing to system specified logs. This might be uin Debug::_display()
+- rename VarStore to VarPersistent
+- add check to VarPersistent to prevent accounts creating too many vars in the DB.
 
 - Processors
 -- Should non sysadmins be able to create processors without validation?

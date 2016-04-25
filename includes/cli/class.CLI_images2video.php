@@ -39,7 +39,6 @@ class CLI_images2video extends CLI_Script
         ),
       ),
       'flags' => array(
-        //TODO: messy
         'del' => 'del',
       )
     );

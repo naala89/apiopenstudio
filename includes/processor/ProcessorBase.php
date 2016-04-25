@@ -166,8 +166,6 @@ class ProcessorBase
    * If the object is a processor, then it will process that down to a final return value,
    * or if the obj is a simple value, then it will return that. Anything else will return an error object.
    *
-   * TODO: Add validation of var type result. This can be declared in $this->required
-   *
    * @param $obj
    * @return array
    * @throws \Datagator\Core\ApiException
