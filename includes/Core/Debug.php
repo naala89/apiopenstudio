@@ -202,8 +202,6 @@ class Debug
    *  text to output
    * @param int $_interface
    *  output interface - uses const HTML & LOG
-   *
-   * @TODO: The problem of not writing to specified logs appears to be here. the commented out code does not write to $_logfile, regardless.
    */
   private static function _display($str, $_interface)
   {

@@ -13,8 +13,6 @@
  *      "value":<processor|mixed>, [optional - if operation is insert]
  *    }
  *  }
- *
- * @TODO: Add check in pace to ensure clients cannot flood the system by saving too many vars.
  */
 
 namespace Datagator\Processor;
