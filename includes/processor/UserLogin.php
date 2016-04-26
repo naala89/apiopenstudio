@@ -16,6 +16,7 @@
 namespace Datagator\Processor;
 use Datagator\Config;
 use Datagator\Core;
+use Datagator\Db;
 
 class UserLogin extends ProcessorBase
 {
@@ -39,15 +40,48 @@ class UserLogin extends ProcessorBase
   );
 
   /**
-   * @return string
+   * @return mixed|string
    * @throws \Datagator\Core\ApiException
+   * @throws \Datagator\Processor\ApiException
    */
   public function process() {
     Core\Debug::variable($this->meta, 'Processor UserLogin', 4);
 
     $username = $this->val($this->meta->username);
     $password = $this->val($this->meta->password);
+    $userMapper = new Db\UserMapper($this->request->db);
 
-    return $this->request->userInterface->loginByUserPass($username, $password);
+    // validate username and active status
+    $user = $userMapper->findByUsername($username);
+    if (empty($user->getUid()) || $user->getActive() == 0) {
+      throw new Core\ApiException('invalid username or password', 4, -1, 401);
+    }
+
+    // if token exists and is active, return it
+    if (!empty($user->getToken())
+      && !empty($user->getTokenTtl())
+      && Core\Utilities::date_mysql2php($user->getTokenTtl()) > time()) {
+      return $user->getToken();
+    }
+
+    // set up salt if not defined
+    if ($user->getSalt() == NULL) {
+      $user->setSalt(Core\Hash::generateSalt());
+    }
+
+    // generate hash and compare to stored hash this prevents refreshing token with a fake password.
+    $hash = Core\Hash::generateHash($password, $user->getSalt());
+    if ($this->user->getHash() != null && $user->getHash() != $hash) {
+      throw new Core\ApiException('invalid username or password', 4, -1, 401);
+    }
+
+    //perform login
+    $user->setHash($hash);
+    $token = md5(time() . $username);
+    $user->setToken($token);
+    $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime(Config::$tokenLife)));
+    $userMapper->save($user);
+
+    return array('token' => $token);
   }
 }

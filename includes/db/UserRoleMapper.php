@@ -135,6 +135,20 @@ class UserRoleMapper
   }
 
   /**
+   * @param $uid
+   * @param $appId
+   * @param $rid
+   * @return \Datagator\Db\UserRole
+   */
+  public function findByUserAppRole($uid, $appId, $rid)
+  {
+    $sql = 'SELECT * FROM user_role WHERE `uid` = ? AND `app_id` = ? AND `rid` = ?';
+    $bindParams = array($uid, $appId, $rid);
+    $row = $this->db->GetRow($sql, $bindParams);
+    return $this->mapArray($row);
+  }
+
+  /**
    * @param array $row
    * @return \Datagator\Db\UserRole
    */

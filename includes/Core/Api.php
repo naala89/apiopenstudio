@@ -139,11 +139,6 @@ class Api
     }
     $request->db->debug = Config::$debugDb;
 
-    $request->userInterface = new UserInterface($request->db);
-    if (isset($request->vars['token'])) {
-      $request->userInterface->validateToken($request->vars['token']);
-    }
-
     return $request;
   }
 
