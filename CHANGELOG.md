@@ -29,7 +29,7 @@ Datagator 0.2.0, 25 April 2016
 Datagator 0.2.1, Unfinished
 ---------------------------
 - added way of defining specific processors in processor->details->accepts, e'g' 'processor varGet'
-- rename User objects, having multiple classes with the same name is confusing
+- removed Core\UserInterface, having multiple classes with the same name is confusing and extra abstraction was wastung resources
 - User should not generate a new token when a valid one still exists
 
 TODO:
