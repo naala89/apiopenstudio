@@ -15,6 +15,8 @@
 
 namespace Datagator\Security;
 use Datagator\Core;
+use Datagator\Db\RoleMapper;
+use Datagator\Db\UserRoleMapper;
 use Datagator\Processor;
 
 class TokenRole extends Token {
@@ -41,11 +43,33 @@ class TokenRole extends Token {
   );
 
   /**
-   * @return bool
-   * @throws \Datagator\Core\ApiException
+   * @return mixed
+   * @throws \Datagator\Security\ApiException
    */
   public function process() {
-    $this->role = $this->val($this->meta->role);
-    parent::process();
+    Core\Debug::variable($this->meta, 'Validator TokenRole', 4);
+
+    $rid = $this->val($this->meta->role);
+    $token = $this->val($this->meta->token);
+    $userMapper = new UserMapper($this->request->db);
+    $userRoleMapper = new UserRoleMapper($this->request->db);
+
+    // Get UID
+    $user = $userMapper->findBytoken($token);
+    $uid = $user->getUid();
+    if (empty($uid) || $user->getActive() == 0) {
+      throw new ApiException('permission denied', 4, -1, 401);
+    }
+
+    // convert role name to rid
+    if (!filter_var($rid, FILTER_VALIDATE_INT)) {
+      $roleMapper = new RoleMapper($this->request->db);
+      $row = $roleMapper->findByName($rid);
+      $rid = $row->getRid();
+    }
+
+    $userRole = $userRoleMapper->findByUserAppRole($uid, $this->request->appId, $rid);
+
+    return !empty($userRole->getId());
   }
 }

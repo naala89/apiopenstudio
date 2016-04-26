@@ -26,13 +26,13 @@ Datagator 0.2.0, 25 April 2016
 - changed Object processor, so that if input is not an array, then all the fields and values sit at root
 - import resources now has full error feedback to devs
 
-Datagator 0.3.0, Unfinished
+Datagator 0.2.1, Unfinished
 ---------------------------
 - added way of defining specific processors in processor->details->accepts, e'g' 'processor varGet'
-
-TODO:
 - rename User objects, having multiple classes with the same name is confusing
 - User should not generate a new token when a valid one still exists
+
+TODO:
 - change format of processor meta (see frontend)
 - create processor Literal (see frontend)
 - Change all resource meta 'validation' to 'security'
