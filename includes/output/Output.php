@@ -26,14 +26,45 @@ abstract class Output extends Processor\ProcessorBase
 
   /**
    * @return mixed
+   * @throws \Datagator\Core\ApiException
    */
   public function process()
   {
     $this->setStatus();
+    $data = $this->getData();
+    if (!empty($this->meta)) {
+      if (empty($this->meta->destination)) {
+        throw new Core\ApiException('no destinations defined for output', 1,$this->id);
+      }
+      foreach ($this->meta->destination as $destination) {
+        $url = $this->val($destination);
+        $curlOpts = array();
+        $curlOpts[CURLOPT_POSTFIELDS] = http_build_query($data);
+
+        $curl = new Core\Curl();
+        $result = $curl->post($url, $curlOpts);
+        if ($result === false) {
+          throw new Core\ApiException('could not get response from remote server: ' . $curl->errorMsg, 5, $this->id, $curl->httpStatus);
+        }
+        if ($curl->httpStatus != 200) {
+          throw new Core\ApiException(json_encode($result), 5, $this->id, $curl->httpStatus);
+        }
+      }
+    } else {
+      return $data;
+    }
+  }
+
+  public function setHeader()
+  {
     if (Config::$debugInterface == 'LOG' || (Config::$debug < 1 && Config::$debugDb < 1)) {
       header($this->header);
     }
-    return $this->getData();
+  }
+
+  public function setStatus()
+  {
+    http_response_code($this->status);
   }
 
   /**
@@ -43,9 +74,4 @@ abstract class Output extends Processor\ProcessorBase
    * @return mixed
    */
   abstract protected function getData();
-
-  protected function setStatus()
-  {
-    http_response_code($this->status);
-  }
 }

@@ -4,7 +4,8 @@
     "adodb/adodb-php": "^5.19",
     "mustangostang/spyc": "^0.5.1",
     "eloquent/pbkdf2-compat": "^1.0.1",
-    "facebook/php-sdk-v4" : "~5.0"
+    "facebook/php-sdk-v4" : "~5.0",
+    "phpmailer/phpmailer": "~5.2"
   },
   "autoload": {
     "psr-4": {

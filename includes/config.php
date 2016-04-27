@@ -99,6 +99,18 @@ class Config
   static public $tokenLife;
   static public $dirYaml;
   static public $dirVendor;
+  static public $dirTemp;
+
+  /**
+   * email
+   */
+  static public $emailService;
+  static public $emailHost;
+  static public $emailAuth;
+  static public $emailUser;
+  static public $emailPass;
+  static public $emailSecure;
+  static public $emailPort;
 
   /**
    * setup the initial config
@@ -144,6 +156,7 @@ class Config
     self::$tokenLife = '+1 hour';
     self::$dirVendor = $_SERVER["DOCUMENT_ROOT"] . '/vendor/';
     self::$dirYaml = $_SERVER["DOCUMENT_ROOT"] . '/yaml/';
+    self::$dirTemp = '/tmp/';
   }
 
   /**
@@ -166,6 +179,14 @@ class Config
     self::$dbpass = 'datagator';
     self::$dboptions = array();
     self::$debugDb = FALSE;
+
+    self::$emailService = 'mail'; //'qmail', 'sendmail', 'smtp', 'mail'
+    self::$emailHost = '';
+    self::$emailAuth = false;
+    self::$emailUser = '';
+    self::$emailPass = '';
+    self::$emailSecure = 'tls'; // tls or ssh
+    self::$emailPort = 587;
 
     self::$errorLog = '/var/log/apache2/datagator.error.log';
     self::$convert = '/usr/local/bin/convert';
@@ -199,8 +220,15 @@ class Config
     self::$dboptions = array('persist' => 0);
     self::$debugDb = FALSE;
 
-    self::$errorLog = '/home/datagator/datagator.error.log';
+    self::$emailService = 'mail'; //'qmail', 'sendmail', 'smtp', 'mail'
+    self::$emailHost = '';
+    self::$emailAuth = false;
+    self::$emailUser = '';
+    self::$emailPass = '';
+    self::$emailSecure = 'tls'; // tls or ssh
+    self::$emailPort = 587;
 
+    self::$errorLog = '/home/datagator/datagator.error.log';
     date_default_timezone_set('Australia/Sydney');
     ini_set('display_errors', 'on');
     ini_set('log_errors','On');
@@ -217,7 +245,6 @@ class Config
     self::$debugCLI = 0;
     self::$_allow_override = FALSE;
     self::$debugInterface = 'LOG';
-    self::$errorLog = '/var/log/apache2/datagator.error.log';
 
     self::$cache = TRUE;
 
@@ -229,6 +256,15 @@ class Config
     self::$dboptions = array('persist' => 0);
     self::$debugDb = FALSE;
 
+    self::$emailService = 'mail'; //'qmail', 'sendmail', 'smtp', 'mail'
+    self::$emailHost = '';
+    self::$emailAuth = false;
+    self::$emailUser = '';
+    self::$emailPass = '';
+    self::$emailSecure = 'tls'; // tls or ssh
+    self::$emailPort = 587;
+
+    self::$errorLog = '/var/log/apache2/datagator.error.log';
     ini_set('display_errors', FALSE);
   }
 
