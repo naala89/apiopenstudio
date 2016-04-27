@@ -42,6 +42,11 @@ class VarStore extends ProcessorBase
         'cardinality' => array(1, 1),
         'accepts' => array('processor', '"save"', '"delete"', '"fetch"')
       ),
+      'strict' => array(
+        'description' => 'If set to 0 then return null if var does not exists. If set to 1 throw exception if var does not exist. Default is strict.',
+        'cardinality' => array(0, 1),
+        'accepts' => array('processor', '"0"', '"1"')
+      ),
     ),
   );
 
@@ -54,9 +59,13 @@ class VarStore extends ProcessorBase
     Core\Debug::variable($this->meta, 'Processor VarStore', 4);
 
     $name = $this->val($this->meta->name);
+    $strict = !empty($this->meta->strict) ? $this->val($this->meta->strict) : 1;
     $operation = $this->val($this->meta->operation);
     $mapper = new Db\VarsMapper($this->request->db);
     $var = $mapper->findByAppIdName($this->request->appId, $name);
+    if ($strict && empty($var->getId())) {
+      throw new Core\ApiException("var $name does not exist", 6, $this->id, 417);
+    }
 
     switch($operation) {
       case 'save':
@@ -70,7 +79,7 @@ class VarStore extends ProcessorBase
         break;
       case 'delete':
         if ($var->getId() === NULL) {
-          throw new Core\ApiException('could not delete variable, does not exist', 6);
+          throw new Core\ApiException('could not delete variable, does not exist', 6, $this->id, 417);
         }
         return $mapper->delete($var);
         break;
