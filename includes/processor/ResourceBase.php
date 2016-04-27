@@ -6,7 +6,39 @@ use Datagator\Db;
 
 abstract class ResourceBase extends ProcessorBase
 {
-  protected $details = array();
+  protected $details = array(
+    'name' => 'Resource',
+    'description' => 'Create, edit or fetch a custom API resource for the application.',
+    'menu' => 'Resource',
+    'application' => 'All',
+    'input' => array(
+      'method' => array(
+        'description' => 'The HTTP method of the resource (only used if fetching or deleting a resource).',
+        'cardinality' => array(0, 1),
+        'accepts' => array('processor', '"get"', '"post"', '"delete"', '"push"'),
+      ),
+      'appid' => array(
+        'description' => 'The application ID the resource is associated with (only used if fetching or deleting a resource).',
+        'cardinality' => array(0, 1),
+        'accepts' => array('integer')
+      ),
+      'noun' => array(
+        'description' => 'The noun identifier of the resource (only used if fetching or deleting a resource).',
+        'cardinality' => array(0, 1),
+        'accepts' => array('literal')
+      ),
+      'verb' => array(
+        'description' => 'The verb identifier of the resource (only used if fetching or deleting a resource).',
+        'cardinality' => array(0, 1),
+        'accepts' => array('literal')
+      ),
+      'resource' => array(
+        'description' => 'The resource. This can be a form file or a urlencoded GET var (this input is only used if you are creating or updating a resource).',
+        'cardinality' => array(0, 1),
+        'accepts' => array('string', 'file')
+      ),
+    )
+  );
 
   /**
    * @return bool|string
@@ -41,10 +73,10 @@ abstract class ResourceBase extends ProcessorBase
   abstract protected function _importData();
 
   /**
-   * @param array $array
+   * @param array $data
    * @return mixed
    */
-  abstract protected function _exportData(array $array);
+  abstract protected function _exportData(array $data);
 
   /**
    * Create or update a resource from YAML.
