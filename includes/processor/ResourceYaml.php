@@ -22,39 +22,19 @@ use Datagator\Core;
 
 class ResourceYaml extends ResourceBase
 {
-  protected $details = array(
-    'name' => 'Resource (Yaml)',
-    'description' => 'Create or fetch a custom API resource for the application in YAML form.',
-    'menu' => 'Resource',
-    'application' => 'All',
-    'input' => array(
-      'method' => array(
-        'description' => 'The HTTP method of the resource (only used if fetching or deleting a resource).',
-        'cardinality' => array(0, 1),
-        'accepts' => array('processor', '"get"', '"post"', '"delete"', '"push"'),
-      ),
-      'appid' => array(
-        'description' => 'The application ID the resource is associated with (only used if fetching or deleting a resource).',
-        'cardinality' => array(0, 1),
-        'accepts' => array('integer')
-      ),
-      'noun' => array(
-        'description' => 'The noun identifier of the resource (only used if fetching or deleting a resource).',
-        'cardinality' => array(0, 1),
-        'accepts' => array('literal')
-      ),
-      'verb' => array(
-        'description' => 'The verb identifier of the resource (only used if fetching or deleting a resource).',
-        'cardinality' => array(0, 1),
-        'accepts' => array('literal')
-      ),
-      'yaml' => array(
-        'description' => 'The yaml string or file. This can be a form file or a urlencoded GET var (this input is only used if you are creating or updating a resource).',
-        'cardinality' => array(0, 1),
-        'accepts' => array('string', 'file')
-      )
-    )
-  );
+
+  /**
+   * Constructor. Store processor metadata and request data in object.
+   *
+   * @param $meta
+   * @param $request
+   */
+  public function __construct($meta, $request)
+  {
+    $this->request['name'] = 'Resource (Yaml)';
+    $this->request['description'] = 'Create edit or fetch a custom API resource for the application in YAML form.';
+    parent::__construct($meta, $request);
+  }
 
   /**
    * @return array|string
@@ -83,11 +63,11 @@ class ResourceYaml extends ResourceBase
   }
 
   /**
-   * @param array $array
+   * @param array $data
    * @return string
    */
-  protected function _exportData(array $array)
+  protected function _exportData(array $data)
   {
-    return \Spyc::YAMLDump($array);
+    return \Spyc::YAMLDump($data);
   }
 }
