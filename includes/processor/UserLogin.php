@@ -71,7 +71,7 @@ class UserLogin extends ProcessorBase
 
     // generate hash and compare to stored hash this prevents refreshing token with a fake password.
     $hash = Core\Hash::generateHash($password, $user->getSalt());
-    if ($this->user->getHash() != null && $user->getHash() != $hash) {
+    if ($user->getHash() != null && $user->getHash() != $hash) {
       throw new Core\ApiException('invalid username or password', 4, -1, 401);
     }
 
