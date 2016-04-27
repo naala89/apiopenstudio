@@ -16,6 +16,7 @@ process:
       meta:
         operation: fetch
         name: myVarName
+        strict: 1
     value:
       processor: varUri
       meta:

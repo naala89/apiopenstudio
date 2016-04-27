@@ -58,8 +58,8 @@ class Api
 
     // fetch the cache of the call, if it is not stale
     $cache = $this->_getCache($resource, $request);
-    if ($cache !== FALSE) {
-      return $cache;
+    if ($cache !== false) {
+      return $this->_getOutput($resource, $request, $cache);
     }
 
     // process the call
@@ -237,6 +237,8 @@ class Api
   }
 
   /**
+   * Get the cache key for a request.
+   *
    * @param $request
    * @return array|string
    */
@@ -246,32 +248,61 @@ class Api
   }
 
   /**
+   * Get the formatted output r
    * @param $resource
    * @param $request
    * @param $data
    * @return string
+   * @throws \Datagator\Core\ApiException
    */
   private function _getOutput($resource, $request, $data)
   {
+    $result = 'true';
+
+    Debug::variable($resource, 'output');
+
     // default to response output if no output defined
-    $outputs = empty($resource->output) ? array('response') : $resource->output;
-    $result = '';
-    foreach ($outputs as $type => $meta) {
-      if ($type == 'response') {
-        //translate the output to the correct format as requested in header and return in the response
-        $outFormat = ucfirst($this->_cleanData($request->outFormat));
-        $outFormat = $outFormat == '**' ? 'Json' : $outFormat;
-        $class = 'Datagator\\Output\\' . $outFormat;
-        $obj = new $class($data, 200);
-        $result = $obj->process();
-      } else {
-        $outFormat = ucfirst($this->_cleanData($request->outFormat));
-        $outFormat = $outFormat == '**' ? 'Json' : $outFormat;
-        $class = 'Datagator\\Output\\' . $outFormat;
-        $obj = new $class($data, 200, $meta);
-        $obj->process();
+    if (empty($resource->output)) {
+      Debug::message('no output section defined - returning the result in the response');
+      // translate the output to the correct format as requested in header and return in the response
+      $outFormat = ucfirst($this->_cleanData($request->outFormat));
+      $outFormat = $outFormat == '**' ? 'Json' : $outFormat;
+      $class = 'Datagator\\Output\\' . $outFormat;
+      if (!class_exists($class)) {
+        throw new ApiException('output processor undefined: ' . $outFormat, 1);
+      }
+      $obj = new $class($data, 200);
+      $result = $obj->process();
+      $obj->setStatus();
+      $obj->setHeader();
+    } else {
+      foreach ($resource->output as $index => $output) {
+        if (is_string($output) && $output == 'response') {
+          // translate the output to the correct format as requested in header and return in the response
+          $outFormat = ucfirst($this->_cleanData($request->outFormat));
+          $outFormat = $outFormat == '**' ? 'Json' : $outFormat;
+          $class = 'Datagator\\Output\\' . $outFormat;
+          if (!class_exists($class)) {
+            throw new ApiException('output processor undefined: ' . $outFormat, 1);
+          }
+          $obj = new $class($data, 200);
+          $result = $obj->process();
+          $obj->setStatus();
+          $obj->setHeader();
+        } else {
+          // treat as a multiple output and let the class take care of the output.
+          foreach ($output as $type=> $meta) {
+            $class = 'Datagator\\Output\\' . $type;
+            if (!class_exists($class)) {
+              throw new ApiException('output processor undefined: ' . $type, 1);
+            }
+            $obj = new $class($data, 200, $meta);
+            $obj->process();
+          }
+        }
       }
     }
+
     return $result;
   }
 

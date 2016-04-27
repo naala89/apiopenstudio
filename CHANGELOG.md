@@ -31,8 +31,11 @@ Datagator 0.2.1, Unfinished
 - added way of defining specific processors in processor->details->accepts, e'g' 'processor varGet'
 - removed Core\UserInterface, having multiple classes with the same name is confusing and extra abstraction was wastung resources
 - User should not generate a new token when a valid one still exists
+- completed Email output processor
+- fixed multiple output delivery
 
 TODO:
+- swagger
 - change format of processor meta (see frontend)
 - create processor Literal (see frontend)
 - Change all resource meta 'validation' to 'security'
@@ -56,8 +59,9 @@ TODO:
 - add check to VarPersistent to prevent accounts creating too many vars in the DB.
 
 - Processors
+-- create if then else processor
+-- create sort processor
 -- Should non sysadmins be able to create processors without validation?
--- Email processor needs completing
 
 - Resource monitoring
 -- Store number number calls per resource history
