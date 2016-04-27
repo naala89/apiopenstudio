@@ -36,13 +36,19 @@ abstract class Output extends Processor\ProcessorBase
       if (empty($this->meta->destination)) {
         throw new Core\ApiException('no destinations defined for output', 1,$this->id);
       }
+      $method = $this->val($this->meta->methos);
       foreach ($this->meta->destination as $destination) {
         $url = $this->val($destination);
+        $data = array('data' => $data);
         $curlOpts = array();
-        $curlOpts[CURLOPT_POSTFIELDS] = http_build_query($data);
+        if ($method == 'post') {
+          $curlOpts[CURLOPT_POSTFIELDS] = http_build_query($data);
+        } elseif ($method == 'get') {
+          $url .= http_build_query($data, '?', '&');
+        }
 
         $curl = new Core\Curl();
-        $result = $curl->post($url, $curlOpts);
+        $result = $curl->{$method}($url, $curlOpts);
         if ($result === false) {
           throw new Core\ApiException('could not get response from remote server: ' . $curl->errorMsg, 5, $this->id, $curl->httpStatus);
         }
