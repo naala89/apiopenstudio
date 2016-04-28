@@ -15,6 +15,7 @@
 
 namespace Datagator\Security;
 use Datagator\Core;
+use Datagator\Db;
 use Datagator\Processor;
 
 class Token extends Processor\ProcessorBase {
@@ -42,7 +43,7 @@ class Token extends Processor\ProcessorBase {
   public function process() {
     Core\Debug::variable($this->meta, 'Validator TokenConsumer', 4);
 
-    $userMapper = new UserMapper($this->request->db);
+    $userMapper = new Db\UserMapper($this->request->db);
     $token = $this->val($this->meta->token);
 
     $user = $userMapper->findBytoken($token);

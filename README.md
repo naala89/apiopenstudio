@@ -27,6 +27,7 @@ Requirements
 * opcode (Memcache or APC)
 * composer
 * mcrpyt
+* zip
 
 Config
 ------
