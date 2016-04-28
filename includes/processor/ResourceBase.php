@@ -92,9 +92,12 @@ abstract class ResourceBase extends ProcessorBase
 
     $this->_validateData($data);
 
+    $name = $data['name'];
+    $description = $data['description'];
     $method = $data['method'];
     $identifier = strtolower($data['uri']['noun']) . strtolower($data['uri']['verb']);
     $meta = array();
+    $meta['security'] = $data['security'];
     $meta['process'] =  $data['process'];
     $ttl = !empty($data['ttl']) ? $data['ttl'] : 0;
 
@@ -105,6 +108,8 @@ abstract class ResourceBase extends ProcessorBase
       $resource->setMethod($method);
       $resource->setIdentifier($identifier);
     }
+    $resource->setName($name);
+    $resource->setDescription($description);
     $resource->setMeta(json_encode($meta));
     $resource->setTtl($ttl);
     return $mapper->save($resource);
@@ -153,6 +158,8 @@ abstract class ResourceBase extends ProcessorBase
       'noun' => $noun,
       'verb' => $verb
     );
+    $result['name'] = $resource->getName();
+    $result['description'] = $resource->getDescription();
     $result['method'] = $resource->getMethod();
     $result['ttl'] = $resource->getTtl();
 
@@ -205,6 +212,12 @@ abstract class ResourceBase extends ProcessorBase
     // check mandatory elements exists in data
     if (empty($data['uri'])) {
       throw new Core\ApiException("missing uri in new resource", 6, $this->id, 417);
+    }
+    if (empty($data['name'])) {
+      throw new Core\ApiException("missing name in new resource", 6, $this->id, 417);
+    }
+    if (empty($data['description'])) {
+      throw new Core\ApiException("missing description in new resource", 6, $this->id, 417);
     }
     if (empty($data['uri']['noun'])) {
       throw new Core\ApiException("missing uri/noun in new resource", 6, $this->id, 417);
@@ -288,7 +301,7 @@ abstract class ResourceBase extends ProcessorBase
             $this->_validateTypeValue($element, $inputDef['accepts'], $inputName);
           }
         } else {
-          $this->_validateTypeValue($obj['meta'][$inputName], $inputDef['accepts'], $inputName);
+          //$this->_validateTypeValue($obj['meta'][$inputName], $inputDef['accepts'], $inputName);
         }
       }
     }

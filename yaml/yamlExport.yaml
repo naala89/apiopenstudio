@@ -1,10 +1,14 @@
+name: YAML export
+
+description: Fetch a resource in string or YAML format.
+
 uri:
   noun: resource
   verb: yaml
 
 method: get
 
-ttl: 300
+ttl: 0
 
 security:
   processor: tokenDeveloper

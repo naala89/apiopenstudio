@@ -1,10 +1,14 @@
+name: User login
+
+description: Login a user to Datagator using username/password.
+
 uri:
   noun: user
   verb: login
 
 method: post
 
-ttl: 300
+ttl: 0
 
 process:
   processor: UserLogin

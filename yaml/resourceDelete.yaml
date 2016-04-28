@@ -1,12 +1,12 @@
-name: JSON export
+name: Resource delete
 
-description: Export a resource in string or JSON format.
+description: Delete a resource.
 
 uri:
   noun: resource
-  verb: json
+  verb: delete
 
-method: get
+method: delete
 
 ttl: 0
 
@@ -21,7 +21,7 @@ security:
         name: token
 
 process:
-  processor: resourceJson
+  processor: resourceYaml
   meta:
     id: 3
     method:

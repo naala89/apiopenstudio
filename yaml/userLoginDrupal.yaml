@@ -1,8 +1,14 @@
+name: User login Drupal
+
+description: Login a user to the system, using user/pass validation on an external Drupal site
+
 uri:
   noun: user
   verb: logindrupal
 
 method: post
+
+ttl: 0
 
 process:
   processor: loginStoreDrupal
