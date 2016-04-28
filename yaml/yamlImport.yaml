@@ -1,10 +1,14 @@
+name: YAML import
+
+description: Create a resource from a document or string in YAML format.
+
 uri:
   noun: resource
   verb: yaml
 
 method: post
 
-ttl: 300
+ttl: 0
 
 security:
   processor: tokenDeveloper

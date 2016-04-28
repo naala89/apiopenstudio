@@ -11,6 +11,8 @@ class Resource
 {
   protected $id;
   protected $appId;
+  protected $name;
+  protected $description;
   protected $method;
   protected $identifier;
   protected $meta;
@@ -24,10 +26,12 @@ class Resource
    * @param null $meta
    * @param null $ttl
    */
-  public function __construct($id=NULL, $appId=NULL, $method=NULL, $identifier=NULL, $meta=NULL, $ttl=NULL)
+  public function __construct($id=NULL, $appId=NULL, $name=NULL, $description=NULL, $method=NULL, $identifier=NULL, $meta=NULL, $ttl=NULL)
   {
     $this->id = $id;
     $this->appId = $appId;
+    $this->name = $name;
+    $this->description = $description;
     $this->method = $method;
     $this->identifier = $identifier;
     $this->meta = $meta;
@@ -64,6 +68,38 @@ class Resource
   public function setAppId($appId)
   {
     $this->appId = $appId;
+  }
+
+  /**
+   * @return string name
+   */
+  public function getName()
+  {
+    return $this->name;
+  }
+
+  /**
+   * @param $name
+   */
+  public function setName($name)
+  {
+    $this->name = $name;
+  }
+
+  /**
+   * @return string description
+   */
+  public function getDescription()
+  {
+    return $this->description;
+  }
+
+  /**
+   * @param $description
+   */
+  public function setDescription($description)
+  {
+    $this->description = $description;
   }
 
   /**

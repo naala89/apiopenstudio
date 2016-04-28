@@ -27,9 +27,11 @@ class ResourceMapper
   public function save(Resource $resource)
   {
     if ($resource->getId() == NULL) {
-      $sql = 'INSERT INTO resource (`appid`, `method`, `identifier`, `meta`, `ttl`) VALUES (?, ?, ?, ?, ?)';
+      $sql = 'INSERT INTO resource (`appid`, `name`, `description`, `method`, `identifier`, `meta`, `ttl`) VALUES (?, ?, ?, ?, ?, ?, ?)';
       $bindParams = array(
         $resource->getAppId(),
+        $resource->getName(),
+        $resource->getDescription(),
         $resource->getMethod(),
         $resource->getIdentifier(),
         $resource->getMeta(),
@@ -37,9 +39,11 @@ class ResourceMapper
       );
       $result = $this->db->Execute($sql, $bindParams);
     } else {
-      $sql = 'UPDATE resource SET `appid` = ?, `method` = ?, `identifier` = ?, `meta` = ?, `ttl` = ? WHERE `id` = ?';
+      $sql = 'UPDATE resource SET `appid` = ?, `name` = ?, `description` = ?, `method` = ?, `identifier` = ?, `meta` = ?, `ttl` = ? WHERE `id` = ?';
       $bindParams = array(
         $resource->getAppId(),
+        $resource->getName(),
+        $resource->getDescription(),
         $resource->getMethod(),
         $resource->getIdentifier(),
         $resource->getMeta(),
@@ -127,6 +131,8 @@ class ResourceMapper
 
     $resource->setId(!empty($row['id']) ? $row['id'] : NULL);
     $resource->setAppId(!empty($row['appid']) ? $row['appid'] : NULL);
+    $resource->setName(!empty($row['name']) ? $row['name'] : NULL);
+    $resource->setDescription(!empty($row['description']) ? $row['description'] : NULL);
     $resource->setMethod(!empty($row['method']) ? $row['method'] : NULL);
     $resource->setIdentifier(!empty($row['identifier']) ? $row['identifier'] : NULL);
     $resource->setMeta(!empty($row['meta']) ? $row['meta'] : NULL);
