@@ -33,34 +33,29 @@ Datagator 0.2.1, Unfinished
 - User should not generate a new token when a valid one still exists
 - completed Email output processor
 - fixed multiple output delivery
+- added GET/POST for multiple delivery
+- finish processor descriptions
 
 TODO:
-- swagger
 - change format of processor meta (see frontend)
-- create processor Literal (see frontend)
 - Change all resource meta 'validation' to 'security'
 -- Update API->_getValidation()
 - Finish endpoint processors
 - Validators for oAuth, etc
-- Finish processor data docs
 - Implement collections
 - Add validation of var type result. This can be declared in $this->required
 - Add unit tests (Phing or Jenkins?)
 - New Relic or Datadog
-- Swagger.io 
--- reformat YAML so get delete put post is direct child if noun/verb 
--- Add description for each call to DB and meta
--- Add description to output
--- Maybe don't bother separating noun and very, just give URL
--- Maybe add summary
--- Change Process to Parameters
 - fix problem of not writing to system specified logs. This might be uin Debug::_display()
 - rename VarStore to VarPersistent
 - add check to VarPersistent to prevent accounts creating too many vars in the DB.
 
 - Processors
--- create if then else processor
--- create sort processor
+-- create ImportSwagger processor
+-- create ifThenElse processor
+-- create Sort processor
+-- create processor VarBody (should the result be normalised?)
+-- create processor Literal (is this needed?)
 -- Should non sysadmins be able to create processors without validation?
 
 - Resource monitoring

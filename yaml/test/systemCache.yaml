@@ -1,8 +1,14 @@
+name: System cache
+
+description: Clear the opcode cache in Datagator.
+
 uri:
   noun: system
   verb: cache
 
 application: System
+
+ttl: 0
 
 security:
   processor: tokenSysAdmin
