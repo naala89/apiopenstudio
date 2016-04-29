@@ -259,8 +259,6 @@ class Api
   {
     $result = 'true';
 
-    Debug::variable($resource, 'output');
-
     // default to response output if no output defined
     if (empty($resource->output)) {
       Debug::message('no output section defined - returning the result in the response');

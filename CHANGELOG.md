@@ -35,6 +35,8 @@ Datagator 0.2.1, Unfinished
 - fixed multiple output delivery
 - added GET/POST for multiple delivery
 - finish processor descriptions
+- change Api->parseType() to return 1st possible output type
+- new ImportSwagger processor
 
 TODO:
 - change format of processor meta (see frontend)
@@ -51,7 +53,6 @@ TODO:
 - add check to VarPersistent to prevent accounts creating too many vars in the DB.
 
 - Processors
--- create ImportSwagger processor
 -- create ifThenElse processor
 -- create Sort processor
 -- create processor VarBody (should the result be normalised?)
