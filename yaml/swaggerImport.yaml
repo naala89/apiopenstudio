@@ -1,0 +1,31 @@
+name: swagger Yaml
+
+description: Accept a Swagger YAML document and create basic Datagator YAML docs.
+
+uri:
+  noun: swagger
+  verb: yaml
+
+method: post
+
+ttl: 0
+
+security:
+  processor: tokenDeveloper
+  meta:
+    id: 1
+    token:
+      processor: varGet
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: swaggerYaml
+  meta:
+    id: 3
+    yaml:
+      processor: varGet
+      meta:
+        id: 4
+        name: yaml
