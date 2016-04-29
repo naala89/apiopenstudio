@@ -337,8 +337,9 @@ class Api
    */
   public function parseType($header, $key, $default=null)
   {
+    $key = strtolower($key);
     $result = $default;
-    if (!empty($header[$key])) {
+    if (!empty($header[strtolower($key)])) {
       $parts = preg_split('/\,|\;/', $header[$key]);
       foreach ($parts as $part) {
         $result = preg_replace("/(application||text)\//i",'',$part);
