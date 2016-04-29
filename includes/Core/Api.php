@@ -330,19 +330,23 @@ class Api
   /**
    * Calculate a format from string of header Content-Type or Accept.
    *
-   * @param $array
+   * @param $header
    * @param $key
    * @param bool|FALSE $default
    * @return bool|string
    */
-  public function parseType($array, $key, $default=null)
+  public function parseType($header, $key, $default=null)
   {
     $result = $default;
-    if (!empty($array[$key])) {
-      $parts = preg_split('/\,|\;/', $array[$key]);
+    if (!empty($header[$key])) {
+      $parts = preg_split('/\,|\;/', $header[$key]);
       foreach ($parts as $part) {
         $result = preg_replace("/(application||text)\//i",'',$part);
         $result = trim($result);
+        $class = "\\Datagator\\Output\\" . $result;
+        if (class_exists($class)) {
+          return $result;
+        }
       }
     }
     return ($result == '*' || $result == '**') ? $default : $result;
