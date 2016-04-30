@@ -1,26 +1,14 @@
 <?php
 
 /**
- * Resource import and export.
- * Allowed inputs are yaml files or yaml strings.
- *
- * METADATA
- * {
- *    "type":"object",
- *    "meta":{
- *      "id": <mixed>,
- *      "yaml": <string>,
- *      "method": <"get"|"post">,
- *      "resource": <mixed>,
- *      "action": <mixed>
- *    }
- *  }
+ * Import resources in Swagger YAML format.
  */
 
 namespace Datagator\Processor;
 use Datagator\Core;
+use Datagator\Db\ResourceMapper;
 
-class SwaggerBase extends ProcessorBase
+class ResourceSwagger extends ResourceBase
 {
   protected $details = array(
     'name' => 'Import Swagger',
@@ -76,40 +64,68 @@ class SwaggerBase extends ProcessorBase
         $resource['parameters'] = array_merge($resource['parameters'], $uriParams);
         $resource['parameters'] = array_merge($resource['parameters'], $requestVars);
 
-        $resources[] = $resource;
+        $resources[] = array(
+          'uri' => $resource['uri'],
+          'method' =>$method,
+          'appId' => $this->request->appId
+        );
+
+        //$this->save($resource);
       }
     }
 
-    return $this->_exportData($resources);
+    return $resources;
+  }
+
+  /**
+   * Create or update a resource from YAML.
+   * The Yaml is either post string 'yaml', or file 'yaml'.
+   * File takes precedence over the string if both present.
+   *
+   * @param null $data
+   * @return bool
+   * @throws \Datagator\Core\ApiException
+   */
+  protected function save($data=NULL)
+  {
+    $this->_validateData($data);
+
+    $name = $data['name'];
+    $description = $data['description'];
+    $method = $data['method'];
+    $identifier = strtolower($data['uri']['noun']) . strtolower($data['uri']['verb']);
+    $meta = array();
+    $meta['security'] = $data['security'];
+    $meta['process'] =  $data['process'];
+    $ttl = !empty($data['ttl']) ? $data['ttl'] : 0;
+
+    $mapper = new ResourceMapper($this->request->db);
+    $resource = $mapper->findByAppIdMethodIdentifier($this->request->appId, $method, $identifier);
+    if (empty($resource->getId())) {
+      $resource->setAppId($this->request->appId);
+      $resource->setMethod($method);
+      $resource->setIdentifier($identifier);
+    }
+    $resource->setName($name);
+    $resource->setDescription($description);
+    $resource->setMeta(json_encode($meta));
+    $resource->setTtl($ttl);
+    return $mapper->save($resource);
   }
 
   /**
    * @return array|string
    * @throws \Datagator\Core\ApiException
    */
-  protected function _importData()
+  protected function _importData($data)
   {
-    // extract yaml
-    $yaml = '';
-    if (sizeof($_FILES) > 1) {
-      throw new Core\ApiException('multiple files received', 3);
-    }
-    if (!empty($_FILES)) {
-      foreach ($_FILES as $file) {
-        $yaml = \Spyc::YAMLLoad($file['tmp_name']);
-      }
-    } else {
-      if (empty($this->request->vars['yaml'])) {
-        throw new Core\ApiException('no yaml supplied', 6, $this->id, 417);
-      }
-      $yaml = $this->val($this->meta->yaml);
-      $yaml = urldecode($yaml);
-      $yaml = \Spyc::YAMLLoadString($yaml);
-    }
-    return $yaml;
+    return \Spyc::YAMLLoadString($data);
   }
 
-  protected function _exportData(array $array) {}
+  protected function _exportData($data)
+  {
+
+  }
 
   /**
    * @param $uriParams

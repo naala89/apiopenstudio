@@ -98,8 +98,7 @@ class Config
   static public $defaultFormat;
   static public $tokenLife;
   static public $dirYaml;
-  static public $dirVendor;
-  static public $dirTemp;
+  static public $dirUploads;
 
   /**
    * email
@@ -154,9 +153,8 @@ class Config
   {
     self::$defaultFormat = 'json';
     self::$tokenLife = '+1 hour';
-    self::$dirVendor = $_SERVER["DOCUMENT_ROOT"] . '/vendor/';
-    self::$dirYaml = $_SERVER["DOCUMENT_ROOT"] . '/yaml/';
-    self::$dirTemp = '/tmp/';
+    self::$dirYaml = '/resources/';
+    self::$dirUploads = '/uploads/';
   }
 
   /**

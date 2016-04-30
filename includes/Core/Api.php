@@ -12,6 +12,7 @@ use Datagator\Processor;
 use Datagator\Db;
 use Datagator\Security;
 use Datagator\Output;
+use Datagator\Resource;
 use Spyc;
 
 Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Config::$debug, Config::$errorLog);
@@ -23,7 +24,7 @@ Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Con
 class Api
 {
   private $cache;
-  private $test = false; // false or name of file in /yaml/test
+  private $test = 'yamlImport.yaml'; // false or filename in /yaml/test
 
   /**
    * Constructor
@@ -164,7 +165,7 @@ class Api
       $result->r = json_decode($resource->getMeta());
       $result->ttl = $resource->getTtl();
     } else {
-      $filepath = Config::$dirYaml . 'test/' . $this->test . '.yaml';
+      $filepath = $_SERVER['DOCUMENT_ROOT'] . Config::$dirYaml . $this->test;
       if (!file_exists($filepath)) {
         throw new ApiException("invalid test yaml: $filepath", 1 , -1, 400);
       }
@@ -257,7 +258,7 @@ class Api
    */
   private function _getOutput($resource, $request, $data)
   {
-    $result = 'true';
+    $result = 'yamlImport';//'true';
 
     // default to response output if no output defined
     if (empty($resource->output)) {

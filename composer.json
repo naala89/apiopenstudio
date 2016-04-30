@@ -10,13 +10,13 @@
   "autoload": {
     "psr-4": {
       "Datagator\\": "includes/",
+      "Resources\\": "resources/",
       "Datagator\\Core\\": "includes/core/",
       "Datagator\\Db\\": "includes/db/",
+      "Datagator\\Endpoint\\": "includes/endpoint/",
       "Datagator\\Output\\": "includes/output/",
       "Datagator\\Processor\\": "includes/processor/",
-      "Datagator\\Security\\": "includes/security/",
-      "Datagator\\Endpoint\\": "includes/endpoint/",
-      "Datagator\\Test\\": "test/"
+      "Datagator\\Security\\": "includes/security/"
     }
   }
 }

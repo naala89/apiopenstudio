@@ -1,10 +1,9 @@
 <?php
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
-use Datagator\config;
 use Datagator\Core;
 
-Config::load();
+\Datagator\Config::load();
 
 ob_start();
 
@@ -14,7 +13,7 @@ if (!array_key_exists('HTTP_ORIGIN', $_SERVER)) {
 }
 
 try {
-  $api = new Core\Api(Config::$cache);
+  $api = new Core\Api(\Datagator\Config::$cache);
   $result = $api->process();
 } catch (Core\ApiException $e) {
   $error = new Core\Error($e->getCode(), $e->getProcessor(), $e->getMessage());
