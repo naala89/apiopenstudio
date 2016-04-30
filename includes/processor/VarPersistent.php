@@ -45,7 +45,7 @@ class VarPersistent extends ProcessorBase
    */
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor VarStorePersistent', 4);
+    Core\Debug::variable($this->meta, 'Processor VarPersistent', 4);
 
     $name = $this->val($this->meta->name);
     $strict = !empty($this->meta->strict) ? $this->val($this->meta->strict) : 1;
