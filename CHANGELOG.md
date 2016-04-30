@@ -38,8 +38,10 @@ Datagator 0.2.1, Unfinished
 - change Api->parseType() to return 1st possible output type
 - new ImportSwagger processor
 - added VarBody (should the result be normalised?)
+- added IfThenElse processor
 
 TODO:
+- 
 - change format of processor meta (see frontend)
 - Change all resource meta 'validation' to 'security'
 -- Update API->_getValidation()
@@ -54,7 +56,6 @@ TODO:
 - add check to VarPersistent to prevent accounts creating too many vars in the DB.
 
 - Processors
--- create ifThenElse processor
 -- create Sort processor
 -- create processor Literal (is this needed?)
 -- Should non sysadmins be able to create processors without validation?
