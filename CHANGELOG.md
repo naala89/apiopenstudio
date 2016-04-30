@@ -39,6 +39,7 @@ Datagator 0.2.1, Unfinished
 - new ImportSwagger processor
 - added VarBody (should the result be normalised?)
 - added IfThenElse processor
+- added Sort processor
 
 TODO:
 - 
@@ -56,7 +57,6 @@ TODO:
 - add check to VarPersistent to prevent accounts creating too many vars in the DB.
 
 - Processors
--- create Sort processor
 -- create processor Literal (is this needed?)
 -- Should non sysadmins be able to create processors without validation?
 
