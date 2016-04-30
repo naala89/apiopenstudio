@@ -45,7 +45,7 @@ class VarTemporary extends ProcessorBase
    */
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor VarStoreTemporary', 4);
+    Core\Debug::variable($this->meta, 'Processor VarTemporary', 4);
 
     $name = $this->val($this->meta->name);
     $strict = !empty($this->meta->strict) ? $this->val($this->meta->strict) : 1;
