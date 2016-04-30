@@ -1,20 +1,7 @@
 <?php
 
 /**
- * Resource import and export.
- * Allowed inputs are yaml files or yaml strings.
- *
- * METADATA
- * {
- *    "type":"object",
- *    "meta":{
- *      "id": <mixed>,
- *      "yaml": <string>,
- *      "method": <"get"|"post">,
- *      "resource": <mixed>,
- *      "action": <mixed>
- *    }
- *  }
+ * Import, export and delete resources in YAML format.
  */
 
 namespace Datagator\Processor;
@@ -37,36 +24,27 @@ class ResourceYaml extends ResourceBase
   }
 
   /**
-   * @return array|string
+   * Convert YAML string to YAML array.
+   *
+   * @param $data
+   * @return array
    * @throws \Datagator\Core\ApiException
    */
-  protected function _importData()
+  protected function _importData($data)
   {
-    // extract yaml
-    $yaml = '';
-    if (sizeof($_FILES) > 1) {
-      throw new Core\ApiException('multiple files received', 3);
-    }
-    if (!empty($_FILES)) {
-      foreach ($_FILES as $file) {
-        $yaml = \Spyc::YAMLLoad($file['tmp_name']);
-      }
-    } else {
-      if (empty($this->request->vars['yaml'])) {
-        throw new Core\ApiException('no yaml supplied', 6, $this->id, 417);
-      }
-      $yaml = $this->val($this->meta->yaml);
-      $yaml = urldecode($yaml);
-      $yaml = \Spyc::YAMLLoadString($yaml);
+    $yaml = \Spyc::YAMLLoadString($data);
+    if (empty($yaml)) {
+      throw new Core\ApiException('Invalid or no YAML supplied', 6, $this->id, 417);
     }
     return $yaml;
   }
 
   /**
+   * Convert YAML array to YAML string
    * @param array $data
    * @return string
    */
-  protected function _exportData(array $data)
+  protected function _exportData($data)
   {
     return \Spyc::YAMLDump($data);
   }

@@ -1,7 +1,6 @@
-name: swagger Yaml
+name: Swagger import
 
-description: Accept a Swagger YAML document and create basic Datagator YAML docs.
-
+description: Create resource/s from a Swagger document.
 uri:
   noun: swagger
   verb: yaml
@@ -21,11 +20,7 @@ security:
         name: token
 
 process:
-  processor: swaggerYaml
+  processor: resourceSwagger
   meta:
     id: 3
-    yaml:
-      processor: varGet
-      meta:
-        id: 4
-        name: yaml
+    resource: resource

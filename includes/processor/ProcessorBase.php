@@ -8,6 +8,7 @@
  */
 
 namespace Datagator\Processor;
+use Datagator\Config;
 use Datagator\Core;
 
 class ProcessorBase
@@ -136,6 +137,7 @@ class ProcessorBase
    * Ensure result of all inputs match the processor's requirement.
    *
    * @throws \Datagator\Core\ApiException
+   * @TODO: is this needed?s
    */
   public function validateInputs()
   {
@@ -190,7 +192,6 @@ class ProcessorBase
     if ($this->isProcessor($obj)) {
       // this is a processor
       $processor = $this->getProcessor($obj);
-      $processor->validateInputs();
       $result = $processor->process();
     } elseif (is_array($obj)) {
       // this is an array of processors or values
@@ -203,6 +204,38 @@ class ProcessorBase
     return $result;
   }
 
+  protected function getFile($file)
+  {
+    if (empty($_FILES[$file])) {
+      return false;
+    }
+
+    // Check for error
+    switch ($_FILES[$file]['error']) {
+      case UPLOAD_ERR_OK:
+        break;
+      case UPLOAD_ERR_NO_FILE:
+        throw new Core\ApiException('No file sent.', 1, $this->id);
+      case UPLOAD_ERR_INI_SIZE:
+      case UPLOAD_ERR_FORM_SIZE:
+        throw new Core\ApiException('Exceeded filesize limit.', 1, $this->id);
+      default:
+        throw new Core\ApiException('Unknown errors.', 1, $this->id);
+    }
+
+    // Check for upload attack.
+    $newFile = $_SERVER['DOCUMENT_ROOT'] . Config::$dirUploads . basename($_FILES[$file]['name']);
+    if (!move_uploaded_file($_FILES[$file]['tmp_name'], $newFile)) {
+      throw new Core\ApiException('Possible file upload attack!', 1, $this->id);
+    }
+
+    $result = file_get_contents($newFile);
+    if (!unlink($newFile)) {
+      throw new Core\ApiException('failed to cleanup and delete uploaded file. Please contact support.', 1, $this->id);
+    }
+
+    return $result;
+  }
 
   /**
    * Fetch the processor defined in the obj (from meta), or return an error.

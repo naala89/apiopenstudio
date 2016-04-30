@@ -24,8 +24,4 @@ process:
   processor: resourceYaml
   meta:
     id: 3
-    yaml:
-      processor: varGet
-      meta:
-        id: 4
-        name: yaml
+    resource: resource

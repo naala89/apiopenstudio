@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Base class for processors to import, export and delete resources.
+ */
+
 namespace Datagator\Processor;
 use Datagator\Core;
 use Datagator\Db;
@@ -33,10 +37,10 @@ abstract class ResourceBase extends ProcessorBase
         'accepts' => array('literal')
       ),
       'resource' => array(
-        'description' => 'The resource. This can be a form file or a urlencoded GET var (this input is only used if you are creating or updating a resource).',
+        'description' => 'The resource as a string (this input is only used if you are creating or updating a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('string', 'file')
-      ),
+        'accepts' => array('processor', 'literal')
+      )
     )
   );
 
@@ -51,13 +55,47 @@ abstract class ResourceBase extends ProcessorBase
 
     switch ($this->request->method) {
       case 'post':
-        $result = $this->save();
+        $resource = $this->val($this->meta->resource);
+        if (empty($resource)) {
+          throw new Core\ApiException('Empty resource', 1, $this->id);
+        }
+        $file = $this->getFile($this->meta->resource);
+        if ($file !== false) {
+          $resource = $file;
+        }
+        $result = $this->save($resource);
         break;
       case 'get':
-        $result = $this->fetch();
+        $appId = $this->request->appId;
+        $method = $this->val($this->meta->method);
+        $noun = $this->val($this->meta->noun);
+        $verb = $this->val($this->meta->verb);
+        if (empty($method)) {
+          throw new Core\ApiException('Missing method', 1, $this->id);
+        }
+        if (empty($noun)) {
+          throw new Core\ApiException('Missing noun', 1, $this->id);
+        }
+        if (empty($verb)) {
+          throw new Core\ApiException('Missing verb', 1, $this->id);
+        }
+        $result = $this->fetch($appId, $method, $verb, $noun);
         break;
       case 'delete':
-        $result = $this->delete();
+        $appId = $this->request->appId;
+        $method = $this->val($this->meta->method);
+        $noun = $this->val($this->meta->noun);
+        $verb = $this->val($this->meta->verb);
+        if (empty($method)) {
+          throw new Core\ApiException('Missing method', 1, $this->id);
+        }
+        if (empty($noun)) {
+          throw new Core\ApiException('Missing noun', 1, $this->id);
+        }
+        if (empty($verb)) {
+          throw new Core\ApiException('Missing verb', 1, $this->id);
+        }
+        $result = $this->delete($appId, $method, $verb, $noun);
         break;
       default:
         throw new Core\ApiException('unknown method', 3, $this->id);
@@ -68,28 +106,33 @@ abstract class ResourceBase extends ProcessorBase
   }
 
   /**
+   * Abstract class used to fetch input resource into the correct array format.
+   * This has to be declared in each derived class, so that we can cater for many input formats.
+   *
+   * @param $data
    * @return mixed
    */
-  abstract protected function _importData();
+  abstract protected function _importData($data);
 
   /**
+   * Abstract class used to fetch input resource into the correct array format.
+   * This has to be declared in each derived class, so that we can cater for many output formats.
+   *
    * @param array $data
    * @return mixed
    */
-  abstract protected function _exportData(array $data);
+  abstract protected function _exportData($data);
 
   /**
-   * Create or update a resource from YAML.
-   * The Yaml is either post string 'yaml', or file 'yaml'.
-   * File takes precedence over the string if both present.
+   * Create or update a resource from input data.
    *
+   * @param $data
    * @return bool
    * @throws \Datagator\Core\ApiException
    */
-  protected function save()
+  protected function save($data)
   {
-    $data = $this->_importData();
-
+    $data = $this->_importData($data);
     $this->_validateData($data);
 
     $name = $data['name'];
@@ -112,27 +155,22 @@ abstract class ResourceBase extends ProcessorBase
     $resource->setDescription($description);
     $resource->setMeta(json_encode($meta));
     $resource->setTtl($ttl);
+
     return $mapper->save($resource);
   }
 
   /**
-   * Fetch a resource in YAML form.
+   * Fetch a resource.
    *
-   * Uses inputs:
-   *  method
-   *  appid
-   *  noun
-   *  verb.
-   *
+   * @param $appId
+   * @param $method
+   * @param $noun
+   * @param $verb
    * @return mixed
    * @throws \Datagator\Core\ApiException
    */
-  protected function fetch()
+  protected function fetch($appId, $method, $noun, $verb)
   {
-    $appId = $this->request->appId;
-    $method = $this->val($this->meta->method);
-    $noun = $this->val($this->meta->noun);
-    $verb = $this->val($this->meta->verb);
     if (empty($appId)) {
       throw new Core\ApiException('missing application ID', 3, $this->id, 400);
     }
@@ -169,21 +207,15 @@ abstract class ResourceBase extends ProcessorBase
   /**
    * Delete a resource.
    *
-   * GET vars:
-   *  method
-   *  appid
-   *  noun
-   *  verb
-   *
+   * @param $appId
+   * @param $method
+   * @param $noun
+   * @param $verb
    * @return bool
    * @throws \Datagator\Core\ApiException
    */
-  protected function delete()
+  protected function delete($appId, $method, $noun, $verb)
   {
-    $appId = $this->request->appId;
-    $method = $this->val($this->meta->method);
-    $noun = $this->val($this->meta->noun);
-    $verb = $this->val($this->meta->verb);
     if (empty($appId)) {
       throw new Core\ApiException('missing application ID', 3, $this->id, 400);
     }
@@ -204,11 +236,12 @@ abstract class ResourceBase extends ProcessorBase
   }
 
   /**
-   * Validate input data for well-formedness.
+   * Validate input data is well formed.
+   *
    * @param $data
    * @throws \Datagator\Core\ApiException
    */
-  private function _validateData($data) {
+  protected function _validateData($data) {
     // check mandatory elements exists in data
     if (empty($data['uri'])) {
       throw new Core\ApiException("missing uri in new resource", 6, $this->id, 417);
@@ -246,6 +279,8 @@ abstract class ResourceBase extends ProcessorBase
   }
 
   /**
+   * If an input is a processor, ensure it exists and has correct meta.
+   *
    * @param $obj
    * @throws \Datagator\Core\ApiException
    */
@@ -287,6 +322,8 @@ abstract class ResourceBase extends ProcessorBase
           $count = 1;
         }
       }
+      Core\Debug::variable($inputDef, "inputDef");
+      Core\Debug::variable($count, '$count');
       if (is_numeric($inputDef['cardinality'][0]) && $count < $inputDef['cardinality'][0]) {
         throw new Core\ApiException("$count inputs supplied (min " . $inputDef['cardinality'][0] . ') for ' . $inputName, 6, $obj['meta']['id'], 406);
       }
