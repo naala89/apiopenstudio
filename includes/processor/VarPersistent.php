@@ -1,18 +1,18 @@
 <?php
 
 /**
- * variables that are stored in the vars table in the session
+ * variables that are stored in the vars table in the db
  */
 
 namespace Datagator\Processor;
 use Datagator\Core;
 use Datagator\Db;
 
-class VarStoreTemporary extends ProcessorBase
+class VarPersistent extends ProcessorBase
 {
   protected $details = array(
-    'name' => 'Var (Store Temporary)',
-    'description' => 'A temporarily stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time during your resource call. The value can be deleted, updated and fetched in future resource..',
+    'name' => 'Var (Persistent)',
+    'description' => 'A persistently stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time. The value can be deleted, updated and fetched in future resource and Processor calls.',
     'menu' => 'Primitive',
     'application' => 'All',
     'input' => array(
@@ -45,7 +45,7 @@ class VarStoreTemporary extends ProcessorBase
    */
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor VarStoreTemporary', 4);
+    Core\Debug::variable($this->meta, 'Processor VarStorePersistent', 4);
 
     $name = $this->val($this->meta->name);
     $strict = !empty($this->meta->strict) ? $this->val($this->meta->strict) : 1;
@@ -58,21 +58,22 @@ class VarStoreTemporary extends ProcessorBase
 
     switch($operation) {
       case 'save':
-        $_SESSION[$name] = $this->meta->value;
+        $val = $this->val($this->meta->value);
+        if ($var->getId() === NULL) {
+          $var->setName($name);
+          $var->setAppId($this->request->appId);
+        }
+        $var->setVal($val);
         return TRUE;
         break;
       case 'delete':
-        if (!isset($_SESSION[$name])) {
+        if ($var->getId() === NULL) {
           throw new Core\ApiException('could not delete variable, does not exist', 6, $this->id, 417);
         }
-        unset($_SESSION[$name]);
-        return true;
+        return $mapper->delete($var);
         break;
       case 'fetch':
-        if (!isset($_SESSION[$name])) {
-          throw new Core\ApiException('could not fetch variable, does not exist', 6, $this->id, 417);
-        }
-        return $_SESSION[$name];
+        return $var->getVal();
         break;
       default:
         throw new Core\ApiException("invalid operation: $operation", 6, $this->id, 417);
