@@ -32,7 +32,7 @@ class VarPersistent extends ProcessorBase
         'accepts' => array('processor', '"save"', '"delete"', '"fetch"')
       ),
       'strict' => array(
-        'description' => 'If set to 0 then return null if var does not exists. If set to 1 throw exception if var does not exist. Default is strict.',
+        'description' => 'If set to 0 then return null if var does not exist. If set to 1 throw exception if var does not exist. Default is strict. Only used in fetch or delete operations.',
         'cardinality' => array(0, 1),
         'accepts' => array('processor', '"0"', '"1"')
       ),
@@ -51,29 +51,32 @@ class VarPersistent extends ProcessorBase
     $strict = !empty($this->meta->strict) ? $this->val($this->meta->strict) : 1;
     $operation = $this->val($this->meta->operation);
     $mapper = new Db\VarsMapper($this->request->db);
-    $var = $mapper->findByAppIdName($this->request->appId, $name);
-    if ($strict && empty($var->getId())) {
-      throw new Core\ApiException("var $name does not exist", 6, $this->id, 417);
-    }
+    $vars = $mapper->findByAppIdName($this->request->appId, $name);
 
     switch($operation) {
       case 'save':
         $val = $this->val($this->meta->value);
-        if ($var->getId() === NULL) {
-          $var->setName($name);
-          $var->setAppId($this->request->appId);
+        if ($vars->getId() === NULL) {
+          $vars->setName($name);
+          $vars->setAppId($this->request->appId);
         }
-        $var->setVal($val);
+        $vars->setVal($val);
         return TRUE;
         break;
       case 'delete':
-        if ($var->getId() === NULL) {
-          throw new Core\ApiException('could not delete variable, does not exist', 6, $this->id, 417);
+        if (empty($vars->getId())) {
+          if ($strict) {
+            throw new Core\ApiException('could not delete variable, does not exist', 6, $this->id, 417);
+          }
+          return true;
         }
-        return $mapper->delete($var);
+        return $mapper->delete($vars);
         break;
       case 'fetch':
-        return $var->getVal();
+        if ($strict && empty($vars->getId())) {
+          throw new Core\ApiException('could not fetch variable, does not exist', 6, $this->id, 417);
+        }
+        return $vars->getVal();
         break;
       default:
         throw new Core\ApiException("invalid operation: $operation", 6, $this->id, 417);

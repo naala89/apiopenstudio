@@ -32,7 +32,7 @@ class VarTemporary extends ProcessorBase
         'accepts' => array('processor', '"save"', '"delete"', '"fetch"')
       ),
       'strict' => array(
-        'description' => 'If set to 0 then return null if var does not exists. If set to 1 throw exception if var does not exist. Default is strict.',
+        'description' => 'If set to 0 then return null if var does not exist. If set to 1 throw exception if var does not exist. Default is strict. Only used in fetch or delete operations.',
         'cardinality' => array(0, 1),
         'accepts' => array('processor', '"0"', '"1"')
       ),
@@ -50,26 +50,24 @@ class VarTemporary extends ProcessorBase
     $name = $this->val($this->meta->name);
     $strict = !empty($this->meta->strict) ? $this->val($this->meta->strict) : 1;
     $operation = $this->val($this->meta->operation);
-    $mapper = new Db\VarsMapper($this->request->db);
-    $var = $mapper->findByAppIdName($this->request->appId, $name);
-    if ($strict && empty($var->getId())) {
-      throw new Core\ApiException("var $name does not exist", 6, $this->id, 417);
-    }
 
     switch($operation) {
       case 'save':
         $_SESSION[$name] = $this->meta->value;
-        return TRUE;
+        return true;
         break;
       case 'delete':
         if (!isset($_SESSION[$name])) {
-          throw new Core\ApiException('could not delete variable, does not exist', 6, $this->id, 417);
+          if ($strict) {
+            throw new Core\ApiException('could not delete variable, does not exist', 6, $this->id, 417);
+          }
+          return true;
         }
         unset($_SESSION[$name]);
         return true;
         break;
       case 'fetch':
-        if (!isset($_SESSION[$name])) {
+        if ($strict && !isset($_SESSION[$name])) {
           throw new Core\ApiException('could not fetch variable, does not exist', 6, $this->id, 417);
         }
         return $_SESSION[$name];
