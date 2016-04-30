@@ -40,9 +40,10 @@ Datagator 0.2.1, Unfinished
 - added VarBody (should the result be normalised?)
 - added IfThenElse processor
 - added Sort processor
+- created VarStoreTemporary
+- rename VarStore as VarStorePersistent
 
 TODO:
-- 
 - change format of processor meta (see frontend)
 - Change all resource meta 'validation' to 'security'
 -- Update API->_getValidation()
@@ -57,6 +58,7 @@ TODO:
 - add check to VarPersistent to prevent accounts creating too many vars in the DB.
 
 - Processors
+-- create a Loop processor
 -- create processor Literal (is this needed?)
 -- Should non sysadmins be able to create processors without validation?
 

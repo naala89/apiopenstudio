@@ -1,29 +1,18 @@
 <?php
 
 /**
- * varliables that are stored in the vars table in the db
- *
- * METADATA
- * {
- *    "type":"varStore",
- *    "meta":{
- *      "id":<integer>,
- *      "operation":"insert|delete|fetch",
- *      "name":<processor|mixed>,
- *      "value":<processor|mixed>, [optional - if operation is insert]
- *    }
- *  }
+ * variables that are stored in the vars table in the db
  */
 
 namespace Datagator\Processor;
 use Datagator\Core;
 use Datagator\Db;
 
-class VarStore extends ProcessorBase
+class VarStorePersistent extends ProcessorBase
 {
   protected $details = array(
-    'name' => 'Var (Store)',
-    'description' => 'A stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time.',
+    'name' => 'Var (Store Persistent)',
+    'description' => 'A persistently stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time. The value can be deleted, updated and fetched in future resource and Processor calls.',
     'menu' => 'Primitive',
     'application' => 'All',
     'input' => array(
@@ -56,7 +45,7 @@ class VarStore extends ProcessorBase
    */
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor VarStore', 4);
+    Core\Debug::variable($this->meta, 'Processor VarStorePersistent', 4);
 
     $name = $this->val($this->meta->name);
     $strict = !empty($this->meta->strict) ? $this->val($this->meta->strict) : 1;
