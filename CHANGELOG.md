@@ -52,7 +52,6 @@ TODO:
 - Implement collections
 - Add validation of var type result. This can be declared in $this->required
 - Add unit tests (Phing or Jenkins?)
-- New Relic or Datadog
 - fix problem of not writing to system specified logs. This might be uin Debug::_display()
 - rename VarStore to VarPersistent
 - add check to VarPersistent to prevent accounts creating too many vars in the DB.
