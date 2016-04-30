@@ -37,6 +37,7 @@ Datagator 0.2.1, Unfinished
 - finish processor descriptions
 - change Api->parseType() to return 1st possible output type
 - new ImportSwagger processor
+- added VarBody (should the result be normalised?)
 
 TODO:
 - change format of processor meta (see frontend)
@@ -55,7 +56,6 @@ TODO:
 - Processors
 -- create ifThenElse processor
 -- create Sort processor
--- create processor VarBody (should the result be normalised?)
 -- create processor Literal (is this needed?)
 -- Should non sysadmins be able to create processors without validation?
 
