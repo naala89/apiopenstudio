@@ -118,6 +118,9 @@ class ProcessorBase
    */
   public function process()
   {
+    if ($this->isFragment($this->meta)) {
+      return $this->request->fragments->{$this->meta->fragment};
+    }
     $processor = $this->getProcessor($this->meta);
     $result =  $processor->process();
     return $result;
@@ -171,7 +174,18 @@ class ProcessorBase
    */
   protected function isProcessor($obj)
   {
-    return (is_object($obj) && (isset($obj->type) || isset($obj->meta)));
+    return (is_object($obj) && isset($obj->processor) && isset($obj->meta));
+  }
+
+  /**
+   * Evaluate an object to see if it's a fragment.
+   *
+   * @param $obj
+   * @return bool
+   */
+  protected function isFragment($obj)
+  {
+    return (is_object($obj) && isset($obj->fragment));
   }
 
   /**
@@ -189,7 +203,13 @@ class ProcessorBase
   {
     $result = $obj;
 
-    if ($this->isProcessor($obj)) {
+    if ($this->isFragment($obj)) {
+      $fragmentName = $obj->fragment;
+      if (!isset($this->request->fragments->{$fragmentName})) {
+        throw new Core\ApiException("fragment $fragmentName does not exist",1, $this->id);
+      }
+      $result = $this->request->fragments->{$fragmentName};
+    } elseif ($this->isProcessor($obj)) {
       // this is a processor
       $processor = $this->getProcessor($obj);
       $result = $processor->process();
