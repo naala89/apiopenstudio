@@ -42,9 +42,10 @@ Datagator 0.2.1, Unfinished
 - added Sort processor
 - created VarPersistent and VarTemporary
 - removed VarStore
+- created Fragments section - this is a partial meta, allowing reuse of processor results - especially useful in IfThenElse to cut down on processing time
 
 TODO:
-- create Fragments - this is a partial meta, allowing reuse of processor results - especially useful in IfThenElse to cut down on processing time
+- unify $request and $resource into one object 
 - remove 'processor' from $details->accepts. processor can be used for all inputs
 - change format of processor meta (see frontend)
 - Change all resource meta 'validation' to 'security'

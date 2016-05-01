@@ -13,6 +13,7 @@ use Datagator\Db;
 use Datagator\Security;
 use Datagator\Output;
 use Datagator\Resource;
+use Facebook\Helpers\FacebookRedirectLoginHelper;
 use Spyc;
 
 Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Config::$debug, Config::$errorLog);
@@ -24,7 +25,7 @@ Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Con
 class Api
 {
   private $cache;
-  private $test = false; // false or filename in /yaml/test
+  private $test = 'fragment.yaml'; // false or filename in /yaml/test
 
   /**
    * Constructor
@@ -64,6 +65,12 @@ class Api
     }
 
     // process the call
+    if (!empty($resource->fragments)) {
+      // replace all fragments with their computed value
+      // need to place fragment results into request object, so that they are available to all processors
+      $request = $this->_processFragments($resource->fragments, $request);
+    }
+    Debug::variable($request, 'request');
     if (empty($resource->process)) {
       throw new ApiException('invalid resource - process section missing', 1);
     }
@@ -165,7 +172,7 @@ class Api
       $result->r = json_decode($resource->getMeta());
       $result->ttl = $resource->getTtl();
     } else {
-      $filepath = $_SERVER['DOCUMENT_ROOT'] . Config::$dirYaml . $this->test;
+      $filepath = $_SERVER['DOCUMENT_ROOT'] . Config::$dirYaml . 'test/' . $this->test;
       if (!file_exists($filepath)) {
         throw new ApiException("invalid test yaml: $filepath", 1 , -1, 400);
       }
@@ -178,6 +185,9 @@ class Api
       }
       if (!empty($array['output'])) {
         $result->r->output = $this->_arrayToObject($array['output']);
+      }
+      if (!empty($array['fragments'])) {
+        $result->r->fragments = $this->_arrayToObject($array['fragments']);
       }
       $result->ttl = $array['ttl'];
       $request->method = $array['method'];
@@ -246,6 +256,28 @@ class Api
   private function _getCacheKey($request)
   {
     return $this->_cleanData($request->method . '_' . $request->request);
+  }
+
+  /**
+   * @param $fragments
+   * @param $request
+   * @throws \Datagator\Core\ApiException
+   */
+  private function _processFragments($fragments, $request) {
+    $request->fragments = new \stdClass();
+    foreach ($fragments as $fragment) {
+      Debug::variable($fragment, 'fragment');
+      if (empty($fragment->fragment) || !isset($fragment->meta)) {
+        throw new ApiException('bad fragment definition');
+      }
+      if (is_string($fragment->meta)) {
+        $request->fragments->{$fragment->fragment} = $fragment->meta;
+      } else {
+        $processor = new Processor\ProcessorBase($fragment->meta, $request);
+        $request->fragments->{$fragment->fragment} = $processor->process();
+      }
+    }
+    return $request;
   }
 
   /**
