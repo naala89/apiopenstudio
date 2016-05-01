@@ -10,10 +10,10 @@ use Datagator\Core;
 class Sort extends ProcessorBase
 {
   private $asc;
-  private $fld;
+  private $key;
   protected $details = array(
     'name' => 'Sort',
-    'description' => 'Sort an input of type Processor Object. Select a field and desc or asc',
+    'description' => 'Sort an input of type Processor Object. Select a key and desc or asc',
     'menu' => 'Logic',
     'application' => 'All',
     'input' => array(
@@ -22,8 +22,8 @@ class Sort extends ProcessorBase
         'cardinality' => array(1, 1),
         'accepts' => array('processor Object'),
       ),
-      'field' => array(
-        'description' => 'The field to be used in the sort operation.',
+      'key' => array(
+        'description' => 'The key to be used in the sort operation.',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', 'literal'),
       ),
@@ -40,7 +40,7 @@ class Sort extends ProcessorBase
     Core\Debug::variable($this->meta, 'Processor Sort', 4);
     $obj = $this->val($this->meta->object);
     $this->asc = $this->val($this->meta->direction) == 'asc';
-    $this->fld = $this->val($this->meta->field);
+    $this->key = $this->val($this->meta->key);
 
     usort($obj, array($this, 'sort'));
 
@@ -49,7 +49,7 @@ class Sort extends ProcessorBase
 
    public function sort($a, $b)
    {
-     if (!isset($a[$this->fld]) || !isset($b[$this->fld])) {
+     if (!isset($a[$this->key]) || !isset($b[$this->key])) {
        throw new Core\ApiException('missing field in object', 1, $this->id);
      }
      if ($a == $b) {

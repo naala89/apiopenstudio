@@ -2,8 +2,8 @@ name: Swagger import
 
 description: Create resource/s from a Swagger document.
 uri:
-  noun: swagger
-  verb: yaml
+  noun: resource
+  verb: swagger
 
 method: post
 

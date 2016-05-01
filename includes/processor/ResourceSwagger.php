@@ -28,7 +28,7 @@ class ResourceSwagger extends ResourceBase
 
   public function process()
   {
-    $this->paramCount = 0;
+    $this->paramCount = 2;
     $resources = array();
     $swagger = $this->_importData();
 
@@ -59,6 +59,19 @@ class ResourceSwagger extends ResourceBase
         $resource['uri']['noun'] = $noun;
         $resource['uri']['verb'] = $verb;
         $resource['method'] = $method;
+        $resource['security'] = array(
+          'processor' => 'tokenConsumer',
+          'meta' => array(
+            'id' => 1,
+            'token' => array(
+              'processor' => 'varGet',
+              'meta' => array(
+                'id' => 2,
+                'name' => 'token'
+              )
+            )
+          )
+        );
         $resource['process'] = '';
         $resource['parameters'] = array();
         $resource['parameters'] = array_merge($resource['parameters'], $uriParams);
@@ -70,7 +83,7 @@ class ResourceSwagger extends ResourceBase
           'appId' => $this->request->appId
         );
 
-        //$this->save($resource);
+        $this->save($resource);
       }
     }
 
@@ -86,7 +99,7 @@ class ResourceSwagger extends ResourceBase
    * @return bool
    * @throws \Datagator\Core\ApiException
    */
-  protected function save($data=NULL)
+  protected function save($data)
   {
     $this->_validateData($data);
 
