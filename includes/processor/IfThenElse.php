@@ -28,7 +28,7 @@ class IfThenElse extends ProcessorBase
       'operator' => array(
         'description' => 'The comparison operator in the equation.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"=="', '"==="', '">"', '">="', '"<"', '"<="'),
+        'accepts' => array('processor', '"=="', '"==="', '"!="', '">"', '">="', '"<"', '"<="'),
       ),
       'then' => array(
         'description' => 'What to do if the equation returns true.',
@@ -55,11 +55,11 @@ class IfThenElse extends ProcessorBase
       case '==':
         $result = $lhs == $rhs;
         break;
-      case '!=':
-        $result = $lhs != $rhs;
-        break;
       case '===':
         $result = $lhs === $rhs;
+        break;
+      case '!=':
+        $result = $lhs != $rhs;
         break;
       case '>':
         $result = $lhs > $rhs;

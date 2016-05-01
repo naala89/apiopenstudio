@@ -2,18 +2,6 @@
 
 /**
  * Simple object type.
- *
- * This will usually take ana array of processorType. However, you can also have literals or processors.
- *
- * METADATA
- * {
- *    "type":"object",
- *    "meta":{
- *      "attributes":[
- *        <processor|var|literal>,
- *      ]
- *    }
- *  }
  */
 
 namespace Datagator\Processor;
@@ -48,7 +36,7 @@ class Object extends ProcessorBase {
         $result[] = $attribute;
       }
     }
-var_dump($result);exit;
+
     return $result;
   }
 }

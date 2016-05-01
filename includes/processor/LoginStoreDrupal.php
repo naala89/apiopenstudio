@@ -25,8 +25,8 @@ class LoginStoreDrupal extends ProcessorBase
   private $user;
   private $defaultEntity = 'drupal';
   protected $details = array(
-    'name' => 'LoginStoreDrupal',
-    'description' => 'Stores the access details from a users login to a remote drupal site for future use.',
+    'name' => 'Login Store Drupal',
+    'description' => 'Login the user Stores the access details from a users login to a remote drupal site for future use.',
     'menu' => 'External',
     'application' => 'All',
     'input' => array(
