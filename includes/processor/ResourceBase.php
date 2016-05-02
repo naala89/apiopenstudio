@@ -142,6 +142,9 @@ abstract class ResourceBase extends ProcessorBase
     $meta = array();
     $meta['security'] = $data['security'];
     $meta['process'] =  $data['process'];
+    if (!empty($data['fragments'])) {
+      $meta['fragments'] = $data['fragments'];
+    }
     $ttl = !empty($data['ttl']) ? $data['ttl'] : 0;
 
     $mapper = new Db\ResourceMapper($this->request->db);
@@ -261,6 +264,9 @@ abstract class ResourceBase extends ProcessorBase
     if (empty($data['method'])) {
       throw new Core\ApiException("missing method in new resource", 6, $this->id, 417);
     }
+    if (empty($data['security'])) {
+      throw new Core\ApiException("missing security in new resource", 6, $this->id, 417);
+    }
     if (empty($data['process'])) {
       throw new Core\ApiException("missing process in new resource", 6, $this->id, 417);
     }
@@ -275,6 +281,9 @@ abstract class ResourceBase extends ProcessorBase
     }
     if (isset($data['security'])) {
       $this->_validateProcessor($data['security']);
+    }
+    if (isset($data['fragments'])) {
+      $this->_validateFragments($data['fragments']);
     }
   }
 
@@ -322,8 +331,6 @@ abstract class ResourceBase extends ProcessorBase
           $count = 1;
         }
       }
-      Core\Debug::variable($inputDef, "inputDef");
-      Core\Debug::variable($count, '$count');
       if (is_numeric($inputDef['cardinality'][0]) && $count < $inputDef['cardinality'][0]) {
         throw new Core\ApiException("$count inputs supplied (min " . $inputDef['cardinality'][0] . ') for ' . $inputName, 6, $obj['meta']['id'], 406);
       }
@@ -342,6 +349,28 @@ abstract class ResourceBase extends ProcessorBase
         }
       }
     }
+  }
+
+  /**
+   * @param $fragments
+   * @throws \Datagator\Core\ApiException
+   */
+  private function _validateFragments($fragments)
+  {
+    if (!is_array($fragments)) {
+      throw new Core\ApiException('Invalid fragments section, this should be a list', 1);
+    }
+    foreach ($fragments as $fragment) {
+      // check valid fragment structure
+      if (empty($fragment['fragment']) || empty($obj['meta'])) {
+        throw new Core\ApiException("invalid fragment structure, missing 'fragments' or 'meta' keys in new resource", 6, -1, 406);
+      }
+      if (!is_string($fragment['meta'])) {
+        // this must be a processor
+        $this->_validateProcessor(($fragment['meta']));
+      }
+    }
+
   }
 
   /**

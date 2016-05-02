@@ -13,7 +13,7 @@ use Datagator\Db;
 use Datagator\Security;
 use Datagator\Output;
 use Datagator\Resource;
-use Facebook\Helpers\FacebookRedirectLoginHelper;
+//use Facebook\Helpers\FacebookRedirectLoginHelper;
 use Spyc;
 
 Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Config::$debug, Config::$errorLog);
@@ -68,9 +68,8 @@ class Api
     if (!empty($resource->fragments)) {
       // replace all fragments with their computed value
       // need to place fragment results into request object, so that they are available to all processors
-      $request = $this->_processFragments($resource->fragments, $request);
-    }
-    Debug::variable($request, 'request');
+      $request->fragments = $this->_processFragments($resource->fragments, $request);
+    };
     if (empty($resource->process)) {
       throw new ApiException('invalid resource - process section missing', 1);
     }
@@ -259,25 +258,44 @@ class Api
   }
 
   /**
+   * Porcess the fragments meta and
+   *
    * @param $fragments
    * @param $request
+   * @return \stdClass
    * @throws \Datagator\Core\ApiException
    */
   private function _processFragments($fragments, $request) {
-    $request->fragments = new \stdClass();
+    $result = new \stdClass();
     foreach ($fragments as $fragment) {
-      Debug::variable($fragment, 'fragment');
       if (empty($fragment->fragment) || !isset($fragment->meta)) {
         throw new ApiException('bad fragment definition');
       }
       if (is_string($fragment->meta)) {
-        $request->fragments->{$fragment->fragment} = $fragment->meta;
+        // fragment is a constant
+        $result->{$fragment->fragment} = $fragment->meta;
+      } elseif (!empty($fragment->meta->processor) && !empty($fragment->meta->meta)) {
+        // fragment is a processor
+        $class = '\\Datagator\\Processor\\' . ucfirst(trim($fragment->meta->processor));
+        if (!class_exists($class)) {
+          $class = '\\Datagator\\Endpoint\\' . ucfirst(trim($fragment->meta->processor));
+          if (!class_exists($class)) {
+            $class = '\\Datagator\\Output\\' . ucfirst(trim($fragment->meta->processor));
+            if (!class_exists($class)) {
+              $class = '\\Datagator\\Security\\' . ucfirst(trim($fragment->meta->processor));
+              if (!class_exists($class)) {
+                throw new ApiException('unknown processor in fragment: ' . ucfirst(trim($fragment->meta->processor)), 1);
+              }
+            }
+          }
+        }
+        $processor = new $class($fragment->meta->meta, $request);
+        $result->{$fragment->fragment} = $processor->process();
       } else {
-        $processor = new Processor\ProcessorBase($fragment->meta, $request);
-        $request->fragments->{$fragment->fragment} = $processor->process();
+        throw new ApiException('invalid fragment meta',1);
       }
     }
-    return $request;
+    return $result;
   }
 
   /**
