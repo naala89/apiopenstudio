@@ -179,8 +179,8 @@ class Api
       $result = new \stdClass();
       $result->r = new \stdClass();
       $result->r->process = $this->_arrayToObject($array['process']);
-      if (!empty($array['validation'])) {
-        $result->r->validation = $this->_arrayToObject($array['validation']);
+      if (!empty($array['security'])) {
+        $result->r->security = $this->_arrayToObject($array['security']);
       }
       if (!empty($array['output'])) {
         $result->r->output = $this->_arrayToObject($array['output']);
@@ -208,13 +208,14 @@ class Api
    */
   private function _getValidation($resource, $request)
   {
-    if (empty($resource->validation)) {
+    Debug::variable($resource->security, 'security');
+    if (empty($resource->security)) {
       return;
     }
-    $class = 'Datagator\\Security\\' . ucfirst($this->_cleanData($resource->validation->processor));
-    $security = new $class($resource->validation->meta, $request);
+    $class = 'Datagator\\Security\\' . ucfirst($this->_cleanData($resource->security->processor));
+    $security = new $class($resource->security->meta, $request);
     if (!$security->process()) {
-      throw new ApiException('unauthorized', 4, $resource->validation->meta->id, 401);
+      throw new ApiException('unauthorized', 4, $resource->security->meta->id, 401);
     }
     return;
   }

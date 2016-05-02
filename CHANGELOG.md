@@ -43,12 +43,12 @@ Datagator 0.2.1, Unfinished
 - created VarPersistent and VarTemporary
 - removed VarStore
 - created Fragments section - this is a partial meta, allowing reuse of processor results - especially useful in IfThenElse to cut down on processing time
+- change all resource meta 'validation' to 'security'
 
 TODO:
 - unify $request and $resource into one object 
 - remove 'processor' from $details->accepts. processor can be used for all inputs
 - change format of processor meta (see frontend)
-- Change all resource meta 'validation' to 'security'
 -- Update API->_getValidation()
 - Finish endpoint processors
 - Validators for oAuth, etc
