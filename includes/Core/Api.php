@@ -13,7 +13,6 @@ use Datagator\Db;
 use Datagator\Security;
 use Datagator\Output;
 use Datagator\Resource;
-//use Facebook\Helpers\FacebookRedirectLoginHelper;
 use Spyc;
 
 Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Config::$debug, Config::$errorLog);

@@ -140,7 +140,9 @@ abstract class ResourceBase extends ProcessorBase
     $method = $data['method'];
     $identifier = strtolower($data['uri']['noun']) . strtolower($data['uri']['verb']);
     $meta = array();
-    $meta['security'] = $data['security'];
+    if (!empty($data['security'])) {
+      $meta['security'] = $data['security'];
+    }
     $meta['process'] =  $data['process'];
     if (!empty($data['fragments'])) {
       $meta['fragments'] = $data['fragments'];
@@ -246,6 +248,12 @@ abstract class ResourceBase extends ProcessorBase
    */
   protected function _validateData($data) {
     // check mandatory elements exists in data
+    if (empty($data)) {
+      throw new Core\ApiException("empty resource uploaded", 6, $this->id, 417);
+    }
+    if (is_array($data) && sizeof($data) == 1 && $data[0] == $this->meta->resource) {
+      throw new Core\ApiException('Form-data element with name: "' . $this->meta->resource . '" not found.', 6, $this->id, 417);
+    }
     if (empty($data['uri'])) {
       throw new Core\ApiException("missing uri in new resource", 6, $this->id, 417);
     }
@@ -264,9 +272,12 @@ abstract class ResourceBase extends ProcessorBase
     if (empty($data['method'])) {
       throw new Core\ApiException("missing method in new resource", 6, $this->id, 417);
     }
+    /*
+     * Do we need this?
     if (empty($data['security'])) {
       throw new Core\ApiException("missing security in new resource", 6, $this->id, 417);
     }
+    */
     if (empty($data['process'])) {
       throw new Core\ApiException("missing process in new resource", 6, $this->id, 417);
     }
