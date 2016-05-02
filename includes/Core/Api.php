@@ -25,7 +25,7 @@ Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Con
 class Api
 {
   private $cache;
-  private $test = 'fragment.yaml'; // false or filename in /yaml/test
+  private $test = false; // false or filename in /yaml/test
 
   /**
    * Constructor
