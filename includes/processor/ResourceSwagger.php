@@ -72,18 +72,18 @@ class ResourceSwagger extends ResourceBase
             )
           )
         );
-        $resource['process'] = '';
-        $resource['parameters'] = array();
-        $resource['parameters'] = array_merge($resource['parameters'], $uriParams);
-        $resource['parameters'] = array_merge($resource['parameters'], $requestVars);
+        $resource['process'] = 'true';
+        $resource['fragments'] = array();
+        $resource['fragments'] = array_merge($resource['fragments'], $uriParams);
+        $resource['fragments'] = array_merge($resource['fragments'], $requestVars);
+
+        $this->save($resource);
 
         $resources[] = array(
           'uri' => $resource['uri'],
           'method' =>$method,
           'appId' => $this->request->appId
         );
-
-        $this->save($resource);
       }
     }
 

@@ -24,8 +24,6 @@ class Object extends ProcessorBase {
   );
 
   public function process() {
-    Core\Debug::variable($this->meta, 'Processor Object', 4);
-
     $result = array();
     $attributes = $this->val($this->meta->attributes);
 
