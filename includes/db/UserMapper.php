@@ -27,7 +27,7 @@ class UserMapper
   public function save(User $user)
   {
     if (empty($user->getUid())) {
-      $sql = 'INSERT INTO `user` (`active`, `username`, `salt`, `hash`, `token`, `token_ttl`, `email`, `honorific`, `name_first`, `name_last`, `company`, `website`, `address_street`, `address_suburb`, `address_city`, `address_state`, `address_postcode`, `phone_mobile`, `phone_work`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      $sql = 'INSERT INTO user (active, username, salt, hash, token, token_ttl, email, honorific, name_first, name_last, company, website, address_street, address_suburb, address_city, address_state, address_postcode, phone_mobile, phone_work) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
       $bindParams = array(
         $user->getActive(),
         $user->getUsername(),
@@ -51,7 +51,7 @@ class UserMapper
       );
       $result = $this->db->Execute($sql, $bindParams);
     } else {
-      $sql = 'UPDATE `user` SET `active`=?, `username`=?, `salt`=?, `hash`=?, `token`=?, `token_ttl`=?, `email`=?, `honorific`=?, `name_first`=?, `name_last`=?, `company`=?, `website`=?, `address_street`=?, `address_suburb`=?, `address_city`=?, `address_state`=?, `address_postcode`=?, `phone_mobile`=?, `phone_work`=?  WHERE `uid`=?';
+      $sql = 'UPDATE user SET active=?, username=?, salt=?, hash=?, token=?, token_ttl=?, email=?, honorific=?, name_first=?, name_last=?, company=?, website=?, address_street=?, address_suburb=?, address_city=?, address_state=?, address_postcode=?, phone_mobile=?, phone_work=?  WHERE uid=?';
       $bindParams = array(
         $user->getActive(),
         $user->getUsername(),
@@ -88,7 +88,7 @@ class UserMapper
    */
   public function findByUid($uid)
   {
-    $sql = 'SELECT * FROM `user` WHERE `uid` = ?';
+    $sql = 'SELECT * FROM user WHERE uid = ?';
     $bindParams = array($uid);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -100,7 +100,7 @@ class UserMapper
    */
   public function findByEmail($email)
   {
-    $sql = 'SELECT * FROM `user` WHERE `email` = ?';
+    $sql = 'SELECT * FROM user WHERE email = ?';
     $bindParams = array($email);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -112,7 +112,7 @@ class UserMapper
    */
   public function findByUsername($username)
   {
-    $sql = 'SELECT * FROM `user` WHERE `username` = ?';
+    $sql = 'SELECT * FROM user WHERE username = ?';
     $bindParams = array($username);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -124,7 +124,7 @@ class UserMapper
    */
   public function findBytoken($token)
   {
-    $sql = 'SELECT * FROM `user` WHERE `token` = ? AND token_ttl > ?';
+    $sql = 'SELECT * FROM user WHERE token = ? AND token_ttl > ?';
     $bindParams = array($token, Core\Utilities::mysqlNow());
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -138,7 +138,7 @@ class UserMapper
    */
   public function hasRole($uid, $appId, $rid)
   {
-    $sql = 'SELECT u.* FROM `user` AS u INNER JOIN `user_role` AS ur ON u.`uid`=ur.`uid` WHERE u.`uid`=? AND ur.`appid`=? AND ur.`rid`=?';
+    $sql = 'SELECT u.* FROM user AS u INNER JOIN user_role AS ur ON u.uid=ur.uid WHERE u.uid=? AND ur.appid=? AND ur.rid=?';
     $bindParams = array($uid, $appId, $rid);
     $row = $this->db->GetRow($sql, $bindParams);
     return !empty($row['uid']);

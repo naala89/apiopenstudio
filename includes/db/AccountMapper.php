@@ -27,14 +27,14 @@ class AccountMapper
   public function save(Account $account)
   {
     if ($account->getAccId() == NULL) {
-      $sql = 'INSERT INTO account (`uid`, `name`) VALUES (?, ?)';
+      $sql = 'INSERT INTO account (uid, name) VALUES (?, ?)';
       $bindParams = array(
         $account->getUid(),
         $account->getName()
       );
       $result = $this->db->Execute($sql, $bindParams);
     } else {
-      $sql = 'UPDATE account SET `uid` = ?, `name` = ? WHERE `accid` = ?';
+      $sql = 'UPDATE account SET uid = ?, name = ? WHERE accid = ?';
       $bindParams = array(
         $account->getUid(),
         $account->getName(),
@@ -54,7 +54,7 @@ class AccountMapper
    */
   public function findByAccId($accId)
   {
-    $sql = 'SELECT * FROM account WHERE `accid` = ?';
+    $sql = 'SELECT * FROM account WHERE accid = ?';
     $bindParams = array($accId);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -66,7 +66,7 @@ class AccountMapper
    */
   public function findByUid($uid)
   {
-    $sql = 'SELECT * FROM account WHERE `uid` = ?';
+    $sql = 'SELECT * FROM account WHERE uid = ?';
     $bindParams = array($uid);
     $recordSet = $this->db->Execute($sql, $bindParams);
 
@@ -84,7 +84,7 @@ class AccountMapper
    */
   public function findByEmail($email)
   {
-    $sql = 'SELECT a.* FROM `account` a INNER JOIN `user` u ON a.uid = u.uid WHERE u.email = ?';
+    $sql = 'SELECT a.* FROM account a INNER JOIN user u ON a.uid = u.uid WHERE u.email = ?';
     $bindParams = array($email);
     $recordSet = $this->db->Execute($sql, $bindParams);
 
@@ -102,7 +102,7 @@ class AccountMapper
    */
   public function findByName($name)
   {
-    $sql = 'SELECT * FROM account WHERE `name` = ?';
+    $sql = 'SELECT * FROM account WHERE name = ?';
     $bindParams = array($name);
     $recordSet = $this->db->Execute($sql, $bindParams);
 

@@ -27,14 +27,14 @@ class ApplicationMapper
   public function save(Application $application)
   {
     if ($application->getAppId() == NULL) {
-      $sql = 'INSERT INTO application (`accid`, `name`) VALUES (?, ?)';
+      $sql = 'INSERT INTO application (accid, name) VALUES (?, ?)';
       $bindParams = array(
         $application->getAccId(),
         $application->getName()
       );
       $result = $this->db->Execute($sql, $bindParams);
     } else {
-      $sql = 'UPDATE application SET `accid` = ?, `name` = ? WHERE `appid` = ?';
+      $sql = 'UPDATE application SET accid = ?, name = ? WHERE appid = ?';
       $bindParams = array(
         $application->getAccId(),
         $application->getName(),
@@ -54,7 +54,7 @@ class ApplicationMapper
    */
   public function findByAppId($appId)
   {
-    $sql = 'SELECT * FROM application WHERE `appid` = ?';
+    $sql = 'SELECT * FROM application WHERE appid = ?';
     $bindParams = array($appId);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -66,7 +66,7 @@ class ApplicationMapper
    */
   public function findByAccId($accId)
   {
-    $sql = 'SELECT * FROM application WHERE `accid` = ?';
+    $sql = 'SELECT * FROM application WHERE accid = ?';
     $bindParams = array($accId);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -78,7 +78,7 @@ class ApplicationMapper
    */
   public function findByName($name)
   {
-    $sql = 'SELECT * FROM application WHERE `name` = ?';
+    $sql = 'SELECT * FROM application WHERE name = ?';
     $bindParams = array($name);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);

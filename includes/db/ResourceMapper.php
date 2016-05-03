@@ -27,7 +27,7 @@ class ResourceMapper
   public function save(Resource $resource)
   {
     if ($resource->getId() == NULL) {
-      $sql = 'INSERT INTO resource (`appid`, `name`, `description`, `method`, `identifier`, `meta`, `ttl`) VALUES (?, ?, ?, ?, ?, ?, ?)';
+      $sql = 'INSERT INTO resource (appid, name, description, method, identifier, meta, ttl) VALUES (?, ?, ?, ?, ?, ?, ?)';
       $bindParams = array(
         $resource->getAppId(),
         $resource->getName(),
@@ -39,7 +39,7 @@ class ResourceMapper
       );
       $result = $this->db->Execute($sql, $bindParams);
     } else {
-      $sql = 'UPDATE resource SET `appid` = ?, `name` = ?, `description` = ?, `method` = ?, `identifier` = ?, `meta` = ?, `ttl` = ? WHERE `id` = ?';
+      $sql = 'UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, identifier = ?, meta = ?, ttl = ? WHERE id = ?';
       $bindParams = array(
         $resource->getAppId(),
         $resource->getName(),
@@ -68,7 +68,7 @@ class ResourceMapper
     if ($resource->getId() == NULL) {
       throw new Core\ApiException('could not delete resource, not found', 2);
     }
-    $sql = 'DELETE FROM `resource` WHERE `id` = ?';
+    $sql = 'DELETE FROM resource WHERE id = ?';
     $bindParams = array($resource->getId());
     $result = $this->db->Execute($sql, $bindParams);
     if (!$result) {
@@ -83,7 +83,7 @@ class ResourceMapper
    */
   public function findId($id)
   {
-    $sql = 'SELECT * FROM resource WHERE `id` = ?';
+    $sql = 'SELECT * FROM resource WHERE id = ?';
     $bindParams = array($id);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -97,7 +97,7 @@ class ResourceMapper
    */
   public function findByAppIdMethodIdentifier($appId, $method, $identifier)
   {
-    $sql = 'SELECT r.* FROM `resource` AS r INNER JOIN `application` AS a ON r.`appid`=a.`appid` WHERE (r.`appid` = ? OR a.`name` = "All") AND r.`method` = ? AND r.`identifier` = ?';
+    $sql = 'SELECT r.* FROM resource AS r INNER JOIN application AS a ON r.appid=a.appid WHERE (r.appid = ? OR a.name = "All") AND r.method = ? AND r.identifier = ?';
     $bindParams = array($appId, $method, $identifier);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -109,7 +109,7 @@ class ResourceMapper
    */
   public function findByAppId($appId)
   {
-    $sql = 'SELECT * FROM resource WHERE `appid` = ?';
+    $sql = 'SELECT * FROM resource WHERE appid = ?';
     $bindParams = array($appId);
     $recordSet = $this->db->Execute($sql, $bindParams);
 

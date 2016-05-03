@@ -27,7 +27,7 @@ class VarsMapper
   public function save(Vars $vars)
   {
     if ($vars->getId() == NULL) {
-      $sql = 'INSERT INTO vars (`appid`, `name`, `val`) VALUES (?, ?, ?)';
+      $sql = 'INSERT INTO vars (appid, name, val) VALUES (?, ?, ?)';
       $bindParams = array(
         $vars->getAppId(),
         $vars->getName(),
@@ -35,7 +35,7 @@ class VarsMapper
       );
       $result = $this->db->Execute($sql, $bindParams);
     } else {
-      $sql = 'UPDATE vars SET `appid`=?, `name`=?, `val`=? WHERE `id` = ?';
+      $sql = 'UPDATE vars SET appid=?, name=?, val=? WHERE id = ?';
       $bindParams = array(
         $vars->getAppId(),
         $vars->getName(),
@@ -60,7 +60,7 @@ class VarsMapper
     if ($vars->getId() === NULL) {
       throw new Core\ApiException('cannot delete var - empty ID', 2);
     }
-    $sql = 'DELETE FROM vars WHERE `id` = ?';
+    $sql = 'DELETE FROM vars WHERE id = ?';
     $bindParams = array($vars->getId());
     $result = $this->db->Execute($sql, $bindParams);
     if (!$result) {
@@ -75,7 +75,7 @@ class VarsMapper
    */
   public function findById($id)
   {
-    $sql = 'SELECT * FROM vars WHERE `id` = ?';
+    $sql = 'SELECT * FROM vars WHERE id = ?';
     $bindParams = array($id);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -88,7 +88,7 @@ class VarsMapper
    */
   public function findByAppIdName($appId, $name)
   {
-    $sql = 'SELECT * FROM vars WHERE `appid` = ? AND `name` = ?';
+    $sql = 'SELECT * FROM vars WHERE appid = ? AND name = ?';
     $bindParams = array($appId, $name);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -100,7 +100,7 @@ class VarsMapper
    */
   public function findByAppId($appId)
   {
-    $sql = 'SELECT * FROM vars WHERE `appid` = ?';
+    $sql = 'SELECT * FROM vars WHERE appid = ?';
     $bindParams = array($appId);
     $recordSet = $this->db->Execute($sql, $bindParams);
 

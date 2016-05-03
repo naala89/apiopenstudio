@@ -61,7 +61,7 @@ class UserLogin extends ProcessorBase
     if (!empty($user->getToken())
       && !empty($user->getTokenTtl())
       && Core\Utilities::date_mysql2php($user->getTokenTtl()) > time()) {
-      return $user->getToken();
+      return array('token' => $user->getToken());
     }
 
     // set up salt if not defined
