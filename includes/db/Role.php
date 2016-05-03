@@ -59,7 +59,9 @@ class Role
    */
   public function debug()
   {
-    Core\Debug::variable($this->rid, 'rid');
-    Core\Debug::variable($this->name, 'name');
+    return array(
+      'rid' => $this->rid,
+      'name' => $this->name,
+    );
   }
 }

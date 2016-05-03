@@ -97,9 +97,11 @@ class Vars
    */
   public function debug()
   {
-    Core\Debug::variable($this->id, 'id');
-    Core\Debug::variable($this->appId, 'appid');
-    Core\Debug::variable($this->name, 'name');
-    Core\Debug::variable($this->val, 'val');
+    return array(
+      'id' => $this->id,
+      'appId' => $this->appId,
+      'name' => $this->name,
+      'val' => $this->val,
+    );
   }
 }

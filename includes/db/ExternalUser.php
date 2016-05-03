@@ -26,10 +26,10 @@ class ExternalUser
    * @param null $dataField2
    * @param null $dataField3
    */
-  public function __construct($id=NULL, $appid=NULL, $externalId=NULL, $externalEntity=NULL, $dataField1=NULL, $dataField2=NULL, $dataField3=NULL)
+  public function __construct($id=NULL, $appId=NULL, $externalId=NULL, $externalEntity=NULL, $dataField1=NULL, $dataField2=NULL, $dataField3=NULL)
   {
     $this->id = $id;
-    $this->appid = $appid;
+    $this->appId = $appId;
     $this->externalId = $externalId;
     $this->externalEntity = $externalEntity;
     $this->dataField1 = $dataField1;
@@ -58,7 +58,7 @@ class ExternalUser
    */
   public function getAppId()
   {
-    return $this->appid;
+    return $this->appId;
   }
 
   /**
@@ -66,7 +66,7 @@ class ExternalUser
    */
   public function setAppId($appId)
   {
-    $this->appid = $appId;
+    $this->appId = $appId;
   }
 
   /**
@@ -154,12 +154,14 @@ class ExternalUser
    */
   public function debug()
   {
-    Core\Debug::variable($this->uid, 'uid');
-    Core\Debug::variable($this->appid, 'appId');
-    Core\Debug::variable($this->externalId, 'externalId');
-    Core\Debug::variable($this->externalEntity, 'externalEntity');
-    Core\Debug::variable($this->dataField1, '$dataField1');
-    Core\Debug::variable($this->dataField2, '$dataField2');
-    Core\Debug::variable($this->dataField3, '$dataField3');
+    return array(
+      'uid' => $this->uid,
+      'appId' => $this->appId,
+      'externalId' => $this->externalId,
+      'externalEntity' => $this->externalEntity,
+      'dataField1' => $this->dataField1,
+      'dataField2' => $this->dataField2,
+      'dataField3' => $this->dataField3,
+    );
   }
 }

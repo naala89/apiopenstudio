@@ -78,8 +78,10 @@ class Account
    */
   public function debug()
   {
-    Core\Debug::variable($this->accId, 'accid');
-    Core\Debug::variable($this->uid, 'uid');
-    Core\Debug::variable($this->name, 'name');
+    return array(
+      'accId' => $this->accId,
+      'uid' => $this->uid,
+      'name' => $this->name,
+    );
   }
 }

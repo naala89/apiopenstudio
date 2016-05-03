@@ -78,8 +78,10 @@ class Application
    */
   public function debug()
   {
-    Core\Debug::variable($this->appId, 'appid');
-    Core\Debug::variable($this->accId, 'accid');
-    Core\Debug::variable($this->name, 'name');
+    return array(
+      'appId' => $this->appId,
+      'accId' => $this->accId,
+      'name' => $this->name,
+    );
   }
 }
