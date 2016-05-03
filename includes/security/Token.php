@@ -41,16 +41,19 @@ class Token extends Processor\ProcessorBase {
    * @throws \Datagator\Core\ApiException
    */
   public function process() {
-    Core\Debug::variable($this->meta, 'Validator TokenConsumer', 4);
+    Core\Debug::variable($this->meta, 'Validator Token', 4);
+
+    $token = $this->val($this->meta->token);
+    if (empty($token)) {
+      throw new Core\ApiException('permission denied', 4, -1, 401);
+    }
 
     $userMapper = new Db\UserMapper($this->request->db);
-    $token = $this->val($this->meta->token);
-
     $user = $userMapper->findBytoken($token);
     if (empty($user->getUid()) || $user->getActive() == 0) {
       throw new Core\ApiException('permission denied', 4, -1, 401);
     }
 
-    return array('result' => true);
+    return true;
   }
 }

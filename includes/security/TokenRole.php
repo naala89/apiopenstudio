@@ -43,14 +43,18 @@ class TokenRole extends Token {
   );
 
   /**
-   * @return mixed
+   * @return bool
+   * @throws \Datagator\Core\ApiException
    * @throws \Datagator\Security\ApiException
    */
   public function process() {
     Core\Debug::variable($this->meta, 'Validator TokenRole', 4);
 
-    $rid = $this->val($this->meta->role);
     $token = $this->val($this->meta->token);
+    if (empty($token)) {
+      throw new Core\ApiException('permission denied', 4, -1, 401);
+    }
+    $rid = $this->val($this->meta->role);
     $userMapper = new UserMapper($this->request->db);
     $userRoleMapper = new UserRoleMapper($this->request->db);
 

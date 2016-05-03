@@ -208,14 +208,11 @@ class Api
   private function _getValidation($resource, $request)
   {
     if (empty($resource->security)) {
-      return;
+      return true;
     }
-    $class = 'Datagator\\Security\\' . ucfirst($this->_cleanData($resource->security->processor));
+    $class = '\\Datagator\\Security\\' . ucfirst($this->_cleanData($resource->security->processor));
     $security = new $class($resource->security->meta, $request);
-    if (!$security->process()) {
-      throw new ApiException('unauthorized', 4, $resource->security->meta->id, 401);
-    }
-    return;
+    return $security->process();
   }
 
   /**
