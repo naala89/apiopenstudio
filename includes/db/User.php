@@ -401,25 +401,27 @@ class User
    */
   public function debug()
   {
-    Core\Debug::variable($this->uid, 'uid');
-    Core\Debug::variable($this->active, 'active');
-    Core\Debug::variable($this->username, 'username');
-    Core\Debug::variable($this->salt, 'salt');
-    Core\Debug::variable($this->hash, 'hash');
-    Core\Debug::variable($this->token, 'token');
-    Core\Debug::variable($this->tokenTtl, 'token_ttl');
-    Core\Debug::variable($this->email, 'email');
-    Core\Debug::variable($this->honorific, 'honorific');
-    Core\Debug::variable($this->nameFirst, 'name_first');
-    Core\Debug::variable($this->nameLast, 'name_last');
-    Core\Debug::variable($this->company, 'company');
-    Core\Debug::variable($this->website, 'website');
-    Core\Debug::variable($this->addressStreet, 'address_street');
-    Core\Debug::variable($this->addressSuburb, 'address_suburb');
-    Core\Debug::variable($this->addressCity, 'address_city');
-    Core\Debug::variable($this->addressState, 'address_state');
-    Core\Debug::variable($this->addressPostcode, 'address_postcode');
-    Core\Debug::variable($this->phoneMobile, 'phone_mobile');
-    Core\Debug::variable($this->phoneWork, 'phone_work');
+    return array(
+      'uid' => $this->uid,
+      'active' => $this->active,
+      'username' => $this->username,
+      'salt' => $this->salt,
+      'hash' => $this->hash,
+      'token' => $this->token,
+      'tokenTtl' => $this->tokenTtl,
+      'email' => $this->email,
+      'honorific' => $this->honorific,
+      'nameFirst' => $this->nameFirst,
+      'nameLast' => $this->nameLast,
+      'company' => $this->company,
+      'website' => $this->website,
+      'addressStreet' => $this->addressStreet,
+      'addressSuburb' => $this->addressSuburb,
+      'addressCity' => $this->addressCity,
+      'addressState' => $this->addressState,
+      'addressPostcode' => $this->addressPostcode,
+      'phone_mobile' => $this->phone_mobile,
+      'phoneWork' => $this->phoneWork,
+    );
   }
 }

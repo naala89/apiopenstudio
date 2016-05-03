@@ -97,9 +97,11 @@ class UserRole
    */
   public function debug()
   {
-    Core\Debug::variable($this->id, 'id');
-    Core\Debug::variable($this->uid, 'uid');
-    Core\Debug::variable($this->rid, 'rid');
-    Core\Debug::variable($this->appId, 'appid');
+    return array(
+      'id' => $this->id,
+      'uid' => $this->uid,
+      'rid' => $this->rid,
+      'appId' => $this->appId,
+    );
   }
 }

@@ -171,11 +171,12 @@ class Resource
    */
   public function debug()
   {
-    Core\Debug::variable($this->id, 'id');
-    Core\Debug::variable($this->appId, 'appid');
-    Core\Debug::variable($this->method, 'method');
-    Core\Debug::variable($this->identifier, 'identifier');
-    Core\Debug::variable($this->meta, 'meta');
-    Core\Debug::variable($this->ttl, 'ttl');
+    return array(
+      'id' => $this->id,
+      'appId' => $this->appId,
+      'method' => $this->method,
+      'identifier' => $this->identifier,
+      'ttl' => $this->ttl,
+    );
   }
 }
