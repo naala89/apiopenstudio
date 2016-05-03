@@ -79,7 +79,7 @@ abstract class ResourceBase extends ProcessorBase
         if (empty($verb)) {
           throw new Core\ApiException('Missing verb', 1, $this->id);
         }
-        $result = $this->fetch($appId, $method, $verb, $noun);
+        $result = $this->fetch($appId, $method, $noun, $verb);
         break;
       case 'delete':
         $appId = $this->request->appId;
@@ -95,7 +95,7 @@ abstract class ResourceBase extends ProcessorBase
         if (empty($verb)) {
           throw new Core\ApiException('Missing verb', 1, $this->id);
         }
-        $result = $this->delete($appId, $method, $verb, $noun);
+        $result = $this->delete($appId, $method, $noun, $verb);
         break;
       default:
         throw new Core\ApiException('unknown method', 3, $this->id);

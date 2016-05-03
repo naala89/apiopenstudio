@@ -27,13 +27,13 @@ class RoleMapper
   public function save(Role $role)
   {
     if ($role->getRid() == NULL) {
-      $sql = 'INSERT INTO role (`name`) VALUES (?, ?)';
+      $sql = 'INSERT INTO role (name) VALUES (?, ?)';
       $bindParams = array(
         $role->getName()
       );
       $result = $this->db->Execute($sql, $bindParams);
     } else {
-      $sql = 'UPDATE external_user SET `name` = ? WHERE `rid` = ?';
+      $sql = 'UPDATE external_user SET name = ? WHERE rid = ?';
       $bindParams = array(
         $role->getName(),
         $role->getRid()
@@ -52,7 +52,7 @@ class RoleMapper
    */
   public function findByRid($rid)
   {
-    $sql = 'SELECT * FROM role WHERE `rid` = ?';
+    $sql = 'SELECT * FROM role WHERE rid = ?';
     $bindParams = array($rid);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -64,7 +64,7 @@ class RoleMapper
    */
   public function findByName($name)
   {
-    $sql = 'SELECT * FROM role WHERE `name` = ?';
+    $sql = 'SELECT * FROM role WHERE name = ?';
     $bindParams = array($name);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);

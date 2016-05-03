@@ -27,7 +27,7 @@ class ExternalUserMapper
   public function save(ExternalUser $user)
   {
     if ($user->getId() == NULL) {
-      $sql = 'INSERT INTO external_user (`appid`, `external_id`, `external_entity`, `data_field_1`, `data_field_2`, `data_field_3`) VALUES (?, ?, ?, ?, ?, ?)';
+      $sql = 'INSERT INTO external_user (appid, external_id, external_entity, data_field_1, data_field_2, data_field_3) VALUES (?, ?, ?, ?, ?, ?)';
       $bindParams = array(
         $user->getAppId(),
         $user->getExternalId(),
@@ -38,7 +38,7 @@ class ExternalUserMapper
       );
       $result = $this->db->Execute($sql, $bindParams);
     } else {
-      $sql = 'UPDATE external_user SET `appid` = ?, `external_id` = ?, `external_entity` = ?, `data_field_1` = ?, `data_field_2` = ?, `data_field_3` = ? WHERE `id` = ?';
+      $sql = 'UPDATE external_user SET appid = ?, external_id = ?, external_entity = ?, data_field_1 = ?, data_field_2 = ?, data_field_3 = ? WHERE id = ?';
       $bindParams = array(
         $user->getAppId(),
         $user->getExternalId(),
@@ -62,7 +62,7 @@ class ExternalUserMapper
    */
   public function findById($id)
   {
-    $sql = 'SELECT * FROM external_user WHERE `id` = ?';
+    $sql = 'SELECT * FROM external_user WHERE id = ?';
     $bindParams = array($id);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -76,7 +76,7 @@ class ExternalUserMapper
    */
   public function findByAppIdEntityExternalId($appId, $externalEntity, $externalId)
   {
-    $sql = 'SELECT * FROM external_user WHERE `appid` = ? AND `external_entity` = ? AND `external_id` = ?';
+    $sql = 'SELECT * FROM external_user WHERE appid = ? AND external_entity = ? AND external_id = ?';
     $bindParams = array($appId, $externalEntity, $externalId);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -88,7 +88,7 @@ class ExternalUserMapper
    */
   public function findByCid($appId)
   {
-    $sql = 'SELECT * FROM external_user WHERE `appid` = ?';
+    $sql = 'SELECT * FROM external_user WHERE appid = ?';
     $bindParams = array($appId);
     $recordSet = $this->db->Execute($sql, $bindParams);
 

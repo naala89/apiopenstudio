@@ -27,7 +27,7 @@ class UserRoleMapper
   public function save(UserRole $userRole)
   {
     if ($userRole->getRid() == NULL) {
-      $sql = 'INSERT INTO user_role (`uid`, `rid`, `appid`) VALUES (?, ?, ?)';
+      $sql = 'INSERT INTO user_role (uid, rid, appid) VALUES (?, ?, ?)';
       $bindParams = array(
         $userRole->getUid(),
         $userRole->getRid(),
@@ -35,7 +35,7 @@ class UserRoleMapper
       );
       $result = $this->db->Execute($sql, $bindParams);
     } else {
-      $sql = 'UPDATE user_role SET `uid`=?, `rid`=?, `appid`=? WHERE `id` = ?';
+      $sql = 'UPDATE user_role SET uid=?, rid=?, appid=? WHERE id = ?';
       $bindParams = array(
         $userRole->getUid(),
         $userRole->getRid(),
@@ -56,7 +56,7 @@ class UserRoleMapper
    */
   public function findById($id)
   {
-    $sql = 'SELECT * FROM user_role WHERE `id` = ?';
+    $sql = 'SELECT * FROM user_role WHERE id = ?';
     $bindParams = array($id);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
@@ -68,7 +68,7 @@ class UserRoleMapper
    */
   public function findByUid($uid)
   {
-    $sql = 'SELECT * FROM user_role WHERE `uid` = ?';
+    $sql = 'SELECT * FROM user_role WHERE uid = ?';
     $bindParams = array($uid);
     $recordSet = $this->db->Execute($sql, $bindParams);
 
@@ -86,7 +86,7 @@ class UserRoleMapper
    */
   public function findByEmail($email)
   {
-    $sql = 'SELECT ur.* FROM user_role ur INNER JOIN `user` u ON u.uid=ur.uid WHERE u.email = ?';
+    $sql = 'SELECT ur.* FROM user_role ur INNER JOIN user u ON u.uid=ur.uid WHERE u.email = ?';
     $bindParams = array($email);
     $recordSet = $this->db->Execute($sql, $bindParams);
 
@@ -104,7 +104,7 @@ class UserRoleMapper
    */
   public function findByRid($rid)
   {
-    $sql = 'SELECT * FROM user_role WHERE `rid` = ?';
+    $sql = 'SELECT * FROM user_role WHERE rid = ?';
     $bindParams = array($rid);
     $recordSet = $this->db->Execute($sql, $bindParams);
 
@@ -122,7 +122,7 @@ class UserRoleMapper
    */
   public function findByAppId($appId)
   {
-    $sql = 'SELECT * FROM user_role WHERE `appid` = ?';
+    $sql = 'SELECT * FROM user_role WHERE appid = ?';
     $bindParams = array($appId);
     $recordSet = $this->db->Execute($sql, $bindParams);
 
@@ -142,7 +142,7 @@ class UserRoleMapper
    */
   public function findByUserAppRole($uid, $appId, $rid)
   {
-    $sql = 'SELECT * FROM user_role WHERE `uid` = ? AND `app_id` = ? AND `rid` = ?';
+    $sql = 'SELECT * FROM user_role WHERE uid = ? AND app_id = ? AND rid = ?';
     $bindParams = array($uid, $appId, $rid);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);

@@ -207,7 +207,6 @@ class Api
    */
   private function _getValidation($resource, $request)
   {
-    Debug::variable($resource->security, 'security');
     if (empty($resource->security)) {
       return;
     }
