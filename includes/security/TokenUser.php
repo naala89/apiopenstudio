@@ -47,6 +47,9 @@ class TokenUser extends Token {
     Core\Debug::variable($this->meta, 'Validator TokenConsumer', 4);
 
     $token = $this->val($this->meta->token);
+    if (empty($token)) {
+      throw new Core\ApiException('permission denied', 4, -1, 401);
+    }
 
     // check user exists
     $this->request->userInterface->validateToken($token);
@@ -63,6 +66,6 @@ class TokenUser extends Token {
       }
     }
 
-    return TRUE;
+    return true;
   }
 }
