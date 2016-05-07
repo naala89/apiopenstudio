@@ -9,6 +9,7 @@ Installation
 1. $ git clone gitolite@naala.com.au:datagator
 2. Install [Composer](https://getcomposer.org/).
 3. $ composer install
+8. $ composer dump-autoload --optimize
 4. Create an empty database and user. Give the user full permission for the DB.
 5. Update includes/config.php:
   1. Set the server role by editing the $_server array so that the LHS values contain the server hostname, and the RHS indicate the server role (development, staging or production).

@@ -47,11 +47,10 @@ Datagator 0.2.1, 3 May 2016
 
 Datagator 0.2.2, Unfinished
 ---------------------------
+Run "composer dump-autoload" on in the docroot after transferring files.
 - unify $request and $resource into one object
 
 TODO:
-- use composer to fetch test yaml
-- remove 'processor' from $details->accepts. processor can be used for all inputs
 - change format of processor meta (see frontend)
 -- Update API->_getValidation()
 - Finish endpoint processors
