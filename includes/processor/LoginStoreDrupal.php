@@ -50,7 +50,8 @@ class LoginStoreDrupal extends ProcessorBase
   public function __construct($meta, $request)
   {
     parent::__construct($meta, $request);
-    $this->user = new Db\ExternalUserMapper($request->db);
+    $db = $this->getDb();
+    $this->user = new Db\ExternalUserMapper($db);
   }
 
   /**
