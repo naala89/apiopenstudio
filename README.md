@@ -115,3 +115,15 @@ Response error codes
 5. External error
 6. Invalid processor input
 7. Invalid application
+
+Testing
+-------
+
+Testing is done with [Codeception](http://codeception.com/).
+From Docroot, run:
+$ vendor/bin/codecept -v
+### Running tests
+If you are running testcase first time in api suite, then in your api directory you will not have api tester file. You need to generate that so run following command:
+$ vendor/bin/codecept build
+Then run:
+$ vendor/bin/codecept run api

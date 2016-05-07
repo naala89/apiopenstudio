@@ -1,9 +1,11 @@
 Datagator 0.1.0, 1 Dec 2015
 ---------------------------
+
 - Installed on Swellnet API
 
 Datagator 0.2.0, 25 April 2016
 ------------------------------
+
 - Improved global handling of error object
 - New YAML importer in uploader
 - Infinite loop detector
@@ -28,6 +30,7 @@ Datagator 0.2.0, 25 April 2016
 
 Datagator 0.2.1, 3 May 2016
 ---------------------------
+
 - added way of defining specific processors in processor->details->accepts, e'g' 'processor varGet'
 - removed Core\UserInterface, having multiple classes with the same name is confusing and extra abstraction was wastung resources
 - User should not generate a new token when a valid one still exists
@@ -47,17 +50,20 @@ Datagator 0.2.1, 3 May 2016
 
 Datagator 0.2.2, Unfinished
 ---------------------------
+
 Run "composer dump-autoload" on in the docroot after transferring files.
+Run "composer update" on in the docroot after transferring files.
 - unify $request and $resource into one object
+
+- add crud processor for account & application
+- add unit tests (Frizby, Codeception, Phing or Jenkins?)
 
 TODO:
 - change format of processor meta (see frontend)
 -- Update API->_getValidation()
 - Finish endpoint processors
 - Validators for oAuth, etc
-- Implement collections
 - Add validation of var type result. This can be declared in $this->required
-- Add unit tests (Phing or Jenkins?)
 - fix problem of not writing to system specified logs. This might be uin Debug::_display()
 - rename VarStore to VarPersistent
 - add check to VarPersistent to prevent accounts creating too many vars in the DB.
