@@ -1,16 +1,7 @@
 <?php
 
 /**
- * Provide token authentication based on token
- *
- * Meta:
- *    {
- *      "type": "token",
- *      "meta": {
- *        "id":<integer>,
- *        "token": <processor|string>
- *      }
- *    }
+ * Provide token authentication based on token.
  */
 
 namespace Datagator\Security;
@@ -41,7 +32,7 @@ class Token extends Processor\ProcessorBase {
    * @throws \Datagator\Core\ApiException
    */
   public function process() {
-    Core\Debug::variable($this->meta, 'Validator Token', 4);
+    Core\Debug::variable($this->meta, 'Security Token', 4);
 
     $token = $this->val($this->meta->token);
     if (empty($token)) {

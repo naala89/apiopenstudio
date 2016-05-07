@@ -17,15 +17,15 @@ namespace Datagator\Security;
 use Datagator\Core;
 use Datagator\Processor;
 
-class TokenDeveloper extends Token {
+class TokenAdmin extends Token {
 
-  protected $role = 'developer';
+  protected $role = 'admin';
   protected $details = array(
-    'machineName' => 'tokenDeveloper',
-    'name' => 'Token (Developer)',
-    'description' => 'Validate the request, requiring the consumer to have a valid token and a role of developer.',
+    'machineName' => 'tokenAdmin',
+    'name' => 'Token (Sys-Admin)',
+    'description' => 'Validate the request, requiring the consumer to have a valid token and a role of admin.',
     'menu' => 'Security',
-    'client' => 'All',
+    'client' => 'System',
     'application' => 'All',
     'input' => array(
       'token' => array(
@@ -37,7 +37,7 @@ class TokenDeveloper extends Token {
   );
 
   public function process() {
-    Core\Debug::variable($this->meta, 'Security TokenDeveloper', 4);
+    Core\Debug::variable($this->meta, 'Security TokenAdmin', 4);
     parent::process();
   }
 }
