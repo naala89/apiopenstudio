@@ -49,7 +49,8 @@ class UserLogin extends ProcessorBase
 
     $username = $this->val($this->meta->username);
     $password = $this->val($this->meta->password);
-    $userMapper = new Db\UserMapper($this->request->db);
+    $db = $this->getDb();
+    $userMapper = new Db\UserMapper($db);
 
     // validate username and active status
     $user = $userMapper->findByUsername($username);

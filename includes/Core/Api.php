@@ -25,6 +25,8 @@ class Api
 {
   private $cache;
   private $test = false; // false or filename in /yaml/test
+  private $request;
+  private $db;
 
   /**
    * Constructor
@@ -46,89 +48,6 @@ class Api
    */
   public function process()
   {
-    // disseminate the request for processing
-    $get = $_GET;
-    $request = $this->_getData($get);
-
-    // get the resource for the processing
-    $result = $this->_getResource($request);
-    $resource = $result->r;
-
-    // validate user for the call, if required
-    $this->_getValidation($resource, $request);
-
-    // fetch the cache of the call, if it is not stale
-    $cache = $this->_getCache($resource, $request);
-    if ($cache !== false) {
-      return $this->_getOutput($resource, $request, $cache);
-    }
-
-    // process the call
-    if (!empty($resource->fragments)) {
-      // replace all fragments with their computed value
-      // need to place fragment results into request object, so that they are available to all processors
-      $request->fragments = $this->_processFragments($resource->fragments, $request);
-    };
-    if (empty($resource->process)) {
-      throw new ApiException('invalid resource - process section missing', 1);
-    }
-    $processor = new Processor\ProcessorBase($resource->process, $request);
-    $data = $processor->process();
-
-    // store the results in cache for next time
-    if (is_object($data) && get_class($data) == 'Error') {
-      Debug::message('Not caching, result is error object');
-    } else {
-      $cacheData = array('data' => $data);
-      $ttl = empty($result->ttl) ? 0 : $result->ttl;
-      $this->cache->set($this->_getCacheKey($request), $cacheData, $ttl);
-    }
-
-    return $this->_getOutput($resource, $request, $data);
-  }
-
-  /**
-   * Process the request and request header into a meaningful array object.
-   *
-   * @param $get
-   * @return bool|\stdClass
-   * @throws \Datagator\Core\ApiException
-   * @throws \Datagator\Core\Exception
-   */
-  private function _getData($get)
-  {
-    if (empty($get['request'])) {
-      return FALSE;
-    }
-
-    $request = new \stdClass();
-    $request->request = $get['request'];
-    $args = explode('/', trim($request->request, '/'));
-    if (sizeof($args) < 2) {
-      // need at least noun and verb
-      throw new ApiException('invalid request', 3);
-    }
-
-    //get request method
-    $request->ip = $_SERVER['REMOTE_ADDR'];
-    $request->method = $this->_getMethod();
-    if($request->method == 'options') {
-      // this is a preflight request - respond with 200 and empty payload
-      die();
-    }
-
-    $request->appId = array_shift($args);
-    $request->noun = array_shift($args);
-    $request->verb = array_shift($args);
-    $request->identifier = $request->noun . $request->verb;
-    $request->args = $args;
-    $header = getallheaders();
-    $request->outFormat = $this->parseType($header, 'Accept', 'json');
-    $request->vars = array_diff_assoc($get, array('request' => $request->request));
-    $request->vars = $request->vars + $_POST;
-
-    Debug::variable($request, 'request', 4);
-
     // set up DB interface
     $dsnOptions = '';
     if (sizeof(Config::$dboptions) > 0) {
@@ -139,103 +58,170 @@ class Api
     }
     $dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptions) : '';
     $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
-    $request->db = \ADONewConnection($dsn);
-    if (!$request->db) {
+    $this->db = \ADONewConnection($dsn);
+    if (!$this->db) {
       throw new ApiException('DB connection failed',2 , -1, 500);
     }
-    $request->db->debug = Config::$debugDb;
+    $this->db->debug = Config::$debugDb;
 
-    return $request;
+    // disseminate the request for processing
+    $get = $_GET;
+    $this->request = $this->_getData($get);
+
+    // get the resource & ttl for the processing
+    $resource = $this->_getResource($this->request);
+    $this->request->resource = json_decode($resource->getMeta());
+    $this->request->ttl = $resource->getTtl();
+
+    // validate user for the call, if required
+    $this->_getValidation();
+
+    // fetch the cache of the call, if it is not stale
+    $data = $this->_getCache();
+    if ($data !== false) {
+      return $this->_getOutput($data);
+    }
+
+    // process the call
+    $this->_processFragments();
+
+    Debug::variable($this->request, 'request', 3);
+    $processor = new Processor\ProcessorBase($this->request->resource->process, $this->request);
+    $data = $processor->process();
+
+    // store the results in cache for next time
+    if (is_object($data) && get_class($data) == 'Error') {
+      Debug::message('Not caching, result is error object');
+    } else {
+      $cacheData = array('data' => $data);
+      $ttl = empty($this->request->ttl) ? 0 : $this->request->ttl;
+      $this->cache->set($this->_getCacheKey(), $cacheData, $ttl);
+    }
+
+    return $this->_getOutput($data);
   }
 
   /**
-   * Get the requested resource and TTL from the DB.
+   * Process the request and request header into a meaningful array object.
    *
-   * @param $request
-   * @return \stdClass
+   * @param $get
+   * @return bool|\stdClass
    * @throws \Datagator\Core\ApiException
    */
-  private function _getResource(&$request)
+  private function _getData($get)
   {
-    $mapper = new Db\ResourceMapper($request->db);
+    if (empty($get['request'])) {
+      return FALSE;
+    }
 
     $result = new \stdClass();
+    $result->request = $get['request'];
+    $args = explode('/', trim($result->request, '/'));
+    if (sizeof($args) < 2) {
+      // need at least noun and verb
+      throw new ApiException('invalid request', 3);
+    }
+
+    //get request method
+    $result->ip = $_SERVER['REMOTE_ADDR'];
+    $result->method = $this->_getMethod();
+    if($result->method == 'options') {
+      // this is a preflight request - respond with 200 and empty payload
+      die();
+    }
+
+    $result->appId = array_shift($args);
+    $result->noun = array_shift($args);
+    $result->verb = array_shift($args);
+    $result->identifier = $result->noun . $result->verb;
+    $result->args = $args;
+    $header = getallheaders();
+    $result->outFormat = $this->parseType($header, 'Accept', 'json');
+    $result->vars = array_diff_assoc($get, array('request' => $result->request));
+    $result->vars = $result->vars + $_POST;
+
+    return $result;
+  }
+
+  /**
+   * Get the requested resource from the DB.
+   *
+   * @param $request
+   * @return \Datagator\Db\Resource
+   * @throws \Datagator\Core\ApiException
+   */
+  private function _getResource($request)
+  {
+    $mapper = new Db\ResourceMapper($this->db);
+
     if (!$this->test) {
       $resource = $mapper->findByAppIdMethodIdentifier($request->appId, $request->method, $request->identifier);
 
       if ($resource->getId() === NULL) {
         throw new ApiException('resource or client not defined', 3, -1, 404);
       }
-
-      $result->r = json_decode($resource->getMeta());
-      $result->ttl = $resource->getTtl();
     } else {
       $filepath = $_SERVER['DOCUMENT_ROOT'] . Config::$dirYaml . 'test/' . $this->test;
       if (!file_exists($filepath)) {
         throw new ApiException("invalid test yaml: $filepath", 1 , -1, 400);
       }
       $array = Spyc::YAMLLoad($filepath);
-      $result = new \stdClass();
-      $result->r = new \stdClass();
-      $result->r->process = $this->_arrayToObject($array['process']);
+      $resource = new Db\Resource();
+      $meta = new \stdClass();
+      $meta->process = $this->_arrayToObject($array['process']);
       if (!empty($array['security'])) {
-        $result->r->security = $this->_arrayToObject($array['security']);
+        $meta->security = $this->_arrayToObject($array['security']);
       }
       if (!empty($array['output'])) {
-        $result->r->output = $this->_arrayToObject($array['output']);
+        $meta->output = $this->_arrayToObject($array['output']);
       }
       if (!empty($array['fragments'])) {
-        $result->r->fragments = $this->_arrayToObject($array['fragments']);
+        $meta->fragments = $this->_arrayToObject($array['fragments']);
       }
-      $result->ttl = $array['ttl'];
-      $request->method = $array['method'];
-      $request->identifier = strtolower($array['uri']['noun']) . strtolower($array['uri']['verb']);
+      $resource->setMeta($meta);
+      $resource->setTtl($array['ttl']);
+      $resource->setMethod($array['method']);
+      $resource->setIdentifier(strtolower($array['uri']['noun']) . strtolower($array['uri']['verb']));
     }
 
-    Debug::variable($result, 'resource', 3);
-
-    return $result;
+    return $resource;
   }
 
   /**
    * Perform api request auth if defined in the meta.
    *
-   * @param $resource
-   * @param $request
    * @return bool
    * @throws \Datagator\Core\ApiException
    */
-  private function _getValidation($resource, $request)
+  private function _getValidation()
   {
-    if (empty($resource->security)) {
+    if (empty($this->request->resource->security)) {
       return true;
     }
-    $class = '\\Datagator\\Security\\' . ucfirst($this->_cleanData($resource->security->processor));
-    $security = new $class($resource->security->meta, $request);
+    $class = '\\Datagator\\Security\\' . ucfirst($this->_cleanData($this->request->resource->security->processor));
+    $security = new $class($this->request->resource->security->meta, $this->request);
     return $security->process();
   }
 
   /**
    * Check cache for any results.
    *
-   * @param $resource
-   * @param $request
    * @return bool
    */
-  private function _getCache($resource, $request)
+  private function _getCache()
   {
     if (!$this->cache->cacheActive()) {
       Debug::message('not searching for cache - inactive', 3);
       return FALSE;
     }
 
-    $cacheKey = $this->_getCacheKey($request);
+    $cacheKey = $this->_getCacheKey();
     Debug::variable($cacheKey, 'cache key', 4);
     $data = $this->cache->get($cacheKey);
 
     if (!empty($data)) {
       Debug::variable($data, 'from cache', 4);
-      return $this->_getOutput($resource, $request, $data);
+      return $this->_getOutput($data);
     }
 
     Debug::message('no cache entry found', 3);
@@ -245,31 +231,32 @@ class Api
   /**
    * Get the cache key for a request.
    *
-   * @param $request
    * @return array|string
    */
-  private function _getCacheKey($request)
+  private function _getCacheKey()
   {
-    return $this->_cleanData($request->method . '_' . $request->request);
+    return $this->_cleanData($this->request->method . '_' . $this->request->request);
   }
 
   /**
-   * Porcess the fragments meta and
+   * Process the fragments meta and store the results in $this->request->fragments.
    *
-   * @param $fragments
-   * @param $request
-   * @return \stdClass
    * @throws \Datagator\Core\ApiException
    */
-  private function _processFragments($fragments, $request) {
-    $result = new \stdClass();
-    foreach ($fragments as $fragment) {
+  private function _processFragments() {
+    if (empty($this->request->resource->fragments)) {
+      return;
+    }
+
+    $this->request->fragments = new \stdClass();
+
+    foreach ($this->request->resource->fragments as $fragment) {
       if (empty($fragment->fragment) || !isset($fragment->meta)) {
         throw new ApiException('bad fragment definition');
       }
       if (is_string($fragment->meta)) {
         // fragment is a constant
-        $result->{$fragment->fragment} = $fragment->meta;
+        $this->request->fragments->{$fragment->fragment} = $fragment->meta;
       } elseif (!empty($fragment->meta->processor) && !empty($fragment->meta->meta)) {
         // fragment is a processor
         $class = '\\Datagator\\Processor\\' . ucfirst(trim($fragment->meta->processor));
@@ -285,34 +272,32 @@ class Api
             }
           }
         }
-        $processor = new $class($fragment->meta->meta, $request);
-        $result->{$fragment->fragment} = $processor->process();
+        $processor = new $class($fragment->meta->meta, $this->request);
+        $this->request->fragments->{$fragment->fragment} = $processor->process();
       } else {
         throw new ApiException('invalid fragment meta',1);
       }
     }
-    return $result;
   }
 
   /**
-   * Get the formatted output r
-   * @param $resource
-   * @param $request
+   * Get the formatted output.
+   *
    * @param $data
    * @return string
    * @throws \Datagator\Core\ApiException
    */
-  private function _getOutput($resource, $request, $data)
+  private function _getOutput($data)
   {
-    $result = 'yamlImport';//'true';
+    $result = true;
 
     // default to response output if no output defined
-    if (empty($resource->output)) {
+    if (empty($this->request->resource->output)) {
       Debug::message('no output section defined - returning the result in the response');
       // translate the output to the correct format as requested in header and return in the response
-      $outFormat = ucfirst($this->_cleanData($request->outFormat));
+      $outFormat = ucfirst($this->_cleanData($this->request->outFormat));
       $outFormat = $outFormat == '**' ? 'Json' : $outFormat;
-      $class = 'Datagator\\Output\\' . $outFormat;
+      $class = '\\Datagator\\Output\\' . $outFormat;
       if (!class_exists($class)) {
         throw new ApiException('output processor undefined: ' . $outFormat, 1);
       }
@@ -321,12 +306,12 @@ class Api
       $obj->setStatus();
       $obj->setHeader();
     } else {
-      foreach ($resource->output as $index => $output) {
+      foreach ($this->request->resource->output as $index => $output) {
         if (is_string($output) && $output == 'response') {
           // translate the output to the correct format as requested in header and return in the response
-          $outFormat = ucfirst($this->_cleanData($request->outFormat));
+          $outFormat = ucfirst($this->_cleanData($this->request->outFormat));
           $outFormat = $outFormat == '**' ? 'Json' : $outFormat;
-          $class = 'Datagator\\Output\\' . $outFormat;
+          $class = '\\Datagator\\Output\\' . $outFormat;
           if (!class_exists($class)) {
             throw new ApiException('output processor undefined: ' . $outFormat, 1);
           }
@@ -336,8 +321,8 @@ class Api
           $obj->setHeader();
         } else {
           // treat as a multiple output and let the class take care of the output.
-          foreach ($output as $type=> $meta) {
-            $class = 'Datagator\\Output\\' . $type;
+          foreach ($output as $type => $meta) {
+            $class = '\\Datagator\\Output\\' . $type;
             if (!class_exists($class)) {
               throw new ApiException('output processor undefined: ' . $type, 1);
             }

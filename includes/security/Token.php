@@ -48,7 +48,8 @@ class Token extends Processor\ProcessorBase {
       throw new Core\ApiException('permission denied', 4, -1, 401);
     }
 
-    $userMapper = new Db\UserMapper($this->request->db);
+    $db = $this->getDb();
+    $userMapper = new Db\UserMapper($db);
     $user = $userMapper->findBytoken($token);
     if (empty($user->getUid()) || $user->getActive() == 0) {
       throw new Core\ApiException('permission denied', 4, -1, 401);

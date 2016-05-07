@@ -50,7 +50,8 @@ class VarPersistent extends ProcessorBase
     $name = $this->val($this->meta->name);
     $strict = !empty($this->meta->strict) ? $this->val($this->meta->strict) : 1;
     $operation = $this->val($this->meta->operation);
-    $mapper = new Db\VarsMapper($this->request->db);
+    $db = $this->getDb();
+    $mapper = new Db\VarsMapper($db);
     $vars = $mapper->findByAppIdName($this->request->appId, $name);
 
     switch($operation) {
