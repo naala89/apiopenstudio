@@ -1,0 +1,40 @@
+name: Account create
+
+description: Create an account.
+
+uri:
+  noun: account
+  verb: manage
+
+method: post
+
+ttl: 0
+
+security:
+  processor: tokenAdmin
+  meta:
+    id: 1
+    token:
+      fragment: userToken
+
+process:
+  processor: account
+  meta:
+    id: 3
+    name:
+      processor: varUri
+      meta:
+        id: 4
+        index: 0
+    action: create
+    token:
+      fragment: userToken
+
+fragments:
+	- fragment: userToken
+      meta:
+        processor: varGet
+          meta:
+            id: 2
+            name: token
+

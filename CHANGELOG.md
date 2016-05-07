@@ -54,8 +54,8 @@ Datagator 0.2.2, Unfinished
 Run "composer dump-autoload" on in the docroot after transferring files.
 Run "composer update" on in the docroot after transferring files.
 - unify $request and $resource into one object
-
 - add crud processor for account & application
+
 - add unit tests (Frizby, Codeception, Phing or Jenkins?)
 
 TODO:

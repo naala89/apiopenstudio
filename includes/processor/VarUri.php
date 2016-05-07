@@ -2,15 +2,6 @@
 
 /**
  * URL variable
- *
- * METADATA
- * {
- *    "type":"uriVar",
- *    "meta":{
- *      "id":<integer>,
- *      "index":<integer>,
- *    }
- *  }
  */
 
 namespace Datagator\Processor;
