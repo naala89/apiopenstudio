@@ -17,14 +17,18 @@
  */
 
 namespace Datagator\Processor;
+use Datagator\Core;
+use Datagator\Db\UserMapper;
 
-class DrupalSession extends \Processor
+class DrupalSession extends ProcessorBase
 {
   public function process()
   {
     Debug::variable($this->meta, 'ProcessorDrupalSession');
     $token = $this->val($this->meta->token);
     $externalId = $this->val($this->meta->externalId);
+    $db = $this->getDb();
+    $userMapper = new UserMapper($db);
 
     if (!empty($token)) {
       $sql = 'SELECT * FROM user WHERE token=?';
@@ -33,11 +37,11 @@ class DrupalSession extends \Processor
       $sql = 'SELECT * FROM user WHERE external_id=?';
       $bindParams = array($externalId);
     } else {
-      throw new \Datagator\includes\ApiException('externalId or token not defined', 3, $this->id, 417);
+      throw new Core\ApiException('externalId or token not defined', 3, $this->id, 417);
     }
     $recordSet = $this->request->db->Execute($sql, $bindParams);
     if ($recordSet->RecordCount() < 1) {
-      throw new \Datagator\includes\ApiException('Invalid token or external ID', 3, $this->id, 417);
+      throw new Core\ApiException('Invalid token or external ID', 3, $this->id, 417);
     }
 
     return $recordSet->fields['session_name'] . '=' . $recordSet->fields['session_id'];

@@ -55,8 +55,9 @@ class TokenRole extends Token {
       throw new Core\ApiException('permission denied', 4, -1, 401);
     }
     $rid = $this->val($this->meta->role);
-    $userMapper = new UserMapper($this->request->db);
-    $userRoleMapper = new UserRoleMapper($this->request->db);
+    $db = $this->getDb();
+    $userMapper = new UserMapper($db);
+    $userRoleMapper = new UserRoleMapper($db);
 
     // Get UID
     $user = $userMapper->findBytoken($token);
@@ -67,7 +68,7 @@ class TokenRole extends Token {
 
     // convert role name to rid
     if (!filter_var($rid, FILTER_VALIDATE_INT)) {
-      $roleMapper = new RoleMapper($this->request->db);
+      $roleMapper = new RoleMapper($db);
       $row = $roleMapper->findByName($rid);
       $rid = $row->getRid();
     }

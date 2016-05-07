@@ -26,7 +26,7 @@ Datagator 0.2.0, 25 April 2016
 - changed Object processor, so that if input is not an array, then all the fields and values sit at root
 - import resources now has full error feedback to devs
 
-Datagator 0.2.1, Unfinished
+Datagator 0.2.1, 3 May 2016
 ---------------------------
 - added way of defining specific processors in processor->details->accepts, e'g' 'processor varGet'
 - removed Core\UserInterface, having multiple classes with the same name is confusing and extra abstraction was wastung resources
@@ -45,8 +45,12 @@ Datagator 0.2.1, Unfinished
 - created Fragments section - this is a partial meta, allowing reuse of processor results - especially useful in IfThenElse to cut down on processing time
 - change all resource meta 'validation' to 'security'
 
+Datagator 0.2.2, Unfinished
+---------------------------
+- unify $request and $resource into one object
+
 TODO:
-- unify $request and $resource into one object 
+- use composer to fetch test yaml
 - remove 'processor' from $details->accepts. processor can be used for all inputs
 - change format of processor meta (see frontend)
 -- Update API->_getValidation()

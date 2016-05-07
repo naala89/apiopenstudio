@@ -10,6 +10,7 @@ use Datagator\Db;
 
 abstract class ResourceBase extends ProcessorBase
 {
+  protected $db;
   protected $details = array(
     'name' => 'Resource',
     'description' => 'Create, edit or fetch a custom API resource for the application.',
@@ -52,6 +53,8 @@ abstract class ResourceBase extends ProcessorBase
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ResourceBase', 4);
+
+    $this->db = $this->getDb();
 
     switch ($this->request->method) {
       case 'post':
@@ -149,7 +152,7 @@ abstract class ResourceBase extends ProcessorBase
     }
     $ttl = !empty($data['ttl']) ? $data['ttl'] : 0;
 
-    $mapper = new Db\ResourceMapper($this->request->db);
+    $mapper = new Db\ResourceMapper($this->db);
     $resource = $mapper->findByAppIdMethodIdentifier($this->request->appId, $method, $identifier);
     if (empty($resource->getId())) {
       $resource->setAppId($this->request->appId);
@@ -190,7 +193,7 @@ abstract class ResourceBase extends ProcessorBase
     }
     $identifier = strtolower($noun) . strtolower($verb);
 
-    $mapper = new Db\ResourceMapper($this->request->db);
+    $mapper = new Db\ResourceMapper($this->db);
     $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
     if (empty($resource->getId())) {
       throw new Core\ApiException('Resource not found', 1, $this->id, 200);
@@ -235,7 +238,7 @@ abstract class ResourceBase extends ProcessorBase
     }
     $identifier = strtolower($noun) . strtolower($verb);
 
-    $mapper = new Db\ResourceMapper($this->request->db);
+    $mapper = new Db\ResourceMapper($this->db);
     $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
     return $mapper->delete($resource);
   }

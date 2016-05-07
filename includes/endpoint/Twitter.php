@@ -13,6 +13,7 @@ class Twitter extends Processor\ProcessorBase
 {
   private $apiUrl = 'https://api.twitter.com/';
   private $externalEntity = 'twitter';
+  private $db;
   protected $details = array(
     'name' => 'Twitter',
     'description' => 'Fetch results from the Twitter API.',
@@ -68,9 +69,10 @@ class Twitter extends Processor\ProcessorBase
     $appId = $this->request->appId;
     $twitterId = $this->val($this->meta->twitterId);
     $twitterId = empty($twitterId) ? 'twitter' : $twitterId;
+    $this->db = $this->getDb();
 
     // get existing token if it exists and if not then fetch a new one
-    $mapper = new ExternalUserMapper($this->request->db);
+    $mapper = new ExternalUserMapper($this->db);
     $externalUser = $mapper->findByAppIdEntityExternalId($appId, 'twitter', $twitterId);
     $token = empty($externalUser->getDataField1()) ? $this->_getToken($key, $secret, $appId, $twitterId) : $externalUser->getDataField1();
 
@@ -130,7 +132,7 @@ class Twitter extends Processor\ProcessorBase
     $token = $response['access_token'];
 
     // save token to db
-    $mapper = new ExternalUserMapper($this->request->db);
+    $mapper = new ExternalUserMapper($this->db);
     $externalUser = $mapper->findByAppIdEntityExternalId($appId, $this->externalEntity, $twitterId);
     if (empty($externalUser->getId())) {
       $externalUser->setAppId($appId);

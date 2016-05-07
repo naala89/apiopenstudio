@@ -112,7 +112,7 @@ class ResourceSwagger extends ResourceBase
     $meta['process'] =  $data['process'];
     $ttl = !empty($data['ttl']) ? $data['ttl'] : 0;
 
-    $mapper = new ResourceMapper($this->request->db);
+    $mapper = new ResourceMapper($this->db);
     $resource = $mapper->findByAppIdMethodIdentifier($this->request->appId, $method, $identifier);
     if (empty($resource->getId())) {
       $resource->setAppId($this->request->appId);
