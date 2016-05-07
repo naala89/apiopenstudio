@@ -44,7 +44,7 @@ class TokenUser extends Token {
    * @throws \Datagator\Core\ApiException
    */
   public function process() {
-    Core\Debug::variable($this->meta, 'Validator TokenConsumer', 4);
+    Core\Debug::variable($this->meta, 'Validator TokenUser', 4);
 
     $token = $this->val($this->meta->token);
     if (empty($token)) {

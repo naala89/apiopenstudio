@@ -35,4 +35,9 @@ class TokenConsumer extends Token {
       )
     ),
   );
+
+  public function process() {
+    Core\Debug::variable($this->meta, 'Security TokenConsumer', 4);
+    parent::process();
+  }
 }

@@ -35,4 +35,9 @@ class TokenSysAdmin extends Token {
       )
     ),
   );
+
+  public function process() {
+    Core\Debug::variable($this->meta, 'Security TokenSysAdmin', 4);
+    parent::process();
+  }
 }
