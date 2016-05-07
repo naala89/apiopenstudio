@@ -49,6 +49,23 @@ class AccountMapper
   }
 
   /**
+   * @param $uid
+   * @param $name
+   * @return bool
+   * @throws \Datagator\Core\ApiException
+   */
+  public function deleteByUidName($uid, $name)
+  {
+    $sql = 'DELETE FROM account WHERE uid = ? AND accid = ?';
+    $bindParams = array($uid, $name);
+    $result = $this->db->Execute($sql, $bindParams);
+    if (!$result) {
+      throw new Core\ApiException($this->db->ErrorMsg(), 2);
+    }
+    return true;
+  }
+
+  /**
    * @param $accId
    * @return \Datagator\Db\ExternalUser
    */
@@ -112,6 +129,19 @@ class AccountMapper
     }
 
     return $entries;
+  }
+
+  /**
+   * @param $uid
+   * @param $name
+   * @return \Datagator\Db\Account
+   */
+  public function findByUidName($uid, $name)
+  {
+    $sql = 'SELECT * FROM account WHERE uid = ? AND name = ?';
+    $bindParams = array($uid, $name);
+    $row = $this->db->GetRow($sql, $bindParams);
+    return $this->mapArray($row);
   }
 
   /**
