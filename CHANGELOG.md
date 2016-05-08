@@ -55,10 +55,12 @@ Run "composer dump-autoload" on in the docroot after transferring files.
 Run "composer update" on in the docroot after transferring files.
 - unify $request and $resource into one object
 - add crud processor for account & application
-
-- add unit tests (Frizby, Codeception, Phing or Jenkins?)
+- added crud api calls for account & application
+- fixed issues in new resource validation
+- consolidated DB structure and data into one file
 
 TODO:
+- add unit tests (Frizby, Codeception, Phing or Jenkins?)
 - change format of processor meta (see frontend)
 -- Update API->_getValidation()
 - Finish endpoint processors
