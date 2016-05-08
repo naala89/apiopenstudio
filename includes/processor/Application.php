@@ -5,6 +5,7 @@
  */
 
 namespace Datagator\Processor;
+use Codeception\Util\Debug;
 use Datagator\Core;
 use Datagator\Db;
 
@@ -26,11 +27,6 @@ class Application extends ProcessorBase
         'cardinality' => array(0, 1),
         'accepts' => array('processor', 'literal'),
       ),
-      'action' => array(
-        'description' => 'CRUD action.',
-        'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"create"', '"fetch"', '"delete"'),
-      ),
       'token' => array(
         'description' => "The users's token.",
         'cardinality' => array(1, 1),
@@ -43,10 +39,10 @@ class Application extends ProcessorBase
   {
     Core\Debug::variable($this->meta, 'Processor Account', 4);
 
-    $appName = $this->val($this->meta->name);
-    $accName = $this->val($this->meta->account);
-    $action = $this->val($this->meta->action);
+    $appName = $this->val($this->meta->applicationName);
+    $accName = $this->val($this->meta->accountName);
     $token = $this->val($this->meta->token);
+    $action = $this->request->method;
     $db = $this->getDb();
 
     // need uid to fetch correct account by name
@@ -65,10 +61,10 @@ class Application extends ProcessorBase
     }
 
     switch ($action) {
-      case 'create':
+      case 'post':
         return $this->_create($db, $accId, $appName);
         break;
-      case 'fetch':
+      case 'get':
         return $this->_fetch($db, $accId, $appName);
         break;
       case 'delete':

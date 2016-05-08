@@ -21,11 +21,6 @@ class Account extends ProcessorBase
         'cardinality' => array(0, 1),
         'accepts' => array('processor', 'literal'),
       ),
-      'action' => array(
-        'description' => 'CRUD action.',
-        'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"create"', '"fetch"', '"delete"'),
-      ),
       'token' => array(
         'description' => "The users's token.",
         'cardinality' => array(1, 1),
