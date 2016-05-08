@@ -56,7 +56,7 @@ class ApplicationMapper
    */
   public function deleteByAccIdName($accId, $name)
   {
-    $sql = 'DELETE FROM account WHERE uid = ? AND accid = ?';
+    $sql = 'DELETE FROM application WHERE accid = ? AND name = ?';
     $bindParams = array($accId, $name);
     $result = $this->db->Execute($sql, $bindParams);
     if (!$result) {
