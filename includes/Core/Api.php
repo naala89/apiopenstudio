@@ -74,7 +74,7 @@ class Api
     $this->request->ttl = $resource->getTtl();
 
     // validate user for the call, if required
-    $this->_getValidation();
+    $this->ValidateSecurity();
 
     // fetch the cache of the call, if it is not stale
     $data = $this->_getCache();
@@ -82,10 +82,12 @@ class Api
       return $this->_getOutput($data);
     }
 
-    // process the call
-    $this->_processFragments();
+    // process the fragments
+    $this->request->fragments = $this->_processFragments();
 
     Debug::variable($this->request, 'request', 3);
+
+    // process the call
     $processor = new Processor\ProcessorBase($this->request->resource->process, $this->request);
     $data = $processor->process();
 
@@ -193,7 +195,7 @@ class Api
    * @return bool
    * @throws \Datagator\Core\ApiException
    */
-  private function _getValidation()
+  private function ValidateSecurity()
   {
     if (empty($this->request->resource->security)) {
       return true;
@@ -248,7 +250,7 @@ class Api
       return;
     }
 
-    $this->request->fragments = new \stdClass();
+    $result = new \stdClass();
 
     foreach ($this->request->resource->fragments as $fragment) {
       if (empty($fragment->fragment) || !isset($fragment->meta)) {
@@ -256,7 +258,7 @@ class Api
       }
       if (is_string($fragment->meta)) {
         // fragment is a constant
-        $this->request->fragments->{$fragment->fragment} = $fragment->meta;
+        $result->{$fragment->fragment} = $fragment->meta;
       } elseif (!empty($fragment->meta->processor) && !empty($fragment->meta->meta)) {
         // fragment is a processor
         $class = '\\Datagator\\Processor\\' . ucfirst(trim($fragment->meta->processor));
@@ -273,11 +275,12 @@ class Api
           }
         }
         $processor = new $class($fragment->meta->meta, $this->request);
-        $this->request->fragments->{$fragment->fragment} = $processor->process();
+        $result->{$fragment->fragment} = $processor->process();
       } else {
         throw new ApiException('invalid fragment meta',1);
       }
     }
+    return $result;
   }
 
   /**
