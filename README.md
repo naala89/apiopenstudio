@@ -15,8 +15,7 @@ Installation
   1. Set the server role by editing the $_server array so that the LHS values contain the server hostname, and the RHS indicate the server role (development, staging or production).
   2. Set the database credentials that you created in step 5 in the server role function you defined in step 5.1.
   3. Set any other desired values you require in the role function you defined in $_server (see Config section for details)
-6. run includes/scripts/db/structure.sql.
-7. run includes/scripts/db/data.sql.
+6. run includes/scripts/db/dbBase.sql.
 
 Requirements
 ------------
