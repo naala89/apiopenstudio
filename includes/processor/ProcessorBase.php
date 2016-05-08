@@ -8,6 +8,7 @@
  */
 
 namespace Datagator\Processor;
+use Codeception\Util\Debug;
 use Datagator\Config;
 use Datagator\Core;
 
@@ -205,10 +206,18 @@ class ProcessorBase
 
     if ($this->isFragment($obj)) {
       $fragmentName = $obj->fragment;
-      if (!isset($this->request->fragments->{$fragmentName})) {
+      $fragment = false;
+      foreach ($this->request->resource->fragments as $val) {
+        if ($val->fragment == $fragmentName) {
+          $fragment = $val;
+          break;
+        }
+      }
+      if (!$fragment) {
         throw new Core\ApiException("fragment $fragmentName does not exist",1, $this->id);
       }
-      $result = $this->request->fragments->{$fragmentName};
+      $processor = $this->getProcessor($fragment->meta);
+      $result = $processor->process();
     } elseif ($this->isProcessor($obj)) {
       // this is a processor
       $processor = $this->getProcessor($obj);
