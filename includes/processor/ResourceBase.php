@@ -5,6 +5,7 @@
  */
 
 namespace Datagator\Processor;
+use Codeception\Util\Debug;
 use Datagator\Core;
 use Datagator\Db;
 
@@ -58,13 +59,14 @@ abstract class ResourceBase extends ProcessorBase
 
     switch ($this->request->method) {
       case 'post':
-        $resource = $this->val($this->meta->resource);
+        $string = $this->val($this->meta->resource);
+        $resource = $this->_importData($string);
+        if (sizeof($resource) == 1 && isset($resource[0])) {
+          // resource is not JSON. Fallback to assuming this is a filename.
+          $resource = $this->_importData($this->getFile($resource[0]));
+        }
         if (empty($resource)) {
           throw new Core\ApiException('Empty resource', 1, $this->id);
-        }
-        $file = $this->getFile($this->meta->resource);
-        if ($file !== false) {
-          $resource = $file;
         }
         $result = $this->save($resource);
         break;
@@ -135,7 +137,7 @@ abstract class ResourceBase extends ProcessorBase
    */
   protected function save($data)
   {
-    $data = $this->_importData($data);
+    Core\Debug::variable($data, 'New resource', 1);
     $this->_validateData($data);
 
     $name = $data['name'];
@@ -289,12 +291,12 @@ abstract class ResourceBase extends ProcessorBase
     }
 
     // check input types for processors
-    $this->_validateProcessor($data['process']);
+    $this->_validateProcessor($data['process'], $data['fragments']);
     if (isset($data['output'])) {
-      $this->_validateProcessor($data['output']);
+      $this->_validateProcessor($data['output'], $data['fragments']);
     }
     if (isset($data['security'])) {
-      $this->_validateProcessor($data['security']);
+      $this->_validateProcessor($data['security'], $data['fragments']);
     }
     if (isset($data['fragments'])) {
       $this->_validateFragments($data['fragments']);
@@ -307,9 +309,10 @@ abstract class ResourceBase extends ProcessorBase
    * @param $obj
    * @throws \Datagator\Core\ApiException
    */
-  private function _validateProcessor($obj) {
+  private function _validateProcessor($obj, $fragments) {
     // check valid processor structure
     if (empty($obj['processor']) || empty($obj['meta'])) {
+      Core\Debug::variable($obj);
       throw new Core\ApiException("invalid processor structure, missing 'processor' or 'meta' keys in new resource", 6, -1, 406);
     }
 
@@ -353,13 +356,25 @@ abstract class ResourceBase extends ProcessorBase
       }
       // validate type
       if (!empty($obj['meta'][$inputName])) {
-        if (is_array($obj['meta'][$inputName]) && sizeof($obj['meta'][$inputName]) != 2  && !isset($obj['meta'][$inputName]['processor']) && !isset($obj['meta'][$inputName]['meta'])) {
-          // This check is for values that are array of values, but we also have to filter out processors
-          foreach ($obj['meta'][$inputName] as $element) {
-            $this->_validateTypeValue($element, $inputDef['accepts'], $inputName);
+        if (is_array($obj['meta'][$inputName])) {
+          if (!empty($obj['meta'][$inputName]['fragment'])) {
+            // validate the fragment exists
+            $fragmentName = $obj['meta'][$inputName]['fragment'];
+            $validFragment = false;
+            foreach ($fragments as $fragment) {
+              if ($fragment['fragment'] == $fragmentName) {
+                $validFragment = true;
+              }
+            }
+            if (!$validFragment) {
+              throw new Core\ApiException("Fragment '$fragmentName'  not defined", 6, $obj['meta']['id'], 406);
+            }
+          } elseif (empty($obj['meta'][$inputName]['processor']) && empty($obj['meta'][$inputName]['meta'])) {
+            // This check is for values that are array of values, but we also have to filter out processors
+            foreach ($obj['meta'][$inputName] as $element) {
+              $this->_validateTypeValue($element, $inputDef['accepts'], $inputName, $fragments);
+            }
           }
-        } else {
-          //$this->_validateTypeValue($obj['meta'][$inputName], $inputDef['accepts'], $inputName);
         }
       }
     }
@@ -376,12 +391,12 @@ abstract class ResourceBase extends ProcessorBase
     }
     foreach ($fragments as $fragment) {
       // check valid fragment structure
-      if (empty($fragment['fragment']) || empty($obj['meta'])) {
+      if (empty($fragment['fragment']) || empty($fragment['meta'])) {
         throw new Core\ApiException("invalid fragment structure, missing 'fragments' or 'meta' keys in new resource", 6, -1, 406);
       }
       if (!is_string($fragment['meta'])) {
         // this must be a processor
-        $this->_validateProcessor(($fragment['meta']));
+        $this->_validateProcessor(($fragment['meta']), $fragments);
       }
     }
 
@@ -394,14 +409,21 @@ abstract class ResourceBase extends ProcessorBase
    * @param $element
    * @param $accepts
    * @param $inputName
+   * @param $fragments
    * @throws \Datagator\Core\ApiException
    */
-  private function _validateTypeValue($element, $accepts, $inputName) {
+  private function _validateTypeValue($element, $accepts, $inputName, $fragments) {
     $valid = false;
+    Core\Debug::variable($element);
 
     foreach ($accepts as $accept) {
+      if (isset($element['fragment'])) {
+        //$this->_validateProcessor($this->request->fragments->{$element['fragment']}, $accepts, $inputName);
+        $valid = true;
+        break;
+      }
       if ($accept == 'processor' && isset($element['processor']) && isset($element['meta'])) {
-        $this->_validateProcessor($element);
+        $this->_validateProcessor($element, $fragments);
         $valid = true;
         break;
       } elseif (strpos($accept, 'processor ') !== false && isset($element['processor']) && isset($element['meta'])) {
@@ -446,7 +468,7 @@ abstract class ResourceBase extends ProcessorBase
     }
 
     if (!$valid) {
-      throw new Core\ApiException("invalid input ($element) for $inputName in new resource. only allowed inputs are: " . implode(', ', $accepts), 6, $element['id'], 406);
+      throw new Core\ApiException("invalid input ($element) for $inputName in new resource. only allowed inputs are: " . implode(', ', $accepts), 6);
     }
   }
 }

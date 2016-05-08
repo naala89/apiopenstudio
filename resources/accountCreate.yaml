@@ -31,10 +31,9 @@ process:
       fragment: userToken
 
 fragments:
-	- fragment: userToken
+  - fragment: userToken
+    meta:
+      processor: varGet
       meta:
-        processor: varGet
-          meta:
-            id: 2
-            name: token
-
+        id: 2
+        name: token
