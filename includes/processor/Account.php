@@ -39,8 +39,8 @@ class Account extends ProcessorBase
     Core\Debug::variable($this->meta, 'Processor Account', 4);
 
     $accName = $this->val($this->meta->name);
-    $action = $this->val($this->meta->action);
     $token = $this->val($this->meta->token);
+    $action = $this->request->method;
     $db = $this->getDb();
 
     $userMapper = new Db\UserMapper($db);
@@ -51,10 +51,10 @@ class Account extends ProcessorBase
     }
 
     switch ($action) {
-      case 'create':
+      case 'post':
         return $this->_create($db, $uid, $accName);
         break;
-      case 'fetch':
+      case 'get':
         return $this->_fetch($db, $uid, $accName);
         break;
       case 'delete':
