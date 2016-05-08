@@ -6,19 +6,19 @@ CREATE TABLE IF NOT EXISTS `account` (
 `accid` int(10) unsigned NOT NULL COMMENT 'account id',
   `uid` int(10) unsigned NOT NULL COMMENT 'user id',
   `name` varchar(255) NOT NULL COMMENT 'name of account'
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 TRUNCATE TABLE `account`;
 INSERT INTO `account` (`accid`, `uid`, `name`) VALUES
 (1, 1, 'Datagator'),
-(3, 10, 'Test');
+(3, 10, 'test');
 
 DROP TABLE IF EXISTS `application`;
 CREATE TABLE IF NOT EXISTS `application` (
 `appid` int(10) unsigned NOT NULL COMMENT 'application id',
   `accid` int(10) unsigned NOT NULL COMMENT 'account id',
   `name` varchar(255) NOT NULL COMMENT 'application name'
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 TRUNCATE TABLE `application`;
 INSERT INTO `application` (`appid`, `accid`, `name`) VALUES
@@ -81,12 +81,12 @@ INSERT INTO `resource` (`id`, `appid`, `name`, `description`, `method`, `identif
 (62, 2, 'JSON export', 'Export a resource in string or JSON format.', 'get', 'resourcejson', '{"security":{"processor":"tokenDeveloper","meta":{"id":1,"token":{"processor":"varGet","meta":{"id":2,"name":"token"}}}},"process":{"processor":"resourceJson","meta":{"id":3,"method":{"processor":"varGet","meta":{"id":4,"name":"method"}},"noun":{"processor":"varGet","meta":{"id":5,"name":"noun"}},"verb":{"processor":"varGet","meta":{"id":6,"name":"verb"}}}}}', 0),
 (74, 2, 'Resource delete', 'Delete a resource.', 'delete', 'resourcedelete', '{"security":{"processor":"tokenDeveloper","meta":{"id":1,"token":{"processor":"varGet","meta":{"id":2,"name":"token"}}}},"process":{"processor":"resourceYaml","meta":{"id":3,"method":{"processor":"varGet","meta":{"id":4,"name":"method"}},"noun":{"processor":"varGet","meta":{"id":5,"name":"noun"}},"verb":{"processor":"varGet","meta":{"id":6,"name":"verb"}}}}}', 0),
 (76, 2, 'Swagger import', 'Create resource/s from a Swagger document.', 'post', 'resourceswagger', '{"security":{"processor":"tokenDeveloper","meta":{"id":1,"token":{"processor":"varGet","meta":{"id":2,"name":"token"}}}},"process":{"processor":"resourceSwagger","meta":{"id":3,"resource":"resource"}}}', 0),
-(77, 1, 'Account create', 'Create an account.', 'post', 'accountmanage', '{"security":{"processor":"tokenAdmin","meta":{"id":1,"token":{"fragment":"userToken"}}},"process":{"processor":"account","meta":{"id":3,"name":{"processor":"varUri","meta":{"id":4,"index":0}},"action":"create","token":{"fragment":"userToken"}}},"fragments":[{"fragment":"userToken","meta":{"processor":"varGet","meta":{"id":2,"name":"token"}}}]}', 0),
-(78, 1, 'Account delete', 'Delete an account.', 'delete', 'accountmanage', '{"security":{"processor":"tokenAdmin","meta":{"id":1,"token":{"fragment":"userToken"}}},"process":{"processor":"account","meta":{"id":3,"name":{"processor":"varUri","meta":{"id":4,"index":0}},"action":"delete","token":{"fragment":"userToken"}}},"fragments":[{"fragment":"userToken","meta":{"processor":"varGet","meta":{"id":2,"name":"token"}}}]}', 0),
-(79, 1, 'Account fetch', 'Fetch an account.', 'get', 'accountmanage', '{"security":{"processor":"tokenAdmin","meta":{"id":1,"token":{"fragment":"userToken"}}},"process":{"processor":"account","meta":{"id":3,"name":{"processor":"varUri","meta":{"id":4,"index":0}},"action":"fetch","token":{"fragment":"userToken"}}},"fragments":[{"fragment":"userToken","meta":{"processor":"varGet","meta":{"id":2,"name":"token"}}}]}', 0),
-(80, 1, 'Application create', 'Create an application.', 'post', 'applicationmanage', '{"security":{"processor":"tokenAdmin","meta":{"id":1,"token":{"fragment":"userToken"}}},"process":{"processor":"account","meta":{"id":3,"0":{"processor":"varUri","meta":{"id":4,"index":0}},"name":{"processor":"varUri","meta":{"id":5,"index":1}},"action":"create","token":{"fragment":"userToken"}}},"fragments":[{"fragment":"userToken","meta":{"processor":"varGet","meta":{"id":2,"name":"token"}}}]}', 0),
-(81, 1, 'Application delete', 'Delete an application.', 'delete', 'applicationmanage', '{"security":{"processor":"tokenAdmin","meta":{"id":1,"token":{"fragment":"userToken"}}},"process":{"processor":"account","meta":{"id":3,"0":{"processor":"varUri","meta":{"id":4,"index":0}},"name":{"processor":"varUri","meta":{"id":5,"index":1}},"action":"delete","token":{"fragment":"userToken"}}},"fragments":[{"fragment":"userToken","meta":{"processor":"varGet","meta":{"id":2,"name":"token"}}}]}', 0),
-(82, 1, 'Application fetch', 'Fetch an application.', 'get', 'applicationmanage', '{"security":{"processor":"tokenAdmin","meta":{"id":1,"token":{"fragment":"userToken"}}},"process":{"processor":"account","meta":{"id":3,"0":{"processor":"varUri","meta":{"id":4,"index":0}},"name":{"processor":"varUri","meta":{"id":5,"index":1}},"action":"fetch","token":{"fragment":"userToken"}}},"fragments":[{"fragment":"userToken","meta":{"processor":"varGet","meta":{"id":2,"name":"token"}}}]}', 0);
+(77, 1, 'Account create', 'Create an account.', 'post', 'accountmanage', '{"security":{"processor":"tokenAdmin","meta":{"id":1,"token":{"fragment":"userToken"}}},"process":{"processor":"account","meta":{"id":3,"name":{"processor":"varUri","meta":{"id":4,"index":0}},"token":{"fragment":"userToken"}}},"fragments":[{"fragment":"userToken","meta":{"processor":"varGet","meta":{"id":2,"name":"token"}}}]}', 0),
+(78, 1, 'Account delete', 'Delete an account.', 'delete', 'accountmanage', '{"security":{"processor":"tokenAdmin","meta":{"id":1,"token":{"fragment":"userToken"}}},"process":{"processor":"account","meta":{"id":3,"name":{"processor":"varUri","meta":{"id":4,"index":0}},"token":{"fragment":"userToken"}}},"fragments":[{"fragment":"userToken","meta":{"processor":"varGet","meta":{"id":2,"name":"token"}}}]}', 0),
+(79, 1, 'Account fetch', 'Fetch an account.', 'get', 'accountmanage', '{"security":{"processor":"tokenAdmin","meta":{"id":1,"token":{"fragment":"userToken"}}},"process":{"processor":"account","meta":{"id":3,"name":{"processor":"varUri","meta":{"id":4,"index":0}},"token":{"fragment":"userToken"}}},"fragments":[{"fragment":"userToken","meta":{"processor":"varGet","meta":{"id":2,"name":"token"}}}]}', 0),
+(80, 1, 'Application create', 'Create an application.', 'post', 'applicationmanage', '{"security":{"processor":"tokenAdmin","meta":{"id":1,"token":{"fragment":"userToken"}}},"process":{"processor":"application","meta":{"id":3,"accountName":{"processor":"varUri","meta":{"id":4,"index":0}},"applicationName":{"processor":"varUri","meta":{"id":5,"index":1}},"token":{"fragment":"userToken"}}},"fragments":[{"fragment":"userToken","meta":{"processor":"varGet","meta":{"id":2,"name":"token"}}}]}', 0),
+(81, 1, 'Application delete', 'Delete an application.', 'delete', 'applicationmanage', '{"security":{"processor":"tokenAdmin","meta":{"id":1,"token":{"fragment":"userToken"}}},"process":{"processor":"application","meta":{"id":3,"accountName":{"processor":"varUri","meta":{"id":4,"index":0}},"applicationName":{"processor":"varUri","meta":{"id":5,"index":1}},"token":{"fragment":"userToken"}}},"fragments":[{"fragment":"userToken","meta":{"processor":"varGet","meta":{"id":2,"name":"token"}}}]}', 0),
+(82, 1, 'Application fetch', 'Fetch an application.', 'get', 'applicationmanage', '{"security":{"processor":"tokenAdmin","meta":{"id":1,"token":{"fragment":"userToken"}}},"process":{"processor":"application","meta":{"id":3,"accountName":{"processor":"varUri","meta":{"id":4,"index":0}},"applicationName":{"processor":"varUri","meta":{"id":5,"index":1}},"token":{"fragment":"userToken"}}},"fragments":[{"fragment":"userToken","meta":{"processor":"varGet","meta":{"id":2,"name":"token"}}}]}', 0);
 
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE IF NOT EXISTS `role` (
@@ -209,9 +209,9 @@ ALTER TABLE `vars`
 
 
 ALTER TABLE `account`
-MODIFY `accid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'account id',AUTO_INCREMENT=4;
+MODIFY `accid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'account id',AUTO_INCREMENT=6;
 ALTER TABLE `application`
-MODIFY `appid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'application id',AUTO_INCREMENT=5;
+MODIFY `appid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'application id',AUTO_INCREMENT=7;
 ALTER TABLE `blacklist`
 MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
 ALTER TABLE `external_user`
