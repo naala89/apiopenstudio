@@ -56,7 +56,7 @@ class AccountMapper
    */
   public function deleteByUidName($uid, $name)
   {
-    $sql = 'DELETE FROM account WHERE uid = ? AND accid = ?';
+    $sql = 'DELETE FROM account WHERE uid = ? AND name = ?';
     $bindParams = array($uid, $name);
     $result = $this->db->Execute($sql, $bindParams);
     if (!$result) {

@@ -79,7 +79,7 @@ class Account
   public function debug()
   {
     return array(
-      'accId' => $this->accId,
+      'accid' => $this->accId,
       'uid' => $this->uid,
       'name' => $this->name,
     );
