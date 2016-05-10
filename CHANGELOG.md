@@ -58,9 +58,10 @@ Run "composer update" on in the docroot after transferring files.
 - added crud api calls for account & application
 - fixed issues in new resource validation
 - consolidated DB structure and data into one file
+- added unit testing framework (codeception)
 
 TODO:
-- add unit tests (Frizby, Codeception, Phing or Jenkins?)
+- do we need account in user structure?
 - change format of processor meta (see frontend)
 -- Update API->_getValidation()
 - Finish endpoint processors

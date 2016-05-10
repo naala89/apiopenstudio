@@ -125,4 +125,4 @@ $ vendor/bin/codecept -v
 If you are running testcase first time in api suite, then in your api directory you will not have api tester file. You need to generate that so run following command:
 $ vendor/bin/codecept build
 Then run:
-$ vendor/bin/codecept run api
+$ vendor/bin/codecept run --env staging|local|prod

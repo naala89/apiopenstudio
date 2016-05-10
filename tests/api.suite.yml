@@ -1,0 +1,29 @@
+class_name: ApiTester
+modules:
+    enabled:
+        - \Helper\Api
+        - REST:
+            url: http://datagator.local/api/
+            depends: PhpBrowser
+env:
+    local:
+        modules:
+            config:
+                PhpBrowser:
+                    url: http://datagator.local/
+                REST:
+                    url: http://datagator.local/api/
+    staging:
+        modules:
+            config:
+                PhpBrowser:
+                    url: http://datagator.yourtemp.website/
+                REST:
+                    url: http://datagator.yourtemp.website/api/
+    staging:
+        modules:
+            config:
+                PhpBrowser:
+                    url: http://datagator.com.au/
+                REST:
+                    url: http://datagator.com.au/api/

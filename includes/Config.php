@@ -58,7 +58,8 @@ class Config
     'localhost' => 'development',
     '127.0.0.1' => 'development',
     'datagator.local' => 'development',
-    'johns-MBP' => 'development'
+    'johns-MBP' => 'development',
+    'johns-MBP-2' => 'staging'
   );
   static private $_allow_override;
 
@@ -117,15 +118,14 @@ class Config
    */
   static public function load($serverName = NULL)
   {
-    if (empty($serverName)) {
-      $serverName = self::whereAmI($serverName);
-    }
-    if (!$serverName) {
-      die('Where am I? You need to create server index in config::$_server ' . $serverName);
+    $environment = self::whereAmI($serverName);
+
+    if (!$environment) {
+      die('Where am I? You need to create server index in config::$_server ' . $environment);
     }
 
     self::everywhere();
-    self::$serverName();
+    self::$environment();
     self::override();
   }
 
