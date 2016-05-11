@@ -420,7 +420,7 @@ class User
       'addressCity' => $this->addressCity,
       'addressState' => $this->addressState,
       'addressPostcode' => $this->addressPostcode,
-      'phone_mobile' => $this->phone_mobile,
+      'phoneMobile' => $this->phoneMobile,
       'phoneWork' => $this->phoneWork,
     );
   }

@@ -291,6 +291,7 @@ abstract class ResourceBase extends ProcessorBase
     }
 
     // check input types for processors
+    $data['fragments'] = isset($data['fragments']) ? $data['fragments'] : array();
     $this->_validateProcessor($data['process'], $data['fragments']);
     if (isset($data['output'])) {
       $this->_validateProcessor($data['output'], $data['fragments']);

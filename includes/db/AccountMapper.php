@@ -49,15 +49,15 @@ class AccountMapper
   }
 
   /**
-   * @param $uid
-   * @param $name
+   * @param \Datagator\Db\Account $account
    * @return bool
    * @throws \Datagator\Core\ApiException
    */
-  public function deleteByUidName($uid, $name)
+  public function delete(Account $account)
   {
-    $sql = 'DELETE FROM account WHERE uid = ? AND name = ?';
-    $bindParams = array($uid, $name);
+
+    $sql = 'DELETE FROM account WHERE accid = ?';
+    $bindParams = array($account->getAccId());
     $result = $this->db->Execute($sql, $bindParams);
     if (!$result) {
       throw new Core\ApiException($this->db->ErrorMsg(), 2);
@@ -67,7 +67,7 @@ class AccountMapper
 
   /**
    * @param $accId
-   * @return \Datagator\Db\ExternalUser
+   * @return \Datagator\Db\Account
    */
   public function findByAccId($accId)
   {
@@ -115,20 +115,14 @@ class AccountMapper
 
   /**
    * @param $name
-   * @return array
+   * @return \Datagator\Db\Account
    */
   public function findByName($name)
   {
     $sql = 'SELECT * FROM account WHERE name = ?';
     $bindParams = array($name);
-    $recordSet = $this->db->Execute($sql, $bindParams);
-
-    $entries   = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-    }
-
-    return $entries;
+    $row = $this->db->GetRow($sql, $bindParams);
+    return $this->mapArray($row);
   }
 
   /**
