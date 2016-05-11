@@ -37,10 +37,9 @@ class VarGet extends VarMixed
     Core\Debug::variable($this->meta, 'Processor VarGet');
     $name = $this->val($this->meta->name);
 
-    if (empty($this->request->vars[$name])) {
-      throw new Core\ApiException("get variable ($name) does not exist", 6, $this->id, 417);
+    if (!empty($this->request->vars[$name])) {
+      return $this->request->vars[$name];
     }
-
-    return $this->request->vars[$name];
+    return null;
   }
 }

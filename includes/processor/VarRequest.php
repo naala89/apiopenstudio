@@ -36,10 +36,9 @@ class VarRequest extends VarMixed
     Core\Debug::variable($this->meta, 'Processor VarRequest');
     $name = $this->val($this->meta->name);
 
-    if (empty($_REQUEST[$name])) {
-      throw new Core\ApiException("request variable ($name) does not exist", 6, $this->id, 417);
+    if (!empty($_REQUEST[$name])) {
+      return $_REQUEST[$name];
     }
-
-    return $_REQUEST[$name];
+    return null;
   }
 }
