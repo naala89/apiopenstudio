@@ -202,9 +202,8 @@ class ProcessorBase
    */
   protected function val($obj)
   {
-    $result = $obj;
-
     if ($this->isFragment($obj)) {
+      // this is a fragment, so fetch pre populated fragment value.
       $fragmentName = $obj->fragment;
       $fragment = false;
       foreach ($this->request->resource->fragments as $val) {
@@ -219,7 +218,7 @@ class ProcessorBase
       $processor = $this->getProcessor($fragment->meta);
       $result = $processor->process();
     } elseif ($this->isProcessor($obj)) {
-      // this is a processor
+      // this is a processor, so process and return the value
       $processor = $this->getProcessor($obj);
       $result = $processor->process();
     } elseif (is_array($obj)) {
@@ -228,6 +227,12 @@ class ProcessorBase
       foreach ($obj as $o) {
         $result[] = $this->val($o);
       }
+    } elseif (is_string($obj)) {
+      // this is a literal, so return it
+      $result = $obj;
+    } else {
+      // invalid value, so return empty string
+      $result = '';
     }
 
     return $result;

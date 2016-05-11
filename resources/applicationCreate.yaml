@@ -15,29 +15,22 @@ security:
   meta:
     id: 1
     token:
-      fragment: userToken
-
-process:
-  processor: application
-  meta:
-    id: 3
-    accountName:
-      processor: varUri
-      meta:
-        id: 4
-        index: 0
-    applicationName:
-      processor: varUri
-      meta:
-        id: 5
-        index: 1
-    token:
-      fragment: userToken
-
-fragments:
-  - fragment: userToken
-    meta:
-      processor: varGet
+      processor: varPost
       meta:
         id: 2
         name: token
+
+process:
+  processor: datagatorApplication
+  meta:
+    id: 3
+    accountName:
+      processor: varPost
+      meta:
+        id: 4
+        name: accountName
+    applicationName:
+      processor: varPost
+      meta:
+        id: 5
+        name: applicationName

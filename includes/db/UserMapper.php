@@ -83,6 +83,22 @@ class UserMapper
   }
 
   /**
+   * @param \Datagator\Db\User $user
+   * @return bool
+   * @throws \Datagator\Core\ApiException
+   */
+  public function delete(User $user)
+  {
+    $sql = 'DELETE FROM user WHERE uid = ?';
+    $bindParams = array($user->getUid());
+    $result = $this->db->Execute($sql, $bindParams);
+    if (!$result) {
+      throw new Core\ApiException($this->db->ErrorMsg(), 2);
+    }
+    return true;
+  }
+
+  /**
    * @param $uid
    * @return \Datagator\Db\User
    */

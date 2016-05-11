@@ -1,0 +1,61 @@
+name: User create
+
+description: Create a user.
+
+uri:
+  noun: user
+  verb: manage
+
+method: post
+
+ttl: 0
+
+security:
+  processor: tokenAdmin
+  meta:
+    id: 1
+    token:
+      processor: varPost
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: datagatorUser
+  meta:
+    id: 3
+    username:
+      processor: varPost
+      meta:
+        id: 4
+        name: username
+    active:
+      processor: varPost
+      meta:
+        id: 5
+        name: active
+    email:
+      processor: varPost
+      meta:
+        id: 6
+        name: email
+    honorific:
+      processor: varPost
+      meta:
+        id: 7
+        name: honorific
+    nameFirst:
+      processor: varPost
+      meta:
+        id: 8
+        name: nameFirst
+    nameLast:
+      processor: varPost
+      meta:
+        id: 9
+        name: nameLast
+    company:
+      processor: varPost
+      meta:
+        id: 10
+        name: company

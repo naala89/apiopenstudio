@@ -1,12 +1,12 @@
-name: Account delete
+name: User fetch
 
-description: Delete an account.
+description: Fetch a user.
 
 uri:
-  noun: account
+  noun: user
   verb: manage
 
-method: delete
+method: get
 
 ttl: 0
 
@@ -21,11 +21,11 @@ security:
         name: token
 
 process:
-  processor: datagatorAccount
+  processor: datagatorUser
   meta:
     id: 3
-    accountName:
+    username:
       processor: varGet
       meta:
         id: 4
-        name: accountName
+        name: username

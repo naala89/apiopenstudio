@@ -49,15 +49,14 @@ class ApplicationMapper
   }
 
   /**
-   * @param $accId
-   * @param $name
+   * @param \Datagator\Db\Application $application
    * @return bool
    * @throws \Datagator\Core\ApiException
    */
-  public function deleteByAccIdName($accId, $name)
+  public function delete(Application $application)
   {
-    $sql = 'DELETE FROM application WHERE accid = ? AND name = ?';
-    $bindParams = array($accId, $name);
+    $sql = 'DELETE FROM application WHERE appid = ?';
+    $bindParams = array($application->getAppId());
     $result = $this->db->Execute($sql, $bindParams);
     if (!$result) {
       throw new Core\ApiException($this->db->ErrorMsg(), 2);
@@ -78,6 +77,18 @@ class ApplicationMapper
   }
 
   /**
+   * @param $name
+   * @return \Datagator\Db\Application
+   */
+  public function findByName($name)
+  {
+    $sql = 'SELECT * FROM application WHERE name = ?';
+    $bindParams = array($name);
+    $row = $this->db->GetRow($sql, $bindParams);
+    return $this->mapArray($row);
+  }
+
+  /**
    * @param $accId
    * @return \Datagator\Db\Application
    */
@@ -93,37 +104,6 @@ class ApplicationMapper
     }
 
     return $entries;
-  }
-
-  /**
-   * @param $name
-   * @return \Datagator\Db\Application
-   */
-  public function findByName($name)
-  {
-    $sql = 'SELECT * FROM application WHERE name = ?';
-    $bindParams = array($name);
-    $recordSet = $this->db->Execute($sql, $bindParams);
-
-    $entries   = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-    }
-
-    return $entries;
-  }
-
-  /**
-   * @param $accId
-   * @param $name
-   * @return \Datagator\Db\Application
-   */
-  public function findByAccIdName($accId, $name)
-  {
-    $sql = 'SELECT * FROM application WHERE accid = ? AND name = ?';
-    $bindParams = array($accId, $name);
-    $row = $this->db->GetRow($sql, $bindParams);
-    return $this->mapArray($row);
   }
 
   /**
