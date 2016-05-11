@@ -40,12 +40,9 @@ class VarPost extends VarMixed
     Core\Debug::variable($this->meta, 'Processor VarPost', 4);
     $name = $this->val($this->meta->name);
 
-    if (empty($this->request->vars[$name])) {
-      throw new Core\ApiException("post variable ($name) does not exist", 6, $this->id, 417);
-    } else {
-      $result = $this->request->vars[$name];
+    if (!empty($this->request->vars[$name])) {
+      return $this->request->vars[$name];
     }
-
-    return $result;
+    return null;
   }
 }
