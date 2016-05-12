@@ -75,8 +75,7 @@ class UserRoleMapper
 
     $entries = array();
     while (!$recordSet->EOF) {
-      $userRole = $this->mapArray($recordSet->fields);
-      $entries[] = $userRole->debug();
+      $entries[] = $this->mapArray($recordSet->fields);
       $recordSet->moveNext();
     }
 
@@ -96,8 +95,7 @@ class UserRoleMapper
 
     $entries = array();
     while (!$recordSet->EOF) {
-      $userRole = $this->mapArray($recordSet->fields);
-      $entries[] = $userRole->debug();
+      $entries[] = $this->mapArray($recordSet->fields);
       $recordSet->moveNext();
     }
 
@@ -117,8 +115,7 @@ class UserRoleMapper
 
     $entries = array();
     while (!$recordSet->EOF) {
-      $userRole = $this->mapArray($recordSet->fields);
-      $entries[] = $userRole->debug();
+      $entries[] = $this->mapArray($recordSet->fields);
       $recordSet->moveNext();
     }
 
@@ -171,8 +168,7 @@ class UserRoleMapper
 
     $entries = array();
     while (!$recordSet->EOF) {
-      $userRole = $this->mapArray($recordSet->fields);
-      $entries[] = $userRole->debug();
+      $entries[] = $this->mapArray($recordSet->fields);
       $recordSet->moveNext();
     }
 

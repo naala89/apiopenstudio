@@ -116,8 +116,7 @@ class ResourceMapper
 
     $entries = array();
     while (!$recordSet->EOF) {
-      $resource = $this->mapArray($recordSet->fields);
-      $entries[] = $resource->debug();
+      $entries[] = $this->mapArray($recordSet->fields);
       $recordSet->moveNext();
     }
 

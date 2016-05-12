@@ -95,8 +95,7 @@ class ExternalUserMapper
 
     $entries = array();
     while (!$recordSet->EOF) {
-      $user = $this->mapArray($recordSet->fields);
-      $entries[] = $user->debug();
+      $entries[] = $this->mapArray($recordSet->fields);
       $recordSet->moveNext();
     }
 

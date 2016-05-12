@@ -101,8 +101,7 @@ class ApplicationMapper
 
     $entries = array();
     while (!$recordSet->EOF) {
-      $application = $this->mapArray($recordSet->fields);
-      $entries[] = $application->debug();
+      $entries[] = $this->mapArray($recordSet->fields);
       $recordSet->moveNext();
     }
 
