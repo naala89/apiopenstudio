@@ -1,0 +1,41 @@
+name: User Role fetch
+
+description: Fetch a role for a user and/or application.
+
+uri:
+  noun: userrole
+  verb: manage
+
+method: delete
+
+ttl: 0
+
+security:
+  processor: tokenAdmin
+  meta:
+    id: 1
+    token:
+      processor: varGet
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: datagatorUserRole
+  meta:
+    id: 3
+    username:
+      processor: varGet
+      meta:
+        id: 4
+        name: username
+    applicationName:
+      processor: varGet
+      meta:
+        id: 5
+        name: applicationName
+    roleName:
+      processor: varPost
+      meta:
+        id: 6
+        name: roleName
