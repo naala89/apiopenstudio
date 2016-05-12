@@ -38,6 +38,12 @@ class TokenAdmin extends Token {
 
   public function process() {
     Core\Debug::variable($this->meta, 'Security TokenAdmin', 4);
-    parent::process();
+    $roles = parent::process();
+    foreach ($roles as $role) {
+      if ($role->getRid() == $this->role->getRid()) {
+        return true;
+      }
+    }
+    throw new Core\ApiException('permission denied', 4, $this->id, 401);
   }
 }

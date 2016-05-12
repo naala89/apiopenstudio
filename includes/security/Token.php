@@ -34,11 +34,13 @@ class Token extends Processor\ProcessorBase {
   public function process() {
     Core\Debug::variable($this->meta, 'Security Token', 4);
 
+    // no token
     $token = $this->val($this->meta->token);
     if (empty($token)) {
       throw new Core\ApiException('permission denied', 4, -1, 401);
     }
 
+    // invalid token or user not active
     $db = $this->getDb();
     $userMapper = new Db\UserMapper($db);
     $user = $userMapper->findBytoken($token);
@@ -46,6 +48,12 @@ class Token extends Processor\ProcessorBase {
       throw new Core\ApiException('permission denied', 4, -1, 401);
     }
 
-    return true;
+    // get role from DB
+    $roleMapper = new Db\RoleMapper($db);
+    $this->role = $roleMapper->findByName($this->role);
+
+    // return list of roles for user for this request app
+    $userRoleMapper = new Db\UserRoleMapper($db);
+    return $userRoleMapper->findByMixed($user->getUid(), $this->request->appId);
   }
 }
