@@ -85,11 +85,14 @@ class AccountMapper
   {
     $sql = 'SELECT * FROM account WHERE uid = ?';
     $bindParams = array($uid);
+
     $recordSet = $this->db->Execute($sql, $bindParams);
 
-    $entries   = array();
+    $entries = array();
     while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
+      $account = $this->mapArray($recordSet->fields);
+      $entries[] = $account->debug();
+      $recordSet->moveNext();
     }
 
     return $entries;
@@ -103,11 +106,14 @@ class AccountMapper
   {
     $sql = 'SELECT a.* FROM account a INNER JOIN user u ON a.uid = u.uid WHERE u.email = ?';
     $bindParams = array($email);
+
     $recordSet = $this->db->Execute($sql, $bindParams);
 
-    $entries   = array();
+    $entries = array();
     while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
+      $userRole = $this->mapArray($recordSet->fields);
+      $entries[] = $userRole->debug();
+      $recordSet->moveNext();
     }
 
     return $entries;

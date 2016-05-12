@@ -111,11 +111,14 @@ class ResourceMapper
   {
     $sql = 'SELECT * FROM resource WHERE appid = ?';
     $bindParams = array($appId);
+
     $recordSet = $this->db->Execute($sql, $bindParams);
 
-    $entries   = array();
+    $entries = array();
     while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
+      $resource = $this->mapArray($recordSet->fields);
+      $entries[] = $resource->debug();
+      $recordSet->moveNext();
     }
 
     return $entries;
