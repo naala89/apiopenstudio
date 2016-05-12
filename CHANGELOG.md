@@ -54,8 +54,10 @@ Datagator 0.2.2, Unfinished
 Run "composer dump-autoload" on in the docroot after transferring files.
 Run "composer update" on in the docroot after transferring files.
 - unify $request and $resource into one object
-- add crud processor for account & application
-- added crud api calls for account & application
+- add crud processor for account, user & application
+- added crud api calls for account, user & application
 - fixed issues in new resource validation
 - consolidated DB structure and data into one file
 - added unit testing framework (codeception)
+- removed validation that request var exist in VarGet, VarPost & VarRequest - this responsibility belongs in the parent processor
+- fixed security processors not validating user_role.

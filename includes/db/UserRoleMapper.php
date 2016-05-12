@@ -51,6 +51,22 @@ class UserRoleMapper
   }
 
   /**
+   * @param \Datagator\Db\UserRole $userRole
+   * @return bool
+   * @throws \Datagator\Core\ApiException
+   */
+  public function delete(UserRole $userRole)
+  {
+    $sql = 'DELETE FROM user_role WHERE id = ?';
+    $bindParams = array($userRole->getId());
+    $result = $this->db->Execute($sql, $bindParams);
+    if (!$result) {
+      throw new Core\ApiException($this->db->ErrorMsg(), 2);
+    }
+    return true;
+  }
+
+  /**
    * @param $id
    * @return \Datagator\Db\UserRole
    */
