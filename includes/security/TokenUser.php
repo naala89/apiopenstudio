@@ -15,6 +15,7 @@
 
 namespace Datagator\Security;
 use Datagator\Core;
+use Datagator\Db;
 
 class TokenUser extends Token {
   protected $role = false;
@@ -46,26 +47,31 @@ class TokenUser extends Token {
   public function process() {
     Core\Debug::variable($this->meta, 'Validator TokenUser', 4);
 
+    // no token
     $token = $this->val($this->meta->token);
     if (empty($token)) {
       throw new Core\ApiException('permission denied', 4, -1, 401);
     }
 
-    // check user exists
-    $this->request->userInterface->validateToken($token);
+    // invalid token or user not active
+    $db = $this->getDb();
+    $userMapper = new Db\UserMapper($db);
+    $user = $userMapper->findBytoken($token);
+    $uid = $user->getUid();
+    if (empty($uid) || $user->getActive() == 0) {
+      throw new Core\ApiException('permission denied', 4, -1, 401);
+    }
 
     // check user is in the list of valid users
     $usernames = $this->val($this->meta->usernames);
     if (!is_array($usernames)) {
       $usernames = array($usernames);
     }
-    $user = $this->request->userInterface->getUser();
     foreach ($usernames as $username) {
-      if ($username != $user->getUsername()) {
-        throw new Core\ApiException('permission denied', 4, $this->id, 401);
+      if ($username == $user->getUsername()) {
+        return true;
       }
     }
-
-    return true;
+    throw new Core\ApiException('permission denied', 4, $this->id, 401);
   }
 }

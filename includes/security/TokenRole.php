@@ -15,8 +15,7 @@
 
 namespace Datagator\Security;
 use Datagator\Core;
-use Datagator\Db\RoleMapper;
-use Datagator\Db\UserRoleMapper;
+use Datagator\Db;
 use Datagator\Processor;
 
 class TokenRole extends Token {
@@ -50,31 +49,35 @@ class TokenRole extends Token {
   public function process() {
     Core\Debug::variable($this->meta, 'Validator TokenRole', 4);
 
+    // no token
     $token = $this->val($this->meta->token);
     if (empty($token)) {
       throw new Core\ApiException('permission denied', 4, -1, 401);
     }
-    $rid = $this->val($this->meta->role);
-    $db = $this->getDb();
-    $userMapper = new UserMapper($db);
-    $userRoleMapper = new UserRoleMapper($db);
 
-    // Get UID
+    // invalid token or user not active
+    $db = $this->getDb();
+    $userMapper = new Db\UserMapper($db);
     $user = $userMapper->findBytoken($token);
     $uid = $user->getUid();
     if (empty($uid) || $user->getActive() == 0) {
-      throw new ApiException('permission denied', 4, -1, 401);
+      throw new Core\ApiException('permission denied', 4, -1, 401);
     }
 
-    // convert role name to rid
+    // get rid
+    $rid = $this->val($this->meta->role);
     if (!filter_var($rid, FILTER_VALIDATE_INT)) {
+      // convert role name to rid
       $roleMapper = new RoleMapper($db);
       $row = $roleMapper->findByName($rid);
       $rid = $row->getRid();
     }
 
+    $userRoleMapper = new Db\UserRoleMapper($db);
     $userRole = $userRoleMapper->findByUserAppRole($uid, $this->request->appId, $rid);
-
-    return !empty($userRole->getId());
+    if (empty($userRole->getId())) {
+      throw new Core\ApiException('permission denied', 4, $this->id, 401);
+    }
+    return true;
   }
 }
