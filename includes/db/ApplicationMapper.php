@@ -96,11 +96,14 @@ class ApplicationMapper
   {
     $sql = 'SELECT * FROM application WHERE accid = ?';
     $bindParams = array($accId);
+
     $recordSet = $this->db->Execute($sql, $bindParams);
 
-    $entries   = array();
+    $entries = array();
     while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
+      $application = $this->mapArray($recordSet->fields);
+      $entries[] = $application->debug();
+      $recordSet->moveNext();
     }
 
     return $entries;

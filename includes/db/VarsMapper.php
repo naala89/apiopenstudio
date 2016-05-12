@@ -102,11 +102,14 @@ class VarsMapper
   {
     $sql = 'SELECT * FROM vars WHERE appid = ?';
     $bindParams = array($appId);
+
     $recordSet = $this->db->Execute($sql, $bindParams);
 
-    $entries   = array();
+    $entries = array();
     while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
+      $vars = $this->mapArray($recordSet->fields);
+      $entries[] = $vars->debug();
+      $recordSet->moveNext();
     }
 
     return $entries;
