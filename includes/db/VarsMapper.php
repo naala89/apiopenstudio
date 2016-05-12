@@ -107,8 +107,7 @@ class VarsMapper
 
     $entries = array();
     while (!$recordSet->EOF) {
-      $vars = $this->mapArray($recordSet->fields);
-      $entries[] = $vars->debug();
+      $entries[] = $this->mapArray($recordSet->fields);
       $recordSet->moveNext();
     }
 

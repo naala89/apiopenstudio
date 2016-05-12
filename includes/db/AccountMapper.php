@@ -90,8 +90,7 @@ class AccountMapper
 
     $entries = array();
     while (!$recordSet->EOF) {
-      $account = $this->mapArray($recordSet->fields);
-      $entries[] = $account->debug();
+      $entries[] = $this->mapArray($recordSet->fields);
       $recordSet->moveNext();
     }
 
@@ -111,8 +110,7 @@ class AccountMapper
 
     $entries = array();
     while (!$recordSet->EOF) {
-      $userRole = $this->mapArray($recordSet->fields);
-      $entries[] = $userRole->debug();
+      $entries[] = $this->mapArray($recordSet->fields);
       $recordSet->moveNext();
     }
 
