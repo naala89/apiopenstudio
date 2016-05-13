@@ -2,6 +2,7 @@ class_name: ApiTester
 modules:
     enabled:
         - \Helper\Api
+        - \Helper\Storage
         - REST:
             url: http://datagator.local/api/
             depends: PhpBrowser
