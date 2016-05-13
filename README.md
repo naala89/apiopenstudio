@@ -126,3 +126,8 @@ If you are running testcase first time in api suite, then in your api directory 
 $ vendor/bin/codecept build
 Then run:
 $ vendor/bin/codecept run --env staging|local|prod
+### Testing user
+Account: Datagator
+Application: Testing
+Username: tester
+Password: tester_pass
