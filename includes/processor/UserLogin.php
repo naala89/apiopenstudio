@@ -58,13 +58,6 @@ class UserLogin extends ProcessorBase
       throw new Core\ApiException('invalid username or password', 4, -1, 401);
     }
 
-    // if token exists and is active, return it
-    if (!empty($user->getToken())
-      && !empty($user->getTokenTtl())
-      && Core\Utilities::date_mysql2php($user->getTokenTtl()) > time()) {
-      return array('token' => $user->getToken());
-    }
-
     // set up salt if not defined
     if ($user->getSalt() == NULL) {
       $user->setSalt(Core\Hash::generateSalt());
@@ -74,6 +67,14 @@ class UserLogin extends ProcessorBase
     $hash = Core\Hash::generateHash($password, $user->getSalt());
     if ($user->getHash() != null && $user->getHash() != $hash) {
       throw new Core\ApiException('invalid username or password', 4, -1, 401);
+    }
+
+    // if token exists and is active, return it
+    if (!empty($user->getToken())
+      && !empty($user->getTokenTtl())
+      && Core\Utilities::date_mysql2php($user->getTokenTtl()) > time()) {
+      $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime(Config::$tokenLife)));
+      return array('token' => $user->getToken());
     }
 
     //perform login
