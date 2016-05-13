@@ -7,3 +7,4 @@ $I->sendPOST('/4/user/login', ['username' => 'tester', 'password' => 'tester_pas
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseMatchesJsonType(array('token' => 'string'));
+$I->storeToken();
