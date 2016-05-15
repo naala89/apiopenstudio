@@ -36,7 +36,7 @@ class Email extends Output
       'format' => array(
         'description' => 'Format for the results to be formatted into.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"json"', '"html"', '"text"'),
+        'accepts' => array('processor', '"json"', '"html"', '"xml"', '"text"'),
       ),
     ),
   );
