@@ -5,7 +5,6 @@
  */
 
 namespace Datagator\Processor;
-use Codeception\Util\Debug;
 use Datagator\Core;
 use Datagator\Db;
 
@@ -294,7 +293,12 @@ abstract class ResourceBase extends ProcessorBase
     $data['fragments'] = isset($data['fragments']) ? $data['fragments'] : array();
     $this->_validateProcessor($data['process'], $data['fragments']);
     if (isset($data['output'])) {
-      $this->_validateProcessor($data['output'], $data['fragments']);
+      foreach ($data['output'] as $output) {
+        if ($output != 'response') {
+          // TODO: Create this function
+          //$this->_validateOutput($output, $data['fragments']);
+        }
+      }
     }
     if (isset($data['security'])) {
       $this->_validateProcessor($data['security'], $data['fragments']);
@@ -313,7 +317,6 @@ abstract class ResourceBase extends ProcessorBase
   private function _validateProcessor($obj, $fragments) {
     // check valid processor structure
     if (empty($obj['processor']) || empty($obj['meta'])) {
-      Core\Debug::variable($obj);
       throw new Core\ApiException("invalid processor structure, missing 'processor' or 'meta' keys in new resource", 6, -1, 406);
     }
 
@@ -415,7 +418,6 @@ abstract class ResourceBase extends ProcessorBase
    */
   private function _validateTypeValue($element, $accepts, $inputName, $fragments) {
     $valid = false;
-    Core\Debug::variable($element);
 
     foreach ($accepts as $accept) {
       if (isset($element['fragment'])) {
