@@ -48,12 +48,12 @@ class Url extends Processor\ProcessorBase
       'reportError' => array(
         'description' => 'Stop processing if the remote source responds with an error.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"0"', '"1"'),
+        'accepts' => array('processor', '"true"', '"false"'),
       ),
       'normalise' => array(
         'description' => 'If set to 0, the results will pass though as a raw string. If set to 1, the results will be parsed into a format that can be processed further, i.e. merge, filter, etc.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"0"', '"1"'),
+        'accepts' => array('processor', '"true"', '"false"'),
       ),
     ),
   );
