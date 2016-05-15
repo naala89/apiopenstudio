@@ -342,7 +342,7 @@ abstract class ResourceBase extends ProcessorBase
       // validate cardinality
       $count = 0;
       if (isset($obj['meta'][$inputName]) && (!empty($obj['meta'][$inputName]) || strlen($obj['meta'][$inputName]))) {
-        if (is_array($obj['meta'][$inputName]) && sizeof($obj['meta'][$inputName]) != 2  && !isset($obj['meta'][$inputName]['processor']) && !isset($obj['meta'][$inputName]['meta'])) {
+        if (is_array($obj['meta'][$inputName]) && (!isset($obj['meta'][$inputName]['processor']) && !isset($obj['meta'][$inputName]['meta']))) {
           // This check is for values that are array of values, but we also have to filter out processors
           $count = sizeof($obj['meta'][$inputName]);
         } else {
