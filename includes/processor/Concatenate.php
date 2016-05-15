@@ -1,19 +1,7 @@
 <?php
 
 /**
- * Perform merge of two external sources
- *
- * METADATA
- * {
- *    "type":"concatenate",
- *    "meta":{
- *      "sources":[
- *        <processor|string|obj>,
- *        <processor|string|obj>,
- *      ]
- *    },
- *  },
- * }
+ * Perform string concatenation of two or more inputs
  */
 
 namespace Datagator\Processor;
