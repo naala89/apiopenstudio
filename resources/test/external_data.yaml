@@ -1,0 +1,34 @@
+name: External API
+description: Fetch a result from an external API.
+uri:
+   noun: external
+   verb: api
+method: get
+ttl: 360
+
+security:
+  processor: tokenConsumer
+  meta:
+    id: 1
+    token:
+      processor: varGet
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: url
+  meta:
+    id: 3
+    source: “https://randomuser.me/api/”
+    method: get
+    reportError: true
+    normalise: true
+
+output:
+  - response
+  - email:
+      to:
+        - foo@bar.com
+        - john@naala.com.au
+      format: xml
