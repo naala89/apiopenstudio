@@ -1,6 +1,6 @@
 name: External API
 description: Fetch a result from an external API
-application: Testing
+application: LeonApp
 uri: Testing
    noun: external
    verb: api
