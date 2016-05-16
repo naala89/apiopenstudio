@@ -1,6 +1,7 @@
 name: External API
-description: Fetch a result from an external API.
-uri:
+description: Fetch a result from an external API
+application: Testing
+uri: Testing
    noun: external
    verb: api
 method: get
