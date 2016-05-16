@@ -67,7 +67,7 @@ abstract class ResourceBase extends ProcessorBase
         if (empty($resource)) {
           throw new Core\ApiException('Empty resource', 1, $this->id);
         }
-        $result = $this->save($resource);
+        $result = $this->create($resource);
         break;
       case 'get':
         $appId = $this->request->appId;
@@ -83,7 +83,7 @@ abstract class ResourceBase extends ProcessorBase
         if (empty($verb)) {
           throw new Core\ApiException('Missing verb', 1, $this->id);
         }
-        $result = $this->fetch($appId, $method, $noun, $verb);
+        $result = $this->read($appId, $method, $noun, $verb);
         break;
       case 'delete':
         $appId = $this->request->appId;
@@ -134,13 +134,15 @@ abstract class ResourceBase extends ProcessorBase
    * @return bool
    * @throws \Datagator\Core\ApiException
    */
-  protected function save($data)
+  protected function create($data)
   {
     Core\Debug::variable($data, 'New resource', 1);
     $this->_validateData($data);
 
     $name = $data['name'];
     $description = $data['description'];
+    $appName = $data['application'];
+    $appId = $this->_validateUserAppAccess($appName);
     $method = $data['method'];
     $identifier = strtolower($data['uri']['noun']) . strtolower($data['uri']['verb']);
     $meta = array();
@@ -154,7 +156,7 @@ abstract class ResourceBase extends ProcessorBase
     $ttl = !empty($data['ttl']) ? $data['ttl'] : 0;
 
     $mapper = new Db\ResourceMapper($this->db);
-    $resource = $mapper->findByAppIdMethodIdentifier($this->request->appId, $method, $identifier);
+    $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
     if (empty($resource->getId())) {
       $resource->setAppId($this->request->appId);
       $resource->setMethod($method);
@@ -178,7 +180,7 @@ abstract class ResourceBase extends ProcessorBase
    * @return mixed
    * @throws \Datagator\Core\ApiException
    */
-  protected function fetch($appId, $method, $noun, $verb)
+  protected function read($appId, $method, $noun, $verb)
   {
     if (empty($appId)) {
       throw new Core\ApiException('missing application ID', 3, $this->id, 400);
@@ -244,6 +246,31 @@ abstract class ResourceBase extends ProcessorBase
     return $mapper->delete($resource);
   }
 
+  protected function _validateUserAppAccess($appName)
+  {
+    $roleName = 'Developer';
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    $application = $applicationMapper->findByName($appName);
+    if (empty($appId = $application->getAppId())) {
+      throw new Core\ApiException("Invalid application name: $appName", 6, $this->id, 417);
+    }
+    $userMapper = new Db\UserMapper($this->db);
+    // TODO: this is untidy and assumes knowledge of the YAML import processor
+    $user = $userMapper->findBytoken($this->request->vars['token']);
+    if (empty($uid = $user->getUid())) {
+      throw new Core\ApiException('Invalid user token: ' . $this->request->vars['token'], 6, $this->id, 417);
+    }
+    $roleMapper = new Db\RoleMapper($this->db);
+    $role = $roleMapper->findByName($roleName);
+    $rid = $role->getRid();
+    $userRoleMapper = new Db\UserRoleMapper($this->db);
+    $userRole = $userRoleMapper->findByUserAppRole($uid, $appId, $rid);
+    if (empty($userRole->getId())) {
+      throw new Core\ApiException("User " . $user->getUsername() ." does not have $roleName access to $appName", 6, $this->id, 417);
+    }
+    return $appId;
+  }
+
   /**
    * Validate input data is well formed.
    *
@@ -258,14 +285,17 @@ abstract class ResourceBase extends ProcessorBase
     if (is_array($data) && sizeof($data) == 1 && $data[0] == $this->meta->resource) {
       throw new Core\ApiException('Form-data element with name: "' . $this->meta->resource . '" not found.', 6, $this->id, 417);
     }
-    if (empty($data['uri'])) {
-      throw new Core\ApiException("missing uri in new resource", 6, $this->id, 417);
-    }
     if (empty($data['name'])) {
       throw new Core\ApiException("missing name in new resource", 6, $this->id, 417);
     }
     if (empty($data['description'])) {
       throw new Core\ApiException("missing description in new resource", 6, $this->id, 417);
+    }
+    if (empty($data['application'])) {
+      throw new Core\ApiException("missing application in new resource", 6, $this->id, 417);
+    }
+    if (empty($data['uri'])) {
+      throw new Core\ApiException("missing uri in new resource", 6, $this->id, 417);
     }
     if (empty($data['uri']['noun'])) {
       throw new Core\ApiException("missing uri/noun in new resource", 6, $this->id, 417);
