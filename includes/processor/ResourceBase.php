@@ -5,6 +5,7 @@
  */
 
 namespace Datagator\Processor;
+use Codeception\Util\Debug;
 use Datagator\Core;
 use Datagator\Db;
 
@@ -158,7 +159,7 @@ abstract class ResourceBase extends ProcessorBase
     $mapper = new Db\ResourceMapper($this->db);
     $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
     if (empty($resource->getId())) {
-      $resource->setAppId($this->request->appId);
+      $resource->setAppId($appId);
       $resource->setMethod($method);
       $resource->setIdentifier($identifier);
     }
@@ -266,7 +267,7 @@ abstract class ResourceBase extends ProcessorBase
     $userRoleMapper = new Db\UserRoleMapper($this->db);
     $userRole = $userRoleMapper->findByUserAppRole($uid, $appId, $rid);
     if (empty($userRole->getId())) {
-      throw new Core\ApiException("User " . $user->getUsername() ." does not have $roleName access to $appName", 6, $this->id, 417);
+      throw new Core\ApiException("User " . $user->getUsername() ." does not have $roleName access for $appName", 6, $this->id, 417);
     }
     return $appId;
   }
