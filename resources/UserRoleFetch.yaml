@@ -1,6 +1,6 @@
-name: User Role delete
+name: User Role fetch
 
-description: Delete a role for a user on an application.
+description: Fetch a role for a user on an application.
 
 uri:
   noun: userrole
