@@ -2,6 +2,8 @@ name: Application create
 
 description: Create an application.
 
+application: Datagator
+
 uri:
   noun: application
   verb: manage

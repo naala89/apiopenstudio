@@ -2,6 +2,8 @@ name: User delete
 
 description: Delete a user.
 
+application: Datagator
+
 uri:
   noun: user
   verb: manage

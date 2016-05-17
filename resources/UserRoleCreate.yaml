@@ -2,6 +2,8 @@ name: User Role create
 
 description: Add a role for a user for an application.
 
+application: Datagator
+
 uri:
   noun: userrole
   verb: manage

@@ -2,6 +2,8 @@ name: Account delete
 
 description: Delete an account.
 
+application: Datagator
+
 uri:
   noun: account
   verb: manage
