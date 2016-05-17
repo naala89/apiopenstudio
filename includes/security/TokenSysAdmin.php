@@ -16,12 +16,12 @@
 namespace Datagator\Security;
 use Datagator\Core;
 use Datagator\Processor;
+use Datagator\Db;
 
-class TokenSysAdmin extends Token {
+class TokenSysAdmin extends Processor\ProcessorBase {
 
-  protected $role = 'sys-admin';
+  protected $role = 'SysAdmin';
   protected $details = array(
-    'machineName' => 'tokenSysAdmin',
     'name' => 'Token (Sys-Admin)',
     'description' => 'Validate the request, requiring the consumer to have a valid token and a role of sys-admin.',
     'menu' => 'Security',
@@ -38,12 +38,32 @@ class TokenSysAdmin extends Token {
 
   public function process() {
     Core\Debug::variable($this->meta, 'Security TokenSysAdmin', 4);
-    $roles = parent::process();
-    foreach ($roles as $role) {
-      if ($role->getRid() == $this->role->getRid()) {
-        return true;
-      }
+
+    // no token
+    $token = $this->val($this->meta->token);
+    if (empty($token)) {
+      throw new Core\ApiException('permission denied', 4, -1, 401);
     }
+
+    // invalid token or user not active
+    $db = $this->getDb();
+    $userMapper = new Db\UserMapper($db);
+    $user = $userMapper->findBytoken($token);
+    if (empty($user->getUid()) || $user->getActive() == 0) {
+      throw new Core\ApiException('permission denied', 4, -1, 401);
+    }
+
+    // get role from DB
+    $roleMapper = new Db\RoleMapper($db);
+    $this->role = $roleMapper->findByName($this->role);
+
+    // return list of roles for user for this request app
+    $userRoleMapper = new Db\UserRoleMapper($db);
+    $roles = $userRoleMapper->findByMixed($user->getUid(), null, $this->role->getRid());
+    if (sizeof($roles) > 0) {
+      return true;
+    }
+
     throw new Core\ApiException('permission denied', 4, $this->id, 401);
   }
 }

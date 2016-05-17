@@ -16,11 +16,11 @@
 namespace Datagator\Security;
 use Datagator\Core;
 use Datagator\Db;
+use Datagator\Processor;
 
-class TokenUser extends Token {
+class TokenUser extends Processor\ProcessorBase {
   protected $role = false;
   protected $details = array(
-    'machineName' => 'tokenUser',
     'name' => 'Token (User)',
     'description' => 'Validate the request by user and token, only allowing specific users to use the resource.',
     'menu' => 'Security',
