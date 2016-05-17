@@ -276,7 +276,7 @@ class Config
     }
     $get = $_GET;
     foreach ($get as $k => $v) {
-      if (property_exists('Config', $k)) {
+      if (property_exists("\\Datagator\\Config", $k)) {
         self::$$k = urldecode($v);
       }
     }
