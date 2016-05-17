@@ -21,7 +21,6 @@ use Datagator\Processor;
 class TokenRole extends Token {
 
   protected $details = array(
-    'machineName' => 'tokenRole',
     'name' => 'Token (Role)',
     'description' => 'Validate the request, requiring the consumer to have a valid token and a declared role.',
     'menu' => 'Security',
