@@ -11,7 +11,7 @@ method: post
 ttl: 0
 
 security:
-  processor: tokenAdmin
+  processor: TokenSysAdmin
   meta:
     id: 1
     token:
