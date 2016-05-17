@@ -5,6 +5,7 @@
  */
 
 namespace Datagator\Db;
+use Codeception\Util\Debug;
 use Datagator\Core;
 
 class UserRoleMapper

@@ -98,26 +98,6 @@ class AccountMapper
   }
 
   /**
-   * @param $email
-   * @return array
-   */
-  public function findByEmail($email)
-  {
-    $sql = 'SELECT a.* FROM account a INNER JOIN user u ON a.uid = u.uid WHERE u.email = ?';
-    $bindParams = array($email);
-
-    $recordSet = $this->db->Execute($sql, $bindParams);
-
-    $entries = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-      $recordSet->moveNext();
-    }
-
-    return $entries;
-  }
-
-  /**
    * @param $name
    * @return \Datagator\Db\Account
    */
@@ -138,6 +118,19 @@ class AccountMapper
   {
     $sql = 'SELECT * FROM account WHERE uid = ? AND name = ?';
     $bindParams = array($uid, $name);
+    $row = $this->db->GetRow($sql, $bindParams);
+    return $this->mapArray($row);
+  }
+
+  /**
+   * @param $accId
+   * @param $uid
+   * @return \Datagator\Db\Account
+   */
+  public function findByAccIdUid($accId, $uid)
+  {
+    $sql = 'SELECT * FROM account WHERE accid = ? AND uid = ?';
+    $bindParams = array($accId, $uid);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
   }
