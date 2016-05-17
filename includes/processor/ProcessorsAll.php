@@ -2,6 +2,9 @@
 
 namespace Datagator\Processor;
 use Datagator\Core;
+use Datagator\Db\ApplicationMapper;
+use Datagator\Db\UserMapper;
+use Datagator\Db\UserRoleMapper;
 
 class ProcessorsAll extends ProcessorBase
 {
@@ -20,13 +23,17 @@ class ProcessorsAll extends ProcessorBase
   {
     Core\Debug::variable($this->meta, 'Processor ProcessorsAll');
 
+    $applicationMapper = new ApplicationMapper($this->getDb());
+    $application = $applicationMapper->findByAppId($this->request->appId);
+    $appName = $application->getName();
+
     $classes = [];
     $classes = array_merge($classes, $this->_getClassList('endpoint'));
     $classes = array_merge($classes, $this->_getClassList('output'));
     $classes = array_merge($classes, $this->_getClassList('processor'));
     $classes = array_merge($classes, $this->_getClassList('security'));
 
-    $result = $this->_getDetails($classes);
+    $result = $this->_getDetails($classes, $appName);
 
     return $result;
   }
@@ -51,9 +58,10 @@ class ProcessorsAll extends ProcessorBase
    * Get details of all processors in an array.
    *
    * @param array $processors
+   * @param $appName
    * @return array
    */
-  private function _getDetails(array $processors)
+  private function _getDetails(array $processors, $appName)
   {
     $result = array();
 
@@ -62,7 +70,7 @@ class ProcessorsAll extends ProcessorBase
       if (!$abstractClass->isAbstract()) {
         $obj = new $processor($this->meta, $this->request);
         $details = $obj->details();
-        if (!empty($details['application'])) {
+        if (!empty($details['application']) && ($details['application'] == 'All' || $details['application'] == $appName)) {
           $result[] = $details;
         }
       }
