@@ -2,15 +2,6 @@
 
 /**
  * Provide token authentication based on token in DB and the user's role
- *
- * Meta:
- *    {
- *      "type": "token",
- *      "meta": {
- *        "id":<integer>,
- *        "token": <processor|string>
- *      }
- *    }
  */
 
 namespace Datagator\Security;

@@ -2,15 +2,6 @@
 
 /**
  * Provide token authentication based on token in DB
- *
- * Meta:
- *    {
- *      "type": "token",
- *      "meta": {
- *        "id":<integer>,
- *        "token": <processor|string>
- *      }
- *    }
  */
 
 namespace Datagator\Security;
@@ -22,8 +13,8 @@ class TokenSysAdmin extends Processor\ProcessorBase {
 
   protected $role = 'SysAdmin';
   protected $details = array(
-    'name' => 'Token (Sys-Admin)',
-    'description' => 'Validate the request, requiring the consumer to have a valid token and a role of sys-admin.',
+    'name' => 'Token (SysAdmin)',
+    'description' => 'Validate the request, requiring the consumer to have a valid token and a role of sys-admin for application referenced by the appId in the URI.',
     'menu' => 'Security',
     'client' => 'System',
     'application' => 'All',

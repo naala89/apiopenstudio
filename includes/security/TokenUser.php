@@ -2,15 +2,6 @@
 
 /**
  * Provide token authentication based on token
- *
- * Meta:
- *    {
- *      "type": "token",
- *      "meta": {
- *        "id":<integer>,
- *        "token": <processor|string>
- *      }
- *    }
  */
 
 namespace Datagator\Security;
