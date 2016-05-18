@@ -2,8 +2,6 @@ name: Application delete
 
 description: Delete an application.
 
-application: Datagator
-
 uri:
   noun: application
   verb: manage

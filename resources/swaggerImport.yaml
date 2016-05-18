@@ -1,6 +1,7 @@
 name: Swagger import
 
 description: Create resource/s from a Swagger document.
+
 uri:
   noun: resource
   verb: swagger

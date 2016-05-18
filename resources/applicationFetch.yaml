@@ -2,8 +2,6 @@ name: Application fetch
 
 description: Fetch an application.
 
-application: Datagator
-
 uri:
   noun: application
   verb: manage

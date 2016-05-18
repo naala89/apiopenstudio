@@ -2,8 +2,6 @@ name: Account fetch
 
 description: Fetch an account.
 
-application: Datagator
-
 uri:
   noun: account
   verb: manage
