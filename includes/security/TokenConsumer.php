@@ -22,7 +22,7 @@ class TokenConsumer extends Token {
   protected $role = 'consumer';
   protected $details = array(
     'name' => 'Token (Consumer)',
-    'description' => 'Validate the request, requiring the consumer to have a valid token and a role of consumer.',
+    'description' => 'Validate the request, requiring the consumer to have a valid token and a role of consumer for application referenced by the appId in the URI.',
     'menu' => 'Security',
     'client' => 'All',
     'application' => 'All',
@@ -37,12 +37,15 @@ class TokenConsumer extends Token {
 
   public function process() {
     Core\Debug::variable($this->meta, 'Security TokenConsumer', 4);
+
     $roles = parent::process();
+
     foreach ($roles as $role) {
       if ($role->getRid() == $this->role->getRid()) {
         return true;
       }
     }
+
     throw new Core\ApiException('permission denied', 4, $this->id, 401);
   }
 }
