@@ -2,8 +2,6 @@ name: User create
 
 description: Create a user.
 
-application: Datagator
-
 uri:
   noun: user
   verb: manage

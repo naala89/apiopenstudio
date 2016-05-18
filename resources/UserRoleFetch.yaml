@@ -2,8 +2,6 @@ name: User Role fetch
 
 description: Fetch a role for a user on an application.
 
-application: Datagator
-
 uri:
   noun: userrole
   verb: manage

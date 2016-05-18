@@ -2,8 +2,6 @@ name: Account create
 
 description: Create an account.
 
-application: Datagator
-
 uri:
   noun: account
   verb: manage

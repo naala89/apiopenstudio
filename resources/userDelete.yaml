@@ -2,8 +2,6 @@ name: User fetch
 
 description: Fetch a user.
 
-application: Datagator
-
 uri:
   noun: user
   verb: manage
