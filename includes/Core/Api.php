@@ -158,7 +158,12 @@ class Api
 
     if (!$this->test) {
       $resource = $mapper->findByAppIdMethodIdentifier($request->appId, $request->method, $request->identifier);
-
+      if ($resource->getId() === NULL) {
+        // also allow applications from app name All
+        $applicationMapper = new Db\ApplicationMapper($this->db);
+        $application = $applicationMapper->findByName('All');
+        $resource = $mapper->findByAppIdMethodIdentifier($application->getAppId(), $request->method, $request->identifier);
+      }
       if ($resource->getId() === NULL) {
         throw new ApiException('resource or client not defined', 3, -1, 404);
       }

@@ -142,8 +142,6 @@ abstract class ResourceBase extends ProcessorBase
 
     $name = $data['name'];
     $description = $data['description'];
-    $appName = $data['application'];
-    $appId = $this->_validateUserAppAccess($appName);
     $method = $data['method'];
     $identifier = strtolower($data['uri']['noun']) . strtolower($data['uri']['verb']);
     $meta = array();
@@ -157,9 +155,9 @@ abstract class ResourceBase extends ProcessorBase
     $ttl = !empty($data['ttl']) ? $data['ttl'] : 0;
 
     $mapper = new Db\ResourceMapper($this->db);
-    $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
+    $resource = $mapper->findByAppIdMethodIdentifier($this->request->appId, $method, $identifier);
     if (empty($resource->getId())) {
-      $resource->setAppId($appId);
+      $resource->setAppId($this->request->appId);
       $resource->setMethod($method);
       $resource->setIdentifier($identifier);
     }
@@ -247,31 +245,6 @@ abstract class ResourceBase extends ProcessorBase
     return $mapper->delete($resource);
   }
 
-  protected function _validateUserAppAccess($appName)
-  {
-    $roleName = 'Developer';
-    $applicationMapper = new Db\ApplicationMapper($this->db);
-    $application = $applicationMapper->findByName($appName);
-    if (empty($appId = $application->getAppId())) {
-      throw new Core\ApiException("Invalid application name: $appName", 6, $this->id, 417);
-    }
-    $userMapper = new Db\UserMapper($this->db);
-    // TODO: this is untidy and assumes knowledge of the YAML import processor
-    $user = $userMapper->findBytoken($this->request->vars['token']);
-    if (empty($uid = $user->getUid())) {
-      throw new Core\ApiException('Invalid user token: ' . $this->request->vars['token'], 6, $this->id, 417);
-    }
-    $roleMapper = new Db\RoleMapper($this->db);
-    $role = $roleMapper->findByName($roleName);
-    $rid = $role->getRid();
-    $userRoleMapper = new Db\UserRoleMapper($this->db);
-    $userRole = $userRoleMapper->findByUserAppRole($uid, $appId, $rid);
-    if (empty($userRole->getId())) {
-      throw new Core\ApiException("User " . $user->getUsername() ." does not have $roleName access for $appName", 6, $this->id, 417);
-    }
-    return $appId;
-  }
-
   /**
    * Validate input data is well formed.
    *
@@ -291,9 +264,6 @@ abstract class ResourceBase extends ProcessorBase
     }
     if (empty($data['description'])) {
       throw new Core\ApiException("missing description in new resource", 6, $this->id, 417);
-    }
-    if (empty($data['application'])) {
-      throw new Core\ApiException("missing application in new resource", 6, $this->id, 417);
     }
     if (empty($data['uri'])) {
       throw new Core\ApiException("missing uri in new resource", 6, $this->id, 417);
