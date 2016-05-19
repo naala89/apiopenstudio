@@ -7,6 +7,7 @@ Installation
 ------------
 
 1. $ git clone gitolite@naala.com.au:datagator
+2. chmod 775 uploads
 2. Install [Composer](https://getcomposer.org/).
 3. $ composer install
 8. $ composer dump-autoload --optimize
@@ -121,13 +122,22 @@ Testing
 Testing is done with [Codeception](http://codeception.com/).
 From Docroot, run:
 $ vendor/bin/codecept -v
-### Running tests
+
 If you are running testcase first time in api suite, then in your api directory you will not have api tester file. You need to generate that so run following command:
 $ vendor/bin/codecept build
-Then run:
-$ vendor/bin/codecept run --env staging|local|prod
 ### Testing user
-Account: Datagator
-Application: Testing
-Username: tester
-Password: tester_pass
+The following testing credentials  are stored in /tests/_support/Helper/api.php
+* Account: Datagator
+* Application: Testing
+* Username: tester
+* Password: tester_pass
+### Creating Tests
+#### Create api test
+$ vendor/bin/codecept generate:cept api TestName
+#### Fetch token
+$I->performLogin();
+$I->getMyStoredToken();
+#### Test YAML fies
+These are in /tests/_data/
+### Running tests
+$ vendor/bin/codecept run --env staging|local|prod
