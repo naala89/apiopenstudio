@@ -14,7 +14,7 @@ abstract class ResourceBase extends ProcessorBase
   protected $db;
   protected $details = array(
     'name' => 'Resource',
-    'description' => 'Create, edit or fetch a custom API resource for the application.',
+    'description' => 'Create, edit or fetch a custom API resource for the application. NOTE: in the case of DELETE, the args for the input should be as GET vars - POST vars are not guaranteed on all servers with this method.',
     'menu' => 'Resource',
     'application' => 'All',
     'input' => array(
