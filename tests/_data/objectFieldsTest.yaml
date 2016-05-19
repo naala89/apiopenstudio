@@ -1,0 +1,39 @@
+name: Testing object fields
+
+description: Test creating an object with fields and literals.
+
+uri:
+  noun: testing
+  verb: objectFields
+
+method: get
+
+ttl: 0
+
+security:
+  processor: TokenConsumer
+  meta:
+    id: 1
+    token:
+      processor: varPost
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: object
+  meta:
+    id: 3
+    attributes:
+      - field1
+      - field2
+      - field3
+      - processor: field
+          meta:
+            id: 3
+            key: myTestVar
+            value:
+              processor: varMixed
+              meta:
+                id: 4
+                value: MyTestVal
