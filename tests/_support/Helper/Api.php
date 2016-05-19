@@ -135,7 +135,7 @@ class Api extends \Codeception\Module
   {
     $yamlArr = $this->getResourceFromYaml($this->yamlFilename);
     $method = strtolower($yamlArr['method']);
-    $params = array_merge($params, array('token' => $this->token));
+    $params = array_merge($params, array('token' => $this->token, 'debug'=> 4));
     $uri = '/' . $this->applicationId . '/' . $yamlArr['uri']['noun'] . '/' . $yamlArr['uri']['verb'];
     if ($method == 'get') {
       $this->getModule('REST')->sendGet($uri, $params);
@@ -179,7 +179,7 @@ class Api extends \Codeception\Module
   /**
    * @throws \Codeception\Exception\ModuleException
    */
-  public function checkResult()
+  public function seeResult()
   {
     var_dump($this->getModule('REST')->response);
     exit;

@@ -28,7 +28,7 @@ class IfThenElse extends ProcessorBase
       'operator' => array(
         'description' => 'The comparison operator in the equation.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"=="', '"==="', '"!="', '">"', '">="', '"<"', '"<="'),
+        'accepts' => array('processor', '"=="', '"!="', '">"', '">="', '"<"', '"<="'),
       ),
       'then' => array(
         'description' => 'What to do if the equation returns true.',
@@ -50,13 +50,9 @@ class IfThenElse extends ProcessorBase
     $rhs = $this->val($this->meta->rhs);
     $operator = $this->val($this->meta->operator);
 
-    $eqRes = false;
-    switch ($eqRes) {
+    switch ($operator) {
       case '==':
         $result = $lhs == $rhs;
-        break;
-      case '===':
-        $result = $lhs === $rhs;
         break;
       case '!=':
         $result = $lhs != $rhs;
@@ -67,16 +63,18 @@ class IfThenElse extends ProcessorBase
       case '>=':
         $result = $lhs >= $rhs;
         break;
+      case '<':
+        $result = $lhs < $rhs;
+        break;
       case '<=':
         $result = $lhs <= $rhs;
         break;
       default:
-        throw new Core\ApiException('invalid operator', 1, $this->id);
+        throw new Core\ApiException("invalid operator: $operator", 1, $this->id);
         break;
     }
 
-    // equation is true
-    if ($eqRes) {
+    if ($result) {
       return $this->val($this->meta->then);
     } else {
       return $this->val($this->meta->else);
