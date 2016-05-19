@@ -1,0 +1,30 @@
+name: Testing object literal
+
+description: Test creating an object with literals.
+
+uri:
+  noun: testingObject
+  verb: literal
+
+method: get
+
+ttl: 0
+
+security:
+  processor: TokenConsumer
+  meta:
+    id: 1
+    token:
+      processor: varPost
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: object
+  meta:
+    id: 3
+    attributes:
+      - field1
+      - field2
+      - field3

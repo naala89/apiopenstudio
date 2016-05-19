@@ -5,6 +5,7 @@ modules:
         - REST:
             url: http://datagator.local/api/
             depends: PhpBrowser
+        - Filesystem
 env:
     local:
         modules:
