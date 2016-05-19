@@ -1,0 +1,32 @@
+name: Testing field
+
+description: Test creating a field from vars and constants.
+
+uri:
+  noun: testing
+  verb: field
+
+method: get
+
+ttl: 0
+
+security:
+  processor: TokenConsumer
+  meta:
+    id: 1
+    token:
+      processor: varGet
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: field
+  meta:
+    id: 3
+    key: myTestVar
+    value:
+      processor: varMixed
+      meta:
+        id: 4
+        value: MyTestVal
