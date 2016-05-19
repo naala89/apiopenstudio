@@ -74,7 +74,7 @@ class Api
     $this->request->ttl = $resource->getTtl();
 
     // validate user for the call, if required
-    $this->ValidateSecurity();
+    $this->_validateSecurity();
 
     // fetch the cache of the call, if it is not stale
     $data = $this->_getCache();
@@ -140,7 +140,7 @@ class Api
     $header = getallheaders();
     $result->outFormat = $this->parseType($header, 'Accept', 'json');
     $result->vars = array_diff_assoc($get, array('request' => $result->request));
-    $result->vars = $result->vars + $_POST;
+    $result->vars = array_merge($result->vars, $_POST);
 
     return $result;
   }
@@ -200,7 +200,7 @@ class Api
    * @return bool
    * @throws \Datagator\Core\ApiException
    */
-  private function ValidateSecurity()
+  private function _validateSecurity()
   {
     if (empty($this->request->resource->security)) {
       return true;
