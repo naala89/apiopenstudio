@@ -149,7 +149,7 @@ class Api extends \Codeception\Module
   /**
    * @throws \Codeception\Exception\ModuleException
    */
-  public function deleteResourceFromYaml()
+  public function tearDownTestFromYaml()
   {
     $yamlArr = $this->getResourceFromYaml($this->yamlFilename);
     $params = array();
@@ -177,13 +177,8 @@ class Api extends \Codeception\Module
   }
 
   /**
-   *
+   * @throws \Codeception\Exception\ModuleException
    */
-  public function tearDownTestFromYaml()
-  {
-    $this->deleteResourceFromYaml();
-  }
-
   public function checkResult()
   {
     var_dump($this->getModule('REST')->response);
