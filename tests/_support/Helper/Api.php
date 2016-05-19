@@ -90,7 +90,7 @@ class Api extends \Codeception\Module
    */
   public function performLogin()
   {
-    $this->getModule('PhpBrowser')->_request('POST', '/api/' . $this->applicationId . '/user/login', ['username' => $this->username, 'password' => $this->password]);
+    $this->getModule('REST')->sendPost('/' . $this->applicationId . '/user/login', ['username' => $this->username, 'password' => $this->password]);
     $this->getModule('REST')->seeResponseCodeIs(200);
     $this->getModule('REST')->seeResponseIsJson();
     $this->getModule('REST')->seeResponseMatchesJsonType(array('token' => 'string'));
@@ -108,28 +108,20 @@ class Api extends \Codeception\Module
   }
 
   /**
-   * @param null $yamlFilename
    * @return array
    */
-  public function getResourceFromYaml($yamlFilename=null)
+  public function getResourceFromYaml()
   {
-    if (!$yamlFilename) {
-      $yamlFilename = $this->yamlFilename;
-    }
-    $yamlArr = file_get_contents(codecept_data_dir($yamlFilename));
+    $yamlArr = file_get_contents(codecept_data_dir($this->yamlFilename));
     return \Spyc::YAMLLoadString($yamlArr);
   }
 
   /**
-   * @param null $yamlFilename
    * @throws \Codeception\Exception\ModuleException
    */
-  public function createResourceFromYaml($yamlFilename=null)
+  public function createResourceFromYaml()
   {
-    if (!$yamlFilename) {
-      $yamlFilename = $this->yamlFilename;
-    }
-    $this->getModule('REST')->sendPost('/' . $this->applicationId . '/resource/yaml', ['token' => $this->token], ['resource' => codecept_data_dir($yamlFilename)]);
+    $this->getModule('REST')->sendPost('/' . $this->applicationId . '/resource/yaml', ['token' => $this->token], ['resource' => codecept_data_dir($this->yamlFilename)]);
     $this->getModule('REST')->seeResponseCodeIs(200);
     $this->getModule('REST')->seeResponseIsJson();
     $this->getModule('REST')->seeResponseContains('true');
@@ -178,6 +170,7 @@ class Api extends \Codeception\Module
    */
   public function doTestFromYaml($yamlFilename, $params=array())
   {
+    $this->performLogin();
     $this->setYamlFilename($yamlFilename);
     $this->createResourceFromYaml();
     $this->callResourceFromYaml($params);
@@ -189,5 +182,11 @@ class Api extends \Codeception\Module
   public function tearDownTestFromYaml()
   {
     $this->deleteResourceFromYaml();
+  }
+
+  public function checkResult()
+  {
+    var_dump($this->getModule('REST')->response);
+    exit;
   }
 }
