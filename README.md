@@ -132,12 +132,10 @@ The following testing credentials  are stored in /tests/_support/Helper/api.php
 * Username: tester
 * Password: tester_pass
 ### Creating Tests
-#### Create api test
+### Create api test
 $ vendor/bin/codecept generate:cept api TestName
-#### Fetch token
-$I->performLogin();
-$I->getMyStoredToken();
-#### Test YAML fies
+### Test YAML fies
 These are in /tests/_data/
 ### Running tests
 $ vendor/bin/codecept run --env staging|local|prod
+$ vendor/bin/codecept run --env staging|local|prod api testName

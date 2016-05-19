@@ -30,7 +30,7 @@ class Concatenate extends ProcessorBase
     $result = '';
     foreach ($this->meta->sources as $source) {
       $val = $this->val($source);
-      $result .= $val;
+      $result .= (string)$val;
     }
     Core\Debug::variable($result, 'concatenation result', 4);
 
