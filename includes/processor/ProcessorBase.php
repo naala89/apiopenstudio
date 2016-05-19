@@ -8,7 +8,6 @@
  */
 
 namespace Datagator\Processor;
-use Codeception\Util\Debug;
 use Datagator\Config;
 use Datagator\Core;
 
