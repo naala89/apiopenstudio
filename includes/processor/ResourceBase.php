@@ -327,7 +327,6 @@ abstract class ResourceBase extends ProcessorBase
     }
 
     // validate all inputs
-    Core\Debug::variable(ucfirst(trim($obj['processor'])), 'processor name');
     $class = '\\Datagator\\Processor\\' . ucfirst(trim($obj['processor']));
     if (!class_exists($class)) {
       $class = '\\Datagator\\Endpoint\\' . ucfirst(trim($obj['processor']));

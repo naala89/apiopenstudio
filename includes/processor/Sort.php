@@ -24,7 +24,7 @@ class Sort extends ProcessorBase
       ),
       'key' => array(
         'description' => 'The key to be used in the sort operation.',
-        'cardinality' => array(1, 1),
+        'cardinality' => array(0, 1),
         'accepts' => array('processor', 'literal'),
       ),
       'direction' => array(
