@@ -8,6 +8,7 @@
  */
 
 namespace Datagator\Processor;
+use Codeception\Util\Debug;
 use Datagator\Config;
 use Datagator\Core;
 
@@ -226,7 +227,7 @@ class ProcessorBase
       foreach ($obj as $o) {
         $result[] = $this->val($o);
       }
-    } elseif (is_string($obj)) {
+    } elseif (!empty($obj)) {
       // this is a literal, so return it
       $result = $obj;
     } else {
