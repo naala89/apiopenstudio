@@ -5,6 +5,7 @@
  */
 
 namespace Datagator\Processor;
+use Codeception\Util\Debug;
 use Datagator\Core;
 
 class Concatenate extends ProcessorBase
@@ -27,12 +28,11 @@ class Concatenate extends ProcessorBase
   {
     Core\Debug::variable($this->meta, 'Processor Concatenate', 4);
 
+    $sources = $this->val($this->meta->sources);
     $result = '';
-    foreach ($this->meta->sources as $source) {
-      $val = $this->val($source);
-      $result .= (string)$val;
+    foreach ($sources as $source) {
+      $result .= (string)$source;
     }
-    Core\Debug::variable($result, 'concatenation result', 4);
 
     return $result;
   }
