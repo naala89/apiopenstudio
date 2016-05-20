@@ -30,7 +30,7 @@ process:
         id: 4
         name: lhs
     rhs:
-      processor: varGets
+      processor: varGet
       meta:
         id: 5
         name: rhs

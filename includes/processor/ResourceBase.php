@@ -327,6 +327,7 @@ abstract class ResourceBase extends ProcessorBase
     }
 
     // validate all inputs
+    Core\Debug::variable(ucfirst(trim($obj['processor'])), 'processor name');
     $class = '\\Datagator\\Processor\\' . ucfirst(trim($obj['processor']));
     if (!class_exists($class)) {
       $class = '\\Datagator\\Endpoint\\' . ucfirst(trim($obj['processor']));
@@ -343,9 +344,10 @@ abstract class ResourceBase extends ProcessorBase
     $processor = new $class($obj['meta'], $this->request);
     $processorDetails = $processor->details();
     foreach($processorDetails['input'] as $inputName => $inputDef) {
+
       // validate cardinality
       $count = 0;
-      if (isset($obj['meta'][$inputName]) && (!empty($obj['meta'][$inputName]) || strlen($obj['meta'][$inputName]))) {
+      if (!empty($obj['meta'][$inputName]) || strlen($obj['meta'][$inputName])) {
         if (is_array($obj['meta'][$inputName]) && (!isset($obj['meta'][$inputName]['processor']) && !isset($obj['meta'][$inputName]['meta']))) {
           // This check is for values that are array of values, but we also have to filter out processors
           $count = sizeof($obj['meta'][$inputName]);
@@ -359,23 +361,30 @@ abstract class ResourceBase extends ProcessorBase
       if (is_numeric($inputDef['cardinality'][1]) && $count > $inputDef['cardinality'][1]) {
         throw new Core\ApiException("$count inputs supplied (max " . $inputDef['cardinality'][1] . ') for ' . $inputName, 6, $obj['meta']['id'], 406);
       }
+
       // validate type
       if (!empty($obj['meta'][$inputName])) {
         if (is_array($obj['meta'][$inputName])) {
+
           if (!empty($obj['meta'][$inputName]['fragment'])) {
             // validate the fragment exists
             $fragmentName = $obj['meta'][$inputName]['fragment'];
-            $validFragment = false;
+            $validFragment = FALSE;
             foreach ($fragments as $fragment) {
               if ($fragment['fragment'] == $fragmentName) {
-                $validFragment = true;
+                $validFragment = TRUE;
               }
             }
             if (!$validFragment) {
               throw new Core\ApiException("Fragment '$fragmentName'  not defined", 6, $obj['meta']['id'], 406);
             }
-          } elseif (empty($obj['meta'][$inputName]['processor']) && empty($obj['meta'][$inputName]['meta'])) {
-            // This check is for values that are array of values, but we also have to filter out processors
+
+          } elseif (!empty($obj['meta'][$inputName]['processor']) && !empty($obj['meta'][$inputName]['meta'])) {
+            // validate the processor
+            $this->_validateProcessor($obj['meta'][$inputName], $fragments);
+
+          } else {
+            // This check is for values that are array of values
             foreach ($obj['meta'][$inputName] as $element) {
               $this->_validateTypeValue($element, $inputDef['accepts'], $inputName, $fragments);
             }
