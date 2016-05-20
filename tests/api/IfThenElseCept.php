@@ -4,7 +4,7 @@ $I = new ApiTester($scenario);
 $I->setYamlFilename('ifThenElse.yaml');
 $I->performLogin();
 $I->createResourceFromYaml();
-
+/*
 $I->wantTo('test IfThenElse == operator when < and see result');
 $I->callResourceFromYaml(array('lhs' => 100, 'rhs' => 200, 'operator' => '=='));
 $I->seeResponseCodeIs(200);
@@ -131,3 +131,4 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson(["error" => ["code" => 1, "message" => "Invalid operator: >>.", "id" => 3]]);
 
 $I->tearDownTestFromYaml();
+*/
