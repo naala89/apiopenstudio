@@ -142,8 +142,6 @@ class Api extends \Codeception\Module
     } else {
       $this->getModule('REST')->sendPost($uri, $params);
     }
-    $this->getModule('REST')->seeResponseCodeIs(200);
-    $this->getModule('REST')->seeResponseIsJson();
   }
 
   /**
