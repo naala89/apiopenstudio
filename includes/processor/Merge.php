@@ -1,19 +1,7 @@
 <?php
 
 /**
- * Perform merge of two external sources
- *
- * METADATA
- * {
- *    "type":"merge",
- *    "meta":{
- *      "mergeType":"union",
- *      "sources":[
- *        {"type":"input","meta":{"url":"http://data1.com"}},
- *        {"type":"input","meta":{"url":"http://data2.com"}},
- *      ]
- *    }
- *  }
+ * Perform merge of multiple sources.
  */
 
 namespace Datagator\Processor;
@@ -58,7 +46,6 @@ class Merge extends ProcessorBase
     if (!method_exists($this, $method)) {
       throw new Core\ApiException("invalid mergeType: $mergeType", 6, $this->id, 407);
     }
-    Core\Debug::variable($unique);
 
     if ($unique) {
       return array_unique($this->$method($sources));
