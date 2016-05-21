@@ -111,7 +111,7 @@ class Utilities
    **/
   public static function is_assoc($m_array)
   {
-    return (is_array($m_array) && 0 !== count(array_diff_key($m_array, array_keys(array_keys($m_array)))));
+    return array_keys($m_array) !== range(0, count($m_array) - 1);
   }
 
   /**
