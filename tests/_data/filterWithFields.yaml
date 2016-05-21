@@ -1,0 +1,59 @@
+name: Testing filter fields
+
+description: Test Filter by filtering out fields by keys
+
+uri:
+  noun: testing
+  verb: filterFields
+
+method: get
+
+ttl: 0
+
+security:
+  processor: TokenConsumer
+  meta:
+    id: 1
+    token:
+      processor: varPost
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: filter
+  meta:
+    id: 3
+    values:
+      processor: object
+      meta:
+        id: 4
+        attributes:
+          - processor: field
+            meta:
+              id: 5
+              key: key1
+              value: val1
+          - processor: field
+            meta:
+              id: 6
+              key: key2
+              value: val2
+          - processor: field
+            meta:
+              id: 7
+              key: key3
+              value: val3
+          - processor: field
+            meta:
+              id: 8
+              key: key4
+              value: val4
+          - processor: field
+            meta:
+              id: 9
+              key: key5
+              value: val5
+    filter:
+      - key1
+      - val3
