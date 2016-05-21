@@ -478,7 +478,10 @@ abstract class ResourceBase extends ProcessorBase
       } elseif ($accept == 'bool' && is_bool($element)) {
         $valid = true;
         break;
-      } else {
+      } elseif ($accept == 'array' && is_array($element)) {
+        $valid = true;
+        break;
+      } elseif (!is_array($element)) {
         $firstLast = substr($accept, 0, 1) . substr($accept, -1, 1);
         if ($firstLast == '""' || $firstLast == "''") {
           if ($element == trim($accept, "\"'")) {
