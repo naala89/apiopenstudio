@@ -2,15 +2,6 @@
 
 /**
  * Get variable
- *
- * METADATA
- * {
- *    "type":"val",
- *    "meta":{
- *      "id":<integer>,
- *      "var":<processor|literal>,
- *    }
- *  }
  */
 
 namespace Datagator\Processor;
