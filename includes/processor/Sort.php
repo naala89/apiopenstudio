@@ -10,21 +10,17 @@ use Datagator\Core;
 class Sort extends ProcessorBase
 {
   private $asc;
-  private $key;
+  private $sortByValue;
+
   protected $details = array(
     'name' => 'Sort',
-    'description' => 'Sort an input of type Processor Object. Select a key and desc or asc',
+    'description' => 'Sort an input of multiple values. The values can be singular items or name/value pairs (sorted by key or value). Singular items cannot be mixed with name/value pairs.',
     'menu' => 'Logic',
     'application' => 'All',
     'input' => array(
-      'object' => array(
-        'description' => 'The obj.',
-        'cardinality' => array(1, 1),
-        'accepts' => array('processor Object'),
-      ),
-      'key' => array(
-        'description' => 'The key to be used in the sort operation.',
-        'cardinality' => array(0, 1),
+      'values' => array(
+        'description' => 'The values to sort.',
+        'cardinality' => array(0, '*'),
         'accepts' => array('processor', 'literal'),
       ),
       'direction' => array(
@@ -32,40 +28,87 @@ class Sort extends ProcessorBase
         'cardinality' => array(1, 1),
         'accepts' => array('processor', '"asc"', '"desc"'),
       ),
+      'sortByValue' => array(
+        'description' => 'If set to true, sort by the value, otherwise sort by key (only used if the sources are of type Field, and the sortable key or value cannot be another key/value pair). Default is false.',
+        'cardinality' => array(0, 1),
+        'accepts' => array('processor', '"true"', '"false"'),
+      ),
     ),
   );
 
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor Sort', 4);
-    $obj = $this->val($this->meta->object);
-    $this->asc = $this->val($this->meta->direction) == 'asc';
-    $this->key = $this->val($this->meta->key);
 
-    usort($obj, array($this, 'sort'));
+    $values = $this->val($this->meta->values);
+    if (!is_array($values) || empty($values)) {
+      return $values;
+    }
+    $this->asc = ($this->val($this->meta->direction) == 'asc');
+    $this->sortByValue = isset($this->meta->sortByValue) ? $this->val($this->meta->sortByValue) == 'true' : false;
 
-    return $obj;
+    Core\Debug::variable($this->sortByValue);
+    Core\Debug::variable($this->asc);
+    
+    $haveField = false;
+    $haveVal = false;
+    foreach ($values as $value) {
+      if (is_array($value)) {
+        if (sizeof($value) > 1) {
+          throw new Core\ApiException('invalid value found in sort - can only use single values or key/value pairs', 1, $this->id);
+        }
+        $haveField = true;
+      } else {
+        $haveVal = true;
+      }
+    }
+
+    if ($haveVal && $haveField) {
+      throw new Core\ApiException('cannot sort a collection of mixed name/value pairs and values', 1, $this->id);
+    }
+    if ($haveField) {
+      usort($values, array($this, 'sortFields'));
+    } elseif ($this->asc) {
+      sort($values);
+    } else {
+      rsort($values);
+    }
+
+    return $values;
   }
 
-   public function sort($a, $b)
+  /**
+   * @param $a
+   * @param $b
+   * @return int
+   * @throws \Datagator\Core\ApiException
+   */
+   public function sortFields($a, $b)
    {
-     if (!isset($a[$this->key]) || !isset($b[$this->key])) {
-       throw new Core\ApiException('missing field in object', 1, $this->id);
+     $ka = array_keys($a);
+     $kb = array_keys($b);
+     if ($this->sortByValue) {
+       $sa = $ka[0];
+       $sb = $kb[0];
+     } else {
+       $sa = $a[$ka[0]];
+       $sb = $b[$kb[0]];
      }
-     if ($a == $b) {
+
+     if ($sa == $sb) {
        return 0;
      }
-     if (is_numeric($a) && is_numeric($b)) {
-       if ($this->asc) {
-         return $a > $b ? +1 : -1;
+     if (is_numeric($sa) && is_numeric($sb)) {
+       if (!$this->asc) {
+         return $sa > $sb ? +1 : -1;
        } else {
-         return $b > $a ? +1 : -1;
+         return $sb > $sa ? +1 : -1;
        }
      } else {
-       if ($this->asc) {
-         return strnatcmp($a, $b);
+       if (!$this->asc) {
+         return strnatcmp($sa, $sb);
        } else {
-         return strnatcmp($b, $a);
+         return strnatcmp($sb, $sa);
        }
      }
    }
