@@ -24,19 +24,24 @@ class Merge extends ProcessorBase
   private $_defaultType = 'union';
   protected $details = array(
     'name' => 'Merge',
-    'description' => 'Merge 2 fields.',
+    'description' => 'Merge multiple data-sets.',
     'menu' => 'Operation',
     'application' => 'All',
     'input' => array(
       'sources' => array(
-        'description' => 'The values to perform the merge on.',
+        'description' => 'The data-sets to merge on.',
         'cardinality' => array(2, '*'),
-        'accepts' => array('processor', 'literal')
+        'accepts' => array('processor', 'array', 'literal')
       ),
       'mergeType' => array(
-        'description' => 'The merge operation to perform.',
+        'description' => 'The merge operation to perform. The default is union.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"negate"', '"intersect"', '"union"')
+        'accepts' => array('processor', '"union"', '"intersect"', '"difference"')
+      ),
+      'unique' => array(
+        'description' => 'Filter out duplicate values. The default is false.',
+        'cardinality' => array(0, 1),
+        'accepts' => array('processor', '"true"', '"false"')
       ),
     ),
   );
@@ -45,54 +50,59 @@ class Merge extends ProcessorBase
   {
     Core\Debug::variable($this->meta, 'processor Merge', 4);
 
-    $sources = $this->meta->sources;
-    $values = array();
-    foreach ($sources as $source) {
-      $processor = $this->getProcessor($source);
-      $data = $processor->process();
-      $values[] = $data;
-    }
+    $sources = $this->val($this->meta->sources);
+    $unique = !empty($this->meta->unique) ? $this->val($this->meta->unique) == 'true' : false;
+    $mergeType = !empty($this->meta->mergeType) ? $this->val($this->meta->mergeType) : $this->_defaultType;
+    $method = '_' . strtolower(trim($mergeType));
 
-    $type = empty($this->meta->meta->mergeType) ? $this->_defaultType : $this->meta->meta->mergeType;
-    $type = ucfirst(trim($type));
-    $method = "_merge$type";
-    if (method_exists($this, $method)) {
-      $result = $this->$method($values);
-    } else {
-      throw new Core\ApiException("invalid mergeType: $type", 6, $this->id, 407);
+    if (!method_exists($this, $method)) {
+      throw new Core\ApiException("invalid mergeType: $mergeType", 6, $this->id, 407);
     }
+    Core\Debug::variable($unique);
 
-    return $result;
+    if ($unique) {
+      return array_unique($this->$method($sources));
+    }
+    return $this->$method($sources);
   }
 
-  private function _mergeNegate($values)
-  {
-    $result = array_shift($values);
-    foreach ($values as $value) {
-      $result = array_diff($result, $value);
-    }
-    return $result;
-  }
-
-  private function _mergeUnion($values)
+  /**
+   * @param $values
+   * @return array|mixed
+   */
+  private function _union($values)
   {
     $result = array_shift($values);
     $result = is_array($result) ? $result : array($result);
     foreach ($values as $value) {
-      if (!is_array($value)) {
-        $result[] = $value;
-      } else {
-        $result += $value;
-      }
+      $value = is_array($value) ? $value : array($value);
+      $result = array_merge($result, $value);
     }
     return $result;
   }
 
-  private function _mergeIntersect($values)
+  /**
+   * @param $values
+   * @return array|mixed
+   */
+  private function _intersect($values)
   {
     $result = array_shift($values);
+    $result = is_array($result) ? $result : array($result);
     foreach ($values as $value) {
+      $value = is_array($value) ? $value : array($value);
       $result = array_intersect($result, $value);
+    }
+    return $result;
+  }
+
+  private function _difference($values)
+  {
+    $result = array_shift($values);
+    $result = is_array($result) ? $result : array($result);
+    foreach ($values as $value) {
+      $value = is_array($value) ? $value : array($value);
+      $result = array_merge(array_diff($result, $value), array_diff($value, $result));
     }
     return $result;
   }
