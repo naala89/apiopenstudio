@@ -2,14 +2,6 @@
 
 /**
  * Request variable
- *
- * METADATA
- * {
- *    "type":"requestVar",
- *    "meta":{
- *      "var":<processor|mixed>,
- *    }
- *  }
  */
 
 namespace Datagator\Processor;
@@ -26,7 +18,7 @@ class VarRequest extends VarMixed
       'name' => array(
         'description' => 'The name of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal')
+        'accepts' => array('processor', 'string')
       ),
     ),
   );

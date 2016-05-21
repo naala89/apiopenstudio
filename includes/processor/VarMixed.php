@@ -2,15 +2,6 @@
 
 /**
  * Parent class for mixed variable types
- *
- * METADATA
- * {
- *    "type":"var",
- *    "meta":{
- *      "id":<integer>,
- *      "var":<processor|mixed>,
- *    }
- *  }
  */
 
 namespace Datagator\Processor;

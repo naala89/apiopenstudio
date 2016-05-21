@@ -2,14 +2,6 @@
 
 /**
  * Post variable
- *
- * METADATA
- * {
- *    "type":"postVar",
- *    "meta":{
- *      "var":<processor|mixed>,
- *    }
- *  }
  */
 
 namespace Datagator\Processor;
@@ -26,7 +18,7 @@ class VarPost extends VarMixed
       'name' => array(
         'description' => 'The name of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'integer')),
+        'accepts' => array('processor', 'string')),
     ),
   );
 
