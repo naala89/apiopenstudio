@@ -1,0 +1,42 @@
+name: Testing Sort singular with a field
+
+description: Test Sort processor with array of single values and a field
+
+uri:
+  noun: testing
+  verb: sortSingularWithField
+
+method: get
+
+ttl: 0
+
+security:
+  processor: TokenConsumer
+  meta:
+    id: 1
+    token:
+      processor: varPost
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: sort
+  meta:
+    id: 3
+    values:
+      - field1
+      - field4
+      - field2
+      - field3
+      - processor: field
+        meta:
+          id: 5
+          key: key
+          value: value
+      - 5
+    direction:
+      processor: varGet
+      meta:
+        id: 6
+        name: direction

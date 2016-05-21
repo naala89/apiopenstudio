@@ -1,0 +1,66 @@
+name: Testing Sort object of fields
+
+description: Test Sort processor with an Object of Fields
+
+uri:
+  noun: testing
+  verb: sortObjectOfFields
+
+method: get
+
+ttl: 0
+
+security:
+  processor: TokenConsumer
+  meta:
+    id: 1
+    token:
+      processor: varPost
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: sort
+  meta:
+    id: 3
+    values:
+      processor: object
+      meta:
+        id: 4
+        attributes:
+          - processor: field
+            meta:
+              id: 5
+              key: key3
+              value: val3
+          - processor: field
+            meta:
+              id: 5
+              key: key2
+              value: val5
+          - processor: field
+            meta:
+              id: 5
+              key: key4
+              value: val2
+          - processor: field
+            meta:
+              id: 5
+              key: key1
+              value: val99
+          - processor: field
+            meta:
+              id: 5
+              key: key999
+              value: val1
+    direction:
+      processor: varGet
+      meta:
+        id: 6
+        name: direction
+    sortByValue:
+      processor: varGet
+      meta:
+        id: 6
+        name: sortByValue
