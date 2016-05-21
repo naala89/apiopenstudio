@@ -1,0 +1,51 @@
+name: Testing filter mixed
+
+description: Test filter with list of mixed fieldsa and single items
+
+uri:
+  noun: testing
+  verb: filterMixed
+
+method: get
+
+ttl: 0
+
+security:
+  processor: TokenConsumer
+  meta:
+    id: 1
+    token:
+      processor: varPost
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: filter
+  meta:
+    id: 3
+    values:
+      processor: object
+      meta:
+        id: 4
+        attributes:
+          - processor: field
+            meta:
+              id: 5
+              key: key1
+              value: val1
+          - processor: field
+            meta:
+              id: 6
+              key: key2
+              value: val2
+          - processor: field
+            meta:
+              id: 7
+              key: key3
+              value: val3
+          - val4
+          - val5
+    filter:
+      - key1
+      - val3
