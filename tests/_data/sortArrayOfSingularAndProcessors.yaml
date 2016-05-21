@@ -1,0 +1,49 @@
+name: Testing Sort singular and processors
+
+description: Test Sort processor with array of single values and procesors
+
+uri:
+  noun: testing
+  verb: sortSingular
+
+method: get
+
+ttl: 0
+
+security:
+  processor: TokenConsumer
+  meta:
+    id: 1
+    token:
+      processor: varPost
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: sort
+  meta:
+    id: 3
+    values:
+      processor: object
+      meta:
+        id: 4
+        attributes:
+          - field1
+          - processor: varStr
+            meta:
+              id: 5
+              value: testStr
+          - processor: varFloat
+            meta:
+              id: 6
+              value: 3.45626
+          - field2
+          - field3
+          - 1
+          - 5
+    direction:
+      processor: varGet
+      meta:
+        id: 7
+        name: direction
