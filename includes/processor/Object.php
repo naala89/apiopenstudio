@@ -23,14 +23,16 @@ class Object extends ProcessorBase {
     ),
   );
 
-  public function process() {
+  public function process()
+  {
     $result = array();
     $attributes = $this->val($this->meta->attributes);
 
-    if (sizeof($attributes) == 1) {
-      $result = $attributes[0];
-    } else {
-      foreach ($attributes as $attribute) {
+    foreach ($attributes as $attribute) {
+      if (is_array($attribute) && Core\Utilities::is_assoc($attribute) && sizeof($attribute) == 1) {
+        $keys = array_keys($attribute);
+        $result[$keys[0]] = $attribute[$keys[0]];
+      } else {
         $result[] = $attribute;
       }
     }
