@@ -1,15 +1,7 @@
 <?php
 
 /**
- * Variable type float
- *
- * METADATA
- * {
- *    "type":"varFloat",
- *    "meta":{
- *      "var":<processor|float>,
- *    }
- *  }
+ * Variable type float.
  */
 
 namespace Datagator\Processor;
@@ -34,8 +26,8 @@ class VarFloat extends VarMixed
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarFloat');
+
     $value = parent::process();
-    var_dump($value);
     if (is_string($value) && is_numeric($value)) {
       $value = floatval($value);
     }

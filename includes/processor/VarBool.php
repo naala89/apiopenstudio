@@ -1,15 +1,7 @@
 <?php
 
 /**
- * Variable type boolean
- *
- * METADATA
- * {
- *    "type":"varBool",
- *    "meta":{
- *      "var":<processor|boolean>,
- *    }
- *  }
+ * Variable type boolean.
  */
 
 namespace Datagator\Processor;
