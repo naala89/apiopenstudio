@@ -37,7 +37,7 @@ class VarBool extends VarMixed
     $value = parent::process();
 
     if (is_string($value)) {
-      $value = strtolower($value) == 'true' || $value = '1' || strtolower($value) =='yes';
+      $value = strtolower($value) == 'true' || $value == '1' || strtolower($value) =='yes';
     }
 
     if (!is_bool($value)) {
