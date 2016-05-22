@@ -1,0 +1,27 @@
+name: Testing varGet
+
+description: Test varGet processor
+
+uri:
+  noun: testing
+  verb: varGet
+
+method: get
+
+ttl: 0
+
+security:
+  processor: TokenConsumer
+  meta:
+    id: 1
+    token:
+      processor: varGet
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: varGet
+  meta:
+    id: 3
+    name: value
