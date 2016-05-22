@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Get variable
+ * Get variable.
  */
 
 namespace Datagator\Processor;
