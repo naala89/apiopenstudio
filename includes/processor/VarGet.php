@@ -31,6 +31,7 @@ class VarGet extends VarMixed
     if (isset($this->request->vars[$name])) {
       return $this->request->vars[$name];
     }
+
     return null;
   }
 }
