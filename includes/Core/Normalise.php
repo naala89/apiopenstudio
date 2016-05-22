@@ -47,15 +47,21 @@ class Normalise
     $format = empty($this->format) ? $this->_calcFormat() : $this->_getFormat();
     switch ($format) {
       case 'xml':
+      case 'application/xml':
+      case 'text/xml':
         $data = $this->_xmlToArray($this->data);
         break;
       case 'json':
+      case 'application/json':
+      case 'text/json':
         $data = $this->_jsonToArray($this->data);
         break;
       case 'array':
         $data = $this->data;
         break;
       case 'text':
+      case 'application/text':
+      case 'text/text':
       default:
         $data = array('data' => $this->data);
         break;
