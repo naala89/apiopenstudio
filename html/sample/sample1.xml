@@ -300,12 +300,12 @@
 
         <init-param>
             <param-name>removePageCache</param-name>
-            <param-value>/content/admin/remove?cache=pages&id=</param-value>
+            <param-value>/content/admin/remove?cache=pages&amp;id=</param-value>
         </init-param>
 
         <init-param>
             <param-name>removeTemplateCache</param-name>
-            <param-value>/content/admin/remove?cache=templates&id=</param-value>
+            <param-value>/content/admin/remove?cache=templates&amp;id=</param-value>
         </init-param>
 
         <init-param>
