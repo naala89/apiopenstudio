@@ -9,7 +9,7 @@ namespace Datagator\Output;
 
 class Xml extends Output
 {
-  protected $header = 'Content-Type:text/html';
+  protected $header = 'Content-Type:application/xml';
   protected $details = array(
     'name' => 'Xml',
     'description' => 'Output in XML format.',
@@ -52,9 +52,9 @@ class Xml extends Output
       $data = get_object_vars($data);
     }
     if (is_array($data)) {
-      $xml = new \SimpleXMLElement('<?xml version="1.0"?><wrapper></wrapper>');
-      $this->_arrayToXml($data, $xml);
-      $xml = $xml->asXML();
+      $xml_data = new \SimpleXMLElement('<?xml version="1.0"?><wrapper></wrapper>');
+      $this->_arrayToXml($data, $xml_data);
+      $xml = $xml_data->asXML();
     }
     else {
       $xml = "<?xml version=\"1.0\"?><wrapper>$data</wrapper>";
@@ -63,19 +63,20 @@ class Xml extends Output
   }
 
   /**
-   * @param $array
-   * @param $xml
+   * @param $data
+   * @param $xml_data
+   * @see http://stackoverflow.com/questions/1397036/how-to-convert-array-to-simplexml
    */
-  private function _arrayToXml($array, &$xml)
-  {
-    foreach($array as $key => $value) {
-      if(is_array($value) || is_object($value)) {
-        $key = is_numeric($key) ? "item$key" : $key;
-        $subnode = $xml->addChild("$key");
+  private function _arrayToXml($data, &$xml_data ) {
+    foreach( $data as $key => $value ) {
+      if( is_array($value) ) {
+        if( is_numeric($key) ){
+          $key = 'item'.$key; //dealing with <0/>..<n/> issues
+        }
+        $subnode = $xml_data->addChild($key);
         $this->_arrayToXml($value, $subnode);
       } else {
-        $key = is_numeric($key) ? "item$key" : $key;
-        $xml->addChild("$key","$value");
+        $xml_data->addChild("$key",htmlspecialchars("$value"));
       }
     }
   }
