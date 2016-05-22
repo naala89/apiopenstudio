@@ -1,15 +1,7 @@
 <?php
 
 /**
- * Variable type number
- *
- * METADATA
- * {
- *    "type":"varNum",
- *    "meta":{
- *      "var":<processor|number>,
- *    }
- *  }
+ * Variable type number.
  */
 
 namespace Datagator\Processor;
@@ -37,7 +29,7 @@ class VarNum extends VarMixed
     $value = parent::process();
 
     if (!is_numeric($value)) {
-      throw new Core\ApiException('invalid number', 6, $this->id, 417);
+      throw new Core\ApiException("invalid number: $value", 6, $this->id, 417);
     }
 
     return $value;
