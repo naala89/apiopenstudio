@@ -7,6 +7,8 @@
 
 namespace Datagator\Output;
 
+use Datagator\Core\Debug;
+
 class Xml extends Output
 {
   protected $header = 'Content-Type:application/xml';
@@ -68,14 +70,27 @@ class Xml extends Output
    * @see http://stackoverflow.com/questions/1397036/how-to-convert-array-to-simplexml
    */
   private function _arrayToXml($data, &$xml_data ) {
-    foreach( $data as $key => $value ) {
-      if( is_array($value) ) {
-        if( is_numeric($key) ){
-          $key = 'item'.$key; //dealing with <0/>..<n/> issues
+    foreach($data as $key => $value) {
+
+      if(is_array($value)) {
+        if (substr($key, 0, 1) == '@') {
+          if ($key != 'header' && $key != 'item' && $key == '@attributes') {
+            foreach ($value as $k => $v) {
+              $xml_data->addAttribute($k, $v);
+            }
+          }
+        }
+        if(is_numeric($key)) {
+          $key = 'item'; //dealing with <0/>..<n/> issues
         }
         $subnode = $xml_data->addChild($key);
         $this->_arrayToXml($value, $subnode);
       } else {
+        if (substr($key, 0, 1) == '@') {
+          if ($key != 'header' && $key != 'item') {
+            $xml_data->addAttribute(substr($key, 1), $value);
+          }
+        }
         $xml_data->addChild("$key",htmlspecialchars("$value"));
       }
     }
