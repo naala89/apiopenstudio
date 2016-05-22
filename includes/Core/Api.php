@@ -303,8 +303,7 @@ class Api
     if (empty($this->request->resource->output)) {
       Debug::message('no output section defined - returning the result in the response');
       // translate the output to the correct format as requested in header and return in the response
-      $outFormat = ucfirst($this->_cleanData($this->request->outFormat));
-      $outFormat = $outFormat == '**' ? 'Json' : $outFormat;
+      $outFormat = ucfirst($this->request->outFormat);
       $class = '\\Datagator\\Output\\' . $outFormat;
       if (!class_exists($class)) {
         throw new ApiException('output processor undefined: ' . $outFormat, 1);
