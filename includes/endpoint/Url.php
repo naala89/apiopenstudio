@@ -55,12 +55,10 @@ class Url extends Processor\ProcessorBase
   {
     Core\Debug::variable($this->meta, 'processor Url', 4);
 
-    $method = $this->val($this->meta->method);
-    $method = strtolower($method);
+    $method = strtolower($this->val($this->meta->method));
     if (!in_array($method, array('get', 'post'))) {
       throw new Core\ApiException('invalid method', 6, $this->id, 417);
     }
-
     $url = $this->val($this->meta->source);
     $reportError = $this->val($this->meta->reportError);
 
@@ -109,7 +107,7 @@ class Url extends Processor\ProcessorBase
     $doNormalise = $this->val($this->meta->normalise) == 'true';
     if ($doNormalise) {
       $normalise = new Core\Normalise();
-      $normalise->set($result);
+      $normalise->set($result, $curl->type);
       $result = $normalise->normalise();
       if ($reportError && $curl->httpStatus != 200) {
         throw new Core\ApiException(json_encode($result), 5, $this->id, $curl->httpStatus);
