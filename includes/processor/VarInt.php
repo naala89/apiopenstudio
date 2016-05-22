@@ -2,14 +2,6 @@
 
 /**
  * variable type integer
- *
- * METADATA
- * {
- *    "type":"integer",
- *    "meta":{
- *      "var":<processor|integer>,
- *    }
- *  }
  */
 
 namespace Datagator\Processor;
@@ -34,10 +26,14 @@ class VarInt extends VarMixed
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarInt', 4);
-    $value = parent::process();
 
-    if (!is_integer($value)) {
-      throw new Core\ApiException('invalid integer', 6, $this->id, 417);
+    $value = parent::process();
+    if (is_string($value) && is_numeric($value)) {
+      $value = $value + 0;
+    }
+
+    if (!is_integer($value) && $value !== 0) {
+      throw new Core\ApiException("invalid integer: $value", 6, $this->id, 417);
     }
 
     return $value;
