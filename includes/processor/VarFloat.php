@@ -33,11 +33,15 @@ class VarFloat extends VarMixed
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor VarFloat, 4');
+    Core\Debug::variable($this->meta, 'Processor VarFloat');
     $value = parent::process();
+    var_dump($value);
+    if (is_string($value) && is_numeric($value)) {
+      $value = floatval($value);
+    }
 
-    if (!is_float($value)) {
-      throw new Core\ApiException('invalid float', 6, $this->id, 417);
+    if (!is_float($value) && $value !== 0) {
+      throw new Core\ApiException("invalid float: $value", 6, $this->id, 417);
     }
 
     return $value;
