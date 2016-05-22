@@ -4,7 +4,7 @@ namespace Datagator\Output;
 
 class Html extends Xml
 {
-  protected $header = 'Content-Type:application/xml';
+  protected $header = 'Content-Type:text/html';
   protected $details = array(
     'name' => 'Html',
     'description' => 'Output in HTML format.',

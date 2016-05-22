@@ -2,20 +2,6 @@
 
 /**
  * Perform input from external source
- *
- * METADATA
- * {
- *  "type": "inputUrl",
- *  "meta": {
- *    "id: <integer>,
- *    "method": "get|post",
- *    "auth": <processor>,
- *    "vars": <processor|string|obj>,
- *    "source": <processor|string|obj>,
- *    "curlOpts": <obj>,
- *    "normalise": <0|1>
- *  },
- * }
  */
 
 namespace Datagator\Endpoint;
@@ -51,7 +37,7 @@ class Url extends Processor\ProcessorBase
         'accepts' => array('processor', '"true"', '"false"'),
       ),
       'normalise' => array(
-        'description' => 'If set to 0, the results will pass though as a raw string. If set to 1, the results will be parsed into a format that can be processed further, i.e. merge, filter, etc.',
+        'description' => 'If set to false, the results will pass though as a raw string. If set to 1\true, the results will be parsed into a format that can be processed further, i.e. merge, filter, etc.',
         'cardinality' => array(1, 1),
         'accepts' => array('processor', '"true"', '"false"'),
       ),
@@ -120,14 +106,15 @@ class Url extends Processor\ProcessorBase
       throw new Core\ApiException('could not get response from remote server: ' . $curl->errorMsg, 5, $this->id, $curl->httpStatus);
     }
 
-    //if ($this->val($this->meta->normalise)) {
-    //  $normalise = new Core\Normalise();
-    //  $normalise->set($result);
-    //  $result = $normalise->normalise();
-    //  if ($reportError && $curl->httpStatus != 200) {
-    //    throw new Core\ApiException(json_encode($result), 5, $this->id, $curl->httpStatus);
-    //  }
-    //}
+    $doNormalise = $this->val($this->meta->normalise) == 'true';
+    if ($doNormalise) {
+      $normalise = new Core\Normalise();
+      $normalise->set($result);
+      $result = $normalise->normalise();
+      if ($reportError && $curl->httpStatus != 200) {
+        throw new Core\ApiException(json_encode($result), 5, $this->id, $curl->httpStatus);
+      }
+    }
 
     return $result;
   }
