@@ -28,7 +28,7 @@ class VarGet extends VarMixed
     Core\Debug::variable($this->meta, 'Processor VarGet');
     $name = $this->val($this->meta->name);
 
-    if (!empty($this->request->vars[$name])) {
+    if (isset($this->request->vars[$name])) {
       return $this->request->vars[$name];
     }
     return null;
