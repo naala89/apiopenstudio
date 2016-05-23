@@ -10,7 +10,7 @@ use Datagator\Core;
 class VarPost extends VarMixed
 {
   protected $details = array(
-    'name' => 'Var (Get)',
+    'name' => 'Var (Post)',
     'description' => 'A "post" variable. It fetches a variable from the post request.',
     'menu' => 'Primitive',
     'application' => 'All',
@@ -18,23 +18,20 @@ class VarPost extends VarMixed
       'name' => array(
         'description' => 'The name of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'string')),
+        'accepts' => array('processor', 'string')
+      ),
     ),
   );
 
-  /**
-   * @return mixed
-   * @throws \Datagator\Core\ApiException
-   * @throws \Datagator\Processor\ApiException
-   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarPost', 4);
     $name = $this->val($this->meta->name);
 
-    if (!empty($this->request->vars[$name])) {
+    if (isset($this->request->vars[$name])) {
       return $this->request->vars[$name];
     }
+
     return null;
   }
 }
