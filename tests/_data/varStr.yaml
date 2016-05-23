@@ -1,0 +1,31 @@
+name: Testing varStr
+
+description: Test varStr processor
+
+uri:
+  noun: testing
+  verb: varStr
+
+method: get
+
+ttl: 0
+
+security:
+  processor: TokenConsumer
+  meta:
+    id: 1
+    token:
+      processor: varGet
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: varStr
+  meta:
+    id: 3
+    value:
+      processor: varGet
+      meta:
+        id: 4
+        name: value

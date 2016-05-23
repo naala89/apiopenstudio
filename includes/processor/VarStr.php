@@ -1,15 +1,7 @@
 <?php
 
 /**
- * Variable type string
- *
- * METADATA
- * {
- *    "type":"string",
- *    "meta":{
- *      "var":<processor|string>,
- *    }
- *  }
+ * Variable type string.
  */
 
 namespace Datagator\Processor;
