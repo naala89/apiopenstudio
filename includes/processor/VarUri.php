@@ -1,7 +1,7 @@
 <?php
 
 /**
- * URL variable
+ * URI variable
  */
 
 namespace Datagator\Processor;
@@ -32,6 +32,6 @@ class VarUri extends ProcessorBase
       throw new Core\ApiException('URI index "' . $index . '" does not exist', 6, $this->id, 417);
     }
 
-    return urldecode($this->request->args[$index]);
+    return urldecode($this->request->args[intval($index)]);
   }
 }
