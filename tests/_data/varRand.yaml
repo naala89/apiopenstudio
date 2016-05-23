@@ -1,0 +1,51 @@
+name: Testing varRand
+
+description: Test varRand processor
+
+uri:
+  noun: testing
+  verb: varRand
+
+method: get
+
+ttl: 0
+
+security:
+  processor: TokenConsumer
+  meta:
+    id: 1
+    token:
+      processor: varGet
+      meta:
+        id: 2
+        name: token
+
+process:
+  processor: varRand
+  meta:
+    id: 3
+    length:
+      processor: varGet
+      meta:
+        id: 4
+        name: length
+    lower:
+      processor: varGet
+      meta:
+        id: 5
+        name: lower
+    upper:
+      processor: varGet
+      meta:
+        id: 6
+        name: upper
+    numeric:
+      processor: varGet
+      meta:
+        id: 7
+        name: numeric
+    special:
+      processor: varGet
+      meta:
+        id: 8
+        name: special

@@ -174,6 +174,14 @@ class Api extends \Codeception\Module
     $this->callResourceFromYaml($params);
   }
 
+  public function seeReponseHasLength($length)
+  {
+    //var_dump($this->getModule('REST')->response);exit;
+    if (strlen(trim($this->getModule('REST')->response, '"')) != $length) {
+      \PHPUnit_Framework_Assert::assertTrue(false, 'string ' . $this->getModule('REST')->response . " does not have length $length");
+    }
+  }
+
   /**
    * @throws \Codeception\Exception\ModuleException
    */
