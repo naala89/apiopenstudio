@@ -190,4 +190,9 @@ class Api extends \Codeception\Module
     var_dump($this->getModule('REST')->response);
     exit;
   }
+
+  public function getResponse()
+  {
+    return $this->getModule('REST')->response;
+  }
 }
