@@ -48,7 +48,7 @@ Datagator 0.2.1, 3 May 2016
 - created Fragments section - this is a partial meta, allowing reuse of processor results - especially useful in IfThenElse to cut down on processing time
 - change all resource meta 'validation' to 'security'
 
-Datagator 0.2.2, Unfinished
+Datagator 0.3, 23 may 2016
 ---------------------------
 
 Run "composer dump-autoload" on in the docroot after transferring files.
@@ -61,3 +61,7 @@ Run "composer update" on in the docroot after transferring files.
 - added unit testing framework (codeception)
 - removed validation that request var exist in VarGet, VarPost & VarRequest - this responsibility belongs in the parent processor
 - fixed security processors not validating user_role.
+- added acceptance tests
+- changed how Object stores Field (no longer as list, but as associative array
+- added Filter processor
+- fixed config override
