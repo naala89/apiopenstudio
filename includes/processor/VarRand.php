@@ -1,20 +1,7 @@
 <?php
 
 /**
- * Variable type random
- *
- * METADATA
- * {
- *    "type":"string",
- *    "meta":{
- *      "id":<integer>,
- *      "length":<integer>,
- *      "lower":<boolean>,
- *      "upper":<boolean>,
- *      "numeric":<boolean>,
- *      "non_alphanum":<boolean>,
- *    }
- *  }
+ * Variable type random.
  */
 
 namespace Datagator\Processor;
@@ -48,8 +35,8 @@ class VarRand extends ProcessorBase
         'cardinality' => array(0, 1),
         'accepts' => array('processor', 'bool')
       ),
-      'nonalphanumic' => array(
-        'description' => 'Use non-alphanumeric characters.',
+      'special' => array(
+        'description' => 'Use special characters.',
         'cardinality' => array(0, 1),
         'accepts' => array('processor', 'bool')
       ),
@@ -65,8 +52,8 @@ class VarRand extends ProcessorBase
     $lower = $this->val($this->meta->lower);
     $upper = $this->val($this->meta->upper);
     $numeric = $this->val($this->meta->numeric);
-    $nonAlphanum = $this->val($this->meta->nonAlphanum);
+    $special = $this->val($this->meta->special);
 
-    return Core\Utilities::random_string($length, $lower, $upper, $numeric, $nonAlphanum);
+    return Core\Utilities::random_string($length, $lower, $upper, $numeric, $special);
   }
 }

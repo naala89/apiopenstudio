@@ -8,7 +8,7 @@ class Utilities
   public static $lower_case = 'abcdefghijklmnopqrstuvwxyz';
   public static $upper_case = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   public static $number = '0123456789';
-  public static $non_alphanum = '!@#$%^&*()';
+  public static $special = '!@#$%^&*()';
 
   /**
    * Returns system time in micro secs.\
@@ -34,14 +34,19 @@ class Utilities
    *  include upper case alpha
    * @param boolean $number
    *  include integers
-   * @param boolean $non_alphanum
-   *  include non alpha numeric characters
+   * @param boolean $special
+   *  include special characters
    *
    * @return string
    *  random string
    **/
-  public static function random_string($length = 8, $lower = true, $upper = true, $number = true, $non_alphanum = false)
+  public static function random_string($length = 8, $lower = true, $upper = true, $number = true, $special = false)
   {
+    $length = empty($length) ? 8 : $length;
+    $lower = empty($lower) ? true : $lower;
+    $upper = empty($upper) ? true : $upper;
+    $number = empty($number) ? true : $number;
+    $special = empty($special) ? false : $special;
     $chars = '';
     if ($lower)
       $chars .= self::$lower_case;
@@ -49,8 +54,8 @@ class Utilities
       $chars .= self::$upper_case;
     if ($number)
       $chars .= self::$number;
-    if ($non_alphanum)
-      $chars .= self::$non_alphanum;
+    if ($special)
+      $chars .= self::$special;
 
     $str = '';
     $count = strlen($chars) - 1;
