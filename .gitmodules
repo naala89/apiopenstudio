@@ -1,0 +1,3 @@
+[submodule "html/docs"]
+	path = html/docs
+	url = gitolite@naala.com.au:datagator_docs
