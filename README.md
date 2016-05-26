@@ -6,7 +6,7 @@ The API project
 Installation
 ------------
 
-1. $ git clone gitolite@naala.com.au:datagator
+1. $ git clone --recursive gitolite@naala.com.au:datagator
 2. if production:
   1. $ cd datagator
   2. $ rm -R README.md CHANGELOG.md codeception.yml resources tests 
