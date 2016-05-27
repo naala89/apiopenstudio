@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>resources | Datagator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Resource selection
+HTTP Delivery method
+Headers
+URL structure
+Request response
+Output dictionary of the resource definition
+Authentication
+Resource logic
+Processors
+Resource Definition
+YAML~ Basics">
+<meta property="og:type" content="website">
+<meta property="og:title" content="resources">
+<meta property="og:url" content="http://datagator_docs.local/resources/index.html">
+<meta property="og:site_name" content="Datagator">
+<meta property="og:description" content="Resource selection
+HTTP Delivery method
+Headers
+URL structure
+Request response
+Output dictionary of the resource definition
+Authentication
+Resource logic
+Processors
+Resource Definition
+YAML~ Basics">
+<meta property="og:updated_time" content="2016-05-27T02:39:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="resources">
+<meta name="twitter:description" content="Resource selection
+HTTP Delivery method
+Headers
+URL structure
+Request response
+Output dictionary of the resource definition
+Authentication
+Resource logic
+Processors
+Resource Definition
+YAML~ Basics">
+  
+    <link rel="alternate" href="/atom.xml" title="Datagator" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Datagator</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Documentation</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://datagator_docs.local"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="page-undefined" class="article article-type-page" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/resources/index.html" class="article-date">
+  <time datetime="2016-05-27T00:02:36.000Z" itemprop="datePublished">2016-05-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      resources
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- toc -->
+<ul>
+<li><a href="#resource-selection">Resource selection</a><ul>
+<li><a href="#http-delivery-method">HTTP Delivery method</a></li>
+<li><a href="#headers">Headers</a></li>
+<li><a href="#url-structure">URL structure</a></li>
+<li><a href="#request-response">Request response</a></li>
+<li><a href="#output-dictionary-of-the-resource-definition">Output dictionary of the resource definition</a></li>
+<li><a href="#authentication">Authentication</a></li>
+<li><a href="#resource-logic">Resource logic</a><ul>
+<li><a href="#processors">Processors</a></li>
+<li><a href="#resource-definition">Resource Definition</a></li>
+<li><a href="#yaml">YAML</a><br>~ <a href="#basics">Basics</a><ul>
+<li><a href="#dictionaries">Dictionaries</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+<p>A resource is a definition of a REST call.</p>
+<h2 id="resource-selection"><a href="#Resource-selection" class="headerlink" title="Resource selection"></a>Resource selection</h2><p>A resource is requested by the selected based on HTTP delivery method, and application ID, noun and verb in the URI.</p>
+<h3 id="http-delivery-method"><a href="#HTTP-Delivery-method" class="headerlink" title="HTTP Delivery method"></a>HTTP Delivery method</h3><p>Although by the nature of its design, Datagator would allow a developer to create resources and apply random delivery methods to them (GET, PUT, POST and DELETE), it is highly recommended they these methods are used in a traditional REST way (CRUD), to define the action that is being used on the data.<br>e.g.<br>&#x2022;    GET &#x2013; request something.<br>&#x2022;    POST &#x2013; create something.<br>&#x2022;    PUT - update/modify something.<br>&#x2022;    DELETE &#x2013; delete something.</p>
+<p>Additional HTTP delivery methods have not been implemented because they are not common.</p>
+<p>A request to a resource of method OPTIONS will result in a 200 response with an empty payload. This is because the CORS standard requires that browsers send a pre-flight request soliciting supported methods from the server with an HTTP OPTIONS request method, and then, upon &#x201C;approval&#x201D; from the server, send the actual request with the actual HTTP request method.</p>
+<h3 id="headers"><a href="#Headers" class="headerlink" title="Headers"></a>Headers</h3><p>Apart form Accept values (see Request response), the only other mandatory header is for post requests:<br>    Content-Type: application/x-www-form-urlencoded</p>
+<h3 id="url-structure"><a href="#URL-structure" class="headerlink" title="URL structure"></a>URL structure</h3><p>The URL is formed in a traditional REST form of noun/verb, e.g. The application ID is also implemented into the URL (see Applications and resources), to identify the application.</p>
+<p>A trailing slash is not required.</p>
+<pre><code>e.g.
+https://domain/api/&lt;application_id&gt;/&lt;noun&gt;/&lt;verb&gt;/
+</code></pre><p>The example above is the bare minimum of Datagator resource URL. Parameters can also be added as further URI path elements, or as GET/POST variables.</p>
+<pre><code>e.g.
+https://domain/api/&lt;application_id&gt;/&lt;noun&gt;/&lt;verb&gt;/val1/val2?var3=val3&amp;var4=val4
+</code></pre><h3 id="request-response"><a href="#Request-response" class="headerlink" title="Request response"></a>Request response</h3><p>There are two ways of defining the format of a request response.</p>
+<p>Accept field in the request header</p>
+<p>This allows the requesting application to define the format it requires, but limits the output to only the HTTP response.</p>
+<p>Datagator uses the traditional REST method of using the Accept header field to define the output type in the response to a request to a resource.</p>
+<pre><code>e.g.
+Accept: application/json
+Accept: application/xml
+Accept: text/plain
+Accept: application/text 
+Accept: text/html 
+Accept: image/png
+</code></pre><h3 id="output-dictionary-of-the-resource-definition"><a href="#Output-dictionary-of-the-resource-definition" class="headerlink" title="Output dictionary of the resource definition"></a>Output dictionary of the resource definition</h3><p>If this section is in the resource, the request response will be to a 200 or other response code response to indicate success to failure. In addition, when using the Output section, it is also possible to define the output to also be sent back in the response.</p>
+<pre><code>e.g.
+output:
+# If output not defined, then default is return results in the response (see - response)
+  - response
+  # Output to be in the response, format declared in the header
+  - email:
+  # Additional output to be sent to the emails listed in Destination, format in Format
+  - format: json
+    destination:
+      - john@naala.com.au
+      - foo@bar.com
+    subject: foobar
+    from: john@naala.com.au
+  - xml:
+  # Additional output in the form of XML to be sent to the URLs listed in Destination
+    destination:
+      -www.foo.com
+      -www.bar.com
+    method: get
+  - json:
+  # Additional output in the form of HTTP POST with JSON to be sent to the URLs listed in Destination
+    destination:
+      - www.wotnot.com
+    method: post
+</code></pre><h3 id="authentication"><a href="#Authentication" class="headerlink" title="Authentication"></a>Authentication</h3><p>Resource access is controlled via token authentication. To request a token, make a call to:</p>
+<pre><code>https://domain/api/1/user/login?username=&lt;username&gt;&amp;password=&lt;password&gt;
+</code></pre><p>The way you use the token for authentication is defined individually in each resource, but the usual way is as a get or post parameter, or as bearer token authentication.</p>
+<p>Datagator does not currently have a security processor for bearer token authentication, but this will be added in the near future.</p>
+<h3 id="resource-logic"><a href="#Resource-logic" class="headerlink" title="Resource logic"></a>Resource logic</h3><p>Logic in Datagator is defined modularly, without the use of any code. Program logic is abstracted into logic elements and these are called &#x201C;processors&#x201D;. The output from a processor or literal can be passed into another processor&#x2019;s input. This allows the chaining and routing of processors to an infinite depth to describe the data logic.</p>
+<h4 id="processors"><a href="#Processors" class="headerlink" title="Processors"></a>Processors</h4><p>The following example shows how a potential processor flow, where we wanted to take the data from 4 external sources (Uri endpoint processors), merge the data into single object (Merge processor), filter out unnecessary data (Filter processor) and then parse the data through a mathematical formula (Math processor):</p>
+<p>A full list of processors available to your application can be fetched from the following GET request:</p>
+<pre><code>http://datagator.local/api/&lt;application_id&gt;/processors/all/?token=&lt;token&gt;
+</code></pre><p>Because each processor describes a unique logic block, each processor has its own pre-defined inputs. These inputs can potentially be mandatory or optional, single value or lists, the output from a processor or a literal, loosely or strictly typed, or limited in value (e.g. <code>&#x201C;true&#x201D;</code>, <code>&#x201C;false&#x201D;</code>, <code>&#x201C;get&#x201D;</code>, <code>&#x201D;post&#x201D;</code>, <code>1</code>, <code>0</code>, etc).</p>
+<p>This can be illustrated by the inputs to the Url endpoint processor:</p>
+<p>A breakdown of the inputs:</p>
+<ul>
+<li>Method<ul>
+<li>Mandatory single input.</li>
+<li>Can only be &#x201C;post&#x201D;, &#x201C;get&#x201D; or a processor that produces either of those values.</li>
+</ul>
+</li>
+<li>Source<ul>
+<li>Mandatory single input.</li>
+<li>Can be a literal value or a processor.</li>
+</ul>
+</li>
+<li>Normalise<ul>
+<li>Mandatory single input.</li>
+<li>Can only be &#x201C;true&#x201D;, &#x201C;false&#x201D; or a processor that produces either of those values.</li>
+</ul>
+</li>
+<li>ReportError <ul>
+<li>Mandatory single input.</li>
+<li>Can only be &#x201C;true&#x201D;, &#x201C;false&#x201D; or a processor that produces either of those values.</li>
+</ul>
+</li>
+<li>Auth<ul>
+<li>Optional input.</li>
+<li>Can only be a processor.<h4 id="resource-definition"><a href="#Resource-Definition" class="headerlink" title="Resource Definition"></a>Resource Definition</h4>A resource definition is split into 9 sections:</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>Name &#x2013; the name of the resource. This dictionary is required.</li>
+<li>Description &#x2013; a brief description of the resource. This dictionary is required.</li>
+<li>Application &#x2013; the application that the resource will belong to. This dictionary is required.</li>
+<li>Uri &#x2013; declare the noun/verb that will be used along with the application ID and method to locate the resource. This dictionary is required.</li>
+<li>Method &#x2013; get, post, delete or put. This dictionary is required.</li>
+<li>Ttl &#x2013; the time to live for caching (in seconds). The value must be an integer. This dictionary is required.</li>
+<li>Security &#x2013; processing required to validate consumer access to the resource. If this dictionary is not declared (not recommended), the resource will be open to everyone. Otherwise the consumer will only receive a valid response if the result of the validation is true. This dictionary is optional.</li>
+<li>Process &#x2013; a single or combination or processors that define the data logic. The processors are nested, so that the output of one processor can become the input of another processor. There is no limit to the depth or number of processors that you want to use in this section. This dictionary is required.</li>
+<li>Fragments &#x2013; this is an array of fragments of Resource meta. It saves development time in typing out repeated meta. It also speeds up processing time, because the meta result is calculated before calculating the result of the process section &#x2013; thus any reference to fragments in the process section will be automatically be replaced with the pre-calculated result. Fragments have their own endpoints delivering data &#x2013; they must be able to standalone rather than relying on inputs from other processors.</li>
+<li>Output &#x2013; by default, the resulting output from process is delivered in the response to the resource request. But if this dictionary is present in the YAML, it will override the default and send outputs to multiple outputs, e.g. email, external URL&#x2019;s and/or the response to the resource request.</li>
+</ol>
+<p>A processor definition has two dictionaries, &#x201C;processor&#x201D; and &#x201C;meta&#x201D;:</p>
+<ul>
+<li>processor &#x2013; the name of the processor (camel case with lowercase first).</li>
+<li>meta &#x2013; the inputs and ID for the processor. The ID is a dictionary with the key &#x201C;id&#x201D;. The inputs are also declared as dictionaries, with the name of the input as the key. The value can either be a list (if the processor requires), a literal or another processor (who&#x2019;s result will become the input).</li>
+</ul>
+<p>A resource can be defined in two formats, YAML or JSON.</p>
+<h4 id="yaml"><a href="#YAML" class="headerlink" title="YAML"></a>YAML</h4><p>A detailed description of YAML and its syntax is available at <a href="http://docs.ansible.com/ansible/YAMLSyntax.html" target="_blank" rel="external">http://docs.ansible.com/ansible/YAMLSyntax.html</a> and <a href="http://www.yaml.org/refcard.html" target="_blank" rel="external">http://www.yaml.org/refcard.html</a>.</p>
+<h5 id="basics"><a href="#Basics" class="headerlink" title="Basics"></a>Basics</h5><h6 id="dictionaries"><a href="#Dictionaries" class="headerlink" title="Dictionaries"></a>Dictionaries</h6><p>A dictionary is represented in a simple key: value form (the colon must be followed by a space):</p>
+<pre><code># An employee record
+martin:
+    name: Martin D&apos;vloper
+    job: Developer
+    skill: Elite
+</code></pre><p>Dictionaries and lists can also be represented in an abbreviated form if you really want to:</p>
+<pre><code>martin: {name: Martin D&apos;vloper, job: Developer, skill: Elite}
+fruits: [&apos;Apple&apos;, &apos;Orange&apos;, &apos;Strawberry&apos;, &apos;Mango&apos;]
+</code></pre><h6 id="lists"><a href="#Lists" class="headerlink" title="Lists"></a>Lists</h6><p>All members of a list are lines beginning at the same indentation level starting with a &#x201C;- &#x201C; (a dash and a space) and optionally end with&#x201D;&#x2026;&#x201D;:</p>
+<pre><code># A list of tasty fruits 
+fruits:
+    - Apple     
+    - Orange     
+    - Strawberry     
+    - Mango
+...
+</code></pre><h6 id="values"><a href="#Values" class="headerlink" title="Values"></a>Values</h6><p>Values can span multiple lines using &#x201C;|&#x201D; or &#x201C;&gt;&#x201D;. Spanning multiple lines using a &#x201C;|&#x201D; will include the newlines. Using a &#x201C;&gt;&#x201D; will ignore newlines. In both cases the indentation will be ignored. Examples are:</p>
+<pre><code>include_newlines: |
+    Exactly as you see
+    will appear these three
+    lines of text.
+ignore_newlines: &gt;
+    This is really a
+    single line of text.
+</code></pre><h5 id="conventions"><a href="#Conventions" class="headerlink" title="Conventions"></a>Conventions</h5><p>All keys begin with lowercase.</p>
+<p>Tabs should be 2 spaces.</p>
+<h5 id="base-keys-and-dictionaries"><a href="#Base-keys-and-dictionaries" class="headerlink" title="Base keys and dictionaries"></a>Base keys and dictionaries</h5><h6 id="name"><a href="#name" class="headerlink" title="name"></a>name</h6><p>A simple key: value pair. This is the human readable name of the resource. i.e.</p>
+<pre><code>name: &lt;name of the resource&gt; 
+</code></pre><h6 id="description"><a href="#description" class="headerlink" title="description"></a>description</h6><p>A simple key: value pair. This is the human readable description of the resource. i.e.</p>
+<pre><code>description: &lt;description of the resource&gt;
+</code></pre><h6 id="application"><a href="#application" class="headerlink" title="application"></a>application</h6><p>The application that this resource will belong to. i.e.</p>
+<pre><code>application: &lt;name of the application&gt;
+</code></pre><h6 id="uri"><a href="#uri" class="headerlink" title="uri"></a>uri</h6><p>A dictionary containing two keys (noun &amp; verb). This is the name and verb to form the unique URI, that works with the method to select the resource. i.e.</p>
+<pre><code>uri:
+    noun: &lt;noun&gt;
+    verb: &lt;verb&gt;
+</code></pre><h6 id="method"><a href="#method" class="headerlink" title="method"></a>method</h6><p>A simple key: value pair. This is the HTTP method used in the request (get, post, delete, put). i.e.</p>
+<pre><code>method: &lt;method&gt;
+</code></pre><h6 id="ttl"><a href="#ttl" class="headerlink" title="ttl"></a>ttl</h6><p>A simple key: value pair. This is the caching time (in seconds) that the request result should be cached for. i.e.</p>
+<pre><code>ttl: &lt;[0-9]*&gt;
+</code></pre><h6 id="fragments"><a href="#fragments" class="headerlink" title="fragments"></a>fragments</h6><p>A list of fragment objects. The fragments list must be in the form of a list of fragments. The key fragment defines the name of the fragment and the key meta contains the processor meta of the fragment logic. i.e.</p>
+<pre><code>fragments:
+    -    fragment: &lt;fragmentName&gt;
+        meta: &lt;literal&gt;
+    -    fragment: &lt;fragmentName&gt;
+        meta: &lt;processors chain&gt;
+</code></pre><h6 id="security"><a href="#security" class="headerlink" title="security"></a>security</h6><p>This is a dictionary of processors or a simple key: value pair where the value is FALSE.</p>
+<h6 id="process"><a href="#process" class="headerlink" title="process"></a>process</h6><p>This is a dictionary of processors.</p>
+<h6 id="processors"><a href="#processors" class="headerlink" title="processors"></a>processors</h6><p>The definition of a processor is a dictionary containing two keys:</p>
+<h6 id="processor"><a href="#Processor" class="headerlink" title="Processor"></a>Processor</h6><p>A key: value pair, were the value is the name of the processor.</p>
+<h6 id="meta"><a href="#meta" class="headerlink" title="meta"></a>meta</h6><p>A dictionary that must contain an id key: value pair. </p>
+<p>It also contains key: value pairs for any inputs that the processor requires. The value of these can be a constant or further processors dictionary, and the output from that processer will be fed into the input (key).</p>
+<h6 id="output"><a href="#output" class="headerlink" title="output"></a>output</h6><p>This list is optional. </p>
+<p>Detailed Example:</p>
+<p>The following example posts a message to Facebook. Although it looks complex, the logic is very simple. To post a message, the request requires an access_token, which is fetched from a separate request.<br>We can define this logic and both requests in a single resource definition, and have the output from the access_token request feed into the request to post the message.<br>Both requests are defined in Url endpoint processors. The &#x201C;source&#x201D; attribute of each of these, which contains the URL of the endpoint, is the result of concatenation of literal strings and variables.</p>
+<pre><code>e.g. 
+&quot;graph.facebook.com/oauth/accesstoken?client_id=&quot; + appId + &quot;&amp;app_secret=&quot; + appSecret + &quot;&amp;grant_type=client_credentials&quot;
+Both appId and appSecret are varPersistent, because they are static and never change.
+The result of this request is delivered as the output from the Url processor, and is fed into the concatenation that forms the request to post the message on Facebook.
+</code></pre><p>The YAML for this:</p>
+<pre><code>name: Facebook post
+
+description: Post a message on Facebook.
+
+uri:
+   noun: facebook
+   verb: message
+
+method: post
+
+ttl: 0
+
+security:
+   processor: tokenConsumer
+   meta:
+      id: 1
+      token:
+         processor: varPost
+         meta:
+            id: 2
+            name: token
+
+process:
+   processor: Url
+   meta:
+      id: 3
+      method: get
+      reportError: 1
+      normalise: 0
+      source:
+         processor: concatenate
+         meta:
+            id: 4
+            sources:
+               - &#x201C;graph.facebook.com/&#x201D;
+               - processor: varUri
+                  meta:
+      id: 5
+                    index: 0
+               - &#x201C;/feed?message=&#x201D;
+               - processor: varPost
+                  meta:
+      id: 6
+                    name: message
+               - &#x201C;&amp;access_token=&#x201D;
+               - processor: url
+                  meta:
+      id: 7
+                    method: get
+                    reportError: 1
+                    normalise: 0
+                    source:
+         processor: concatenate
+         meta:
+            id: 8
+            sources:
+               - &quot;graph.facebook.com/oauth/accesstoken?client_id=&quot;
+               - processor: varPersistent
+                  meta:
+                   id: 9
+                   operation: fetch
+                   name: appId
+               - &quot;&amp;app_secret=&quot;
+                             - processor: varPersistent
+                  meta:
+                    id: 10
+                    operation: fetch
+                    name: appSecret
+               - &quot;&amp;grant_type=client_credentials&quot;
+</code></pre><h3 id="json"><a href="#JSON" class="headerlink" title="JSON"></a>JSON</h3><p>The sections are the same as above, where dictionaries and name/value pairs are defined as objects, and lists by arrays</p>
+<pre><code>Example:
+{
+    name: &#x201C;foobar&#x201D;,
+    description: &#x201C;lorem ipsum&#x201D;,
+    uri: {
+        noun: &quot;foo&quot;,
+        verb: &quot;bar&quot;
+    },
+    method: &quot;get&quot;,
+    validation: {
+        processor: &quot;TokenUser&quot;,
+        meta: {
+            id: 1,
+            token: {
+                processor: &quot;varGet&quot;,
+                meta: {
+                    id: 2,
+                    name: &quot;token&quot;
+                }
+            }
+        }
+    },
+    process: {
+        processor: &quot;field&quot;,
+        meta: {
+            id: 1,
+           name: {
+                processor: &quot;varStore&quot;,
+                meta: {
+                    id: 2,
+                    operation: &quot;fetch&quot;,
+                    name: &quot;myVarName&quot;
+                }
+            },
+            value: {
+                processor: &quot;varUri&quot;,
+                meta: {
+                    id: 3,
+                    index: 1
+                }
+            }
+        }
+    }
+}
+</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://datagator_docs.local/resources/index.html" data-id="ciop53sx80006r3qkubvj5jfi" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/05/27/hello-world/">DataGator Home</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Naala Pty Ltd<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
