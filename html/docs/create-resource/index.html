@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>create-resource | Datagator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="For a definition of YAML, and its syntax and standards, see http://www.yaml.org/spec/1.2/spec.html.
+
+login with your developer credentials, using the following POST REST call, with (Accept: applicatio">
+<meta property="og:type" content="website">
+<meta property="og:title" content="create-resource">
+<meta property="og:url" content="http://datagator.yourtemp.website/create-resource/index.html">
+<meta property="og:site_name" content="Datagator">
+<meta property="og:description" content="For a definition of YAML, and its syntax and standards, see http://www.yaml.org/spec/1.2/spec.html.
+
+login with your developer credentials, using the following POST REST call, with (Accept: applicatio">
+<meta property="og:updated_time" content="2016-05-27T04:40:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="create-resource">
+<meta name="twitter:description" content="For a definition of YAML, and its syntax and standards, see http://www.yaml.org/spec/1.2/spec.html.
+
+login with your developer credentials, using the following POST REST call, with (Accept: applicatio">
+  
+    <link rel="alternate" href="/atom.xml" title="Datagator" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/docs/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/docs/" id="logo">Datagator</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/docs/" id="subtitle">Documentation</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/docs/">Home</a>
+        
+          <a class="main-nav-link" href="/docs/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Zoeken"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://datagator.yourtemp.website"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="page-undefined" class="article article-type-page" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docs/create-resource/index.html" class="article-date">
+  <time datetime="2016-05-27T03:12:01.000Z" itemprop="datePublished">2016-05-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      create-resource
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>For a definition of YAML, and its syntax and standards, see <a href="http://www.yaml.org/spec/1.2/spec.html" target="_blank" rel="external">http://www.yaml.org/spec/1.2/spec.html</a>.</p>
+<ol>
+<li>login with your developer credentials, using the following POST REST call, with (Accept: application/json in the header is optional): <a href="http://datagator.yourtemp.website/api/">http://datagator.yourtemp.website/api/</a><app_id>/user/login/?username=<username>&amp;password=<password><br>1.1.    To begin with, your logins will be new and there will be no password. So you must remember the password that you choose the first time that you login, because you will need it again to authenticate, when your current token expires and you need to fetch a new token.</password></username></app_id></li>
+<li>Copy the token you receive.</li>
+<li>Send your YAML to Datagator in either of the following ways:<br>3.1.    Save your YAML to a file, and make a POST REST call, with the file attached to: <a href="http://datagator.yourtemp.website/api/">http://datagator.yourtemp.website/api/</a><app_id>/resource/yaml/?token=<token>  .<br>3.2.    Convert your YAML to a url-encoded string, and make a POST REST call to: <a href="http://datagator.yourtemp.website/api/">http://datagator.yourtemp.website/api/</a><app_id>/resource/yaml/?token=<token>&amp;yaml=<urlencodedyaml> .</urlencodedyaml></token></app_id></token></app_id></li>
+<li>If the result from the call is successful, test your call, using a valid consumer token if required.</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://datagator.yourtemp.website/create-resource/index.html" data-id="ciopixred0001geqkk8zpm16q" class="article-share-link">Delen</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archieven</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/docs/archives/2016/05/">May 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recente berichten</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/docs/2016/05/27/hello-world/">DataGator Home</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Naala Pty Ltd<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/docs/" class="mobile-nav-link">Home</a>
+  
+    <a href="/docs/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/docs/fancybox/jquery.fancybox.css">
+  <script src="/docs/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/docs/js/script.js"></script>
+
+  </div>
+</body>
+</html>
