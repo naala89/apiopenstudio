@@ -5,7 +5,8 @@
   
   <title>validation | Datagator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="TokenConsumer
+  <meta name="description" content="Token
+TokenConsumer
 TokenDeveloper
 TokenSysAdmin
 TokenUser
@@ -13,12 +14,13 @@ TokenRole
 
 
 These processors can only be used in the validation section of the resource.
-TokenValidate the request, requiring the user to have a">
+They are specifically to restrict access to your r">
 <meta property="og:type" content="website">
 <meta property="og:title" content="validation">
-<meta property="og:url" content="http://datagator_docs.local/validation/index.html">
+<meta property="og:url" content="http://datagator.yourtemp.website/validation/index.html">
 <meta property="og:site_name" content="Datagator">
-<meta property="og:description" content="TokenConsumer
+<meta property="og:description" content="Token
+TokenConsumer
 TokenDeveloper
 TokenSysAdmin
 TokenUser
@@ -26,11 +28,12 @@ TokenRole
 
 
 These processors can only be used in the validation section of the resource.
-TokenValidate the request, requiring the user to have a">
-<meta property="og:updated_time" content="2016-05-27T02:42:59.000Z">
+They are specifically to restrict access to your r">
+<meta property="og:updated_time" content="2016-05-27T05:44:26.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="validation">
-<meta name="twitter:description" content="TokenConsumer
+<meta name="twitter:description" content="Token
+TokenConsumer
 TokenDeveloper
 TokenSysAdmin
 TokenUser
@@ -38,7 +41,7 @@ TokenRole
 
 
 These processors can only be used in the validation section of the resource.
-TokenValidate the request, requiring the user to have a">
+They are specifically to restrict access to your r">
   
     <link rel="alternate" href="/atom.xml" title="Datagator" type="application/atom+xml">
   
@@ -48,7 +51,7 @@ TokenValidate the request, requiring the user to have a">
   
     <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
   
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/docs/css/style.css">
   
 
 </head>
@@ -61,11 +64,11 @@ TokenValidate the request, requiring the user to have a">
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">Datagator</a>
+        <a href="/docs/" id="logo">Datagator</a>
       </h1>
       
         <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Documentation</a>
+          <a href="/docs/" id="subtitle">Documentation</a>
         </h2>
       
     </div>
@@ -73,9 +76,9 @@ TokenValidate the request, requiring the user to have a">
       <nav id="main-nav">
         <a id="main-nav-toggle" class="nav-icon"></a>
         
-          <a class="main-nav-link" href="/">Home</a>
+          <a class="main-nav-link" href="/docs/">Home</a>
         
-          <a class="main-nav-link" href="/archives">Archives</a>
+          <a class="main-nav-link" href="/docs/archives">Archives</a>
         
       </nav>
       <nav id="sub-nav">
@@ -85,7 +88,7 @@ TokenValidate the request, requiring the user to have a">
         <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://datagator_docs.local"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://datagator.yourtemp.website"></form>
       </div>
     </div>
   </div>
@@ -93,7 +96,7 @@ TokenValidate the request, requiring the user to have a">
       <div class="outer">
         <section id="main"><article id="page-undefined" class="article article-type-page" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/validation/index.html" class="article-date">
+    <a href="/docs/validation/index.html" class="article-date">
   <time datetime="2016-05-27T00:03:32.000Z" itemprop="datePublished">2016-05-27</time>
 </a>
     
@@ -115,6 +118,7 @@ TokenValidate the request, requiring the user to have a">
       
         <!-- toc -->
 <ul>
+<li><a href="#token">Token</a></li>
 <li><a href="#tokenconsumer">TokenConsumer</a></li>
 <li><a href="#tokendeveloper">TokenDeveloper</a></li>
 <li><a href="#tokensysadmin">TokenSysAdmin</a></li>
@@ -123,6 +127,7 @@ TokenValidate the request, requiring the user to have a">
 </ul>
 <!-- tocstop -->
 <p>These processors can only be used in the validation section of the resource.</p>
+<p>They are specifically to restrict access to your resource. You can restrict access by valid token (anyone who is registered, role (anyone who has been given a specific role for your application) &amp; user/role (specific users with roles for your application).</p>
 <h2 id="token"><a href="#Token" class="headerlink" title="Token"></a>Token</h2><p>Validate the request, requiring the user to have a valid token.</p>
 <ul>
 <li>Inputs<ul>
@@ -130,36 +135,86 @@ TokenValidate the request, requiring the user to have a">
 </ul>
 </li>
 </ul>
-<h2 id="tokenconsumer"><a href="#TokenConsumer" class="headerlink" title="TokenConsumer"></a>TokenConsumer</h2><p>Validate the request, requiring the user to have a valid token and a role of consumer</p>
+<p>Example (take the get var token and validate that in the security processor Token):</p>
+<pre><code>security:
+  processor: token
+  meta:
+    id: 1
+    token:
+      processor: varPost
+      meta:
+        id: 2
+        name: token
+</code></pre><h2 id="tokenconsumer"><a href="#TokenConsumer" class="headerlink" title="TokenConsumer"></a>TokenConsumer</h2><p>Validate the request, requiring the user to have a valid token and a role of consumer</p>
 <ul>
 <li>Inputs<ul>
 <li>Token<br>The consumers token. Can be a processor.</li>
 </ul>
 </li>
 </ul>
-<h2 id="tokendeveloper"><a href="#TokenDeveloper" class="headerlink" title="TokenDeveloper"></a>TokenDeveloper</h2><p>Validate the request, requiring the user to have a valid token and a role of developer</p>
+<p>Example (take the get var token and validate that in the security processor TokenConsumer):</p>
+<pre><code>security:
+  processor: tokenConsumer
+  meta:
+    id: 1
+    token:
+      processor: varPost
+      meta:
+        id: 2
+        name: token
+</code></pre><h2 id="tokendeveloper"><a href="#TokenDeveloper" class="headerlink" title="TokenDeveloper"></a>TokenDeveloper</h2><p>Validate the request, requiring the user to have a valid token and a role of developer</p>
 <ul>
 <li>Inputs<ul>
 <li>Token<br>The consumers token. Can be a processor.</li>
 </ul>
 </li>
 </ul>
-<h2 id="tokensysadmin"><a href="#TokenSysAdmin" class="headerlink" title="TokenSysAdmin"></a>TokenSysAdmin</h2><p>Validate the request, requiring the user to have a valid token and a role of system admin</p>
+<p>Example (take the get var token and validate that in the security processor TokenDeveloper):</p>
+<pre><code>security:
+  processor: tokenDeveloper
+  meta:
+    id: 1
+    token:
+      processor: varPost
+      meta:
+        id: 2
+        name: token
+</code></pre><h2 id="tokensysadmin"><a href="#TokenSysAdmin" class="headerlink" title="TokenSysAdmin"></a>TokenSysAdmin</h2><p>Validate the request, requiring the user to have a valid token and a role of system admin</p>
 <ul>
 <li>Inputs<ul>
 <li>Token<br>The consumers token. Can be a processor.</li>
 </ul>
 </li>
 </ul>
-<h2 id="tokenuser"><a href="#TokenUser" class="headerlink" title="TokenUser"></a>TokenUser</h2><p>Validate the request, requiring the user to have a valid token and is in an array of usernames.</p>
+<p>Example (take the get var token and validate that in the security processor TokenSysAdmin):</p>
+<pre><code>security:
+  processor: tokenSysAdmin
+  meta:
+    id: 1
+    token:
+      processor: varPost
+      meta:
+        id: 2
+        name: token
+</code></pre><h2 id="tokenuser"><a href="#TokenUser" class="headerlink" title="TokenUser"></a>TokenUser</h2><p>Validate the request, requiring the user to have a valid token and is in an array of usernames.</p>
 <ul>
 <li>Inputs<ul>
 <li>Token<br>The consumers token. Can be a processor.</li>
-<li>Usernames<br>1 or more usernames. Can be processors or literals</li>
+<li>Usernames<br>one or more usernames. Can be processors or literals</li>
 </ul>
 </li>
 </ul>
-<h2 id="tokenrole"><a href="#TokenRole" class="headerlink" title="TokenRole"></a>TokenRole</h2><p>Validate the request, requiring the user to have a valid token and is having a defined role.</p>
+<p>Example (take the get var token and validate that in the security processor TokenUser):</p>
+<pre><code>security:
+  processor: tokenUser
+  meta:
+    id: 1
+    token:
+      processor: varPost
+      meta:
+        id: 2
+        name: token
+</code></pre><h2 id="tokenrole"><a href="#TokenRole" class="headerlink" title="TokenRole"></a>TokenRole</h2><p>Validate the request, requiring the user to have a valid token and is having a defined role.</p>
 <ul>
 <li>Inputs<ul>
 <li>Token<br>The consumers token. Can be a processor.</li>
@@ -167,11 +222,24 @@ TokenValidate the request, requiring the user to have a">
 </ul>
 </li>
 </ul>
-
+<p>Example (take the get var token and validate that in the security processor TokenRole, and only allowing access if that user has developer of consumer role):</p>
+<pre><code>security:
+  processor: tokenConsumer
+  meta:
+    id: 1
+    token:
+      processor: varPost
+      meta:
+        id: 2
+        name: token
+    role: 
+      - developer
+      - consumer
+</code></pre>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://datagator_docs.local/validation/index.html" data-id="ciop53sxb0008r3qkwc80rjlq" class="article-share-link">Share</a>
+      <a data-url="http://datagator.yourtemp.website/validation/index.html" data-id="ciopctynx000h6hqk6fs9fifk" class="article-share-link">Share</a>
       
       
     </footer>
@@ -197,7 +265,7 @@ TokenValidate the request, requiring the user to have a">
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/docs/archives/2016/05/">May 2016</a></li></ul>
     </div>
   </div>
 
@@ -210,7 +278,7 @@ TokenValidate the request, requiring the user to have a">
       <ul>
         
           <li>
-            <a href="/2016/05/27/hello-world/">DataGator Home</a>
+            <a href="/docs/2016/05/27/hello-world/">DataGator Home</a>
           </li>
         
       </ul>
@@ -233,9 +301,9 @@ TokenValidate the request, requiring the user to have a">
     </div>
     <nav id="mobile-nav">
   
-    <a href="/" class="mobile-nav-link">Home</a>
+    <a href="/docs/" class="mobile-nav-link">Home</a>
   
-    <a href="/archives" class="mobile-nav-link">Archives</a>
+    <a href="/docs/archives" class="mobile-nav-link">Archives</a>
   
 </nav>
     
@@ -243,11 +311,11 @@ TokenValidate the request, requiring the user to have a">
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+  <link rel="stylesheet" href="/docs/fancybox/jquery.fancybox.css">
+  <script src="/docs/fancybox/jquery.fancybox.pack.js"></script>
 
 
-<script src="/js/script.js"></script>
+<script src="/docs/js/script.js"></script>
 
   </div>
 </body>

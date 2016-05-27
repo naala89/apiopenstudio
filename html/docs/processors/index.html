@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="Concatenate
 Field
+Filter
 IfThenElse
 Merge
 Object
@@ -25,13 +26,14 @@ VarMixed
 VarNum
 VarPersistent
 VarPost
-VarRand">
+V">
 <meta property="og:type" content="website">
 <meta property="og:title" content="processors">
-<meta property="og:url" content="http://datagator_docs.local/processors/index.html">
+<meta property="og:url" content="http://datagator.yourtemp.website/processors/index.html">
 <meta property="og:site_name" content="Datagator">
 <meta property="og:description" content="Concatenate
 Field
+Filter
 IfThenElse
 Merge
 Object
@@ -50,12 +52,13 @@ VarMixed
 VarNum
 VarPersistent
 VarPost
-VarRand">
-<meta property="og:updated_time" content="2016-05-27T02:37:17.000Z">
+V">
+<meta property="og:updated_time" content="2016-05-27T06:24:20.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="processors">
 <meta name="twitter:description" content="Concatenate
 Field
+Filter
 IfThenElse
 Merge
 Object
@@ -74,7 +77,7 @@ VarMixed
 VarNum
 VarPersistent
 VarPost
-VarRand">
+V">
   
     <link rel="alternate" href="/atom.xml" title="Datagator" type="application/atom+xml">
   
@@ -84,7 +87,7 @@ VarRand">
   
     <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
   
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/docs/css/style.css">
   
 
 </head>
@@ -97,11 +100,11 @@ VarRand">
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">Datagator</a>
+        <a href="/docs/" id="logo">Datagator</a>
       </h1>
       
         <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Documentation</a>
+          <a href="/docs/" id="subtitle">Documentation</a>
         </h2>
       
     </div>
@@ -109,9 +112,9 @@ VarRand">
       <nav id="main-nav">
         <a id="main-nav-toggle" class="nav-icon"></a>
         
-          <a class="main-nav-link" href="/">Home</a>
+          <a class="main-nav-link" href="/docs/">Home</a>
         
-          <a class="main-nav-link" href="/archives">Archives</a>
+          <a class="main-nav-link" href="/docs/archives">Archives</a>
         
       </nav>
       <nav id="sub-nav">
@@ -121,7 +124,7 @@ VarRand">
         <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://datagator_docs.local"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://datagator.yourtemp.website"></form>
       </div>
     </div>
   </div>
@@ -129,7 +132,7 @@ VarRand">
       <div class="outer">
         <section id="main"><article id="page-undefined" class="article article-type-page" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/processors/index.html" class="article-date">
+    <a href="/docs/processors/index.html" class="article-date">
   <time datetime="2016-05-27T00:02:01.000Z" itemprop="datePublished">2016-05-27</time>
 </a>
     
@@ -153,6 +156,7 @@ VarRand">
 <ul>
 <li><a href="#concatenate">Concatenate</a></li>
 <li><a href="#field">Field</a></li>
+<li><a href="#filter">Filter</a></li>
 <li><a href="#ifthenelse">IfThenElse</a></li>
 <li><a href="#merge">Merge</a></li>
 <li><a href="#object">Object</a></li>
@@ -182,12 +186,22 @@ VarRand">
 <h2 id="concatenate"><a href="#Concatenate" class="headerlink" title="Concatenate"></a>Concatenate</h2><p>Concatenate a series of strings or numbers into a single value.</p>
 <ul>
 <li>Inputs<ul>
-<li>Sources</li>
+<li>input<br>An array of 2 or more values. Accepts processor or literal.</li>
 </ul>
 </li>
 </ul>
-<p>An array of 2 or more values. Accepts processor or literal.</p>
-<h2 id="field"><a href="#Field" class="headerlink" title="Field"></a>Field</h2><p>Create a key: value pair. This is primarily for use in Object processor.</p>
+<p>Example:</p>
+<pre><code>processor: concatenate
+meta:
+  id: 1
+  input:
+    - val1
+    - processor: varStr
+      meta:
+        id: 2
+        value: middlestr
+    - val2
+</code></pre><h2 id="field"><a href="#Field" class="headerlink" title="Field"></a>Field</h2><p>Create a key: value pair. This is primarily for use in Object processor.</p>
 <ul>
 <li>Inputs<ul>
 <li>Key<br>The key of the NVP. Accepts processor or literal.</li>
@@ -195,7 +209,40 @@ VarRand">
 </ul>
 </li>
 </ul>
-<h2 id="ifthenelse"><a href="#IfThenElse" class="headerlink" title="IfThenElse"></a>IfThenElse</h2><p>This allows the use of logic in the for of &#x201C;if&#x2026; then&#x2026; else&#x2026;&#x201D;.</p>
+<p>Example:</p>
+<pre><code>processor: field
+meta:
+  id: 1
+  key: key1
+  value: val1
+</code></pre><h2 id="filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h2><p>Filter values out of a data-set.</p>
+<ul>
+<li>Inputs<ul>
+<li>values<br>the data-set to filter</li>
+<li>filter<br>the values to filter out</li>
+</ul>
+</li>
+</ul>
+<p>Example:</p>
+<pre><code>processor: filter
+meta:
+  id: 1
+  values:
+    - val1
+    - val2
+    - processor: varStr
+      meta:
+        id: 3
+        value: middlestr
+    - processor: varGet
+      meta:
+        id: 4
+        name: val
+    - val3
+  filter:
+    - val1
+    - val33
+</code></pre><h2 id="ifthenelse"><a href="#IfThenElse" class="headerlink" title="IfThenElse"></a>IfThenElse</h2><p>This allows the use of logic in the for of &#x201C;if&#x2026; then&#x2026; else&#x2026;&#x201D;.</p>
 <p>The comparison is between two inputs, using a selected operator. The result of the Processor is then calculated using the meta in the &#x201C;then&#x201D; or &#x201C;else&#x201D; inputs.</p>
 <p>** Note: The meta in then or else inputs is completely separate from the input to Lhs and RHS. This has been deliberate to ensure coverage of all use cases, even though there is an increased processing time. When &#x201C;fragments&#x201D; are created, they will speed this up significantly.</p>
 <ul>
@@ -217,22 +264,110 @@ VarRand">
 </ul>
 </li>
 </ul>
-<h2 id="merge"><a href="#Merge" class="headerlink" title="Merge"></a>Merge</h2><p>Takes the data sets (Object processor or URL endpoint) and performs a merge operation on them of merge, negation or union.</p>
+<p>Example:</p>
+<pre><code>processor: ifThenElse
+meta:
+  id: 1
+  lhs: 0
+  operator: &quot;&lt;&quot;
+  rhs: 
+    processor: varGet
+    meta:
+      id: 2
+      name: val
+  then: &quot;less than&quot;
+  else: 
+    processor: url
+    meta:
+      id: 3
+      method: get
+      source: &quot;http:/foo.bar.com/less/than&quot;
+      reportError: true
+</code></pre><h2 id="merge"><a href="#Merge" class="headerlink" title="Merge"></a>Merge</h2><p>Takes the data sets (Object processor or URL endpoint) and performs a merge operation on them of merge, negation or union.</p>
 <ul>
 <li>Inputs<ul>
-<li>Input<br>Take 2 or literals processors and are the data sets to perform the action upon.</li>
-<li>mergeType<br>The action to perform on the data. This can only be literals of negate, intersect or union. It can also be a processor that provides any of the three literals from above.</li>
+<li>sources<br>Take 2 or literals processors and are the data sets to perform the action upon.</li>
+<li>mergeType<br>The action to perform on the data. This can only be literals of union, intersect or difference. It can also be a processor that provides any of the three literals from above.</li>
+<li>unique<br>Filter out duplicate values. The default is false.</li>
 </ul>
 </li>
 </ul>
-<h2 id="object"><a href="#Object" class="headerlink" title="Object"></a>Object</h2><p>Create a custom object from inputs. This is useful for creating an output object from selected fields. You can use the Field processor for key/value pairs, or other processors or literals to create single values. If then is only a single input then Object will populate with only this (rather than each input in an array), so a normalised Url output can be placed in Output for further processing. </p>
+<p>Example:</p>
+<pre><code>processor: merge
+meta:
+  id: 1
+  sources:
+    - processor: object
+      meta:
+        id: 2
+        attributes:
+          - processor: field
+            meta:
+              id: 3
+              key: key1
+              val: val1
+          - processor: field
+            meta:
+              id: 4
+              key: key2
+              val: val2
+          - processor: field
+            meta:
+              id: 5
+              key: key3
+              val: val3
+    - processor: object
+      meta:
+        id: 6
+        attributes:
+          - processor: field
+            meta:
+              id: 7
+              key: key1
+              val: val1
+          - processor: field
+            meta:
+              id: 8
+              key: key4
+              val: val4
+          - processor: field
+            meta:
+              id: 9
+              key: key5
+              val: val5
+  mergeType: union
+  unique: true
+</code></pre><h2 id="object"><a href="#Object" class="headerlink" title="Object"></a>Object</h2><p>Create a custom object from inputs. This is useful for creating an output object from selected fields. You can use the Field processor for key/value pairs, or other processors or literals to create single values. If then is only a single input then Object will populate with only this (rather than each input in an array), so a normalised Url output can be placed in Output for further processing. </p>
 <ul>
 <li>Inputs<ul>
-<li>Attributes<br>A single value or an array of values that belong to the object. Accepts processor or literal.</li>
+<li>attributes<br>A single value or an array of values that belong to the object. Accepts processor or literal.</li>
 </ul>
 </li>
 </ul>
-<h2 id="processorsall"><a href="#ProcessorsAll" class="headerlink" title="ProcessorsAll"></a>ProcessorsAll</h2><p>Fetch data on all processors available to the application.</p>
+<p>Example:</p>
+<pre><code>processor: object
+meta:
+  id: 1
+  attributes:
+    - processor: field
+      meta:
+        id: 2
+        key: key1
+        val: val1
+    - processor: field
+      meta:
+        id: 3
+        key: key4
+        val: val4
+    - processor: field
+      meta:
+        id: 4
+        key: key5
+        val: val5
+    - val4
+    - val5
+    - val6
+</code></pre><h2 id="processorsall"><a href="#ProcessorsAll" class="headerlink" title="ProcessorsAll"></a>ProcessorsAll</h2><p>Fetch data on all processors available to the application.</p>
 <h2 id="resourcejson"><a href="#ResourceJson" class="headerlink" title="ResourceJson"></a>ResourceJson</h2><p>CRUD for a resource in JSON format.</p>
 <p>An input YAML&#x2019;s syntax will be validated against required sections, and all processor inputs will be validated against the processor cardinality and input rules. If any validations fail, an error object with details of the error will be returned, and the resource will not be saved.</p>
 <ul>
@@ -286,7 +421,20 @@ VarRand">
 </ul>
 </li>
 </ul>
-<h2 id="userlogin"><a href="#UserLogin" class="headerlink" title="UserLogin"></a>UserLogin</h2><p>Login a user to for token-based API access</p>
+<p>Example:</p>
+<pre><code>processor: sort
+meta:
+  id: 1
+  values:
+    - val1
+    - val2
+    - val3
+    - val4
+    - val5
+    - 35
+    - 456
+  direction: asc
+</code></pre><h2 id="userlogin"><a href="#UserLogin" class="headerlink" title="UserLogin"></a>UserLogin</h2><p>Login a user to for token-based API access</p>
 <ul>
 <li>Inputs<ul>
 <li>Username<br>The user&#x2019;s username.</li>
@@ -298,46 +446,83 @@ VarRand">
 <ul>
 <li>Inputs<br>None.</li>
 </ul>
-<h2 id="varbool"><a href="#VarBool" class="headerlink" title="VarBool"></a>VarBool</h2><p>A boolean variable. Throws an error if the input is not a Boolean.</p>
+<p>Example:</p>
+<pre><code>processor: varBody
+meta: 
+  id: 1
+</code></pre><h2 id="varbool"><a href="#VarBool" class="headerlink" title="VarBool"></a>VarBool</h2><p>A boolean variable. Throws an error if the input is not a Boolean. It accepts yes, no, true, false, 0, 1</p>
 <ul>
 <li>Inputs<ul>
 <li>Value<br>The value of the variable. Accepts processor or literal.</li>
 </ul>
 </li>
 </ul>
-<h2 id="varfloat"><a href="#VarFloat" class="headerlink" title="VarFloat"></a>VarFloat</h2><p>A float variable. Throws an error if the input is not a float.</p>
+<p>Example</p>
+<pre><code>processor: varBool
+meta:
+  id: 1
+  value: yes
+</code></pre><h2 id="varfloat"><a href="#VarFloat" class="headerlink" title="VarFloat"></a>VarFloat</h2><p>A float variable. Throws an error if the input is not a float.</p>
 <ul>
-<li>Inputs<br>*Value<br>The value of the variable. Accepts processor or literal.</li>
+<li>Inputs<ul>
+<li>Value<br>The value of the variable. Accepts processor or literal.</li>
 </ul>
-<h2 id="varget"><a href="#VarGet" class="headerlink" title="VarGet"></a>VarGet</h2><p>A GET variable.</p>
+</li>
+</ul>
+<p>Example</p>
+<pre><code>processor: varFloat
+meta:
+  id: 1
+  value: 1.000003
+</code></pre><h2 id="varget"><a href="#VarGet" class="headerlink" title="VarGet"></a>VarGet</h2><p>A GET variable.</p>
 <ul>
 <li>Inputs<ul>
 <li>Name<br>The name of the GET variable. Accepts processor or literal.</li>
 </ul>
 </li>
 </ul>
-<h2 id="varint"><a href="#VarInt" class="headerlink" title="VarInt"></a>VarInt</h2><p>An integer variable. Throws an error if the input is not an integer.</p>
+<p>Example</p>
+<pre><code>processor: varGet
+meta:
+  id: 1
+  name: varName
+</code></pre><h2 id="varint"><a href="#VarInt" class="headerlink" title="VarInt"></a>VarInt</h2><p>An integer variable. Throws an error if the input is not an integer.</p>
 <ul>
 <li>Inputs<ul>
 <li>Value<br>The value of the variable. Accepts processor or literal.</li>
 </ul>
 </li>
 </ul>
-<h2 id="varmixed"><a href="#VarMixed" class="headerlink" title="VarMixed"></a>VarMixed</h2><p>A variable of any type (loosely typed).</p>
+<p>Example</p>
+<pre><code>processor: varInt
+meta:
+  id: 1
+  value: -34
+</code></pre><h2 id="varmixed"><a href="#VarMixed" class="headerlink" title="VarMixed"></a>VarMixed</h2><p>A variable of any type (loosely typed).</p>
 <ul>
 <li>Inputs<ul>
 <li>Value<br>The value of the variable. Accepts processor or literal.</li>
 </ul>
 </li>
 </ul>
-<h2 id="varnum"><a href="#VarNum" class="headerlink" title="VarNum"></a>VarNum</h2><p>A number variable. Throws an error if the input is not a number.</p>
+<p>Example</p>
+<pre><code>processor: varMixed
+meta:
+  id: 1
+  value: mixedString
+</code></pre><h2 id="varnum"><a href="#VarNum" class="headerlink" title="VarNum"></a>VarNum</h2><p>A number variable. Throws an error if the input is not a number.</p>
 <ul>
 <li>Inputs<ul>
 <li>Value<br>The value of the variable. Accepts processor or literal. </li>
 </ul>
 </li>
 </ul>
-<h2 id="varpersistent"><a href="#VarPersistent" class="headerlink" title="VarPersistent"></a>VarPersistent</h2><p>A persistently stored variable, that extends beyond the life of a single request. This allows you to create, edit, fetch and delete a frequently used value at any time.</p>
+<p>Example</p>
+<pre><code>processor: varNum
+meta:
+  id: 1
+  value: -1.5987345897
+</code></pre><h2 id="varpersistent"><a href="#VarPersistent" class="headerlink" title="VarPersistent"></a>VarPersistent</h2><p>A persistently stored variable, that extends beyond the life of a single request. This allows you to create, edit, fetch and delete a frequently used value at any time.</p>
 <ul>
 <li>Inputs<ul>
 <li>Name<br>The name of the variable. Accepts processor or literal.</li>
@@ -346,39 +531,70 @@ VarRand">
 </ul>
 </li>
 </ul>
-<h2 id="varpost"><a href="#VarPost" class="headerlink" title="VarPost"></a>VarPost</h2><p>The value of a POST variable. </p>
+<p>Example</p>
+<pre><code>processor: varPersistent
+meta:
+  id: 1
+  name: varName
+  value: varVal
+  operation: save
+</code></pre><h2 id="varpost"><a href="#VarPost" class="headerlink" title="VarPost"></a>VarPost</h2><p>The value of a POST variable. </p>
 <ul>
 <li>Inputs<ul>
-<li>Name<br>The name of the POST variable. Accepts processor or literal. </li>
+<li>Name<br>The name of the POST variable. Accepts processor or literal.</li>
 </ul>
 </li>
 </ul>
-<h2 id="varrand"><a href="#VarRand" class="headerlink" title="VarRand"></a>VarRand</h2><p>Generate a random variable.</p>
+<p>Example</p>
+<pre><code>processor: varPost
+meta:
+  id: 1
+  name: varName
+</code></pre><h2 id="varrand"><a href="#VarRand" class="headerlink" title="VarRand"></a>VarRand</h2><p>Generate a random variable.</p>
 <ul>
 <li>Inputs<ul>
 <li>Length<br>The length of the variable. Accepts processor or integer.</li>
 <li>Lower<br>Include lower case alpha characters.</li>
 <li>Upper<br>Include upper-case alpha characters.</li>
 <li>Numeric<br>Include numeric characters.</li>
-<li>Nonalphanumeric<br>Include non-alphanumeric characters. </li>
+<li>special<br>Include non-alphanumeric characters. </li>
 </ul>
 </li>
 </ul>
-<h2 id="varrequest"><a href="#VarRequest" class="headerlink" title="VarRequest"></a>VarRequest</h2><p>The value of a GET or POST variable. </p>
+<p>Example</p>
+<pre><code>processor: varRand
+meta:
+  id: 1
+  length: 16
+  lower: true
+  upper: true
+  numeric: true
+  special: true
+</code></pre><h2 id="varrequest"><a href="#VarRequest" class="headerlink" title="VarRequest"></a>VarRequest</h2><p>The value of a GET or POST variable. </p>
 <ul>
 <li>Inputs<ul>
 <li>Name<br>The name of the variable. Accepts processor or literal.</li>
 </ul>
 </li>
 </ul>
-<h2 id="varstr"><a href="#VarStr" class="headerlink" title="VarStr"></a>VarStr</h2><p>A string variable. Throws an error if the input is not a string.</p>
+<p>Example</p>
+<pre><code>processor: varRequest
+meta:
+  id: 1
+  name: varName
+</code></pre><h2 id="varstr"><a href="#VarStr" class="headerlink" title="VarStr"></a>VarStr</h2><p>A string variable. Throws an error if the input is not a string.</p>
 <ul>
 <li>Inputs<ul>
 <li>Value<br>The value of the variable. Accepts processor or literal.</li>
 </ul>
 </li>
 </ul>
-<h2 id="vartemporary"><a href="#VarTemporary" class="headerlink" title="VarTemporary"></a>VarTemporary</h2><p>A temporarily stored variable, that extends only during the life of a single request. This allows you to create, edit, fetch and delete the value at any time in the meta.</p>
+<p>Example</p>
+<pre><code>processor: varStr
+meta:
+  id: 1
+  value: mystring
+</code></pre><h2 id="vartemporary"><a href="#VarTemporary" class="headerlink" title="VarTemporary"></a>VarTemporary</h2><p>A temporarily stored variable, that extends only during the life of a single request. This allows you to create, edit, fetch and delete the value at any time in the meta.</p>
 <ul>
 <li>Inputs<ul>
 <li>Name<br>The name of the variable. Accepts processor or literal.</li>
@@ -387,7 +603,14 @@ VarRand">
 </ul>
 </li>
 </ul>
-<h2 id="varuri"><a href="#VarUri" class="headerlink" title="VarUri"></a>VarUri</h2><p>A number of the position of the value within the URI. This counts like an index, where 0 is the position after noun/verb:</p>
+<p>Example</p>
+<pre><code>processor: varPersistent
+meta:
+  id: 1
+  name: varName
+  value: varVal
+  operation: save
+</code></pre><h2 id="varuri"><a href="#VarUri" class="headerlink" title="VarUri"></a>VarUri</h2><p>A number of the position of the value within the URI. This counts like an index, where 0 is the position after noun/verb:</p>
 <pre><code>0 in datagator.yourtemp.website/v1/&lt;app_code&gt;/&lt;noun&gt;/&lt;verb&gt;/foo = foo
 1 in datagator.yourtemp.website/v1/&lt;app_code&gt;/&lt;noun&gt;/&lt;verb&gt;/foo/bar = bar
 etc
@@ -397,11 +620,16 @@ etc
 </ul>
 </li>
 </ul>
-
+<p>Example</p>
+<pre><code>processor: varUri
+meta:
+  id: 1
+  index: 0
+</code></pre>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://datagator_docs.local/processors/index.html" data-id="ciop53sx60004r3qk8dvxuuhj" class="article-share-link">Share</a>
+      <a data-url="http://datagator.yourtemp.website/processors/index.html" data-id="ciopctynl000a6hqkobwuuofj" class="article-share-link">Share</a>
       
       
     </footer>
@@ -427,7 +655,7 @@ etc
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/docs/archives/2016/05/">May 2016</a></li></ul>
     </div>
   </div>
 
@@ -440,7 +668,7 @@ etc
       <ul>
         
           <li>
-            <a href="/2016/05/27/hello-world/">DataGator Home</a>
+            <a href="/docs/2016/05/27/hello-world/">DataGator Home</a>
           </li>
         
       </ul>
@@ -463,9 +691,9 @@ etc
     </div>
     <nav id="mobile-nav">
   
-    <a href="/" class="mobile-nav-link">Home</a>
+    <a href="/docs/" class="mobile-nav-link">Home</a>
   
-    <a href="/archives" class="mobile-nav-link">Archives</a>
+    <a href="/docs/archives" class="mobile-nav-link">Archives</a>
   
 </nav>
     
@@ -473,11 +701,11 @@ etc
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+  <link rel="stylesheet" href="/docs/fancybox/jquery.fancybox.css">
+  <script src="/docs/fancybox/jquery.fancybox.pack.js"></script>
 
 
-<script src="/js/script.js"></script>
+<script src="/docs/js/script.js"></script>
 
   </div>
 </body>
