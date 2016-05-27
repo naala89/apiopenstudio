@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>endpoints | Datagator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="AuthCookie
+AuthOauthHeader
+AuthUserPwd
+Url
+
+
+The following can be used to access data from an external source. There are more endpoints for 3rd party applications and API&amp;#x2019;s on the roadmap.
+Au">
+<meta property="og:type" content="website">
+<meta property="og:title" content="endpoints">
+<meta property="og:url" content="http://datagator_docs.local/endpoints/index.html">
+<meta property="og:site_name" content="Datagator">
+<meta property="og:description" content="AuthCookie
+AuthOauthHeader
+AuthUserPwd
+Url
+
+
+The following can be used to access data from an external source. There are more endpoints for 3rd party applications and API&amp;#x2019;s on the roadmap.
+Au">
+<meta property="og:updated_time" content="2016-05-27T02:47:44.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="endpoints">
+<meta name="twitter:description" content="AuthCookie
+AuthOauthHeader
+AuthUserPwd
+Url
+
+
+The following can be used to access data from an external source. There are more endpoints for 3rd party applications and API&amp;#x2019;s on the roadmap.
+Au">
+  
+    <link rel="alternate" href="/atom.xml" title="Datagator" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Datagator</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Documentation</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://datagator_docs.local"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="page-undefined" class="article article-type-page" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/endpoints/index.html" class="article-date">
+  <time datetime="2016-05-27T02:44:23.000Z" itemprop="datePublished">2016-05-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      endpoints
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- toc -->
+<ul>
+<li><a href="#authcookie">AuthCookie</a></li>
+<li><a href="#authoauthheader">AuthOauthHeader</a></li>
+<li><a href="#authuserpwd">AuthUserPwd</a></li>
+<li><a href="#url">Url</a></li>
+</ul>
+<!-- tocstop -->
+<p>The following can be used to access data from an external source. There are more endpoints for 3rd party applications and API&#x2019;s on the roadmap.</p>
+<h2 id="authcookie"><a href="#AuthCookie" class="headerlink" title="AuthCookie"></a>AuthCookie</h2><p>Providing authentication with a remote server, using a cookie. This is used in the Url endoint.</p>
+<ul>
+<li>Inputs<br>*Cookie<br>The cookie. Accepts processor or literal.</li>
+</ul>
+<h2 id="authoauthheader"><a href="#AuthOauthHeader" class="headerlink" title="AuthOauthHeader"></a>AuthOauthHeader</h2><p>Providing authentication with a remote server, using OAuth signature in the header. This is used in the Url endoint. This is still a work in progress.</p>
+<ul>
+<li>Inputs<ul>
+<li>Key<br>The consumer key. Accepts processor or literal.</li>
+<li>Nonce<br>The nonce. Accepts processor or literal.</li>
+<li>Signature<br>The signature. Accepts processor or literal.</li>
+<li>SignatureMethod<br>The signature method. Accepts processor or literal.</li>
+<li>OauthVersion<br>The OAuth version. Accepts processor or literal.</li>
+</ul>
+</li>
+</ul>
+<h2 id="authuserpwd"><a href="#AuthUserPwd" class="headerlink" title="AuthUserPwd"></a>AuthUserPwd</h2><p>Providing authentication with a remote server, using username/password. This is used in the Url endoint.</p>
+<ul>
+<li>Inputs<ul>
+<li>username<br>The username. Accepts processor or literal.</li>
+<li>Password<br>The password. Accepts processor or literal.</li>
+</ul>
+</li>
+</ul>
+<h2 id="url"><a href="#Url" class="headerlink" title="Url"></a>Url</h2><p>Fetch the result from an external URL.</p>
+<ul>
+<li>Inputs<ul>
+<li>Method<br>The HTTP method. Accepts processor or literal</li>
+<li>Source<br>The source URL. Accepts processor or literal.</li>
+<li>Auth<br>The remote authentication process. Accepts processor of type AuthCookie, AuthOauthHeader, AuthUserPwd. This input is optional.</li>
+<li>ReportError<br>Stop processing and throw an error if the source responds with an error.</li>
+<li>Normalize<br>If set to 0, the results of the URL will be passed through as a string. If set to 1, the results will be converted into a form that can be processed further, e.g. merge, filter, object, etc.</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://datagator_docs.local/endpoints/index.html" data-id="ciop53sx20001r3qkrfhs3h6g" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/05/27/hello-world/">DataGator Home</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Naala Pty Ltd<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
