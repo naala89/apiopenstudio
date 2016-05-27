@@ -18,7 +18,7 @@ Resource Definition
 YAML~ Basics">
 <meta property="og:type" content="website">
 <meta property="og:title" content="resources">
-<meta property="og:url" content="http://datagator_docs.local/resources/index.html">
+<meta property="og:url" content="http://datagator.yourtemp.website/resources/index.html">
 <meta property="og:site_name" content="Datagator">
 <meta property="og:description" content="Resource selection
 HTTP Delivery method
@@ -31,7 +31,10 @@ Resource logic
 Processors
 Resource Definition
 YAML~ Basics">
-<meta property="og:updated_time" content="2016-05-27T02:39:00.000Z">
+<meta property="og:image" content="http://datagator.yourtemp.website/docs/images/example-processors.png">
+<meta property="og:image" content="http://datagator.yourtemp.website/docs/images/url-processor-inputs.png">
+<meta property="og:image" content="http://datagator.yourtemp.website/docs/images/resource-logic.png">
+<meta property="og:updated_time" content="2016-05-27T05:13:10.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="resources">
 <meta name="twitter:description" content="Resource selection
@@ -45,6 +48,7 @@ Resource logic
 Processors
 Resource Definition
 YAML~ Basics">
+<meta name="twitter:image" content="http://datagator.yourtemp.website/docs/images/example-processors.png">
   
     <link rel="alternate" href="/atom.xml" title="Datagator" type="application/atom+xml">
   
@@ -54,7 +58,7 @@ YAML~ Basics">
   
     <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
   
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/docs/css/style.css">
   
 
 </head>
@@ -67,11 +71,11 @@ YAML~ Basics">
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">Datagator</a>
+        <a href="/docs/" id="logo">Datagator</a>
       </h1>
       
         <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Documentation</a>
+          <a href="/docs/" id="subtitle">Documentation</a>
         </h2>
       
     </div>
@@ -79,9 +83,9 @@ YAML~ Basics">
       <nav id="main-nav">
         <a id="main-nav-toggle" class="nav-icon"></a>
         
-          <a class="main-nav-link" href="/">Home</a>
+          <a class="main-nav-link" href="/docs/">Home</a>
         
-          <a class="main-nav-link" href="/archives">Archives</a>
+          <a class="main-nav-link" href="/docs/archives">Archives</a>
         
       </nav>
       <nav id="sub-nav">
@@ -91,7 +95,7 @@ YAML~ Basics">
         <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://datagator_docs.local"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://datagator.yourtemp.website"></form>
       </div>
     </div>
   </div>
@@ -99,7 +103,7 @@ YAML~ Basics">
       <div class="outer">
         <section id="main"><article id="page-undefined" class="article article-type-page" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/resources/index.html" class="article-date">
+    <a href="/docs/resources/index.html" class="article-date">
   <time datetime="2016-05-27T00:02:36.000Z" itemprop="datePublished">2016-05-27</time>
 </a>
     
@@ -196,10 +200,12 @@ output:
 <p>Datagator does not currently have a security processor for bearer token authentication, but this will be added in the near future.</p>
 <h3 id="resource-logic"><a href="#Resource-logic" class="headerlink" title="Resource logic"></a>Resource logic</h3><p>Logic in Datagator is defined modularly, without the use of any code. Program logic is abstracted into logic elements and these are called &#x201C;processors&#x201D;. The output from a processor or literal can be passed into another processor&#x2019;s input. This allows the chaining and routing of processors to an infinite depth to describe the data logic.</p>
 <h4 id="processors"><a href="#Processors" class="headerlink" title="Processors"></a>Processors</h4><p>The following example shows how a potential processor flow, where we wanted to take the data from 4 external sources (Uri endpoint processors), merge the data into single object (Merge processor), filter out unnecessary data (Filter processor) and then parse the data through a mathematical formula (Math processor):</p>
+<p><img src="/docs/images/example-processors.png" alt=""></p>
 <p>A full list of processors available to your application can be fetched from the following GET request:</p>
 <pre><code>http://datagator.local/api/&lt;application_id&gt;/processors/all/?token=&lt;token&gt;
 </code></pre><p>Because each processor describes a unique logic block, each processor has its own pre-defined inputs. These inputs can potentially be mandatory or optional, single value or lists, the output from a processor or a literal, loosely or strictly typed, or limited in value (e.g. <code>&#x201C;true&#x201D;</code>, <code>&#x201C;false&#x201D;</code>, <code>&#x201C;get&#x201D;</code>, <code>&#x201D;post&#x201D;</code>, <code>1</code>, <code>0</code>, etc).</p>
 <p>This can be illustrated by the inputs to the Url endpoint processor:</p>
+<p><img src="/docs/images/url-processor-inputs.png" alt=""></p>
 <p>A breakdown of the inputs:</p>
 <ul>
 <li>Method<ul>
@@ -302,12 +308,15 @@ ignore_newlines: &gt;
 <p>It also contains key: value pairs for any inputs that the processor requires. The value of these can be a constant or further processors dictionary, and the output from that processer will be fed into the input (key).</p>
 <h6 id="output"><a href="#output" class="headerlink" title="output"></a>output</h6><p>This list is optional. </p>
 <p>Detailed Example:</p>
-<p>The following example posts a message to Facebook. Although it looks complex, the logic is very simple. To post a message, the request requires an access_token, which is fetched from a separate request.<br>We can define this logic and both requests in a single resource definition, and have the output from the access_token request feed into the request to post the message.<br>Both requests are defined in Url endpoint processors. The &#x201C;source&#x201D; attribute of each of these, which contains the URL of the endpoint, is the result of concatenation of literal strings and variables.</p>
+<p>The following example posts a message to Facebook. Although it looks complex, the logic is very simple. To post a message, the request requires an access_token, which is fetched from a separate request. </p>
+<p>We can define this logic and both requests in a single resource definition, and have the output from the access_token request feed into the request to post the message.</p>
+<p>Both requests are defined in Url endpoint processors. The &#x201C;source&#x201D; attribute of each of these, which contains the URL of the endpoint, is the result of concatenation of literal strings and variables.</p>
 <pre><code>e.g. 
 &quot;graph.facebook.com/oauth/accesstoken?client_id=&quot; + appId + &quot;&amp;app_secret=&quot; + appSecret + &quot;&amp;grant_type=client_credentials&quot;
-Both appId and appSecret are varPersistent, because they are static and never change.
-The result of this request is delivered as the output from the Url processor, and is fed into the concatenation that forms the request to post the message on Facebook.
-</code></pre><p>The YAML for this:</p>
+</code></pre><p>Both appId and appSecret are varPersistent, because they are static and never change.</p>
+<p>The result of this request is delivered as the output from the Url processor, and is fed into the concatenation that forms the request to post the message on Facebook.</p>
+<p><img src="/docs/images/resource-logic.png" alt=""></p>
+<p>The YAML for this:</p>
 <pre><code>name: Facebook post
 
 description: Post a message on Facebook.
@@ -426,7 +435,7 @@ process:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://datagator_docs.local/resources/index.html" data-id="ciop53sx80006r3qkubvj5jfi" class="article-share-link">Share</a>
+      <a data-url="http://datagator.yourtemp.website/resources/index.html" data-id="ciopctynn000d6hqklibgd60p" class="article-share-link">Share</a>
       
       
     </footer>
@@ -452,7 +461,7 @@ process:
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/docs/archives/2016/05/">May 2016</a></li></ul>
     </div>
   </div>
 
@@ -465,7 +474,7 @@ process:
       <ul>
         
           <li>
-            <a href="/2016/05/27/hello-world/">DataGator Home</a>
+            <a href="/docs/2016/05/27/hello-world/">DataGator Home</a>
           </li>
         
       </ul>
@@ -488,9 +497,9 @@ process:
     </div>
     <nav id="mobile-nav">
   
-    <a href="/" class="mobile-nav-link">Home</a>
+    <a href="/docs/" class="mobile-nav-link">Home</a>
   
-    <a href="/archives" class="mobile-nav-link">Archives</a>
+    <a href="/docs/archives" class="mobile-nav-link">Archives</a>
   
 </nav>
     
@@ -498,11 +507,11 @@ process:
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+  <link rel="stylesheet" href="/docs/fancybox/jquery.fancybox.css">
+  <script src="/docs/fancybox/jquery.fancybox.pack.js"></script>
 
 
-<script src="/js/script.js"></script>
+<script src="/docs/js/script.js"></script>
 
   </div>
 </body>
