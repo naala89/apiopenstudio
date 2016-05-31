@@ -113,7 +113,7 @@ class Api
   private function _getData($get)
   {
     if (empty($get['request'])) {
-      return FALSE;
+      throw new ApiException('invalid request', 3);
     }
 
     $result = new \stdClass();
