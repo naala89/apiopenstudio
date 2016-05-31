@@ -1,14 +1,46 @@
-IndexIgnore *
 RewriteEngine on
 
+# Don't show directory listings for URLs which map to a directory.
+
+# Follow symbolic links in this directory.
+Options +FollowSymLinks
+
+# Make Drupal handle any 404 errors.
+ErrorDocument 404 /index.php
+
+# Set the default handler.
+DirectoryIndex index.php index.html index.htm
+
+# Allow cross domain policy
 Header set Access-Control-Allow-Origin "*"
 Header set Access-Control-Allow-Headers "origin, x-requested-with, content-type"
+
+# Limit HTTP methods to PUT, GET, POST, DELETE and OPTIONS
 Header set Access-Control-Allow-Methods "PUT, GET, POST, DELETE, OPTIONS"
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
+
+  # Block access to "hidden" directories whose names begin with a period. This
+  # includes directories used by version control systems such as Subversion or
+  # Git to store control files. Files whose names begin with a period, as well
+  # as the control files used by CVS, are protected by the FilesMatch directive
+  # above.
+  #
+  # NOTE: This only works when mod_rewrite is loaded. Without mod_rewrite, it is
+  # not possible to block access to entire directories from .htaccess, because
+  # <DirectoryMatch> is not allowed here.
+  #
+  # If you do not have mod_rewrite installed, you should remove these
+  # directories from your webroot or otherwise protect them from being
+  # downloaded.
+  RewriteRule "(^|/)\." - [F]
+
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
+  # Rewrite rule for docs
   RewriteRule ^docs/(.*)$ /html/docs/$1 [L]
+
+  # Rewrite rule for all coorrect requests to the API
   RewriteRule ^api/([a-zA-Z0-9\/\-_\%\.]*)$ /html/index.php?request=$1 [QSA,NC]
 </IfModule>
