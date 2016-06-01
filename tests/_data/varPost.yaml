@@ -6,7 +6,7 @@ uri:
   noun: testing
   verb: varPost
 
-method: get
+method: post
 
 ttl: 0
 
@@ -15,7 +15,7 @@ security:
   meta:
     id: 1
     token:
-      processor: varGet
+      processor: varPost
       meta:
         id: 2
         name: token

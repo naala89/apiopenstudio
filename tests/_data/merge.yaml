@@ -15,7 +15,7 @@ security:
   meta:
     id: 1
     token:
-      processor: varPost
+      processor: varGet
       meta:
         id: 2
         name: token
