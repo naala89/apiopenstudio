@@ -9,7 +9,7 @@ class Api extends \Codeception\Module
   private $token = '';
   private $accountName = 'Datagator';
   private $applicationName = 'Testing';
-  private $applicationId = 4;
+  private $applicationId = 3;
   private $username = 'tester';
   private $password = 'tester_pass';
 
