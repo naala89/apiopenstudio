@@ -15,7 +15,7 @@ security:
   meta:
     id: 1
     token:
-      processor: varGet
+      processor: varPost
       meta:
         id: 2
         name: token
@@ -25,7 +25,7 @@ process:
   meta:
     id: 3
     yaml:
-      processor: varGet
+      processor: varPost
       meta:
         id: 4
         name: yaml

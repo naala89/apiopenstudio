@@ -1,12 +1,12 @@
-name: User delete
+name: User fetch
 
-description: Delete a user.
+description: Fetch a user.
 
 uri:
   noun: user
   verb: manage
 
-method: delete
+method: get
 
 ttl: 0
 
