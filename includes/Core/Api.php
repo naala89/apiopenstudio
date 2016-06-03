@@ -88,8 +88,6 @@ class Api
     Debug::variable($this->request, 'request', 3);
 
     // process the call
-    //$processor = new Processor\ProcessorBase($this->request->resource->process, $this->request);
-    //$data = $processor->process();
     $data = $this->_crawlMeta($this->request->resource->process);
 
     // store the results in cache for next time
@@ -232,22 +230,6 @@ class Api
       throw new ApiException("unknown process: $className", 1);
     }
     return $classStr;
-  }
-
-  /**
-   * Perform api request auth if defined in the meta.
-   *
-   * @return bool
-   * @throws \Datagator\Core\ApiException
-   */
-  private function _validateSecurity()
-  {
-    if (empty($this->request->resource->security)) {
-      return true;
-    }
-    $class = '\\Datagator\\Security\\' . ucfirst($this->_cleanData($this->request->resource->security->processor));
-    $security = new $class($this->request->resource->security->meta, $this->request);
-    return $security->process();
   }
 
   /**
