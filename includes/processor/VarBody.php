@@ -21,7 +21,7 @@ class VarBody extends VarMixed
     'name' => 'Var (Body)',
     'description' => 'Fetch the entire body of a post into a variable.',
     'menu' => 'Primitive',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(),
   );
 

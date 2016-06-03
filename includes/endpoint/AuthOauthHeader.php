@@ -25,7 +25,7 @@ class AuthOAuthHeader extends Processor\ProcessorBase
     'name' => 'Auth (o-auth header)',
     'description' => 'Authentication for remote server, using OAuth signature in the header.',
     'menu' => 'Authentication',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'key' => array(
         'description' => 'The consumer key.',

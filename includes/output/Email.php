@@ -16,7 +16,7 @@ class Email extends Output
     'name' => 'Email',
     'description' => 'Output in email format.',
     'menu' => 'Output',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'to' => array(
         'description' => 'A single or array of emails to send the results to.',

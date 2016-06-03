@@ -15,8 +15,7 @@ class TokenRole extends Token {
     'name' => 'Token (Role)',
     'description' => 'Validate the request, requiring the consumer to have a valid token and a declared role.',
     'menu' => 'Security',
-    'client' => 'All',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'token' => array(
         'description' => 'The consumers token.',

@@ -14,7 +14,7 @@ class VarTemporary extends ProcessorBase
     'name' => 'Var (Temporary)',
     'description' => 'A temporarily stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time during your resource call. The value can be deleted, updated and fetched in future resource..',
     'menu' => 'Primitive',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'name' => array(
         'description' => 'The name of the variable.',

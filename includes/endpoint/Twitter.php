@@ -18,7 +18,7 @@ class Twitter extends Processor\ProcessorBase
     'name' => 'Twitter',
     'description' => 'Fetch results from the Twitter API.',
     'menu' => 'Endpoint',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'key' => array(
         'description' => 'The consumer key to attach with.',

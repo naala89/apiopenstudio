@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `application` (
 TRUNCATE TABLE `application`;
 INSERT INTO `application` (`appid`, `accid`, `name`) VALUES
   (1, 1, 'Datagator'),
-  (2, 1, 'All'),
+  (2, 1, 'Common'),
   (3, 1, 'Testing');
 
 DROP TABLE IF EXISTS `blacklist`;

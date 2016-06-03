@@ -14,7 +14,7 @@ class Concatenate extends ProcessorBase
     'name' => 'Concatenate',
     'description' => 'Concatenate a series of strings or numbers into a single value.',
     'menu' => 'Operation',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'sources' => array(
         'description' => 'The values to concatenate',

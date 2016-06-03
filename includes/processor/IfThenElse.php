@@ -13,7 +13,7 @@ class IfThenElse extends ProcessorBase
     'name' => 'If Then Else',
     'description' => 'An if then else logic gate.',
     'menu' => 'Logic',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'lhs' => array(
         'description' => 'The left-land side value in the equation.',

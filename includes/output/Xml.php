@@ -16,7 +16,7 @@ class Xml extends Output
     'name' => 'Xml',
     'description' => 'Output in XML format.',
     'menu' => 'Output',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'destination' => array(
         'description' => 'A single or array of URLs to send the results to.',

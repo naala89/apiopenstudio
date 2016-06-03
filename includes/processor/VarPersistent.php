@@ -14,7 +14,7 @@ class VarPersistent extends ProcessorBase
     'name' => 'Var (Persistent)',
     'description' => 'A persistently stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time. The value can be deleted, updated and fetched in future resource and Processor calls.',
     'menu' => 'Primitive',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'name' => array(
         'description' => 'The name of the variable.',
