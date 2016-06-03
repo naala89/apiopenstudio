@@ -22,7 +22,7 @@ class TokenSysAdmin extends Processor\ProcessorBase {
       'token' => array(
         'description' => 'The consumers token.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor')
+        'accepts' => array('function')
       )
     ),
   );

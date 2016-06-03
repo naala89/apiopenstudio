@@ -11,16 +11,13 @@ method: get
 ttl: 3600
 
 security:
-  processor: tokenDeveloper
-  meta:
-    id: 1
-    token:
-      processor: varGet
-      meta:
-        id: 2
-        name: token
+  function: tokenDeveloper
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
 
 process:
-  processor: ProcessorsAll
-  meta:
-    id: 3
+  function: ProcessorsAll
+  id: 3

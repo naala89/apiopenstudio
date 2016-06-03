@@ -18,27 +18,27 @@ class VarRand extends ProcessorBase
       'length' => array(
         'description' => 'The length of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'integer')
+        'accepts' => array('function', 'integer')
       ),
       'lower' => array(
         'description' => 'Use lower-case alpha characters.',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'bool')
+        'accepts' => array('function', 'boolean')
       ),
       'upper' => array(
         'description' => 'Use upper-case alpha characters.',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'bool')
+        'accepts' => array('function', 'boolean')
       ),
       'numeric' => array(
         'description' => 'Use numeric characters.',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'bool')
+        'accepts' => array('function', 'boolean')
       ),
       'special' => array(
         'description' => 'Use special characters.',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'bool')
+        'accepts' => array('function', 'boolean')
       ),
     ),
   );

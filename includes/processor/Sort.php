@@ -18,17 +18,17 @@ class Sort extends ProcessorBase
       'values' => array(
         'description' => 'The values to sort.',
         'cardinality' => array(0, '*'),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'direction' => array(
         'description' => 'Sort ascending or descending.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"asc"', '"desc"'),
+        'accepts' => array('function', '"asc"', '"desc"'),
       ),
       'sortByValue' => array(
         'description' => 'If set to true, sort by the value, otherwise sort by key (only used if the sources are of type Field, and the sortable key or value cannot be another key/value pair). Default is false.',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', '"true"', '"false"'),
+        'accepts' => array('function', '"true"', '"false"'),
       ),
     ),
   );

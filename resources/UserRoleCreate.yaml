@@ -11,31 +11,25 @@ method: post
 ttl: 0
 
 security:
-  processor: TokenSysAdmin
-  meta:
-    id: 1
-    token:
-      processor: varPost
-      meta:
-        id: 2
-        name: token
+  function: TokenSysAdmin
+  id: 1
+  token:
+    function: varPost
+    id: 2
+    name: token
 
 process:
-  processor: datagatorUserRole
-  meta:
-    id: 3
-    username:
-      processor: varPost
-      meta:
-        id: 4
-        name: username
-    applicationName:
-      processor: varPost
-      meta:
-        id: 5
-        name: applicationName
-    roleName:
-      processor: varPost
-      meta:
-        id: 6
-        name: roleName
+  function: datagatorUserRole
+  id: 3
+  username:
+    function: varPost
+    id: 4
+    name: username
+  applicationName:
+    function: varPost
+    id: 5
+    name: applicationName
+  roleName:
+    function: varPost
+    id: 6
+    name: roleName

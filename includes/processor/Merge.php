@@ -19,17 +19,17 @@ class Merge extends ProcessorBase
       'sources' => array(
         'description' => 'The data-sets to merge on.',
         'cardinality' => array(2, '*'),
-        'accepts' => array('processor', 'array', 'literal')
+        'accepts' => array('function', 'array', 'literal')
       ),
       'mergeType' => array(
         'description' => 'The merge operation to perform. The default is union.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"union"', '"intersect"', '"difference"')
+        'accepts' => array('function', '"union"', '"intersect"', '"difference"')
       ),
       'unique' => array(
         'description' => 'Filter out duplicate values. The default is false.',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', '"true"', '"false"')
+        'accepts' => array('function', '"true"', '"false"')
       ),
     ),
   );

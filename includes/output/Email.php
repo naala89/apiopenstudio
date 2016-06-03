@@ -21,22 +21,22 @@ class Email extends Output
       'to' => array(
         'description' => 'A single or array of emails to send the results to.',
         'cardinality' => array(1, '*'),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'from' => array(
         'description' => 'From email address for the email.',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'subject' => array(
         'description' => 'Subject for the email.',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'format' => array(
         'description' => 'Format for the results to be formatted into.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"json"', '"html"', '"xml"', '"text"'),
+        'accepts' => array('function', '"json"', '"html"', '"xml"', '"text"'),
       ),
     ),
   );

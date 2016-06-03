@@ -30,7 +30,7 @@ class ProcessorsAll extends ProcessorBase
     $classes = [];
     $classes = array_merge($classes, $this->_getClassList('endpoint'));
     $classes = array_merge($classes, $this->_getClassList('output'));
-    $classes = array_merge($classes, $this->_getClassList('processor'));
+    $classes = array_merge($classes, $this->_getClassList('function'));
     $classes = array_merge($classes, $this->_getClassList('security'));
 
     $result = $this->_getDetails($classes, $appName);

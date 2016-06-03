@@ -30,27 +30,27 @@ class AuthOAuthHeader extends Processor\ProcessorBase
       'key' => array(
         'description' => 'The consumer key.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'nonce' => array(
         'description' => 'The nonce.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'signature' => array(
         'description' => 'The signature.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'signatureMethod' => array(
         'description' => 'The signature method.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'oauthVersion' => array(
         'description' => 'The OAuth version.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
     ),
   );

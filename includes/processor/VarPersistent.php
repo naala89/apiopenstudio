@@ -19,22 +19,22 @@ class VarPersistent extends ProcessorBase
       'name' => array(
         'description' => 'The name of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal')
+        'accepts' => array('function', 'literal')
       ),
       'value' => array(
         'description' => 'The value of the variable. This input is only used in save operations.',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'literal')
+        'accepts' => array('function', 'literal')
       ),
       'operation' => array(
         'description' => 'The operation to be performed on the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"save"', '"delete"', '"fetch"')
+        'accepts' => array('function', '"save"', '"delete"', '"fetch"')
       ),
       'strict' => array(
         'description' => 'If set to 0 then return null if var does not exist. If set to 1 throw exception if var does not exist. Default is strict. Only used in fetch or delete operations.',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', '"0"', '"1"')
+        'accepts' => array('function', '"0"', '"1"')
       ),
     ),
   );

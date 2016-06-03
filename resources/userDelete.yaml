@@ -11,21 +11,17 @@ method: delete
 ttl: 0
 
 security:
-  processor: TokenSysAdmin
-  meta:
-    id: 1
-    token:
-      processor: varGet
-      meta:
-        id: 2
-        name: token
+  function: TokenSysAdmin
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
 
 process:
-  processor: datagatorUser
-  meta:
-    id: 3
-    username:
-      processor: varGet
-      meta:
-        id: 4
-        name: username
+  function: datagatorUser
+  id: 3
+  username:
+    function: varGet
+    id: 4
+    name: username

@@ -19,7 +19,7 @@ class Concatenate extends ProcessorBase
       'sources' => array(
         'description' => 'The values to concatenate',
         'cardinality' => array(2, '*'),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
     ),
   );

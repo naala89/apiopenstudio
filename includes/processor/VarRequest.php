@@ -18,7 +18,7 @@ class VarRequest extends VarMixed
       'name' => array(
         'description' => 'The name of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'string')
+        'accepts' => array('function', 'string')
       ),
     ),
   );

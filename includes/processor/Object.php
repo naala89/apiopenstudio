@@ -18,7 +18,7 @@ class Object extends ProcessorBase {
       'attributes' => array(
         'description' => 'The value of an attribute or a complex object.',
         'cardinality' => array(0, '*'),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
     ),
   );

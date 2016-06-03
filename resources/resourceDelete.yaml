@@ -11,31 +11,25 @@ method: delete
 ttl: 0
 
 security:
-  processor: tokenDeveloper
-  meta:
-    id: 1
-    token:
-      processor: varGet
-      meta:
-        id: 2
-        name: token
+  function: tokenDeveloper
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
 
 process:
-  processor: resourceYaml
-  meta:
-    id: 3
-    method:
-      processor: varGet
-      meta:
-        id: 4
-        name: method
-    noun:
-      processor: varGet
-      meta:
-        id: 5
-        name: noun
-    verb:
-      processor: varGet
-      meta:
-        id: 6
-        name: verb
+  function: resourceYaml
+  id: 3
+  method:
+    function: varGet
+    id: 4
+    name: method
+  noun:
+    function: varGet
+    id: 5
+    name: noun
+  verb:
+    function: varGet
+    id: 6
+    name: verb

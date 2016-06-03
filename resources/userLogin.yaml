@@ -11,16 +11,13 @@ method: post
 ttl: 0
 
 process:
-  processor: UserLogin
-  meta:
-    id: 1
-    username:
-      processor: VarPost
-      meta:
-        id: 2
-        name: username
-    password:
-      processor: VarPost
-      meta:
-        id: 3
-        name: password
+  function: UserLogin
+  id: 1
+  username:
+    function: VarPost
+    id: 2
+    name: username
+  password:
+    function: VarPost
+    id: 3
+    name: password

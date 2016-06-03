@@ -19,27 +19,27 @@ class Url extends Processor\ProcessorBase
       'method' => array(
         'description' => 'The HTTP method.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"get"', '"post"'),
+        'accepts' => array('function', '"get"', '"post"'),
       ),
       'source' => array(
         'description' => 'The source URL.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'auth' => array(
         'description' => 'The remote authentication process.',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor'),
+        'accepts' => array('function'),
       ),
       'reportError' => array(
         'description' => 'Stop processing if the remote source responds with an error.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"true"', '"false"'),
+        'accepts' => array('function', '"true"', '"false"'),
       ),
       'normalise' => array(
         'description' => 'If set to false, the results will pass though as a raw string. If set to 1\true, the results will be parsed into a format that can be processed further, i.e. merge, filter, etc.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"true"', '"false"'),
+        'accepts' => array('function', '"true"', '"false"'),
       ),
     ),
   );
@@ -53,7 +53,7 @@ class Url extends Processor\ProcessorBase
    */
   public function process()
   {
-    Core\Debug::variable($this->meta, 'processor Url', 4);
+    Core\Debug::variable($this->meta, 'function Url', 4);
 
     $method = strtolower($this->val($this->meta->method));
     if (!in_array($method, array('get', 'post'))) {

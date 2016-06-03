@@ -18,7 +18,7 @@ class VarUri extends ProcessorBase
       'index' => array(
         'description' => 'The index of the variable, starting with 0 after the client ID, request noun and verb.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'integer')
+        'accepts' => array('function', 'integer')
       ),
     ),
   );

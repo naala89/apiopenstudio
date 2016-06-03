@@ -21,7 +21,7 @@ abstract class ResourceBase extends ProcessorBase
       'method' => array(
         'description' => 'The HTTP method of the resource (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', '"get"', '"post"', '"delete"', '"push"'),
+        'accepts' => array('function', '"get"', '"post"', '"delete"', '"push"'),
       ),
       'appid' => array(
         'description' => 'The application ID the resource is associated with (only used if fetching or deleting a resource).',
@@ -31,17 +31,17 @@ abstract class ResourceBase extends ProcessorBase
       'noun' => array(
         'description' => 'The noun identifier of the resource (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('literal')
+        'accepts' => array('function', 'literal')
       ),
       'verb' => array(
         'description' => 'The verb identifier of the resource (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('literal')
+        'accepts' => array('function', 'literal')
       ),
       'resource' => array(
         'description' => 'The resource as a string (this input is only used if you are creating or updating a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'literal')
+        'accepts' => array('function', 'literal')
       )
     )
   );
@@ -293,9 +293,9 @@ abstract class ResourceBase extends ProcessorBase
     // check input types for processors
     $data['fragments'] = isset($data['fragments']) ? $data['fragments'] : array();
     if (isset($data['security'])) {
-      $this->_validateProcessor($data['security'], $data['fragments']);
+      $this->_validateMeta($data['security'], $data['fragments']);
     }
-    $this->_validateProcessor($data['process'], $data['fragments']);
+    $this->_validateMeta($data['process'], $data['fragments']);
     if (isset($data['output'])) {
       foreach ($data['output'] as $output) {
         if ($output != 'response') {
@@ -304,74 +304,78 @@ abstract class ResourceBase extends ProcessorBase
         }
       }
     }
+    /*
     if (isset($data['fragments'])) {
       $this->_validateFragments($data['fragments']);
     }
+    */
   }
 
   /**
    * If an input is a processor, ensure it exists and has correct meta.
    *
    * @param $resourcePartial
+   * @param $fragments
    * @throws \Datagator\Core\ApiException
    */
-  private function _validateProcessor($resourcePartial, $fragments) {
+  private function _validateMeta($resourcePartial, $fragments) {
     // check valid processor structure
-    if (empty($resourcePartial['processor']) || empty($resourcePartial['meta'])) {
-      throw new Core\ApiException("invalid processor structure, missing 'processor' or 'meta' keys in new resource", 6, -1, 406);
+    if (empty($resourcePartial['function'])) {
+      throw new Core\ApiException("invalid processor structure, missing 'function' dictionary", 6, -1, 406);
     }
 
     // check for ID in meta
-    if (empty($resourcePartial['meta']['id'])) {
-      throw new Core\ApiException("processor missing an id attribute in the meta in new resource", 6, -1, 406);
+    if (empty($resourcePartial['id'])) {
+      throw new Core\ApiException("invalid processor structure, missing 'id' dictionary", 6, -1, 406);
     }
 
     // ensure the processor exists
-    $class = '\\Datagator\\Processor\\' . ucfirst(trim($resourcePartial['processor']));
-    if (!class_exists($class)) {
-      $class = '\\Datagator\\Endpoint\\' . ucfirst(trim($resourcePartial['processor']));
-      if (!class_exists($class)) {
-        $class = '\\Datagator\\Output\\' . ucfirst(trim($resourcePartial['processor']));
-        if (!class_exists($class)) {
-          $class = '\\Datagator\\Security\\' . ucfirst(trim($resourcePartial['processor']));
-          if (!class_exists($class)) {
-            throw new Core\ApiException('unknown processor in new resource: ' . ucfirst(trim($resourcePartial['processor'])), 1);
-          }
-        }
+    $namespaces = array('Security', 'Endpoint', 'Output', 'Processor');
+    $className = ucfirst(trim($resourcePartial['function']));
+    $class = false;
+    foreach ($namespaces as $namespace) {
+      $classStr = "\\Datagator\\$namespace\\$className";
+      if (class_exists($classStr)) {
+        $class = $classStr;
+        break;
       }
+    }
+    if (!$class) {
+      throw new Core\ApiException("unknown function in new resource: $className", 1);
     }
 
     // Create a processor from the input partial and loop through its $details['inputs'] to make sure all inputs are correct
-    $processor = new $class($resourcePartial['meta'], $this->request);
+    $processor = new $class($resourcePartial, $this->request);
     $processorDetails = $processor->details();
 
     foreach ($processorDetails['input'] as $inputName => $inputDef) {
 
       // 1. validate cardinality
       $count = 0;
-      if (isset($resourcePartial['meta'][$inputName])) {
-        if (is_array($resourcePartial['meta'][$inputName]) && !isset($resourcePartial['meta'][$inputName]['processor']) && !isset($resourcePartial['meta'][$inputName]['meta'])) {
+      if (isset($resourcePartial[$inputName])) {
+        if (is_array($resourcePartial[$inputName]) && !isset($resourcePartial[$inputName]['function'])) {
           // This check is for values that are array of values, but we also have to filter out processors
-          $count = sizeof($resourcePartial['meta'][$inputName]);
+          $count = sizeof($resourcePartial[$inputName]);
         } else {
           $count = 1;
         }
       }
       if (is_numeric($inputDef['cardinality'][0]) && $count < $inputDef['cardinality'][0]) {
-        throw new Core\ApiException("$count inputs supplied (min " . $inputDef['cardinality'][0] . ') for ' . $inputName, 6, $resourcePartial['meta']['id'], 406);
+        throw new Core\ApiException("$count inputs supplied (min " . $inputDef['cardinality'][0] . ') for ' . $inputName, 6, $resourcePartial['id'], 406);
       }
       if (is_numeric($inputDef['cardinality'][1]) && $count > $inputDef['cardinality'][1]) {
-        throw new Core\ApiException("$count inputs supplied (max " . $inputDef['cardinality'][1] . ') for ' . $inputName, 6, $resourcePartial['meta']['id'], 406);
+        throw new Core\ApiException("$count inputs supplied (max " . $inputDef['cardinality'][1] . ') for ' . $inputName, 6, $resourcePartial['id'], 406);
       }
 
       // 2. validate allowed types
       if ($count > 0) {
         // if input is an array
-        if (is_array($resourcePartial['meta'][$inputName])) {
+        if (is_array($resourcePartial[$inputName])) {
 
-          if (!empty($resourcePartial['meta'][$inputName]['fragment'])) {
+          if (!empty($resourcePartial[$inputName]['fragment'])) {
+            /*
             // validate the fragment exists
-            $fragmentName = $resourcePartial['meta'][$inputName]['fragment'];
+            $fragmentName = $resourcePartial[$inputName]['fragment'];
             $validFragment = FALSE;
             foreach ($fragments as $fragment) {
               if ($fragment['fragment'] == $fragmentName) {
@@ -379,25 +383,25 @@ abstract class ResourceBase extends ProcessorBase
               }
             }
             if (!$validFragment) {
-              throw new Core\ApiException("Fragment '$fragmentName'  not defined", 6, $resourcePartial['meta']['id'], 406);
+              throw new Core\ApiException("Fragment '$fragmentName'  not defined", 6, $resourcePartial['id'], 406);
             }
-
-          } elseif (isset($resourcePartial['meta'][$inputName]['processor']) && isset($resourcePartial['meta'][$inputName]['meta'])) {
-            if (!in_array('processor', $inputDef['accepts'])) {
-              throw new Core\ApiException("processor not allowed as input for '$inputName' in processor '" . $resourcePartial['processor'] . "'", 6, $resourcePartial['meta']['id'], 406);
+            */
+          } elseif (isset($resourcePartial[$inputName]['function'])) {
+            if (!in_array('function', $inputDef['accepts'])) {
+              throw new Core\ApiException("function not allowed as input for '$inputName' in function '" . $resourcePartial['function'] . "'", 6, $resourcePartial['id'], 406);
             }
             // validate the processor
-            $this->_validateProcessor($resourcePartial['meta'][$inputName], $fragments);
+            $this->_validateMeta($resourcePartial[$inputName], $fragments);
 
           } else {
             // Fallback - the array is not a fragment or processor, so loop through and validate as constants
-            foreach ($resourcePartial['meta'][$inputName] as $element) {
+            foreach ($resourcePartial[$inputName] as $element) {
               $this->_validateTypeValue($element, $inputDef['accepts'], $inputName, $fragments);
             }
           }
         } else {
           // the value is a single constant
-          $this->_validateTypeValue($resourcePartial['meta'][$inputName], $inputDef['accepts'], $inputName, $fragments);
+          $this->_validateTypeValue($resourcePartial[$inputName], $inputDef['accepts'], $inputName, $fragments);
         }
       }
     }
@@ -414,12 +418,12 @@ abstract class ResourceBase extends ProcessorBase
     }
     foreach ($fragments as $fragment) {
       // check valid fragment structure
-      if (empty($fragment['fragment']) || empty($fragment['meta'])) {
+      if (empty($fragment['fragment']) || empty($fragment)) {
         throw new Core\ApiException("invalid fragment structure, missing 'fragments' or 'meta' keys in new resource", 6, -1, 406);
       }
-      if (!is_string($fragment['meta'])) {
+      if (!is_string($fragment)) {
         // this must be a processor
-        $this->_validateProcessor(($fragment['meta']), $fragments);
+        $this->_validateProcessor(($fragment), $fragments);
       }
     }
 
@@ -439,18 +443,18 @@ abstract class ResourceBase extends ProcessorBase
     $valid = false;
 
     foreach ($accepts as $accept) {
-      if (isset($element['fragment'])) {
-        //$this->_validateProcessor($this->request->fragments->{$element['fragment']}, $accepts, $inputName);
+      //if (isset($element['fragment'])) {
+      //  $this->_validateProcessor($this->request->fragments->{$element['fragment']}, $accepts, $inputName);
+      //  $valid = true;
+      //  break;
+      //}
+      if ($accept == 'function' && isset($element['function']) && isset($element)) {
+        $this->_validateMeta($element, $fragments);
         $valid = true;
         break;
-      }
-      if ($accept == 'processor' && isset($element['processor']) && isset($element['meta'])) {
-        $this->_validateProcessor($element, $fragments);
-        $valid = true;
-        break;
-      } elseif (strpos($accept, 'processor ') !== false && isset($element['processor']) && isset($element['meta'])) {
+      } elseif (strpos($accept, 'function ') !== false && isset($element['function'])) {
         $parts = explode(' ', $accept);
-        if (strtolower($element['processor']) == strtolower($parts[1])) {
+        if (strtolower($element['function']) == strtolower($parts[1])) {
           $valid = true;
           break;
         }
@@ -460,7 +464,7 @@ abstract class ResourceBase extends ProcessorBase
       } elseif ($accept == 'literal' && (is_string($element) || is_numeric($element))) {
         $valid = true;
         break;
-      } elseif ($accept == 'bool' && is_bool($element)) {
+      } elseif ($accept == 'boolean' && is_bool($element)) {
         $valid = true;
         break;
       } elseif ($accept == 'numeric' && is_numeric($element)) {
@@ -473,9 +477,6 @@ abstract class ResourceBase extends ProcessorBase
         $valid = true;
         break;
       } elseif ($accept == 'float' && is_float($element)) {
-        $valid = true;
-        break;
-      } elseif ($accept == 'bool' && is_bool($element)) {
         $valid = true;
         break;
       } elseif ($accept == 'array' && is_array($element)) {
@@ -493,6 +494,9 @@ abstract class ResourceBase extends ProcessorBase
     }
 
     if (!$valid) {
+      var_dump($element);
+      var_dump($inputName);
+      var_dump($accepts);
       throw new Core\ApiException("invalid input ($element) for $inputName in new resource. only allowed inputs are: " . implode(', ', $accepts), 6);
     }
   }

@@ -18,7 +18,7 @@ class VarMixed extends ProcessorBase
       'value' => array(
         'description' => 'The value of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal')
+        'accepts' => array('function', 'literal')
       ),
     ),
   );

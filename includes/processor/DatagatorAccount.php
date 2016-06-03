@@ -19,12 +19,12 @@ class DatagatorAccount extends ProcessorBase
       'accountName' => array(
         'description' => 'The name of the account.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'username' => array(
         'description' => "The username to associate with the account.",
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
     ),
   );

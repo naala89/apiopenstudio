@@ -19,37 +19,37 @@ class DatagatorUser extends ProcessorBase
       'username' => array(
         'description' => 'The username of the user.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'active' => array(
         'description' => 'The status of the user account. Only used for creating user',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', '"0"', '"1"'),
+        'accepts' => array('function', '"0"', '"1"'),
       ),
       'email' => array(
         'description' => 'The email of the user. Only used for creating user',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'string'),
+        'accepts' => array('function', 'string'),
       ),
       'honorific' => array(
         'description' => 'The honorific of the user. Only used for creating user',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'string'),
+        'accepts' => array('function', 'string'),
       ),
       'nameFirst' => array(
         'description' => 'The first name of the user. Only used for creating user',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'string'),
+        'accepts' => array('function', 'string'),
       ),
       'nameLast' => array(
         'description' => 'The last name of the user. Only used for creating user',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'string'),
+        'accepts' => array('function', 'string'),
       ),
       'company' => array(
         'description' => 'The company of the user Only used for creating user',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'string'),
+        'accepts' => array('function', 'string'),
       ),
     ),
   );
