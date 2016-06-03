@@ -18,12 +18,12 @@ class Filter extends ProcessorBase
       'values' => array(
         'description' => 'The data-set to filter.',
         'cardinality' => array(0, '*'),
-        'accepts' => array('processor', 'literal')
+        'accepts' => array('function', 'literal')
       ),
       'filter' => array(
         'description' => 'The values to filter out. These are keys if values contains Fields, otherwise values.',
         'cardinality' => array(0, '*'),
-        'accepts' => array('processor', 'literal')
+        'accepts' => array('function', 'literal')
       ),
     ),
   );

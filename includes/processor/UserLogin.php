@@ -20,12 +20,12 @@ class UserLogin extends ProcessorBase
       'username' => array(
         'description' => 'Users username.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'password' => array(
         'description' => 'Users password.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
     ),
   );

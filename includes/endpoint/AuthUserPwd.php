@@ -32,12 +32,12 @@ class AuthUserPwd extends Processor\ProcessorBase
       'username' => array(
         'description' => 'The username.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'password' => array(
         'description' => 'The password.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
     ),
   );

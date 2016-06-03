@@ -18,7 +18,7 @@ class VarInt extends VarMixed
       'value' => array(
         'description' => 'The value of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'integer')
+        'accepts' => array('function', 'integer')
       ),
     ),
   );

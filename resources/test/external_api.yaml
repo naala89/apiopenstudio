@@ -8,23 +8,20 @@ method: get
 ttl: 360
 
 security:
-  processor: tokenConsumer
-  meta:
-    id: 1
-    token:
-      processor: varGet
-      meta:
-        id: 2
-        name: token
+  function: tokenConsumer
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
 
 process:
-  processor: url
-  meta:
-    id: 3
-    source: “https://randomuser.me/api/”
-    method: get
-    reportError: true
-    normalise: true
+  function: url
+  id: 3
+  source: “https://randomuser.me/api/”
+  method: get
+  reportError: true
+  normalise: true
 
 output:
   - response

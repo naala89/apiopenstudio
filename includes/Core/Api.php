@@ -24,7 +24,7 @@ Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Con
 class Api
 {
   private $cache;
-  private $test = 'testTemplate1.yaml'; // false or filename in /yaml/test
+  private $test = false; // false or filename in /yaml/test
   private $request;
   private $db;
 
@@ -197,20 +197,20 @@ class Api
     if (!is_object($meta)) {
       return $meta;
     }
-    if (empty($meta->process)) {
-      throw new ApiException('Missing process value in meta', 1);
+    if (empty($meta->function)) {
+      throw new ApiException('Missing function key in meta' . (!empty($meta->id) ? ': ' . $meta->id : ''), 1);
     }
     if (empty($meta->id)) {
-      throw new ApiException('Missing id value in meta', 1);
+      throw new ApiException('Missing id key in meta' . (!empty($meta->function) ? ': ' . $meta->function : ''), 1);
     }
     foreach ($meta as $k => & $v) {
-      if ($k != 'id' && $k != 'process') {
+      if ($k != 'id' && $k != 'function') {
         if (is_object($v)) {
           $v = $this->_crawlMeta($v);
         }
       }
     }
-    $classStr = $this->_getProcessor($meta->process);
+    $classStr = $this->_getProcessor($meta->function);
     $class = new $classStr($meta, $this->request);
     return $class->process();
   }
@@ -219,15 +219,16 @@ class Api
   {
     $namespaces = array('Security', 'Endpoint', 'Output', 'Processor');
     $className = ucfirst(trim($className));
-    $classStr = false;
+    $class = false;
     foreach ($namespaces as $namespace) {
       $classStr = "\\Datagator\\$namespace\\$className";
       if (class_exists($classStr)) {
+        $class = $classStr;
         break;
       }
     }
-    if (!$classStr) {
-      throw new ApiException("unknown process: $className", 1);
+    if (!$class) {
+      throw new ApiException("unknown function in new resource: $className", 1);
     }
     return $classStr;
   }

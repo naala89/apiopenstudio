@@ -21,12 +21,12 @@ class DatagatorApplication extends ProcessorBase
       'applicationName' => array(
         'description' => 'The name of the application.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'accountName' => array(
         'description' => 'The name of the account.',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
     ),
   );

@@ -11,26 +11,26 @@ method: get
 ttl: 0
 
 security:
-  process: tokenDeveloper
+  function: tokenDeveloper
   id: "limit access to developers"
   token:
-    process: varGet
+    function: varGet
     id: "get token from query string"
     name: token
 
 process:
-  process: resourceYaml
+  function: resourceYaml
   id: 3
   method:
-    process: varGet
+    function: varGet
     id: "get method from query string"
     name: method
   noun:
-    process: varGet
+    function: varGet
     id: "get noun from query string"
     name: noun
   verb:
-    process: varGet
+    function: varGet
     id: "get verb from query string"
     name: verb
 

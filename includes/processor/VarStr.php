@@ -18,7 +18,7 @@ class VarStr extends VarMixed
       'value' => array(
         'description' => 'The value of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'string')
+        'accepts' => array('function', 'string')
       ),
     ),
   );

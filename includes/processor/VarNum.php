@@ -18,7 +18,7 @@ class VarNum extends VarMixed
       'value' => array(
         'description' => 'The value of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'numeric')
+        'accepts' => array('function', 'numeric')
       ),
     ),
   );

@@ -19,17 +19,17 @@ class DatagatorUserRole extends ProcessorBase
       'username' => array(
         'description' => 'The username of the user.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'string'),
+        'accepts' => array('function', 'string'),
       ),
       'applicationName' => array(
         'description' => 'the application name for the user/role.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'string'),
+        'accepts' => array('function', 'string'),
       ),
       'roleName' => array(
         'description' => 'The role name for the user in the application.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'string'),
+        'accepts' => array('function', 'string'),
       ),
     ),
   );

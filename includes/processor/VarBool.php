@@ -19,7 +19,7 @@ class VarBool extends VarMixed
       'value' => array(
         'description' => 'The value of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'bool')
+        'accepts' => array('function', 'boolean')
       ),
     ),
   );

@@ -21,12 +21,12 @@ class TokenRole extends Token {
       'token' => array(
         'description' => 'The consumers token.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor')
+        'accepts' => array('function')
       ),
       'role' => array(
         'description' => 'The consumers role.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'string')
+        'accepts' => array('function', 'string')
       )
     ),
   );

@@ -27,12 +27,12 @@ class Field extends ProcessorBase
       'key' => array(
         'description' => 'The key of the nvp.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'value' => array(
         'description' => 'The value of the nvp.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
     ),
   );

@@ -3,17 +3,16 @@ name: Hello world
 description: Return a hello world string.
 
 uri:
-   noun: hello
-   verb: world
+  noun: hello
+  verb: world
 
 method: get
 
 ttl: 360
 
 process:
-   processor: concatenate
-   meta:
-      id: 1
-      sources:
-        - "Hello "
-        - "world!"
+  function: concatenate
+  id: 1
+  sources:
+    - "Hello "
+    - "world!"

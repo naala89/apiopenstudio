@@ -33,12 +33,12 @@ class LoginStoreDrupal extends ProcessorBase
       'source' => array(
         'description' => 'The results of a login attempt to the remote site. i.e. Processor InputUrl.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor')
+        'accepts' => array('function')
       ),
       'externalEntity' => array(
         'description' => 'The name of the external entity this user is tied to (default is "drupal" - use custom names if you access more than one drupal site).',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'literal')
+        'accepts' => array('function', 'literal')
       ),
     ),
   );

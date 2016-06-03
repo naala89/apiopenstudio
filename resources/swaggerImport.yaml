@@ -11,17 +11,14 @@ method: post
 ttl: 0
 
 security:
-  processor: tokenDeveloper
-  meta:
-    id: 1
-    token:
-      processor: varPost
-      meta:
-        id: 2
-        name: token
+  function: tokenDeveloper
+  id: 1
+  token:
+    function: varPost
+    id: 2
+    name: token
 
 process:
-  processor: resourceSwagger
-  meta:
-    id: 3
-    resource: resource
+  function: resourceSwagger
+  id: 3
+  resource: resource

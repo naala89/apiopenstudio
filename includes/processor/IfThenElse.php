@@ -18,27 +18,27 @@ class IfThenElse extends ProcessorBase
       'lhs' => array(
         'description' => 'The left-land side value in the equation.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'rhs' => array(
         'description' => 'The right-land side value in the equation.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'operator' => array(
         'description' => 'The comparison operator in the equation.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"=="', '"!="', '">"', '">="', '"<"', '"<="'),
+        'accepts' => array('function', '"=="', '"!="', '">"', '">="', '"<"', '"<="'),
       ),
       'then' => array(
         'description' => 'What to do if the equation returns true.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'else' => array(
         'description' => 'What to do if the equation returns false.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
     ),
   );

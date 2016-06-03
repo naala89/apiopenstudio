@@ -23,32 +23,32 @@ class Twitter extends Processor\ProcessorBase
       'key' => array(
         'description' => 'The consumer key to attach with.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'secret' => array(
         'description' => 'The consumer secret to attach with.',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'twitterId' => array(
         'description' => 'The ID of the twitter account used for authentication - use this if an application has more than one twitter account that it uses (if omitted it will default to "twitter").',
         'cardinality' => array(0, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'method' => array(
         'description' => 'The API call method (get or past).',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', '"get"', '"post"'),
+        'accepts' => array('function', '"get"', '"post"'),
       ),
       'uri' => array(
         'description' => 'The call you want to make to the Twitter API (e.g. "statuses/user_timeline.json", "friends/list.json", etc).',
         'cardinality' => array(1, 1),
-        'accepts' => array('processor', 'literal'),
+        'accepts' => array('function', 'literal'),
       ),
       'options' => array(
         'description' => 'The options (an array of Processor Field) allowed by Twitter for the call (e.g. cursor: -1, screen_name: twitterapi, skip_status: true, etc).',
         'cardinality' => array(0, '*'),
-        'accepts' => array('processor Field'),
+        'accepts' => array('function Field'),
       ),
     ),
   );

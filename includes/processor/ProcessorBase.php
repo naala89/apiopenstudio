@@ -68,7 +68,7 @@ class ProcessorBase
    *
    *    examples:
    *      input => array(
-   *        'sources' => array('description' => 'desc1', 'cardinality' => array(1, '*'), type => array('processor', 'literal'))
+   *        'sources' => array('description' => 'desc1', 'cardinality' => array(1, '*'), type => array('function', 'literal'))
    *      )
    *          This processor has only one input, called sources.
    *          Sources must contain at least one value.
@@ -76,8 +76,8 @@ class ProcessorBase
    *
    *      input => array(
    *        'method' => array('description' => 'desc1', 'cardinality' => array(1, 1), 'accepts' => array('literal' => array('"get"', '"post"'))),
-   *        'auth' => array('description' => 'desc2', 'cardinality' => array(1, 1), 'accepts' => array('processor'),
-   *        'vars' => array('description' => 'desc3', 'cardinality' => array(0, '*'), type => array('processor', 'integer')),
+   *        'auth' => array('description' => 'desc2', 'cardinality' => array(1, 1), 'accepts' => array('function'),
+   *        'vars' => array('description' => 'desc3', 'cardinality' => array(0, '*'), type => array('function', 'integer')),
    *        't' => array('description' => 'desc4', 'cardinality' => array(0, '*'), type => array('processor field', 'string'))
    *      )
    *          This Processor has 3 inputs:
