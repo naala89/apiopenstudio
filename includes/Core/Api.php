@@ -24,7 +24,7 @@ Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Con
 class Api
 {
   private $cache;
-  private $test = false; // false or filename in /yaml/test
+  private $test = 'testTemplate1.yaml'; // false or filename in /yaml/test
   private $request;
   private $db;
 
@@ -74,9 +74,9 @@ class Api
     $this->request->ttl = $resource->getTtl();
 
     // validate user for the call, if required
-    $this->_validateSecurity();
+    $this->_crawlMeta($this->request->resource->security);
 
-    // fetch the cache of the call, if it is not stale
+    // fetch the cache of the call, and process into output if it is not stale
     $data = $this->_getCache();
     if ($data !== false) {
       return $this->_getOutput($data);
@@ -88,8 +88,9 @@ class Api
     Debug::variable($this->request, 'request', 3);
 
     // process the call
-    $processor = new Processor\ProcessorBase($this->request->resource->process, $this->request);
-    $data = $processor->process();
+    //$processor = new Processor\ProcessorBase($this->request->resource->process, $this->request);
+    //$data = $processor->process();
+    $data = $this->_crawlMeta($this->request->resource->process);
 
     // store the results in cache for next time
     if (is_object($data) && get_class($data) == 'Error') {
@@ -155,7 +156,6 @@ class Api
   private function _getResource($request)
   {
     $mapper = new Db\ResourceMapper($this->db);
-
     if (!$this->test) {
       $resource = $mapper->findByAppIdMethodIdentifier($request->appId, $request->method, $request->identifier);
       if ($resource->getId() === NULL) {
@@ -174,24 +174,64 @@ class Api
       }
       $array = Spyc::YAMLLoad($filepath);
       $resource = new Db\Resource();
-      $meta = new \stdClass();
-      $meta->process = $this->_arrayToObject($array['process']);
+      $meta = array();
+      $meta['process'] = $array['process'];
       if (!empty($array['security'])) {
-        $meta->security = $this->_arrayToObject($array['security']);
+        $meta['security'] = $array['security'];
       }
       if (!empty($array['output'])) {
-        $meta->output = $this->_arrayToObject($array['output']);
+        $meta['output'] = $array['output'];
       }
       if (!empty($array['fragments'])) {
-        $meta->fragments = $this->_arrayToObject($array['fragments']);
+        $meta['fragments'] = $array['fragments'];
       }
-      $resource->setMeta($meta);
+      $resource->setMeta(json_encode($meta));
       $resource->setTtl($array['ttl']);
       $resource->setMethod($array['method']);
       $resource->setIdentifier(strtolower($array['uri']['noun']) . strtolower($array['uri']['verb']));
     }
 
     return $resource;
+  }
+
+  private function _crawlMeta(& $meta)
+  {
+    if (!is_object($meta)) {
+      return $meta;
+    }
+    if (empty($meta->process)) {
+      throw new ApiException('Missing process value in meta', 1);
+    }
+    if (empty($meta->id)) {
+      throw new ApiException('Missing id value in meta', 1);
+    }
+    foreach ($meta as $k => & $v) {
+      if ($k != 'id' && $k != 'process') {
+        if (is_object($v)) {
+          $v = $this->_crawlMeta($v);
+        }
+      }
+    }
+    $classStr = $this->_getProcessor($meta->process);
+    $class = new $classStr($meta, $this->request);
+    return $class->process();
+  }
+
+  private function _getProcessor($className)
+  {
+    $namespaces = array('Security', 'Endpoint', 'Output', 'Processor');
+    $className = ucfirst(trim($className));
+    $classStr = false;
+    foreach ($namespaces as $namespace) {
+      $classStr = "\\Datagator\\$namespace\\$className";
+      if (class_exists($classStr)) {
+        break;
+      }
+    }
+    if (!$classStr) {
+      throw new ApiException("unknown process: $className", 1);
+    }
+    return $classStr;
   }
 
   /**
