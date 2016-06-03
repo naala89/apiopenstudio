@@ -14,7 +14,7 @@ class ResourceSwagger extends ResourceBase
     'name' => 'Import Swagger',
     'description' => 'Create a custom API resource using a Swagger YAML document.',
     'menu' => 'Resource',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'resource' => array(
         'description' => 'The resource string or file. This can be an attached file or a urlencoded GET var.',

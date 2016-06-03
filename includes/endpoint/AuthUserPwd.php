@@ -27,7 +27,7 @@ class AuthUserPwd extends Processor\ProcessorBase
     'name' => 'Auth (User/Pass)',
     'description' => 'Authentication for remote server, using username/password.',
     'menu' => 'Authentication',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'username' => array(
         'description' => 'The username.',

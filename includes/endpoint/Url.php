@@ -14,7 +14,7 @@ class Url extends Processor\ProcessorBase
     'name' => 'Url',
     'description' => 'Fetch the result form an external URL.',
     'menu' => 'Endpoint',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'method' => array(
         'description' => 'The HTTP method.',

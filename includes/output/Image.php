@@ -16,7 +16,7 @@ class Image extends Output
     'name' => 'Image',
     'description' => 'Output in image format. The data fed into the output can be a URL (must start with http) or an input filename.',
     'menu' => 'Output',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'destination' => array(
         'description' => 'A single or array of URLs to send the results to.',

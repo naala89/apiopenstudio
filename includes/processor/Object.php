@@ -13,7 +13,7 @@ class Object extends ProcessorBase {
     'name' => 'Object',
     'description' => 'Create a custom object from inputs. This is useful for creating an output of object from selected input fields. You can use field processor for name value pairs, or other processors or literals to create single values. It can also be used to parse XML, JSON input from an external source into an object that you can work with.',
     'menu' => 'Primitive',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'attributes' => array(
         'description' => 'The value of an attribute or a complex object.',

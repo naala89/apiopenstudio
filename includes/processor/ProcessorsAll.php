@@ -12,7 +12,7 @@ class ProcessorsAll extends ProcessorBase
     'name' => 'processors (all)',
     'description' => 'Fetch data on all processors available to your application.',
     'menu' => 'System',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array()
   );
 
@@ -70,7 +70,7 @@ class ProcessorsAll extends ProcessorBase
       if (!$abstractClass->isAbstract()) {
         $obj = new $processor($this->meta, $this->request);
         $details = $obj->details();
-        if (!empty($details['application']) && ($details['application'] == 'All' || $details['application'] == $appName)) {
+        if (!empty($details['application']) && ($details['application'] == 'Common' || $details['application'] == $appName)) {
           $result[] = $details;
         }
       }

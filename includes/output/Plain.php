@@ -9,7 +9,7 @@ class Plain extends Text
     'name' => 'Plain',
     'description' => 'Output in plain-text format.',
     'menu' => 'Output',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'destination' => array(
         'description' => 'A single or array of URLs to send the results to.',

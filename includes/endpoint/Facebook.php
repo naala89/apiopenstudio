@@ -16,7 +16,7 @@ class Facebook extends Processor\ProcessorBase
     'name' => 'Facebook',
     'description' => 'Fetch results from facebook Graph API.',
     'menu' => 'Endpoint',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'appId' => array(
         'description' => 'The app_id that you will be accessing facebook with.',

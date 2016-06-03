@@ -157,9 +157,9 @@ class Api
     if (!$this->test) {
       $resource = $mapper->findByAppIdMethodIdentifier($request->appId, $request->method, $request->identifier);
       if ($resource->getId() === NULL) {
-        // also allow applications from app name All
+        // also allow applications from app name Common
         $applicationMapper = new Db\ApplicationMapper($this->db);
-        $application = $applicationMapper->findByName('All');
+        $application = $applicationMapper->findByName('Common');
         $resource = $mapper->findByAppIdMethodIdentifier($application->getAppId(), $request->method, $request->identifier);
       }
       if ($resource->getId() === NULL) {

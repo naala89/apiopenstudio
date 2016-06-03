@@ -16,7 +16,7 @@ abstract class ResourceBase extends ProcessorBase
     'name' => 'Resource',
     'description' => 'Create, edit or fetch a custom API resource for the application. NOTE: in the case of DELETE, the args for the input should be as GET vars - POST vars are not guaranteed on all servers with this method.',
     'menu' => 'Resource',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'method' => array(
         'description' => 'The HTTP method of the resource (only used if fetching or deleting a resource).',

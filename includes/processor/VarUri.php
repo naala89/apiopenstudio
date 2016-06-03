@@ -13,7 +13,7 @@ class VarUri extends ProcessorBase
     'name' => 'Var (URI)',
     'description' => 'A value from the request URI. It fetches the value of a particular param in the URI, based on the index value.',
     'menu' => 'Primitive',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'index' => array(
         'description' => 'The index of the variable, starting with 0 after the client ID, request noun and verb.',

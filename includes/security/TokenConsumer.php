@@ -24,8 +24,7 @@ class TokenConsumer extends Token {
     'name' => 'Token (Consumer)',
     'description' => 'Validate the request, requiring the consumer to have a valid token and a role of consumer for application referenced by the appId in the URI.',
     'menu' => 'Security',
-    'client' => 'All',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'token' => array(
         'description' => 'The consumers token.',

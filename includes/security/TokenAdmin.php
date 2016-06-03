@@ -15,8 +15,7 @@ class TokenAdmin extends Token {
     'name' => 'Token (Admin)',
     'description' => 'Validate the request, requiring the consumer to have a valid token and a role of admin for application referenced by the appId in the URI.',
     'menu' => 'Security',
-    'client' => 'System',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'token' => array(
         'description' => 'The consumers token.',

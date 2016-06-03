@@ -13,7 +13,7 @@ class VarInt extends VarMixed
     'name' => 'Var (Integer)',
     'description' => 'An integer variable. It validates the input and returns an error if it is not a integer.',
     'menu' => 'Primitive',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'value' => array(
         'description' => 'The value of the variable.',

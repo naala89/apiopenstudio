@@ -9,7 +9,7 @@ class Text extends Output
     'name' => 'Text',
     'description' => 'Output in text format.',
     'menu' => 'Output',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'destination' => array(
         'description' => 'A single or array of URLs to send the results to.',

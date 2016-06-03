@@ -14,7 +14,7 @@ class Merge extends ProcessorBase
     'name' => 'Merge',
     'description' => 'Merge multiple data-sets.',
     'menu' => 'Operation',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'sources' => array(
         'description' => 'The data-sets to merge on.',

@@ -14,7 +14,7 @@ class VarBool extends VarMixed
     'name' => 'Var (Boolean)',
     'description' => 'A boolean variable. It validates the input and returns an error if it is not a boolean. Possible input',
     'menu' => 'Primitive',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'value' => array(
         'description' => 'The value of the variable.',

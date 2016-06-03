@@ -15,7 +15,7 @@ class UserLogin extends ProcessorBase
     'name' => 'User Login',
     'description' => 'Login a user for token-based API access.',
     'menu' => 'Validator',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'username' => array(
         'description' => 'Users username.',

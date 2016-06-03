@@ -13,7 +13,7 @@ class Filter extends ProcessorBase
     'name' => 'Filter',
     'description' => 'Filter values from a data-set.',
     'menu' => 'Operation',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'values' => array(
         'description' => 'The data-set to filter.',

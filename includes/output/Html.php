@@ -9,7 +9,7 @@ class Html extends Xml
     'name' => 'Html',
     'description' => 'Output in HTML format.',
     'menu' => 'Output',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'destination' => array(
         'description' => 'A single or array of URLs to send the results to.',

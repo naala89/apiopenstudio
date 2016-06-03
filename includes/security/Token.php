@@ -15,8 +15,7 @@ class Token extends Processor\ProcessorBase {
     'name' => 'Token',
     'description' => 'Validate the request, requiring the consumer to have a valid token.',
     'menu' => 'Security',
-    'client' => 'All',
-    'application' => 'All',
+    'application' => 'Common',
     'input' => array(
       'token' => array(
         'description' => 'The consumers token.',
