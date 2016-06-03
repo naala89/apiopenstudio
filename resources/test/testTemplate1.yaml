@@ -1,0 +1,38 @@
+name: YAML export
+
+description: Fetch a resource in string or YAML format.
+
+uri:
+  noun: resource
+  verb: yaml
+
+method: get
+
+ttl: 0
+
+security:
+  process: tokenDeveloper
+  id: "limit access to developers"
+  token:
+    process: varGet
+    id: "get token from query string"
+    name: token
+
+process:
+  process: resourceYaml
+  id: 3
+  method:
+    process: varGet
+    id: "get method from query string"
+    name: method
+  noun:
+    process: varGet
+    id: "get noun from query string"
+    name: noun
+  verb:
+    process: varGet
+    id: "get verb from query string"
+    name: verb
+
+output:
+  - response
