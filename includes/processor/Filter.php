@@ -7,7 +7,7 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class Filter extends ProcessorBase
+class Filter extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'Filter',
@@ -32,17 +32,17 @@ class Filter extends ProcessorBase
   {
     Core\Debug::variable($this->meta, 'processor Filter', 4);
 
+    if (empty($this->meta->values)) {
+      return [];
+    }
     $values = $this->val($this->meta->values);
-    $filter = $this->val($this->meta->filter);
-
-    if (empty($values) || empty($filter)) {
+    if (empty($this->meta->filter)) {
       return $values;
     }
+    $filter = $this->val($this->meta->filter);
 
     $filter = is_array($filter) ? $filter : array($filter);
     $values = is_array($values) ? $values : array($values);
-
-    Core\Debug::variable($values);
 
     if (Core\Utilities::is_assoc($values)) {
       foreach ($filter as $key) {

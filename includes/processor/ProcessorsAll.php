@@ -6,7 +6,7 @@ use Datagator\Db\ApplicationMapper;
 use Datagator\Db\UserMapper;
 use Datagator\Db\UserRoleMapper;
 
-class ProcessorsAll extends ProcessorBase
+class ProcessorsAll extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'processors (all)',

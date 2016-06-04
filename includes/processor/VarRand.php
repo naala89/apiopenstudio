@@ -7,7 +7,7 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class VarRand extends ProcessorBase
+class VarRand extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Rand)',

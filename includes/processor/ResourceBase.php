@@ -5,11 +5,10 @@
  */
 
 namespace Datagator\Processor;
-use Codeception\Util\Debug;
 use Datagator\Core;
 use Datagator\Db;
 
-abstract class ResourceBase extends ProcessorBase
+abstract class ResourceBase extends ProcessorEntity
 {
   protected $db;
   protected $details = array(

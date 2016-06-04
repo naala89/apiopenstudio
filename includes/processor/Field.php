@@ -1,22 +1,13 @@
 <?php
 
 /**
- * Simple field type
- *
- * METADATA
- * {
- *    "type":"field",
- *    "meta":{
- *      "name":<processor|string>,
- *      "value":<processor|var>
- *    }
- *  }
+ * Simple field type.
  */
 
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class Field extends ProcessorBase
+class Field extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'Field',
@@ -41,9 +32,11 @@ class Field extends ProcessorBase
   {
     Core\Debug::variable($this->meta, 'Processor Field', 4);
 
-    $name = $this->val($this->meta->key);
+    $key = $this->val($this->meta->key);
     $value = $this->val($this->meta->value);
 
-    return array($name => $value);
+    Core\Debug::variable(array($key => $value), 'result');
+
+    return array($key => $value);
   }
 }

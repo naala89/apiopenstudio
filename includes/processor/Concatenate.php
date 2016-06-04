@@ -5,10 +5,9 @@
  */
 
 namespace Datagator\Processor;
-use Codeception\Util\Debug;
 use Datagator\Core;
 
-class Concatenate extends ProcessorBase
+class Concatenate extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'Concatenate',
