@@ -75,7 +75,8 @@ class Api
 
     // validate user for the call, if required
     if (!empty($this->request->resource->security)) {
-      $this->_crawlMeta($this->request->resource->security);
+      $security = $this->request->resource->security;
+      $this->_crawlMeta($security);
     }
 
     // fetch the cache of the call, and process into output if it is not stale
@@ -85,12 +86,13 @@ class Api
     }
 
     // process the fragments
-    $this->request->fragments = $this->_processFragments();
+    //$this->request->fragments = $this->_processFragments();
 
     Debug::variable($this->request, 'request', 3);
 
     // process the call
-    $data = $this->_crawlMeta($this->request->resource->process);
+    $process = $this->request->resource->process;
+    $data = $this->_crawlMeta($process);
 
     // store the results in cache for next time
     if (is_object($data) && get_class($data) == 'Error') {
@@ -194,31 +196,43 @@ class Api
     return $resource;
   }
 
+  /**
+   * Recursively crawl though metadata. Recurse through Replace all processors with result values and return final value
+   * @param $meta
+   * @return mixed
+   * @throws \Datagator\Core\ApiException
+   */
   private function _crawlMeta(& $meta)
   {
-    if (is_string($meta) || is_numeric($meta)) {
-      return $meta;
-    }
-    if (empty($meta->function)) {
-      throw new ApiException('Missing function key in meta' . (!empty($meta->id) ? ': ' . $meta->id : ''), 1);
-    }
-    if (empty($meta->id)) {
-      throw new ApiException('Missing id key in meta' . (!empty($meta->function) ? ': ' . $meta->function : ''), 1);
-    }
-    foreach ($meta as $key => & $value) {
-      if (is_object($value)) {
+    // array of values - parse each one
+    if (is_array($meta)) {
+      foreach ($meta as $key => & $value) {
         $value = $this->_crawlMeta($value);
-      } elseif (is_array($value) && !Utilities::is_assoc($value)) {
-        foreach ($value as & $v) {
-          $v = $this->_crawlMeta($v);
-        }
       }
     }
-    $classStr = $this->_getProcessor($meta->function);
-    $class = new $classStr($meta, $this->request);
-    return $class->process();
+
+    // object of value - process each key/value, and process() if a processpr
+    if (is_object($meta)) {
+      // replace each value of key/value pair with final value
+      foreach ($meta as $key => & $value) {
+        $value = $this->_crawlMeta($value);
+      }
+      if (!empty($meta->function) && !empty($meta->id)) {
+        $classStr = $this->_getProcessor($meta->function);
+        $class = new $classStr($meta, $this->request);
+        return $class->process();
+      }
+    }
+
+    return $meta;
   }
 
+  /**
+   * Return processor namnespace and class name
+   * @param $className
+   * @return string
+   * @throws \Datagator\Core\ApiException
+   */
   private function _getProcessor($className)
   {
     $namespaces = array('Security', 'Endpoint', 'Output', 'Processor');
