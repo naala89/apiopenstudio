@@ -1,10 +1,12 @@
 <?php
 
+/**
+ * Fetch a list of all processors
+ */
+
 namespace Datagator\Processor;
 use Datagator\Core;
 use Datagator\Db\ApplicationMapper;
-use Datagator\Db\UserMapper;
-use Datagator\Db\UserRoleMapper;
 
 class ProcessorsAll extends ProcessorEntity
 {
@@ -30,7 +32,7 @@ class ProcessorsAll extends ProcessorEntity
     $classes = [];
     $classes = array_merge($classes, $this->_getClassList('endpoint'));
     $classes = array_merge($classes, $this->_getClassList('output'));
-    $classes = array_merge($classes, $this->_getClassList('function'));
+    $classes = array_merge($classes, $this->_getClassList('processor'));
     $classes = array_merge($classes, $this->_getClassList('security'));
 
     $result = $this->_getDetails($classes, $appName);
