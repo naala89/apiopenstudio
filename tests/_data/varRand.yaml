@@ -11,41 +11,33 @@ method: get
 ttl: 0
 
 security:
-  processor: TokenConsumer
-  meta:
-    id: 1
-    token:
-      processor: varGet
-      meta:
-        id: 2
-        name: token
+  function: TokenConsumer
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
 
 process:
-  processor: varRand
-  meta:
-    id: 3
-    length:
-      processor: varGet
-      meta:
-        id: 4
-        name: length
-    lower:
-      processor: varGet
-      meta:
-        id: 5
-        name: lower
-    upper:
-      processor: varGet
-      meta:
-        id: 6
-        name: upper
-    numeric:
-      processor: varGet
-      meta:
-        id: 7
-        name: numeric
-    special:
-      processor: varGet
-      meta:
-        id: 8
-        name: special
+  function: varRand
+  id: 3
+  length:
+    function: varGet
+    id: 4
+    name: length
+  lower:
+    function: varGet
+    id: 5
+    name: lower
+  upper:
+    function: varGet
+    id: 6
+    name: upper
+  numeric:
+    function: varGet
+    id: 7
+    name: numeric
+  special:
+    function: varGet
+    id: 8
+    name: special

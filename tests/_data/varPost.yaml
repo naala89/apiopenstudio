@@ -11,17 +11,14 @@ method: post
 ttl: 0
 
 security:
-  processor: TokenConsumer
-  meta:
-    id: 1
-    token:
-      processor: varPost
-      meta:
-        id: 2
-        name: token
+  function: TokenConsumer
+  id: 1
+  token:
+    function: varPost
+    id: 2
+    name: token
 
 process:
-  processor: varPost
-  meta:
-    id: 3
-    name: value
+  function: varPost
+  id: 3
+  name: value

@@ -11,38 +11,33 @@ method: get
 ttl: 0
 
 security:
-  processor: TokenConsumer
-  meta:
-    id: 1
-    token:
-      processor: varGet
-      meta:
-        id: 2
-        name: token
+  function: TokenConsumer
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
 
 process:
-  processor: merge
-  meta:
-    id: 3
-    sources:
-      -
-        - val1
-        - val2
-        - val3
-        - val4
-      -
-        - val1
-        - val5
-        - val6
-        - val7
-        - val8
-    mergeType:
-      processor: varGet
-      meta:
-        id: 6
-        name: mergeType
-    unique:
-      processor: varGet
-      meta:
-        id: 6
-        name: unique
+  function: merge
+  id: 3
+  sources:
+    -
+      - val1
+      - val2
+      - val3
+      - val4
+    -
+      - val1
+      - val5
+      - val6
+      - val7
+      - val8
+  mergeType:
+    function: varGet
+    id: 6
+    name: mergeType
+  unique:
+    function: varGet
+    id: 6
+    name: unique
