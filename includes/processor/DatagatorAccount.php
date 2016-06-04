@@ -8,7 +8,7 @@ namespace Datagator\Processor;
 use Datagator\Core;
 use Datagator\Db;
 
-class DatagatorAccount extends ProcessorBase
+class DatagatorAccount extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'Datagator Account',

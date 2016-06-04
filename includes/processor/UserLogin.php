@@ -9,7 +9,7 @@ use Datagator\Config;
 use Datagator\Core;
 use Datagator\Db;
 
-class UserLogin extends ProcessorBase
+class UserLogin extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'User Login',

@@ -20,7 +20,7 @@ namespace Datagator\Processor;
 use Datagator\Core;
 use Datagator\Db;
 
-class LoginStoreDrupal extends ProcessorBase
+class LoginStoreDrupal extends ProcessorEntity
 {
   private $user;
   private $defaultEntity = 'drupal';

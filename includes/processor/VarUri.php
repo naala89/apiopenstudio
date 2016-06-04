@@ -7,7 +7,7 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class VarUri extends ProcessorBase
+class VarUri extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (URI)',

@@ -8,7 +8,7 @@ namespace Datagator\Processor;
 use Datagator\Core;
 use Datagator\Db;
 
-class VarTemporary extends ProcessorBase
+class VarTemporary extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Temporary)',
