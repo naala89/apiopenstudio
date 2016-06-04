@@ -74,7 +74,9 @@ class Api
     $this->request->ttl = $resource->getTtl();
 
     // validate user for the call, if required
-    $this->_crawlMeta($this->request->resource->security);
+    if (!empty($this->request->resource->security)) {
+      $this->_crawlMeta($this->request->resource->security);
+    }
 
     // fetch the cache of the call, and process into output if it is not stale
     $data = $this->_getCache();
@@ -194,7 +196,7 @@ class Api
 
   private function _crawlMeta(& $meta)
   {
-    if (!is_object($meta)) {
+    if (is_string($meta) || is_numeric($meta)) {
       return $meta;
     }
     if (empty($meta->function)) {
@@ -203,9 +205,11 @@ class Api
     if (empty($meta->id)) {
       throw new ApiException('Missing id key in meta' . (!empty($meta->function) ? ': ' . $meta->function : ''), 1);
     }
-    foreach ($meta as $k => & $v) {
-      if ($k != 'id' && $k != 'function') {
-        if (is_object($v)) {
+    foreach ($meta as $key => & $value) {
+      if (is_object($value)) {
+        $value = $this->_crawlMeta($value);
+      } elseif (is_array($value) && !Utilities::is_assoc($value)) {
+        foreach ($value as & $v) {
           $v = $this->_crawlMeta($v);
         }
       }
