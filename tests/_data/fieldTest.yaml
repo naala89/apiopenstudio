@@ -11,22 +11,18 @@ method: get
 ttl: 0
 
 security:
-  processor: TokenConsumer
-  meta:
-    id: 1
-    token:
-      processor: varGet
-      meta:
-        id: 2
-        name: token
+  function: TokenConsumer
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
 
 process:
-  processor: field
-  meta:
-    id: 3
-    key: myTestVar
-    value:
-      processor: varMixed
-      meta:
-        id: 4
-        value: MyTestVal
+  function: field
+  id: 3
+  key: myTestVar
+  value:
+    function: varMixed
+    id: 4
+    value: MyTestVal

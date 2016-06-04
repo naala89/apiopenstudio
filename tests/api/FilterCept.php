@@ -27,7 +27,7 @@ $I->createResourceFromYaml();
 $I->callResourceFromYaml();
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(['key2' => 'val2', 'key3' => 'val3', 0 => 'val4', 1 => 'val5']);
+$I->seeResponseContainsJson([0 => 'val4', 1 => 'val5', 'key2' => 'val2', 'key3' => 'val3']);
 $I->tearDownTestFromYaml();
 
 $I->wantTo('perform a filter of multiple keys from a list of Fields');

@@ -11,56 +11,45 @@ method: get
 ttl: 0
 
 security:
-  processor: TokenConsumer
-  meta:
-    id: 1
-    token:
-      processor: varGet
-      meta:
-        id: 2
-        name: token
+  function: TokenConsumer
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
 
 process:
-  processor: sort
-  meta:
-    id: 3
-    values:
-      processor: object
-      meta:
-        id: 4
-        attributes:
-          - processor: field
-            meta:
-              id: 5
-              key: key3
-              value: val3
-          - processor: field
-            meta:
-              id: 5
-              key: key2
-              value: val5
-          - processor: field
-            meta:
-              id: 5
-              key: key4
-              value: val2
-          - processor: field
-            meta:
-              id: 5
-              key: key1
-              value: val99
-          - processor: field
-            meta:
-              id: 5
-              key: key999
-              value: val1
-    direction:
-      processor: varGet
-      meta:
-        id: 6
-        name: direction
-    sortByValue:
-      processor: varGet
-      meta:
-        id: 6
-        name: sortByValue
+  function: sort
+  id: 3
+  values:
+    function: object
+    id: 4
+    attributes:
+      - function: field
+        id: 5
+        key: key3
+        value: val3
+      - function: field
+        id: 5
+        key: key2
+        value: val5
+      - function: field
+        id: 5
+        key: key4
+        value: val2
+      - function: field
+        id: 5
+        key: key1
+        value: val99
+      - function: field
+        id: 5
+        key: key999
+        value: val1
+  direction:
+    function: varGet
+    id: 6
+    name: direction
+  sortByValue:
+    function: varGet
+    id: 6
+    name: sortByValue
