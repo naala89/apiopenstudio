@@ -216,7 +216,7 @@ class ProcessorEntity extends Core\Entity
       foreach ($obj as $o) {
         $result[] = $this->val($o);
       }
-    } elseif (!empty($obj)) {
+    } elseif (!empty($obj) || $obj == 0) {
       // this is a literal, so return it
       $result = $obj;
     } else {

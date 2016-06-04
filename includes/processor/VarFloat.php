@@ -28,6 +28,7 @@ class VarFloat extends VarMixed
     Core\Debug::variable($this->meta, 'Processor VarFloat');
 
     $value = parent::process();
+
     if (is_string($value) && is_numeric($value)) {
       $value = floatval($value);
     }
