@@ -19,7 +19,7 @@ security:
     name: token
 
 process:
-  function: varUri=
+  function: varUri
   id: 3
   index:
     function: varGet
