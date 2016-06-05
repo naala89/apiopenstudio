@@ -4,7 +4,7 @@ namespace Datagator\Processor;
 use Datagator\Config;
 use Datagator\Core;
 
-class ProcessorEntity extends Core\Entity
+class ProcessorEntity
 {
   /**
    * Processor ID.
