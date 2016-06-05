@@ -135,10 +135,10 @@ class Api
       die();
     }
 
-    $result->appId = array_shift($args);
-    $result->noun = array_shift($args);
-    $result->verb = array_shift($args);
-    $result->identifier = $result->noun . $result->verb;
+    $result->appName = array_shift($args);
+//    $result->noun = array_shift($args);
+//    $result->verb = array_shift($args);
+//    $result->identifier = $result->noun . $result->verb;
     $result->args = $args;
     $header = getallheaders();
     $result->outFormat = $this->parseType($header, 'Accept', 'json');
@@ -157,42 +157,55 @@ class Api
    */
   private function _getResource($request)
   {
-    $mapper = new Db\ResourceMapper($this->db);
     if (!$this->test) {
-      $resource = $mapper->findByAppIdMethodIdentifier($request->appId, $request->method, $request->identifier);
-      if ($resource->getId() === NULL) {
-        // also allow applications from app name Common
-        $applicationMapper = new Db\ApplicationMapper($this->db);
-        $application = $applicationMapper->findByName('Common');
-        $resource = $mapper->findByAppIdMethodIdentifier($application->getAppId(), $request->method, $request->identifier);
+      $mapper = new Db\ResourceMapper($this->db);
+      $resources = array();
+      $uirParts = $request->args;
+      $identifier = '';
+
+      while (sizeof($resources) < 1 && sizeof($uirParts) > 0) {
+        $identifier .= strtolower(trim(array_shift($uirParts)));
+        $resources = $mapper->findByAppsMethodIdentifier(array('Common', $request->appName), $request->method, $identifier);
       }
-      if ($resource->getId() === NULL) {
+      if (sizeof($resources) < 1) {
         throw new ApiException('resource or client not defined', 3, -1, 404);
       }
-    } else {
-      $filepath = $_SERVER['DOCUMENT_ROOT'] . Config::$dirYaml . 'test/' . $this->test;
-      if (!file_exists($filepath)) {
-        throw new ApiException("invalid test yaml: $filepath", 1 , -1, 400);
+      if (sizeof($resources) == 1) {
+        return $resources[0];
       }
-      $array = Spyc::YAMLLoad($filepath);
-      $resource = new Db\Resource();
-      $meta = array();
-      $meta['process'] = $array['process'];
-      if (!empty($array['security'])) {
-        $meta['security'] = $array['security'];
+
+      $mapper = new Db\ApplicationMapper($this->db);
+      $application = $mapper->findByName($request->appName);
+      $appId = $application->getAppId();
+      foreach ($resources as $resource) {
+        if ($resource->getAppId == $appId) {
+          return $resource;
+        }
       }
-      if (!empty($array['output'])) {
-        $meta['output'] = $array['output'];
-      }
-      if (!empty($array['fragments'])) {
-        $meta['fragments'] = $array['fragments'];
-      }
-      $resource->setMeta(json_encode($meta));
-      $resource->setTtl($array['ttl']);
-      $resource->setMethod($array['method']);
-      $resource->setIdentifier(strtolower($array['uri']['noun']) . strtolower($array['uri']['verb']));
+      return $resources[0];
     }
 
+    $filepath = $_SERVER['DOCUMENT_ROOT'] . Config::$dirYaml . 'test/' . $this->test;
+    if (!file_exists($filepath)) {
+      throw new ApiException("invalid test yaml: $filepath", 1 , -1, 400);
+    }
+    $array = Spyc::YAMLLoad($filepath);
+    $meta = array();
+    $meta['process'] = $array['process'];
+    if (!empty($array['security'])) {
+      $meta['security'] = $array['security'];
+    }
+    if (!empty($array['output'])) {
+      $meta['output'] = $array['output'];
+    }
+    if (!empty($array['fragments'])) {
+      $meta['fragments'] = $array['fragments'];
+    }
+    $resource = new Db\Resource();
+    $resource->setMeta(json_encode($meta));
+    $resource->setTtl($array['ttl']);
+    $resource->setMethod($array['method']);
+    $resource->setIdentifier(strtolower($array['uri']['noun']) . strtolower($array['uri']['verb']));
     return $resource;
   }
 
