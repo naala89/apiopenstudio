@@ -19,7 +19,7 @@ namespace Datagator\Endpoint;
 use Datagator\Processor;
 use Datagator\Core;
 
-class AuthOAuthHeader extends Processor\ProcessorBase
+class AuthOAuthHeader extends Processor\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Auth (o-auth header)',

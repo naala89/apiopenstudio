@@ -17,11 +17,6 @@ class ProcessorEntity
    */
   protected $meta;
   /**
-   * All of the request details.
-   * @var stdClass
-   */
-  protected $request;
-  /**
    * An array of details of the processor, used to configure the frontend GUI and metadata construction.
    *
    * Indexes:
@@ -85,15 +80,11 @@ class ProcessorEntity
    * If this method is overridden by any derived classes, don't forget to call parent::__construct()
    *
    * @param $meta
-   * @param $request
    */
-  public function __construct($meta, $request)
+  public function __construct($meta)
   {
     $this->meta = $meta;
-    $this->request = $request;
-    if (isset($meta->id)) {
-      $this->id = $meta->id;
-    }
+    $this->id = !empty($meta->id) ? $meta->id : -1;
   }
 
   /**
@@ -190,24 +181,7 @@ class ProcessorEntity
    */
   protected function val($obj)
   {
-    /*if ($this->isFragment($obj)) {
-
-      // this is a fragment, so fetch pre populated fragment value.
-      $fragmentName = $obj->fragment;
-      $fragment = false;
-      foreach ($this->request->resource->fragments as $val) {
-        if ($val->fragment == $fragmentName) {
-          $fragment = $val;
-          break;
-        }
-      }
-      if (!$fragment) {
-        throw new Core\ApiException("fragment $fragmentName does not exist",1, $this->id);
-      }
-      $processor = $this->getProcessor($fragment->meta);
-      $result = $processor->process();
-
-    } else*/if (is_object($obj) && isset($obj->function)) {
+    if (is_object($obj) && isset($obj->function)) {
       // this is a processor. Something has gone wrong - we should only have values at this point
       throw new Core\ApiException('function encountered in an input!');
     } elseif (is_array($obj) && !Core\Utilities::is_assoc($obj)) {

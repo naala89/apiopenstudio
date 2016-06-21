@@ -9,7 +9,7 @@ use Datagator\Db\ExternalUserMapper;
 use Datagator\Processor;
 use Datagator\Core;
 
-class Twitter extends Processor\ProcessorBase
+class Twitter extends Processor\ProcessorEntity
 {
   private $apiUrl = 'https://api.twitter.com/';
   private $externalEntity = 'twitter';
