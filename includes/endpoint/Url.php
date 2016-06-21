@@ -8,7 +8,7 @@ namespace Datagator\Endpoint;
 use Datagator\Processor;
 use Datagator\Core;
 
-class Url extends Processor\ProcessorBase
+class Url extends Processor\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Url',

@@ -19,7 +19,7 @@ namespace Datagator\Endpoint;
 use Datagator\Processor;
 use Datagator\Core;
 
-class AuthCookie extends Processor\ProcessorBase
+class AuthCookie extends Processor\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Auth (Cookie)',

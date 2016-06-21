@@ -10,7 +10,7 @@ use Datagator\Core;
 use Datagator\Processor;
 use Datagator\Db;
 
-class TokenOwner extends Processor\ProcessorBase {
+class TokenOwner extends Processor\ProcessorEntity {
 
   protected $role = 'owner';
   protected $details = array(

@@ -9,7 +9,7 @@ use Datagator\Core;
 use Datagator\Processor;
 use Datagator\Db;
 
-class TokenSysAdmin extends Processor\ProcessorBase {
+class TokenSysAdmin extends Processor\ProcessorEntity {
 
   protected $role = 'SysAdmin';
   protected $details = array(
