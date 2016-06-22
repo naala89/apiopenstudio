@@ -26,10 +26,12 @@ class VarPost extends VarMixed
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarPost', 4);
-    $name = $this->val($this->meta->name);
 
-    if (isset($_POST[$name])) {
-      return $_POST[$name];
+    $name = $this->val($this->meta->name);
+    $vars = $this->request->getPostVars();
+
+    if (isset($vars[$name])) {
+      return $vars[$name];
     }
 
     return null;
