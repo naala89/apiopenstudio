@@ -26,10 +26,12 @@ class VarRequest extends VarMixed
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarRequest', 4);
-    $name = $this->val($this->meta->name);
 
-    if (isset($this->request->vars[$name])) {
-      return $this->request->vars[$name];
+    $name = $this->val($this->meta->name);
+    $vars = array_merge($this->request->getGetVars(), $this->request->getPostVars());
+
+    if (isset($vars[$name])) {
+      return $vars[$name];
     }
 
     return null;

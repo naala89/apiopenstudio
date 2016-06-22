@@ -26,10 +26,12 @@ class VarGet extends VarMixed
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarGet', 4);
-    $name = $this->val($this->meta->name);
 
-    if (isset($_GET[$name])) {
-      return $_GET[$name];
+    $name = $this->val($this->meta->name);
+    $vars = $this->request->getGetVars();
+
+    if (isset($vars[$name])) {
+      return $vars[$name];
     }
 
     return null;
