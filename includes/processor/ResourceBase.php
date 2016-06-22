@@ -56,7 +56,7 @@ abstract class ResourceBase extends ProcessorEntity
 
     $this->db = $this->getDb();
 
-    switch ($this->request->method) {
+    switch ($this->request->getMethod()) {
       case 'post':
         $string = $this->val($this->meta->resource);
         $resource = $this->_importData($string);
@@ -154,7 +154,7 @@ abstract class ResourceBase extends ProcessorEntity
     $ttl = !empty($data['ttl']) ? $data['ttl'] : 0;
 
     $mapper = new Db\ResourceMapper($this->db);
-    $resource = $mapper->findByAppIdMethodIdentifier($this->request->appId, $method, $identifier);
+    $resource = $mapper->findByAppIdMethodIdentifier($this->request->getAppId(), $method, $identifier);
     if (empty($resource->getId())) {
       $resource->setAppId($this->request->appId);
       $resource->setMethod($method);

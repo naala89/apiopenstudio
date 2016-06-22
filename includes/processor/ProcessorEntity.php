@@ -4,7 +4,7 @@ namespace Datagator\Processor;
 use Datagator\Config;
 use Datagator\Core;
 
-class ProcessorEntity
+abstract class ProcessorEntity
 {
   /**
    * Processor ID.
@@ -16,6 +16,11 @@ class ProcessorEntity
    * @var integer
    */
   protected $meta;
+  /**
+   * All of the request details.
+   * @var stdClass
+   */
+  protected $request;
   /**
    * An array of details of the processor, used to configure the frontend GUI and metadata construction.
    *
@@ -80,11 +85,13 @@ class ProcessorEntity
    * If this method is overridden by any derived classes, don't forget to call parent::__construct()
    *
    * @param $meta
+   * @param $request
    */
-  public function __construct($meta)
+  public function __construct($meta, $request)
   {
     $this->meta = $meta;
-    $this->id = !empty($meta->id) ? $meta->id : -1;
+    $this->request = $request;
+    $this->id = isset($meta->id) ? $meta->id : -1;
   }
 
   /**
@@ -97,15 +104,7 @@ class ProcessorEntity
    *
    * @return array|Error
    */
-  public function process()
-  {
-    if ($this->isFragment($this->meta)) {
-      return $this->request->fragments->{$this->meta->fragment};
-    }
-    $processor = $this->getProcessor($this->meta);
-    $result =  $processor->process();
-    return $result;
-  }
+  abstract public function process();
 
   /**
    * Return details for processor.
