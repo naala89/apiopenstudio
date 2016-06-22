@@ -104,25 +104,25 @@ class ResourceMapper
   }
 
   /**
-   * @param $apps
+   * @param $appNames
    * @param $method
    * @param $identifier
    * @return array
    */
-  public function findByAppsMethodIdentifier($apps, $method, $identifier)
+  public function findByAppNamesMethodIdentifier($appNames, $method, $identifier)
   {
     $sql = 'SELECT r.* FROM resource AS r INNER JOIN application AS a ON r.appid=a.appid WHERE';
     $bindParams = array();
-    if (is_array($apps)) {
+    if (is_array($appNames)) {
       $q = array();
-      for ($i = 0; $i < sizeof($apps); $i++) {
+      for ($i = 0; $i < sizeof($appNames); $i++) {
         $q[] = '?';
-        $bindParams[] = $apps[$i];
+        $bindParams[] = $appNames[$i];
       }
       $sql .= ' a.name in (' . implode(',', $q) . ')';
     } else {
       $sql .= ' a.name=?';
-      $bindParams[] = $apps;
+      $bindParams[] = $appNames;
     }
     $sql .= ' AND r.method = ? AND r.identifier = ?';
     $bindParams[] = $method;

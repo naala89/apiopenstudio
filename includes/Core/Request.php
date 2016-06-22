@@ -9,6 +9,7 @@ namespace Datagator\Core;
 class Request
 {
   private $uri;
+  private $appName;
   private $appId;
   private $method;
   private $args;
@@ -34,6 +35,22 @@ class Request
   public function getUri()
   {
     return $this->uri;
+  }
+
+  /**
+   * @param $var
+   */
+  public function setAppName($var)
+  {
+    $this->appName = $var;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getAppName()
+  {
+    return $this->appName;
   }
 
   /**
