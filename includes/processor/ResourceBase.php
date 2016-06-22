@@ -27,13 +27,8 @@ abstract class ResourceBase extends ProcessorEntity
         'cardinality' => array(0, 1),
         'accepts' => array('integer')
       ),
-      'noun' => array(
-        'description' => 'The noun identifier of the resource (only used if fetching or deleting a resource).',
-        'cardinality' => array(0, 1),
-        'accepts' => array('function', 'literal')
-      ),
-      'verb' => array(
-        'description' => 'The verb identifier of the resource (only used if fetching or deleting a resource).',
+      'uri' => array(
+        'description' => 'The URI for the resource, i.e. the part after the App ID in the URL (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
         'accepts' => array('function', 'literal')
       ),
@@ -72,34 +67,26 @@ abstract class ResourceBase extends ProcessorEntity
       case 'get':
         $appId = $this->request->appId;
         $method = $this->val($this->meta->method);
-        $noun = $this->val($this->meta->noun);
-        $verb = $this->val($this->meta->verb);
+        $uri = $this->val($this->meta->uri);
         if (empty($method)) {
           throw new Core\ApiException('Missing method', 1, $this->id);
         }
-        if (empty($noun)) {
-          throw new Core\ApiException('Missing noun', 1, $this->id);
+        if (empty($uri)) {
+          throw new Core\ApiException('Missing URI', 1, $this->id);
         }
-        if (empty($verb)) {
-          throw new Core\ApiException('Missing verb', 1, $this->id);
-        }
-        $result = $this->read($appId, $method, $noun, $verb);
+        $result = $this->read($appId, $method, $uri);
         break;
       case 'delete':
         $appId = $this->request->appId;
         $method = $this->val($this->meta->method);
-        $noun = $this->val($this->meta->noun);
-        $verb = $this->val($this->meta->verb);
+        $uri = $this->val($this->meta->uri);
         if (empty($method)) {
           throw new Core\ApiException('Missing method', 1, $this->id);
         }
-        if (empty($noun)) {
-          throw new Core\ApiException('Missing noun', 1, $this->id);
+        if (empty($uri)) {
+          throw new Core\ApiException('Missing URI', 1, $this->id);
         }
-        if (empty($verb)) {
-          throw new Core\ApiException('Missing verb', 1, $this->id);
-        }
-        $result = $this->delete($appId, $method, $noun, $verb);
+        $result = $this->delete($appId, $method, $uri);
         break;
       default:
         throw new Core\ApiException('unknown method', 3, $this->id);
@@ -142,7 +129,7 @@ abstract class ResourceBase extends ProcessorEntity
     $name = $data['name'];
     $description = $data['description'];
     $method = $data['method'];
-    $identifier = strtolower($data['uri']['noun']) . strtolower($data['uri']['verb']);
+    $identifier = strtolower($data['uri']);
     $meta = array();
     if (!empty($data['security'])) {
       $meta['security'] = $data['security'];
@@ -266,12 +253,6 @@ abstract class ResourceBase extends ProcessorEntity
     }
     if (empty($data['uri'])) {
       throw new Core\ApiException("missing uri in new resource", 6, $this->id, 417);
-    }
-    if (empty($data['uri']['noun'])) {
-      throw new Core\ApiException("missing uri/noun in new resource", 6, $this->id, 417);
-    }
-    if (empty($data['uri']['verb'])) {
-      throw new Core\ApiException("missing uri/verb in new resource", 6, $this->id, 417);
     }
     if (empty($data['method'])) {
       throw new Core\ApiException("missing method in new resource", 6, $this->id, 417);

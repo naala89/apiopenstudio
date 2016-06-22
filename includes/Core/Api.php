@@ -109,22 +109,30 @@ class Api
    */
   private function _getData()
   {
-    $get = $_GET;
-    if (empty($get['request'])) {
-      throw new ApiException('invalid request', 3);
-    }
     $method = $this->_getMethod();
     if($method == 'options') {
       die();
     }
+    $get = $_GET;
+    if (empty($get['request'])) {
+      throw new ApiException('invalid request', 3);
+    }
 
     $request = new Request();
-    $request->setMethod($method);
+
     $uriParts = explode('/', trim($get['request'], '/'));
-    $appId = array_shift($uriParts);
+    $appName = array_shift($uriParts);
+    $mapper = new Db\ApplicationMapper($this->db);
+    $application = $mapper->findByName($appName);
+    $appId = $application->getAppId();
+    if (empty($appId)) {
+      throw new ApiException("invalid application: $appName", 3, -1, 404);
+    }
+    $request->setAppName($appName);
     $request->setAppId($appId);
     $request->setUri($uriParts);
-    $resource = $this->_getResource($appId, $method, $uriParts);
+    $request->setMethod($method);
+    $resource = $this->_getResource($appName, $method, $uriParts);
     $resource = json_decode($resource->getMeta());
     $request->setResource($resource);
     $request->setFragments(!empty($resource->fragments) ? $resource->fragments : array());
@@ -157,8 +165,8 @@ class Api
       $resources = array();
 
       while (sizeof($resources) < 1 && sizeof($uriParts) > 0) {
-        $str = strtolower(implode('', $uriParts));
-        $resources = $mapper->findByAppsMethodIdentifier(array('Common', $appName), $method, $str);
+        $str = strtolower(implode('/', $uriParts));
+        $resources = $mapper->findByAppNamesMethodIdentifier(array('Common', $appName), $method, $str);
         if (sizeof($resources) < 1) {
           array_unshift($args, array_pop($uriParts));
         }
@@ -167,18 +175,6 @@ class Api
         throw new ApiException('resource or client not defined', 3, -1, 404);
       }
       $uriParts = $args;
-      if (sizeof($resources) == 1) {
-        return $resources[0];
-      }
-
-      $mapper = new Db\ApplicationMapper($this->db);
-      $application = $mapper->findByName($appName);
-      $appId = $application->getAppId();
-      foreach ($resources as $resource) {
-        if ($resource->getAppId == $appId) {
-          return $resource;
-        }
-      }
       return $resources[0];
     }
 
@@ -202,7 +198,7 @@ class Api
     $resource->setMeta(json_encode($meta));
     $resource->setTtl($array['ttl']);
     $resource->setMethod($array['method']);
-    $resource->setIdentifier(strtolower($array['uri']['noun']) . strtolower($array['uri']['verb']));
+    $resource->setIdentifier(strtolower($array['uri']));
     return $resource;
   }
 
