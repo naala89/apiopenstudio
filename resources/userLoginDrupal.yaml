@@ -2,9 +2,7 @@ name: User login Drupal
 
 description: Login a user to the system, using user/pass validation on an external Drupal site
 
-uri:
-  noun: user
-  verb: logindrupal
+uri: user/login/drupal
 
 method: post
 

@@ -2,9 +2,7 @@ name: Application delete
 
 description: Delete an application.
 
-uri:
-  noun: application
-  verb: manage
+uri: applicaton
 
 method: delete
 

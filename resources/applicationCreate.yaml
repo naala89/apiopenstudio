@@ -2,9 +2,7 @@ name: Application create
 
 description: Create an application.
 
-uri:
-  noun: application
-  verb: manage
+uri: application
 
 method: post
 

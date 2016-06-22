@@ -1,0 +1,22 @@
+name: Import resource Swagger
+
+description: Create resource/s from a Swagger document.
+
+uri: resource/swagger
+
+method: post
+
+ttl: 0
+
+security:
+  function: tokenDeveloper
+  id: 1
+  token:
+    function: varPost
+    id: 2
+    name: token
+
+process:
+  function: resourceSwagger
+  id: 3
+  resource: resource

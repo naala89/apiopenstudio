@@ -2,9 +2,7 @@ name: Application fetch
 
 description: Fetch an application.
 
-uri:
-  noun: application
-  verb: manage
+uri: application
 
 method: get
 

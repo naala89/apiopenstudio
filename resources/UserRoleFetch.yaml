@@ -2,9 +2,7 @@ name: User Role fetch
 
 description: Fetch a role for a user on an application.
 
-uri:
-  noun: userrole
-  verb: manage
+uri: userrole
 
 method: get
 

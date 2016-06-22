@@ -2,9 +2,7 @@ name: Account fetch
 
 description: Fetch an account.
 
-uri:
-  noun: account
-  verb: manage
+uri: account
 
 method: get
 

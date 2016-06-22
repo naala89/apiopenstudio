@@ -1,10 +1,8 @@
-name: Processors all
+name: Processors
 
 description: Fetch details of all procssors.
 
-uri:
-  noun: processors
-  verb: all
+uri: processors
 
 method: get
 

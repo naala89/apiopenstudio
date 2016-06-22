@@ -2,9 +2,7 @@ name: User Role create
 
 description: Add a role for a user for an application.
 
-uri:
-  noun: userrole
-  verb: manage
+uri: userrole
 
 method: post
 

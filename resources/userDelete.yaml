@@ -2,9 +2,7 @@ name: User delete
 
 description: Delete a user.
 
-uri:
-  noun: user
-  verb: manage
+uri: user
 
 method: delete
 

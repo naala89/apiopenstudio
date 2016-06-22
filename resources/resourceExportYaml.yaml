@@ -1,10 +1,10 @@
-name: Resource delete
+name: Export resource YAML
 
-description: Delete a resource.
+description: Fetch a resource in string or YAML format.
 
-uri: resource
+uri: resource/yaml
 
-method: delete
+method: get
 
 ttl: 0
 

@@ -2,9 +2,7 @@ name: User create
 
 description: Create a user.
 
-uri:
-  noun: user
-  verb: manage
+uri: user
 
 method: post
 

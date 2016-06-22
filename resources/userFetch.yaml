@@ -2,9 +2,7 @@ name: User fetch
 
 description: Fetch a user.
 
-uri:
-  noun: user
-  verb: manage
+uri: user
 
 method: get
 
