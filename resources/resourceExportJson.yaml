@@ -1,4 +1,4 @@
-name: Export resource JSON
+name: Resource export JSON
 
 description: Export a resource in string or JSON format.
 
