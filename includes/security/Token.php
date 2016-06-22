@@ -52,6 +52,6 @@ class Token extends Processor\ProcessorEntity {
 
     // return list of roles for user for this request app
     $userRoleMapper = new Db\UserRoleMapper($db);
-    return $userRoleMapper->findByMixed($user->getUid(), $this->request->appId);
+    return $userRoleMapper->findByMixed($user->getUid(), $this->request->getAppId());
   }
 }
