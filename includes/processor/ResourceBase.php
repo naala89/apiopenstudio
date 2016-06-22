@@ -156,7 +156,7 @@ abstract class ResourceBase extends ProcessorEntity
     $mapper = new Db\ResourceMapper($this->db);
     $resource = $mapper->findByAppIdMethodIdentifier($this->request->getAppId(), $method, $identifier);
     if (empty($resource->getId())) {
-      $resource->setAppId($this->request->appId);
+      $resource->setAppId($this->request->getAppId());
       $resource->setMethod($method);
       $resource->setIdentifier($identifier);
     }
