@@ -2,9 +2,7 @@ name: User login
 
 description: Login a user to Datagator using username/password.
 
-uri:
-  noun: user
-  verb: login
+uri: user/login
 
 method: post
 

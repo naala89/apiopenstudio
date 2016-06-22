@@ -2,9 +2,7 @@ name: User Role delete
 
 description: Delete a role for a user and/or application.
 
-uri:
-  noun: userrole
-  verb: manage
+uri: userrole
 
 method: delete
 

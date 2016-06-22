@@ -1,0 +1,26 @@
+name: Import resource JSON
+
+description: Create a resource from a document or string in JSON format.
+
+uri: resource/json
+
+method: post
+
+ttl: 0
+
+security:
+  function: tokenDeveloper
+  id: 1
+  token:
+    function: varPost
+    id: 2
+    name: token
+
+process:
+  function: resourceJson
+  id: 3
+  yaml:
+    function: varPost
+    id: 4
+    name: yaml
+

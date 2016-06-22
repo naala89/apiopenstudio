@@ -2,9 +2,7 @@ name: Account delete
 
 description: Delete an account.
 
-uri:
-  noun: account
-  verb: manage
+uri: account
 
 method: delete
 

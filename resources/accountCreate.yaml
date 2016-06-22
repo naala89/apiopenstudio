@@ -2,9 +2,7 @@ name: Account create
 
 description: Create an account.
 
-uri:
-  noun: account
-  verb: manage
+uri: account
 
 method: post
 

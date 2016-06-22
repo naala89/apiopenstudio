@@ -1,10 +1,10 @@
-name: Resource delete
+name: Export resource JSON
 
-description: Delete a resource.
+description: Export a resource in string or JSON format.
 
-uri: resource
+uri: resource/json
 
-method: delete
+method: get
 
 ttl: 0
 
@@ -17,7 +17,7 @@ security:
     name: token
 
 process:
-  function: resourceYaml
+  function: resourceJson
   id: 3
   method:
     function: varGet
