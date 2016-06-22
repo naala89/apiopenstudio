@@ -9,7 +9,7 @@ namespace Datagator\Core;
 class Request
 {
   private $uri;
-  private $appName;
+  private $appId;
   private $method;
   private $args;
   private $getVars;
@@ -39,17 +39,17 @@ class Request
   /**
    * @param $var
    */
-  public function setAppName($var)
+  public function setAppId($var)
   {
-    $this->appName = $var;
+    $this->appId = $var;
   }
 
   /**
    * @return mixed
    */
-  public function getAppName()
+  public function getAppId()
   {
-    return $this->appName;
+    return $this->appId;
   }
 
   /**
@@ -191,73 +191,5 @@ class Request
   public function getFragments()
   {
     return $this->fragments;
-  }
-
-  /**
-   * Recursively crawl though metadata. Recurse through Replace all processors with result values and return final value
-   * @param $meta
-   * @return mixed
-   * @throws \Datagator\Core\ApiException
-   */
-  public function crawlMeta(& $meta)
-  {
-    // array of values - parse each one
-    if (is_array($meta)) {
-      foreach ($meta as $key => & $value) {
-        $value = $this->crawlMeta($value);
-      }
-    }
-
-    // object of value - process each key/value, and process() if a processpr
-    if (is_object($meta)) {
-      // replace each value of key/value pair with final value
-      foreach ($meta as $key => & $value) {
-        $value = $this->crawlMeta($value);
-      }
-      if (!empty($meta->function) && !empty($meta->id)) {
-        $classStr = $this->getProcessor($meta->function);
-        \Datagator\Core\Debug::variable($classStr);
-        $class = $meta->function == 'fragment' ? new $classStr($meta, $this->fragments) : new $classStr($meta);
-        return $class->process();
-      }
-    }
-
-    return $meta;
-  }
-
-  /**
-   * Return processor namespace and class name string.
-   * @param $className
-   * @param array $namespaces
-   * @return string
-   * @throws \Datagator\Core\ApiException
-   */
-  public function getProcessor($className, $namespaces=array('Security', 'Endpoint', 'Output', 'Processor'))
-  {
-    $className = ucfirst(trim($className));
-    $class = null;
-
-    foreach ($namespaces as $namespace) {
-      $classStr = "\\Datagator\\$namespace\\$className";
-      if (class_exists($classStr)) {
-        $class = $classStr;
-        break;
-      }
-    }
-
-    if (!$class) {
-      throw new ApiException("unknown function in new resource: $className", 1);
-    }
-    return $classStr;
-  }
-
-  /**
-   * Validate whether an object or array is a processor.
-   * @param $obj
-   * @return bool
-   */
-  public function isProcessor($obj)
-  {
-    return (is_object($obj) && !empty($obj->function)) || (is_array($obj) && !empty($obj['function']));
   }
 }
