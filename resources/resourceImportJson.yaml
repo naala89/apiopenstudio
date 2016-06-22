@@ -1,4 +1,4 @@
-name: Import resource JSON
+name: Resource import JSON
 
 description: Create a resource from a document or string in JSON format.
 

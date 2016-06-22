@@ -1,4 +1,4 @@
-name: Import resource Swagger
+name: Resource import Swagger
 
 description: Create resource/s from a Swagger document.
 

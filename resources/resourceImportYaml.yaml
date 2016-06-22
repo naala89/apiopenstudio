@@ -1,4 +1,4 @@
-name: Import resource YAML
+name: Resource import YAML
 
 description: Create a resource from a document or string in YAML format.
 

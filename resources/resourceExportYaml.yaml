@@ -1,4 +1,4 @@
-name: Export resource YAML
+name: Resource export YAML
 
 description: Fetch a resource in string or YAML format.
 
