@@ -25,14 +25,14 @@ class Fragment extends ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor Concatenate', 4);
+    Core\Debug::variable($this->meta, 'Processor Fragment', 4);
 
-    $sources = $this->val($this->meta->sources);
-    $result = '';
-    foreach ($sources as $source) {
-      $result .= (string)$source;
+    $name = $this->val($this->meta->name);
+    $fragments = $this->request->getFragments();
+    if (empty($fragments) || empty($fragments->$name)) {
+      throw new Core\ApiException("invalid fragment name: $name", $this->id);
     }
 
-    return $result;
+    return $fragments->$name;
   }
 }
