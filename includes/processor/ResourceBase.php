@@ -275,6 +275,9 @@ abstract class ResourceBase extends ProcessorEntity
       }
     }
     if (isset($data['fragments'])) {
+      if (!Core\Utilities::is_assoc($data['fragments'])) {
+        throw new Core\ApiException("invalid fragments", 6, $this->id, 417);
+      }
       foreach ($data['fragments'] as $fragKey => $fragVal) {
         $this->_validateMeta($fragVal);
       }
@@ -311,7 +314,7 @@ abstract class ResourceBase extends ProcessorEntity
       }
     }
     if (!$class) {
-      throw new Core\ApiException("unknown function in new resource: $className", 1);
+      throw new Core\ApiException("unknown function in new resource: $className", 1, isset($resourcePartial['id']) ? $resourcePartial['id']: -1);
     }
 
     // Create a processor from the input partial and loop through its $details['inputs'] to make sure all inputs are correct
