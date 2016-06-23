@@ -2,9 +2,7 @@ name: Testing varMixed
 
 description: Test varMixed processor
 
-uri:
-  noun: testing
-  verb: varMixed
+uri: test/varmixed
 
 method: get
 

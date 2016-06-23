@@ -2,9 +2,7 @@ name: Testing concatenate
 
 description: Test concatenate.
 
-uri:
-  noun: testing
-  verb: concatenate
+uri: test/concatenate/strings
 
 method: get
 

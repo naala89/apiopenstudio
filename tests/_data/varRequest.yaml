@@ -2,9 +2,7 @@ name: Testing varRequest
 
 description: Test varRequest processor
 
-uri:
-  noun: testing
-  verb: varRequest
+uri: test/varrequest
 
 method: get
 

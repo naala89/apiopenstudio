@@ -2,9 +2,7 @@ name: Testing varUri
 
 description: Test varUri processor
 
-uri:
-  noun: testing
-  verb: varUri
+uri: test/varuri
 
 method: get
 

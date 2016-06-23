@@ -2,9 +2,7 @@ name: Testing varFloat
 
 description: Test varFloat processor
 
-uri:
-  noun: testing
-  verb: varFloat
+uri: test/varfloat
 
 method: get
 

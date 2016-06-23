@@ -2,9 +2,7 @@ name: Testing Sort singular
 
 description: Test Sort processor with array of single values
 
-uri:
-  noun: testing
-  verb: sortSingular
+uri: test/sort/singular
 
 method: get
 

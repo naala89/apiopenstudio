@@ -2,9 +2,7 @@ name: Testing Merge
 
 description: Test Merge
 
-uri:
-  noun: testing
-  verb: merge
+uri: test/merge
 
 method: get
 
