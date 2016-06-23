@@ -3,7 +3,7 @@ $I = new ApiTester($scenario);
 $I->performLogin();
 $I->setYamlFilename('varUri.yaml');
 $I->createResourceFromYaml();
-$uri = '/' . $I->getMyApplicationId() . '/testing/varUri';
+$uri = '/' . $I->getMyApplicationName() . '/test/varUri';
 
 $I->wantTo('populate a varUri with text and see the result.');
 $I->sendGet($uri . '/text', ['token' => $I->getMyStoredToken(), 'index' => 'text']);

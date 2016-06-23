@@ -1,7 +1,7 @@
 <?php
 $I = new ApiTester($scenario);
 $I->performLogin();
-$uri = '/' . $I->getMyApplicationId() . '/processors/all';
+$uri = '/' . $I->getMyApplicationName() . '/processors/all';
 
 $I->wantTo('call /processors/all and see the result.');
 $I->sendGet($uri, ['token' => $I->getMyStoredToken()]);

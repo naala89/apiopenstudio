@@ -26,7 +26,7 @@ class ProcessorsAll extends ProcessorEntity
     Core\Debug::variable($this->meta, 'Processor ProcessorsAll');
 
     $applicationMapper = new ApplicationMapper($this->getDb());
-    $application = $applicationMapper->findByAppId($this->request->appId);
+    $application = $applicationMapper->findByAppId($this->request->getAppId());
     $appName = $application->getName();
 
     $classes = [];

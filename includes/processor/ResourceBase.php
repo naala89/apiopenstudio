@@ -77,7 +77,7 @@ abstract class ResourceBase extends ProcessorEntity
         $result = $this->read($appId, $method, $uri);
         break;
       case 'delete':
-        $appId = $this->request->appId;
+        $appId = $this->request->getAppId();
         $method = $this->val($this->meta->method);
         $uri = $this->val($this->meta->uri);
         if (empty($method)) {
@@ -205,12 +205,11 @@ abstract class ResourceBase extends ProcessorEntity
    *
    * @param $appId
    * @param $method
-   * @param $noun
-   * @param $verb
+   * @param $uri
    * @return bool
    * @throws \Datagator\Core\ApiException
    */
-  protected function delete($appId, $method, $noun, $verb)
+  protected function delete($appId, $method, $uri)
   {
     if (empty($appId)) {
       throw new Core\ApiException('missing application ID', 3, $this->id, 400);
@@ -218,16 +217,14 @@ abstract class ResourceBase extends ProcessorEntity
     if (empty($method)) {
       throw new Core\ApiException('missing method parameter', 1, $this->id, 400);
     }
-    if (empty($noun)) {
-      throw new Core\ApiException('missing noun parameter', 1, $this->id, 400);
+    if (empty($uri)) {
+      throw new Core\ApiException('missing uri parameter', 1, $this->id, 400);
     }
-    if (empty($verb)) {
-      throw new Core\ApiException('missing verb parameter', 1, $this->id, 400);
-    }
-    $identifier = strtolower($noun) . strtolower($verb);
 
+    $identifier = strtolower($uri);
     $mapper = new Db\ResourceMapper($this->db);
     $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
+
     return $mapper->delete($resource);
   }
 
@@ -474,9 +471,6 @@ abstract class ResourceBase extends ProcessorEntity
     }
 
     if (!$valid) {
-      var_dump($element);
-      var_dump($inputName);
-      var_dump($accepts);
       throw new Core\ApiException("invalid input ($element) for $inputName in new resource. only allowed inputs are: " . implode(', ', $accepts), 6);
     }
   }

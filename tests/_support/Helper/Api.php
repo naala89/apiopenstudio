@@ -9,7 +9,6 @@ class Api extends \Codeception\Module
   private $token = '';
   private $accountName = 'Datagator';
   private $applicationName = 'Testing';
-  private $applicationId = 3;
   private $username = 'tester';
   private $password = 'tester_pass';
 
@@ -48,18 +47,16 @@ class Api extends \Codeception\Module
   }
 
   /**
-   * @return int
+   * @param $yamlFilename
    */
-  public function getMyApplicationId()
-  {
-    return $this->applicationId;
-  }
-
   public function setYamlFilename($yamlFilename)
   {
     $this->yamlFilename = $yamlFilename;
   }
 
+  /**
+   * @return string
+   */
   public function getYamlFilename()
   {
     return $this->yamlFilename;
@@ -90,7 +87,7 @@ class Api extends \Codeception\Module
    */
   public function performLogin()
   {
-    $this->getModule('REST')->sendPost('/' . $this->applicationId . '/user/login', ['username' => $this->username, 'password' => $this->password]);
+    $this->getModule('REST')->sendPost('/common/user/login', ['username' => $this->username, 'password' => $this->password]);
     $this->getModule('REST')->seeResponseCodeIs(200);
     $this->getModule('REST')->seeResponseIsJson();
     $this->getModule('REST')->seeResponseMatchesJsonType(array('token' => 'string'));
@@ -121,7 +118,7 @@ class Api extends \Codeception\Module
    */
   public function createResourceFromYaml()
   {
-    $this->getModule('REST')->sendPost('/' . $this->applicationId . '/resource/yaml', ['token' => $this->token], ['resource' => codecept_data_dir($this->yamlFilename)]);
+    $this->getModule('REST')->sendPost('/' . $this->applicationName . '/resource/yaml', ['token' => $this->token], ['resource' => codecept_data_dir($this->yamlFilename)]);
     $this->getModule('REST')->seeResponseCodeIs(200);
     $this->getModule('REST')->seeResponseIsJson();
     $this->getModule('REST')->seeResponseContains('true');
@@ -136,7 +133,7 @@ class Api extends \Codeception\Module
     $yamlArr = $this->getResourceFromYaml($this->yamlFilename);
     $method = strtolower($yamlArr['method']);
     $params = array_merge($params, array('token' => $this->token, 'debug'=> 4));
-    $uri = '/' . $this->applicationId . '/' . $yamlArr['uri']['noun'] . '/' . $yamlArr['uri']['verb'];
+    $uri = '/' . $this->applicationName . '/' . $yamlArr['uri'];
     if ($method == 'get') {
       $this->getModule('REST')->sendGet($uri, $params);
     } else {
@@ -153,9 +150,8 @@ class Api extends \Codeception\Module
     $params = array();
     $params[] = 'token=' . $this->token;
     $params[] = 'method=' . $yamlArr['method'];
-    $params[] = 'noun=' . $yamlArr['uri']['noun'];
-    $params[] = 'verb=' . $yamlArr['uri']['verb'];
-    $uri = '/' . $this->applicationId . '/resource/delete?' . implode('&', $params);
+    $params[] = 'uri=' . urlencode($yamlArr['uri']);
+    $uri = '/' . $this->applicationName . '/resource?' . implode('&', $params);
     $this->getModule('REST')->sendDELETE($uri);
     $this->getModule('REST')->seeResponseIsJson();
     $this->getModule('REST')->seeResponseCodeIs(200);
@@ -176,7 +172,6 @@ class Api extends \Codeception\Module
 
   public function seeReponseHasLength($length)
   {
-    //var_dump($this->getModule('REST')->response);exit;
     if (strlen(trim($this->getModule('REST')->response, '"')) != $length) {
       \PHPUnit_Framework_Assert::assertTrue(false, 'string ' . $this->getModule('REST')->response . " does not have length $length");
     }
