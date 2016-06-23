@@ -1,0 +1,50 @@
+name: Testing fragments
+
+description: Test fragment.
+
+uri: test/fragments
+
+method: get
+
+ttl: 0
+
+security:
+  function: TokenConsumer
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
+
+process:
+  function: concatenate
+  id: 3
+  sources:
+    - function: fragment
+      name: frag1
+      id: 4
+    - function: fragment
+      name: frag2
+      id: 5
+    - function: fragment
+      name: frag3
+      id: 6
+    - function: fragment
+      name: frag1
+      id: 7
+    - 4
+    - 5
+
+fragments:
+  frag1:
+    function: varGet
+    id: 8
+    name: val1
+  frag2:
+    function: varGet
+    id: 9
+    name: val2
+  frag3:
+    function: varGet
+    id: 10
+    name: val3

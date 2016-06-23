@@ -82,7 +82,11 @@ class Api
 
     // set fragments in Meta class
     if (isset($resource->fragments)) {
-      $this->request->setFragments($resource->fragments);
+      $fragments = $resource->fragments;
+      foreach ($fragments as $fragKey => $fragVal) {
+        $fragments->$fragKey = $this->_crawlMeta($fragVal);
+      }
+      $this->request->setFragments($fragments);
     }
 
     Debug::variable($this->request, 'request', 3);

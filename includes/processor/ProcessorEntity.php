@@ -87,7 +87,7 @@ abstract class ProcessorEntity
    * @param $meta
    * @param $request
    */
-  public function __construct($meta, $request)
+  public function __construct($meta, & $request)
   {
     $this->meta = $meta;
     $this->request = $request;
