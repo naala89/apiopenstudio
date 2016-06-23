@@ -27,11 +27,12 @@ class VarUri extends ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor VarUri', 4);
     $index = $this->val($this->meta->index);
+    $args = $this->request->getArgs();
 
-    if (!isset($this->request->args[$index])) {
+    if (!isset($args[$index])) {
       throw new Core\ApiException('URI index "' . $index . '" does not exist', 6, $this->id, 417);
     }
 
-    return urldecode($this->request->args[intval($index)]);
+    return urldecode($args[intval($index)]);
   }
 }

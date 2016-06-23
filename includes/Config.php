@@ -162,10 +162,10 @@ class Config
    */
   static private function development()
   {
-    self::$debug = 4;
-    self::$debugCLI = 4;
+    self::$debug = 0;
+    self::$debugCLI = 0;
     self::$_allow_override = TRUE;
-    self::$debugInterface = 'HTML';
+    self::$debugInterface = 'LOG';
 
     self::$cache = FALSE;
     self::$tokenLife = '+1 day';
@@ -186,7 +186,7 @@ class Config
     self::$emailSecure = 'tls'; // tls or ssh
     self::$emailPort = 587;
 
-    self::$errorLog = '/var/log/apache2/datagator.error.log';
+    self::$errorLog = '/var/log/apache2/datagator-error.log';
     self::$convert = '/usr/local/bin/convert';
     self::$ffmpeg = '/usr/local/bin/ffmpeg';
 
