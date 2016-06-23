@@ -234,7 +234,8 @@ abstract class ResourceBase extends ProcessorEntity
    * @param $data
    * @throws \Datagator\Core\ApiException
    */
-  protected function _validateData($data) {
+  protected function _validateData($data)
+  {
     // check mandatory elements exists in data
     if (empty($data)) {
       throw new Core\ApiException("empty resource uploaded", 6, $this->id, 417);
@@ -254,12 +255,6 @@ abstract class ResourceBase extends ProcessorEntity
     if (empty($data['method'])) {
       throw new Core\ApiException("missing method in new resource", 6, $this->id, 417);
     }
-    /*
-     * Do we need this?
-    if (empty($data['security'])) {
-      throw new Core\ApiException("missing security in new resource", 6, $this->id, 417);
-    }
-    */
     if (empty($data['process'])) {
       throw new Core\ApiException("missing process in new resource", 6, $this->id, 417);
     }
@@ -268,34 +263,32 @@ abstract class ResourceBase extends ProcessorEntity
     }
 
     // check input types for processors
-    $data['fragments'] = isset($data['fragments']) ? $data['fragments'] : array();
     if (isset($data['security'])) {
-      $this->_validateMeta($data['security'], $data['fragments']);
+      $this->_validateMeta($data['security']);
     }
-    $this->_validateMeta($data['process'], $data['fragments']);
     if (isset($data['output'])) {
       foreach ($data['output'] as $output) {
         if ($output != 'response') {
           // TODO: Create this function
-          //$this->_validateOutput($output, $data['fragments']);
+          //$this->_validateOutput($output);
         }
       }
     }
-    /*
     if (isset($data['fragments'])) {
-      $this->_validateFragments($data['fragments']);
+      foreach ($data['fragments'] as $fragKey => $fragVal) {
+        $this->_validateMeta($fragVal);
+      }
     }
-    */
   }
 
   /**
    * If an input is a processor, ensure it exists and has correct meta.
    *
    * @param $resourcePartial
-   * @param $fragments
    * @throws \Datagator\Core\ApiException
    */
-  private function _validateMeta($resourcePartial, $fragments) {
+  private function _validateMeta($resourcePartial)
+  {
     // check valid processor structure
     if (empty($resourcePartial['function'])) {
       throw new Core\ApiException("invalid processor structure, missing 'function' dictionary", 6, -1, 406);
@@ -349,61 +342,25 @@ abstract class ResourceBase extends ProcessorEntity
         // if input is an array
         if (is_array($resourcePartial[$inputName])) {
 
-          if (!empty($resourcePartial[$inputName]['fragment'])) {
-            /*
-            // validate the fragment exists
-            $fragmentName = $resourcePartial[$inputName]['fragment'];
-            $validFragment = FALSE;
-            foreach ($fragments as $fragment) {
-              if ($fragment['fragment'] == $fragmentName) {
-                $validFragment = TRUE;
-              }
-            }
-            if (!$validFragment) {
-              throw new Core\ApiException("Fragment '$fragmentName'  not defined", 6, $resourcePartial['id'], 406);
-            }
-            */
-          } elseif (isset($resourcePartial[$inputName]['function'])) {
+          if (isset($resourcePartial[$inputName]['function'])) {
             if (!in_array('function', $inputDef['accepts'])) {
               throw new Core\ApiException("function not allowed as input for '$inputName' in function '" . $resourcePartial['function'] . "'", 6, $resourcePartial['id'], 406);
             }
             // validate the processor
-            $this->_validateMeta($resourcePartial[$inputName], $fragments);
+            $this->_validateMeta($resourcePartial[$inputName]);
 
           } else {
             // Fallback - the array is not a fragment or processor, so loop through and validate as constants
             foreach ($resourcePartial[$inputName] as $element) {
-              $this->_validateTypeValue($element, $inputDef['accepts'], $inputName, $fragments);
+              $this->_validateTypeValue($element, $inputDef['accepts'], $inputName);
             }
           }
         } else {
           // the value is a single constant
-          $this->_validateTypeValue($resourcePartial[$inputName], $inputDef['accepts'], $inputName, $fragments);
+          $this->_validateTypeValue($resourcePartial[$inputName], $inputDef['accepts'], $inputName);
         }
       }
     }
-  }
-
-  /**
-   * @param $fragments
-   * @throws \Datagator\Core\ApiException
-   */
-  private function _validateFragments($fragments)
-  {
-    if (!is_array($fragments)) {
-      throw new Core\ApiException('Invalid fragments section, this should be a list', 1);
-    }
-    foreach ($fragments as $fragment) {
-      // check valid fragment structure
-      if (empty($fragment['fragment']) || empty($fragment)) {
-        throw new Core\ApiException("invalid fragment structure, missing 'fragments' or 'meta' keys in new resource", 6, -1, 406);
-      }
-      if (!is_string($fragment)) {
-        // this must be a processor
-        $this->_validateProcessor(($fragment), $fragments);
-      }
-    }
-
   }
 
   /**
@@ -413,20 +370,15 @@ abstract class ResourceBase extends ProcessorEntity
    * @param $element
    * @param $accepts
    * @param $inputName
-   * @param $fragments
    * @throws \Datagator\Core\ApiException
    */
-  private function _validateTypeValue($element, $accepts, $inputName, $fragments) {
+  private function _validateTypeValue($element, $accepts, $inputName)
+  {
     $valid = false;
 
     foreach ($accepts as $accept) {
-      //if (isset($element['fragment'])) {
-      //  $this->_validateProcessor($this->request->fragments->{$element['fragment']}, $accepts, $inputName);
-      //  $valid = true;
-      //  break;
-      //}
       if ($accept == 'function' && isset($element['function']) && isset($element)) {
-        $this->_validateMeta($element, $fragments);
+        $this->_validateMeta($element);
         $valid = true;
         break;
       } elseif (strpos($accept, 'function ') !== false && isset($element['function'])) {
