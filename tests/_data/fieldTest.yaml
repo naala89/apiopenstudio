@@ -1,10 +1,8 @@
-name: Testing field
+name: Test field
 
 description: Test creating a field from vars and constants.
 
-uri:
-  noun: testing
-  verb: field
+uri: test/field
 
 method: get
 

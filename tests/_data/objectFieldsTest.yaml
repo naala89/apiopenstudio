@@ -2,9 +2,7 @@ name: Testing object fields
 
 description: Test creating an object with fields and literals.
 
-uri:
-  noun: testing
-  verb: objectFields
+uri: test/object/fields
 
 method: get
 

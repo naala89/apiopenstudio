@@ -2,9 +2,7 @@ name: Testing varGet
 
 description: Test varGet processor
 
-uri:
-  noun: testing
-  verb: varGet
+uri: testing/varget
 
 method: get
 

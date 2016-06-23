@@ -2,9 +2,7 @@ name: Testing filter single
 
 description: Test Filter by filtering out a single value
 
-uri:
-  noun: testing
-  verb: filterSingle
+uri: test/filter/single
 
 method: get
 

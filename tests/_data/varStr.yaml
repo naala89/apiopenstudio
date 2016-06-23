@@ -2,9 +2,7 @@ name: Testing varStr
 
 description: Test varStr processor
 
-uri:
-  noun: testing
-  verb: varStr
+uri: test/varstr
 
 method: get
 

@@ -2,9 +2,7 @@ name: Testing varInt
 
 description: Test varInt processor
 
-uri:
-  noun: testing
-  verb: varInt
+uri: test/varint
 
 method: get
 

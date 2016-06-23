@@ -2,9 +2,7 @@ name: Testing varBool
 
 description: Test VarBool processor
 
-uri:
-  noun: testing
-  verb: varBool
+uri: testing/varbool
 
 method: get
 

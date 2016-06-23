@@ -2,9 +2,7 @@ name: Testing filter multiple
 
 description: Test Filter by filtering out multiple value
 
-uri:
-  noun: testing
-  verb: filterMultiple
+uri: test/filter/multiple
 
 method: get
 

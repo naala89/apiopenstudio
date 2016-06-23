@@ -1,10 +1,8 @@
-name: Testing concatenate strings numbers
+name: Test concatenate strings numbers
 
-description: Test concatenate.
+description: Test mixed concatenate.
 
-uri:
-  noun: testing
-  verb: concatenate
+uri: test/concatenate/mixed
 
 method: get
 
