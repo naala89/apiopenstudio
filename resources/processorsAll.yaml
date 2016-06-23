@@ -1,8 +1,8 @@
-name: Processors
+name: Processors all
 
 description: Fetch details of all procssors.
 
-uri: processors
+uri: processors/all
 
 method: get
 
