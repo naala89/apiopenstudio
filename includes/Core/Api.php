@@ -25,6 +25,7 @@ class Api
 {
   private $cache;
   private $request;
+  private $helper;
   private $test = false; // false or filename in /yaml/test
   private $db;
 
@@ -38,6 +39,7 @@ class Api
   public function __construct($cache=FALSE)
   {
     $this->cache = new Cache($cache);
+    $this->helper = new ProcessorHelper();
   }
 
   /**
@@ -265,49 +267,13 @@ class Api
         $value = $this->_crawlMeta($value);
       }
       if (!empty($meta->function) && !empty($meta->id)) {
-        $classStr = $this->getProcessor($meta->function);
+        $classStr = $this->helper->getProcessorString($meta->function);
         $class = new $classStr($meta, $this->request);
         return $class->process();
       }
     }
 
     return $meta;
-  }
-
-  /**
-   * Return processor namespace and class name string.
-   * @param $className
-   * @param array $namespaces
-   * @return string
-   * @throws \Datagator\Core\ApiException
-   */
-  public function getProcessor($className, $namespaces=array('Security', 'Endpoint', 'Output', 'Processor'))
-  {
-    $className = ucfirst(trim($className));
-    $class = null;
-
-    foreach ($namespaces as $namespace) {
-      $classStr = "\\Datagator\\$namespace\\$className";
-      if (class_exists($classStr)) {
-        $class = $classStr;
-        break;
-      }
-    }
-
-    if (!$class) {
-      throw new ApiException("unknown function in new resource: $className", 1);
-    }
-    return $classStr;
-  }
-
-  /**
-   * Validate whether an object or array is a processor.
-   * @param $obj
-   * @return bool
-   */
-  public function isProcessor($obj)
-  {
-    return (is_object($obj) && !empty($obj->function)) || (is_array($obj) && !empty($obj['function']));
   }
 
   /**
@@ -326,7 +292,7 @@ class Api
     if (empty($resource->output)) {
       Debug::message('no output section defined - returning the result in the response');
       // translate the output to the correct format as requested in header and return in the response
-      $class = $this->getProcessor(ucfirst($this->request->getOutFormat()), array('Output'));
+      $class = $this->helper->getProcessorString(ucfirst($this->request->getOutFormat()), array('Output'));
       $obj = new $class($data, 200);
       $result = $obj->process();
       $obj->setStatus();
@@ -337,7 +303,7 @@ class Api
           // translate the output to the correct format as requested in header and return in the response
           $outFormat = ucfirst($this->_cleanData($this->request->outFormat));
           $outFormat = $outFormat == '**' ? 'Json' : $outFormat;
-          $class = $this->getProcessor($outFormat, array('Output'));
+          $class = $this->helper->getProcessor($outFormat, array('Output'));
           $obj = new $class($data, 200);
           $result = $obj->process();
           $obj->setStatus();
@@ -345,7 +311,7 @@ class Api
         } else {
           // treat as a multiple output and let the class take care of the output.
           foreach ($output as $type => $meta) {
-            $class = $this->getProcessor($outFormat, array('Output'));
+            $class = $this->helper->getProcessor($outFormat, array('Output'));
             $obj = new $class($data, 200, $meta);
             $obj->process();
           }

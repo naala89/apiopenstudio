@@ -5,12 +5,14 @@
  */
 
 namespace Datagator\Processor;
+use Codeception\Util\Debug;
 use Datagator\Core;
 use Datagator\Db;
 
 abstract class ResourceBase extends ProcessorEntity
 {
   protected $db;
+  protected $helper;
   protected $details = array(
     'name' => 'Resource',
     'description' => 'Create, edit or fetch a custom API resource for the application. NOTE: in the case of DELETE, the args for the input should be as GET vars - POST vars are not guaranteed on all servers with this method.',
@@ -22,10 +24,10 @@ abstract class ResourceBase extends ProcessorEntity
         'cardinality' => array(0, 1),
         'accepts' => array('function', '"get"', '"post"', '"delete"', '"push"'),
       ),
-      'appid' => array(
-        'description' => 'The application ID the resource is associated with (only used if fetching or deleting a resource).',
+      'appName' => array(
+        'description' => 'The application name that the resource is associated with (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('integer')
+        'accepts' => array('function', 'literal')
       ),
       'uri' => array(
         'description' => 'The URI for the resource, i.e. the part after the App ID in the URL (only used if fetching or deleting a resource).',
@@ -39,6 +41,11 @@ abstract class ResourceBase extends ProcessorEntity
       )
     )
   );
+  public function __construct($meta, & $request)
+  {
+    $this->helper = new Core\ProcessorHelper();
+    parent::__construct($meta, $request);
+  }
 
   /**
    * @return bool|string
@@ -115,6 +122,72 @@ abstract class ResourceBase extends ProcessorEntity
   abstract protected function _exportData($data);
 
   /**
+   * Fetch a resource.
+   *
+   * @param $appId
+   * @param $method
+   * @param $uri
+   * @return mixed
+   * @throws \Datagator\Core\ApiException
+   */
+  protected function read($appId, $method, $uri)
+  {
+    if (empty($appId)) {
+      throw new Core\ApiException('missing application ID', 3, $this->id, 400);
+    }
+    if (empty($method)) {
+      throw new Core\ApiException('missing method parameter', 1, $this->id, 400);
+    }
+    if (empty($uri)) {
+      throw new Core\ApiException('missing $uri parameter', 1, $this->id, 400);
+    }
+    $identifier = strtolower($uri);
+
+    $mapper = new Db\ResourceMapper($this->db);
+    $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
+    if (empty($resource->getId())) {
+      throw new Core\ApiException('Resource not found', 1, $this->id, 200);
+    }
+
+    $result = json_decode($resource->getMeta(), TRUE);
+    $result['uri'] = $resource->getIdentifier();
+    $result['name'] = $resource->getName();
+    $result['description'] = $resource->getDescription();
+    $result['method'] = $resource->getMethod();
+    $result['ttl'] = $resource->getTtl();
+
+    return $this->_exportData($result);
+  }
+
+  /**
+   * Delete a resource.
+   *
+   * @param $appId
+   * @param $method
+   * @param $uri
+   * @return bool
+   * @throws \Datagator\Core\ApiException
+   */
+  protected function delete($appId, $method, $uri)
+  {
+    if (empty($appId)) {
+      throw new Core\ApiException('missing application ID', 3, $this->id, 400);
+    }
+    if (empty($method)) {
+      throw new Core\ApiException('missing method parameter', 1, $this->id, 400);
+    }
+    if (empty($uri)) {
+      throw new Core\ApiException('missing uri parameter', 1, $this->id, 400);
+    }
+
+    $identifier = strtolower($uri);
+    $mapper = new Db\ResourceMapper($this->db);
+    $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
+
+    return $mapper->delete($resource);
+  }
+
+  /**
    * Create or update a resource from input data.
    *
    * @param $data
@@ -156,79 +229,6 @@ abstract class ResourceBase extends ProcessorEntity
   }
 
   /**
-   * Fetch a resource.
-   *
-   * @param $appId
-   * @param $method
-   * @param $noun
-   * @param $verb
-   * @return mixed
-   * @throws \Datagator\Core\ApiException
-   */
-  protected function read($appId, $method, $noun, $verb)
-  {
-    if (empty($appId)) {
-      throw new Core\ApiException('missing application ID', 3, $this->id, 400);
-    }
-    if (empty($method)) {
-      throw new Core\ApiException('missing method parameter', 1, $this->id, 400);
-    }
-    if (empty($noun)) {
-      throw new Core\ApiException('missing noun parameter', 1, $this->id, 400);
-    }
-    if (empty($verb)) {
-      throw new Core\ApiException('missing verb parameter', 1, $this->id, 400);
-    }
-    $identifier = strtolower($noun) . strtolower($verb);
-
-    $mapper = new Db\ResourceMapper($this->db);
-    $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
-    if (empty($resource->getId())) {
-      throw new Core\ApiException('Resource not found', 1, $this->id, 200);
-    }
-
-    $result = json_decode($resource->getMeta(), TRUE);
-    $result['uri'] = array(
-      'noun' => $noun,
-      'verb' => $verb
-    );
-    $result['name'] = $resource->getName();
-    $result['description'] = $resource->getDescription();
-    $result['method'] = $resource->getMethod();
-    $result['ttl'] = $resource->getTtl();
-
-    return $this->_exportData($result);
-  }
-
-  /**
-   * Delete a resource.
-   *
-   * @param $appId
-   * @param $method
-   * @param $uri
-   * @return bool
-   * @throws \Datagator\Core\ApiException
-   */
-  protected function delete($appId, $method, $uri)
-  {
-    if (empty($appId)) {
-      throw new Core\ApiException('missing application ID', 3, $this->id, 400);
-    }
-    if (empty($method)) {
-      throw new Core\ApiException('missing method parameter', 1, $this->id, 400);
-    }
-    if (empty($uri)) {
-      throw new Core\ApiException('missing uri parameter', 1, $this->id, 400);
-    }
-
-    $identifier = strtolower($uri);
-    $mapper = new Db\ResourceMapper($this->db);
-    $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
-
-    return $mapper->delete($resource);
-  }
-
-  /**
    * Validate input data is well formed.
    *
    * @param $data
@@ -262,15 +262,39 @@ abstract class ResourceBase extends ProcessorEntity
       throw new Core\ApiException("missing ttl in new resource", 6, $this->id, 417);
     }
 
-    // check input types for processors
+    // validate functions
     if (isset($data['security'])) {
-      $this->_validateMeta($data['security']);
+      $this->_validateDetails($data['security']);
     }
     if (isset($data['output'])) {
-      foreach ($data['output'] as $output) {
-        if ($output != 'response') {
-          // TODO: Create this function
-          //$this->_validateOutput($output);
+      if (!is_array($data['output'])) {
+        throw new Core\ApiException('invalid output structure', 6, -1, 406);
+      }
+      foreach ($data['output'] as $i => $output) {
+        if ($output == 'response') {
+          break;
+        }
+        if (is_object($output)) {
+          $keys = get_object_vars($output);
+          if (sizeof($keys) != 1) {
+            throw new Core\ApiException('invalid input structure: bad keys index ' . $i, 6, -1, 406);
+          }
+
+          switch ($keys[0]) {
+            case 'email':
+            case 'html':
+            case 'image':
+            case 'json':
+            case 'plain':
+            case 'text':
+              $this->_validateDetails($output);
+              break;
+            default:
+              throw new Core\ApiException("invalid key at index: $i", 6, -1, 406);
+              break;
+          }
+        } else {
+          throw new Core\ApiException("invalid output structure at index: $i", 6, -1, 406);
         }
       }
     }
@@ -279,154 +303,103 @@ abstract class ResourceBase extends ProcessorEntity
         throw new Core\ApiException("invalid fragments", 6, $this->id, 417);
       }
       foreach ($data['fragments'] as $fragKey => $fragVal) {
-        $this->_validateMeta($fragVal);
+        $this->_validateDetails($fragVal);
+      }
+    }
+    $this->_validateDetails($data['process']);
+  }
+
+  /**
+   * @param $meta
+   * @throws \Datagator\Core\ApiException
+   */
+  private function _validateDetails($meta)
+  {
+    if ($this->helper->isProcessor($meta)) {
+      $classStr = $this->helper->getProcessorString($meta['function']);
+      $class = new $classStr($meta, new Core\Request());
+    }
+    $details = $class->details();
+
+    foreach ($details['input'] as $inputKey => $inputDef) {
+      $min = $inputDef['cardinality'][0];
+      $max = $inputDef['cardinality'][1];
+      $accepts = $inputDef['accepts'];
+      $input = $meta[$inputKey];
+      $id = isset($meta->id) ? $meta->id : -1;
+      $count = is_array($input) && !isset($input['function']) ? sizeof($input) : !empty($input);
+
+      // validate cardinality
+      if ($count < $min) {
+        // check for nothing to validate and if that is ok.
+        throw new Core\ApiException("function requires min $min of $inputKey in function", 6, $id, 406);
+      }
+      if ($max != '*' && $count > $max) {
+        throw new Core\ApiException("1 function requires max:$max of $inputKey in function", 6, $id, 406);
+      }
+
+      if (!$this->helper->isProcessor($input)) {
+        $this->_validateTypeValue($input, $accepts);
       }
     }
   }
 
-  /**
-   * If an input is a processor, ensure it exists and has correct meta.
-   *
-   * @param $resourcePartial
-   * @throws \Datagator\Core\ApiException
-   */
-  private function _validateMeta($resourcePartial)
-  {
-    // check valid processor structure
-    if (empty($resourcePartial['function'])) {
-      throw new Core\ApiException("invalid processor structure, missing 'function' dictionary", 6, -1, 406);
-    }
-
-    // check for ID in meta
-    if (empty($resourcePartial['id'])) {
-      throw new Core\ApiException("invalid processor structure, missing 'id' dictionary", 6, -1, 406);
-    }
-
-    // ensure the processor exists
-    $namespaces = array('Security', 'Endpoint', 'Output', 'Processor');
-    $className = ucfirst(trim($resourcePartial['function']));
-    $class = false;
-    foreach ($namespaces as $namespace) {
-      $classStr = "\\Datagator\\$namespace\\$className";
-      if (class_exists($classStr)) {
-        $class = $classStr;
-        break;
-      }
-    }
-    if (!$class) {
-      throw new Core\ApiException("unknown function in new resource: $className", 1, isset($resourcePartial['id']) ? $resourcePartial['id']: -1);
-    }
-
-    // Create a processor from the input partial and loop through its $details['inputs'] to make sure all inputs are correct
-    $processor = new $class($resourcePartial, $this->request);
-    $processorDetails = $processor->details();
-
-    foreach ($processorDetails['input'] as $inputName => $inputDef) {
-
-      // 1. validate cardinality
-      $count = 0;
-      if (isset($resourcePartial[$inputName])) {
-        if (is_array($resourcePartial[$inputName]) && !isset($resourcePartial[$inputName]['function'])) {
-          // This check is for values that are array of values, but we also have to filter out processors
-          $count = sizeof($resourcePartial[$inputName]);
-        } else {
-          $count = 1;
-        }
-      }
-      if (is_numeric($inputDef['cardinality'][0]) && $count < $inputDef['cardinality'][0]) {
-        throw new Core\ApiException("$count inputs supplied (min " . $inputDef['cardinality'][0] . ') for ' . $inputName, 6, $resourcePartial['id'], 406);
-      }
-      if (is_numeric($inputDef['cardinality'][1]) && $count > $inputDef['cardinality'][1]) {
-        throw new Core\ApiException("$count inputs supplied (max " . $inputDef['cardinality'][1] . ') for ' . $inputName, 6, $resourcePartial['id'], 406);
-      }
-
-      // 2. validate allowed types
-      if ($count > 0) {
-        // if input is an array
-        if (is_array($resourcePartial[$inputName])) {
-
-          if (isset($resourcePartial[$inputName]['function'])) {
-            if (!in_array('function', $inputDef['accepts'])) {
-              throw new Core\ApiException("function not allowed as input for '$inputName' in function '" . $resourcePartial['function'] . "'", 6, $resourcePartial['id'], 406);
-            }
-            // validate the processor
-            $this->_validateMeta($resourcePartial[$inputName]);
-
-          } else {
-            // Fallback - the array is not a fragment or processor, so loop through and validate as constants
-            foreach ($resourcePartial[$inputName] as $element) {
-              $this->_validateTypeValue($element, $inputDef['accepts'], $inputName);
-            }
-          }
-        } else {
-          // the value is a single constant
-          $this->_validateTypeValue($resourcePartial[$inputName], $inputDef['accepts'], $inputName);
-        }
-      }
-    }
-  }
-
-  /**
-   * Compare an element type and possible literal value or type in the input resource with the definition in the Processor it refers to.
-   * If the element type is processor, recursively iterate through, using the calling function _validateProcessor().
-   *
-   * @param $element
-   * @param $accepts
-   * @param $inputName
-   * @throws \Datagator\Core\ApiException
-   */
-  private function _validateTypeValue($element, $accepts, $inputName)
-  {
-    $valid = false;
+    /**
+     * Compare an element type and possible literal value or type in the input resource with the definition in the Processor it refers to.
+     * If the element type is processor, recursively iterate through, using the calling function _validateProcessor().
+     *
+     * @param $element
+     * @param $accepts
+     * @throws \Datagator\Core\ApiException
+     */
+  private function _validateTypeValue($element, $accepts) {
+    $valid = FALSE;
+    $isProcessor = $this->helper->isProcessor($element);
 
     foreach ($accepts as $accept) {
-      if ($accept == 'function' && isset($element['function']) && isset($element)) {
-        $this->_validateMeta($element);
-        $valid = true;
+      if ($accept == 'function' && $isProcessor) {
+        $this->_validateDetails($element);
+        $valid = TRUE;
         break;
-      } elseif (strpos($accept, 'function ') !== false && isset($element['function'])) {
+      } elseif (strpos($accept, 'function ') !== FALSE && $isProcessor) {
         $parts = explode(' ', $accept);
         if (strtolower($element['function']) == strtolower($parts[1])) {
-          $valid = true;
+          $valid = TRUE;
           break;
         }
       } elseif ($accept == 'file') {
-        $valid = true;
+        $valid = TRUE;
         break;
       } elseif ($accept == 'literal' && (is_string($element) || is_numeric($element))) {
-        $valid = true;
+        $valid = TRUE;
         break;
       } elseif ($accept == 'boolean' && is_bool($element)) {
-        $valid = true;
+        $valid = TRUE;
         break;
       } elseif ($accept == 'numeric' && is_numeric($element)) {
-        $valid = true;
+        $valid = TRUE;
         break;
       } elseif ($accept == 'integer' && is_integer($element)) {
-        $valid = true;
+        $valid = TRUE;
         break;
       } elseif ($accept == 'string' && is_string($element)) {
-        $valid = true;
+        $valid = TRUE;
         break;
       } elseif ($accept == 'float' && is_float($element)) {
-        $valid = true;
+        $valid = TRUE;
         break;
       } elseif ($accept == 'array' && is_array($element)) {
-        $valid = true;
+        $valid = TRUE;
         break;
       } elseif (!is_array($element)) {
         $firstLast = substr($accept, 0, 1) . substr($accept, -1, 1);
         if ($firstLast == '""' || $firstLast == "''") {
           if ($element == trim($accept, "\"'")) {
-            $valid = true;
+            $valid = TRUE;
             break;
           }
         }
       }
-    }
-
-    if (!$valid) {
-      throw new Core\ApiException("invalid input ($element) for $inputName in new resource. only allowed inputs are: " . implode(', ', $accepts), 6);
     }
   }
 }

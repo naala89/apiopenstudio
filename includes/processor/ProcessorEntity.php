@@ -117,17 +117,6 @@ abstract class ProcessorEntity
   }
 
   /**
-   * Evaluate an object to see if it's a processor.
-   *
-   * @param $obj
-   * @return bool
-   */
-  protected function isProcessor($obj)
-  {
-    return (is_object($obj) && isset($obj->function));
-  }
-
-  /**
    * Get a file.
    *
    * @param $file
