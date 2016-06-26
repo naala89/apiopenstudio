@@ -1,8 +1,6 @@
 uri: test
 
-name: test/resource/good
-
-description: test
+name: test/resurce/methodmissig
 
 method: get
 

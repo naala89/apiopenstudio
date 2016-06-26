@@ -238,28 +238,28 @@ abstract class ResourceBase extends ProcessorEntity
   {
     // check mandatory elements exists in data
     if (empty($data)) {
-      throw new Core\ApiException("empty resource uploaded", 6, $this->id, 417);
+      throw new Core\ApiException("empty resource uploaded", 6, $this->id, 406);
     }
     if (is_array($data) && sizeof($data) == 1 && $data[0] == $this->meta->resource) {
-      throw new Core\ApiException('Form-data element with name: "' . $this->meta->resource . '" not found.', 6, $this->id, 417);
+      throw new Core\ApiException('Form-data element with name: "' . $this->meta->resource . '" not found.', 6, $this->id, 406);
     }
     if (empty($data['name'])) {
-      throw new Core\ApiException("missing name in new resource", 6, $this->id, 417);
+      throw new Core\ApiException("missing name in new resource", 6, $this->id, 406);
     }
     if (empty($data['description'])) {
-      throw new Core\ApiException("missing description in new resource", 6, $this->id, 417);
+      throw new Core\ApiException("missing description in new resource", 6, $this->id, 406);
     }
     if (empty($data['uri'])) {
-      throw new Core\ApiException("missing uri in new resource", 6, $this->id, 417);
+      throw new Core\ApiException("missing uri in new resource", 6, $this->id, 406);
     }
     if (empty($data['method'])) {
-      throw new Core\ApiException("missing method in new resource", 6, $this->id, 417);
+      throw new Core\ApiException("missing method in new resource", 6, $this->id, 406);
     }
     if (empty($data['process'])) {
-      throw new Core\ApiException("missing process in new resource", 6, $this->id, 417);
+      throw new Core\ApiException("missing process in new resource", 6, $this->id, 406);
     }
     if (!isset($data['ttl']) || strlen($data['ttl']) < 1) {
-      throw new Core\ApiException("missing ttl in new resource", 6, $this->id, 417);
+      throw new Core\ApiException("missing or negative ttl in new resource", 6, $this->id, 406);
     }
 
     // validate functions
@@ -300,7 +300,7 @@ abstract class ResourceBase extends ProcessorEntity
     }
     if (isset($data['fragments'])) {
       if (!Core\Utilities::is_assoc($data['fragments'])) {
-        throw new Core\ApiException("invalid fragments", 6, $this->id, 417);
+        throw new Core\ApiException("invalid fragments", 6, $this->id, 406);
       }
       foreach ($data['fragments'] as $fragKey => $fragVal) {
         $this->_validateDetails($fragVal);
@@ -344,15 +344,16 @@ abstract class ResourceBase extends ProcessorEntity
     }
   }
 
-    /**
-     * Compare an element type and possible literal value or type in the input resource with the definition in the Processor it refers to.
-     * If the element type is processor, recursively iterate through, using the calling function _validateProcessor().
-     *
-     * @param $element
-     * @param $accepts
-     * @throws \Datagator\Core\ApiException
-     */
-  private function _validateTypeValue($element, $accepts) {
+  /**
+   * Compare an element type and possible literal value or type in the input resource with the definition in the Processor it refers to.
+   * If the element type is processor, recursively iterate through, using the calling function _validateProcessor().
+   *
+   * @param $element
+   * @param $accepts
+   * @throws \Datagator\Core\ApiException
+   */
+  private function _validateTypeValue($element, $accepts)
+  {
     $valid = FALSE;
     $isProcessor = $this->helper->isProcessor($element);
 
@@ -400,6 +401,9 @@ abstract class ResourceBase extends ProcessorEntity
           }
         }
       }
+    }
+    if (!$valid) {
+      throw new Core\ApiException("invalid input literal ($element). only $accepts accepted", 6, -1, 406);
     }
   }
 }

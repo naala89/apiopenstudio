@@ -144,7 +144,7 @@ class Api extends \Codeception\Module
   /**
    * @throws \Codeception\Exception\ModuleException
    */
-  public function tearDownTestFromYaml()
+  public function tearDownTestFromYaml($code=200, $respone='true')
   {
     $yamlArr = $this->getResourceFromYaml($this->yamlFilename);
     $params = array();
@@ -154,8 +154,12 @@ class Api extends \Codeception\Module
     $uri = '/' . $this->applicationName . '/resource?' . implode('&', $params);
     $this->getModule('REST')->sendDELETE($uri);
     $this->getModule('REST')->seeResponseIsJson();
-    $this->getModule('REST')->seeResponseCodeIs(200);
-    $this->getModule('REST')->seeResponseContains('true');
+    $this->getModule('REST')->seeResponseCodeIs($code);
+    if (is_array($respone)) {
+      $this->getModule('REST')->seeResponseContainsJson($respone);
+    } else {
+      $this->getModule('REST')->seeResponseContains($respone);
+    }
   }
 
   /**

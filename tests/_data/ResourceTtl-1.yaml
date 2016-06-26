@@ -1,12 +1,10 @@
 uri: test
 
-name: test/resource/good
+name: test/resource/ttlmissing
 
 description: test
 
 method: get
-
-ttl: 3600
 
 security:
   function: tokenDeveloper

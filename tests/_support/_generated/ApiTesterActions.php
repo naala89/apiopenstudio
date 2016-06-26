@@ -177,7 +177,7 @@ trait ApiTesterActions
      * @throws \Codeception\Exception\ModuleException
      * @see \Helper\Api::tearDownTestFromYaml()
      */
-    public function tearDownTestFromYaml() {
+    public function tearDownTestFromYaml($code = null, $respone = null) {
         return $this->getScenario()->runStep(new \Codeception\Step\Action('tearDownTestFromYaml', func_get_args()));
     }
 
