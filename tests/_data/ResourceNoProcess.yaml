@@ -1,12 +1,12 @@
 uri: test
 
-name: test/resource/good
+name: test/resource/ttlmissing
 
 description: test
 
 method: get
 
-ttl: 3600
+ttl: 0
 
 security:
   function: tokenDeveloper
@@ -15,10 +15,6 @@ security:
     function: varGet
     id: 2
     name: token
-
-process:
-  function: ProcessorsAll
-  id: 3
 
 output:
   - response

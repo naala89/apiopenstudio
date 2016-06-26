@@ -1,7 +1,5 @@
 uri: test
 
-name: test/resource/good
-
 description: test
 
 method: get
