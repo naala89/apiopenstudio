@@ -24,7 +24,7 @@ class Text extends Output
       'options' => array(
         'description' => 'Extra Curl options to be applied when sent to the destination  (e.g. cursor: -1, screen_name: foobarapi, skip_status: true, etc).',
         'cardinality' => array(0, '*'),
-        'accepts' => array('processor field'),
+        'accepts' => array('function field'),
       ),
     ),
   );
