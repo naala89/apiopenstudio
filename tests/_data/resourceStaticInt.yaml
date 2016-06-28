@@ -1,0 +1,11 @@
+name: test
+
+description: test
+
+uri: test/resource/good
+
+method: get
+
+ttl: 3600
+
+process: 0

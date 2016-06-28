@@ -2,7 +2,7 @@ name: test
 
 description: test
 
-uri: test/resource/good
+uri: test/resource/badmin
 
 method: get
 
@@ -17,8 +17,10 @@ security:
     name: token
 
 process:
-  function: ProcessorsAll
+  function: concatenate
   id: 3
+  sources:
+    - zsdkfjh
 
 output:
   - function: email
@@ -28,5 +30,8 @@ output:
     format: html
   - function: xml
     id: 5
-    destination: www.foo.bar
+    destination:
+      - www.foo.bar
+      - www.foo.bar
+      - www.foo.bar
     method: post

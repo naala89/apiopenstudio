@@ -1,12 +1,20 @@
-uri: test
-
-name: test/resource/good
+name: test
 
 description: test
+
+uri: test/resource/arrayInp
 
 method: get
 
 ttl: 3600
+
+security:
+  function: tokenDeveloper
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
 
 process:
   function: ProcessorsAll
@@ -20,5 +28,8 @@ output:
     format: html
   - function: xml
     id: 5
-    destination: www.foo.bar
+    destination:
+      - www.foo.bar
+      - www.foo.bar
+      - www.foo.bar
     method: post

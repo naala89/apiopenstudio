@@ -1,12 +1,20 @@
-uri: test
-
-name: test/resource/good
+name: test
 
 description: test
+
+uri: test/resource/good
 
 method: get
 
 ttl: 3600
+
+security:
+  function: tokenDeveloper
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
 
 process:
   function: ProcessorsAll
@@ -22,3 +30,6 @@ output:
     id: 5
     destination: www.foo.bar
     method: post
+    options:
+      function: ProcessorsAll
+      id: 6

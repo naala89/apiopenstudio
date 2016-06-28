@@ -116,6 +116,9 @@ class Utilities
    **/
   public static function is_assoc($m_array)
   {
+    if (!is_array($m_array)) {
+      return false;
+    }
     return array_keys($m_array) !== range(0, count($m_array) - 1);
   }
 
