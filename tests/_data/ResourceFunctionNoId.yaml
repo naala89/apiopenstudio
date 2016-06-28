@@ -1,24 +1,31 @@
-uri: test
-
-name: test/resource/good
+name: test
 
 description: test
+
+uri: test/resource/good
 
 method: get
 
 ttl: 3600
+
+security:
+  function: tokenDeveloper
+  id: 1
+  token:
+    function: varGet
+    name: token
 
 process:
   function: ProcessorsAll
   id: 3
 
 output:
+  - response
   - function: email
-    id: 4
     to: john@naala.com.au
     subject: "test email"
     format: html
   - function: xml
-    id: 5
     destination: www.foo.bar
     method: post
+

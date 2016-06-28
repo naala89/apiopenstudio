@@ -19,7 +19,7 @@ class Merge extends ProcessorEntity
       'sources' => array(
         'description' => 'The data-sets to merge on.',
         'cardinality' => array(2, '*'),
-        'accepts' => array('function', 'array', 'literal')
+        'accepts' => array('function', 'literal')
       ),
       'mergeType' => array(
         'description' => 'The merge operation to perform. The default is union.',

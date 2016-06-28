@@ -1,16 +1,30 @@
-uri: test
-
-name: test/resource/good
+name: test
 
 description: test
+
+uri: test/resource/good
 
 method: get
 
 ttl: 3600
 
+security:
+  function: tokenDeveloper
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
+
 process:
-  function: ProcessorsAll
+  function: fragment
+  name: processors
   id: 3
+
+fragments:
+  processors:
+    function: ProcessorsAll
+    id: 4
 
 output:
   - function: email

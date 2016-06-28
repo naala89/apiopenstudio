@@ -2,7 +2,7 @@ name: test
 
 description: test
 
-uri: test/resource/good
+uri: test/resource/response
 
 method: get
 
@@ -21,12 +21,5 @@ process:
   id: 3
 
 output:
-  - function: email
-    id: 4
-    to: john@naala.com.au
-    subject: "test email"
-    format: html
-  - function: xml
-    id: 5
-    destination: www.foo.bar
-    method: post
+  - response
+

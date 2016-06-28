@@ -1,0 +1,17 @@
+name: test
+
+description: test
+
+uri: test/resource
+
+method: get
+
+ttl: 3600
+
+process:
+  function: ProcessorsAll
+  id: 1
+
+output: dfgdzfgfs
+
+

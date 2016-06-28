@@ -5,7 +5,6 @@
  */
 
 namespace Datagator\Processor;
-use Codeception\Util\Debug;
 use Datagator\Core;
 use Datagator\Db;
 
@@ -243,64 +242,47 @@ abstract class ResourceBase extends ProcessorEntity
     if (is_array($data) && sizeof($data) == 1 && $data[0] == $this->meta->resource) {
       throw new Core\ApiException('Form-data element with name: "' . $this->meta->resource . '" not found.', 6, $this->id, 406);
     }
-    if (empty($data['name'])) {
+    if (!isset($data['name'])) {
       throw new Core\ApiException("missing name in new resource", 6, $this->id, 406);
     }
-    if (empty($data['description'])) {
+    if (!isset($data['description'])) {
       throw new Core\ApiException("missing description in new resource", 6, $this->id, 406);
     }
-    if (empty($data['uri'])) {
+    if (!isset($data['uri'])) {
       throw new Core\ApiException("missing uri in new resource", 6, $this->id, 406);
     }
-    if (empty($data['method'])) {
+    if (!isset($data['method'])) {
       throw new Core\ApiException("missing method in new resource", 6, $this->id, 406);
     }
-    if (empty($data['process'])) {
+    if (!isset($data['process'])) {
       throw new Core\ApiException("missing process in new resource", 6, $this->id, 406);
     }
     if (!isset($data['ttl']) || strlen($data['ttl']) < 1) {
       throw new Core\ApiException("missing or negative ttl in new resource", 6, $this->id, 406);
     }
 
-    // validate functions
+    // validate dictionaries
     if (isset($data['security'])) {
       $this->_validateDetails($data['security']);
     }
-    if (isset($data['output'])) {
-      if (!is_array($data['output'])) {
+    if (!empty($data['output'])) {
+      if (!is_array($data['output']) || Core\Utilities::is_assoc($data['output'])) {
         throw new Core\ApiException('invalid output structure', 6, -1, 406);
       }
       foreach ($data['output'] as $i => $output) {
-        if ($output == 'response') {
-          break;
-        }
-        if (is_object($output)) {
-          $keys = get_object_vars($output);
-          if (sizeof($keys) != 1) {
-            throw new Core\ApiException('invalid input structure: bad keys index ' . $i, 6, -1, 406);
+        if (is_array($output)) {
+          if (!$this->helper->isProcessor($output)) {
+            throw new Core\ApiException("missing function at index $i", 6, -1, 406);
           }
-
-          switch ($keys[0]) {
-            case 'email':
-            case 'html':
-            case 'image':
-            case 'json':
-            case 'plain':
-            case 'text':
-              $this->_validateDetails($output);
-              break;
-            default:
-              throw new Core\ApiException("invalid key at index: $i", 6, -1, 406);
-              break;
-          }
-        } else {
+          $this->_validateDetails($output);
+        } elseif ($output != 'response') {
           throw new Core\ApiException("invalid output structure at index: $i", 6, -1, 406);
         }
       }
     }
-    if (isset($data['fragments'])) {
+    if (!empty($data['fragments'])) {
       if (!Core\Utilities::is_assoc($data['fragments'])) {
-        throw new Core\ApiException("invalid fragments", 6, $this->id, 406);
+        throw new Core\ApiException("invalid fragments structure", 6, $this->id, 406);
       }
       foreach ($data['fragments'] as $fragKey => $fragVal) {
         $this->_validateDetails($fragVal);
@@ -310,36 +292,64 @@ abstract class ResourceBase extends ProcessorEntity
   }
 
   /**
+   * Validate a resource section
    * @param $meta
    * @throws \Datagator\Core\ApiException
    */
   private function _validateDetails($meta)
   {
-    if ($this->helper->isProcessor($meta)) {
-      $classStr = $this->helper->getProcessorString($meta['function']);
-      $class = new $classStr($meta, new Core\Request());
+    if (!$this->helper->isProcessor($meta)) {
+      // this allows for static values in base dictionaries
+      return;
     }
+    if (!isset($meta['id'])) {
+      throw new Core\ApiException('function missing an ID: ' . $meta['function'], 6, -1, 406);
+    }
+
+    $classStr = $this->helper->getProcessorString($meta['function']);
+    $class = new $classStr($meta, new Core\Request());
     $details = $class->details();
+    $id = $meta['id'];
 
     foreach ($details['input'] as $inputKey => $inputDef) {
       $min = $inputDef['cardinality'][0];
       $max = $inputDef['cardinality'][1];
       $accepts = $inputDef['accepts'];
-      $input = $meta[$inputKey];
-      $id = isset($meta->id) ? $meta->id : -1;
-      $count = is_array($input) && !isset($input['function']) ? sizeof($input) : !empty($input);
+
+      $count = 0;
+      if (!empty($meta[$inputKey])) {
+        $input = $meta[$inputKey];
+        if ($this->helper->isProcessor($input)) {
+          $valid = true;
+          foreach ($accepts as $accept) {
+            $split = explode(' ', $accept);
+            if (sizeof($split) > 1 && $split[0] == 'function') {
+              $valid = false;
+            }
+          }
+          if (!$valid) {
+            throw new Core\ApiException("invalid input, incorrect function type ($inputKey)", 6, $id, 406);
+          }
+          $this->_validateDetails($input);
+          $count = 1;
+        } elseif (is_array($input)) {
+          foreach ($input as $inp) {
+            $this->_validateDetails($inp);
+          }
+          $count = sizeof($input);
+        } else {
+          $this->_validateTypeValue($input, $inputDef['accepts']);
+          $count = 1;
+        }
+      }
 
       // validate cardinality
       if ($count < $min) {
         // check for nothing to validate and if that is ok.
-        throw new Core\ApiException("function requires min $min of $inputKey in function", 6, $id, 406);
+        throw new Core\ApiException("input '$inputKey' requires min $min", 6, $id, 406);
       }
       if ($max != '*' && $count > $max) {
-        throw new Core\ApiException("1 function requires max:$max of $inputKey in function", 6, $id, 406);
-      }
-
-      if (!$this->helper->isProcessor($input)) {
-        $this->_validateTypeValue($input, $accepts);
+        throw new Core\ApiException("input '$inputKey' requires max $max", 6, $id, 406);
       }
     }
   }
