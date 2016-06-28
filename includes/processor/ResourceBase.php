@@ -212,6 +212,16 @@ abstract class ResourceBase extends ProcessorEntity
     }
     $ttl = !empty($data['ttl']) ? $data['ttl'] : 0;
 
+    // prevent same URLS as in common
+    $mapper = new Db\ApplicationMapper($this->db);
+    $application = $mapper->findByName('Common');
+    $appId = $application->getAppId();
+    $mapper = new Db\ResourceMapper($this->db);
+    $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
+    if (empty($resource->getId())) {
+      throw new Core\ApiException('cannot create a resource using reserved method & URI', 6, -1, 406);
+    }
+
     $mapper = new Db\ResourceMapper($this->db);
     $resource = $mapper->findByAppIdMethodIdentifier($this->request->getAppId(), $method, $identifier);
     if (empty($resource->getId())) {
