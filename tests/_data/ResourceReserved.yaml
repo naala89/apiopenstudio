@@ -1,0 +1,37 @@
+name: test
+
+description: test
+
+uri: account
+
+method: get
+
+ttl: 3600
+
+security:
+  function: tokenDeveloper
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
+
+process:
+  function: field
+  id: 3
+  key: zsdkfjh
+  value: dfhstfn
+
+output:
+  - function: email
+    id: 4
+    to: john@naala.com.au
+    subject: "test email"
+    format: html
+  - function: xml
+    id: 5
+    destination:
+      - www.foo.bar
+      - www.foo.bar
+      - www.foo.bar
+    method: post
