@@ -41,6 +41,21 @@ class Url extends Processor\ProcessorEntity
         'cardinality' => array(1, 1),
         'accepts' => array('function', '"true"', '"false"'),
       ),
+      'connectTimeout' => array(
+        'description' => 'The number of seconds to wait while trying to connect. Indefinite wait time if 0 is disallowed (optional).',
+        'cardinality' => array(0, 1),
+        'accepts' => array('function', 'integer'),
+      ),
+      'timeout' => array(
+        'description' => 'The maximum number of seconds to allow the remote call to execute (optional). This time will include connectTimeout value.',
+        'cardinality' => array(0, 1),
+        'accepts' => array('function', 'integer'),
+      ),
+//      'retry' => array(
+//        'description' => 'The number of times to attempt the call on failure (optional). The default is 1.',
+//        'cardinality' => array(0, 1),
+//        'accepts' => array('function', 'integer'),
+//      ),
     ),
   );
 
@@ -59,11 +74,23 @@ class Url extends Processor\ProcessorEntity
     if (!in_array($method, array('get', 'post'))) {
       throw new Core\ApiException('invalid method', 6, $this->id, 417);
     }
+    $connectTimeout = $this->val($this->meta->connectTimeout);
+    $timeout = $this->val($this->meta->timeout);
+//    $retry = $this->val($this->meta->retry);
     $url = $this->val($this->meta->source);
     $reportError = $this->val($this->meta->reportError);
 
     //get static curl options for this call
     $curlOpts = array();
+    if ($connectTimeout > 0) {
+      $curlOpts[] = [CURLOPT_CONNECTTIMEOUT => $connectTimeout];
+    }
+    if ($timeout > 0) {
+      $curlOpts[] = [CURLOPT_TIMEOUT => $timeout];
+    }
+//    if ($retry > 1) {
+//
+//    }
     if (isset($this->meta->curlOpts)) {
       foreach ($this->meta->curlOpts as $k => $v) {
         $curlOpts += array($this->_get_curlopt_from_string($k) => $v);
