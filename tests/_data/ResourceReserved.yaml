@@ -2,7 +2,7 @@ name: test
 
 description: test
 
-uri: account
+uri: processors/all
 
 method: get
 
@@ -17,21 +17,7 @@ security:
     name: token
 
 process:
-  function: field
+  function: datagatorAccount
   id: 3
-  key: zsdkfjh
-  value: dfhstfn
-
-output:
-  - function: email
-    id: 4
-    to: john@naala.com.au
-    subject: "test email"
-    format: html
-  - function: xml
-    id: 5
-    destination:
-      - www.foo.bar
-      - www.foo.bar
-      - www.foo.bar
-    method: post
+  accountName: zsdkfjh
+  username: dfhstfn

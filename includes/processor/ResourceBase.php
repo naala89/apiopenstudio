@@ -218,8 +218,8 @@ abstract class ResourceBase extends ProcessorEntity
     $appId = $application->getAppId();
     $mapper = new Db\ResourceMapper($this->db);
     $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
-    if (empty($resource->getId())) {
-      throw new Core\ApiException('cannot create a resource using reserved method & URI', 6, -1, 406);
+    if (!empty($resource->getId())) {
+      throw new Core\ApiException("this resource is reserved ($method + $identifier)", 6, -1, 406);
     }
 
     $mapper = new Db\ResourceMapper($this->db);

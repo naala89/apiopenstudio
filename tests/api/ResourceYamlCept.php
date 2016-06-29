@@ -212,6 +212,6 @@ $I->wantTo('create a new resource from YAML with reserved method & uri and see t
 $I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/ResourceReserved.yaml']);
 $I->seeResponseCodeIs(406);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => "Cannot create a resource using reserved method & URI.", "id" => -1]]);
+$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => "This resource is reserved (get + processors/all).", "id" => -1]]);
 $I->setYamlFilename('ResourceReserved.yaml');
 $I->tearDownTestFromYaml(400, ['error' => ['code' => 2,'message' => 'Could not delete resource, not found.', 'id' => -1]]);
