@@ -19,7 +19,11 @@ class ResourceSwagger extends ResourceBase
       'resource' => array(
         'description' => 'The resource string or file. This can be an attached file or a urlencoded GET var.',
         'cardinality' => array(1, 1),
-        'accepts' => array('string', 'file')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string', 'file'),
+        'limitValues' => array(),
+        'default' => ''
       )
     )
   );

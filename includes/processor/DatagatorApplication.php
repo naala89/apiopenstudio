@@ -21,12 +21,20 @@ class DatagatorApplication extends ProcessorEntity
       'applicationName' => array(
         'description' => 'The name of the application.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'accountName' => array(
         'description' => 'The name of the account.',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );

@@ -12,7 +12,7 @@ use Datagator\Processor;
 
 class ProcessorHelper
 {
-  private $_namespaces = array('Security', 'Endpoint', 'Output', 'Processor');
+  private $_namespaces = array('Security', 'Endpoint', 'Output', 'Processor', 'Core');
   /**
    * Return processor namespace and class name string.
    * @param $className
@@ -43,6 +43,6 @@ class ProcessorHelper
    */
   public function isProcessor($obj)
   {
-    return (is_object($obj) && !empty($obj->function)) || (is_array($obj) && !empty($obj['function']));
+    return (is_array($obj) && !empty($obj['function']));
   }
 }

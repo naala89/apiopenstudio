@@ -22,7 +22,11 @@ class TokenOwner extends Processor\ProcessorEntity {
       'token' => array(
         'description' => 'The consumers token.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function')
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       )
     ),
   );

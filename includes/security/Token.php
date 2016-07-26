@@ -20,7 +20,11 @@ class Token extends Processor\ProcessorEntity {
       'token' => array(
         'description' => 'The consumers token.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function')
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       )
     ),
   );
@@ -33,7 +37,7 @@ class Token extends Processor\ProcessorEntity {
     Core\Debug::variable($this->meta, 'Security Token', 4);
 
     // no token
-    $token = $this->val($this->meta->token);
+    $token = $this->val('token');
     if (empty($token)) {
       throw new Core\ApiException('permission denied', 4, -1, 401);
     }

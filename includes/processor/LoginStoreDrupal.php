@@ -33,12 +33,20 @@ class LoginStoreDrupal extends ProcessorEntity
       'source' => array(
         'description' => 'The results of a login attempt to the remote site. i.e. Processor InputUrl.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function')
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'externalEntity' => array(
-        'description' => 'The name of the external entity this user is tied to (default is "drupal" - use custom names if you access more than one drupal site).',
+        'description' => 'The name of the external entity this user is tied to (use custom names if you access more than one drupal site).',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'literal')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => 'drupal'
       ),
     ),
   );

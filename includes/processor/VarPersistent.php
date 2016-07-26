@@ -19,22 +19,38 @@ class VarPersistent extends ProcessorEntity
       'name' => array(
         'description' => 'The name of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'value' => array(
         'description' => 'The value of the variable. This input is only used in save operations.',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'literal')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'operation' => array(
         'description' => 'The operation to be performed on the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', '"save"', '"delete"', '"fetch"')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array('save', 'delete', 'fetch'),
+        'default' => ''
       ),
       'strict' => array(
         'description' => 'If set to 0 then return null if var does not exist. If set to 1 throw exception if var does not exist. Default is strict. Only used in fetch or delete operations.',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', '"0"', '"1"')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('boolean'),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );

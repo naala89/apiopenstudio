@@ -18,7 +18,20 @@ class VarRequest extends VarMixed
       'name' => array(
         'description' => 'The name of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'string')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
+      ),
+      'nullable' => array(
+        'description' => 'Throw exception if the post variable does not exist.',
+        'cardinality' => array(0, 1),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('boolean'),
+        'limitValues' => array(),
+        'default' => true
       ),
     ),
   );
@@ -27,13 +40,15 @@ class VarRequest extends VarMixed
   {
     Core\Debug::variable($this->meta, 'Processor VarRequest', 4);
 
-    $name = $this->val($this->meta->name);
+    $name = $this->val('name');
     $vars = array_merge($this->request->getGetVars(), $this->request->getPostVars());
 
     if (isset($vars[$name])) {
-      return $vars[$name];
+      return new Core\Text($vars[$name]);
     }
-
-    return null;
+    if ($this->val('nullable')) {
+      return new Core\Text('');
+    }
+    throw new Core\ApiException("post var $name not available", 1, $this->id);
   }
 }
