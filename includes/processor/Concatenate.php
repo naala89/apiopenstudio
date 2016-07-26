@@ -18,7 +18,11 @@ class Concatenate extends ProcessorEntity
       'sources' => array(
         'description' => 'The values to concatenate',
         'cardinality' => array(2, '*'),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array(),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );

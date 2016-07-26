@@ -19,43 +19,67 @@ class Url extends Processor\ProcessorEntity
       'method' => array(
         'description' => 'The HTTP method.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', '"get"', '"post"'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array('get', 'post'),
+        'default' => ''
       ),
       'source' => array(
         'description' => 'The source URL.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
+      ),
+      'sourceType' => array(
+        'description' => 'Manually declare the source type (the fastest), or allow Datagator to detect the type ("auto"). \
+         If auto is selected, CSV and invalid JSON/XML will be treated as text.',
+        'cardinality' => array(0, 1),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array('xml', 'json', 'text', 'html', 'auto'),
+        'default' => 'auto'
       ),
       'auth' => array(
         'description' => 'The remote authentication process.',
         'cardinality' => array(0, 1),
-        'accepts' => array('function'),
+        'literalAllowed' => true,
+        'limitFunctions' => array('AuthCookie', 'AuthOauthHeader', 'AuthUserPwd'),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'reportError' => array(
         'description' => 'Stop processing if the remote source responds with an error.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', '"true"', '"false"'),
-      ),
-      'normalise' => array(
-        'description' => 'If set to false, the results will pass though as a raw string. If set to 1\true, the results will be parsed into a format that can be processed further, i.e. merge, filter, etc.',
-        'cardinality' => array(1, 1),
-        'accepts' => array('function', '"true"', '"false"'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('boolean'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'connectTimeout' => array(
-        'description' => 'The number of seconds to wait while trying to connect. Indefinite wait time if 0 is disallowed (optional).',
+        'description' => 'The number of seconds to wait while trying to connect. Indefinite wait time of 0 is disallowed (optional).',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'integer'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('integer'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'timeout' => array(
         'description' => 'The maximum number of seconds to allow the remote call to execute (optional). This time will include connectTimeout value.',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'integer'),
-      ),
-//      'retry' => array(
-//        'description' => 'The number of times to attempt the call on failure (optional). The default is 1.',
-//        'cardinality' => array(0, 1),
-//        'accepts' => array('function', 'integer'),
-//      ),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('integer'),
+        'limitValues' => array(),
+        'default' => ''
+      )
     ),
   );
 
@@ -70,15 +94,13 @@ class Url extends Processor\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'function Url', 4);
 
-    $method = strtolower($this->val($this->meta->method));
-    if (!in_array($method, array('get', 'post'))) {
-      throw new Core\ApiException('invalid method', 6, $this->id, 417);
-    }
-    $connectTimeout = $this->val($this->meta->connectTimeout);
-    $timeout = $this->val($this->meta->timeout);
-//    $retry = $this->val($this->meta->retry);
-    $url = $this->val($this->meta->source);
-    $reportError = $this->val($this->meta->reportError);
+    $method = $this->val('method');
+    $connectTimeout = $this->val('connectTimeout');
+    $timeout = $this->val('timeout');
+    $url = $this->val('url');
+    $reportError = $this->val('reportError');
+    $sourceType = $this->val('sourceType');
+    $auth = $this->val('auth');
 
     //get static curl options for this call
     $curlOpts = array();
@@ -88,9 +110,6 @@ class Url extends Processor\ProcessorEntity
     if ($timeout > 0) {
       $curlOpts[] = [CURLOPT_TIMEOUT => $timeout];
     }
-//    if ($retry > 1) {
-//
-//    }
     if (isset($this->meta->curlOpts)) {
       foreach ($this->meta->curlOpts as $k => $v) {
         $curlOpts += array($this->_get_curlopt_from_string($k) => $v);
@@ -109,16 +128,19 @@ class Url extends Processor\ProcessorEntity
     }
 
     //add any params to post or get call
-    if (!empty($this->meta->vars)) {
+    if (!empty($auth)) {
       $vars = array();
-      foreach ($this->meta->vars as $key => $val) {
-        $vars[$key] = $this->val($val);
-      }
       switch ($method) {
         case 'post':
+          foreach ($this->request->getPostVars() as $key => $val) {
+            $vars[$key] = $this->val($val);
+          }
           $curlOpts[CURLOPT_POSTFIELDS] = http_build_query($vars);
           break;
         case 'get':
+          foreach ($this->request->getGetVars() as $key => $val) {
+            $vars[$key] = $this->val($val);
+          }
           $url .= http_build_query($vars, '?', '&');
           break;
       }
@@ -130,18 +152,42 @@ class Url extends Processor\ProcessorEntity
     if ($result === false) {
       throw new Core\ApiException('could not get response from remote server: ' . $curl->errorMsg, 5, $this->id, $curl->httpStatus);
     }
-
-    $doNormalise = $this->val($this->meta->normalise) == 'true';
-    if ($doNormalise) {
-      $normalise = new Core\Normalise();
-      $normalise->set($result, $curl->type);
-      $result = $normalise->normalise();
-      if ($reportError && $curl->httpStatus != 200) {
-        throw new Core\ApiException(json_encode($result), 5, $this->id, $curl->httpStatus);
-      }
+    if ($reportError && $curl->httpStatus != 200) {
+      throw new Core\ApiException(json_encode($result), 5, $this->id, $curl->httpStatus);
     }
 
-    return $result;
+    if ($sourceType == 'auto') {
+      $sourceType = $this->_calcFormat();
+    }
+
+    $classStr = "Datagator\\Core\\$sourceType";
+    if (!class_exists($classStr)) {
+      throw new Core\ApiException("could not get data transport for: '$classStr'", 5, $this->id, $curl->httpStatus);
+    }
+
+    return new $classStr($result);
+  }
+
+  /**
+   * @return string
+   */
+  private function _calcFormat()
+  {
+    $data = $this->data;
+    // test for array
+    if (is_array($data)) {
+      return 'array';
+    }
+    // test for JSON
+    json_decode($data);
+    if (json_last_error() == JSON_ERROR_NONE) {
+      return 'json';
+    }
+    // test for XML
+    if (simplexml_load_string($data) !== false) {
+      return 'xml';
+    }
+    return 'text';
   }
 
   /**

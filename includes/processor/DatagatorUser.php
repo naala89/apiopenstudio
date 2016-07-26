@@ -19,37 +19,65 @@ class DatagatorUser extends ProcessorEntity
       'username' => array(
         'description' => 'The username of the user.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'active' => array(
         'description' => 'The status of the user account. Only used for creating user',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', '"0"', '"1"'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('boolean'),
+        'limitValues' => array(),
+        'default' => true
       ),
       'email' => array(
         'description' => 'The email of the user. Only used for creating user',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'string'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'honorific' => array(
         'description' => 'The honorific of the user. Only used for creating user',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'string'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'nameFirst' => array(
         'description' => 'The first name of the user. Only used for creating user',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'string'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'nameLast' => array(
         'description' => 'The last name of the user. Only used for creating user',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'string'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'company' => array(
         'description' => 'The company of the user Only used for creating user',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'string'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );

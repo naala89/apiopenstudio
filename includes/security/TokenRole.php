@@ -20,12 +20,20 @@ class TokenRole extends Token {
       'token' => array(
         'description' => 'The consumers token.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function')
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'role' => array(
-        'description' => 'The consumers role.',
+        'description' => 'The consumers token.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'string')
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       )
     ),
   );

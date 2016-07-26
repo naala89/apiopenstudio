@@ -18,5 +18,5 @@ security:
 
 process:
   function: resourceYaml
-  id: 3
+  id: 4
   resource: resource

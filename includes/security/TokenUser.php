@@ -20,12 +20,20 @@ class TokenUser extends Processor\ProcessorEntity {
       'token' => array(
         'description' => 'The consumers token.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function')
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'usernames' => array(
-        'description' => "The username/s.",
+        'description' => 'The username/s.',
         'cardinality' => array(1, '*'),
-        'accepts' => array('function', 'literal', 'array'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );

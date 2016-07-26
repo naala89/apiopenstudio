@@ -18,12 +18,12 @@ security:
 
 process:
   function: resourceYaml
-  id: 3
+  id: 4
   method:
     function: varRequest
-    id: 4
+    id: 5
     name: method
   uri:
     function: varRequest
-    id: 5
+    id: 7
     name: uri

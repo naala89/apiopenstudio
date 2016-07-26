@@ -5,6 +5,7 @@
  */
 
 namespace Datagator\Processor;
+use Codeception\Util\Debug;
 use Datagator\Core;
 use Datagator\Db;
 
@@ -21,22 +22,38 @@ abstract class ResourceBase extends ProcessorEntity
       'method' => array(
         'description' => 'The HTTP method of the resource (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', '"get"', '"post"', '"delete"', '"push"'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array('get', 'post', 'delete', 'push'),
+        'default' => ''
       ),
       'appName' => array(
         'description' => 'The application name that the resource is associated with (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'literal')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'uri' => array(
         'description' => 'The URI for the resource, i.e. the part after the App ID in the URL (only used if fetching or deleting a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'literal')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'resource' => array(
         'description' => 'The resource as a string (this input is only used if you are creating or updating a resource).',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'literal')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       )
     )
   );
@@ -59,7 +76,7 @@ abstract class ResourceBase extends ProcessorEntity
 
     switch ($this->request->getMethod()) {
       case 'post':
-        $string = $this->val($this->meta->resource);
+        $string = $this->val('resource');
         $resource = $this->_importData($string);
         if (sizeof($resource) == 1 && isset($resource[0])) {
           // resource is not JSON. Fallback to assuming this is a filename.
@@ -72,8 +89,8 @@ abstract class ResourceBase extends ProcessorEntity
         break;
       case 'get':
         $appId = $this->request->appId;
-        $method = $this->val($this->meta->method);
-        $uri = $this->val($this->meta->uri);
+        $method = $this->val('method');
+        $uri = $this->val('uri');
         if (empty($method)) {
           throw new Core\ApiException('Missing method', 1, $this->id);
         }
@@ -84,8 +101,8 @@ abstract class ResourceBase extends ProcessorEntity
         break;
       case 'delete':
         $appId = $this->request->getAppId();
-        $method = $this->val($this->meta->method);
-        $uri = $this->val($this->meta->uri);
+        $method = $this->val('method');
+        $uri = $this->val('uri');
         if (empty($method)) {
           throw new Core\ApiException('Missing method', 1, $this->id);
         }
@@ -303,52 +320,59 @@ abstract class ResourceBase extends ProcessorEntity
 
   /**
    * Validate a resource section
+   *
    * @param $meta
    * @throws \Datagator\Core\ApiException
    */
   private function _validateDetails($meta)
   {
-    if (!$this->helper->isProcessor($meta)) {
-      // this allows for static values in base dictionaries
-      return;
-    }
-    if (!isset($meta['id'])) {
-      throw new Core\ApiException('function missing an ID: ' . $meta['function'], 6, -1, 406);
-    }
+    Core\Debug::variable($meta, 'meta');
+    $id = $meta['id'];
 
     $classStr = $this->helper->getProcessorString($meta['function']);
     $class = new $classStr($meta, new Core\Request());
     $details = $class->details();
-    $id = $meta['id'];
+    //Core\Debug::variable($details['name'], 'name');
 
     foreach ($details['input'] as $inputKey => $inputDef) {
+      //Core\Debug::variable($inputKey, 'inputkey');
+      //Core\Debug::variable($inputDef, 'inputdef');
       $min = $inputDef['cardinality'][0];
       $max = $inputDef['cardinality'][1];
-      $accepts = $inputDef['accepts'];
+      $literalAllowed = $inputDef['literalAllowed'];
+      $limitFunctions = $inputDef['limitFunctions'];
+      $limitTypes = $inputDef['limitTypes'];
+      $limitValues = $inputDef['limitValues'];
 
       $count = 0;
       if (!empty($meta[$inputKey])) {
         $input = $meta[$inputKey];
         if ($this->helper->isProcessor($input)) {
-          $valid = true;
-          foreach ($accepts as $accept) {
-            $split = explode(' ', $accept);
-            if (sizeof($split) > 1 && $split[0] == 'function') {
-              $valid = false;
-            }
-          }
-          if (!$valid) {
-            throw new Core\ApiException("invalid input, incorrect function type ($inputKey)", 6, $id, 406);
+          if (!empty($limitFunctions) && !in_array($input['function'], $limitFunctions)) {
+            throw new Core\ApiException("invalid function in $inputKey: " . $input['function'], 6, $id, 406);
           }
           $this->_validateDetails($input);
           $count = 1;
         } elseif (is_array($input)) {
-          foreach ($input as $inp) {
-            $this->_validateDetails($inp);
+          foreach ($input as $item) {
+            Core\Debug::variable($item, 'item');
+            Core\Debug::variable($inputDef, 'inputDef');
+            if ($this->helper->isProcessor($item)) {
+              $this->_validateDetails($item);
+            } else {
+              $this->_validateTypeValue($item, $limitTypes);
+            }
           }
           $count = sizeof($input);
+        } elseif (!$literalAllowed) {
+          throw new Core\ApiException("literals not allowed as input", 6, $id, 406);
         } else {
-          $this->_validateTypeValue($input, $inputDef['accepts']);
+          if (!empty($limitValues) && !in_array($input, $limitValues)) {
+            throw new Core\ApiException("invalid value in $inputKey: " . $input, 6, $id, 406);
+          }
+          if (!empty($limitTypes)) {
+            $this->_validateTypeValue($input, $limitTypes);
+          }
           $count = 1;
         }
       }
@@ -370,25 +394,18 @@ abstract class ResourceBase extends ProcessorEntity
    *
    * @param $element
    * @param $accepts
+   * @return bool
    * @throws \Datagator\Core\ApiException
    */
   private function _validateTypeValue($element, $accepts)
   {
+    if (empty($accepts)) {
+      return true;
+    }
     $valid = FALSE;
-    $isProcessor = $this->helper->isProcessor($element);
 
     foreach ($accepts as $accept) {
-      if ($accept == 'function' && $isProcessor) {
-        $this->_validateDetails($element);
-        $valid = TRUE;
-        break;
-      } elseif (strpos($accept, 'function ') !== FALSE && $isProcessor) {
-        $parts = explode(' ', $accept);
-        if (strtolower($element['function']) == strtolower($parts[1])) {
-          $valid = TRUE;
-          break;
-        }
-      } elseif ($accept == 'file') {
+      if ($accept == 'file') {
         $valid = TRUE;
         break;
       } elseif ($accept == 'literal' && (is_string($element) || is_numeric($element))) {
@@ -412,18 +429,11 @@ abstract class ResourceBase extends ProcessorEntity
       } elseif ($accept == 'array' && is_array($element)) {
         $valid = TRUE;
         break;
-      } elseif (!is_array($element)) {
-        $firstLast = substr($accept, 0, 1) . substr($accept, -1, 1);
-        if ($firstLast == '""' || $firstLast == "''") {
-          if ($element == trim($accept, "\"'")) {
-            $valid = TRUE;
-            break;
-          }
-        }
       }
     }
     if (!$valid) {
       throw new Core\ApiException("invalid input literal ($element). only $accepts accepted", 6, -1, 406);
     }
+    return $valid;
   }
 }

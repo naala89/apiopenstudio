@@ -18,16 +18,16 @@ security:
 
 process:
   function: resourceJson
-  id: 3
+  id: 4
   method:
     function: varGet
-    id: 4
+    id: 5
     name: method
   noun:
     function: varGet
-    id: 5
+    id: 7
     name: noun
   verb:
     function: varGet
-    id: 6
+    id: 9
     name: verb

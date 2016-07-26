@@ -163,30 +163,82 @@ abstract class ProcessorEntity
    * If the object is a processor, then it will process that down to a final return value,
    * or if the obj is a simple value, then it will return that. Anything else will return an error object.
    *
-   * @param $obj
+   * @param $key
    * @return array
    * @throws \Datagator\Core\ApiException
    */
-  protected function val($obj)
+  protected function val($key)
   {
-    if (is_object($obj) && isset($obj->function)) {
-      // this is a processor. Something has gone wrong - we should only have values at this point
-      throw new Core\ApiException('function encountered in an input!');
-    } elseif (is_array($obj) && !Core\Utilities::is_assoc($obj)) {
-      // this is an array values
-      $result = array();
-      foreach ($obj as $o) {
-        $result[] = $this->val($o);
+    $inputDet = $this->details['input'];
+    if (empty($inputDet[$key])) {
+      // reject if input key not defined for this processor type
+      throw new Core\ApiException("invalid key: $key", 1, $this->id);
+    }
+
+    $min = $inputDet[$key]['cardinality'][0];
+    $max = $inputDet[$key]['cardinality'][1];
+    $limitValues = $inputDet[$key]['limitValues'];
+    $limitTypes = $inputDet[$key]['limitTypes'];
+
+    $count = empty($this->meta->$key) ? 0 : is_array($this->meta->$key) ? sizeof($this->meta->$key) : 1;
+    if ($count < $min || ($max != '*' && $count > $max)) {
+      throw new Core\ApiException("invalid number of inputs ($count), requires $min - $max", 1, $this->id);
+    }
+
+    if (empty($this->meta->$key)) {
+      return $inputDet[$key]['default'];
+    }
+
+    $result = $this->meta->$key;
+
+    if (is_array($result)) {
+      foreach ($result as & $r) {
+        $r = is_object($r) && method_exists($r, 'getData') ? $r->getData() : $r;
+        $this->_validateAllowedValues($r, $limitValues);
+        $this->_validateAllowedTypes($r, $limitTypes);
       }
-    } elseif (!empty($obj) || $obj == 0) {
-      // this is a literal, so return it
-      $result = $obj;
     } else {
-      // invalid value, so return empty string
-      $result = '';
+      $result = is_object($result) && method_exists($result, 'getData') ? $result->getData() : $result;
+      $this->_validateAllowedValues($result, $limitValues);
+      $this->_validateAllowedTypes($result, $limitTypes);
     }
 
     return $result;
+  }
+
+  /**
+   * Validate an input for allowed values
+   *
+   * @param $val
+   * @param array $allowed
+   * @throws \Datagator\Core\ApiException
+   */
+  private function _validateAllowedValues($val, array $allowed)
+  {
+    if (empty($allowed)) {
+      return;
+    }
+    if (!in_array($val, $allowed)) {
+      throw new Core\ApiException("invalid value ($val). Only '" . implode("', '",$allowed) . "' allowed", 1, $this->id);
+    }
+  }
+
+  /**
+   * Validate an input for allowed variable types
+   *
+   * @param $val
+   * @param array $types
+   * @throws \Datagator\Core\ApiException
+   */
+  private function _validateAllowedTypes($val, array $types)
+  {
+    if (empty($types)) {
+      return;
+    }
+    $type = gettype($val);
+    if (!in_array($type, $types)) {
+      throw new Core\ApiException("invalid value type ($type), only '" . implode("', '",$types) . "' allowed", 1, $this->id);
+    }
   }
 
   /**

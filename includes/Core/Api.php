@@ -251,12 +251,12 @@ class Api
    * @return mixed
    * @throws \Datagator\Core\ApiException
    */
-  public function _crawlMeta(& $meta)
+  public function _crawlMeta(& $meta, $caller=null)
   {
     // array of values - parse each one
     if (is_array($meta)) {
       foreach ($meta as $key => & $value) {
-        $value = $this->_crawlMeta($value);
+        $value = $this->_crawlMeta($value, $caller);
       }
     }
 
@@ -264,9 +264,22 @@ class Api
     if (is_object($meta)) {
       // replace each value of key/value pair with final value
       foreach ($meta as $key => & $value) {
-        $value = $this->_crawlMeta($value);
+        // 1. process all key/value pairs using recursion
+        // this allows infinite depth and final first
+        $value = $this->_crawlMeta($value, !empty($meta->function) ? $meta->function : null);
       }
       if (!empty($meta->function) && !empty($meta->id)) {
+        // 2. process a function
+        // this will be arrived at once all values are constants
+        if (!empty($caller)) {
+          // validate function if limited type allowed
+          $callerStr = $this->helper->getProcessorString($caller);
+          $class = new $callerStr($meta, $this->request);
+          $details = $class->details();
+          if (!empty($details['allowedFunctions']) && !in_array($meta->function, $details['allowedFunctions'])) {
+            throw new ApiException('invalid function. ' . $meta->function . ' not allowed as input in ' . $caller, 1, $this->id);
+          }
+        }
         $classStr = $this->helper->getProcessorString($meta->function);
         $class = new $classStr($meta, $this->request);
         return $class->process();
