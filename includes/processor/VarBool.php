@@ -19,23 +19,17 @@ class VarBool extends VarMixed
       'value' => array(
         'description' => 'The value of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'boolean')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('boolean'),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor VarBool', 4);
-
-    $value = parent::process();
-    if (empty($value) || (is_string($value) && in_array($value, $this->accetableStrings))) {
-      $value = strtolower($value) == 'true' || $value == '1' || strtolower($value) =='yes';
-    }
-    if (!is_bool($value)) {
-      throw new Core\ApiException('invalid boolean', 5, $this->id, 417);
-    }
-
-    return $value;
+    return parent::process();
   }
 }

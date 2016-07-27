@@ -18,7 +18,11 @@ class VarUri extends ProcessorEntity
       'index' => array(
         'description' => 'The index of the variable, starting with 0 after the client ID, request noun and verb.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'integer')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('integer'),
+        'limitValues' => array(),
+        'default' => 0
       ),
     ),
   );

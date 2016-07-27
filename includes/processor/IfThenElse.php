@@ -18,27 +18,47 @@ class IfThenElse extends ProcessorEntity
       'lhs' => array(
         'description' => 'The left-land side value in the equation.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array(),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'rhs' => array(
         'description' => 'The right-land side value in the equation.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array(),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'operator' => array(
         'description' => 'The comparison operator in the equation.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', '"=="', '"!="', '">"', '">="', '"<"', '"<="'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array('==', '!=', '>', '>=', '<', '<='),
+        'default' => ''
       ),
       'then' => array(
         'description' => 'What to do if the equation returns true.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array(),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'else' => array(
         'description' => 'What to do if the equation returns false.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array(),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );

@@ -18,7 +18,11 @@ class Object extends ProcessorEntity {
       'attributes' => array(
         'description' => 'The value of an attribute or a complex object.',
         'cardinality' => array(0, '*'),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array(),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );

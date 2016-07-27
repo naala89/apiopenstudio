@@ -30,27 +30,47 @@ class AuthOAuthHeader extends Processor\ProcessorEntity
       'key' => array(
         'description' => 'The consumer key.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'nonce' => array(
         'description' => 'The nonce.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'signature' => array(
         'description' => 'The signature.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'signatureMethod' => array(
         'description' => 'The signature method.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'oauthVersion' => array(
         'description' => 'The OAuth version.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );

@@ -18,7 +18,11 @@ class VarMixed extends ProcessorEntity
       'value' => array(
         'description' => 'The value of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array(),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );

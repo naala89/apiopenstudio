@@ -18,7 +18,11 @@ class Fragment extends ProcessorEntity
       'name' => array(
         'description' => 'The name of the fragment',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array(),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );

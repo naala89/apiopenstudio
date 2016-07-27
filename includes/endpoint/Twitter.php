@@ -23,32 +23,56 @@ class Twitter extends Processor\ProcessorEntity
       'key' => array(
         'description' => 'The consumer key to attach with.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'secret' => array(
         'description' => 'The consumer secret to attach with.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'twitterId' => array(
         'description' => 'The ID of the twitter account used for authentication - use this if an application has more than one twitter account that it uses (if omitted it will default to "twitter").',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'method' => array(
         'description' => 'The API call method (get or past).',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', '"get"', '"post"'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array('get', 'post'),
+        'default' => ''
       ),
       'uri' => array(
         'description' => 'The call you want to make to the Twitter API (e.g. "statuses/user_timeline.json", "friends/list.json", etc).',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'options' => array(
         'description' => 'The options (an array of Processor Field) allowed by Twitter for the call (e.g. cursor: -1, screen_name: twitterapi, skip_status: true, etc).',
         'cardinality' => array(0, '*'),
-        'accepts' => array('function Field'),
+        'literalAllowed' => false,
+        'limitFunctions' => array('Field'),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );

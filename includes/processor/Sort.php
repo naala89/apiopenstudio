@@ -18,17 +18,29 @@ class Sort extends ProcessorEntity
       'values' => array(
         'description' => 'The values to sort.',
         'cardinality' => array(0, '*'),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array(),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'direction' => array(
         'description' => 'Sort ascending or descending.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', '"asc"', '"desc"'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array('asc', 'desc'),
+        'default' => ''
       ),
       'sortByValue' => array(
         'description' => 'If set to true, sort by the value, otherwise sort by key (only used if the sources are of type Field, and the sortable key or value cannot be another key/value pair). Default is false.',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', '"true"', '"false"'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('boolean'),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );

@@ -18,7 +18,11 @@ class VarFloat extends VarMixed
       'value' => array(
         'description' => 'The value of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'float')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array(),
+        'limitValues' => array('float'),
+        'default' => ''
       ),
     ),
   );
@@ -27,16 +31,6 @@ class VarFloat extends VarMixed
   {
     Core\Debug::variable($this->meta, 'Processor VarFloat');
 
-    $value = parent::process();
-
-    if (is_string($value) && is_numeric($value)) {
-      $value = floatval($value);
-    }
-
-    if (!is_float($value) && $value !== 0) {
-      throw new Core\ApiException("invalid float: $value", 6, $this->id, 417);
-    }
-
-    return $value;
+    return parent::process();
   }
 }
