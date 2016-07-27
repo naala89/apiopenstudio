@@ -55,8 +55,8 @@ class AuthUserPwd extends Processor\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Auth UserPwd', 4);
 
-    $username = $this->val($this->meta->username);
-    $password = $this->val($this->meta->password);
+    $username = $this->val('username');
+    $password = $this->val('password');
 
     return array(CURLOPT_USERPWD => "$username:$password");
   }

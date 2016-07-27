@@ -79,12 +79,12 @@ class AuthOAuthHeader extends Processor\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Auth o-auth(header)', 4);
 
-    $key = $this->val($this->meta->key);
-    $nonce = $this->val($this->meta->nonce);
-    $signature = $this->val($this->meta->signature);
-    $signatureMethod = $this->val($this->meta->signatureMethod);
+    $key = $this->val('key');
+    $nonce = $this->val('nonce');
+    $signature = $this->val('signature');
+    $signatureMethod = $this->val('signatureMethod');
     $timestamp = time();
-    $oauthVersion = $this->val($this->meta->oauthVersion);
+    $oauthVersion = $this->val('oauthVersion');
 
     $header = 'OAuth ';
     $header .= !empty($key) ? "oauth_consumer_key=$key" : '';

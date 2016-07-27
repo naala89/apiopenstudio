@@ -47,7 +47,7 @@ class TokenRole extends Token {
     Core\Debug::variable($this->meta, 'Validator TokenRole', 4);
 
     // no token
-    $token = $this->val($this->meta->token);
+    $token = $this->val('token');
     if (empty($token)) {
       throw new Core\ApiException('permission denied', 4, -1, 401);
     }
@@ -62,7 +62,7 @@ class TokenRole extends Token {
     }
 
     // get rid
-    $rid = $this->val($this->meta->role);
+    $rid = $this->val('role');
     if (!filter_var($rid, FILTER_VALIDATE_INT)) {
       // convert role name to rid
       $roleMapper = new RoleMapper($db);

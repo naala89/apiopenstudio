@@ -31,7 +31,7 @@ class Object extends ProcessorEntity {
   {
     Core\Debug::variable($this->meta, 'Processor Object', 4);
     $result = array();
-    $attributes = $this->val($this->meta->attributes);
+    $attributes = $this->val('attributes');
 
     foreach ($attributes as $attribute) {
       Core\Debug::variable($attribute);

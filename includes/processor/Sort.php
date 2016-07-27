@@ -49,13 +49,13 @@ class Sort extends ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor Sort', 4);
 
-    $values = $this->val($this->meta->values);
+    $values = $this->val('values');
     if (!is_array($values) || empty($values)) {
       return $values;
     }
 
-    $asc = ($this->val($this->meta->direction) == 'asc');
-    $sortByValue = isset($this->meta->sortByValue) ? $this->val($this->meta->sortByValue) == 'true' : false;
+    $asc = ($this->val('direction') == 'asc');
+    $sortByValue = isset($this->meta->sortByValue) ? $this->val('sortByValue') == 'true' : false;
 
     if (!$sortByValue) {
       if ($asc) {

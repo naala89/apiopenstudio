@@ -40,8 +40,8 @@ class Field extends ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor Field', 4);
 
-    $key = $this->val($this->meta->key);
-    $value = $this->val($this->meta->value);
+    $key = $this->val('key');
+    $value = $this->val('value');
 
     Core\Debug::variable(array($key => $value), 'result');
 

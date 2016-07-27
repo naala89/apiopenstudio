@@ -21,74 +21,42 @@ class Facebook extends Processor\ProcessorEntity
       'appId' => array(
         'description' => 'The app_id that you will be accessing facebook with.',
         'cardinality' => array(1, 1),
-        'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
+        'accepts' => array('function', 'literal'),
       ),
       'appSecret' => array(
         'description' => 'The app_secret that you will be accessing facebook with.',
         'cardinality' => array(1, 1),
-        'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
+        'accepts' => array('function', 'literal'),
       ),
       'graphVersion' => array(
         'description' => 'The version of graph to use (do not prefix with "v", e.g. use "2.4").',
         'cardinality' => array(1, 1),
-        'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
+        'accepts' => array('function', 'float'),
       ),
       'node' => array(
         'description' => 'The node or edge that you want to fetch or post to facebook.',
         'cardinality' => array(1, 1),
-        'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
+        'accepts' => array('function', 'literal'),
       ),
       'fields' => array(
         'description' => 'The fields that you want to fetch from the node.',
         'cardinality' => array(0, '*'),
-        'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
+        'accepts' => array('function', 'literal'),
       ),
       'fields' => array(
         'description' => 'An array of the fields that you want to fetch from the node.',
         'cardinality' => array(0, '*'),
-        'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
+        'accepts' => array('function', 'literal'),
       ),
       'data' => array(
         'description' => 'An array of the data that you want to send from the node.',
         'cardinality' => array(0, '*'),
-        'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
+        'accepts' => array('function', 'literal'),
       ),
       'objectType' => array(
         'description' => 'The object type that you want to send from the node, i.e. photos.',
         'cardinality' => array(0, '*'),
-        'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
+        'accepts' => array('function', 'literal'),
       ),
     ),
   );
@@ -103,11 +71,11 @@ class Facebook extends Processor\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Endpoint Facebook', 4);
 
-    $appId = $this->val($this->meta->appId);
-    $appSecret = $this->val($this->meta->appSecret);
-    $graphVersion = $this->val($this->meta->graphVersion);
+    $appId = $this->val('appId');
+    $appSecret = $this->val('appSecret');
+    $graphVersion = $this->val('graphVersion');
     $accessToken = $this->_getToken($appId, $appSecret, $graphVersion);
-    $method = strtolower($this->val($this->meta->method));
+    $method = strtolower($this->val('method'));
     if ($method != 'get' && $method != 'post') {
       throw new Core\ApiException('invalid method', 6, $this->id);
     }
@@ -118,7 +86,7 @@ class Facebook extends Processor\ProcessorEntity
       'default_graph_version' => "v$graphVersion",
     ));
 
-    $node = $this->val($this->meta->node);
+    $node = $this->val('node');
 
     return $this->{"_$method"}($fb, $node, $accessToken);
   }
@@ -180,7 +148,7 @@ class Facebook extends Processor\ProcessorEntity
    */
   private function _get($fb, $node, $accessToken)
   {
-    $fields = $this->val($this->meta->fields);
+    $fields = $this->val('fields');
 
     try {
       $response = $fb->get("/$node?fields=" . implode(',', $fields), $accessToken);
@@ -203,8 +171,8 @@ class Facebook extends Processor\ProcessorEntity
    */
   private function _post($fb, $node, $accessToken)
   {
-    $objectType = $this->val($this->meta->objectType);
-    $data = $this->val($this->meta->data);
+    $objectType = $this->val('objectType');
+    $data = $this->val('data');
 
 
     try {

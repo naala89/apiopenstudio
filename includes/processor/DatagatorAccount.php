@@ -41,13 +41,13 @@ class DatagatorAccount extends ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor DatagatorAccount', 4);
 
-    $accountName = $this->val($this->meta->accountName);
+    $accountName = $this->val('accountName');
     $method = $this->request->method;
     $db = $this->getDb();
 
     $uid = '';
     if (!empty($this->meta->username)) {
-      $username = $this->val($this->meta->username);
+      $username = $this->val('username');
       $userMapper = new Db\UserMapper($db);
       $user = $userMapper->findByUsername($username);
       $uid = $user->getUid();

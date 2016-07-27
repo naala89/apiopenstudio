@@ -63,16 +63,16 @@ class VarPersistent extends ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor VarPersistent', 4);
 
-    $name = $this->val($this->meta->name);
-    $strict = !empty($this->meta->strict) ? $this->val($this->meta->strict) : 1;
-    $operation = $this->val($this->meta->operation);
+    $name = $this->val('name');
+    $strict = !empty($this->meta->strict) ? $this->val('strict') : 1;
+    $operation = $this->val('operation');
     $db = $this->getDb();
     $mapper = new Db\VarsMapper($db);
     $vars = $mapper->findByAppIdName($this->request->appId, $name);
 
     switch($operation) {
       case 'save':
-        $val = $this->val($this->meta->value);
+        $val = $this->val('value');
         if ($vars->getId() === NULL) {
           $vars->setName($name);
           $vars->setAppId($this->request->appId);
