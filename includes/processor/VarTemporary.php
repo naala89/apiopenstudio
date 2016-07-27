@@ -63,9 +63,9 @@ class VarTemporary extends ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor VarTemporary', 4);
 
-    $name = $this->val($this->meta->name);
-    $strict = !empty($this->meta->strict) ? $this->val($this->meta->strict) : 1;
-    $operation = $this->val($this->meta->operation);
+    $name = $this->val('name');
+    $strict = !empty($this->meta->strict) ? $this->val('strict') : 1;
+    $operation = $this->val('operation');
 
     switch($operation) {
       case 'save':

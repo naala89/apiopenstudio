@@ -326,17 +326,13 @@ abstract class ResourceBase extends ProcessorEntity
    */
   private function _validateDetails($meta)
   {
-    Core\Debug::variable($meta, 'meta');
     $id = $meta['id'];
 
     $classStr = $this->helper->getProcessorString($meta['function']);
     $class = new $classStr($meta, new Core\Request());
     $details = $class->details();
-    //Core\Debug::variable($details['name'], 'name');
 
     foreach ($details['input'] as $inputKey => $inputDef) {
-      //Core\Debug::variable($inputKey, 'inputkey');
-      //Core\Debug::variable($inputDef, 'inputdef');
       $min = $inputDef['cardinality'][0];
       $max = $inputDef['cardinality'][1];
       $literalAllowed = $inputDef['literalAllowed'];
@@ -355,8 +351,6 @@ abstract class ResourceBase extends ProcessorEntity
           $count = 1;
         } elseif (is_array($input)) {
           foreach ($input as $item) {
-            Core\Debug::variable($item, 'item');
-            Core\Debug::variable($inputDef, 'inputDef');
             if ($this->helper->isProcessor($item)) {
               $this->_validateDetails($item);
             } else {

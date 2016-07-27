@@ -31,7 +31,7 @@ class Fragment extends ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor Fragment', 4);
 
-    $name = $this->val($this->meta->name);
+    $name = $this->val('name');
     $fragments = $this->request->getFragments();
     if (empty($fragments) || empty($fragments->$name)) {
       throw new Core\ApiException("invalid fragment name: $name", $this->id);

@@ -88,10 +88,10 @@ class Twitter extends Processor\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Endpoint Twitter', 4);
 
-    $key = $this->val($this->meta->key);
-    $secret = $this->val($this->meta->secret);
+    $key = $this->val('key');
+    $secret = $this->val('secret');
     $appId = $this->request->appId;
-    $twitterId = $this->val($this->meta->twitterId);
+    $twitterId = $this->val('twitterId');
     $twitterId = empty($twitterId) ? 'twitter' : $twitterId;
     $this->db = $this->getDb();
 
@@ -101,13 +101,13 @@ class Twitter extends Processor\ProcessorEntity
     $token = empty($externalUser->getDataField1()) ? $this->_getToken($key, $secret, $appId, $twitterId) : $externalUser->getDataField1();
 
     // make call
-    $method = $this->val($this->meta->method);
+    $method = $this->val('method');
     if ($method != 'get' && $method != 'post') {
       throw new Core\ApiException('incorrect method', 6, $this->id);
     }
-    $uri = $this->val($this->meta->uri);
+    $uri = $this->val('uri');
     $url = $this->apiUrl . $uri;
-    $options = $this->val($this->meta->options);
+    $options = $this->val('options');
     $parameters = array();
     foreach ($options as $option) {
       $parameters[] = $option;

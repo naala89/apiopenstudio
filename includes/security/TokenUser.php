@@ -46,7 +46,7 @@ class TokenUser extends Processor\ProcessorEntity {
     Core\Debug::variable($this->meta, 'Validator TokenUser', 4);
 
     // no token
-    $token = $this->val($this->meta->token);
+    $token = $this->val('token');
     if (empty($token)) {
       throw new Core\ApiException('permission denied', 4, -1, 401);
     }
@@ -61,7 +61,7 @@ class TokenUser extends Processor\ProcessorEntity {
     }
 
     // check user is in the list of valid users
-    $usernames = $this->val($this->meta->usernames);
+    $usernames = $this->val('usernames');
     if (!is_array($usernames)) {
       $usernames = array($usernames);
     }

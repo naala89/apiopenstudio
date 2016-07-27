@@ -43,7 +43,7 @@ class AuthCookie extends Processor\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Auth Cookie', 4);
 
-    $cookie = $this->val($this->meta->cookie);
+    $cookie = $this->val('cookie');
 
     return array(CURLOPT_COOKIE => $cookie);
   }

@@ -46,8 +46,8 @@ class UserLogin extends ProcessorEntity
   public function process() {
     Core\Debug::variable($this->meta, 'Processor UserLogin', 4);
 
-    $username = $this->val($this->meta->username);
-    $password = $this->val($this->meta->password);
+    $username = $this->val('username');
+    $password = $this->val('password');
     $db = $this->getDb();
     $userMapper = new Db\UserMapper($db);
 

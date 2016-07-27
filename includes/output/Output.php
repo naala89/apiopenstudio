@@ -36,7 +36,7 @@ abstract class Output extends Processor\ProcessorEntity
       if (empty($this->meta->destination)) {
         throw new Core\ApiException('no destinations defined for output', 1,$this->id);
       }
-      $method = $this->val($this->meta->methos);
+      $method = $this->val('method');
       foreach ($this->meta->destination as $destination) {
         $url = $this->val($destination);
         $data = array('data' => $data);

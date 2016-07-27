@@ -30,7 +30,7 @@ class VarUri extends ProcessorEntity
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarUri', 4);
-    $index = $this->val($this->meta->index);
+    $index = $this->val('index');
     $args = $this->request->getArgs();
 
     if (!isset($args[$index])) {

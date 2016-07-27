@@ -68,11 +68,11 @@ class VarRand extends ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor VarRand', 4);
 
-    $length = $this->val($this->meta->length);
-    $lower = $this->val($this->meta->lower);
-    $upper = $this->val($this->meta->upper);
-    $numeric = $this->val($this->meta->numeric);
-    $special = $this->val($this->meta->special);
+    $length = $this->val('length');
+    $lower = $this->val('lower');
+    $upper = $this->val('upper');
+    $numeric = $this->val('numeric');
+    $special = $this->val('special');
 
     return Core\Utilities::random_string($length, $lower, $upper, $numeric, $special);
   }

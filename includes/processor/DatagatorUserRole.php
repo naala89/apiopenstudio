@@ -52,17 +52,17 @@ class DatagatorUserRole extends ProcessorEntity
 
     $db = $this->getDb();
 
-    $username = $this->val($this->meta->username);
+    $username = $this->val('username');
     $userMapper = new Db\UserMapper($db);
     $user = $userMapper->findByUsername($username);
     $uid = $user->getUid();
 
-    $applicationName = $this->val($this->meta->applicationName);
+    $applicationName = $this->val('applicationName');
     $applicationMapper = new Db\ApplicationMapper($db);
     $application = $applicationMapper->findByName($applicationName);
     $appId = $application->getAppId();
 
-    $roleName = $this->val($this->meta->roleName);
+    $roleName = $this->val('roleName');
     $rolemapper = new Db\RoleMapper($db);
     $role = $rolemapper->findByName($roleName);
     $rid = $role->getRid();

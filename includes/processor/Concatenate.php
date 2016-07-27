@@ -31,7 +31,7 @@ class Concatenate extends ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor Concatenate', 4);
 
-    $sources = $this->val($this->meta->sources);
+    $sources = $this->val('sources');
     $result = '';
     foreach ($sources as $source) {
       $result .= (string)$source;

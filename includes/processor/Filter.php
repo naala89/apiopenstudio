@@ -43,11 +43,11 @@ class Filter extends ProcessorEntity
     if (empty($this->meta->values)) {
       return [];
     }
-    $values = $this->val($this->meta->values);
+    $values = $this->val('values');
     if (empty($this->meta->filter)) {
       return $values;
     }
-    $filter = $this->val($this->meta->filter);
+    $filter = $this->val('filter');
 
     $filter = is_array($filter) ? $filter : array($filter);
     $values = is_array($values) ? $values : array($values);

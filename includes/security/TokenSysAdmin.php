@@ -34,7 +34,7 @@ class TokenSysAdmin extends Processor\ProcessorEntity {
     Core\Debug::variable($this->meta, 'Security TokenSysAdmin', 4);
 
     // no token
-    $token = $this->val($this->meta->token);
+    $token = $this->val('token');
     if (empty($token)) {
       throw new Core\ApiException('permission denied', 4, -1, 401);
     }

@@ -86,7 +86,7 @@ class DatagatorUser extends ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor DatagatorUser', 4);
 
-    $username = $this->val($this->meta->username);
+    $username = $this->val('username');
     $method = $this->request->method;
     $db = $this->getDb();
 
@@ -96,14 +96,14 @@ class DatagatorUser extends ProcessorEntity
     switch ($method) {
       case 'post':
         $user->setUsername($username);
-        $active = $this->val($this->meta->active);
+        $active = $this->val('active');
         $active = !empty($active) ? $active : 1;
         $user->setActive($active);
-        $user->setEmail($this->val($this->meta->email));
-        $user->setHonorific($this->val($this->meta->honorific));
-        $user->setNameFirst($this->val($this->meta->nameFirst));
-        $user->setNameLast($this->val($this->meta->nameLast));
-        $user->setCompany($this->val($this->meta->company));
+        $user->setEmail($this->val('email'));
+        $user->setHonorific($this->val('honorific'));
+        $user->setNameFirst($this->val('nameFirst'));
+        $user->setNameLast($this->val('nameLast'));
+        $user->setCompany($this->val('company'));
         return $userMapper->save($user);
         break;
       case 'get':
