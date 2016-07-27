@@ -19,17 +19,29 @@ class Merge extends ProcessorEntity
       'sources' => array(
         'description' => 'The data-sets to merge on.',
         'cardinality' => array(2, '*'),
-        'accepts' => array('function', 'literal')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array(),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'mergeType' => array(
         'description' => 'The merge operation to perform. The default is union.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', '"union"', '"intersect"', '"difference"')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array('union', 'intersect', 'difference'),
+        'default' => ''
       ),
       'unique' => array(
         'description' => 'Filter out duplicate values. The default is false.',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', '"true"', '"false"')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('boolean'),
+        'limitValues' => array(),
+        'default' => true
       ),
     ),
   );

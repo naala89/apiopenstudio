@@ -30,7 +30,11 @@ class AuthCookie extends Processor\ProcessorEntity
       'cookie' => array(
         'description' => 'The cookie.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );

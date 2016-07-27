@@ -18,12 +18,20 @@ class Filter extends ProcessorEntity
       'values' => array(
         'description' => 'The data-set to filter.',
         'cardinality' => array(0, '*'),
-        'accepts' => array('function', 'literal')
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('object', 'array'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'filter' => array(
         'description' => 'The values to filter out. These are keys if values contains Fields, otherwise values.',
         'cardinality' => array(0, '*'),
-        'accepts' => array('function', 'literal')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );

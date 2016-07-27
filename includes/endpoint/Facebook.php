@@ -21,42 +21,74 @@ class Facebook extends Processor\ProcessorEntity
       'appId' => array(
         'description' => 'The app_id that you will be accessing facebook with.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'appSecret' => array(
         'description' => 'The app_secret that you will be accessing facebook with.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'graphVersion' => array(
         'description' => 'The version of graph to use (do not prefix with "v", e.g. use "2.4").',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'float'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'node' => array(
         'description' => 'The node or edge that you want to fetch or post to facebook.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'fields' => array(
         'description' => 'The fields that you want to fetch from the node.',
         'cardinality' => array(0, '*'),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'fields' => array(
         'description' => 'An array of the fields that you want to fetch from the node.',
         'cardinality' => array(0, '*'),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'data' => array(
         'description' => 'An array of the data that you want to send from the node.',
         'cardinality' => array(0, '*'),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'objectType' => array(
         'description' => 'The object type that you want to send from the node, i.e. photos.',
         'cardinality' => array(0, '*'),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );

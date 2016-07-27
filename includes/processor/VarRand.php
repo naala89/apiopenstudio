@@ -18,27 +18,47 @@ class VarRand extends ProcessorEntity
       'length' => array(
         'description' => 'The length of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'integer')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('integer'),
+        'limitValues' => array(),
+        'default' => 8
       ),
       'lower' => array(
         'description' => 'Use lower-case alpha characters.',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'boolean')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('boolean'),
+        'limitValues' => array(),
+        'default' => true
       ),
       'upper' => array(
         'description' => 'Use upper-case alpha characters.',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'boolean')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('boolean'),
+        'limitValues' => array(),
+        'default' => true
       ),
       'numeric' => array(
         'description' => 'Use numeric characters.',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'boolean')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('boolean'),
+        'limitValues' => array(),
+        'default' => true
       ),
       'special' => array(
         'description' => 'Use special characters.',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'boolean')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('boolean'),
+        'limitValues' => array(),
+        'default' => true
       ),
     ),
   );

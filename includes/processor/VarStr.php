@@ -18,7 +18,11 @@ class VarStr extends VarMixed
       'value' => array(
         'description' => 'The value of the variable.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'string')
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );

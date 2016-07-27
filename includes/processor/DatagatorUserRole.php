@@ -19,17 +19,29 @@ class DatagatorUserRole extends ProcessorEntity
       'username' => array(
         'description' => 'The username of the user.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'string'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'applicationName' => array(
         'description' => 'the application name for the user/role.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'string'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'roleName' => array(
         'description' => 'The role name for the user in the application.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'string'),
+        'literalAllowed' => false,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
     ),
   );
