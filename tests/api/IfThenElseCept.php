@@ -125,9 +125,10 @@ $I->callResourceFromYaml(array('lhs' => 100, 'rhs' => 100, 'operator' => '<='));
 $I->seeResponseCodeIs(200);
 $I->seeResponseContains('true');
 
+
 $I->wantTo('test IfThenElse for bad operator and see result');
 $I->callResourceFromYaml(array('lhs' => 100, 'rhs' => 100, 'operator' => '>>'));
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson(["error" => ["code" => 1, "message" => "Invalid operator: >>.", "id" => 3]]);
+$I->seeResponseContainsJson(["error" => ["code" => 1, "message" => "Invalid value (>>). Only '==', '!=', '>', '>=', '<', '<=' allowed.", "id" => 3]]);
 
 $I->tearDownTestFromYaml();

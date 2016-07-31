@@ -18,9 +18,9 @@ class Filter extends ProcessorEntity
       'values' => array(
         'description' => 'The data-set to filter.',
         'cardinality' => array(0, '*'),
-        'literalAllowed' => false,
+        'literalAllowed' => true,
         'limitFunctions' => array(),
-        'limitTypes' => array('object', 'array'),
+        'limitTypes' => array('object', 'string', 'number'),
         'limitValues' => array(),
         'default' => ''
       ),
