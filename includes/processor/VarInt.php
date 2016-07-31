@@ -2,6 +2,9 @@
 
 /**
  * variable type integer
+ *
+ * This is a special case, we cannot use val(), because it validates type before it can be cast.
+ * thus get vars, etc will always fail.
  */
 
 namespace Datagator\Processor;
@@ -31,6 +34,18 @@ class VarInt extends VarMixed
   {
     Core\Debug::variable($this->meta, 'Processor VarInt', 4);
 
-    return parent::process();
+    if (empty($this->meta->value)) {
+      throw new ApiException('input empty',2 , $this->id, 500);
+    }
+
+    $result = $this->meta->value;
+    if ($this->_checkInt($result)) {
+      return (intval($result));
+    }
+    throw new ApiException('integer required',2 , $this->id, 500);
+  }
+
+  public function _checkInt($var) {
+    return null !== filter_var($var, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
   }
 }
