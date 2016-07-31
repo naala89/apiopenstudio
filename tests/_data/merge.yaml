@@ -36,6 +36,9 @@ process:
     id: 6
     name: mergeType
   unique:
-    function: varGet
+    function: varBool
     id: 6
-    name: unique
+    value:
+      function: varGet
+      id: 6
+      name: unique

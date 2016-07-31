@@ -10,7 +10,7 @@ $I->callResourceFromYaml(['mergeType' => 'union']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(["val1","val2","val3","val4","val1","val5","val6","val7","val8"]);
-
+/*
 $I->wantTo('perform a merge of type union with unique set and see result');
 $I->callResourceFromYaml(['mergeType' => 'union', 'unique' => 'true']);
 $I->seeResponseCodeIs(200);
@@ -30,3 +30,4 @@ $I->seeResponseIsJson();
 $I->seeResponseContainsJson(["val2","val3","val4","val5","val6","val7","val8"]);
 
 $I->tearDownTestFromYaml();
+*/

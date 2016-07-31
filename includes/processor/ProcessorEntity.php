@@ -210,16 +210,16 @@ abstract class ProcessorEntity
    * Validate an input for allowed values
    *
    * @param $val
-   * @param array $allowed
+   * @param array $limitValues
    * @throws \Datagator\Core\ApiException
    */
-  private function _validateAllowedValues($val, array $allowed)
+  private function _validateAllowedValues($val, array $limitValues)
   {
-    if (empty($allowed)) {
+    if (empty($limitValues)) {
       return;
     }
-    if (!in_array($val, $allowed)) {
-      throw new Core\ApiException("invalid value ($val). Only '" . implode("', '",$allowed) . "' allowed", 1, $this->id);
+    if (!in_array($val, $limitValues)) {
+      throw new Core\ApiException("invalid value ($val). Only '" . implode("', '",$limitValues) . "' allowed", 1, $this->id);
     }
   }
 
@@ -227,17 +227,19 @@ abstract class ProcessorEntity
    * Validate an input for allowed variable types
    *
    * @param $val
-   * @param array $types
+   * @param array $limitTypes
    * @throws \Datagator\Core\ApiException
    */
-  private function _validateAllowedTypes($val, array $types)
+  private function _validateAllowedTypes($val, array $limitTypes)
   {
-    if (empty($types)) {
+    Core\Debug::variable($val);
+    Core\Debug::variable($limitTypes);
+    if (empty($limitTypes)) {
       return;
     }
     $type = gettype($val);
-    if (!in_array($type, $types)) {
-      throw new Core\ApiException("invalid value type ($type), only '" . implode("', '",$types) . "' allowed", 1, $this->id);
+    if (!in_array($type, $limitTypes)) {
+      throw new Core\ApiException("invalid value type ($type), only '" . implode("', '",$limitTypes) . "' allowed", 1, $this->id);
     }
   }
 

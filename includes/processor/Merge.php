@@ -51,8 +51,8 @@ class Merge extends ProcessorEntity
     Core\Debug::variable($this->meta, 'processor Merge', 4);
 
     $sources = $this->val('sources');
-    $unique = !empty($this->meta->unique) ? $this->val('unique') == 'true' : false;
-    $mergeType = !empty($this->meta->mergeType) ? $this->val('mergeType') : $this->_defaultType;
+    $unique = empty($this->meta->unique) ? $this->details['input']['unique']['default'] : boolval($this->meta->unique);
+    $mergeType = $this->val('mergeType');
     $method = '_' . strtolower(trim($mergeType));
 
     if (!method_exists($this, $method)) {

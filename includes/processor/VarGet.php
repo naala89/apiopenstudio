@@ -44,10 +44,10 @@ class VarGet extends VarMixed
     $vars = $this->request->getGetVars();
 
     if (isset($vars[$name])) {
-      return new Core\Text($vars[$name]);
+      return $vars[$name];
     }
     if ($this->val('nullable')) {
-      return new Core\Text('');
+      return '';
     }
     throw new Core\ApiException("post var $name not available", 1, $this->id);
   }
