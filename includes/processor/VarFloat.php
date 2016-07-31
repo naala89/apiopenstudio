@@ -2,6 +2,9 @@
 
 /**
  * Variable type float.
+ *
+ * This is a special case, we cannot use val(), because it validates type before it can be cast.
+ * thus get vars, etc will always fail.
  */
 
 namespace Datagator\Processor;
@@ -29,8 +32,20 @@ class VarFloat extends VarMixed
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor VarFloat');
+    Core\Debug::variable($this->meta, 'Processor VarFloat', 4);
 
-    return parent::process();
+    if (empty($this->meta->value)) {
+      throw new ApiException('input empty',2 , $this->id, 500);
+    }
+
+    $result = $this->meta->value;
+    if ($this->_checkFloat($result)) {
+      return (floatval($result));
+    }
+    throw new ApiException('float required',2 , $this->id, 500);
+  }
+
+  public function _checkFloat($var) {
+    return null !== filter_var($var, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
   }
 }

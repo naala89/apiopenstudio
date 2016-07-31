@@ -32,6 +32,8 @@ class VarBool extends VarMixed
 
   public function process()
   {
+    Core\Debug::variable($this->meta, 'Processor VarBool', 4);
+
     if (empty($this->meta->value)) {
       throw new ApiException('input empty',2 , $this->id, 500);
     }
