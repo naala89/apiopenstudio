@@ -51,7 +51,8 @@ class Merge extends ProcessorEntity
     Core\Debug::variable($this->meta, 'processor Merge', 4);
 
     $sources = $this->val('sources');
-    $unique = empty($this->meta->unique) ? $this->details['input']['unique']['default'] : boolval($this->meta->unique);
+    $unique = !isset($this->meta->unique) ? $this->details['input']['unique']['default'] : $this->meta->unique;
+    Core\Debug::variable($unique, 'unique in merge');
     $mergeType = $this->val('mergeType');
     $method = '_' . strtolower(trim($mergeType));
 
@@ -59,7 +60,7 @@ class Merge extends ProcessorEntity
       throw new Core\ApiException("invalid mergeType: $mergeType", 6, $this->id, 407);
     }
 
-    if ($unique) {
+    if ($unique === true) {
       return array_unique($this->$method($sources));
     }
     return $this->$method($sources);

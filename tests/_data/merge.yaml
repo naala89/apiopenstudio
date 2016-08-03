@@ -33,11 +33,11 @@ process:
       - val8
   mergeType:
     function: varGet
-    id: 6
+    id: 4
     name: mergeType
   unique:
     function: varBool
-    id: 6
+    id: 5
     value:
       function: varGet
       id: 6

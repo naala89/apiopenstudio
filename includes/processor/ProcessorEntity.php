@@ -232,8 +232,6 @@ abstract class ProcessorEntity
    */
   private function _validateAllowedTypes($val, array $limitTypes)
   {
-    Core\Debug::variable($val);
-    Core\Debug::variable($limitTypes);
     if (empty($limitTypes)) {
       return;
     }
