@@ -14,6 +14,7 @@ class Image extends Output
 {
   protected $details = array(
     'name' => 'Image',
+    'machineName' => 'image',
     'description' => 'Output in image format. The data fed into the output can be a URL (must start with http) or an input filename.',
     'menu' => 'Output',
     'application' => 'Common',

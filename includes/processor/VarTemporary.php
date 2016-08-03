@@ -12,6 +12,7 @@ class VarTemporary extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Temporary)',
+    'machineName' => 'varTemporary',
     'description' => 'A temporarily stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time during your resource call. The value can be deleted, updated and fetched in future resource..',
     'menu' => 'Primitive',
     'application' => 'Common',

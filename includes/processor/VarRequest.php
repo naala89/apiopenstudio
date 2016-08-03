@@ -11,6 +11,7 @@ class VarRequest extends VarMixed
 {
   protected $details = array(
     'name' => 'Var (Request)',
+    'machineName' => 'varRequest',
     'description' => 'A "get" or "post" variable. It fetches a variable from the get or post requests.',
     'menu' => 'Primitive',
     'application' => 'Common',

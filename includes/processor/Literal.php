@@ -11,6 +11,7 @@ class Literal extends ProcessorEntity {
 
   protected $details = array(
     'name' => 'Literal',
+    'machineName' => 'literal',
     'description' => 'A literal string or value. This accepts only string or number values',
     'menu' => 'Primitive',
     'application' => 'Common',

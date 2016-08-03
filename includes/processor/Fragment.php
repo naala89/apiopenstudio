@@ -11,6 +11,7 @@ class Fragment extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'Fragment',
+    'machineName' => 'fragment',
     'description' => 'Insert the result of a fragment declaration.',
     'menu' => 'Common',
     'application' => 'Common',

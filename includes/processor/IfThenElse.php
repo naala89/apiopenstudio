@@ -11,6 +11,7 @@ class IfThenElse extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'If Then Else',
+    'machineName' => 'ifThenElse',
     'description' => 'An if then else logic gate.',
     'menu' => 'Logic',
     'application' => 'Common',

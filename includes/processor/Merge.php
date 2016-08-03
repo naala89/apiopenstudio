@@ -12,6 +12,7 @@ class Merge extends ProcessorEntity
   private $_defaultType = 'union';
   protected $details = array(
     'name' => 'Merge',
+    'machineName' => 'merge',
     'description' => 'Merge multiple data-sets.',
     'menu' => 'Operation',
     'application' => 'Common',

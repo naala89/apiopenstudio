@@ -22,6 +22,7 @@ class TokenConsumer extends Token {
   protected $role = 'consumer';
   protected $details = array(
     'name' => 'Token (Consumer)',
+    'machineName' => 'tokenConsumer',
     'description' => 'Validate the request, requiring the consumer to have a valid token and a role of consumer for application referenced by the appId in the URI.',
     'menu' => 'Security',
     'application' => 'Common',

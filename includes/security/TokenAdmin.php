@@ -13,6 +13,7 @@ class TokenAdmin extends Token {
   protected $role = 'admin';
   protected $details = array(
     'name' => 'Token (Admin)',
+    'machineName' => 'tokenAdmin',
     'description' => 'Validate the request, requiring the consumer to have a valid token and a role of admin for application referenced by the appId in the URI.',
     'menu' => 'Security',
     'application' => 'Common',

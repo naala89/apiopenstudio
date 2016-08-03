@@ -11,6 +11,7 @@ class VarStr extends VarMixed
 {
   protected $details = array(
     'name' => 'Var (String)',
+    'machineName' => 'varStr',
     'description' => 'A string variable. It validates the input and returns an error if it is not a string.',
     'menu' => 'Primitive',
     'application' => 'Common',

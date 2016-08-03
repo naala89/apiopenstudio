@@ -25,6 +25,7 @@ class AuthUserPwd extends Processor\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Auth (User/Pass)',
+    'machineName' => 'authUserPwd',
     'description' => 'Authentication for remote server, using username/password.',
     'menu' => 'Authentication',
     'application' => 'Common',

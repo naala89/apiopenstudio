@@ -7,6 +7,7 @@ class Text extends Output
   protected $header = 'Content-Type:text/text';
   protected $details = array(
     'name' => 'Text',
+    'machineName' => 'text',
     'description' => 'Output in text format.',
     'menu' => 'Output',
     'application' => 'Common',

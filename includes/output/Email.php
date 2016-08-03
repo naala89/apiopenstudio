@@ -14,6 +14,7 @@ class Email extends Output
   );
   protected $details = array(
     'name' => 'Email',
+    'machineName' => 'email',
     'description' => 'Output in email format.',
     'menu' => 'Output',
     'application' => 'Common',

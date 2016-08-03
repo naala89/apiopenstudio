@@ -13,11 +13,36 @@ $I->seeResponseMatchesJsonType([
   'application' => 'string',
   'input' => 'array',
 ]);
+/*
+  {
+    "name": "Auth (Cookie)",
+    "description": "Authentication for remote server, using a cookie.",
+    "menu": "Authentication",
+    "application": "Common",
+    "input": {
+      "cookie": {
+        "description": "The cookie.",
+        "cardinality": [
+          1,
+          1
+        ],
+        "literalAllowed": false,
+        "limitFunctions": [],
+        "limitTypes": [
+          "string"
+        ],
+        "limitValues": [],
+        "default": ""
+      }
+    }
+  },
+*/
 foreach (\GuzzleHttp\json_decode($I->getResponse()) as $processor) {
-  foreach ($processor->input as $inputName => $inputDetails) {
-    if (empty($inputDetails->description)) {
+  foreach ($processor->input as $input) {
+    if (empty($inputDetails->name)) {
       \PHPUnit_Framework_Assert::assertTrue(false,  'the processor: ' . $processor->name . " is missing a description on its input: $inputName");
     }
+    /*
     if (empty($inputDetails->cardinality)) {
       \PHPUnit_Framework_Assert::assertTrue(false,  'the processor: ' . $processor->name . " is missing cardinality on its input: $inputName");
     }
@@ -42,5 +67,6 @@ foreach (\GuzzleHttp\json_decode($I->getResponse()) as $processor) {
     if (empty($inputDetails->accepts)) {
       \PHPUnit_Framework_Assert::assertTrue(false,  'the processor: ' . $processor->name . " is missing an accepts on its input: $inputName");
     }
+    */
   }
 }

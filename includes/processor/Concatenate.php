@@ -11,6 +11,7 @@ class Concatenate extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'Concatenate',
+    'machineName' => 'concatenate',
     'description' => 'Concatenate a series of strings or numbers into a single value.',
     'menu' => 'Operation',
     'application' => 'Common',

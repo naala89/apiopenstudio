@@ -12,6 +12,7 @@ class ProcessorsAll extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'processors (all)',
+    'machineName' => 'processorsAll',
     'description' => 'Fetch data on all processors available to your application.',
     'menu' => 'System',
     'application' => 'Common',

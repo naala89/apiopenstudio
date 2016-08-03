@@ -13,6 +13,7 @@ class TokenDeveloper extends Token {
   protected $role = 'developer';
   protected $details = array(
     'name' => 'Token (Developer)',
+    'machineName' => 'tokenDeveloper',
     'description' => 'Validate the request, requiring the consumer to have a valid token and a role of developer for application referenced by the appId in the URI.',
     'menu' => 'Security',
     'application' => 'Common',

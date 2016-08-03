@@ -14,6 +14,7 @@ class TokenSysAdmin extends Processor\ProcessorEntity {
   protected $role = 'SysAdmin';
   protected $details = array(
     'name' => 'Token (SysAdmin)',
+    'machineName' => 'tokenSysAdmin',
     'description' => 'Validate the request, requiring the consumer to have a valid token and a role of sys-admin for application referenced by the appId in the URI.',
     'menu' => 'Security',
     'application' => 'Common',

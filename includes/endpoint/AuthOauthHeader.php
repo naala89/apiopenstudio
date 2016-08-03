@@ -23,6 +23,7 @@ class AuthOAuthHeader extends Processor\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Auth (o-auth header)',
+    'machineName' => 'authOAuthHeader',
     'description' => 'Authentication for remote server, using OAuth signature in the header.',
     'menu' => 'Authentication',
     'application' => 'Common',

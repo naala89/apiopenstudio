@@ -13,6 +13,7 @@ class TokenRole extends Token {
 
   protected $details = array(
     'name' => 'Token (Role)',
+    'machineName' => 'tokenRole',
     'description' => 'Validate the request, requiring the consumer to have a valid token and a declared role.',
     'menu' => 'Security',
     'application' => 'Common',

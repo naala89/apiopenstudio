@@ -12,6 +12,7 @@ class ResourceSwagger extends ResourceBase
 {
   protected $details = array(
     'name' => 'Import Swagger',
+    'machineName' => 'resourceSwagger',
     'description' => 'Create a custom API resource using a Swagger YAML document.',
     'menu' => 'Resource',
     'application' => 'Common',

@@ -16,6 +16,7 @@ class Twitter extends Processor\ProcessorEntity
   private $db;
   protected $details = array(
     'name' => 'Twitter',
+    'machineName' => 'twitter',
     'description' => 'Fetch results from the Twitter API.',
     'menu' => 'Endpoint',
     'application' => 'Common',

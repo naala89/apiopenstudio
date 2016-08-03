@@ -14,6 +14,7 @@ class Xml extends Output
   protected $header = 'Content-Type:application/xml';
   protected $details = array(
     'name' => 'Xml',
+    'machineName' => 'xml',
     'description' => 'Output in XML format.',
     'menu' => 'Output',
     'application' => 'Common',

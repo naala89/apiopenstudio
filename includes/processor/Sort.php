@@ -11,6 +11,7 @@ class Sort extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'Sort',
+    'machineName' => 'sort',
     'description' => 'Sort an input of multiple values. The values can be singular items or name/value pairs (sorted by key or value). Singular items cannot be mixed with name/value pairs.',
     'menu' => 'Logic',
     'application' => 'Common',

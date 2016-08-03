@@ -11,6 +11,7 @@ class VarUri extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (URI)',
+    'machineName' => 'varUri',
     'description' => 'A value from the request URI. It fetches the value of a particular param in the URI, based on the index value.',
     'menu' => 'Primitive',
     'application' => 'Common',
