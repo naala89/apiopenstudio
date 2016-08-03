@@ -8,6 +8,7 @@ class Json extends Output
   protected $header = 'Content-Type: application/json';
   protected $details = array(
     'name' => 'Json',
+    'machineName' => 'json',
     'description' => 'Output in JSON format.',
     'menu' => 'Output',
     'application' => 'Common',

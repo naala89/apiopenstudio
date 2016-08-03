@@ -14,6 +14,7 @@ class VarInt extends VarMixed
 {
   protected $details = array(
     'name' => 'Var (Integer)',
+    'machineName' => 'varInt',
     'description' => 'An integer variable. It validates the input and returns an error if it is not a integer.',
     'menu' => 'Primitive',
     'application' => 'Common',

@@ -14,6 +14,7 @@ class Facebook extends Processor\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Facebook',
+    'machineName' => 'facebook',
     'description' => 'Fetch results from facebook Graph API.',
     'menu' => 'Endpoint',
     'application' => 'Common',

@@ -26,6 +26,7 @@ class LoginStoreDrupal extends ProcessorEntity
   private $defaultEntity = 'drupal';
   protected $details = array(
     'name' => 'Login Store Drupal',
+    'machineName' => 'loginStoreDrupal',
     'description' => 'Login the user Stores the access details from a users login to a remote drupal site for future use.',
     'menu' => 'External',
     'application' => 'Common',

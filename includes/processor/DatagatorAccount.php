@@ -12,6 +12,7 @@ class DatagatorAccount extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'Datagator Account',
+    'machineName' => 'datagatorAccount',
     'description' => 'CRUD operations for Datagator accounts.',
     'menu' => 'Admin',
     'application' => 'Admin',

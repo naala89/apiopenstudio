@@ -14,6 +14,7 @@ class VarBool extends VarMixed
 {
   protected $details = array(
     'name' => 'Var (Boolean)',
+    'machineName' => 'varBool',
     'description' => 'A boolean variable. It validates the input and returns an error if it is not a boolean. Possible input',
     'menu' => 'Primitive',
     'application' => 'Common',

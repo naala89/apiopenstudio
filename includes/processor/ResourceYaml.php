@@ -19,6 +19,7 @@ class ResourceYaml extends ResourceBase
   public function __construct($meta, $request)
   {
     $this->request['name'] = 'Resource (Yaml)';
+    $this->request['machineName'] = 'resourceYaml';
     $this->request['description'] = 'Create edit or fetch a custom API resource for the application in YAML form.';
     parent::__construct($meta, $request);
   }

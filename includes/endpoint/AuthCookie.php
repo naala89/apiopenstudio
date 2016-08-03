@@ -23,6 +23,7 @@ class AuthCookie extends Processor\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Auth (Cookie)',
+    'machineName' => 'authCookie',
     'description' => 'Authentication for remote server, using a cookie.',
     'menu' => 'Authentication',
     'application' => 'Common',

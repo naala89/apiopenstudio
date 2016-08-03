@@ -11,6 +11,7 @@ class Filter extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'Filter',
+    'machineName' => 'filter',
     'description' => 'Filter values from a data-set.',
     'menu' => 'Operation',
     'application' => 'Common',

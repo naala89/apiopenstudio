@@ -5,7 +5,6 @@
  */
 
 namespace Datagator\Processor;
-use Codeception\Util\Debug;
 use Datagator\Core;
 use Datagator\Db;
 
@@ -15,6 +14,7 @@ abstract class ResourceBase extends ProcessorEntity
   protected $helper;
   protected $details = array(
     'name' => 'Resource',
+    'machineName' => 'resourceBase',
     'description' => 'Create, edit or fetch a custom API resource for the application. NOTE: in the case of DELETE, the args for the input should be as GET vars - POST vars are not guaranteed on all servers with this method.',
     'menu' => 'Resource',
     'application' => 'Common',

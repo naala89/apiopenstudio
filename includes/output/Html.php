@@ -7,6 +7,7 @@ class Html extends Xml
   protected $header = 'Content-Type:text/html';
   protected $details = array(
     'name' => 'Html',
+    'machineName' => 'html',
     'description' => 'Output in HTML format.',
     'menu' => 'Output',
     'application' => 'Common',

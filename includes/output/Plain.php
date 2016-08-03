@@ -7,6 +7,7 @@ class Plain extends Text
   protected $header = 'Content-Type:text/plain';
   protected $details = array(
     'name' => 'Plain',
+    'machineName' => 'plain',
     'description' => 'Output in plain-text format.',
     'menu' => 'Output',
     'application' => 'Common',

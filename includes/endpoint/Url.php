@@ -12,6 +12,7 @@ class Url extends Processor\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Url',
+    'machineName' => 'url',
     'description' => 'Fetch the result form an external URL.',
     'menu' => 'Endpoint',
     'application' => 'Common',

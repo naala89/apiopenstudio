@@ -11,6 +11,7 @@ class VarPost extends VarMixed
 {
   protected $details = array(
     'name' => 'Var (Post)',
+    'machineName' => 'varPost',
     'description' => 'A "post" variable. It fetches a variable from the post request.',
     'menu' => 'Primitive',
     'application' => 'Common',

@@ -12,6 +12,7 @@ class VarPersistent extends ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Persistent)',
+    'machineName' => 'varPersistent',
     'description' => 'A persistently stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time. The value can be deleted, updated and fetched in future resource and Processor calls.',
     'menu' => 'Primitive',
     'application' => 'Common',

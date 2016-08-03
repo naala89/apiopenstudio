@@ -13,6 +13,7 @@ class Token extends Processor\ProcessorEntity {
   protected $role = false;
   protected $details = array(
     'name' => 'Token',
+    'machineName' => 'token',
     'description' => 'Validate the request, requiring the consumer to have a valid token.',
     'menu' => 'Security',
     'application' => 'Common',

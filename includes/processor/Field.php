@@ -10,7 +10,8 @@ use Datagator\Core;
 class Field extends ProcessorEntity
 {
   protected $details = array(
-    'name' => 'Field',
+    'name' => 'field',
+    'machineName' => 'url',
     'description' => 'Create a name value pair. This is primarily for use as a field in object.',
     'menu' => 'Primitive',
     'application' => 'Common',

@@ -19,6 +19,7 @@ class ResourceJson extends ResourceBase
   public function __construct($meta, $request)
   {
     $this->request['name'] = 'Resource (JSON)';
+    $this->request['machineName'] = 'resourceJson';
     $this->request['description'] = 'Create edit or fetch a custom API resource for the application in JSON form.';
     parent::__construct($meta, $request);
   }

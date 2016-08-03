@@ -11,6 +11,7 @@ class VarGet extends VarMixed
 {
   protected $details = array(
     'name' => 'Var (Get)',
+    'machineName' => 'varGet',
     'description' => 'A "get" variable. It fetches a variable from the get request.',
     'menu' => 'Primitive',
     'application' => 'Common',

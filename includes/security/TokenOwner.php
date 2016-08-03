@@ -15,6 +15,7 @@ class TokenOwner extends Processor\ProcessorEntity {
   protected $role = 'owner';
   protected $details = array(
     'name' => 'Token (Admin)',
+    'machineName' => 'tokenOwner',
     'description' => 'Validate the request, requiring the consumer to have a valid token and a role of owner. In order to validate correctly, the usual appId in the URL is replaced with accId',
     'menu' => 'Security',
     'application' => 'Common',

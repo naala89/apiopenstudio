@@ -13,6 +13,7 @@ class TokenUser extends Processor\ProcessorEntity {
   protected $role = false;
   protected $details = array(
     'name' => 'Token (User)',
+    'machineName' => 'tokenUser',
     'description' => 'Validate the request by user and token, only allowing specific users to use the resource.',
     'menu' => 'Security',
     'application' => 'Common',
