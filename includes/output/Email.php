@@ -20,24 +20,40 @@ class Email extends Output
     'application' => 'Common',
     'input' => array(
       'to' => array(
-        'description' => 'A single or array of emails to send the results to.',
+        'description' => 'Destination emails for the output.',
         'cardinality' => array(1, '*'),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'from' => array(
         'description' => 'From email address for the email.',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'subject' => array(
         'description' => 'Subject for the email.',
         'cardinality' => array(0, 1),
-        'accepts' => array('function', 'literal'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
       ),
       'format' => array(
         'description' => 'Format for the results to be formatted into.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', '"json"', '"html"', '"xml"', '"text"'),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array('json', 'html', 'xml', 'text'),
+        'default' => 'json'
       ),
     ),
   );
