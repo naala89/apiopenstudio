@@ -48,6 +48,9 @@ process:
     id: 6
     name: direction
   sortByValue:
-    function: varGet
-    id: 6
-    name: sortByValue
+    function: varBool
+    id: 7
+    value:
+      function: varGet
+      id: 6
+      name: sortByValue

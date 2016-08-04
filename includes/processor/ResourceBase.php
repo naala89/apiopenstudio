@@ -365,7 +365,9 @@ abstract class ResourceBase extends ProcessorEntity
           throw new Core\ApiException("literals not allowed as input", 6, $id, 406);
         } else {
           if (!empty($limitValues) && !in_array($input, $limitValues)) {
-            throw new Core\ApiException("invalid value in $inputKey: " . $input, 6, $id, 406);
+            Core\Debug::variable($input);
+            Core\Debug::variable($limitValues);
+            throw new Core\ApiException("invalid value type in $inputKey: " . $input, 6, $id, 406);
           }
           if (!empty($limitTypes)) {
             $this->_validateTypeValue($input, $limitTypes);
