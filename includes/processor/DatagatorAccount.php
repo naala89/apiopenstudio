@@ -20,7 +20,7 @@ class DatagatorAccount extends ProcessorEntity
       'accountName' => array(
         'description' => 'The name of the account.',
         'cardinality' => array(1, 1),
-        'literalAllowed' => false,
+        'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array(),
@@ -29,7 +29,7 @@ class DatagatorAccount extends ProcessorEntity
       'username' => array(
         'description' => 'The username to associate with the account.',
         'cardinality' => array(0, 1),
-        'literalAllowed' => false,
+        'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array(),
