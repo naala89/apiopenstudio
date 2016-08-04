@@ -22,7 +22,7 @@ class DatagatorApplication extends ProcessorEntity
       'applicationName' => array(
         'description' => 'The name of the application.',
         'cardinality' => array(1, 1),
-        'literalAllowed' => false,
+        'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array(),
@@ -31,7 +31,7 @@ class DatagatorApplication extends ProcessorEntity
       'accountName' => array(
         'description' => 'The name of the account.',
         'cardinality' => array(0, 1),
-        'literalAllowed' => false,
+        'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array(),

@@ -14,30 +14,7 @@ $I->seeResponseMatchesJsonType([
   'application' => 'string',
   'input' => 'array',
 ]);
-/*
-  {
-    "name": "Auth (Cookie)",
-    "description": "Authentication for remote server, using a cookie.",
-    "menu": "Authentication",
-    "application": "Common",
-    "input": {
-      "cookie": {
-        "description": "The cookie.",
-        "cardinality": [
-          1,
-          1
-        ],
-        "literalAllowed": false,
-        "limitFunctions": [],
-        "limitTypes": [
-          "string"
-        ],
-        "limitValues": [],
-        "default": ""
-      }
-    }
-  },
-*/
+
 foreach (\GuzzleHttp\json_decode($I->getResponse()) as $index => $processor) {
   if (empty($processor->name)) {
     \PHPUnit_Framework_Assert::assertTrue(false,  'the processor: ' . $index . ' is missing a name in its details in its details.');

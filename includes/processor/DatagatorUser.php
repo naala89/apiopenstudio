@@ -20,7 +20,7 @@ class DatagatorUser extends ProcessorEntity
       'username' => array(
         'description' => 'The username of the user.',
         'cardinality' => array(1, 1),
-        'literalAllowed' => false,
+        'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array(),
@@ -29,7 +29,7 @@ class DatagatorUser extends ProcessorEntity
       'active' => array(
         'description' => 'The status of the user account. Only used for creating user',
         'cardinality' => array(0, 1),
-        'literalAllowed' => false,
+        'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('boolean'),
         'limitValues' => array(),
@@ -38,7 +38,7 @@ class DatagatorUser extends ProcessorEntity
       'email' => array(
         'description' => 'The email of the user. Only used for creating user',
         'cardinality' => array(0, 1),
-        'literalAllowed' => false,
+        'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array(),
@@ -47,7 +47,7 @@ class DatagatorUser extends ProcessorEntity
       'honorific' => array(
         'description' => 'The honorific of the user. Only used for creating user',
         'cardinality' => array(0, 1),
-        'literalAllowed' => false,
+        'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array(),
@@ -56,7 +56,7 @@ class DatagatorUser extends ProcessorEntity
       'nameFirst' => array(
         'description' => 'The first name of the user. Only used for creating user',
         'cardinality' => array(0, 1),
-        'literalAllowed' => false,
+        'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array(),
@@ -65,7 +65,7 @@ class DatagatorUser extends ProcessorEntity
       'nameLast' => array(
         'description' => 'The last name of the user. Only used for creating user',
         'cardinality' => array(0, 1),
-        'literalAllowed' => false,
+        'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array(),
@@ -74,7 +74,7 @@ class DatagatorUser extends ProcessorEntity
       'company' => array(
         'description' => 'The company of the user Only used for creating user',
         'cardinality' => array(0, 1),
-        'literalAllowed' => false,
+        'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array(),

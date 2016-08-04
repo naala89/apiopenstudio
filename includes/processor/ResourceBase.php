@@ -267,25 +267,25 @@ abstract class ResourceBase extends ProcessorEntity
       throw new Core\ApiException("empty resource uploaded", 6, $this->id, 406);
     }
     if (is_array($data) && sizeof($data) == 1 && $data[0] == $this->meta->resource) {
-      throw new Core\ApiException('Form-data element with name: "' . $this->meta->resource . '" not found.', 6, $this->id, 406);
+      throw new Core\ApiException('Form-data element with name: "' . $this->meta->resource . '" not found.', 6, -1, 406);
     }
     if (!isset($data['name'])) {
-      throw new Core\ApiException("missing name in new resource", 6, $this->id, 406);
+      throw new Core\ApiException("missing name in new resource", 6, -1, 406);
     }
     if (!isset($data['description'])) {
-      throw new Core\ApiException("missing description in new resource", 6, $this->id, 406);
+      throw new Core\ApiException("missing description in new resource", 6, -1, 406);
     }
     if (!isset($data['uri'])) {
-      throw new Core\ApiException("missing uri in new resource", 6, $this->id, 406);
+      throw new Core\ApiException("missing uri in new resource", 6, -1, 406);
     }
     if (!isset($data['method'])) {
-      throw new Core\ApiException("missing method in new resource", 6, $this->id, 406);
+      throw new Core\ApiException("missing method in new resource", 6, -1, 406);
     }
     if (!isset($data['process'])) {
-      throw new Core\ApiException("missing process in new resource", 6, $this->id, 406);
+      throw new Core\ApiException("missing process in new resource", 6, -1, 406);
     }
     if (!isset($data['ttl']) || strlen($data['ttl']) < 1) {
-      throw new Core\ApiException("missing or negative ttl in new resource", 6, $this->id, 406);
+      throw new Core\ApiException("missing or negative ttl in new resource", 6, -1, 406);
     }
 
     // validate dictionaries
@@ -309,7 +309,7 @@ abstract class ResourceBase extends ProcessorEntity
     }
     if (!empty($data['fragments'])) {
       if (!Core\Utilities::is_assoc($data['fragments'])) {
-        throw new Core\ApiException("invalid fragments structure", 6, $this->id, 406);
+        throw new Core\ApiException("invalid fragments structure", 6, -1, 406);
       }
       foreach ($data['fragments'] as $fragKey => $fragVal) {
         $this->_validateDetails($fragVal);
@@ -326,7 +326,9 @@ abstract class ResourceBase extends ProcessorEntity
    */
   private function _validateDetails($meta)
   {
-    Core\Debug::variable($meta, 'meta');
+    if (empty($meta['id'])) {
+      throw new Core\ApiException('missing ID in a function', 6, -1, 406);
+    }
     $id = $meta['id'];
 
     $classStr = $this->helper->getProcessorString($meta['function']);
