@@ -47,6 +47,7 @@ $I->seeResponseContainsJson([
   3.4562599999999999,
   5
 ]);
+
 $I->tearDownTestFromYaml();
 
 $I->wantTo('Sort an Object of Fields by key in ascending order and see the result.');

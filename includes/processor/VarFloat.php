@@ -24,8 +24,8 @@ class VarFloat extends VarMixed
         'cardinality' => array(1, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
-        'limitTypes' => array(),
-        'limitValues' => array('float'),
+        'limitTypes' => array('float'),
+        'limitValues' => array(),
         'default' => ''
       ),
     ),
