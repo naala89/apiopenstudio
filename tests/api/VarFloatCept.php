@@ -8,13 +8,13 @@ $I->wantTo('populate a VarFloat with text and see the result.');
 $I->callResourceFromYaml(['value' => 'text']);
 $I->seeResponseCodeIs(417);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => "Invalid float: text.", "id" => 3]]);
+$I->seeResponseContainsJson(["error" => ["code" => 5, "message" => "Invalid value type (string), only 'float' allowed.", "id" => 3]]);
 
 $I->wantTo('populate a VarFloat with true and see the result.');
 $I->callResourceFromYaml(['value' => 'true']);
 $I->seeResponseCodeIs(417);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => "Invalid float: true.", "id" => 3]]);
+$I->seeResponseContainsJson(["error" => ["code" => 5, "message" => "Invalid value type (string), only 'float' allowed.", "id" => 3]]);
 
 $I->wantTo('populate a VarFloat with 1.6 and see the result.');
 $I->callResourceFromYaml(['value' => '1.6']);

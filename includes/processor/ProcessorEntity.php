@@ -238,6 +238,9 @@ abstract class ProcessorEntity
     if (in_array('boolean', $limitTypes) && $this->_checkBool($val)) {
       return;
     }
+    if (in_array('float', $limitTypes) && $this->_checkFloat($val)) {
+      return;
+    }
     $type = gettype($val);
     if (!in_array($type, $limitTypes)) {
       throw new Core\ApiException("invalid value type ($type), only '" . implode("', '",$limitTypes) . "' allowed", 5, $this->id, 417);
@@ -246,6 +249,10 @@ abstract class ProcessorEntity
 
   public function _checkBool($var) {
     return null !== filter_var($var, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+  }
+
+  public function _checkFloat($var) {
+    return null !== filter_var($var, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
   }
 
   /**
