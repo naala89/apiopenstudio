@@ -2,7 +2,7 @@ name: Testing fragments
 
 description: Test fragment.
 
-uri: test/fragments
+uri: fragments
 
 method: get
 

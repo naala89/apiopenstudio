@@ -1,8 +1,8 @@
-name: test
+name: test resource with bad min
 
-description: test
+description: test resource with bad min
 
-uri: test/resource/badmin
+uri: resource/badmin
 
 method: get
 

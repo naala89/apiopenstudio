@@ -1,8 +1,8 @@
-name: test
+name: resource output response
 
-description: test
+description: test resource with output response only
 
-uri: test/resource/response
+uri: resource/output/response
 
 method: get
 

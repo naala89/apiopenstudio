@@ -2,7 +2,7 @@ name: Testing varRand
 
 description: Test varRand processor
 
-uri: test/varrand
+uri: varrand
 
 method: get
 

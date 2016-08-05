@@ -2,7 +2,7 @@ name: Testing object literal
 
 description: Test creating an object with literals.
 
-uri: test/object/literal
+uri: object/literal
 
 method: get
 

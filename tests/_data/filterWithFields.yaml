@@ -2,7 +2,7 @@ name: Testing filter fields
 
 description: Test Filter by filtering out fields by keys
 
-uri: test/filter/fields
+uri: filter/fields
 
 method: get
 

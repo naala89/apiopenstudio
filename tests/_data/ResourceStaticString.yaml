@@ -1,8 +1,8 @@
-name: test
+name: resource static string
 
-description: test
+description: test resource with static string in process
 
-uri: test/resource/good
+uri: resource/static/string
 
 method: get
 

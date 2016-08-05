@@ -2,7 +2,7 @@ name: Testing varPost
 
 description: Test varPost processor
 
-uri: test/varpost
+uri: varpost
 
 method: post
 

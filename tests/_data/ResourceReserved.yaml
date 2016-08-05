@@ -1,6 +1,6 @@
-name: test
+name: resource reserved uri
 
-description: test
+description: test resource with reserved uri
 
 uri: processors/all
 

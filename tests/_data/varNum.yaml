@@ -2,7 +2,7 @@ name: Testing varNum
 
 description: Test varNum processor
 
-uri: test/varnum
+uri: varnum
 
 method: get
 

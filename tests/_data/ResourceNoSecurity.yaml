@@ -1,8 +1,8 @@
-uri: test
+name: resource no security
 
-name: test/resource/good
+description: test bew resource with missing security
 
-description: test
+uri: resource/missing/security
 
 method: get
 

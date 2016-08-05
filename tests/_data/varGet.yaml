@@ -2,7 +2,7 @@ name: Testing varGet
 
 description: Test varGet processor
 
-uri: testing/varget
+uri: varget
 
 method: get
 

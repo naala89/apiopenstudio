@@ -1,8 +1,8 @@
-name: test
+name: test resource w no id
 
-description: test
+description: test resource with no id
 
-uri: test/resource/good
+uri: resource/function/noid
 
 method: get
 

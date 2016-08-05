@@ -2,7 +2,7 @@ name: Testing filter mixed
 
 description: Test filter with list of mixed fieldsa and single items
 
-uri: test/filter/mixed
+uri: filter/mixed
 
 method: get
 

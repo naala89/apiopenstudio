@@ -1,8 +1,8 @@
-uri: test
+name: resource no output
 
-name: test/resource/outputMissing
+description: test bew resource with missing output
 
-description: test
+uri: resource/missing/output
 
 method: get
 

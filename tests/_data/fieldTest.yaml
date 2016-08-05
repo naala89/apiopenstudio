@@ -2,7 +2,7 @@ name: Test field
 
 description: Test creating a field from vars and constants.
 
-uri: test/field
+uri: field
 
 method: get
 

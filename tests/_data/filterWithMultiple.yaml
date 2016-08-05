@@ -2,7 +2,7 @@ name: Testing filter multiple
 
 description: Test Filter by filtering out multiple value
 
-uri: test/filter/multiple
+uri: filter/multiple
 
 method: get
 

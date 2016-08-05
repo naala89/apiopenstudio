@@ -1,8 +1,8 @@
-name: test
+name: resource output empty func
 
-description: test
+description: test resource with empty function as output
 
-uri: test/resource/good
+uri: resource/output/empty
 
 method: get
 
