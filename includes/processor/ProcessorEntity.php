@@ -185,7 +185,7 @@ abstract class ProcessorEntity
       throw new Core\ApiException("invalid number of inputs ($count), requires $min - $max", 1, $this->id);
     }
 
-    if (empty($this->meta->$key)) {
+    if (!isset($this->meta->$key)) {
       return $inputDet[$key]['default'];
     }
 
@@ -219,7 +219,7 @@ abstract class ProcessorEntity
       return;
     }
     if (!in_array($val, $limitValues)) {
-      throw new Core\ApiException("invalid value ($val). Only '" . implode("', '",$limitValues) . "' allowed", 1, $this->id);
+      throw new Core\ApiException("invalid value ($val). Only '" . implode("', '",$limitValues) . "' allowed", 5, $this->id, 417);
     }
   }
 
@@ -235,10 +235,17 @@ abstract class ProcessorEntity
     if (empty($limitTypes)) {
       return;
     }
+    if (in_array('boolean', $limitTypes) && $this->_checkBool($val)) {
+      return;
+    }
     $type = gettype($val);
     if (!in_array($type, $limitTypes)) {
-      throw new Core\ApiException("invalid value type ($type), only '" . implode("', '",$limitTypes) . "' allowed", 1, $this->id);
+      throw new Core\ApiException("invalid value type ($type), only '" . implode("', '",$limitTypes) . "' allowed", 5, $this->id, 417);
     }
+  }
+
+  public function _checkBool($var) {
+    return null !== filter_var($var, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
   }
 
   /**

@@ -35,18 +35,6 @@ class VarBool extends VarMixed
   {
     Core\Debug::variable($this->meta, 'Processor VarBool', 4);
 
-    if (empty($this->meta->value)) {
-      throw new Core\ApiException('input empty',2 , $this->id, 500);
-    }
-
-    $result = $this->meta->value;
-    if ($this->_checkBool($result)) {
-      return filter_var($result, FILTER_VALIDATE_BOOLEAN);
-    }
-    throw new Core\ApiException('boolean required',2 , $this->id, 500);
-  }
-
-  public function _checkBool($var) {
-    return null !== filter_var($var, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    return filter_var($this->val('value'), FILTER_VALIDATE_BOOLEAN);
   }
 }
