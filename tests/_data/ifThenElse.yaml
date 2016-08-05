@@ -2,7 +2,7 @@ name: Testing IfThenElse
 
 description: Test IfThenElse processor
 
-uri: test/ifthenelse
+uri: ifthenelse
 
 method: get
 

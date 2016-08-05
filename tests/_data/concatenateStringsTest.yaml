@@ -1,8 +1,8 @@
-name: Testing concatenate
+name: Testing concatenate string
 
-description: Test concatenate.
+description: Test concatenate string
 
-uri: test/concatenate/strings
+uri: concatenate/strings
 
 method: get
 

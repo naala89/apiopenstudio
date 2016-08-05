@@ -2,7 +2,7 @@ name: Testing Sort object of fields
 
 description: Test Sort processor with an Object of Fields
 
-uri: test/sort/object/Fields
+uri: sort/object/Fields
 
 method: get
 

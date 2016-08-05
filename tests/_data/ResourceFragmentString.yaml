@@ -1,8 +1,8 @@
-name: test
+name: test resource with fragment string
 
-description: test
+description: test resource with fragment string
 
-uri: test/resource/good
+uri: resource/fragment/string
 
 method: get
 

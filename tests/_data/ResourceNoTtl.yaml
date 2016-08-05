@@ -1,8 +1,8 @@
-uri: test
+name: resource no ttl
 
-name: test/resource/ttlmissing
+description: test bew resource with missing ttl
 
-description: test
+uri: resource/missing/ttl
 
 method: get
 

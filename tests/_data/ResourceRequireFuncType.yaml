@@ -1,8 +1,8 @@
-name: test
+name: resource required func type
 
-description: test
+description: test resource with required funciton type
 
-uri: test/resource/good
+uri: resource/output/assoc
 
 method: get
 

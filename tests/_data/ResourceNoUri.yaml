@@ -1,6 +1,6 @@
-name: test/test
+name: resource no uri
 
-description: test
+description: test bew resource with missing uri
 
 method: get
 

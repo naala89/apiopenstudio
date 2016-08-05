@@ -2,7 +2,7 @@ name: Testing varBool
 
 description: Test VarBool processor
 
-uri: testing/varbool
+uri: varbool
 
 method: get
 

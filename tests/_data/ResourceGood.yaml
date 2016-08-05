@@ -1,8 +1,8 @@
-name: test
+name: test good resource
 
-description: test
+description: test good resource
 
-uri: test/resource/good
+uri: resource/good
 
 method: get
 

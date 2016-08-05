@@ -2,7 +2,7 @@ name: Test concatenate strings numbers
 
 description: Test mixed concatenate.
 
-uri: test/concatenate/mixed
+uri: concatenate/mixed
 
 method: get
 

@@ -1,8 +1,8 @@
-name: test
+name: resource static int
 
-description: test
+description: test resource with static integer in process
 
-uri: test/resource/good
+uri: resource/static/int
 
 method: get
 

@@ -1,8 +1,8 @@
-uri: test
+name: test resource w missing method
 
-name: test/resurce/methodmissig
+description: test resource with missing method
 
-description: test
+uri: resource/missing/method
 
 ttl: 3600
 

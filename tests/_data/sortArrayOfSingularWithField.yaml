@@ -2,7 +2,7 @@ name: Testing Sort singular with a field
 
 description: Test Sort processor with array of single values and a field
 
-uri: testing/sort/singular/w/field
+uri: sort/singular/field
 
 method: get
 

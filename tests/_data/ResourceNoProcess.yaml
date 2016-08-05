@@ -1,8 +1,8 @@
-uri: test
+name: resource no process
 
-name: test/resource/ttlmissing
+description: test bew resource with missing process
 
-description: test
+uri: resource/missing/process
 
 method: get
 

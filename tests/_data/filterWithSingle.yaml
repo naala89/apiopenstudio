@@ -2,7 +2,7 @@ name: Testing filter single
 
 description: Test Filter by filtering out a single value
 
-uri: test/filter/single
+uri: filter/single
 
 method: get
 

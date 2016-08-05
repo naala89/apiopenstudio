@@ -2,7 +2,7 @@ name: Testing Merge
 
 description: Test Merge
 
-uri: test/merge
+uri: merge
 
 method: get
 

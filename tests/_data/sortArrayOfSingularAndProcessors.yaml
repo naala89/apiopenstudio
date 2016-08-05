@@ -2,7 +2,7 @@ name: Testing Sort singular and processors
 
 description: Test Sort processor with array of single values and procesors
 
-uri: test/sort/singular
+uri: sort/singular
 
 method: get
 

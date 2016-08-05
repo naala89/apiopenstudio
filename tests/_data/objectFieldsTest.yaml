@@ -2,7 +2,7 @@ name: Testing object fields
 
 description: Test creating an object with fields and literals.
 
-uri: test/object/fields
+uri: object/fields
 
 method: get
 

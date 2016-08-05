@@ -2,7 +2,7 @@ name: Testing varRequest
 
 description: Test varRequest processor
 
-uri: test/varrequest
+uri: varrequest
 
 method: get
 
