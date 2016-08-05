@@ -61,23 +61,16 @@ $I->seeResponseContains('false');
 
 $I->wantTo('populate a VarBool with 6 and see the result.');
 $I->createResourceFromYaml();
-$I->callResourceFromYaml(['value' => '6']);
-$I->seeResponseCodeIs(417);
-$I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 5, "message" => "Invalid boolean.", "id" => 3]]);
-
-$I->wantTo('populate a VarBool with 6 and see the result.');
-$I->createResourceFromYaml();
 $I->callResourceFromYaml(['value' => 6]);
 $I->seeResponseCodeIs(417);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 5, "message" => "Invalid boolean.", "id" => 3]]);
+$I->seeResponseContainsJson(["error" => ["code" => 5, "message" => "Invalid value type (string), only 'boolean' allowed.", "id" => 3]]);
 
 $I->wantTo('populate a VarBool with fales and see the result.');
 $I->createResourceFromYaml();
 $I->callResourceFromYaml(['value' => 'fales']);
 $I->seeResponseCodeIs(417);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 5, "message" => "Invalid boolean.", "id" => 3]]);
+$I->seeResponseContainsJson(["error" => ["code" => 5, "message" => "Invalid value type (string), only 'boolean' allowed.", "id" => 3]]);
 
 $I->tearDownTestFromYaml();
