@@ -35,18 +35,6 @@ class VarFloat extends VarMixed
   {
     Core\Debug::variable($this->meta, 'Processor VarFloat', 4);
 
-    if (empty($this->meta->value)) {
-      throw new Core\ApiException('input empty',2 , $this->id, 500);
-    }
-
-    $result = $this->meta->value;
-    if ($this->_checkFloat($result)) {
-      return (floatval($result));
-    }
-    throw new Core\ApiException('float required',2 , $this->id, 500);
-  }
-
-  public function _checkFloat($var) {
-    return null !== filter_var($var, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
+    return filter_var($this->val('value'), FILTER_VALIDATE_FLOAT);
   }
 }
