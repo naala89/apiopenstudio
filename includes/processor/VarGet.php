@@ -26,13 +26,13 @@ class VarGet extends VarMixed
         'default' => ''
       ),
       'nullable' => array(
-        'description' => 'Throw exception if the post variable does not exist.',
+        'description' => 'Allow the processing to continue if the post variable does not exist.',
         'cardinality' => array(0, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('boolean'),
         'limitValues' => array(),
-        'default' => true
+        'default' => false
       ),
     ),
   );
@@ -42,14 +42,15 @@ class VarGet extends VarMixed
     Core\Debug::variable($this->meta, 'Processor VarGet', 4);
 
     $name = $this->val('name');
+    $nullable = $this->val('nullable');
     $vars = $this->request->getGetVars();
 
     if (isset($vars[$name])) {
       return $vars[$name];
     }
-    if ($this->val('nullable')) {
+    if ($nullable) {
       return '';
     }
-    throw new Core\ApiException("post var $name not available", 1, $this->id);
+    throw new Core\ApiException("post variable ($name) not received", 5, $this->id, 417);
   }
 }
