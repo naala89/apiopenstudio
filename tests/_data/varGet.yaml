@@ -20,3 +20,8 @@ process:
   function: varGet
   id: 3
   name: value
+  nullable:
+    function: varGet
+    id: 3
+    name: nullable
+    nullable: true
