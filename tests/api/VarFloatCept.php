@@ -44,7 +44,7 @@ $I->wantTo('populate a VarFloat with 0 and see the result.');
 $I->callResourceFromYaml(['value' => 0]);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('0');
+$I->seeResponseContains('false');
 
 $I->wantTo('populate a VarFloat with 0.0 and see the result.');
 $I->callResourceFromYaml(['value' => 0.0]);
