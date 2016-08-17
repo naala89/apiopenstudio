@@ -35,18 +35,8 @@ class VarInt extends VarMixed
   {
     Core\Debug::variable($this->meta, 'Processor VarInt', 4);
 
-    if (empty($this->meta->value)) {
-      throw new Core\ApiException('input empty',2 , $this->id, 500);
-    }
+    Core\Debug::variable($this->val('value'), 'initial val');
 
-    $result = $this->meta->value;
-    if ($this->_checkInt($result)) {
-      return (intval($result));
-    }
-    throw new Core\ApiException('integer required',2 , $this->id, 500);
-  }
-
-  public function _checkInt($var) {
-    return null !== filter_var($var, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
+    return filter_var($this->val('value'), FILTER_VALIDATE_INT);
   }
 }

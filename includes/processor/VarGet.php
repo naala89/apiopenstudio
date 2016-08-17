@@ -5,6 +5,7 @@
  */
 
 namespace Datagator\Processor;
+use Codeception\Util\Debug;
 use Datagator\Core;
 
 class VarGet extends VarMixed
@@ -42,8 +43,8 @@ class VarGet extends VarMixed
     Core\Debug::variable($this->meta, 'Processor VarGet', 4);
 
     $name = $this->val('name');
-    $nullable = $this->val('nullable');
     $vars = $this->request->getGetVars();
+    $nullable = filter_var($this->val('nullable'), FILTER_VALIDATE_BOOLEAN);
 
     if (isset($vars[$name])) {
       return $vars[$name];
@@ -51,6 +52,7 @@ class VarGet extends VarMixed
     if ($nullable) {
       return '';
     }
-    throw new Core\ApiException("post variable ($name) not received", 5, $this->id, 417);
+
+    throw new Core\ApiException("get variable ($name) not received", 5, $this->id, 417);
   }
 }

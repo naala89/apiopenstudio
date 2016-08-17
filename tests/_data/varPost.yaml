@@ -20,3 +20,8 @@ process:
   function: varPost
   id: 3
   name: value
+  nullable:
+    function: varPost
+    id: 4
+    name: nullable
+    nullable: true

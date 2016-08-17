@@ -32,7 +32,7 @@ class VarPost extends VarMixed
         'limitFunctions' => array(),
         'limitTypes' => array('boolean'),
         'limitValues' => array(),
-        'default' => true
+        'default' => false
       ),
     ),
   );
@@ -43,13 +43,18 @@ class VarPost extends VarMixed
 
     $name = $this->val('name');
     $vars = $this->request->getPostVars();
+    $nullable = filter_var($this->val('nullable'), FILTER_VALIDATE_BOOLEAN);
 
+    Core\Debug::variable($name);
+    Core\Debug::variable($vars);
+    Core\Debug::variable($nullable);
     if (isset($vars[$name])) {
       return $vars[$name];
     }
-    if ($this->val('nullable')) {
+    if ($nullable) {
       return '';
     }
-    throw new Core\ApiException("post var $name not available", 1, $this->id);
+
+    throw new Core\ApiException("post variable ($name) not received", 5, $this->id, 417);
   }
 }

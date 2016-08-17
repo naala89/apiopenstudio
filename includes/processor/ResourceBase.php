@@ -398,11 +398,14 @@ abstract class ResourceBase extends ProcessorEntity
    */
   private function _validateTypeValue($element, $accepts)
   {
-    Core\Debug::variable($element);
-    Core\Debug::variable($accepts);
     if (empty($accepts)) {
-      return true;
+      return TRUE;
     }
+    /*
+    if (is_array($element) && isset($element['function']) && isset($element['id'])) {
+      return TRUE;
+    }
+    */
     $valid = FALSE;
 
     foreach ($accepts as $accept) {
@@ -412,19 +415,16 @@ abstract class ResourceBase extends ProcessorEntity
       } elseif ($accept == 'literal' && (is_string($element) || is_numeric($element))) {
         $valid = TRUE;
         break;
-      } elseif ($accept == 'boolean' && is_bool($element)) {
+      } elseif ($accept == 'boolean' && filter_var($element, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) !== null) {
         $valid = TRUE;
         break;
-      } elseif ($accept == 'numeric' && is_numeric($element)) {
-        $valid = TRUE;
-        break;
-      } elseif ($accept == 'integer' && is_integer($element)) {
+      } elseif ($accept == 'integer' && filter_var($element, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) !== null) {
         $valid = TRUE;
         break;
       } elseif ($accept == 'string' && is_string($element)) {
         $valid = TRUE;
         break;
-      } elseif ($accept == 'float' && is_float($element)) {
+      } elseif ($accept == 'float' && filter_var($element, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) !== null) {
         $valid = TRUE;
         break;
       } elseif ($accept == 'array' && is_array($element)) {
