@@ -185,7 +185,7 @@ abstract class ProcessorEntity
       throw new Core\ApiException("invalid number of inputs ($count), requires $min - $max", 1, $this->id);
     }
 
-    if (!isset($this->meta->$key)) {
+    if (empty($this->meta->$key)) {
       return $inputDet[$key]['default'];
     }
 
@@ -241,9 +241,12 @@ abstract class ProcessorEntity
     if (in_array('float', $limitTypes) && $this->_checkFloat($val)) {
       return;
     }
+    if (in_array('integer', $limitTypes) && $this->_checkInt($val)) {
+      return;
+    }
     $type = gettype($val);
     if (!in_array($type, $limitTypes)) {
-      throw new Core\ApiException("invalid value type ($type), only '" . implode("', '",$limitTypes) . "' allowed", 5, $this->id, 417);
+      throw new Core\ApiException("invalid value ($val), only '" . implode("', '",$limitTypes) . "' allowed", 5, $this->id, 417);
     }
   }
 
@@ -253,6 +256,10 @@ abstract class ProcessorEntity
 
   public function _checkFloat($var) {
     return null !== filter_var($var, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
+  }
+
+  public function _checkInt($var) {
+    return null !== filter_var($var, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
   }
 
   /**

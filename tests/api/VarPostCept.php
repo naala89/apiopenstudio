@@ -52,10 +52,23 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContains('0');
 
-$I->wantTo('populate a varPost with wrong varname and see the result.');
-$I->callResourceFromYaml(['values' => 'test']);
+$I->wantTo('populate a varPost with wrong varname and nullable true and see the result.');
+$I->callResourceFromYaml(['values' => 'test', 'nullable' => true]);
+$I->seeResult();exit;
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('null');
+$I->seeResponseContains('');
+
+$I->wantTo('populate a varPost with wrong varname and nullable false and see the result.');
+$I->callResourceFromYaml(['values' => 'test', 'nullable' => false]);
+$I->seeResponseCodeIs(417);
+$I->seeResponseIsJson();
+$I->seeResponseContains('Post variable (value) not received.');
+
+$I->wantTo('populate a varPost with wrong varname and nullable not set and see the result.');
+$I->callResourceFromYaml(['values' => 'test']);
+$I->seeResponseCodeIs(417);
+$I->seeResponseIsJson();
+$I->seeResponseContains('Post variable (value) not received.');
 
 $I->tearDownTestFromYaml();

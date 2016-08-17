@@ -63,12 +63,12 @@ $I->callResourceFromYaml(['values' => 'test', 'nullable' => false]);
 $I->callResourceFromYaml(['values' => 'test']);
 $I->seeResponseCodeIs(417);
 $I->seeResponseIsJson();
-$I->seeResponseContains('Post variable (value) not received.');
+$I->seeResponseContains('Get variable (value) not received.');
 
 $I->wantTo('populate a VarGet with wrong varname and nullable not set and see the result.');
 $I->callResourceFromYaml(['values' => 'test']);
 $I->seeResponseCodeIs(417);
 $I->seeResponseIsJson();
-$I->seeResponseContains('Post variable (value) not received.');
+$I->seeResponseContains('Get variable (value) not received.');
 
 $I->tearDownTestFromYaml();
