@@ -7,8 +7,8 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class Literal extends ProcessorEntity {
-
+class Literal extends Core\ProcessorEntity
+{
   protected $details = array(
     'name' => 'Literal',
     'machineName' => 'literal',

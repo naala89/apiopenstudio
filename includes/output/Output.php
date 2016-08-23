@@ -5,7 +5,7 @@ use Datagator\Core;
 use Datagator\Processor;
 use Datagator\Config;
 
-abstract class Output extends Processor\ProcessorEntity
+abstract class Output extends Core\ProcessorEntity
 {
   protected $data;
   protected $meta;

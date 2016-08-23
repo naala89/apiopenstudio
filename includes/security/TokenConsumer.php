@@ -17,8 +17,8 @@ namespace Datagator\Security;
 use Datagator\Core;
 use Datagator\Processor;
 
-class TokenConsumer extends Token {
-
+class TokenConsumer extends Token
+{
   protected $role = 'consumer';
   protected $details = array(
     'name' => 'Token (Consumer)',

@@ -9,7 +9,8 @@ use Datagator\Core;
 use Datagator\Db;
 use Datagator\Processor;
 
-class TokenUser extends Processor\ProcessorEntity {
+class TokenUser extends Core\ProcessorEntity
+{
   protected $role = false;
   protected $details = array(
     'name' => 'Token (User)',

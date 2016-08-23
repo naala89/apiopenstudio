@@ -7,7 +7,7 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class Fragment extends ProcessorEntity
+class Fragment extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Fragment',

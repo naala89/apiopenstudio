@@ -10,7 +10,7 @@ use Datagator\Core;
 use Facebook\Authentication;
 use Facebook\Exceptions;
 
-class Facebook extends Processor\ProcessorEntity
+class Facebook extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Facebook',

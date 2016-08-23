@@ -1,8 +1,7 @@
 <?php
 
-namespace Datagator\Processor;
+namespace Datagator\Core;
 use Datagator\Config;
-use Datagator\Core;
 
 abstract class ProcessorEntity
 {
@@ -134,23 +133,23 @@ abstract class ProcessorEntity
       case UPLOAD_ERR_OK:
         break;
       case UPLOAD_ERR_NO_FILE:
-        throw new Core\ApiException('No file sent.', 1, $this->id);
+        throw new ApiException('No file sent.', 1, $this->id);
       case UPLOAD_ERR_INI_SIZE:
       case UPLOAD_ERR_FORM_SIZE:
-        throw new Core\ApiException('Exceeded filesize limit.', 1, $this->id);
+        throw new ApiException('Exceeded filesize limit.', 1, $this->id);
       default:
-        throw new Core\ApiException('Unknown errors.', 1, $this->id);
+        throw new ApiException('Unknown errors.', 1, $this->id);
     }
 
     // Check for upload attack.
     $newFile = $_SERVER['DOCUMENT_ROOT'] . Config::$dirUploads . basename($_FILES[$file]['name']);
     if (!move_uploaded_file($_FILES[$file]['tmp_name'], $newFile)) {
-      throw new Core\ApiException('Possible file upload attack!', 1, $this->id);
+      throw new ApiException('Possible file upload attack!', 1, $this->id);
     }
 
     $result = file_get_contents($newFile);
     if (!unlink($newFile)) {
-      throw new Core\ApiException('failed to cleanup and delete uploaded file. Please contact support.', 1, $this->id);
+      throw new ApiException('failed to cleanup and delete uploaded file. Please contact support.', 1, $this->id);
     }
 
     return $result;
@@ -164,7 +163,7 @@ abstract class ProcessorEntity
    * or if the obj is a simple value, then it will return that. Anything else will return an error object.
    *
    * @param $key
-   * @return array
+   * @return mixed
    * @throws \Datagator\Core\ApiException
    */
   protected function val($key)
@@ -172,7 +171,7 @@ abstract class ProcessorEntity
     $inputDet = $this->details['input'];
     if (empty($inputDet[$key])) {
       // reject if input key not defined for this processor type
-      throw new Core\ApiException("invalid key: $key", 1, $this->id);
+      throw new ApiException("invalid key: $key", 1, $this->id);
     }
 
     $min = $inputDet[$key]['cardinality'][0];
@@ -182,7 +181,7 @@ abstract class ProcessorEntity
 
     $count = empty($this->meta->$key) ? 0 : is_array($this->meta->$key) ? sizeof($this->meta->$key) : 1;
     if ($count < $min || ($max != '*' && $count > $max)) {
-      throw new Core\ApiException("invalid number of inputs ($count), requires $min - $max", 1, $this->id);
+      throw new ApiException("invalid number of inputs ($count), requires $min - $max", 1, $this->id);
     }
 
     if (!isset($this->meta->$key)) {
@@ -219,7 +218,7 @@ abstract class ProcessorEntity
       return;
     }
     if (!in_array($val, $limitValues)) {
-      throw new Core\ApiException("invalid value ($val). Only '" . implode("', '",$limitValues) . "' allowed", 5, $this->id, 417);
+      throw new ApiException("invalid value ($val). Only '" . implode("', '",$limitValues) . "' allowed", 5, $this->id, 417);
     }
   }
 
@@ -246,7 +245,7 @@ abstract class ProcessorEntity
     }
     $type = gettype($val);
     if (!in_array($type, $limitTypes)) {
-      throw new Core\ApiException("invalid value ($val), only '" . implode("', '",$limitTypes) . "' allowed", 5, $this->id, 417);
+      throw new ApiException("invalid value ($val), only '" . implode("', '",$limitTypes) . "' allowed", 5, $this->id, 417);
     }
   }
 
@@ -266,7 +265,7 @@ abstract class ProcessorEntity
    * Get a DB object.
    *
    * @return \the
-   * @throws \Datagator\Processor\ApiException
+   * @throws \Datagator\Core\ApiException
    */
   protected function getDb()
   {

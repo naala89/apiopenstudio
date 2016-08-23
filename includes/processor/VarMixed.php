@@ -7,7 +7,7 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class VarMixed extends ProcessorEntity
+class VarMixed extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Mixed)',

@@ -9,8 +9,8 @@ use Datagator\Core;
 use Datagator\Db;
 use Datagator\Processor;
 
-class TokenRole extends Token {
-
+class TokenRole extends Token
+{
   protected $details = array(
     'name' => 'Token (Role)',
     'machineName' => 'tokenRole',
