@@ -185,7 +185,7 @@ abstract class ProcessorEntity
       throw new Core\ApiException("invalid number of inputs ($count), requires $min - $max", 1, $this->id);
     }
 
-    if (empty($this->meta->$key)) {
+    if (!isset($this->meta->$key)) {
       return $inputDet[$key]['default'];
     }
 
