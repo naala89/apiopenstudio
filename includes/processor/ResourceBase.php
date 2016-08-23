@@ -8,7 +8,7 @@ namespace Datagator\Processor;
 use Datagator\Core;
 use Datagator\Db;
 
-abstract class ResourceBase extends ProcessorEntity
+abstract class ResourceBase extends Core\ProcessorEntity
 {
   protected $db;
   protected $helper;

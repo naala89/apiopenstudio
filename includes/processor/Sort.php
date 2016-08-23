@@ -7,7 +7,7 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class Sort extends ProcessorEntity
+class Sort extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Sort',

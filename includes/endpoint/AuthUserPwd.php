@@ -21,7 +21,7 @@ namespace Datagator\Endpoint;
 use Datagator\Processor;
 use Datagator\Core;
 
-class AuthUserPwd extends Processor\ProcessorEntity
+class AuthUserPwd extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Auth (User/Pass)',

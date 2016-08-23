@@ -7,7 +7,7 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class Merge extends ProcessorEntity
+class Merge extends Core\ProcessorEntity
 {
   private $_defaultType = 'union';
   protected $details = array(

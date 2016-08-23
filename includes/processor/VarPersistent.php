@@ -8,7 +8,7 @@ namespace Datagator\Processor;
 use Datagator\Core;
 use Datagator\Db;
 
-class VarPersistent extends ProcessorEntity
+class VarPersistent extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Persistent)',

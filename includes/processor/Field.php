@@ -7,7 +7,7 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class Field extends ProcessorEntity
+class Field extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'field',

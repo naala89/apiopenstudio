@@ -8,7 +8,7 @@ namespace Datagator\Processor;
 use Datagator\Core;
 use Datagator\Db\ApplicationMapper;
 
-class ProcessorsAll extends ProcessorEntity
+class ProcessorsAll extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'processors (all)',

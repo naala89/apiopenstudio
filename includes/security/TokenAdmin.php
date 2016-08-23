@@ -8,8 +8,8 @@ namespace Datagator\Security;
 use Datagator\Core;
 use Datagator\Processor;
 
-class TokenAdmin extends Token {
-
+class TokenAdmin extends Token
+{
   protected $role = 'admin';
   protected $details = array(
     'name' => 'Token (Admin)',

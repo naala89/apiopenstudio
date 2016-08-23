@@ -7,7 +7,7 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class IfThenElse extends ProcessorEntity
+class IfThenElse extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'If Then Else',

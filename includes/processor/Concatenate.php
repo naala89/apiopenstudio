@@ -7,7 +7,7 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class Concatenate extends ProcessorEntity
+class Concatenate extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Concatenate',

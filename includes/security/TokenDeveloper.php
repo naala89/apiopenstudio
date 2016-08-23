@@ -8,8 +8,8 @@ namespace Datagator\Security;
 use Datagator\Core;
 use Datagator\Processor;
 
-class TokenDeveloper extends Token {
-
+class TokenDeveloper extends Token
+{
   protected $role = 'developer';
   protected $details = array(
     'name' => 'Token (Developer)',
