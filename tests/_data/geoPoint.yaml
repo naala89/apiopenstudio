@@ -1,0 +1,31 @@
+name: Testing geoPoint
+
+description: Test GeoPoint processor
+
+uri: gepoint
+
+method: get
+
+ttl: 0
+
+security:
+  function: TokenConsumer
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
+
+process:
+  function: geoPoint
+  id: 3
+  lat:
+    function: varGet
+    id: 4
+    name: lat
+    nullable: true
+  lon:
+    function: varGet
+    id: 5
+    name: lon
+    nullable: true
