@@ -48,7 +48,7 @@ class Json extends Output
    */
   protected function getData()
   {
-    return $this->toJson();
+    return $this->toJson($this->data->getData());
   }
 
   /**
