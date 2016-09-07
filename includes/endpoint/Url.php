@@ -26,7 +26,7 @@ class Url extends Core\ProcessorEntity
         'limitValues' => array('get', 'post'),
         'default' => ''
       ),
-      'source' => array(
+      'url' => array(
         'description' => 'The source URL.',
         'cardinality' => array(1, 1),
         'literalAllowed' => true,
@@ -50,7 +50,7 @@ class Url extends Core\ProcessorEntity
         'cardinality' => array(0, 1),
         'literalAllowed' => true,
         'limitFunctions' => array('AuthCookie', 'AuthOauthHeader', 'AuthUserPwd'),
-        'limitTypes' => array('string'),
+        'limitTypes' => array(),
         'limitValues' => array(),
         'default' => ''
       ),
@@ -129,6 +129,7 @@ class Url extends Core\ProcessorEntity
     }
 
     //add any params to post or get call
+    /*
     if (!empty($auth)) {
       $vars = array();
       switch ($method) {
@@ -146,7 +147,7 @@ class Url extends Core\ProcessorEntity
           break;
       }
     }
-
+*/
     //send request
     $curl = new Core\Curl();
     $result = $curl->{strtolower($this->meta->method)}($url, $curlOpts);
