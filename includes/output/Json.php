@@ -1,7 +1,7 @@
 <?php
 
 namespace Datagator\Output;
-use Datagator;
+use Datagator\Core;
 
 class Json extends Output
 {
@@ -48,6 +48,7 @@ class Json extends Output
    */
   protected function getData()
   {
+    Core\Debug::variable('Processor Json->getData()');
     return $this->toJson($this->data->getData());
   }
 

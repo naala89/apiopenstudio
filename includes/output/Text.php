@@ -1,6 +1,7 @@
 <?php
 
 namespace Datagator\Output;
+use Datagator\Core;
 
 class Text extends Output
 {
@@ -47,7 +48,8 @@ class Text extends Output
    */
   protected function getData()
   {
-    return $this->toText();
+    Core\Debug::variable('Processor Text->getData()');
+    return $this->toText($this->data->getData());
   }
 
   /**

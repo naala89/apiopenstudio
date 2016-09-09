@@ -6,8 +6,7 @@
  */
 
 namespace Datagator\Output;
-
-use Datagator\Core\Debug;
+use Datagator\Core;
 
 class Xml extends Output
 {
@@ -54,7 +53,8 @@ class Xml extends Output
    */
   protected function getData()
   {
-    return $this->toXml();
+    Core\Debug::variable('Processor Xml->getData()');
+    return $this->toXml($this->data->getData());
   }
 
   /**

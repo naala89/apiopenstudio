@@ -12,7 +12,7 @@ class Concatenate extends Core\ProcessorEntity
   protected $details = array(
     'name' => 'Concatenate',
     'machineName' => 'concatenate',
-    'description' => 'Concatenate a series of strings or numbers into a single value.',
+    'description' => 'Concatenate a series of strings or numbers into a single string.',
     'menu' => 'Operation',
     'application' => 'Common',
     'input' => array(
@@ -35,9 +35,13 @@ class Concatenate extends Core\ProcessorEntity
     $sources = $this->val('sources');
     $result = '';
     foreach ($sources as $source) {
-      $result .= (string)$source;
+      if ($this->isDataEntity($source)) {
+        $result .= (string) $source->getData();
+      } else {
+        $result .= (string) $source;
+      }
     }
 
-    return $result;
+    return new Core\Text($result);
   }
 }

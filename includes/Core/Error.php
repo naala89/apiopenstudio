@@ -27,15 +27,14 @@ class Error
    */
   public function process()
   {
-    $result = array(
-      'error' => array(
-        'code' => $this->code,
-        'message' => (!empty($this->message) ? ucfirst($this->message) . '.' : 'Unidentified error.'),
-      ),
+    return new Json(
+      array(
+        'error' => array(
+          'id' => !empty($this->id) ? $this->id : -1,
+          'code' => $this->code,
+          'message' => (!empty($this->message) ? ucfirst($this->message) . '.' : 'Unidentified error.'),
+        ),
+      )
     );
-    if (!empty($this->id)) {
-      $result['error']['id'] = $this->id;
-    }
-    return $result;
   }
 }
