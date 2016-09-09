@@ -205,6 +205,11 @@ abstract class ProcessorEntity
     return $result;
   }
 
+  protected function isDataEntity($data)
+  {
+    return is_object($data) && is_a($data, 'DataEntity');
+  }
+
   /**
    * Validate an input for allowed values
    *

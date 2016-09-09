@@ -148,6 +148,9 @@ class Api
     $request->setPostVars($_POST);
     $request->setIp($_SERVER['REMOTE_ADDR']);
     $header = getallheaders();
+    foreach ($header as $key => $val) {
+      $header[strtolower($key)] = $val;
+    }
     $request->setOutFormat($this->parseType($header, 'Accept', 'json'));
 
     return $request;
@@ -368,8 +371,9 @@ class Api
   {
     $key = strtolower($key);
     $result = $default;
-    if (!empty($header[strtolower($key)])) {
-      $parts = preg_split('/\,|\;/', $header[$key]);
+    $val = !empty($header[strtolower($key)]) ? $header[strtolower($key)] : '';
+    if (!empty($val)) {
+      $parts = preg_split('/\,|\;/', $val);
       foreach ($parts as $part) {
         $result = preg_replace("/(application||text)\//i",'',$part);
         $result = trim($result);
