@@ -58,13 +58,14 @@ abstract class Output extends Core\ProcessorEntity
         }
       }
     } else {
+      $this->setHeader();
       return $data;
     }
   }
 
   public function setHeader()
   {
-    if (Config::$debugInterface == 'LOG' || (Config::$debug < 1 && Config::$debugDb < 1)) {
+    if (Config::$debugInterface != 'HTML' || (Config::$debug < 1 && Config::$debugDb < 1)) {
       header($this->header);
     }
   }
