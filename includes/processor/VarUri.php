@@ -18,7 +18,7 @@ class VarUri extends Core\ProcessorEntity
     'input' => array(
       'index' => array(
         'description' => 'The index of the variable, starting with 0 after the client ID, request noun and verb.',
-        'cardinality' => array(1, 1),
+        'cardinality' => array(0, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('integer'),
@@ -31,7 +31,7 @@ class VarUri extends Core\ProcessorEntity
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarUri', 4);
-    $index = $this->val('index');
+    $index = $this->val('index', true);
     $args = $this->request->getArgs();
 
     if (!isset($args[$index])) {

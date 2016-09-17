@@ -35,9 +35,6 @@ class VarFloat extends VarMixed
   {
     Core\Debug::variable($this->meta, 'Processor VarFloat', 4);
 
-    $val = $this->val('value');
-    $val = filter_var($val, FILTER_VALIDATE_FLOAT);
-
-    return filter_var($this->val('value'), FILTER_VALIDATE_FLOAT);
+    return filter_var(parent::process(), FILTER_VALIDATE_FLOAT);
   }
 }

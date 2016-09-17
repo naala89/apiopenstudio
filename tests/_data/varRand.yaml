@@ -23,19 +23,24 @@ process:
     function: varGet
     id: 4
     name: length
+    nullable: true
   lower:
     function: varGet
     id: 5
     name: lower
+    nullable: true
   upper:
     function: varGet
     id: 6
     name: upper
+    nullable: true
   numeric:
     function: varGet
     id: 7
     name: numeric
+    nullable: true
   special:
     function: varGet
     id: 8
     name: special
+    nullable: true

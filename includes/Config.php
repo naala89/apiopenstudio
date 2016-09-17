@@ -164,6 +164,7 @@ class Config
   {
     self::$debug = 0;
     self::$debugCLI = 0;
+    self::$debugDb = 0;
     self::$_allow_override = TRUE;
     self::$debugInterface = 'LOG';
 
@@ -176,7 +177,6 @@ class Config
     self::$dbuser = 'datagator';
     self::$dbpass = 'datagator';
     self::$dboptions = array();
-    self::$debugDb = FALSE;
 
     self::$emailService = 'mail'; //'qmail', 'sendmail', 'smtp', 'mail'
     self::$emailHost = '';
@@ -193,7 +193,7 @@ class Config
     date_default_timezone_set('Australia/Sydney');
     ini_set('display_errors', 'on');
     ini_set('log_errors','On');
-    ini_set('error_reporting', E_ALL);
+    //ini_set('error_reporting', E_ALL);
     ini_set('error_log', self::$errorLog);
   }
 
@@ -274,8 +274,8 @@ class Config
     if (!self::$_allow_override) {
       return;
     }
-    $get = $_GET;
-    foreach ($get as $k => $v) {
+    $request = $_REQUEST;
+    foreach ($request as $k => $v) {
       if (property_exists("\\Datagator\\Config", $k)) {
         self::$$k = urldecode($v);
       }

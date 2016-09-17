@@ -35,6 +35,6 @@ class VarBool extends VarMixed
   {
     Core\Debug::variable($this->meta, 'Processor VarBool', 4);
 
-    return filter_var($this->val('value'), FILTER_VALIDATE_BOOLEAN);
+    return filter_var(parent::process(), FILTER_VALIDATE_BOOLEAN);
   }
 }

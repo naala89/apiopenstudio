@@ -7,7 +7,7 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class VarPost extends VarMixed
+class VarPost extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Post)',
@@ -32,7 +32,7 @@ class VarPost extends VarMixed
         'limitFunctions' => array(),
         'limitTypes' => array('boolean'),
         'limitValues' => array(),
-        'default' => false
+        'default' => true
       ),
     ),
   );
@@ -41,18 +41,14 @@ class VarPost extends VarMixed
   {
     Core\Debug::variable($this->meta, 'Processor VarPost', 4);
 
-    $name = $this->val('name');
+    $name = $this->val('name', true);
     $vars = $this->request->getPostVars();
-    $nullable = filter_var($this->val('nullable'), FILTER_VALIDATE_BOOLEAN);
 
-    Core\Debug::variable($name);
-    Core\Debug::variable($vars);
-    Core\Debug::variable($nullable);
     if (isset($vars[$name])) {
-      return $vars[$name];
+      return new Core\Text($vars[$name]);
     }
-    if ($nullable) {
-      return '';
+    if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
+      return new Core\Text('');
     }
 
     throw new Core\ApiException("post variable ($name) not received", 5, $this->id, 417);

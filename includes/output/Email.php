@@ -71,10 +71,10 @@ class Email extends Output
     Core\Debug::message("Output Email");
 
     $mail = new \PHPMailer();
-    $to = $this->val('to');
-    $from = !empty($this->meta->from) ? $this->val('from') : $this->defaults['from'];
-    $subject = !empty($this->meta->subject) ? $this->val('subject') : $this->defaults['subject'];
-    $format = $this->val('format');
+    $to = $this->val('to', true);
+    $from = !empty($this->meta->from) ? $this->val('from', true) : $this->defaults['from'];
+    $subject = !empty($this->meta->subject) ? $this->val('subject', true) : $this->defaults['subject'];
+    $format = $this->val('format', true);
     $class = '\\Datagator\\Output\\' . $format;
     $obj = new $class($this->data, 200, '');
     $data = $obj->getData();

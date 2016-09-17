@@ -42,7 +42,7 @@ class DatagatorAccount extends Core\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor DatagatorAccount', 4);
 
-    $accountName = $this->val('accountName');
+    $accountName = $this->val('accountName', true);
     $method = $this->request->method;
     $db = $this->getDb();
 

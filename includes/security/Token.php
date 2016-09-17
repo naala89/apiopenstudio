@@ -37,9 +37,9 @@ class Token extends Core\ProcessorEntity
    */
   public function process() {
     Core\Debug::variable($this->meta, 'Security Token', 4);
+    $token = $this->val('token', true);
 
     // no token
-    $token = $this->val('token');
     if (empty($token)) {
       throw new Core\ApiException('permission denied', 4, -1, 401);
     }

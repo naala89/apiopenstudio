@@ -162,15 +162,18 @@ abstract class ProcessorEntity
    * If the object is a processor, then it will process that down to a final return value,
    * or if the obj is a simple value, then it will return that. Anything else will return an error object.
    *
+   * Setting $realValue will force the value to be the actial valie, rather than a dataEntity.
+   *
    * @param $key
-   * @return mixed
+   * @param bool|FALSE $realValue
+   * @return array
    * @throws \Datagator\Core\ApiException
    */
-  protected function val($key)
+  protected function val($key, $realValue=false)
   {
     $inputDet = $this->details['input'];
     if (empty($inputDet[$key])) {
-      // reject if input key not defined for this processor type
+      // undefined input key for this processor type
       throw new ApiException("invalid key: $key", 1, $this->id);
     }
 
@@ -178,13 +181,16 @@ abstract class ProcessorEntity
     $max = $inputDet[$key]['cardinality'][1];
     $limitValues = $inputDet[$key]['limitValues'];
     $limitTypes = $inputDet[$key]['limitTypes'];
+    $default = $inputDet[$key]['default'];
 
     $count = empty($this->meta->$key) ? 0 : is_array($this->meta->$key) ? sizeof($this->meta->$key) : 1;
     if ($count < $min || ($max != '*' && $count > $max)) {
+      // invalid cardinality
       throw new ApiException("invalid number of inputs ($count), requires $min - $max", 1, $this->id);
     }
 
-    if (!isset($this->meta->$key) || $this->meta->$key == '') {
+    if (empty($this->meta->$key)) {
+      // return default if empty
       return $inputDet[$key]['default'];
     }
 
@@ -192,22 +198,22 @@ abstract class ProcessorEntity
 
     if (is_array($result)) {
       foreach ($result as & $r) {
-        $r = is_object($r) && method_exists($r, 'getData') ? $r->getData() : $r;
-        $this->_validateAllowedValues($r, $limitValues);
-        $this->_validateAllowedTypes($r, $limitTypes);
+        $test = $this->isDataEntity($r) ? $r->getData() : $r;
+        $this->_validateAllowedValues($test, $limitValues);
+        $this->_validateAllowedTypes($test, $limitTypes);
       }
     } else {
-      $result = is_object($result) && method_exists($result, 'getData') ? $result->getData() : $result;
-      $this->_validateAllowedValues($result, $limitValues);
-      $this->_validateAllowedTypes($result, $limitTypes);
+      $test = $this->isDataEntity($result) ? $result->getData() : $result;
+      $this->_validateAllowedValues($test, $limitValues);
+      $this->_validateAllowedTypes($test, $limitTypes);
     }
 
-    return $result;
+    return $realValue ? $this->isDataEntity($result) ? $result->getData() : $result : $result;
   }
 
   protected function isDataEntity($data)
   {
-    return is_object($data) && is_a($data, 'DataEntity');
+    return is_object($data) && method_exists($data, 'getData');
   }
 
   /**
@@ -248,9 +254,11 @@ abstract class ProcessorEntity
     if (in_array('integer', $limitTypes) && $this->_checkInt($val)) {
       return;
     }
-    $type = gettype($val);
-    if (!in_array($type, $limitTypes)) {
-      throw new ApiException("invalid value ($val), only '" . implode("', '",$limitTypes) . "' allowed", 5, $this->id, 417);
+    if (!empty($val)) {
+      $type = gettype($val);
+      if (!in_array($type, $limitTypes)) {
+        throw new ApiException("invalid value ($val), only '" . implode("', '",$limitTypes) . "' allowed", 5, $this->id, 417);
+      }
     }
   }
 

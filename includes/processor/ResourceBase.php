@@ -76,7 +76,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
 
     switch ($this->request->getMethod()) {
       case 'post':
-        $string = $this->val('resource');
+        $string = $this->val('resource', true);
         $resource = $this->_importData($string);
         if (sizeof($resource) == 1 && isset($resource[0])) {
           // resource is not JSON. Fallback to assuming this is a filename.
@@ -89,8 +89,8 @@ abstract class ResourceBase extends Core\ProcessorEntity
         break;
       case 'get':
         $appId = $this->request->appId;
-        $method = $this->val('method');
-        $uri = $this->val('uri');
+        $method = $this->val('method', true);
+        $uri = $this->val('uri', true);
         if (empty($method)) {
           throw new Core\ApiException('Missing method', 1, $this->id);
         }
@@ -101,8 +101,8 @@ abstract class ResourceBase extends Core\ProcessorEntity
         break;
       case 'delete':
         $appId = $this->request->getAppId();
-        $method = $this->val('method');
-        $uri = $this->val('uri');
+        $method = $this->val('method', true);
+        $uri = $this->val('uri', true);
         if (empty($method)) {
           throw new Core\ApiException('Missing method', 1, $this->id);
         }
@@ -172,7 +172,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
     $result['method'] = $resource->getMethod();
     $result['ttl'] = $resource->getTtl();
 
-    return $this->_exportData($result);
+    return new Core\Text($this->_exportData($result));
   }
 
   /**
@@ -200,7 +200,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
     $mapper = new Db\ResourceMapper($this->db);
     $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
 
-    return $mapper->delete($resource);
+    return new Core\Text($mapper->delete($resource));
   }
 
   /**
@@ -251,7 +251,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
     $resource->setMeta(json_encode($meta));
     $resource->setTtl($ttl);
 
-    return $mapper->save($resource);
+    return new Core\Text($mapper->save($resource));
   }
 
   /**
