@@ -54,7 +54,7 @@ class Xml extends Output
   protected function getData()
   {
     Core\Debug::variable('Processor Xml->getData()');
-    return $this->toXml($this->data->getData());
+    return $this->toXml($this->isDataEntity($this->data) ? $this->data->getData() : $this->data);
   }
 
   /**

@@ -95,12 +95,12 @@ class Url extends Core\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'function Url', 4);
 
-    $method = $this->val('method');
-    $connectTimeout = $this->val('connectTimeout');
-    $timeout = $this->val('timeout');
-    $url = $this->val('url');
-    $reportError = $this->val('reportError');
-    $sourceType = $this->val('sourceType');
+    $method = $this->val('method', true);
+    $connectTimeout = $this->val('connectTimeout', true);
+    $timeout = $this->val('timeout', true);
+    $url = $this->val('url', true);
+    $reportError = $this->val('reportError', true);
+    $sourceType = $this->val('sourceType', true);
     $auth = $this->val('auth');
 
     //get static curl options for this call
@@ -111,12 +111,8 @@ class Url extends Core\ProcessorEntity
     if ($timeout > 0) {
       $curlOpts[] = [CURLOPT_TIMEOUT => $timeout];
     }
-    if (isset($this->meta->curlOpts)) {
-      foreach ($this->meta->curlOpts as $k => $v) {
-        $curlOpts += array($this->_get_curlopt_from_string($k) => $v);
-      }
-    }
 
+    /*
     //get auth
     if (!empty($this->meta->auth)) {
       $class = 'Datagator\\Endpoint\\Auth' . ucfirst(trim($this->meta->auth));
@@ -127,30 +123,11 @@ class Url extends Core\ProcessorEntity
       $authentication = $authenticator->process();
       $curlOpts += $authentication;
     }
+    */
 
-    //add any params to post or get call
-    /*
-    if (!empty($auth)) {
-      $vars = array();
-      switch ($method) {
-        case 'post':
-          foreach ($this->request->getPostVars() as $key => $val) {
-            $vars[$key] = $this->val($val);
-          }
-          $curlOpts[CURLOPT_POSTFIELDS] = http_build_query($vars);
-          break;
-        case 'get':
-          foreach ($this->request->getGetVars() as $key => $val) {
-            $vars[$key] = $this->val($val);
-          }
-          $url .= http_build_query($vars, '?', '&');
-          break;
-      }
-    }
-*/
     //send request
     $curl = new Core\Curl();
-    $result = $curl->{strtolower($this->meta->method)}($url, $curlOpts);
+    $result = $curl->$method($url, $curlOpts);
     if ($result === false) {
       throw new Core\ApiException('could not get response from remote server: ' . $curl->errorMsg, 5, $this->id, $curl->httpStatus);
     }

@@ -7,7 +7,7 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class VarRequest extends VarMixed
+class VarRequest extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Request)',
@@ -41,13 +41,13 @@ class VarRequest extends VarMixed
   {
     Core\Debug::variable($this->meta, 'Processor VarRequest', 4);
 
-    $name = $this->val('name');
+    $name = $this->val('name', true);
     $vars = array_merge($this->request->getGetVars(), $this->request->getPostVars());
 
     if (isset($vars[$name])) {
       return $vars[$name];
     }
-    if ($this->val('nullable')) {
+    if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
       return '';
     }
     throw new Core\ApiException("post var $name not available", 1, $this->id);

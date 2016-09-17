@@ -9,7 +9,6 @@ use Datagator\Core;
 
 class Merge extends Core\ProcessorEntity
 {
-  private $_defaultType = 'union';
   protected $details = array(
     'name' => 'Merge',
     'machineName' => 'merge',
@@ -18,7 +17,7 @@ class Merge extends Core\ProcessorEntity
     'application' => 'Common',
     'input' => array(
       'sources' => array(
-        'description' => 'The data-sets to merge on.',
+        'description' => 'The data-sets to be merged.',
         'cardinality' => array(2, '*'),
         'literalAllowed' => true,
         'limitFunctions' => array(),
@@ -27,22 +26,22 @@ class Merge extends Core\ProcessorEntity
         'default' => ''
       ),
       'mergeType' => array(
-        'description' => 'The merge operation to perform. The default is union.',
+        'description' => 'The merge operation to perform.',
         'cardinality' => array(1, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array('union', 'intersect', 'difference'),
-        'default' => ''
+        'default' => 'union'
       ),
       'unique' => array(
-        'description' => 'Filter out duplicate values. The default is false.',
+        'description' => 'Disallow duplicate values.',
         'cardinality' => array(0, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('boolean'),
         'limitValues' => array(),
-        'default' => true
+        'default' => false
       ),
     ),
   );
@@ -51,10 +50,9 @@ class Merge extends Core\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'processor Merge', 4);
 
-    $sources = $this->val('sources');
-    $unique = !isset($this->meta->unique) ? $this->details['input']['unique']['default'] : $this->meta->unique;
-    Core\Debug::variable($unique, 'unique in merge');
-    $mergeType = $this->val('mergeType');
+    $sources = $this->val('sources', true);
+    $unique = $this->val('unique', true);
+    $mergeType = $this->val('mergeType', true);
     $method = '_' . strtolower(trim($mergeType));
 
     if (!method_exists($this, $method)) {

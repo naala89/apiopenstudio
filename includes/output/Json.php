@@ -48,8 +48,7 @@ class Json extends Output
    */
   protected function getData()
   {
-    Core\Debug::variable('Processor Json->getData()');
-    return $this->toJson($this->data->getData());
+    return $this->toJson($this->isDataEntity($this->data) ? $this->data->getData() : $this->data);
   }
 
   /**
@@ -59,6 +58,7 @@ class Json extends Output
   protected function toJson($data=null)
   {
     $data = empty($data) ? $this->data : $data;
+    $data = $this->isDataEntity($this->data) ? $this->data->getData() : $this->data;
     if (is_object($data)) {
       $data = (array) $data;
     }

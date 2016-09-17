@@ -67,9 +67,9 @@ class IfThenElse extends Core\ProcessorEntity
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor IfThenElse', 4);
-    $lhs = $this->val('lhs');
-    $rhs = $this->val('rhs');
-    $operator = $this->val('operator');
+    $lhs = $this->val('lhs', true);
+    $rhs = $this->val('rhs', true);
+    $operator = $this->val('operator', true);
 
     switch ($operator) {
       case '==':

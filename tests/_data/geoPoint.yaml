@@ -2,7 +2,7 @@ name: Testing geoPoint
 
 description: Test GeoPoint processor
 
-uri: gepoint
+uri: geopoint
 
 method: get
 

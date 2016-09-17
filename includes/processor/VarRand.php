@@ -18,7 +18,7 @@ class VarRand extends Core\ProcessorEntity
     'input' => array(
       'length' => array(
         'description' => 'The length of the variable.',
-        'cardinality' => array(1, 1),
+        'cardinality' => array(0, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('integer'),
@@ -59,7 +59,7 @@ class VarRand extends Core\ProcessorEntity
         'limitFunctions' => array(),
         'limitTypes' => array('boolean'),
         'limitValues' => array(),
-        'default' => true
+        'default' => false
       ),
     ),
   );
@@ -69,11 +69,11 @@ class VarRand extends Core\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor VarRand', 4);
 
-    $length = $this->val('length');
-    $lower = $this->val('lower');
-    $upper = $this->val('upper');
-    $numeric = $this->val('numeric');
-    $special = $this->val('special');
+    $length = $this->val('length', true);
+    $lower = $this->val('lower', true);
+    $upper = $this->val('upper', true);
+    $numeric = $this->val('numeric', true);
+    $special = $this->val('special', true);
 
     return Core\Utilities::random_string($length, $lower, $upper, $numeric, $special);
   }

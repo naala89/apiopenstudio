@@ -35,11 +35,7 @@ class Concatenate extends Core\ProcessorEntity
     $sources = $this->val('sources');
     $result = '';
     foreach ($sources as $source) {
-      if ($this->isDataEntity($source)) {
-        $result .= (string) $source->getData();
-      } else {
-        $result .= (string) $source;
-      }
+      $result .= (string) $this->isDataEntity($source) ? $source->getData() : $source;
     }
 
     return new Core\Text($result);

@@ -54,10 +54,9 @@ $I->seeResponseContains('0');
 
 $I->wantTo('populate a varPost with wrong varname and nullable true and see the result.');
 $I->callResourceFromYaml(['values' => 'test', 'nullable' => true]);
-$I->seeResult();exit;
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('');
+$I->seeResponseEquals('');
 
 $I->wantTo('populate a varPost with wrong varname and nullable false and see the result.');
 $I->callResourceFromYaml(['values' => 'test', 'nullable' => false]);

@@ -27,21 +27,21 @@ class Sort extends Core\ProcessorEntity
       ),
       'direction' => array(
         'description' => 'Sort ascending or descending.',
-        'cardinality' => array(1, 1),
+        'cardinality' => array(0, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array('asc', 'desc'),
-        'default' => ''
+        'default' => 'asc'
       ),
       'sortByValue' => array(
-        'description' => 'If set to true, sort by the value, otherwise sort by key (only used if the sources are of type Field, and the sortable key or value cannot be another key/value pair). Default is false.',
+        'description' => 'If set to true, sort by the value, otherwise sort by key (only used if the sources are of type Field, and the sortable key or value cannot be another key/value pair).',
         'cardinality' => array(0, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('boolean'),
         'limitValues' => array(),
-        'default' => ''
+        'default' => false
       ),
     ),
   );
@@ -55,8 +55,8 @@ class Sort extends Core\ProcessorEntity
       return $values;
     }
 
-    $asc = ($this->val('direction') == 'asc');
-    $sortByValue = isset($this->meta->sortByValue) ? $this->val('sortByValue') == 'true' : false;
+    $asc = $this->val('direction', true);
+    $sortByValue = $this->val('sortByValue', true);
 
     if (!$sortByValue) {
       if ($asc) {

@@ -35,8 +35,6 @@ class VarInt extends VarMixed
   {
     Core\Debug::variable($this->meta, 'Processor VarInt', 4);
 
-    Core\Debug::variable($this->val('value'), 'initial val');
-
-    return filter_var($this->val('value'), FILTER_VALIDATE_INT);
+    return filter_var(parent::process(), FILTER_VALIDATE_INT);
   }
 }

@@ -7,7 +7,7 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class VarGet extends VarMixed
+class VarGet extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Get)',
@@ -41,15 +41,14 @@ class VarGet extends VarMixed
   {
     Core\Debug::variable($this->meta, 'Processor VarGet', 4);
 
-    $name = $this->val('name');
+    $name = $this->val('name', true);
     $vars = $this->request->getGetVars();
-    $nullable = filter_var($this->val('nullable'), FILTER_VALIDATE_BOOLEAN);
-
+    
     if (isset($vars[$name])) {
-      return $vars[$name];
+      return new Core\Text($vars[$name]);
     }
-    if ($nullable) {
-      return '';
+    if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
+      return new Core\Text('');
     }
 
     throw new Core\ApiException("get variable ($name) not received", 5, $this->id, 417);
