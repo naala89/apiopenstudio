@@ -32,5 +32,4 @@ $I->seeResponseCodeIs(417);
 $I->seeResponseIsJson();
 $I->seeResponseContains("Invalid value (three), only 'float', 'integer' allowed.");
 
-
 $I->tearDownTestFromYaml();
