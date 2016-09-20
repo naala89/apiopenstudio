@@ -8,8 +8,7 @@
 namespace Datagator\Output;
 use Datagator\Core;
 
-class Xml extends Output
-{
+class Xml extends Output {
   protected $header = 'Content-Type:application/xml';
   protected $details = array(
     'name' => 'Xml',
@@ -20,8 +19,8 @@ class Xml extends Output
     'input' => array(
       'destination' => array(
         'description' => 'Destination URLs for the output.',
-        'cardinality' => array(1, '*'),
-        'literalAllowed' => true,
+        'cardinality' => array(0, '*'),
+        'literalAllowed' => TRUE,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array(),
@@ -30,7 +29,7 @@ class Xml extends Output
       'method' => array(
         'description' => 'HTTP delivery method when sending output. Only used in the output section.',
         'cardinality' => array(0, '1'),
-        'literalAllowed' => true,
+        'literalAllowed' => TRUE,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array('get', 'post'),
@@ -39,7 +38,7 @@ class Xml extends Output
       'options' => array(
         'description' => 'Extra Curl options to be applied when sent to the destination  (e.g. cursor: -1, screen_name: foobarapi, skip_status: true, etc).',
         'cardinality' => array(0, '*'),
-        'literalAllowed' => true,
+        'literalAllowed' => TRUE,
         'limitFunctions' => array('field'),
         'limitTypes' => array('string'),
         'limitValues' => array(),
@@ -49,63 +48,73 @@ class Xml extends Output
   );
 
   /**
-   * @return \Datagator\Output\SimpleXMLElement|string
+   * @param $data
+   * @return string
    */
-  protected function getData()
-  {
-    Core\Debug::variable('Processor Xml->getData()');
-    return $this->toXml($this->isDataEntity($this->data) ? $this->data->getData() : $this->data);
-  }
-
-  /**
-   * @param null $data
-   * @return \Datagator\Output\SimpleXMLElement|string
-   */
-  protected function toXml($data = null) {
-    $data = empty($data) ? $this->data : $data;
-    if (is_object($data)) {
-      $data = get_object_vars($data);
-    }
-    if (is_array($data)) {
-      $xml_data = new \SimpleXMLElement('<?xml version="1.0"?><wrapper></wrapper>');
-      $this->_arrayToXml($data, $xml_data);
-      $xml = $xml_data->asXML();
+  protected function fromXml(& $data) {
+    libxml_use_internal_errors(TRUE);
+    $doc = simplexml_load_string($data);
+    if (!$doc) {
+      libxml_clear_errors();
+      return "<?xml version=\"1.0\"?><datagatorWrapper>$data</datagatorWrapper>";
     }
     else {
-      $xml = "<?xml version=\"1.0\"?><wrapper>$data</wrapper>";
+      return $data;
     }
-    return $xml;
   }
 
   /**
    * @param $data
-   * @param $xml_data
-   * @see http://stackoverflow.com/questions/1397036/how-to-convert-array-to-simplexml
+   * @return mixed
    */
-  private function _arrayToXml($data, &$xml_data ) {
-    foreach($data as $key => $value) {
+  protected function fromHtml(& $data) {
+    return $data;
+  }
 
+  /**
+   * @param $data
+   * @return mixed
+   */
+  protected function fromText(& $data) {
+    return $data;
+  }
+
+  /**
+   * @param $data
+   * @return mixed
+   */
+  protected function fromArray(& $data) {
+    $xml_data = new \SimpleXMLElement('<?xml version="1.0"?><datagatorWrapper></datagatorWrapper>');
+    $this->_array2xml($data, $xml_data);
+    return $xml_data->asXML();
+  }
+
+  /**
+   * @param $data
+   * @return mixed
+   */
+  protected function fromJson(& $data) {
+    $data = json_decode($data, TRUE);
+    return $this->fromArray($data);
+  }
+
+  /**
+   * @param $array
+   * @param $xml
+   * @return mixed
+   */
+  private function _array2xml($array, $xml)
+  {
+    foreach($array as $key => $value) {
+      if (is_numeric($key)) {
+        $key = "item$key";
+      }
       if(is_array($value)) {
-        if (substr($key, 0, 1) == '@') {
-          if ($key != 'header' && $key != 'item' && $key == '@attributes') {
-            foreach ($value as $k => $v) {
-              $xml_data->addAttribute($k, $v);
-            }
-          }
-        }
-        if(is_numeric($key)) {
-          $key = 'item'; //dealing with <0/>..<n/> issues
-        }
-        $subnode = $xml_data->addChild($key);
-        $this->_arrayToXml($value, $subnode);
+        $this->_array2xml($value, $xml->addChild($key));
       } else {
-        if (substr($key, 0, 1) == '@') {
-          if ($key != 'header' && $key != 'item') {
-            $xml_data->addAttribute(substr($key, 1), $value);
-          }
-        }
-        $xml_data->addChild("$key",htmlspecialchars("$value"));
+        $xml->addchild($key, htmlentities($value));
       }
     }
+    return $xml->asXML();
   }
 }

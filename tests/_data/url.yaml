@@ -31,15 +31,19 @@ process:
     function: varGet
     id: 4
     name: sourceType
+    nullable: true
   reportError:
     function: varGet
     id: 4
     name: reportError
+    nullable: true
   connectTimeout:
     function: varGet
     id: 4
     name: connectTimeout
+    nullable: true
   timeout:
     function: varGet
     id: 4
     name: timeout
+    nullable: true

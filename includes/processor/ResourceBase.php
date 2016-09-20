@@ -172,7 +172,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
     $result['method'] = $resource->getMethod();
     $result['ttl'] = $resource->getTtl();
 
-    return new Core\Text($this->_exportData($result));
+    return new Core\DataContainer($this->_exportData($result), 'text');
   }
 
   /**
@@ -200,7 +200,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
     $mapper = new Db\ResourceMapper($this->db);
     $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
 
-    return new Core\Text($mapper->delete($resource));
+    return new Core\DataContainer($mapper->delete($resource), 'text');
   }
 
   /**
@@ -251,7 +251,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
     $resource->setMeta(json_encode($meta));
     $resource->setTtl($ttl);
 
-    return new Core\Text($mapper->save($resource));
+    return new Core\DataContainer($mapper->save($resource), 'text');
   }
 
   /**

@@ -41,4 +41,46 @@ class Plain extends Text
       ),
     ),
   );
+
+  /**
+   * @param $data
+   * @return string
+   */
+  protected function fromXml(& $data) {
+    return $data;
+  }
+
+  /**
+   * @param $data
+   * @return mixed
+   */
+  protected function fromHtml(& $data) {
+    return $data;
+  }
+
+  /**
+   * @param $data
+   * @return mixed
+   */
+  protected function fromText(& $data) {
+    return $data;
+  }
+
+  /**
+   * @param $data
+   * @return mixed
+   */
+  protected function fromArray(& $data) {
+    $objTmp = (object) array('aFlat' => array());
+    array_walk_recursive($aNonFlat, create_function('&$v, $k, &$t', '$t->aFlat[] = $v;'), $objTmp);
+    return $objTmp['aFlat'];
+  }
+
+  /**
+   * @param $data
+   * @return mixed
+   */
+  protected function fromJson(& $data) {
+    return $data;
+  }
 }

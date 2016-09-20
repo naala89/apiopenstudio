@@ -44,27 +44,44 @@ class Text extends Output
   );
 
   /**
-   * @return array|null|string
+   * @param $data
+   * @return string
    */
-  protected function getData()
-  {
-    Core\Debug::variable('Processor Text->getData()');
-    return $this->toText($this->data->getData());
+  protected function fromXml(& $data) {
+    return $data;
   }
 
   /**
-   * @param null $data
-   * @return array|null|string
+   * @param $data
+   * @return mixed
    */
-  protected function toText($data=null)
-  {
-    $data = empty($data) ? $this->data : $data;
-    if (is_object($data)) {
-      $data = (array) $data;
-    }
-    if (is_array($data)) {
-      $data = serialize($data);
-    }
+  protected function fromHtml(& $data) {
+    return $data;
+  }
+
+  /**
+   * @param $data
+   * @return mixed
+   */
+  protected function fromText(& $data) {
+    return $data;
+  }
+
+  /**
+   * @param $data
+   * @return mixed
+   */
+  protected function fromArray(& $data) {
+    $objTmp = (object) array('aFlat' => array());
+    array_walk_recursive($aNonFlat, create_function('&$v, $k, &$t', '$t->aFlat[] = $v;'), $objTmp);
+    return $objTmp['aFlat'];
+  }
+
+  /**
+   * @param $data
+   * @return mixed
+   */
+  protected function fromJson(& $data) {
     return $data;
   }
 }

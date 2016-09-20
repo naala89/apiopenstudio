@@ -21,7 +21,7 @@ env:
                     url: http://datagator.yourtemp.website/
                 REST:
                     url: http://datagator.yourtemp.website/api/
-    staging:
+    production:
         modules:
             config:
                 PhpBrowser:

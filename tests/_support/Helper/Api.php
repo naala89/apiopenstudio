@@ -63,6 +63,26 @@ class Api extends \Codeception\Module
   }
 
   /**
+   * @param $name
+   * @param $value
+   * @throws \Codeception\Exception\ModuleException
+   */
+  public function haveHttpHeader($name, $value)
+  {
+    $this->getModule('REST')->haveHttpHeader($name, $value);
+  }
+
+  /**
+   * @return mixed
+   * @throws \Codeception\Exception\ModuleException
+   */
+  public function getBaseUrl()
+  {
+    $str = $this->getModule('PhpBrowser')->_getUrl();
+    return substr($str, 0, strlen($str) - 4);
+  }
+
+  /**
    * @throws \Codeception\Exception\ModuleException
    */
   public function storeMyToken()
@@ -152,6 +172,7 @@ class Api extends \Codeception\Module
     $params[] = 'method=' . $yamlArr['method'];
     $params[] = 'uri=' . urlencode($yamlArr['uri']);
     $uri = '/' . $this->applicationName . '/resource?' . implode('&', $params);
+    $this->haveHttpHeader('Accept', 'application/json');
     $this->getModule('REST')->sendDELETE($uri);
     $this->getModule('REST')->seeResponseIsJson();
     $this->getModule('REST')->seeResponseCodeIs($code);
