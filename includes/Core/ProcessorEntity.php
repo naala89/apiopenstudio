@@ -3,7 +3,7 @@
 namespace Datagator\Core;
 use Datagator\Config;
 
-abstract class ProcessorEntity
+abstract class ProcessorEntity extends Entity
 {
   /**
    * Processor ID.
@@ -189,8 +189,11 @@ abstract class ProcessorEntity
       throw new ApiException("invalid number of inputs ($count), requires $min - $max", 1, $this->id);
     }
 
-    if (empty($this->meta->$key)) {
-      // return default if empty
+    // return default if empty
+    if (!isset($this->meta->$key)) {
+      return $inputDet[$key]['default'];
+    }
+    if ($this->isDataEntity($this->meta->$key) && $this->meta->$key->getData() == '') {
       return $inputDet[$key]['default'];
     }
 

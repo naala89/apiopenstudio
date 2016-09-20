@@ -28,6 +28,8 @@ try {
   exit();
 }
 
+//var_dump($result);
+
 ob_end_flush();
 
 echo $result;

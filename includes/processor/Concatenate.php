@@ -38,6 +38,6 @@ class Concatenate extends Core\ProcessorEntity
       $result .= (string) $this->isDataEntity($source) ? $source->getData() : $source;
     }
 
-    return new Core\Text($result);
+    return new Core\DataContainer($result, 'text');
   }
 }

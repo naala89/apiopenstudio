@@ -56,12 +56,12 @@ class Url extends Core\ProcessorEntity
       ),
       'reportError' => array(
         'description' => 'Stop processing if the remote source responds with an error.',
-        'cardinality' => array(1, 1),
+        'cardinality' => array(0, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('boolean'),
         'limitValues' => array(),
-        'default' => ''
+        'default' => true
       ),
       'connectTimeout' => array(
         'description' => 'The number of seconds to wait while trying to connect. Indefinite wait time of 0 is disallowed (optional).',
@@ -127,12 +127,12 @@ class Url extends Core\ProcessorEntity
 
     //send request
     $curl = new Core\Curl();
-    $result = $curl->$method($url, $curlOpts);
-    if ($result === false) {
+    $this->data = $curl->$method($url, $curlOpts);
+    if ($this->data === false) {
       throw new Core\ApiException('could not get response from remote server: ' . $curl->errorMsg, 5, $this->id, $curl->httpStatus);
     }
     if ($reportError && $curl->httpStatus != 200) {
-      throw new Core\ApiException(json_encode($result), 5, $this->id, $curl->httpStatus);
+      throw new Core\ApiException(json_encode($this->data), 5, $this->id, $curl->httpStatus);
     }
 
     if ($sourceType == 'auto') {
@@ -144,7 +144,7 @@ class Url extends Core\ProcessorEntity
       throw new Core\ApiException("could not get data transport for: '$classStr'", 5, $this->id, $curl->httpStatus);
     }
 
-    return new $classStr($result);
+    return new $classStr($this->data);
   }
 
   /**

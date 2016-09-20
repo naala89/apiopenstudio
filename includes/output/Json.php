@@ -44,40 +44,74 @@ class Json extends Output
   );
 
   /**
-   * @return array|null|string
+   * @param $data
+   * @return string
    */
-  protected function getData()
-  {
-    return $this->toJson($this->isDataEntity($this->data) ? $this->data->getData() : $this->data);
+  protected function fromXml(& $data) {
+    Core\Debug::variable($data);
+    $xml = simplexml_load_string($data);
+    return $this->_xml2json($xml);
   }
 
   /**
-   * @param null $data
-   * @return array|null|string
+   * @param $data
+   * @return mixed
    */
-  protected function toJson($data=null)
-  {
-    $data = empty($data) ? $this->data : $data;
-    $data = $this->isDataEntity($this->data) ? $this->data->getData() : $this->data;
-    if (is_object($data)) {
-      $data = (array) $data;
-    }
-    if (!$this->isJson($data)) {
-      $data = json_encode($data);
-    }
+  protected function fromHtml(& $data) {
+    return $this->_xml2json($data);
+  }
+
+  /**
+   * @param $data
+   * @return mixed
+   */
+  protected function fromText(& $data) {
     return $data;
   }
 
   /**
-   * @param $string
-   * @return bool
+   * @param $data
+   * @return mixed
    */
-  protected function isJson($string)
-  {
-    if (!is_string($string)) {
-      return FALSE;
+  protected function fromArray(& $data) {
+    return \GuzzleHttp\json_encode($data);
+  }
+
+  /**
+   * @param $data
+   * @return mixed
+   */
+  protected function fromJson(& $data) {
+    return $data;
+  }
+
+  private function _xml2json(& $xml) {
+    $root = (func_num_args() > 1 ? false : true);
+    $jsnode = array();
+
+    if (!$root) {
+      if (count($xml->attributes()) > 0){
+        $jsnode["$"] = array();
+        foreach($xml->attributes() as $key => $value)
+          $jsnode["$"][$key] = (string)$value;
+      }
+
+      $textcontent = trim((string)$xml);
+      if (count($textcontent) > 0)
+        $jsnode["_"] = $textcontent;
+
+      foreach ($xml->children() as $childxmlnode) {
+        $childname = $childxmlnode->getName();
+        if (!array_key_exists($childname, $jsnode))
+          $jsnode[$childname] = array();
+        array_push($jsnode[$childname], $this->_xml2json($childxmlnode, true));
+      }
+      return $jsnode;
+    } else {
+      $nodename = $xml->getName();
+      $jsnode[$nodename] = array();
+      array_push($jsnode[$nodename], $this->_xml2json($xml, true));
+      return json_encode($jsnode);
     }
-    json_decode($string);
-    return (json_last_error() == JSON_ERROR_NONE);
   }
 }

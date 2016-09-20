@@ -45,10 +45,10 @@ class VarPost extends Core\ProcessorEntity
     $vars = $this->request->getPostVars();
 
     if (isset($vars[$name])) {
-      return new Core\Text($vars[$name]);
+      return new Core\DataContainer($vars[$name], 'text');
     }
     if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
-      return new Core\Text('');
+      return new Core\DataContainer('', 'text');
     }
 
     throw new Core\ApiException("post variable ($name) not received", 5, $this->id, 417);

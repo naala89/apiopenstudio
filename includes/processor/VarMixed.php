@@ -31,7 +31,7 @@ class VarMixed extends Core\ProcessorEntity
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarMixed', 4);
-
+    
     return $this->val('value', true);
   }
 }
