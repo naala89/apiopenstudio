@@ -51,6 +51,33 @@ class Xml extends Output {
    * @param $data
    * @return string
    */
+  protected function fromBoolean(& $data)
+  {
+    return '<?xml version="1.0"?><datagatorWrapper>' . $data ? 'true' : 'false' . '</datagatorWrapper>';
+  }
+
+  /**
+   * @param $data
+   * @return string
+   */
+  protected function fromInteger(& $data)
+  {
+    return '<?xml version="1.0"?><datagatorWrapper>' . $data . '</datagatorWrapper>';
+  }
+
+  /**
+   * @param $data
+   * @return string
+   */
+  protected function fromFloat(& $data)
+  {
+    return '<?xml version="1.0"?><datagatorWrapper>' . $data . '</datagatorWrapper>';
+  }
+
+  /**
+   * @param $data
+   * @return string
+   */
   protected function fromXml(& $data) {
     libxml_use_internal_errors(TRUE);
     $doc = simplexml_load_string($data);

@@ -48,9 +48,9 @@ class UserLogin extends Core\ProcessorEntity
     Core\Debug::variable($this->meta, 'Processor UserLogin', 4);
 
     $username = $this->val('username');
-    $username = $this->isDataEntity($username) ? $username->getData() : $username;
+    $username = $this->isDataContainer($username) ? $username->getData() : $username;
     $password = $this->val('password');
-    $password = $this->isDataEntity($password) ? $password->getData() : $password;
+    $password = $this->isDataContainer($password) ? $password->getData() : $password;
     $db = $this->getDb();
     $userMapper = new Db\UserMapper($db);
 

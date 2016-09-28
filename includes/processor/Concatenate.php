@@ -35,7 +35,7 @@ class Concatenate extends Core\ProcessorEntity
     $sources = $this->val('sources');
     $result = '';
     foreach ($sources as $source) {
-      $result .= (string) $this->isDataEntity($source) ? $source->getData() : $source;
+      $result .= (string) $this->isDataContainer($source) ? $source->getData() : $source;
     }
 
     return new Core\DataContainer($result, 'text');

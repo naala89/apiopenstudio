@@ -31,7 +31,12 @@ class VarMixed extends Core\ProcessorEntity
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarMixed', 4);
-    
-    return $this->val('value', true);
+
+    $result = $this->val('value');
+    if (!$this->isDataContainer($result)) {
+      $result = new Core\DataContainer($result, 'text');
+    }
+
+    return $result;
   }
 }

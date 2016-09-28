@@ -79,22 +79,22 @@ class VarPersistent extends Core\ProcessorEntity
           $vars->setAppId($this->request->appId);
         }
         $vars->setVal($val);
-        return TRUE;
+        return new Core\DataContainer('true', 'text');
         break;
       case 'delete':
         if (empty($vars->getId())) {
           if ($strict) {
             throw new Core\ApiException('could not delete variable, does not exist', 6, $this->id, 417);
           }
-          return true;
+          return new Core\DataContainer('true', 'text');
         }
-        return $mapper->delete($vars);
+        return new Core\DataContainer($mapper->delete($vars), 'text');
         break;
       case 'fetch':
         if ($strict && empty($vars->getId())) {
           throw new Core\ApiException('could not fetch variable, does not exist', 6, $this->id, 417);
         }
-        return $vars->getVal();
+        return new Core\DataContainer($vars->getVal(), 'text');
         break;
       default:
         throw new Core\ApiException("invalid operation: $operation", 6, $this->id, 417);

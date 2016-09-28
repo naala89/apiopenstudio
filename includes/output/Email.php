@@ -137,9 +137,17 @@ class Email extends Output
   }
 
   /**
-   * No need for getData() in this class, because it is only a delivery mechanism.
+   * No need define these classes, because it is only a delivery mechanism.
    */
-  protected function getData()
-  {
-  }
+  protected function getData() {}
+
+  protected function fromXml(& $data) {}
+
+  protected function fromJson(& $data) {}
+
+  protected function fromHtml(& $data) {}
+
+  protected function fromText(& $data) {}
+
+  protected function fromArray(& $data) {}
 }

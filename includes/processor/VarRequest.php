@@ -45,10 +45,10 @@ class VarRequest extends Core\ProcessorEntity
     $vars = array_merge($this->request->getGetVars(), $this->request->getPostVars());
 
     if (isset($vars[$name])) {
-      return $vars[$name];
+      return new Core\DataContainer($vars[$name], 'text');
     }
     if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
-      return '';
+      return new Core\DataContainer('', 'text');
     }
     throw new Core\ApiException("post var $name not available", 1, $this->id);
   }

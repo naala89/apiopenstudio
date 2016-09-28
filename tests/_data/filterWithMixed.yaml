@@ -4,6 +4,7 @@ description: Test filter with list of mixed fieldsa and single items
 
 uri: filter/mixed
 
+
 method: get
 
 ttl: 0

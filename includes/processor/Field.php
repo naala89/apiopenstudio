@@ -46,6 +46,6 @@ class Field extends Core\ProcessorEntity
 
     Core\Debug::variable(array($key => $value), 'result');
 
-    return array($key => $value);
+    return new Core\DataContainer(array($key => $value), 'array');
   }
 }

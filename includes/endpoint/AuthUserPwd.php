@@ -42,7 +42,6 @@ class AuthUserPwd extends Core\ProcessorEntity
       'password' => array(
         'description' => 'The password.',
         'cardinality' => array(1, 1),
-        'accepts' => array('function', 'literal'),
         'literalAllowed' => false,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),

@@ -10,7 +10,7 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class VarFloat extends VarMixed
+class VarFloat extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Float)',
@@ -35,6 +35,16 @@ class VarFloat extends VarMixed
   {
     Core\Debug::variable($this->meta, 'Processor VarFloat', 4);
 
-    return filter_var(parent::process(), FILTER_VALIDATE_FLOAT);
+    $result = $this->val('value');
+    if (!$this->isDataContainer($result)) {
+      $result = new Core\DataContainer($result, 'float');
+    }
+    $float = filter_var($result->getData(), FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
+    if (is_null($float)) {
+      throw new Core\ApiException($result->getData() . ' is not float', 0, $this->id);
+    }
+    $result->setData($float);
+    $result->setType('float');
+    return $result;
   }
 }

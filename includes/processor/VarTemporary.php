@@ -71,23 +71,23 @@ class VarTemporary extends Core\ProcessorEntity
     switch($operation) {
       case 'save':
         $_SESSION[$name] = $this->meta->value;
-        return true;
+        return new Core\DataContainer('true', 'text');
         break;
       case 'delete':
         if (!isset($_SESSION[$name])) {
           if ($strict) {
             throw new Core\ApiException('could not delete variable, does not exist', 6, $this->id, 417);
           }
-          return true;
+          return new Core\DataContainer('true', 'text');
         }
         unset($_SESSION[$name]);
-        return true;
+        return new Core\DataContainer('true', 'text');
         break;
       case 'fetch':
         if ($strict && !isset($_SESSION[$name])) {
           throw new Core\ApiException('could not fetch variable, does not exist', 6, $this->id, 417);
         }
-        return $_SESSION[$name];
+        return new Core\DataContainer($_SESSION[$name], 'text');
         break;
       default:
         throw new Core\ApiException("invalid operation: $operation", 6, $this->id, 417);

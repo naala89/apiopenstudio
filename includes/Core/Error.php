@@ -27,14 +27,15 @@ class Error
    */
   public function process()
   {
-    return new Json(
+    return new DataContainer(
       array(
         'error' => array(
           'id' => !empty($this->id) ? $this->id : -1,
           'code' => $this->code,
           'message' => (!empty($this->message) ? ucfirst($this->message) . '.' : 'Unidentified error.'),
         ),
-      )
+      ),
+      'array'
     );
   }
 }
