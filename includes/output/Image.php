@@ -49,10 +49,6 @@ class Image extends Output
     ),
   );
 
-  protected function getData()
-  {
-  }
-
   public function process()
   {
     parent::process();
@@ -83,4 +79,19 @@ class Image extends Output
     header("Content-Type:$mime");
     return file_get_contents($this->data);
   }
+
+  /**
+   * No need define these classes, because it is only a delivery mechanism.
+   */
+  protected function getData() {}
+
+  protected function fromXml(& $data) {}
+
+  protected function fromJson(& $data) {}
+
+  protected function fromHtml(& $data) {}
+
+  protected function fromText(& $data) {}
+
+  protected function fromArray(& $data) {}
 }

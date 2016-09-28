@@ -1,9 +1,5 @@
 <?php
 
-/**
- *
- */
-
 namespace Datagator\Core;
 use Datagator\Security;
 use Datagator\Endpoint;
@@ -41,7 +37,7 @@ class ProcessorHelper
    * @param $obj
    * @return bool
    */
-  public function isProcessor($obj)
+  public function isProcessor(& $obj)
   {
     return (is_array($obj) && !empty($obj['function']));
   }

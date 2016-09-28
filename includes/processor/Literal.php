@@ -41,18 +41,9 @@ class Literal extends Core\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor Literal', 4);
 
-    $value = $this->meta->value;
-    if (!is_string($value) && !is_numeric($value)) {
-      throw new Core\ApiException('Invalid literal value', 6, $this->id, 307);
-    }
+    $value = $this->val('value');
+    $type = $this->val('type');
 
-    $type = !empty($this->meta->type) ? $this->meta->type : $this->details['input']['type']['default'];
-    if (!in_array($type, $this->details['input']['type']['limitValues'])) {
-      throw new Core\ApiException('Invalid type value', 6, $this->id, 307);
-    }
-
-    $className = ucfirst(trim($type));
-    $classStr = "\\Datagator\\Core\\$className";
-    return new $classStr($value);
+    return new Core\DataContainer($value, $type);
   }
 }

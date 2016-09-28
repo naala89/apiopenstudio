@@ -7,7 +7,7 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class VarStr extends VarMixed
+class VarStr extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (String)',
@@ -31,12 +31,16 @@ class VarStr extends VarMixed
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor VarStr', 4);
-    $value = parent::process();
 
-    if (!is_string($value)) {
-      throw new Core\ApiException('invalid string', 6, $this->id, 417);
+    $result = $this->val('value');
+    if (!$this->isDataContainer($result)) {
+      $result = new Core\DataContainer($result, 'text');
     }
-
-    return $value;
+    $string = $result->getData();
+    if (!is_string($string)) {
+      throw new Core\ApiException($result->getData() . ' is not text', 0, $this->id);
+    }
+    $result->setType('text');
+    return $result;
   }
 }

@@ -8,10 +8,13 @@ class DataContainer extends Entity
    * @var array
    */
   private $types = array(
+    'boolean',
+    'integer',
+    'float',
     'text',
-    'xml',
+    'array',
     'json',
-    'array'
+    'xml'
   );
   /**
    * Data type
@@ -39,6 +42,15 @@ class DataContainer extends Entity
    */
   public function getData()
   {
+    if ($this->type == 'boolean') {
+      return filter_var($this->data, FILTER_VALIDATE_BOOLEAN);
+    }
+    if ($this->type == 'integer') {
+      return filter_var($this->data, FILTER_VALIDATE_INT);
+    }
+    if ($this->type == 'float') {
+      return filter_var($this->data, FILTER_VALIDATE_FLOAT);
+    }
     return $this->data;
   }
 

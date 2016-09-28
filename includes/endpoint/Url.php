@@ -139,12 +139,7 @@ class Url extends Core\ProcessorEntity
       $sourceType = $this->_calcFormat();
     }
 
-    $classStr = "Datagator\\Core\\$sourceType";
-    if (!class_exists($classStr)) {
-      throw new Core\ApiException("could not get data transport for: '$classStr'", 5, $this->id, $curl->httpStatus);
-    }
-
-    return new $classStr($this->data);
+    return new Core\DataContainer($this->data, $sourceType);
   }
 
   /**

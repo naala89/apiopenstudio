@@ -193,7 +193,7 @@ abstract class ProcessorEntity extends Entity
     if (!isset($this->meta->$key)) {
       return $inputDet[$key]['default'];
     }
-    if ($this->isDataEntity($this->meta->$key) && $this->meta->$key->getData() == '') {
+    if ($this->isDataContainer($this->meta->$key) && $this->meta->$key->getData() == '') {
       return $inputDet[$key]['default'];
     }
 
@@ -201,22 +201,22 @@ abstract class ProcessorEntity extends Entity
 
     if (is_array($result)) {
       foreach ($result as & $r) {
-        $test = $this->isDataEntity($r) ? $r->getData() : $r;
-        $this->_validateAllowedValues($test, $limitValues);
-        $this->_validateAllowedTypes($test, $limitTypes);
+        $value = $this->isDataContainer($r) ? $r->getData() : $r;
+        $this->_validateAllowedValues($value, $limitValues);
+        $this->_validateAllowedTypes($value, $limitTypes);
       }
     } else {
-      $test = $this->isDataEntity($result) ? $result->getData() : $result;
-      $this->_validateAllowedValues($test, $limitValues);
-      $this->_validateAllowedTypes($test, $limitTypes);
+      $value = $this->isDataContainer($result) ? $result->getData() : $result;
+      $this->_validateAllowedValues($value, $limitValues);
+      $this->_validateAllowedTypes($value, $limitTypes);
     }
 
-    return $realValue ? $this->isDataEntity($result) ? $result->getData() : $result : $result;
+    return $realValue ? $this->isDataContainer($result) ? $result->getData() : $result : $result;
   }
 
-  protected function isDataEntity($data)
+  protected function isDataContainer($data)
   {
-    return is_object($data) && method_exists($data, 'getData');
+    return is_object($data) && get_class($data) == 'Datagator\Core\DataContainer';
   }
 
   /**
@@ -251,10 +251,13 @@ abstract class ProcessorEntity extends Entity
     if (in_array('boolean', $limitTypes) && $this->_checkBool($val)) {
       return;
     }
+    if (in_array('integer', $limitTypes) && $this->_checkInt($val)) {
+      return;
+    }
     if (in_array('float', $limitTypes) && $this->_checkFloat($val)) {
       return;
     }
-    if (in_array('integer', $limitTypes) && $this->_checkInt($val)) {
+    if (in_array('array', $limitTypes) && is_array($val)) {
       return;
     }
     if (!empty($val)) {

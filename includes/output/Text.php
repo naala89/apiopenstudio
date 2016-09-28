@@ -47,6 +47,33 @@ class Text extends Output
    * @param $data
    * @return string
    */
+  protected function fromBoolean(& $data)
+  {
+    return $data ? 'true' : 'false';
+  }
+
+  /**
+   * @param $data
+   * @return string
+   */
+  protected function fromInteger(& $data)
+  {
+    return $data;
+  }
+
+  /**
+   * @param $data
+   * @return string
+   */
+  protected function fromFloat(& $data)
+  {
+    return $data;
+  }
+
+  /**
+   * @param $data
+   * @return string
+   */
   protected function fromXml(& $data) {
     return $data;
   }

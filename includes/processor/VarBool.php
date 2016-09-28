@@ -10,12 +10,12 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class VarBool extends VarMixed
+class VarBool extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Boolean)',
     'machineName' => 'varBool',
-    'description' => 'A boolean variable. It validates the input and returns an error if it is not a boolean. Possible input',
+    'description' => 'A boolean variable. It validates the input (0,1,yes,no,true,false) into a boolean value, and returns an error if it is not a boolean.',
     'menu' => 'Primitive',
     'application' => 'Common',
     'input' => array(
@@ -26,7 +26,7 @@ class VarBool extends VarMixed
         'limitFunctions' => array(),
         'limitTypes' => array('boolean'),
         'limitValues' => array(),
-        'default' => ''
+        'default' => false
       ),
     ),
   );
@@ -35,6 +35,16 @@ class VarBool extends VarMixed
   {
     Core\Debug::variable($this->meta, 'Processor VarBool', 4);
 
-    return filter_var(parent::process(), FILTER_VALIDATE_BOOLEAN);
+    $result = $this->val('value');
+    if (!$this->isDataContainer($result)) {
+      $result = new Core\DataContainer($result, 'boolean');
+    }
+    $boolean = filter_var($result->getData(), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    if (is_null($boolean)) {
+      throw new Core\ApiException($result->getData() . ' is not boolean', 0, $this->id);
+    }
+    $result->setData($boolean);
+    $result->setType('boolean');
+    return $result;
   }
 }

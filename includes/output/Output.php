@@ -100,32 +100,39 @@ abstract class Output extends Core\ProcessorEntity
    * @throws \Datagator\Core\ApiException
    */
   protected function getData() {
-    Core\Debug::variable($this->data);
-    if (!$this->isDataEntity($this->data)) {
+
+    if (!$this->isDataContainer($this->data)) {
       $type = $this->calcType();
-      $data = $this->data;
     }
     else {
-      $data = $this->data->getData();
       $type = $this->data->getType();
     }
-    Core\Debug::variable($type);
+    $this->_dataContainer2value($this->data);
+
     switch ($type) {
-      case 'xml':
-        return $this->fromXml($data);
+      case 'boolean':
+        return $this->fromBoolean($this->data);
         break;
-      case 'html':
-        return $this->fromHtml($data);
+      case 'integer':
+        return $this->fromInteger($this->data);
         break;
-      case 'json':
-        return $this->fromJson($data);
-        break;
-      case 'array':
-        return $this->fromArray($data);
+      case 'float':
+        return $this->fromFloat($this->data);
         break;
       case 'text':
-      case 'plain':
-        return $this->fromText($data);
+        return $this->fromText($this->data);
+        break;
+      case 'array':
+        return $this->fromArray($this->data);
+        break;
+      case 'json':
+        return $this->fromJson($this->data);
+        break;
+      case 'xml':
+        return $this->fromXml($this->data);
+        break;
+      case 'html':
+        return $this->fromHtml($this->data);
         break;
       default:
         throw new Core\ApiException("unknown output type: '$type'. Cannot convert to XML");
@@ -133,13 +140,39 @@ abstract class Output extends Core\ProcessorEntity
     }
   }
 
-  abstract protected function fromXml(& $data);
+  private function _dataContainer2value(& $data)
+  {
+    if (is_array($data)) {
+      foreach ($data as $key => & $value) {
+        $value = $this->_dataContainer2value($value);
+      }
+    } elseif ($this->isDataContainer($data)) {
+      $type = $data->getType();
+      $data = $data->getData();
+      if ($type == 'array') {
+        foreach ($data as & $item) {
+          $item = $this->_dataContainer2value($item);
+        }
+      } elseif ($this->isDataContainer($data)) {
+        $data = $this->_dataContainer2value($data);
+      }
+    }
+    return $data;
+  }
 
-  abstract protected function fromJson(& $data);
+  abstract protected function fromBoolean(& $data);
 
-  abstract protected function fromHtml(& $data);
+  abstract protected function fromInteger(& $data);
+
+  abstract protected function fromFloat(& $data);
 
   abstract protected function fromText(& $data);
 
   abstract protected function fromArray(& $data);
+
+  abstract protected function fromJson(& $data);
+
+  abstract protected function fromXml(& $data);
+
+  abstract protected function fromHtml(& $data);
 }

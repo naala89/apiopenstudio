@@ -10,7 +10,7 @@
 namespace Datagator\Processor;
 use Datagator\Core;
 
-class VarInt extends VarMixed
+class VarInt extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Integer)',
@@ -35,6 +35,16 @@ class VarInt extends VarMixed
   {
     Core\Debug::variable($this->meta, 'Processor VarInt', 4);
 
-    return filter_var(parent::process(), FILTER_VALIDATE_INT);
+    $result = $this->val('value');
+    if (!$this->isDataContainer($result)) {
+      $result = new Core\DataContainer($result, 'integer');
+    }
+    $integer = filter_var($result->getData(), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+    if (is_null($integer)) {
+      throw new Core\ApiException($result->getData() . ' is not integer', 0, $this->id);
+    }
+    $result->setData($integer);
+    $result->setType('integer');
+    return $result;
   }
 }
