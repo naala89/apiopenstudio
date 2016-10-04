@@ -44,8 +44,6 @@ class Field extends Core\ProcessorEntity
     $key = $this->val('key', true);
     $value = $this->val('value', true);
 
-    Core\Debug::variable(array($key => $value), 'result');
-
     return new Core\DataContainer(array($key => $value), 'array');
   }
 }

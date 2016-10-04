@@ -1,10 +1,10 @@
 {
   "name": "naala/datagator",
   "require": {
-    "adodb/adodb-php": "^5.19",
+    "adodb/adodb-php": "^5.20",
     "mustangostang/spyc": "^0.5.1",
     "eloquent/pbkdf2-compat": "^1.0.1",
-    "facebook/php-sdk-v4" : "~5.0",
+    "facebook/graph-sdk" : "~5.3",
     "phpmailer/phpmailer": "~5.2",
     "codeception/codeception": "*"
   },

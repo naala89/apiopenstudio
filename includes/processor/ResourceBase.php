@@ -5,6 +5,7 @@
  */
 
 namespace Datagator\Processor;
+use Codeception\Util\Debug;
 use Datagator\Core;
 use Datagator\Db;
 

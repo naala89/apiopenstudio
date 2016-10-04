@@ -1,0 +1,49 @@
+name: Testing filter fields values strict value normal
+
+description: Test Filter by filtering out fields by array of values with settings non-regex, value, non-inverse
+
+uri: filter/fields/strict/values/recursive/normal
+method: get
+
+ttl: 0
+
+security:
+  function: TokenConsumer
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
+
+process:
+  function: filter
+  id: 3
+  values:
+    - function: field
+      id: 5
+      key: key1
+      value: val1
+    - function: field
+      id: 6
+      key: key2
+      value: val2
+    - function: field
+      id: 7
+      key: key3
+      value: val3
+    - function: field
+      id: 8
+      key: key4
+      value: val4
+    - function: field
+      id: 9
+      key: key5
+      value: val5
+  filter:
+    - key1
+    - val3
+    - val4
+  regex: false
+  keyValue: value
+  recursive: true
+  inverse: false

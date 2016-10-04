@@ -172,7 +172,7 @@ abstract class ProcessorEntity extends Entity
   protected function val($key, $realValue=false)
   {
     $inputDet = $this->details['input'];
-    if (empty($inputDet[$key])) {
+    if (!isset($inputDet[$key])) {
       // undefined input key for this processor type
       throw new ApiException("invalid key: $key", 1, $this->id);
     }

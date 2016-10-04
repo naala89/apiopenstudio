@@ -46,3 +46,7 @@ process:
   filter:
     - key1
     - val3
+  regex: false
+  keyValue: value
+  recursive: true
+  inverse: false

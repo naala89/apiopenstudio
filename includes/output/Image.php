@@ -87,6 +87,12 @@ class Image extends Output
 
   protected function fromXml(& $data) {}
 
+  protected function fromFloat(& $data) {}
+
+  protected function fromBoolean(& $data) {}
+
+  protected function fromInteger(& $data) {}
+
   protected function fromJson(& $data) {}
 
   protected function fromHtml(& $data) {}

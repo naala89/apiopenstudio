@@ -13,7 +13,7 @@ Installation
 3. chmod 775 uploads
 4. Install [Composer](https://getcomposer.org/).
 5. $ composer install
-6. $ composer dump-autoload --optimize
+6. $ composer dump-autoload
 7. Create an empty database and user. Give the user full permission for the DB.
 8. Update includes/config.php:
   1. Set the server role by editing the $_server array so that the LHS values contain the server hostname, and the RHS indicate the server role (development, staging or production).
