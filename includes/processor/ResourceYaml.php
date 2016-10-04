@@ -27,12 +27,13 @@ class ResourceYaml extends ResourceBase
   /**
    * Convert YAML string to YAML array.
    *
-   * @param $data
+   * @param $file
    * @return array
    * @throws \Datagator\Core\ApiException
    */
-  protected function _importData($data)
+  protected function _importData($file)
   {
+    $data = $this->getFile($file);
     $yaml = \Spyc::YAMLLoadString($data);
     if (empty($yaml)) {
       throw new Core\ApiException('Invalid or no YAML supplied', 6, $this->id, 417);

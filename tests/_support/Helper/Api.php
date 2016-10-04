@@ -195,6 +195,10 @@ class Api extends \Codeception\Module
     $this->callResourceFromYaml($params);
   }
 
+  /**
+   * @param $length
+   * @throws \Codeception\Exception\ModuleException
+   */
   public function seeReponseHasLength($length)
   {
     if (strlen(trim($this->getModule('REST')->response, '"')) != $length) {
@@ -211,6 +215,10 @@ class Api extends \Codeception\Module
     exit;
   }
 
+  /**
+   * @return mixed
+   * @throws \Codeception\Exception\ModuleException
+   */
   public function getResponse()
   {
     return $this->getModule('REST')->response;

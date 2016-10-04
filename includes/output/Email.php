@@ -143,6 +143,12 @@ class Email extends Output
 
   protected function fromXml(& $data) {}
 
+  protected function fromInteger(& $data) {}
+
+  protected function fromBoolean(& $data) {}
+
+  protected function fromFloat(& $data) {}
+
   protected function fromJson(& $data) {}
 
   protected function fromHtml(& $data) {}
