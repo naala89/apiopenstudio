@@ -93,6 +93,17 @@ class Json extends Output
    * @return mixed
    */
   protected function fromText(& $data) {
+    if ($data == '') {
+      // Empty string should be returned as double quotes so that it is not returned as null.
+      return '""';
+    }
+    // Wrap in double quotes if not already present.
+    if (substr($data, 0, 1) != '"' && substr($data, 0, 6) != '&quot;') {
+      $data = '"' . $data;
+    }
+    if (substr($data, -1, 1) != '"' && substr($data, -6, 6) != '&quot;') {
+      $data = $data . '"';
+    }
     return $data;
   }
 
