@@ -83,7 +83,7 @@ class Xml extends Output {
     $doc = simplexml_load_string($data);
     if (!$doc) {
       libxml_clear_errors();
-      return "<?xml version=\"1.0\"?><datagatorWrapper>$data</datagatorWrapper>";
+      return '<?xml version="1.0"?><datagatorWrapper>' . $data . '</datagatorWrapper>';
     }
     else {
       return $data;
@@ -103,7 +103,7 @@ class Xml extends Output {
    * @return mixed
    */
   protected function fromText(& $data) {
-    return $data;
+    return '<?xml version="1.0"?><datagatorWrapper>' . $data . '</datagatorWrapper>';
   }
 
   /**
