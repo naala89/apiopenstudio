@@ -17,7 +17,7 @@ class VarGet extends Core\ProcessorEntity
     'application' => 'Common',
     'input' => array(
       'name' => array(
-        'description' => 'The name of the variable.',
+        'description' => 'The key or name of the GET variable.',
         'cardinality' => array(1, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
@@ -26,7 +26,7 @@ class VarGet extends Core\ProcessorEntity
         'default' => ''
       ),
       'nullable' => array(
-        'description' => 'Allow the processing to continue if the post variable does not exist.',
+        'description' => 'Allow the processing to continue if the GET variable does not exist.',
         'cardinality' => array(0, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),

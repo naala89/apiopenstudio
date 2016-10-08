@@ -17,7 +17,7 @@ class VarPost extends Core\ProcessorEntity
     'application' => 'Common',
     'input' => array(
       'name' => array(
-        'description' => 'The name of the variable.',
+        'description' => 'The key or name of the POST variable.',
         'cardinality' => array(1, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
@@ -26,7 +26,7 @@ class VarPost extends Core\ProcessorEntity
         'default' => ''
       ),
       'nullable' => array(
-        'description' => 'Throw exception if the post variable does not exist.',
+        'description' => 'Allow the processing to continue if the POST variable does not exist.',
         'cardinality' => array(0, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
