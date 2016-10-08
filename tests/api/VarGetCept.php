@@ -56,7 +56,7 @@ $I->wantTo('populate a VarGet with wrong varname and nullable true and see the r
 $I->callResourceFromYaml(['values' => 'test', 'nullable' => true]);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseEquals('');
+$I->seeResponseEquals('""');
 
 $I->wantTo('populate a VarGet with wrong varname and nullable false and see the result.');
 $I->callResourceFromYaml(['values' => 'test', 'nullable' => false]);

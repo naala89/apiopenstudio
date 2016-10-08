@@ -56,6 +56,6 @@ $I->wantTo('populate a varRequest with wrong varname and see the result.');
 $I->callResourceFromYaml(['values' => 'test']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseEquals('');
+$I->seeResponseEquals('""');
 
 $I->tearDownTestFromYaml();
