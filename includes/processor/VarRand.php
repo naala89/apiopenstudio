@@ -75,6 +75,6 @@ class VarRand extends Core\ProcessorEntity
     $numeric = $this->val('numeric', true);
     $special = $this->val('special', true);
 
-    return new DataContainer(Core\Utilities::random_string($length, $lower, $upper, $numeric, $special), 'text');
+    return new Core\DataContainer(Core\Utilities::random_string($length, $lower, $upper, $numeric, $special), 'text');
   }
 }
