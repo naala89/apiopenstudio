@@ -147,11 +147,7 @@ class Api
     $request->setGetVars(array_diff_assoc($get, array('request' => $get['request'])));
     $request->setPostVars($_POST);
     $request->setIp($_SERVER['REMOTE_ADDR']);
-    $header = getallheaders();
-    foreach ($header as $key => $val) {
-      $header[strtolower($key)] = $val;
-    }
-    $request->setOutFormat($this->parseType($header, 'Accept', 'json'));
+    $request->setOutFormat($this->parseType('Accept', 'json'));
 
     return $request;
   }
@@ -362,13 +358,16 @@ class Api
   /**
    * Calculate a format from string of header Content-Type or Accept.
    *
-   * @param $header
    * @param $key
    * @param bool|FALSE $default
    * @return bool|string
    */
-  public function parseType($header, $key, $default=null)
+  public function parseType($key, $default=null)
   {
+    $header = getallheaders();
+    foreach ($header as $k => $v) {
+      $header[strtolower($k)] = $v;
+    }
     $key = strtolower($key);
     $result = $default;
     $val = !empty($header[strtolower($key)]) ? $header[strtolower($key)] : '';
