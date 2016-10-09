@@ -7,9 +7,6 @@ Options +FollowSymLinks
 # Set the default handler.
 DirectoryIndex index.php index.html index.htm
 
-# Handle 404 in standard way
-ErrorDocument 404 /html/error.json
-
 # Allow cross domain policy
 Header set Access-Control-Allow-Origin "*"
 Header set Access-Control-Allow-Headers "origin, x-requested-with, content-type"
