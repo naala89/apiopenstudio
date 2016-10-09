@@ -8,49 +8,49 @@ $I->createResourceFromYaml();
 $I->callResourceFromYaml(['value' => '1']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('1');
-/*
+$I->seeResponseContains('true');
+
 $I->wantTo('populate a VarBool with 0 and see the result.');
 $I->createResourceFromYaml();
 $I->callResourceFromYaml(['value' => '0']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('0');
+$I->seeResponseContains('false');
 
 $I->wantTo('populate a VarBool with 1 and see the result.');
 $I->createResourceFromYaml();
 $I->callResourceFromYaml(['value' => 1]);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('1');
+$I->seeResponseContains('true');
 
 $I->wantTo('populate a VarBool with 0 and see the result.');
 $I->createResourceFromYaml();
 $I->callResourceFromYaml(['value' => 0]);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('0');
+$I->seeResponseContains('false');
 
 $I->wantTo('populate a VarBool with yes and see the result.');
 $I->createResourceFromYaml();
 $I->callResourceFromYaml(['value' => 'yes']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('1');
+$I->seeResponseContains('true');
 
 $I->wantTo('populate a VarBool with no and see the result.');
 $I->createResourceFromYaml();
 $I->callResourceFromYaml(['value' => 'no']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('0');
+$I->seeResponseContains('false');
 
 $I->wantTo('populate a VarBool with true and see the result.');
 $I->createResourceFromYaml();
 $I->callResourceFromYaml(['value' => 'true']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('1');
+$I->seeResponseContains('true');
 
 $I->wantTo('populate a VarBool with 0 and see the result.');
 $I->createResourceFromYaml();
@@ -74,4 +74,3 @@ $I->seeResponseIsJson();
 $I->seeResponseContainsJson(["error" => ["code" => 5, "message" => "Invalid value (fales), only 'boolean' allowed.", "id" => 3]]);
 
 $I->tearDownTestFromYaml();
-*/
