@@ -91,7 +91,6 @@ abstract class Output extends Core\ProcessorEntity
         $result = 'text';
       }
     }
-    Core\Debug::variable($result);
     return $result;
   }
 

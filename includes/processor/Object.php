@@ -35,7 +35,9 @@ class Object extends Core\ProcessorEntity
     $attributes = $this->val('attributes');
 
     foreach ($attributes as $attribute) {
-      Core\Debug::variable($attribute);
+      if ($this->isDataContainer($attribute)) {
+        $attribute = $attribute->getData();
+      }
       if (is_array($attribute) && Core\Utilities::is_assoc($attribute) && sizeof($attribute) == 1) {
         $keys = array_keys($attribute);
         $result[$keys[0]] = $attribute[$keys[0]];
