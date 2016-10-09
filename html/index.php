@@ -17,14 +17,14 @@ try {
   $result = $api->process();
 } catch (Core\ApiException $e) {
   $error = new Core\Error($e->getCode(), $e->getProcessor(), $e->getMessage());
-  $class = 'Datagator\\Output\\' . ucfirst($api->parseType(getallheaders(), 'Accept', 'json'));
+  $class = 'Datagator\\Output\\' . ucfirst($api->parseType('Accept', 'json'));
   $output = new $class($error->process(), $e->getHtmlCode());
-  echo $output->process();
   ob_end_flush();
+  echo $output->process();
   exit();
 } catch (Exception $e) {
-  echo 'Error: ' . $e->getCode() . '. ' . $e->getMessage();
   ob_end_flush();
+  echo 'Error: ' . $e->getCode() . '. ' . $e->getMessage();
   exit();
 }
 
