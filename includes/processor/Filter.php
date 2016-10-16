@@ -6,6 +6,7 @@
 
 namespace Datagator\Processor;
 use Datagator\Core;
+use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Console\Helper\DebugFormatterHelper;
 
 class Filter extends Core\ProcessorEntity
@@ -93,6 +94,7 @@ class Filter extends Core\ProcessorEntity
     if (empty($filter)) {
       return $this->val('values');
     }
+
     $regex = $this->val('regex', true);
     if ($regex && is_array($filter)) {
       throw new Core\ApiException('cannot have an array of regexes as a filter', 0, $this->id);
@@ -100,12 +102,14 @@ class Filter extends Core\ProcessorEntity
     if (!$regex && !is_array($filter)) {
       $this->filter = array($filter);
     }
+
     $keyValue = $this->val('keyValue', true);
     $recursive = $this->val('recursive', true);
     $inverse = $this->val('inverse', true);
+    $func = '_arrayFilter' . ucfirst($keyValue);
+    $callback = $regex ? $this->_regexComparison($filter, $inverse) : $this->_strictComparison($filter, $inverse);
 
-    $func = '_arrayFilter' . ucfirst($keyValue) . 'Recursive';
-    $values = $this->{$func}($values, $regex ? $this->_regexComparison($filter) : $this->_strictComparison($filter));
+    $values = $this->{$func}($values, $callback, $recursive, $inverse);
 
     // TODO: better dynamic container type
     return new Core\DataContainer($values, is_array($values) ? 'array' : 'text');
@@ -113,30 +117,67 @@ class Filter extends Core\ProcessorEntity
 
   /**
    * Recursively filter an array by value
-   *
    * @see https://wpscholar.com/blog/filter-multidimensional-array-php/
-   *
-   * @param array $array
+   * @param $array
    * @param callable|NULL $callback
    * @return array
    */
-  private function _arrayFilterValueRecursive(array $array, callable $callback=null) {
+  private function _arrayFilterValue($array, callable $callback=null, $recursive, $inverse) {
+    if ($this->isDataContainer($array)) {
+      $array = $array->getData();
+    }
+    if (!is_array($array)) {
+      $array = array($array);
+    }
+
     $array = is_callable($callback) ? array_filter($array, $callback) : array_filter($array);
-    foreach ($array as & $value) {
-      if (is_array($value)) {
-        $value = call_user_func(__FUNCTION__, $value, $callback);
+    if ($recursive) {
+      foreach ($array as & $value) {
+        if (is_array($value)) {
+          $value = call_user_func(__FUNCTION__, $value, $callback, $recursive, $inverse);
+        }
       }
     }
 
     return $array;
   }
 
-  private function _arrayFilterKeyRecursive(array $array, callable $callback=null) {
+  /**
+   * Recursively filter an array by key
+   * @param $array
+   * @param callable|NULL $callback
+   * @return array
+   */
+  private function _arrayFilterKey($array, callable $callback=null, $recursive, $inverse) {
+    if ($this->isDataContainer($array)) {
+      $array = $array->getData();
+    }
+    if (!is_array($array)) {
+      $array = array($array);
+    }
+
     Core\Debug::variable($array, 'array');
-    $array = is_callable($callback) ? array_filter($array, $callback, ARRAY_FILTER_USE_KEY) : array_filter($array, ARRAY_FILTER_USE_KEY);
-    foreach ($array as & $value) {
+
+    foreach ($array as $key => & $value) {
       if (is_array($value)) {
-        $value = call_user_func(__FUNCTION__, $value, $callback);
+        if ($recursive) {
+          Core\Debug::message('recursive and have an array');
+          $value = call_user_func(__FUNCTION__, $value, $callback, $recursive, $inverse);
+        }
+      } else {
+        if ($callback($key)) {
+          Core\Debug::variable('passed callback', $key);
+          if (!$inverse) {
+            Core\Debug::message('not inverse');
+            unset($array[$key]);
+          }
+        } else {
+          Core\Debug::variable('failed callback', $key);
+          if ($inverse) {
+            Core\Debug::message('inverse');
+            unset($array[$key]);
+          }
+        }
       }
     }
 
@@ -148,11 +189,13 @@ class Filter extends Core\ProcessorEntity
    * @param $pattern
    * @return \Closure
    */
-  private function _regexComparison($pattern)
+  private function _regexComparison($pattern, $inverse)
   {
-    return function($item) use ($pattern) {
-      if ($this->isDataContainer($item)) {
-        $item = $item->getData();
+    return function($item) use ($pattern, $inverse) {
+      //Core\Debug::variable($item, '$item');
+      //Core\Debug::variable($pattern, '$pattern');
+      if ($this->inverse) {
+        return !preg_match($pattern, $item);
       }
       return preg_match($pattern, $item);
     };
@@ -163,18 +206,14 @@ class Filter extends Core\ProcessorEntity
    * @param $array
    * @return \Closure
    */
-  private function _strictComparison($array)
+  private function _strictComparison($array, $inverse)
   {
-    return function($item) use ($array) {
-      if ($this->isDataContainer($item)) {
-        $item = $item->getData();
-      }
-      if (is_array($item)) {
-        if (sizeof($item) == 1) {
-          $keys = array_keys(($item));
-          return !in_array(($item[$keys[0]]), $array);
-        }
-        return false;
+    return function($item) use ($array, $inverse) {
+      Core\Debug::variable($item, '$item');
+      Core\Debug::variable($array, '$array');
+      Core\Debug::variable(in_array($item, $array), 'equality');
+      if ($this->inverse) {
+        return !in_array($item, $array);
       }
       return in_array($item, $array);
     };
