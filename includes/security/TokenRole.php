@@ -30,7 +30,7 @@ class TokenRole extends Token
       'role' => array(
         'description' => 'The consumers token.',
         'cardinality' => array(1, 1),
-        'literalAllowed' => false,
+        'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array(),
