@@ -24,7 +24,7 @@ class Json extends Output
       ),
       'method' => array(
         'description' => 'HTTP delivery method when sending output. Only used in the output section.',
-        'cardinality' => array(0, '1'),
+        'cardinality' => array(0, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
@@ -113,6 +113,10 @@ class Json extends Output
    */
   protected function fromArray(& $data) {
     return \GuzzleHttp\json_encode($data);
+  }
+
+  protected function fromImage(& $data) {
+    return $this->fromText($data);
   }
 
   /**

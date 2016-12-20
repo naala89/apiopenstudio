@@ -156,4 +156,6 @@ class Email extends Output
   protected function fromText(& $data) {}
 
   protected function fromArray(& $data) {}
+
+  protected function fromImage(& $data) {}
 }

@@ -133,6 +133,9 @@ abstract class Output extends Core\ProcessorEntity
       case 'html':
         return $this->fromHtml($this->data);
         break;
+      case 'image':
+        return $this->fromImage($this->data);
+        break;
       default:
         throw new Core\ApiException("unknown output type: '$type'. Cannot convert to XML");
         break;
@@ -174,4 +177,6 @@ abstract class Output extends Core\ProcessorEntity
   abstract protected function fromXml(& $data);
 
   abstract protected function fromHtml(& $data);
+
+  abstract protected function fromImage(& $data);
 }

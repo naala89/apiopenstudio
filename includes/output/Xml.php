@@ -28,7 +28,7 @@ class Xml extends Output {
       ),
       'method' => array(
         'description' => 'HTTP delivery method when sending output. Only used in the output section.',
-        'cardinality' => array(0, '1'),
+        'cardinality' => array(0, 1),
         'literalAllowed' => TRUE,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
@@ -123,6 +123,10 @@ class Xml extends Output {
   protected function fromJson(& $data) {
     $data = json_decode($data, TRUE);
     return $this->fromArray($data);
+  }
+
+  protected function fromImage(& $data) {
+    return this.$this->fromText($data);
   }
 
   /**

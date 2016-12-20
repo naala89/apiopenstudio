@@ -162,7 +162,7 @@ abstract class ProcessorEntity extends Entity
    * If the object is a processor, then it will process that down to a final return value,
    * or if the obj is a simple value, then it will return that. Anything else will return an error object.
    *
-   * Setting $realValue will force the value to be the actial valie, rather than a dataEntity.
+   * Setting $realValue to true will force the value to be the actual value, rather than a potential dataContainer.
    *
    * @param $key
    * @param bool|FALSE $realValue
