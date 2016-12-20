@@ -17,7 +17,7 @@ try {
   $result = $api->process();
 } catch (Core\ApiException $e) {
   $error = new Core\Error($e->getCode(), $e->getProcessor(), $e->getMessage());
-  $class = 'Datagator\\Output\\' . ucfirst($api->parseType('Accept', 'json'));
+  $class = 'Datagator\\Output\\' . ucfirst($api->getAccept(\Datagator\Config::$defaultFormat));
   $output = new $class($error->process(), $e->getHtmlCode());
   ob_end_flush();
   echo $output->process();
