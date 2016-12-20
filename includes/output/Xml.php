@@ -125,6 +125,10 @@ class Xml extends Output {
     return $this->fromArray($data);
   }
 
+  protected function fromImage(& $data) {
+    return this.$this->fromText($data);
+  }
+
   /**
    * @param $array
    * @param $xml
