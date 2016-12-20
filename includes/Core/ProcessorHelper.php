@@ -29,7 +29,8 @@ class ProcessorHelper
       }
     }
 
-    throw new ApiException("unknown function in new resource: $className", 1);
+    throw new ApiException("unknown function in new resource: $className", 1, -1, 406);
+    exit;
   }
 
   /**
