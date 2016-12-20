@@ -16,9 +16,16 @@ try {
   $api = new Core\Api(\Datagator\Config::$cache);
   $result = $api->process();
 } catch (Core\ApiException $e) {
+  $outputClass = 'Datagator\\Output\\' . ucfirst($api->getAccept(Datagator\Config::$defaultFormat));
+  if (!class_exists($outputClass)) {
+    $error = new Core\Error(3, -1, 'invalid Accept header');
+    $output = new Datagator\Output\Json($error->process(), $e->getHtmlCode());
+    ob_end_flush();
+    echo $output->process();
+    exit();
+  }
   $error = new Core\Error($e->getCode(), $e->getProcessor(), $e->getMessage());
-  $class = 'Datagator\\Output\\' . ucfirst($api->getAccept(\Datagator\Config::$defaultFormat));
-  $output = new $class($error->process(), $e->getHtmlCode());
+  $output = new $outputClass($error->process(), $e->getHtmlCode());
   ob_end_flush();
   echo $output->process();
   exit();
