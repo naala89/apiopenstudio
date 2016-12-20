@@ -99,9 +99,7 @@ class Text extends Output
    * @return mixed
    */
   protected function fromArray(& $data) {
-    $objTmp = (object) array('aFlat' => array());
-    array_walk_recursive($aNonFlat, create_function('&$v, $k, &$t', '$t->aFlat[] = $v;'), $objTmp);
-    return $objTmp['aFlat'];
+    return json_encode($data);
   }
 
   /**
@@ -109,6 +107,10 @@ class Text extends Output
    * @return mixed
    */
   protected function fromJson(& $data) {
+    return $data;
+  }
+
+  protected function fromImage(& $data) {
     return $data;
   }
 }

@@ -147,7 +147,7 @@ class Api
     $request->setGetVars(array_diff_assoc($get, array('request' => $get['request'])));
     $request->setPostVars($_POST);
     $request->setIp($_SERVER['REMOTE_ADDR']);
-    $request->setOutFormat($this->parseType('Accept', 'json'));
+    $request->setOutFormat($this->getAccept(Config::$defaultFormat));
 
     return $request;
   }
@@ -362,27 +362,49 @@ class Api
    * @param bool|FALSE $default
    * @return bool|string
    */
-  public function parseType($key, $default=null)
+  public function getAccept($default=null)
   {
-    $header = getallheaders();
-    foreach ($header as $k => $v) {
-      $header[strtolower($k)] = $v;
+    $key = 'accept';
+    $headers = getallheaders();
+    foreach ($headers as $k => $v) {
+      $headers[strtolower($k)] = strtolower($v);
     }
-    $key = strtolower($key);
-    $result = $default;
-    $val = !empty($header[strtolower($key)]) ? $header[strtolower($key)] : '';
-    if (!empty($val)) {
-      $parts = preg_split('/\,|\;/', $val);
-      foreach ($parts as $part) {
-        $result = preg_replace("/(application||text)\//i",'',$part);
-        $result = trim($result);
-        $class = "\\Datagator\\Output\\" . $result;
-        if (class_exists($class)) {
-          return $result;
-        }
+    $header = !empty($headers[strtolower($key)]) ? $headers[strtolower($key)] : '';
+    if (!empty($header)) {
+      $values = explode(',', $header);
+      foreach ($values as $key => $value) {
+        $tempArr = explode(';q=', $value);
+        $values[$key] = array();
+        $value = $tempArr[0];
+        $values[$key]['weight'] = sizeof($tempArr) == 1 ? 1 : floatval($tempArr[1]);
+        $tempArr = explode('/', $value);
+        $values[$key]['mimeType'] = $tempArr[0];
+        $values[$key]['mimeSubType'] = $tempArr[1];
       }
+      usort($values, array('self', '_sortHeadersWeight'));
     }
-    return ($result == '*' || $result == '**') ? $default : $result;
+    if (sizeof($values) < 1) {
+      return $default;
+    }
+    $result = '';
+    switch ($values[0]['mimeType']) {
+      case 'image' :
+        return 'image';
+      case 'text':
+      case 'application':
+        return ($result == '*' || $result == '**') ? $default : $values[0]['mimeSubType'];
+      default:
+        return $default;
+    }
+    return ($values[0]['mimeSubType'] == '*' || $values[0]['mimeSubType'] == '**') ? $default : $values[0]['mimeSubType'];
+  }
+
+  static function _sortHeadersWeight($a, $b)
+  {
+    if ($a['weight'] == $b['weight']) {
+      return 0;
+    }
+    return $a['weight'] > $b['weight'] ? -1 : 1;
   }
 
   /**

@@ -1,8 +1,9 @@
-name: Testing filter fields values strict value normal
+name: Testing filter fields value strict key normal
 
-description: Test Filter by filtering out fields by array of values with settings non-regex, value, non-inverse
+description: Test Filter by filtering an array of fields by key with settings non-regex, non-inverse, recursive
 
-uri: filter/fields/strict/values/recursive/normal
+uri: filter/fields/key/nonregex/noninverse/recursive
+
 method: get
 
 ttl: 0
@@ -40,10 +41,11 @@ process:
       key: key5
       value: val5
   filter:
+    - "1"
     - key1
+    - key4
     - val3
-    - val4
+  keyValue: key
   regex: false
-  keyValue: value
-  recursive: true
   inverse: false
+  recursive: true
