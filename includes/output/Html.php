@@ -129,9 +129,9 @@ class Html extends Xml
     foreach($arr as $key => $val) {
       $result .= "<dt>$key</dt>";
       if(is_array($val)) {
-        $result .= '<dl>' . $this->_array2dl($val) . '</dl>';
+        $result .= '<dd>' . $this->_array2dl($val) . '</dd>';
       } else {
-        $result .= "<dt>$val</dt>";
+        $result .= "<dd>$val</dd>";
       }
     }
     return "$result</dl>";
