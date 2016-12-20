@@ -115,6 +115,10 @@ class Json extends Output
     return \GuzzleHttp\json_encode($data);
   }
 
+  protected function fromImage(& $data) {
+    return $this->fromText($data);
+  }
+
   /**
    * @param $data
    * @return mixed

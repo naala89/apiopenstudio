@@ -16,6 +16,7 @@ try {
   $api = new Core\Api(\Datagator\Config::$cache);
   $result = $api->process();
 } catch (Core\ApiException $e) {
+  var_dump($e);exit;
   $outputClass = 'Datagator\\Output\\' . ucfirst($api->getAccept(Datagator\Config::$defaultFormat));
   if (!class_exists($outputClass)) {
     $error = new Core\Error(3, -1, 'invalid Accept header');

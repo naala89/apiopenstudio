@@ -108,4 +108,8 @@ class Plain extends Text
   protected function fromJson(& $data) {
     return $data;
   }
+
+  protected function fromImage(& $data) {
+    return $data;
+  }
 }

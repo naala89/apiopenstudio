@@ -109,4 +109,8 @@ class Text extends Output
   protected function fromJson(& $data) {
     return $data;
   }
+
+  protected function fromImage(& $data) {
+    return $data;
+  }
 }

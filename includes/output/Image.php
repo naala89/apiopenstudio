@@ -48,13 +48,14 @@ class Image extends Output
       ),
     ),
   );
-
+/*
   public function process()
   {
     parent::process();
 
     if (!is_string($this->data)) {
-      throw new Core\ApiException('data revieved is not an image.', 1, $this->id);
+      header('Content-Type: application/json');
+      throw new Core\ApiException('data revieved is not an image.', 1, $this->id, 406);
     }
     if (empty($this->data)) {
       throw new Core\ApiException('image empty.', 1, $this->id);
@@ -79,25 +80,41 @@ class Image extends Output
     header("Content-Type:$mime");
     return file_get_contents($this->data);
   }
+*/
 
-  /**
-   * No need define these classes, because it is only a delivery mechanism.
-   */
-  protected function getData() {}
+  protected function fromXml(& $data) {
+    return 'data is not an image';
+  }
 
-  protected function fromXml(& $data) {}
+  protected function fromFloat(& $data) {
+    return 'data is not an image';
+  }
 
-  protected function fromFloat(& $data) {}
+  protected function fromBoolean(& $data) {
+    return 'data is not an image';
+  }
 
-  protected function fromBoolean(& $data) {}
+  protected function fromInteger(& $data) {
+    return 'data is not an image';
+  }
 
-  protected function fromInteger(& $data) {}
+  protected function fromJson(& $data) {
+    return 'data is not an image';
+  }
 
-  protected function fromJson(& $data) {}
+  protected function fromHtml(& $data) {
+    return 'data is not an image';
+  }
 
-  protected function fromHtml(& $data) {}
+  protected function fromText(& $data) {
+    return $data;
+  }
 
-  protected function fromText(& $data) {}
+  protected function fromArray(& $data) {
+    return 'data is not an image';
+  }
 
-  protected function fromArray(& $data) {}
+  protected function fromImage(& $data) {
+    return $data;
+  }
 }
