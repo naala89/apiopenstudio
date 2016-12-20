@@ -23,7 +23,7 @@ class Html extends Xml
       ),
       'method' => array(
         'description' => 'HTTP delivery method when sending output. Only used in the output section.',
-        'cardinality' => array(0, '1'),
+        'cardinality' => array(0, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),

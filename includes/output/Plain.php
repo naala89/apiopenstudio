@@ -23,7 +23,7 @@ class Plain extends Text
       ),
       'method' => array(
         'description' => 'HTTP delivery method when sending output. Only used in the output section.',
-        'cardinality' => array(0, '1'),
+        'cardinality' => array(0, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
@@ -98,9 +98,7 @@ class Plain extends Text
    * @return mixed
    */
   protected function fromArray(& $data) {
-    $objTmp = (object) array('aFlat' => array());
-    array_walk_recursive($aNonFlat, create_function('&$v, $k, &$t', '$t->aFlat[] = $v;'), $objTmp);
-    return $objTmp['aFlat'];
+    return json_encode($data);
   }
 
   /**
