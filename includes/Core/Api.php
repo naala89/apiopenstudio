@@ -370,6 +370,7 @@ class Api
       $headers[strtolower($k)] = strtolower($v);
     }
     $header = !empty($headers[strtolower($key)]) ? $headers[strtolower($key)] : '';
+    $values = [];
     if (!empty($header)) {
       $values = explode(',', $header);
       foreach ($values as $key => $value) {
