@@ -20,7 +20,7 @@ class Object extends Core\ProcessorEntity
         'description' => 'The value of an attribute or a complex object.',
         'cardinality' => array(0, '*'),
         'literalAllowed' => true,
-        'limitFunctions' => array(),
+        'limitFunctions' => array('field'),
         'limitTypes' => array(),
         'limitValues' => array(),
         'default' => ''
@@ -38,12 +38,8 @@ class Object extends Core\ProcessorEntity
       if ($this->isDataContainer($attribute)) {
         $attribute = $attribute->getData();
       }
-      if (is_array($attribute) && Core\Utilities::is_assoc($attribute) && sizeof($attribute) == 1) {
-        $keys = array_keys($attribute);
-        $result[$keys[0]] = $attribute[$keys[0]];
-      } else {
-        $result[] = $attribute;
-      }
+      $keys = array_keys($attribute);
+      $result[$keys[0]] = $attribute[$keys[0]];
     }
 
     return $result;
