@@ -42,6 +42,6 @@ class Object extends Core\ProcessorEntity
       $result[$keys[0]] = $attribute[$keys[0]];
     }
 
-    return $result;
+    return new Core\DataContainer($result, 'array');
   }
 }
