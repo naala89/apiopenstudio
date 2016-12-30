@@ -193,7 +193,7 @@ abstract class ProcessorEntity extends Entity
     if (!isset($this->meta->$key)) {
       return $inputDet[$key]['default'];
     }
-    if ($this->isDataContainer($this->meta->$key) && $this->meta->$key->getData() == '') {
+    if ($this->isDataContainer($this->meta->$key) && $this->meta->$key->getData() === '') {
       return $inputDet[$key]['default'];
     }
 
@@ -211,7 +211,7 @@ abstract class ProcessorEntity extends Entity
       $this->_validateAllowedTypes($value, $limitTypes);
     }
 
-    return $realValue ? $this->isDataContainer($result) ? $result->getData() : $result : $result;
+    return $realValue && $this->isDataContainer($result) ? $result->getData() : $result;
   }
 
   protected function isDataContainer($data)
