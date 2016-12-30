@@ -1,0 +1,93 @@
+name: Testing filter object
+
+description: Test Filter processor with an object
+
+uri: filter/object
+
+method: get
+
+ttl: 0
+
+security:
+  function: TokenConsumer
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
+
+process:
+  function: filter
+  id: 3
+  values:
+    function: object
+    id: 4
+    attributes:
+      - function: field
+        id: 5
+        key: key1
+        value: val1
+      - function: field
+        id: 6
+        key: key2
+        value: val2
+      - function: field
+        id: 7
+        key: key3
+        value: val3
+      - function: field
+        id: 8
+        key: key4
+        value: val4
+      - function: field
+        id: 9
+        key: key5
+        value:
+          function: object
+          id: 10
+          attributes:
+            - function: field
+              id: 11
+              key: key6
+              value: val6
+            - function: field
+              id: 12
+              key: key7
+              value: val7
+  filter:
+    - "1"
+    - key1
+    - key4
+    - val3
+  keyOrValue:
+    function: varGet
+    id: 13
+    name: keyOrValue
+  regex:
+    function: varBool
+    id: 14
+    value:
+      function: varGet
+      id: 15
+      name: regex
+  inverse:
+    function: varBool
+    id: 16
+    value:
+      function: varGet
+      id: 17
+      name: inverse
+  recursive:
+    function: varBool
+    id: 18
+    value:
+      function: varGet
+      id: 19
+      name: recursive
+  strict:
+    function: varBool
+    id: 20
+    value:
+      function: varGet
+      id: 21
+      name: strict

@@ -45,6 +45,6 @@ process:
     - val3
     - val4
   regex: false
-  keyValue: value
+  keyOrValue: value
   inverse: false
   recursive: true

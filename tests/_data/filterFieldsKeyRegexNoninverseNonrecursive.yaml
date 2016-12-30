@@ -45,7 +45,7 @@ process:
     - key1
     - key4
     - val3
-  keyValue: key
+  keyOrValue: key
   regex: true
   inverse: false
   recursive: false
