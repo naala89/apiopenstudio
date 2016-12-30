@@ -34,7 +34,7 @@ class DataContainer extends Entity
    */
   public function __construct($data, $type)
   {
-    $this->data = $data;
+    $this->setData($data);
     $this->setType($type);
   }
 
