@@ -190,10 +190,7 @@ abstract class ProcessorEntity extends Entity
     }
 
     // return default if empty
-    if (!isset($this->meta->$key)) {
-      return $inputDet[$key]['default'];
-    }
-    if ($this->isDataContainer($this->meta->$key) && $this->meta->$key->getData() === '') {
+    if (!isset($this->meta->$key) || ($this->isDataContainer($this->meta->$key) && $this->meta->$key->getData() === '')) {
       return $inputDet[$key]['default'];
     }
 

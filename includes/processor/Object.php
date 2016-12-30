@@ -32,15 +32,18 @@ class Object extends Core\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor Object', 4);
     $attributes = $this->val('attributes', true);
+    Core\Debug::variable($attributes, '$attributes');
     $result = array();
 
     foreach ($attributes as $attribute) {
       if ($this->isDataContainer($attribute)) {
-        $attribute = $attribute->getData();
+        $attribute = $this->val($attribute, true);
       }
       $keys = array_keys($attribute);
       $result[$keys[0]] = $attribute[$keys[0]];
     }
+
+    Core\Debug::variable($result, '$result');
 
     return new Core\DataContainer($result, 'array');
   }

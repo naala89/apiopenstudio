@@ -252,6 +252,7 @@ class Api
    */
   public function _crawlMeta(& $meta, $caller=null)
   {
+    Debug::variable($meta, '$meta');
     // array of values - parse each one
     if (is_array($meta)) {
       foreach ($meta as $key => & $value) {
@@ -259,7 +260,7 @@ class Api
       }
     }
 
-    // object of value - process each key/value, and process() if a processpr
+    // object of value - process each key/value, and process() if a processor
     if (is_object($meta)) {
       // replace each value of key/value pair with final value
       foreach ($meta as $key => & $value) {
