@@ -31,8 +31,8 @@ class Object extends Core\ProcessorEntity
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor Object', 4);
+    $attributes = $this->val('attributes', true);
     $result = array();
-    $attributes = $this->val('attributes');
 
     foreach ($attributes as $attribute) {
       if ($this->isDataContainer($attribute)) {
