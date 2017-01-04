@@ -245,11 +245,80 @@ class Api
   }
 
   /**
+   * Depth first iteration.
+   * @param $meta
+   */
+  private function _crawlMeta($meta)
+  {
+    if (!$this->isProcessor($meta)) {
+      return $meta;
+    }
+
+    $stack = array($meta); // used to traverse the tree
+    $results = array();
+    $finalId = $meta->id;
+
+    Debug::variable($meta, 'meta at start');
+    Debug::variable($stack, 'stack at start');
+    Debug::variable($finalId, 'finalId');
+
+    while (sizeof($stack) > 0) {
+
+      $node = array_shift($stack);
+      Debug::variable($node, 'node');
+
+      foreach ($node as $key => $value) {
+        if ($key == 'id' || $key == 'function') {
+          continue;
+        }
+        Debug::variable($key, 'key');
+        Debug::variable($value, 'value');
+
+        if ($this->isProcessor($value)) {
+          if (!$this->hasAllValues($value, $results)) {
+            array_unshift($stack, $value);
+          } else {
+            $classStr = $this->helper->getProcessorString($value->function);
+            $class = new $classStr($value, $this->request);
+            $results[$value->id] = $class->process();
+          }
+        }
+      }
+
+      Debug::variable($stack, 'stack after properties loop');
+    }
+
+    Debug::variable($results, 'results at end');
+    exit;
+  }
+
+  /**
+   * @param $processor
+   * @return bool
+   * @todo: this does not need to check array
+   * @see: _crawlMeta()
+   */
+  public function isProcessor($processor)
+  {
+    return isset($processor->id) && isset($processor->function) ? TRUE : FALSE;
+  }
+
+  public function hasAllValues($processor, $results)
+  {
+    foreach ($processor as $item) {
+      if ($this->isProcessor($item) && !isset($results[$item->id])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * Recursively crawl though metadata. Recurse through Replace all processors with result values and return final value
    * @param $meta
    * @return mixed
    * @throws \Datagator\Core\ApiException
-   */
+   *
   public function _crawlMeta(& $meta, $caller=null)
   {
     Debug::variable($meta, '$meta');
