@@ -30,7 +30,7 @@ class Field extends Core\ProcessorEntity
         'cardinality' => array(1, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
-        'limitTypes' => array('string'),
+        'limitTypes' => array(),
         'limitValues' => array(),
         'default' => ''
       ),

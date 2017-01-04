@@ -86,7 +86,7 @@ class Filter extends Core\ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'processor Filter', 4);
+    Core\Debug::variable($this->meta, 'Processor Filter', 4);
 
     $filter = $this->val('filter', true);
     $keyOrValue = $this->val('keyOrValue', true);

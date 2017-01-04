@@ -245,18 +245,18 @@ class Api
   }
 
   /**
-   * Recursively crawl though metadata. Recurse through Replace all processors with result values and return final value
+   * Recursively crawl though metadata. Recurse through Replace all processors with result values and return final value.
    * @param $meta
+   * @param null $caller
    * @return mixed
    * @throws \Datagator\Core\ApiException
    */
   public function _crawlMeta(& $meta, $caller=null)
   {
-    Debug::variable($meta, '$meta');
     // array of values - parse each one
     if (is_array($meta)) {
-      foreach ($meta as $key => & $value) {
-        $value = $this->_crawlMeta($value, $caller);
+      foreach ($meta as $key => $value) {
+        $meta[$key] = $this->_crawlMeta($value, $caller);
       }
     }
 
