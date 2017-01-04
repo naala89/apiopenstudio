@@ -8,7 +8,7 @@ $I->haveHttpHeader('Accept', 'application/json');
  */
 
 $I->wantTo('Test Filter by filtering by key on an array of fields with settings non-regex, inverse, non-recursive');
-$I->setYamlFilename('filter.yaml');
+$I->setYamlFilename('filterObject.yaml');
 $I->createResourceFromYaml();
 $I->callResourceFromYaml(['keyOrValue' => 'key', 'regex' => false, 'inverse' => false, 'recursive' => false, 'strict' => false]);
 $I->seeResponseCodeIs(200);

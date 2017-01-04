@@ -191,7 +191,7 @@ abstract class ProcessorEntity extends Entity
 
     // return default if empty
     if (!isset($this->meta->$key) || ($this->isDataContainer($this->meta->$key) && $this->meta->$key->getData() === '')) {
-      return $inputDet[$key]['default'];
+      return $default;
     }
 
     $result = $this->meta->$key;
@@ -211,6 +211,11 @@ abstract class ProcessorEntity extends Entity
     return $realValue && $this->isDataContainer($result) ? $result->getData() : $result;
   }
 
+  /**
+   * Validate if a set of data is wrapped in a DataContainer object.
+   * @param $data
+   * @return bool
+   */
   protected function isDataContainer($data)
   {
     return is_object($data) && get_class($data) == 'Datagator\Core\DataContainer';
