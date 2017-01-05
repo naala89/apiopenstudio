@@ -162,11 +162,11 @@ class Config
    */
   static private function development()
   {
-    self::$debug = 4;
+    self::$debug = 0;
     self::$debugCLI = 0;
     self::$debugDb = 0;
     self::$_allow_override = TRUE;
-    self::$debugInterface = 'HTML';
+    self::$debugInterface = 'LOG';
 
     self::$cache = FALSE;
     self::$tokenLife = '+1 day';
