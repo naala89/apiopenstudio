@@ -58,7 +58,9 @@ process:
     - "1"
     - key1
     - key4
+    - key6
     - val3
+    - val7
   keyOrValue:
     function: varGet
     id: 13
@@ -84,10 +86,3 @@ process:
       function: varGet
       id: 19
       name: recursive
-  strict:
-    function: varBool
-    id: 20
-    value:
-      function: varGet
-      id: 21
-      name: strict
