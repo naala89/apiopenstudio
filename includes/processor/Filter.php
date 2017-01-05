@@ -106,8 +106,7 @@ class Filter extends Core\ProcessorEntity
       $filter = array($filter);
     }
 
-    $func = '_arrayFilter' . ucfirst($keyOrValue) . ($recursive ? 'Recursive' : 'Nonrecursive');
-    Core\Debug::variable($func, '$func');
+    $func = '_filterBy' . ucfirst($keyOrValue) . ($recursive ? 'Recursive' : 'Nonrecursive');
     $getCallback = '_callback' . ($inverse ? 'Inverse' : 'Noninverse') . ($regex ? 'Regex' : 'Nonregex');
     $callback = $this->{$getCallback}($filter);
 
@@ -125,7 +124,7 @@ class Filter extends Core\ProcessorEntity
    * @param $callback
    * @return array
    */
-  private function _arrayFilterKeyNonrecursive($data, $callback)
+  private function _filterByKeyNonrecursive($data, $callback)
   {
     if (!is_array($data)) {
       return $data;
@@ -140,7 +139,7 @@ class Filter extends Core\ProcessorEntity
    * @param $callback
    * @return array
    */
-  private function _arrayFilterKeyRecursive($data, $callback)
+  private function _filterByKeyRecursive($data, $callback)
   {
     if (!is_array($data)) {
       return $data;
@@ -150,7 +149,7 @@ class Filter extends Core\ProcessorEntity
 
     foreach ($data as $key => $item) {
       if (is_array($item)) {
-        $data[$key] = $this->_arrayFilterKeyRecursive($item, $callback);
+        $data[$key] = $this->_filterByKeyRecursive($item, $callback);
       }
     }
 
@@ -163,13 +162,19 @@ class Filter extends Core\ProcessorEntity
    * @param $callback
    * @return array
    */
-  private function _arrayFilterValueNonrecursive($data, $callback)
+  private function _filterByValueNonrecursive($data, $callback)
   {
     if (!is_array($data)) {
-      return $data;
+      return !$callback($data) ? null : $data;
     }
 
-    return array_filter($data, $callback);
+    foreach ($data as $key => $item) {
+      if (!is_array($item) && !$callback($item)) {
+        unset($data[$key]);
+      }
+    }
+
+    return $data;
   }
 
   /**
@@ -178,17 +183,19 @@ class Filter extends Core\ProcessorEntity
    * @param $callback
    * @return array
    */
-  private function _arrayFilterValueRecursive($data, $callback)
+  private function _filterByValueRecursive($data, $callback)
   {
     if (!is_array($data)) {
-      return $data;
+      return $callback($data) ? null : $data;
     }
 
-    $data = array_filter($data, $callback);
-
     foreach ($data as $key => $item) {
-      if (is_array($item)) {
-        $data[$key] = $this->_arrayFilterValueRecursive($item, $callback);
+      if (!is_array($item)) {
+        if (!$callback($item)) {
+          unset($data[$key]);
+        }
+      } else {
+        $data[$key] = $this->_filterByValueRecursive($item, $callback);
       }
     }
 
@@ -216,6 +223,33 @@ class Filter extends Core\ProcessorEntity
   {
     return function($item) use ($filter) {
       return in_array($item, $filter);
+    };
+  }
+
+  /**
+   * Filter callback for non-inverse, regex.
+   * @param $filter
+   * @return \Closure
+   */
+  private function _callbackNoninverseRegex($filter)
+  {
+    return function($item) use ($filter) {
+//      var_dump($item);
+//      var_dump($filter);
+//      var_dump(preg_match($filter, $item));
+      return preg_match($filter, $item) == 0;
+    };
+  }
+
+  /**
+   * Filter callback for inverse, regex.
+   * @param $filter
+   * @return \Closure
+   */
+  private function _callbackInverseRegex($filter)
+  {
+    return function($item) use ($filter) {
+      return preg_match($filter, $item) > 0;
     };
   }
 }
