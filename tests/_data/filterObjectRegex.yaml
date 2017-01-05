@@ -1,8 +1,8 @@
-name: Testing filter object non-regex
+name: Testing filter object regex
 
-description: Test Filter processor with an object using non-regex
+description: Test Filter processor with an object using Regex
 
-uri: filter/object/nonregex
+uri: filter/object/regex
 
 method: get
 
@@ -54,13 +54,7 @@ process:
               id: 12
               key: key7
               value: val7
-  filter:
-    - "1"
-    - key1
-    - key4
-    - key6
-    - val3
-    - val7
+  filter: "/^key[4,6]|val[3,7]$/"
   keyOrValue:
     function: varGet
     id: 13
