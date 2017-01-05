@@ -1,8 +1,8 @@
 name: Testing filter object
 
-description: Test Filter processor with an object
+description: Test Filter processor with an object using non-regex
 
-uri: filter/object
+uri: filter/object/nonregex
 
 method: get
 
