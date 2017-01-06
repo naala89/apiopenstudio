@@ -266,12 +266,12 @@ abstract class ProcessorEntity extends Entity
       $type = gettype($val);
       if (!in_array($type, $limitTypes)) {
         Debug::variable($type, 'type');
-        $text = $type;
+        $text = $val;
         if ($type == 'array' || $type == 'object') {
           $text = 'compound object';
         }
         Debug::variable("invalid value () only '". "' allowed");
-        throw new ApiException("invalid value ($text) only '" . implode(', ', $limitTypes) .  "' allowed", 5, $this->id, 417);
+        throw new ApiException("invalid value ($text), only '" . implode("', '", $limitTypes) .  "' allowed", 5, $this->id, 417);
         //' . ((is_array($val) || is_object($val)) ? 'compound object' : $val)  . '
       }
     }
