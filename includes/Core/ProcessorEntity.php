@@ -182,6 +182,7 @@ abstract class ProcessorEntity extends Entity
     $limitValues = $inputDet[$key]['limitValues'];
     $limitTypes = $inputDet[$key]['limitTypes'];
     $default = $inputDet[$key]['default'];
+    Debug::variable($inputDet, '$inputDet');
 
     $count = empty($this->meta->$key) ? 0 : is_array($this->meta->$key) ? sizeof($this->meta->$key) : 1;
     if ($count < $min || ($max != '*' && $count > $max)) {
