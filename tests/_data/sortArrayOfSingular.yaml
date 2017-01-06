@@ -20,15 +20,12 @@ process:
   function: sort
   id: 3
   values:
-    function: object
-    id: 4
-    attributes:
-      - field1
-      - field4
-      - field2
-      - field3
-      - 1
-      - 5
+    - field1
+    - field4
+    - field2
+    - field3
+    - 1
+    - 5
   direction:
     function: varGet
     id: 5
