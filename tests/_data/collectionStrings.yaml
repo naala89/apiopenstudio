@@ -1,0 +1,26 @@
+name: Testing collection strings
+
+description: Test a good Collection processor of strings
+
+uri: collection/strings
+
+method: get
+
+ttl: 0
+
+security:
+  function: TokenConsumer
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
+
+process:
+  function: collection
+  id: 3
+  values:
+    - attr1
+    - attr2
+    - attr3
+    - attr4

@@ -1,0 +1,31 @@
+name: Testing collection fields
+
+description: Test a good Collection processor of fields
+
+uri: collection/fields
+
+method: get
+
+ttl: 0
+
+security:
+  function: TokenConsumer
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
+
+process:
+  function: collection
+  id: 3
+  values:
+    - function: field
+      id: 4
+      key: key1
+      value:
+        function: field
+        id: 5
+        key: key2
+        value: val2
+

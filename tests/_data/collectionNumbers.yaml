@@ -1,0 +1,28 @@
+name: Testing collection numbers
+
+description: Test a good Collection processor of numbers
+
+uri: collection/numbers
+
+method: get
+
+ttl: 0
+
+security:
+  function: TokenConsumer
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
+
+process:
+  function: collection
+  id: 3
+  values:
+    - 1
+    - 2
+    - 9999999999
+    - -1
+    - 0
+    - -3.345987345433624537
