@@ -35,13 +35,13 @@ class Sort extends Core\ProcessorEntity
         'default' => 'asc'
       ),
       'sortByValue' => array(
-        'description' => 'If set to true, sort by the value, otherwise sort by key (only used if the sources are of type Field, and the sortable key or value cannot be another key/value pair).',
+        'description' => 'If set to true then sort by the value. If false then sort by key (only used if all the sources are of type Field or a single Object).',
         'cardinality' => array(0, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
         'limitTypes' => array('boolean'),
         'limitValues' => array(),
-        'default' => false
+        'default' => true
       ),
     ),
   );

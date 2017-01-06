@@ -2,7 +2,7 @@ name: Testing Sort singular and processors
 
 description: Test Sort processor with array of single values and procesors
 
-uri: sort/singular
+uri: sort/singular/processor
 
 method: get
 
@@ -20,20 +20,17 @@ process:
   function: sort
   id: 3
   values:
-    function: object
-    id: 4
-    attributes:
-      - field1
-      - function: varStr
-        id: 5
-        value: testStr
-      - function: varFloat
-        id: 6
-        value: 3.45626
-      - field2
-      - field3
-      - 1
-      - 5
+    - field1
+    - function: varStr
+      id: 5
+      value: testStr
+    - function: varFloat
+      id: 6
+      value: 3.45626
+    - field2
+    - field3
+    - 1
+    - 5
   direction:
     function: varGet
     id: 7
