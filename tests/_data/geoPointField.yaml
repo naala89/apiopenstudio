@@ -1,0 +1,27 @@
+name: Testing geoPoint field
+
+description: Test GeoPoint processor with a Field in lat
+
+uri: geopoint/field
+
+method: get
+
+ttl: 0
+
+security:
+  function: TokenConsumer
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
+
+process:
+  function: geoPoint
+  id: 3
+  lat:
+    function: field
+    id: 4
+    key: key1
+    value: val1
+  lon: 141

@@ -43,18 +43,8 @@ class GeoPoint extends Core\ProcessorEntity
     Core\Debug::variable($this->meta, 'Processor GeoPoint', 4);
 
     $lat = $this->val('lat', true);
-    $lat = empty($lat) ? $this->details['input']['lat']['default'] : $lat;
     $lon = $this->val('lon', true);
-    $lon = empty($lon) ? $this->details['input']['lon']['default'] : $lon;
 
-    Core\Debug::variable(array(
-      'lat' => $lat,
-      'lon' => $lon
-    ), 'geo result');
-
-    return array(
-      'lat' => $lat,
-      'lon' => $lon
-    );
+    return new Core\DataContainer(array('lat' => $lat, 'lon' => $lon), 'array');
   }
 }
