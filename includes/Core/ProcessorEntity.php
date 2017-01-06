@@ -182,6 +182,7 @@ abstract class ProcessorEntity extends Entity
     $limitValues = $inputDet[$key]['limitValues'];
     $limitTypes = $inputDet[$key]['limitTypes'];
     $default = $inputDet[$key]['default'];
+    Debug::variable($inputDet, '$inputDet');
 
     $count = empty($this->meta->$key) ? 0 : is_array($this->meta->$key) ? sizeof($this->meta->$key) : 1;
     if ($count < $min || ($max != '*' && $count > $max)) {
@@ -265,7 +266,14 @@ abstract class ProcessorEntity extends Entity
     if (!empty($val)) {
       $type = gettype($val);
       if (!in_array($type, $limitTypes)) {
-        throw new ApiException("invalid value ($val), only '" . implode("', '",$limitTypes) . "' allowed", 5, $this->id, 417);
+        Debug::variable($type, 'type');
+        $text = $val;
+        if ($type == 'array' || $type == 'object') {
+          $text = 'compound object';
+        }
+        Debug::variable("invalid value () only '". "' allowed");
+        throw new ApiException("invalid value ($text), only '" . implode("', '", $limitTypes) .  "' allowed", 5, $this->id, 417);
+        //' . ((is_array($val) || is_object($val)) ? 'compound object' : $val)  . '
       }
     }
   }
