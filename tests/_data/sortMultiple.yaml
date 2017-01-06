@@ -1,8 +1,8 @@
-name: Testing Sort singular and processors
+name: Testing Sort singular with a field
 
-description: Test Sort processor with array of single values and procesors
+description: Test Sort processor with array of single values and a field
 
-uri: sort/singular/processor
+uri: sort/multiple
 
 method: get
 
@@ -21,17 +21,16 @@ process:
   id: 3
   values:
     - field1
-    - function: varStr
-      id: 5
-      value: testStr
-    - function: varFloat
-      id: 6
-      value: 3.45626
+    - field4
     - field2
     - field3
     - 1
     - 5
   direction:
     function: varGet
-    id: 7
+    id: 5
     name: direction
+  sortBy:
+    function: varGet
+    id: 6
+    name: sortby

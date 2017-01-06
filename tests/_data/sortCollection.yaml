@@ -1,0 +1,40 @@
+name: Testing Sort collection
+
+description: Test Sort processor with a Collection of values
+
+uri: sort/collection
+
+method: get
+
+ttl: 0
+
+security:
+  function: TokenConsumer
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
+
+process:
+  function: sort
+  id: 3
+  values:
+    function: collection
+    id: 4
+    values:
+      - field1
+      - field4
+      - field2
+      - field3
+      - 1
+      - 5
+  direction:
+    function: varGet
+    id: 5
+    name: direction
+  sortBy:
+    function: varGet
+    id: 6
+    name: sortby
+
