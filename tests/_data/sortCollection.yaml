@@ -1,8 +1,8 @@
-name: Testing Sort singular
+name: Testing Sort collection
 
-description: Test Sort processor with array of single values
+description: Test Sort processor with a Collection of values
 
-uri: sort/singular
+uri: sort/collection
 
 method: get
 
@@ -20,9 +20,9 @@ process:
   function: sort
   id: 3
   values:
-    function: object
+    function: collection
     id: 4
-    attributes:
+    values:
       - field1
       - field4
       - field2
@@ -33,3 +33,8 @@ process:
     function: varGet
     id: 5
     name: direction
+  sortBy:
+    function: varGet
+    id: 6
+    name: sortby
+

@@ -34,14 +34,14 @@ class Sort extends Core\ProcessorEntity
         'limitValues' => array('asc', 'desc'),
         'default' => 'asc'
       ),
-      'sortByValue' => array(
-        'description' => 'If set to true, sort by the value, otherwise sort by key (only used if the sources are of type Field, and the sortable key or value cannot be another key/value pair).',
+      'sortBy' => array(
+        'description' => 'Perform the sort on key or value.',
         'cardinality' => array(0, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
-        'limitTypes' => array('boolean'),
-        'limitValues' => array(),
-        'default' => false
+        'limitTypes' => array(),
+        'limitValues' => array('key', 'value'),
+        'default' => 'key'
       ),
     ),
   );
@@ -50,27 +50,48 @@ class Sort extends Core\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor Sort', 4);
 
-    $values = $this->val('values');
-    if (!is_array($values) || empty($values)) {
+    $values = $this->val('values', true);
+
+    if (empty($values) || !is_array($values)) {
       return $values;
     }
 
-    $asc = $this->val('direction', true);
-    $sortByValue = $this->val('sortByValue', true);
+    $direction = $this->val('direction', true);
+    $sortBy = $this->val('sortBy', true);
 
-    if (!$sortByValue) {
-      if ($asc) {
-        ksort($values);
+    Core\Debug::variable($values, 'values before sort');
+
+    if ($sortBy == 'key') {
+      if ($direction == 'asc') {
+        if (!Core\Utilities::is_assoc($values)) {
+          // do nothing, this is a normal array
+        } else {
+          ksort($values);
+        }
       } else {
-        krsort($values);
+        if (!Core\Utilities::is_assoc($values)) {
+          $values = array_reverse($values);
+        } else {
+          krsort($values);
+        }
       }
     } else {
-      if ($asc) {
-        asort($values);
+      if ($direction == 'asc') {
+        if (!Core\Utilities::is_assoc($values)) {
+          sort($values);
+        } else {
+          asort($values);
+        }
       } else {
-        arsort($values);
+        if (!Core\Utilities::is_assoc($values)) {
+          rsort($values);
+        } else {
+          arsort($values);
+        }
       }
     }
+
+    Core\Debug::variable($values, 'values after sort');
 
     return $values;
   }

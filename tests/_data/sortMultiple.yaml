@@ -2,7 +2,7 @@ name: Testing Sort singular with a field
 
 description: Test Sort processor with array of single values and a field
 
-uri: sort/singular/field
+uri: sort/multiple
 
 method: get
 
@@ -24,12 +24,13 @@ process:
     - field4
     - field2
     - field3
-    - function: field
-      id: 5
-      key: key
-      value: value
+    - 1
     - 5
   direction:
     function: varGet
-    id: 6
+    id: 5
     name: direction
+  sortBy:
+    function: varGet
+    id: 6
+    name: sortby

@@ -20,13 +20,19 @@ process:
   function: object
   id: 3
   attributes:
-    - field1
-    - field2
-    - field3
     - function: field
-      id: 3
-      key: myTestVar
-      value:
-        function: varMixed
-        id: 4
-        value: MyTestVal
+      id: 4
+      key: field1
+      value: field1
+    - function: field
+      id: 5
+      key: field2
+      value: field2
+    - function: field
+      id: 6
+      key: field3
+      value: field3
+    - function: field
+      id: 7
+      key: field4
+      value: field4

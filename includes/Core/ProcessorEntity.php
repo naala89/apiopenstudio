@@ -99,6 +99,7 @@ abstract class ProcessorEntity extends Entity
    * This is where the magic happens, and should be overridden by all derived classes.
    *
    * Fetches and process the processor described in the metadata.
+   * It is also the 1st stop to recursive processing of processors, so the place validate user credentials.
    *
    * @return array|Error
    */
@@ -181,8 +182,8 @@ abstract class ProcessorEntity extends Entity
     $limitValues = $inputDet[$key]['limitValues'];
     $limitTypes = $inputDet[$key]['limitTypes'];
     $default = $inputDet[$key]['default'];
-    $count = empty($this->meta->$key) ? 0 : is_array($this->meta->$key) ? sizeof($this->meta->$key) : 1;
 
+    $count = empty($this->meta->$key) ? 0 : is_array($this->meta->$key) ? sizeof($this->meta->$key) : 1;
     if ($count < $min || ($max != '*' && $count > $max)) {
       // invalid cardinality
       throw new ApiException("invalid number of inputs ($count), requires $min - $max", 1, $this->id);
@@ -210,6 +211,11 @@ abstract class ProcessorEntity extends Entity
     return $realValue && $this->isDataContainer($result) ? $result->getData() : $result;
   }
 
+  /**
+   * Validate if a set of data is wrapped in a DataContainer object.
+   * @param $data
+   * @return bool
+   */
   protected function isDataContainer($data)
   {
     return is_object($data) && get_class($data) == 'Datagator\Core\DataContainer';

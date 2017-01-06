@@ -31,19 +31,14 @@ class Object extends Core\ProcessorEntity
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor Object', 4);
-    $attributes = $this->val('attributes', true);
-    Core\Debug::variable($attributes, '$attributes');
+    $attributes = $this->val('attributes', false);
     $result = array();
 
     foreach ($attributes as $attribute) {
-      if ($this->isDataContainer($attribute)) {
-        $attribute = $this->val($attribute, true);
-      }
-      $keys = array_keys($attribute);
-      $result[$keys[0]] = $attribute[$keys[0]];
+      $field = $attribute->getData();
+      $keys = array_keys($field);
+      $result[$keys[0]] = $field[$keys[0]];
     }
-
-    Core\Debug::variable($result, '$result');
 
     return new Core\DataContainer($result, 'array');
   }
