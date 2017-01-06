@@ -1,8 +1,8 @@
-name: Testing filter object
+name: Testing filter object regex
 
-description: Test Filter processor with an object
+description: Test Filter processor with an object using Regex
 
-uri: filter/object
+uri: filter/object/regex
 
 method: get
 
@@ -54,11 +54,7 @@ process:
               id: 12
               key: key7
               value: val7
-  filter:
-    - "1"
-    - key1
-    - key4
-    - val3
+  filter: "/^key[4,6]|val[3,7]$/"
   keyOrValue:
     function: varGet
     id: 13
@@ -84,10 +80,3 @@ process:
       function: varGet
       id: 19
       name: recursive
-  strict:
-    function: varBool
-    id: 20
-    value:
-      function: varGet
-      id: 21
-      name: strict

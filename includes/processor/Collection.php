@@ -16,7 +16,7 @@ class Collection extends Core\ProcessorEntity
     'menu' => 'Primitive',
     'application' => 'Common',
     'input' => array(
-      'elements' => array(
+      'values' => array(
         'description' => 'The values in the collection',
         'cardinality' => array(0, '*'),
         'literalAllowed' => true,
@@ -32,10 +32,12 @@ class Collection extends Core\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor Collection', 4);
 
-    $elements = $this->val('elements');
-    $result = [];
-    foreach ($elements as $element) {
-      $result[] = $this->isDataContainer($element) ? $this->val($element, true) : $element;
+    $values = $this->val('values', false);
+    $result = array();
+
+    foreach ($values as $value) {
+      $data = $this->isDataContainer($value) ? $value->getData() : $value;
+      $result[] = $data;
     }
 
     return new Core\DataContainer($result, 'array');

@@ -78,9 +78,9 @@ foreach (\GuzzleHttp\json_decode($I->getResponse()) as $index => $processor) {
       \PHPUnit_Framework_Assert::assertTrue(false,  'the processor: ' . $processor->name . " needs a limitTypes  on its input: $key");
     }
     foreach ($val->limitTypes as $limitType) {
-      $limitTypes = array('file', 'object', 'string', 'number', 'integer', 'float', 'boolean');
+      $limitTypes = array('file', 'object', 'array', 'string', 'number', 'integer', 'float', 'boolean');
       if (!in_array($limitType, $limitTypes)) {
-        \PHPUnit_Framework_Assert::assertTrue(FALSE, 'the processor: ' . $processor->name . " can only have a value of " . implode(',', $limitTypes) . " on its limitTypes: $key");
+        \PHPUnit_Framework_Assert::assertTrue(false, 'the processor: ' . $processor->name . " can only have a value of " . implode(', ', $limitTypes) . " on its limitTypes: $key");
       }
     }
     if (!isset($val->limitValues)) {

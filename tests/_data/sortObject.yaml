@@ -1,8 +1,8 @@
-name: Testing Sort object of fields
+name: Testing Sort object
 
-description: Test Sort processor with an Object of Fields
+description: Test Sort processor with an Object
 
-uri: sort/object/Fields
+uri: sort/object
 
 method: get
 
@@ -47,10 +47,7 @@ process:
     function: varGet
     id: 6
     name: direction
-  sortByValue:
-    function: varBool
+  sortBy:
+    function: varGet
     id: 7
-    value:
-      function: varGet
-      id: 6
-      name: sortByValue
+    name: sortby
