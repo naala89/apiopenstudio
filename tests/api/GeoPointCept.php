@@ -36,7 +36,7 @@ $I->seeResponseContainsJson(array(
   'error' => array(
     'code' => 5,
     'id' => 3,
-    'message' => 'Invalid value (string) only \'float, integer\' allowed.',
+    'message' => 'Invalid value (three), only \'float\', \'integer\' allowed.',
   )
 ));
 
@@ -52,6 +52,6 @@ $I->seeResponseContainsJson(array(
   'error' => array(
     'code' => 5,
     'id' => 3,
-    'message' => 'Invalid value (compound object) only \'float, integer\' allowed.',
+    'message' => 'Invalid value (compound object), only \'float\', \'integer\' allowed.',
   )
 ));
