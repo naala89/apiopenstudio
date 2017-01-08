@@ -250,67 +250,43 @@ class Api
    */
   private function _crawlMeta($meta)
   {
-    if (!$this->isProcessor($meta)) {
+    if (!$this->helper->isProcessor($meta)) {
       return $meta;
     }
 
-    $stack = array($meta); // used to traverse the tree
-    $results = array();
     $finalId = $meta->id;
-
-    Debug::variable($meta, 'meta at start');
-    Debug::variable($stack, 'stack at start');
-    Debug::variable($finalId, 'finalId');
+    $stack = array($meta);
+    $results = array();
 
     while (sizeof($stack) > 0) {
 
       $node = array_shift($stack);
-      Debug::variable($node, 'node');
+      $newNodes = array();
 
       foreach ($node as $key => $value) {
-        if ($key == 'id' || $key == 'function') {
-          continue;
+        if ($this->helper->isProcessor($value) && !isset($results[$value->id])) {
+          array_unshift($newNodes, $value);
         }
-        Debug::variable($key, 'key');
-        Debug::variable($value, 'value');
+      }
 
-        if ($this->isProcessor($value)) {
-          if (!$this->hasAllValues($value, $results)) {
-            array_unshift($stack, $value);
-          } else {
-            $classStr = $this->helper->getProcessorString($value->function);
-            $class = new $classStr($value, $this->request);
-            $results[$value->id] = $class->process();
+      if (!empty($newNodes)) {
+        array_push($newNodes, $node);
+      } else {
+        foreach ($node as $key => $value) {
+          if (isset($results[$value->id])) {
+            $node->{$key} = $results[$value->id];
+            unset($results[$value->id]);
           }
         }
+        $classStr = $this->helper->getProcessorString($node->function);
+        $class = new $classStr($node, $this->request);
+        $results[$node->id] = $class->process();
       }
 
-      Debug::variable($stack, 'stack after properties loop');
+      $stack = array_merge($newNodes, $stack);
     }
 
-    Debug::variable($results, 'results at end');
-    exit;
-  }
-
-  /**
-   * @param $processor
-   * @return bool
-   * @todo: this does not need to check array
-   * @see: _crawlMeta()
-   */
-  public function isProcessor($processor)
-  {
-    return isset($processor->id) && isset($processor->function) ? TRUE : FALSE;
-  }
-
-  public function hasAllValues($processor, $results)
-  {
-    foreach ($processor as $item) {
-      if ($this->isProcessor($item) && !isset($results[$item->id])) {
-        return false;
-      }
-    }
-    return true;
+    return $results[$finalId];
   }
 
   /**
