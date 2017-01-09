@@ -71,7 +71,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
    */
   public function process()
   {
-    Core\Debug::message('Processor ResourceBase', 4);
+    Core\Debug::variable($this->meta, 'Processor ResourceBase', 4);
 
     $this->db = $this->getDb();
 
@@ -380,10 +380,10 @@ abstract class ResourceBase extends Core\ProcessorEntity
       // validate cardinality
       if ($count < $min) {
         // check for nothing to validate and if that is ok.
-        throw new Core\ApiException("input '$inputKey' requires min $min", 6, $id, 406);
+        throw new Core\ApiException("input '$inputKey' in function '" . $meta['id'] . "' requires min $min", 6, $id, 406);
       }
       if ($max != '*' && $count > $max) {
-        throw new Core\ApiException("input '$inputKey' requires max $max", 6, $id, 406);
+        throw new Core\ApiException("input '$inputKey' in function '" . $meta['id'] . "' requires max $max", 6, $id, 406);
       }
     }
   }
@@ -434,7 +434,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
       }
     }
     if (!$valid) {
-      throw new Core\ApiException("invalid input literal ($element). only $accepts accepted", 6, -1, 406);
+      throw new Core\ApiException("invalid literal in new resource. only '" . implode("', '", $accepts) . "' accepted", 6, -1, 406);
     }
     return $valid;
   }
