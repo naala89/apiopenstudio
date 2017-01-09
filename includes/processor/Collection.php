@@ -32,12 +32,20 @@ class Collection extends Core\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor Collection', 4);
 
-    $values = $this->val('values', false);
-    $result = array();
+    $values = $this->val('values', true);
 
-    foreach ($values as $value) {
+    if (!is_array($values)) {
+      return array($values);
+    }
+
+    if (!Core\Utilities::is_assoc($values)) {
+      return $values;
+    }
+
+    $result = array();
+    foreach ($values as $key => $value) {
       $data = $this->isDataContainer($value) ? $value->getData() : $value;
-      $result[] = $data;
+      $result[] = array($key => $data);
     }
 
     return new Core\DataContainer($result, 'array');
