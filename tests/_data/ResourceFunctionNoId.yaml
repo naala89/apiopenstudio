@@ -10,9 +10,9 @@ ttl: 3600
 
 security:
   function: tokenDeveloper
-  id: 1
   token:
     function: varGet
+    id: 2
     name: token
 
 process:
