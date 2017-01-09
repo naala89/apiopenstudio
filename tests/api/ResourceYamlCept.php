@@ -140,7 +140,7 @@ $I->wantTo('create a new resource from YAML with a func val missing in output st
 $I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/ResourceOutputEmptyFunc.yaml']);
 $I->seeResponseCodeIs(406);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => 'Missing function at index 0.', "id" => -1]]);
+$I->seeResponseContainsJson(["error" => ["code" => 1, "message" => 'Empty function name.', "id" => -1]]);
 $I->setYamlFilename('ResourceOutputEmptyFunc.yaml');
 $I->tearDownTestFromYaml(400, ['error' => ['code' => 2,'message' => 'Could not delete resource, not found.', 'id' => -1]]);
 
@@ -196,7 +196,7 @@ $I->wantTo('create a new resource from YAML with less than min inputs and see th
 $I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/ResourceBadMin.yaml']);
 $I->seeResponseCodeIs(406);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => "Input 'sources' requires min 2.", "id" => 3]]);
+$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => "Input 'sources' in function '3' requires min 2.", "id" => 3]]);
 $I->setYamlFilename('ResourceBadMin.yaml');
 $I->tearDownTestFromYaml(400, ['error' => ['code' => 2,'message' => 'Could not delete resource, not found.', 'id' => -1]]);
 
@@ -204,7 +204,7 @@ $I->wantTo('create a new resource from YAML with more than max inputs and see th
 $I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/ResourceBadMax.yaml']);
 $I->seeResponseCodeIs(406);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => "Input 'value' requires max 1.", "id" => 3]]);
+$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => "Input 'value' in function '3' requires max 1.", "id" => 3]]);
 $I->setYamlFilename('ResourceBadMax.yaml');
 $I->tearDownTestFromYaml(400, ['error' => ['code' => 2,'message' => 'Could not delete resource, not found.', 'id' => -1]]);
 
