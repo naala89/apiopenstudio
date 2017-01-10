@@ -84,7 +84,7 @@ $I->wantTo('create a new resource from YAML missing an id attr and see the resul
 $I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/resourceFunctionNoId.yaml']);
 $I->seeResponseCodeIs(406);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => "Bad function declaration in output at index 1.", "id" => -1]]);
+$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => "Bad function declaration in output at index 1 in new resource.", "id" => -1]]);
 $I->setYamlFilename('resourceFunctionNoId.yaml');
 $I->tearDownTestFromYaml(400, ['error' => ['code' => 2,'message' => 'Could not delete resource, not found.', 'id' => -1]]);
 
@@ -124,7 +124,7 @@ $I->wantTo('create a new resource from YAML with an non array output structure a
 $I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/ResourceOutputString.yaml']);
 $I->seeResponseCodeIs(406);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => 'Invalid output structure.', "id" => -1]]);
+$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => 'Invalid output structure in new resource.', "id" => -1]]);
 $I->setYamlFilename('ResourceOutputString.yaml');
 $I->tearDownTestFromYaml(400, ['error' => ['code' => 2,'message' => 'Could not delete resource, not found.', 'id' => -1]]);
 
@@ -132,7 +132,7 @@ $I->wantTo('create a new resource from YAML with an associative array output str
 $I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/ResourceOutputAssocArr.yaml']);
 $I->seeResponseCodeIs(406);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => "Invalid output structure.", "id" => -1]]);
+$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => "Invalid output structure in new resource.", "id" => -1]]);
 $I->setYamlFilename('ResourceOutputAssocArr.yaml');
 $I->tearDownTestFromYaml(400, ['error' => ['code' => 2,'message' => 'Could not delete resource, not found.', 'id' => -1]]);
 
@@ -164,7 +164,7 @@ $I->wantTo('create a new resource from YAML with string in fragments structure a
 $I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/ResourceFragmentString.yaml']);
 $I->seeResponseCodeIs(406);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => 'Invalid fragments structure.', "id" => -1]]);
+$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => 'Invalid fragments structure in new resource.', "id" => -1]]);
 $I->setYamlFilename('ResourceFragmentString.yaml');
 $I->tearDownTestFromYaml(400, ['error' => ['code' => 2,'message' => 'Could not delete resource, not found.', 'id' => -1]]);
 
@@ -172,7 +172,7 @@ $I->wantTo('create a new resource from YAML with string in fragments structure a
 $I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/ResourceFragmentString.yaml']);
 $I->seeResponseCodeIs(406);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => 'Invalid fragments structure.', "id" => -1]]);
+$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => 'Invalid fragments structure in new resource.', "id" => -1]]);
 $I->setYamlFilename('ResourceFragmentString.yaml');
 $I->tearDownTestFromYaml(400, ['error' => ['code' => 2,'message' => 'Could not delete resource, not found.', 'id' => -1]]);
 
@@ -180,7 +180,7 @@ $I->wantTo('create a new resource from YAML with normal array in fragments struc
 $I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/ResourceFragmentArray.yaml']);
 $I->seeResponseCodeIs(406);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => 'Invalid fragments structure.', "id" => -1]]);
+$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => 'Invalid fragments structure in new resource.', "id" => -1]]);
 $I->setYamlFilename('ResourceFragmentArray.yaml');
 $I->tearDownTestFromYaml(400, ['error' => ['code' => 2,'message' => 'Could not delete resource, not found.', 'id' => -1]]);
 
@@ -188,7 +188,7 @@ $I->wantTo('create a new resource from YAML with incorrect function and see the 
 $I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/ResourceRequireFuncType.yaml']);
 $I->seeResponseCodeIs(406);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => 'Invalid function in options: ProcessorsAll.', "id" => 5]]);
+$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => 'Processor 6 is an invalid function type (only "field" allowed).', "id" => 5]]);
 $I->setYamlFilename('ResourceRequireFuncType.yaml');
 $I->tearDownTestFromYaml(400, ['error' => ['code' => 2,'message' => 'Could not delete resource, not found.', 'id' => -1]]);
 
@@ -212,7 +212,7 @@ $I->wantTo('create a new resource from YAML with reserved method & uri and see t
 $I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/ResourceReserved.yaml']);
 $I->seeResponseCodeIs(406);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => "This resource is reserved (get + processors/all).", "id" => -1]]);
+$I->seeResponseContainsJson(["error" => ["code" => 6, "message" => "New resource (method: get and URI: processors/all) is reserved.", "id" => -1]]);
 $I->setYamlFilename('ResourceReserved.yaml');
 $I->tearDownTestFromYaml(400, ['error' => ['code' => 2,'message' => 'Could not delete resource, not found.', 'id' => -1]]);
 
