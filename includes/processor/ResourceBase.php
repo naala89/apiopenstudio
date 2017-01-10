@@ -331,10 +331,8 @@ abstract class ResourceBase extends Core\ProcessorEntity
   {
     $id = array();
     $stack = array($meta);
-    Core\Debug::variable($stack, '$stack');
 
     while ($node = array_shift($stack)) {
-      Core\Debug::variable($node, '$node');
       if ($this->helper->isProcessor($node)) {
         if (in_array($node['id'], $id)) {
           throw new Core\ApiException('identical ID in new resource: ' . $node['id'], 6, -1, 406);
