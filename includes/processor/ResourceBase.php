@@ -303,7 +303,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
       foreach ($data['output'] as $i => $output) {
         if (is_array($output)) {
           if (!$this->helper->isProcessor($output)) {
-            throw new Core\ApiException("missing function at index $i", 6, -1, 406);
+            throw new Core\ApiException("bad function declaration in output at index $i", 6, -1, 406);
           }
           $this->_validateDetails($output);
         } elseif ($output != 'response') {
@@ -357,65 +357,82 @@ abstract class ResourceBase extends Core\ProcessorEntity
    */
   private function _validateDetails($meta)
   {
-    if (empty($meta['id'])) {
-      throw new Core\ApiException('missing ID in a function', 6, -1, 406);
-    }
-    $id = $meta['id'];
+    $stack = array($meta);
 
-    $classStr = $this->helper->getProcessorString($meta['function']);
-    $class = new $classStr($meta, new Core\Request());
-    $details = $class->details();
+    while ($node = array_shift($stack)) {
 
-    foreach ($details['input'] as $inputKey => $inputDef) {
-      $min = $inputDef['cardinality'][0];
-      $max = $inputDef['cardinality'][1];
-      $literalAllowed = $inputDef['literalAllowed'];
-      $limitFunctions = $inputDef['limitFunctions'];
-      $limitTypes = $inputDef['limitTypes'];
-      $limitValues = $inputDef['limitValues'];
+      if ($this->helper->isProcessor($node)) {
 
-      $count = 0;
-      if (!empty($meta[$inputKey])) {
-        $input = $meta[$inputKey];
-        if ($this->helper->isProcessor($input)) {
-          if (!empty($limitFunctions) && !in_array($input['function'], $limitFunctions)) {
-            throw new Core\ApiException("invalid function in $inputKey: " . $input['function'], 6, $id, 406);
-          }
-          $this->_validateDetails($input);
-          $count = 1;
-        } elseif (is_array($input)) {
-          foreach ($input as $item) {
-            if ($this->helper->isProcessor($item)) {
-              $this->_validateDetails($item);
+        $classStr = $this->helper->getProcessorString($node['function']);
+        $class = new $classStr($meta, new Core\Request());
+        $details = $class->details();
+        $id = $node['id'];
+
+        foreach ($details['input'] as $inputKey => $inputDef) {
+
+          $min = $inputDef['cardinality'][0];
+          $max = $inputDef['cardinality'][1];
+          $literalAllowed = $inputDef['literalAllowed'];
+          $limitFunctions = $inputDef['limitFunctions'];
+          $limitTypes = $inputDef['limitTypes'];
+          $limitValues = $inputDef['limitValues'];
+          $count = 0;
+
+          if (!empty($node[$inputKey])) {
+
+            $input = $node[$inputKey];
+
+            if ($this->helper->isProcessor($input)) {
+              if (!empty($limitFunctions) && !in_array($input['function'], $limitFunctions)) {
+                throw new Core\ApiException("invalid function in $inputKey: " . $input['function'], 6, $id, 406);
+              }
+              array_unshift($stack, $input);
+              $count = 1;
+
+            } elseif (is_array($input)) {
+              foreach ($input as $item) {
+                if ($this->helper->isProcessor($item)) {
+                  array_unshift($stack, $item);
+                } else {
+                  $this->_validateTypeValue($item, $limitTypes);
+                }
+              }
+              $count = sizeof($input);
+
+            } elseif (!$literalAllowed) {
+              throw new Core\ApiException("literals not allowed as input", 6, $id, 406);
+
             } else {
-              $this->_validateTypeValue($item, $limitTypes);
+              if (!empty($limitValues) && !in_array($input, $limitValues)) {
+                throw new Core\ApiException("invalid value type in $inputKey: " . $input, 6, $id, 406);
+              }
+              if (!empty($limitTypes)) {
+                $this->_validateTypeValue($input, $limitTypes);
+              }
+              $count = 1;
             }
           }
-          $count = sizeof($input);
-        } elseif (!$literalAllowed) {
-          throw new Core\ApiException("literals not allowed as input", 6, $id, 406);
-        } else {
-          if (!empty($limitValues) && !in_array($input, $limitValues)) {
-            Core\Debug::variable($input);
-            Core\Debug::variable($limitValues);
-            throw new Core\ApiException("invalid value type in $inputKey: " . $input, 6, $id, 406);
+
+          // validate cardinality
+          if ($count < $min) {
+            // check for nothing to validate and if that is ok.
+            throw new Core\ApiException("input '$inputKey' in function '" . $node['id'] . "' requires min $min", 6, $id, 406);
           }
-          if (!empty($limitTypes)) {
-            $this->_validateTypeValue($input, $limitTypes);
+          if ($max != '*' && $count > $max) {
+            throw new Core\ApiException("input '$inputKey' in function '" . $node['id'] . "' requires max $max", 6, $id, 406);
           }
-          $count = 1;
+        }
+
+      } elseif (is_array($node)) {
+        foreach ($node as $key => $value) {
+          array_unshift($stack, $value);
         }
       }
-
-      // validate cardinality
-      if ($count < $min) {
-        // check for nothing to validate and if that is ok.
-        throw new Core\ApiException("input '$inputKey' in function '" . $meta['id'] . "' requires min $min", 6, $id, 406);
-      }
-      if ($max != '*' && $count > $max) {
-        throw new Core\ApiException("input '$inputKey' in function '" . $meta['id'] . "' requires max $max", 6, $id, 406);
-      }
     }
+
+
+
+
   }
 
   /**

@@ -9,6 +9,6 @@ method: get
 ttl: 3600
 
 process:
-  - val1
-  - val2
-  - val3
+  key1: val1
+  key2: val2
+  key3: val3
