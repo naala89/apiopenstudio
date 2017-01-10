@@ -245,8 +245,9 @@ class Api
   }
 
   /**
-   * Depth first iteration.
+   * Process the meta data, using depth first iteration.
    * @param $meta
+   * @return mixed
    */
   private function _crawlMeta($meta)
   {
@@ -257,81 +258,68 @@ class Api
     $finalId = $meta->id;
     $stack = array($meta);
     $results = array();
+    $arrayStack = [];
+    $arrayResults = array();
 
     while (sizeof($stack) > 0) {
 
       $node = array_shift($stack);
-      $newNodes = array();
+      $processNode = true;
 
+      // traverse through each attribute on the node
       foreach ($node as $key => $value) {
+
+        // $value is a processor and has not been calculated yet, add it to the front of $stack
         if ($this->helper->isProcessor($value) && !isset($results[$value->id])) {
-          array_unshift($newNodes, $value);
+          if ($processNode) {
+            array_unshift($stack, $node); // We have the first instance of an unprocessed attribute, so re-add $node to the stack
+          }
+          array_unshift($stack, $value);
+          $processNode = false;
+
+          // $value is an array of values, add to $stack
+        } elseif (is_array($value)) {
+          foreach ($value as $index => $item) {
+            if ($this->helper->isProcessor($item) && !isset($results[$item->id])) {
+              if ($processNode) {
+                array_unshift($stack, $node); // We have the first instance of an unprocessed attribute, so re-add $node to the stack
+              }
+              array_unshift($stack, $item);
+              $processNode = false;
+            }
+          }
+
         }
       }
 
-      if (!empty($newNodes)) {
-        array_push($newNodes, $node);
-      } else {
+      // No new attributes have been added to the stack, so we can process the node
+      if ($processNode) {
+        // traverse through each attribute on the node and place values from $results into $node
         foreach ($node as $key => $value) {
-          if (isset($results[$value->id])) {
-            $node->{$key} = $results[$value->id];
-            unset($results[$value->id]);
+          if ($this->helper->isProcessor($value)) {
+            // single processor - if value exists in $results, replace value in $node with value from $results
+            if (isset($results[$value->id])) {
+              $node->{$key} = $results[$value->id];
+              unset($results[$value->id]);
+            }
+          } elseif (is_array($value)) {
+            // array of values - loop through values and if value exists in $results, replace indexed value in $node with value from $results
+            foreach ($value as $index => $item) {
+              if ($this->helper->isProcessor($item) && isset($results[$item->id])) {
+                $node->{$key}[$index] = $results[$item->id];
+                unset($results[$item->id]);
+              }
+            }
           }
         }
+
         $classStr = $this->helper->getProcessorString($node->function);
         $class = new $classStr($node, $this->request);
         $results[$node->id] = $class->process();
       }
-
-      $stack = array_merge($newNodes, $stack);
     }
 
     return $results[$finalId];
-  }
-
-  /**
-   * Recursively crawl though metadata. Recurse through Replace all processors with result values and return final value
-   * @param $meta
-   * @param null $caller
-   * @return mixed
-   * @throws \Datagator\Core\ApiException
-   *
-  public function _crawlMeta(& $meta, $caller=null)
-  {
-    // array of values - parse each one
-    if (is_array($meta)) {
-      foreach ($meta as $key => $value) {
-        $meta[$key] = $this->_crawlMeta($value, $caller);
-      }
-    }
-
-    // object of value - process each key/value, and process() if a processor
-    if (is_object($meta)) {
-      // replace each value of key/value pair with final value
-      foreach ($meta as $key => & $value) {
-        // 1. process all key/value pairs using recursion
-        // this allows infinite depth and final first
-        $value = $this->_crawlMeta($value, !empty($meta->function) ? $meta->function : null);
-      }
-      if (!empty($meta->function) && !empty($meta->id)) {
-        // 2. process a function
-        // this will be arrived at once all values are constants
-        if (!empty($caller)) {
-          // validate function if limited type allowed
-          $callerStr = $this->helper->getProcessorString($caller);
-          $class = new $callerStr($meta, $this->request);
-          $details = $class->details();
-          if (!empty($details['allowedFunctions']) && !in_array($meta->function, $details['allowedFunctions'])) {
-            throw new ApiException('invalid function. ' . $meta->function . ' not allowed as input in ' . $caller, 1, $this->id);
-          }
-        }
-        $classStr = $this->helper->getProcessorString($meta->function);
-        $class = new $classStr($meta, $this->request);
-        return $class->process();
-      }
-    }
-
-    return $meta;
   }
 
   /**

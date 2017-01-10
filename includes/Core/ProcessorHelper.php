@@ -18,6 +18,9 @@ class ProcessorHelper
    */
   public function getProcessorString($className, $namespaces=null)
   {
+    if (empty($className)) {
+      throw new ApiException('empty function name', 1, -1, 406);
+    }
     $namespaces = empty($namespaces) ? $this->_namespaces : $namespaces;
     $className = ucfirst(trim($className));
 
@@ -29,7 +32,7 @@ class ProcessorHelper
       }
     }
 
-    throw new ApiException("unknown function in new resource: $className", 1, -1, 406);
+    throw new ApiException("unknown function: $className", 1, -1, 406);
     exit;
   }
 
@@ -40,6 +43,12 @@ class ProcessorHelper
    */
   public function isProcessor(& $obj)
   {
-    return (is_array($obj) && !empty($obj['function']));
+    if (is_object($obj)) {
+      return (isset($obj->function) && isset($obj->id));
+    }
+    if (is_array($obj)) {
+      return (isset($obj['function']) && isset($obj['id']));
+    }
+    return false;
   }
 }
