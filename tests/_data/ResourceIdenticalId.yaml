@@ -1,8 +1,8 @@
-name: test resource w good fragment
+name: test good resource
 
-description: test resource with good fragment
+description: test good resource
 
-uri: resource/fragment/good
+uri: resource/good
 
 method: get
 
@@ -17,22 +17,16 @@ security:
     name: token
 
 process:
-  function: fragment
-  name: processors
+  function: ProcessorsAll
   id: 3
-
-fragments:
-  processors:
-    function: ProcessorsAll
-    id: 4
 
 output:
   - function: email
-    id: 5
+    id: 3
     to: john@naala.com.au
     subject: "test email"
     format: html
   - function: xml
-    id: 6
+    id: 5
     destination: www.foo.bar
     method: post

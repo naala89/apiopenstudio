@@ -5,7 +5,6 @@
  */
 
 namespace Datagator\Processor;
-use Codeception\Util\Debug;
 use Datagator\Core;
 use Datagator\Db;
 
@@ -289,8 +288,12 @@ abstract class ResourceBase extends Core\ProcessorEntity
       throw new Core\ApiException("missing or negative ttl in new resource", 6, -1, 406);
     }
 
+    // validate for identical IDs
+    $this->_identicalIds($data);
+
     // validate dictionaries
     if (isset($data['security'])) {
+      // check for identical IDs
       $this->_validateDetails($data['security']);
     }
     if (!empty($data['output'])) {
@@ -317,6 +320,35 @@ abstract class ResourceBase extends Core\ProcessorEntity
       }
     }
     $this->_validateDetails($data['process']);
+  }
+
+  /**
+   * Search for identical IDs.
+   * @param $meta
+   * @throws \Datagator\Core\ApiException
+   */
+  private function _identicalIds($meta)
+  {
+    $id = array();
+    $stack = array($meta);
+    Core\Debug::variable($stack, '$stack');
+
+    while ($node = array_shift($stack)) {
+      Core\Debug::variable($node, '$node');
+      if ($this->helper->isProcessor($node)) {
+        if (in_array($node['id'], $id)) {
+          throw new Core\ApiException('identical ID in new resource: ' . $node['id'], 6, -1, 406);
+        }
+        $id[] = $node['id'];
+      }
+      if (is_array($node)) {
+        foreach ($node as $item) {
+          array_unshift($stack, $item);
+        }
+      }
+    }
+
+    return;
   }
 
   /**
