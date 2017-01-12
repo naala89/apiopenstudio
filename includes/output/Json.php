@@ -124,7 +124,7 @@ class Json extends Output
    * @return mixed
    */
   protected function fromJson(& $data) {
-    return $data;
+    return is_string($data) ? $data : \GuzzleHttp\json_encode($data);
   }
 
   private function _xml2json(& $xml) {
