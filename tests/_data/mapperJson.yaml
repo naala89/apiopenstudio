@@ -1,0 +1,31 @@
+name: Testing mapper json
+
+description: Test Mapper processor with json
+
+uri: mapper/json
+
+method: get
+
+ttl: 0
+
+security:
+  function: TokenConsumer
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
+
+process:
+  function: mapper
+  id: 3
+  source:
+    function: url
+    id: 4
+    method: get
+    url: "http://datagator.local/html/sample/sample5.json"
+  mappings:
+    - get: "store.book[?title=='Moby Dick'].category"
+      set: "/category/array[]"
+    - get: "store.book[?title=='Sayings of the Century'].category"
+      set: "/category/associative[key]"

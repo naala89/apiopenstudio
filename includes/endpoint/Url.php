@@ -93,7 +93,7 @@ class Url extends Core\ProcessorEntity
    */
   public function process()
   {
-    Core\Debug::variable($this->meta, 'function Url', 4);
+    Core\Debug::variable($this->meta, 'Processor Url', 4);
 
     $method = $this->val('method', true);
     $connectTimeout = $this->val('connectTimeout', true);
