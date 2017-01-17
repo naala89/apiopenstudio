@@ -33,7 +33,6 @@ class Collection extends Core\ProcessorEntity
     Core\Debug::variable($this->meta, 'Processor Collection', 4);
 
     $values = $this->val('values', true);
-    Core\Debug::variable($values, 'for collection');
 
     if (!is_array($values)) {
       return array($values);
@@ -48,8 +47,6 @@ class Collection extends Core\ProcessorEntity
       $data = $this->isDataContainer($value) ? $value->getData() : $value;
       $result[] = array($key => $data);
     }
-
-    Core\Debug::variable($result, 'from collection');
 
     return new Core\DataContainer($result, 'array');
   }

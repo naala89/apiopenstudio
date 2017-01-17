@@ -6,7 +6,8 @@
     "eloquent/pbkdf2-compat": "^1.0.1",
     "facebook/graph-sdk" : "~5.3",
     "phpmailer/phpmailer": "~5.2",
-    "codeception/codeception": "*"
+    "codeception/codeception": "*",
+    "mtdowling/jmespath.php": "~2.4.0"
   },
   "autoload": {
     "psr-4": {

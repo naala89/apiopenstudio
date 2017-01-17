@@ -112,7 +112,7 @@ class Json extends Output
    * @return mixed
    */
   protected function fromArray(& $data) {
-    return \GuzzleHttp\json_encode($data);
+    return \json_encode($data);
   }
 
   protected function fromImage(& $data) {
@@ -124,7 +124,7 @@ class Json extends Output
    * @return mixed
    */
   protected function fromJson(& $data) {
-    return is_string($data) ? $data : \GuzzleHttp\json_encode($data);
+    return is_string($data) ? $data : \json_encode($data);
   }
 
   private function _xml2json(& $xml) {
