@@ -211,7 +211,8 @@ class Mapper extends Core\ProcessorEntity
    *  foo/bar - add the node bar as the child of foo
    *  foo[@bar] = add to node as an attribute <foo bar="value"></foo>
    * @param $regex
-   * @param $value
+   * @param \DOMNodeList $values
+   * @throws \Datagator\Core\ApiException
    */
   private function _addResultXml($regex, \DOMNodeList $values)
   {
