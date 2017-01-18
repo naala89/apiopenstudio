@@ -1,0 +1,28 @@
+name: Testing url basic
+
+description: Test Url processor with basic username/password authentication
+
+uri: url/auth/basic
+
+method: get
+
+ttl: 0
+
+security:
+  function: TokenConsumer
+  id: 1
+  token:
+    function: varGet
+    id: 2
+    name: token
+
+process:
+  function: url
+  id: 3
+  method: get
+  url: "http://datagator.local/html/sample/testAuthBasic.php"
+  auth:
+    function: AuthBasic
+    id: 4
+    username: username
+    password: password

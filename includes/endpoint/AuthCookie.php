@@ -2,21 +2,9 @@
 
 /**
  * Provide cookie authentication
- *
- * This class is to be used by ProcessorInput.
- *
- * Meta:
- *    {
- *      "type": "cookie",
- *      "meta": {
- *        "id": <integer>,
- *        "cookie": <processor|string>
- *      }
- *    }
  */
 
 namespace Datagator\Endpoint;
-use Datagator\Processor;
 use Datagator\Core;
 
 class AuthCookie extends Core\ProcessorEntity
@@ -29,7 +17,7 @@ class AuthCookie extends Core\ProcessorEntity
     'application' => 'Common',
     'input' => array(
       'cookie' => array(
-        'description' => 'The cookie.',
+        'description' => 'The cookie string.',
         'cardinality' => array(1, 1),
         'literalAllowed' => false,
         'limitFunctions' => array(),
@@ -44,7 +32,7 @@ class AuthCookie extends Core\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Auth Cookie', 4);
 
-    $cookie = $this->val('cookie');
+    $cookie = $this->val('cookie', true);
 
     return array(CURLOPT_COOKIE => $cookie);
   }

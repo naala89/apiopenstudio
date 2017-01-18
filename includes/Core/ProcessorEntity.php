@@ -186,7 +186,7 @@ abstract class ProcessorEntity extends Entity
     $count = empty($this->meta->$key) ? 0 : is_array($this->meta->$key) ? sizeof($this->meta->$key) : 1;
     if ($count < $min || ($max != '*' && $count > $max)) {
       // invalid cardinality
-      throw new ApiException("invalid number of inputs ($count), requires $min - $max", 1, $this->id);
+      throw new ApiException("invalid number of inputs ($count) in $key, requires $min - $max", 1, $this->id);
     }
 
     // return default if empty
