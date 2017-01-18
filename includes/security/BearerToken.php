@@ -13,8 +13,8 @@ class BearerToken extends Core\ProcessorEntity
     'name' => 'Bearer Token',
     'machineName' => 'bearerToken',
     'description' => 'Fetch a bearer token from the request header.',
-    'menu' => 'Primitive',
-    'application' => 'Security',
+    'menu' => 'Security',
+    'application' => 'Common',
     'input' => array(),
   );
 
