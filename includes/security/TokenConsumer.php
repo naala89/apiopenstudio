@@ -2,20 +2,10 @@
 
 /**
  * Provide token authentication based on token in DB
- *
- * Meta:
- *    {
- *      "type": "token",
- *      "meta": {
- *        "id":<integer>,
- *        "token": <processor|string>
- *      }
- *    }
  */
 
 namespace Datagator\Security;
 use Datagator\Core;
-use Datagator\Processor;
 
 class TokenConsumer extends Token
 {

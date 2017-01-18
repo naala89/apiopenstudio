@@ -6,7 +6,6 @@
 
 namespace Datagator\Security;
 use Datagator\Core;
-use Datagator\Processor;
 
 class TokenDeveloper extends Token
 {

@@ -7,7 +7,6 @@
 namespace Datagator\Security;
 use Datagator\Core;
 use Datagator\Db;
-use Datagator\Processor;
 
 class TokenUser extends Core\ProcessorEntity
 {
