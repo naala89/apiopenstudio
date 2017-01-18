@@ -113,14 +113,18 @@ class Mapper extends Core\ProcessorEntity
    * @throws \Datagator\Core\ApiException
    * @see https://github.com/jmespath/jmespath.php
    */
-  private function _mapJson(array & $source, $mappings, $format) {
+  private function _mapJson(\stdClass & $source, $mappings, $format) {
     $resultFunc = '_addResult' . ucfirst($format);
 
     foreach ($mappings as $index => $mapping) {
       if (empty($mapping->get) || empty($mapping->set)) {
         throw new Core\ApiException("missing get or set indices a index: $index", 6, $this->id, 417);
       }
-      $value = JmesPath\search($mapping->get, \json_decode($source));
+      try {
+        $value = JmesPath\search($mapping->get, $source);
+      } catch(\Exception $e) {
+        throw new Core\ApiException($e->getMessage(), 6, $this->id, 417);
+      }
       $this->{$resultFunc}($mapping->set, $value);
     }
 
@@ -165,7 +169,9 @@ class Mapper extends Core\ProcessorEntity
           if (!isset($currentNode[$nodeName])) {
             $currentNode[$nodeName] = array();
           }
-          $currentNode[$nodeName] += array_merge($currentNode[$nodeName], $value);
+          if (!empty($value)) {
+            $currentNode[$nodeName] += array_merge($currentNode[$nodeName], $value);
+          }
         } elseif (preg_match("/.+\[.+\]/", $node)) {
           // add value as object value with textual index
           $left = strpos($node, '[');

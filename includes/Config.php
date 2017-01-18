@@ -191,9 +191,9 @@ class Config
     self::$ffmpeg = '/usr/local/bin/ffmpeg';
 
     date_default_timezone_set('Australia/Sydney');
-    ini_set('display_errors', 'on');
-    ini_set('log_errors','On');
-    //ini_set('error_reporting', E_ALL);
+    ini_set('display_errors', '1');
+    ini_set('log_errors','1');
+    ini_set('error_reporting', E_ALL);
     ini_set('error_log', self::$errorLog);
   }
 
@@ -228,8 +228,8 @@ class Config
 
     self::$errorLog = '/home/datagator/datagator.error.log';
     date_default_timezone_set('Australia/Sydney');
-    ini_set('display_errors', 'on');
-    ini_set('log_errors','On');
+    ini_set('display_errors', '1');
+    ini_set('log_errors','1');
     ini_set('error_reporting', E_ALL);
     ini_set('error_log', self::$errorLog);
   }
@@ -263,7 +263,8 @@ class Config
     self::$emailPort = 587;
 
     self::$errorLog = '/var/log/apache2/datagator.error.log';
-    ini_set('display_errors', FALSE);
+    ini_set('display_errors', '0');
+    ini_set('log_errors','1');
   }
 
   /**
