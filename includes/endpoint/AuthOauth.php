@@ -2,28 +2,16 @@
 
 /**
  * Provide OAuth header authentication
- *
- * This class is to be used by ProcessorInput.
- *
- * Meta:
- *    {
- *      "type": "cookie",
- *      "meta": {
- *        "id": <integer>,
- *        "cookie": <processor|string>
- *      }
- *    }
  */
 
 namespace Datagator\Endpoint;
-use Datagator\Processor;
 use Datagator\Core;
 
-class AuthOAuthHeader extends Core\ProcessorEntity
+class AuthOAuth extends Core\ProcessorEntity
 {
   protected $details = array(
-    'name' => 'Auth (o-auth header)',
-    'machineName' => 'authOAuthHeader',
+    'name' => 'Auth (OAuth)',
+    'machineName' => 'authOAuth',
     'description' => 'Authentication for remote server, using OAuth signature in the header.',
     'menu' => 'Authentication',
     'application' => 'Common',
@@ -57,21 +45,21 @@ class AuthOAuthHeader extends Core\ProcessorEntity
       ),
       'signatureMethod' => array(
         'description' => 'The signature method.',
-        'cardinality' => array(1, 1),
+        'cardinality' => array(0, 1),
         'literalAllowed' => false,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array(),
-        'default' => ''
+        'default' => 'HMAC-SHA1'
       ),
       'oauthVersion' => array(
         'description' => 'The OAuth version.',
-        'cardinality' => array(1, 1),
+        'cardinality' => array(0, 1),
         'literalAllowed' => false,
         'limitFunctions' => array(),
         'limitTypes' => array('string'),
         'limitValues' => array(),
-        'default' => ''
+        'default' => '1.0'
       ),
     ),
   );
@@ -80,21 +68,16 @@ class AuthOAuthHeader extends Core\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Auth o-auth(header)', 4);
 
-    $key = $this->val('key');
-    $nonce = $this->val('nonce');
-    $signature = $this->val('signature');
-    $signatureMethod = $this->val('signatureMethod');
-    $timestamp = time();
-    $oauthVersion = $this->val('oauthVersion');
+    $headers = array(
+      Authorization => OAuth,
+      'oauth_consumer_key' => $this->val('key', true),
+      'oauth_nonce' => $this->val('nonce', true),
+      'oauth_signature' => $this->val('signature', true),
+      'oauth_signature_method' => $this->val('signatureMethod', true),
+      'oauth_timestamp' => time(),
+      'oauth_version' => $this->val('oauthVersion', true)
+     );
 
-    $header = 'OAuth ';
-    $header .= !empty($key) ? "oauth_consumer_key=$key" : '';
-    $header .= !empty($nonce) ? "oauth_nonce=$nonce" : '';
-    $header .= !empty($signature) ? "oauth_signature=$signature" : '';
-    $header .= !empty($signatureMethod) ? "oauth_signature_method=$signatureMethod" : '';
-    $header .= !empty($timestamp) ? "oauth_timestamp=$timestamp" : '';
-    $header .= !empty($oauthVersion) ? "oauth_version=$oauthVersion" : '';
-
-    return array('Authorization' => $header);
+    return array(CURLOPT_HTTPHEADER => $headers);
   }
 }

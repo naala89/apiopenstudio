@@ -5,7 +5,6 @@
  */
 
 namespace Datagator\Endpoint;
-use Datagator\Processor;
 use Datagator\Core;
 
 class Url extends Core\ProcessorEntity
@@ -47,9 +46,9 @@ class Url extends Core\ProcessorEntity
       ),
       'auth' => array(
         'description' => 'The remote authentication process.',
-        'cardinality' => array(0, 1),
+        'cardinality' => array(0, '*'),
         'literalAllowed' => true,
-        'limitFunctions' => array('AuthCookie', 'AuthOauthHeader', 'AuthUserPwd'),
+        'limitFunctions' => array('AuthCookie', 'AuthOauthHeader', 'AuthBasic', 'AuthDigest'),
         'limitTypes' => array(),
         'limitValues' => array(),
         'default' => ''
@@ -93,7 +92,7 @@ class Url extends Core\ProcessorEntity
    */
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor Url', 4);
+    Core\Debug::variable($this->meta, 'Endpoint Url', 4);
 
     $method = $this->val('method', true);
     $connectTimeout = $this->val('connectTimeout', true);
@@ -101,7 +100,7 @@ class Url extends Core\ProcessorEntity
     $url = $this->val('url', true);
     $reportError = $this->val('reportError', true);
     $sourceType = $this->val('sourceType', true);
-    $auth = $this->val('auth');
+    $auth = $this->val('auth', true);
 
     //get static curl options for this call
     $curlOpts = array();
@@ -112,18 +111,10 @@ class Url extends Core\ProcessorEntity
       $curlOpts[] = [CURLOPT_TIMEOUT => $timeout];
     }
 
-    /*
     //get auth
-    if (!empty($this->meta->auth)) {
-      $class = 'Datagator\\Endpoint\\Auth' . ucfirst(trim($this->meta->auth));
-      if (!class_exists($class)) {
-        throw new Core\ApiException('invalid Auth: ' . $this->meta->auth, 6);
-      }
-      $authenticator = new $class($this->meta->auth, $this->request);
-      $authentication = $authenticator->process();
-      $curlOpts += $authentication;
+    if (!empty($auth)) {
+      $curlOpts += $auth;
     }
-    */
 
     //send request
     $curl = new Core\Curl();
