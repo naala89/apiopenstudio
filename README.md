@@ -18,6 +18,11 @@ Installation
    2. Set the database credentials that you created in step 5 in the server role function you defined in step 5.1.
    3. Set any other desired values you require in the role function you defined in ```$_server``` (see Config section for details)
 9. Run ```includes/scripts/db/dbBase.sql```.
+10. Update ```php.ini``` (if using non-apache server, see [Hardening your HTTP response headers](https://scotthelme.co.uk/hardening-your-http-response-headers/#removingheaders)):
+    1. ```expose_php = Off```
+11. Update ```httpd.conf```
+    2. ```ServerSignature Off```
+    3. ```ServerTokens Prod```
 
 Requirements
 ------------
