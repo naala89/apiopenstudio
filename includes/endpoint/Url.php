@@ -44,6 +44,15 @@ class Url extends Core\ProcessorEntity
         'limitValues' => array('xml', 'json', 'text', 'html', 'auto'),
         'default' => 'auto'
       ),
+      'body' => array(
+        'description' => 'The body of the request.',
+        'cardinality' => array(0, 1),
+        'literalAllowed' => true,
+        'limitFunctions' => array(),
+        'limitTypes' => array('string'),
+        'limitValues' => array(),
+        'default' => ''
+      ),
       'auth' => array(
         'description' => 'The remote authentication process.',
         'cardinality' => array(0, '*'),
@@ -98,6 +107,7 @@ class Url extends Core\ProcessorEntity
     $connectTimeout = $this->val('connectTimeout', true);
     $timeout = $this->val('timeout', true);
     $url = $this->val('url', true);
+    $body = $this->val('body', true);
     $reportError = $this->val('reportError', true);
     $sourceType = $this->val('sourceType', true);
     $auth = $this->val('auth', true);
@@ -109,6 +119,9 @@ class Url extends Core\ProcessorEntity
     }
     if ($timeout > 0) {
       $curlOpts[] = [CURLOPT_TIMEOUT => $timeout];
+    }
+    if (!empty($body)) {
+      $curlOpts[] = [CURLOPT_POSTFIELDS => $body];
     }
 
     //get auth
