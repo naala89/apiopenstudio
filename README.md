@@ -1,6 +1,18 @@
 Datagator
 =========
 
+Requirements
+------------
+
+* apache
+* https
+* php >= 5.3
+* mysql
+* opcode (Memcache or APC)
+* composer
+* mcrpyt
+* zip
+
 Installation
 ------------
 
@@ -23,18 +35,6 @@ Installation
 11. Update ```httpd.conf```
     2. ```ServerSignature Off```
     3. ```ServerTokens Prod```
-
-Requirements
-------------
-
-* apache
-* https
-* php >= 5.3
-* mysql
-* opcode (Memcache or APC)
-* composer
-* mcrpyt
-* zip
 
 Config
 ------
