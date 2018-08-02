@@ -10,6 +10,12 @@ $loader = new Twig_Loader_Filesystem($dir_templates);
 //));
 $twig = new Twig_Environment($loader);
 
+$menu = [
+    'Login' => '/login',
+    'Accounts' => '/accounts',
+    'Resources' => '/resources',
+    'Users' => '/users'];
+
 $username = !empty($_POST['username']) ? $_POST['username'] : (!empty($_SESSION['username']) ? $_SESSION['username'] : '');
 $password = !empty($_POST['password']) ? $_POST['password'] : (!empty($_SESSION['password']) ? $_SESSION['password'] : '');
 if (empty($username) || empty($password)) {
