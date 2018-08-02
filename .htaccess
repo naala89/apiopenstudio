@@ -32,11 +32,11 @@ Header set Access-Control-Allow-Methods "PUT, GET, POST, DELETE, OPTIONS"
   # downloaded.
   RewriteRule "(^|/)\." - [F]
 
-  # Rewrite rule for docs
+  # Rewrite rule for admin area
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^docs/(.*)$ /html/docs/$1 [L]
 
   # Rewrite rule for all coorrect requests to the API
   RewriteRule ^api/([a-zA-Z0-9\/\-_\%\.]*)$ /html/index.php?request=$1 [QSA,NC,L]
+  RewriteRule ^admin/(.*)$ /html/admin/index.php?q=$1 [L]
 </IfModule>
