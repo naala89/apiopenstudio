@@ -1,0 +1,54 @@
+account:
+  columns:
+    accid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: account id }
+    uid: { type: int(10), notnull: true, comment: uid of the owner }
+    name: { type: varchar(255), notnull: true, comment: name of account }
+  data:
+  - { accid: 1, uid: 1, name: Datagator }
+
+applications:
+  columns:
+    appid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: application id }
+    accid: { type: int(10) unsigned, notnull: true, comment: account id }
+    name: { type: varchar(255), notnull: true, comment: application name }
+  data:
+    - { appid: 1, accid: 1, name: Datagator }
+    - { appid: 2, accid: 1, name: Common }
+    - { appid: 3, accid: 1, name: Testing }
+
+blacklist:
+  columns:
+    id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: blacklist id }
+    appid: { type: int(10) unsigned, notnull: true, comment: application id }
+    min_ip: { type: varchar(32), notnull: true, comment: ip range minimum }
+    max_ip: { type: varchar(32), notnull: true, comment: ip range maximum }
+
+external_user:
+  columns:
+    id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: external user id }
+    appid: { type: int(10) unsigned, notnull: true, comment: application id }
+    external_id: { type: varchar(255), notnull: true, comment: user id in external entity }
+    external_entity: { type: varchar(255), notnull: true, comment: name of the external entity }
+    data_field_1: { type: varchar(255), notnull: false, comment: extra data field 1 }
+    data_field_2: { type: varchar(255), notnull: false, comment: extra data field 2 }
+    data_field_3: { type: varchar(255), notnull: false, comment: extra data field 3 }
+
+log:
+  columns:
+    id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: log identifier id }
+    datetime: { type: timestamp, notnull: true, default: CURRENT_TIMESTAMP, comment: log time and date }
+    user: { type: varchar(255), notnull: true, comment: user name }
+    ip: { type: varchar(11), notnull: true, comment: user id }
+    type: { type: varchar(64), notnull: true, comment: call type }
+    text: { type: varchar(1024), notnull: true, comment: log text }
+
+resource:
+  columns:
+    id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: resource id }
+    appid: { type: int(10) unsigned, notnull: true, comment: application id }
+    name: { type: varchar(255), notnull: true, comment: name of the resource }
+    description : { type: varchar(2048), notnull: true, comment: description of the resource }
+    method: { type text, notnull: true, comment: form delivery method }
+    identifier: { type: varchar(64), notnull: true, comment: identifier of the api call }
+    meta: { type: varchar(16384), notnull: true, comment: all of the actions taken by the call }
+    ttl: { type: int(10) unsigned, notnull: true, default: 300, comment: time to cache the results (seconds) }
