@@ -4,9 +4,8 @@ Datagator
 Requirements
 ------------
 
-* apache
-* https
-* php >= 5.3
+* apache/nginx (see [foobar](https://foobar) for nginx config file)
+* php >= 7.0
 * mysql
 * opcode (Memcache or APC)
 * composer
