@@ -3,6 +3,11 @@ free version
 
 Code only, setting up the infrastructure is up to the user/devs.
 
+config
+------
+
+change Config.php to be a single file, with Config.example.php 
+
 web
 ---
 
@@ -20,7 +25,8 @@ web
 #### install
 
 - need a page with script to install DB.
-- only visible to developer
+- multi-step form
+- db created with single user with owner & administrator access
 
 #### update
 
@@ -87,6 +93,7 @@ questions
   - how can this we done
   - would they be in a separate repository
 - how do we handle 3rd party processors
+  - packagist?
 - custom css, logo and header title
 
 paid version

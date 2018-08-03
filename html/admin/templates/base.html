@@ -15,7 +15,17 @@
   <!--<![endif]--></head>
 
 <body>
-  <div id="header">{% block menu %}{% endblock %}</div>
+  <div id="header">
+    {% block menu %}
+    <div class="pure-menu pure-menu-horizontal">
+      <ul class="pure-menu-list">
+        {% for key,value in menu %}
+        <li class="pure-menu-item pure-menu-selected"><a href="{{ value }}" class="pure-menu-link">{{ key }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endblock %}
+  </div>
   <div id="main">{% block content %}{% endblock %}</div>
   <div id="footer">
     {% block footer %}
