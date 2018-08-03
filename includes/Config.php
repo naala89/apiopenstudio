@@ -1,5 +1,7 @@
 <?php
 
+namespace Datagator;
+
 /**
  * Config for the entire API app.
  *
@@ -43,8 +45,6 @@
  *   $convert: absolute path to php module convert script (optional).
  *   $ffmpeg: absolute path to php module ffmpeg script (optional).
  */
-
-namespace Datagator;
 
 class Config
 {
