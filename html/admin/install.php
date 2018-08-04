@@ -15,11 +15,9 @@ if (sizeof(Config::$dboptions) > 0) {
   }
 }
 
-$dir_templates = dirname(__DIR__) . '/admin/templates';
-$dir_cache = dirname(__DIR__) . '/../../twig_cache';
-$loader = new Twig_Loader_Filesystem($dir_templates);
+$loader = new Twig_Loader_Filesystem(Config::$adminTemplates);
 //$twig = new Twig_Environment($loader, array(
-//  'cache' => $dir_cache,
+//  'cache' => Config::$twigCache,
 //));
 $twig = new Twig_Environment($loader);
 $template = $twig->load('install.html');
@@ -27,18 +25,25 @@ $template = $twig->load('install.html');
 $dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptions) : '';
 $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
 $db = \ADONewConnection($dsn);
+//$db = newADOConnection(Config::$dbdriver);
+//$db->debug = true;
+//$db->connect(Config::$dbhost, Config::$dbuser, Config::$dbpass, Config::$dbname);
+
+$menu = ['Login' => '/admin/login.php'];
+
 if (!$db) {
-  $message = 'DB connection failed, please check your config settings.';
-  echo $template->render(['message' => $message]);
+  $message = [
+    'type' => 'error',
+    'text' => 'DB connection failed, please check your config settings.'
+  ];
+  echo $template->render(['message' => $message, 'menu' => $menu]);
   exit;
 }
 
 switch ($step) {
   case 1:
-    $file = __DIR__ . '/dbBase.yaml';
-
-    $dbBase = file_get_contents($file);
-    $definition = \Spyc::YAMLLoadString($dbBase);
+    $yaml = file_get_contents(Config::$dbBase);
+    $definition = \Spyc::YAMLLoadString($yaml);
 
     foreach ($definition as $table => $tableData) {
       $sqlPrimary = '';
@@ -47,16 +52,18 @@ switch ($step) {
         $sqlColumn = "`$column` ";
         $sqlColumn .= ' ' . $columnData['type'];
         $sqlColumn .= isset($columnData['notnull']) && $columnData['notnull'] ? ' NOT NULL' : '';
-        $sqlColumn .= (isset($columnData['autoincrement']) ? ' AUTO_INCREMENT' : '');
-        $sqlColumn .= " COMMENT '" . $columnData['comment'] . "'";
+        $sqlColumn .= isset($columnData['autoincrement']) ? ' AUTO_INCREMENT' : '';
+        $sqlColumn .= isset($columnData['primary']) ? ' PRIMARY KEY' : '';
+        $sqlColumn .= isset($columnData['comment']) ? (" COMMENT '" . $columnData['comment'] . "'") : '';
         $sqlColumns[] = $sqlColumn;
-
-        if (isset($columnData['primary'])) {
-          $sqlPrimary = 'ALTER TABLE `$column` ADD PRIMARY KEY (`$column`);';
-        }
       }
-      $sqlCreate = " CREATE TABLE IF NOT EXISTS `$table` (" . implode(', ', $sqlColumns) . ');';
-      $db->execute($sqlCreate);
-      $db->execute($sqlPrimary);
+      $sqlCreate = "CREATE TABLE IF NOT EXISTS `$table` (" . implode(', ', $sqlColumns) . ');';
+      $result = $db->execute($sqlCreate);
     }
+    $message = [
+      'type' => 'info',
+      'text' => 'DB created!.'
+    ];
+    echo $template->render(['message' => $message, 'menu' => $menu]);
+    exit;
 }

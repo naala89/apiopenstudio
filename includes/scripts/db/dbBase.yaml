@@ -48,7 +48,7 @@ resource:
     appid: { type: int(10) unsigned, notnull: true, comment: application id }
     name: { type: varchar(255), notnull: true, comment: name of the resource }
     description : { type: varchar(2048), notnull: true, comment: description of the resource }
-    method: { type text, notnull: true, comment: form delivery method }
+    method: { type: text, notnull: true, comment: form delivery method }
     identifier: { type: varchar(64), notnull: true, comment: identifier of the api call }
     meta: { type: varchar(16384), notnull: true, comment: all of the actions taken by the call }
     ttl: { type: int(10) unsigned, notnull: true, default: 300, comment: time to cache the results (seconds) }
