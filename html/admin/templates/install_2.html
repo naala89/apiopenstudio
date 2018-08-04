@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% set title = "Create your user (step 1)" %}
+
+{% block content %}
+<div class="row margin-top-medium">
+    <form class="ff-form horizontally-center-this" method="post">
+        <input type="hidden" name="step" value="2" />
+        <div class="ff-input-unit">
+            <input class="ff-input needs-validation input-success" type="text" id="username" name="username" placeholder=" " required/>
+            <label for="username">User Name</label>
+        </div>
+
+        <div class="ff-input-unit">
+            <input class="ff-input needs-validation" type="text" id="email" name="email"  placeholder=" " />
+            <label for="email">Email</label>
+        </div>
+
+        <div class="ff-input-unit">
+            <select class="ff-select" name="honorific" id="honorific">
+                <option value="" hidden>Select one</option>
+                <option value="mr">Mr</option>
+                <option value="ms">Ms</option>
+                <option value="miss">Miss</option>
+                <option value="mrs">Mrs</option>
+                <option value="dr">Dr</option>
+                <option value="prof">Prof</option>
+            </select>
+            <label for="honorific">Title</label>
+        </div>
+
+        <div class="ff-input-unit">
+            <input class="ff-input needs-validation" type="text" id="first_name" name="first_name"  placeholder=" " />
+            <label for="first_name">First Name</label>
+        </div>
+
+        <div class="ff-input-unit">
+            <input class="ff-input needs-validation" type="text" id="last_name" name="last_name"  placeholder=" " />
+            <label for="last_name">Last Name</label>
+        </div>
+
+        <div class="ff-input-unit">
+            <input class="ff-input needs-validation" type="text" id="company" name="company"  placeholder=" " />
+            <label for="company">Company</label>
+        </div>
+
+        <div class="ff-input-unit">
+            <input class="ff-input needs-validation" type="text" id="website" name="website"  placeholder=" " />
+            <label for="website">Website</label>
+        </div>
+
+        <input class="ff-button shape-rounded bg-indigo shadow-hard full-width" type="submit" value="Submit" />
+    </form>
+</div>
+{% endblock %}
+

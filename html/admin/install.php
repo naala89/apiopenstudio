@@ -57,7 +57,7 @@ switch ($step) {
       foreach ($tableData['columns'] as $column => $columnData) {
         $sqlColumn = "`$column` ";
         if (!isset($columnData['type'])) {
-          $template = $twig->load('install_0.html');
+          $template = $twig->load('install_1.html');
           $message['text'] .= "Create `$table` fail!<br />";
           $message['text'] .= "Type missing in the metadata.";
           $message['type'] = 'error';
@@ -74,7 +74,7 @@ switch ($step) {
       }
       $sqlCreate = "CREATE TABLE IF NOT EXISTS `$table` (" . implode(', ', $sqlColumns) . ');';
       if (empty($db->execute($sqlCreate))) {
-        $template = $twig->load('install_0.html');
+        $template = $twig->load('install_1.html');
         $message['text'] .= "Create `$table` fail!<br />";
         $message['text'] .= "Processing halted. Please check the logs and retry.";
         $message['type'] = 'error';
@@ -95,7 +95,7 @@ switch ($step) {
           }
           $sqlRow = "INSERT INTO `$table` (" . implode(', ', $keys) . ') VALUES (' . implode(', ', $values) . ');';
           if (empty($db->execute($sqlRow))) {
-            $template = $twig->load('install_0.html');
+            $template = $twig->load('install_1.html');
             $message['text'] .= "Populate `$table` fail!<br />";
             $message['text'] .= "Processing halted. Please check the logs and retry.";
             $message['type'] = 'error';
@@ -109,6 +109,11 @@ switch ($step) {
     $template = $twig->load('install_1.html');
     $message['text'] .= "Database Successfully created!";
     echo $template->render(['message' => $message, 'menu' => $menu]);
+    exit;
+    break;
+  case 2:
+    $template = $twig->load('install_2.html');
+    echo $template->render(['menu' => $menu]);
     exit;
     break;
 }

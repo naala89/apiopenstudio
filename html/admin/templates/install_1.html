@@ -1,24 +1,41 @@
 {% extends "base.html" %}
 
-{% set title = "Create your user (step 1)" %}
+{% set title = "Install the DB (step 1)" %}
 
 {% block content %}
-<form class="ff-form horizontally-center-this" method="post">
-    <div class="ff-input-unit">
-        <p>Continuing will erase any existing data in the database. Continue?</p>
-    </div>
-    <div class="row ff-form-multi-unit">
-        <div class="portion half">
-            <div class="ff-form-unit">
-                <input class="ff-button shape-rounded bg-red-80 shadow-hard full-width" type="submit" value="yes" formaction="/admin/install.php" />
+<div class="row margin-top-medium">
+    <form class="ff-form horizontally-center-this" method="post">
+        {% if message.type == "error" %}
+        <div class="ff-input-unit">
+            <p>Database creation failed. Retry?</p>
+        </div>
+        <input type="hidden" name="step" value="1">
+        <div class="row ff-form-multi-unit">
+            <div class="portion half">
+                <div class="ff-form-unit">
+                    <input class="ff-button shape-rounded bg-red-80 shadow-hard" type="submit" value="yes" formaction="/admin/install.php" />
+                </div>
+            </div>
+
+            <div class="portion half">
+                <div class="ff-form-unit">
+                    <input class="ff-button shape-rounded bg-pistachio-60 shadow-hard" type="submit" value="no" formaction="/admin/" />
+                </div>
             </div>
         </div>
-
-        <div class="portion half">
-            <div class="ff-form-unit">
-                <input class="ff-button shape-rounded bg-pistachio-60 shadow-hard full-width" type="submit" value="no" formaction="/admin/" /></div>
+        {% else %}
+        <div class="ff-input-unit">
+            <p>Database successfully created!</p>
         </div>
-    </div>
-</form>
+        <div class="row ff-form">
+            <input type="hidden" name="step" value="2">
+
+            <div class="ff-input-unit">
+                <input class="ff-button shape-rounded bg-indigo shadow-hard full-width" type="submit" value="Continue" />
+            </div>
+        </div>
+        {% endif %}
+    </form>
+</div>
 {% endblock %}
 
