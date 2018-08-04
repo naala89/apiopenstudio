@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
-{% set title = "Install the DB (step 0)" %}
+{% set title = "Install Datagator (step 0)" %}
 
 {% block content %}
+<div class="row margin-top-medium">
     <form class="ff-form horizontally-center-this" method="post">
         <div class="ff-input-unit">
             <p>Continuing will erase any existing data in the database. Continue?</p>
@@ -17,9 +18,11 @@
 
             <div class="portion half">
                 <div class="ff-form-unit">
-                    <input class="ff-button shape-rounded bg-pistachio-60 shadow-hard full-width" type="submit" value="no" formaction="/admin/" /></div>
+                    <input class="ff-button shape-rounded bg-pistachio-60 shadow-hard full-width" type="submit" value="no" formaction="/admin/" />
+                </div>
             </div>
         </div>
     </form>
+</div>
 {% endblock %}
 
