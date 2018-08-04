@@ -74,7 +74,7 @@ class Config
   static public $dboptions;
 
   /**
-   * cache
+   * API cache
    */
   static public $cache;
 
@@ -92,6 +92,13 @@ class Config
   static public $debugCLI;
   static public $debugInterface;
   static public $errorLog;
+
+  /**
+   * admin
+   */
+  static public $twigCache;
+  static public $adminTemplates;
+  static public $dbBase;
 
   /**
    * api
@@ -155,6 +162,9 @@ class Config
     self::$tokenLife = '+1 hour';
     self::$dirYaml = '/resources/';
     self::$dirUploads = '/uploads/';
+    self::$twigCache = '/twig_cache/';
+    self::$dbBase = dirname(__DIR__) . '/includes/scripts/db/dbBase.yaml';
+    self::$adminTemplates = dirname(__DIR__) . '/html/admin/templates';
   }
 
   /**
@@ -172,7 +182,7 @@ class Config
     self::$tokenLife = '+1 day';
 
     self::$dbdriver = 'mysqli';
-    self::$dbhost = 'localhost';
+    self::$dbhost = '192.168.254.101';
     self::$dbname = 'datagator';
     self::$dbuser = 'datagator';
     self::$dbpass = 'datagator';
