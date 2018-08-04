@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% set title = "Install the DB (step 0)" %}
+
+{% block content %}
+    <form class="ff-form horizontally-center-this" method="post">
+        <div class="ff-input-unit">
+            <p>Continuing will erase any existing data in the database. Continue?</p>
+        </div>
+        <div class="row ff-form-multi-unit">
+            <input type="hidden" name="step" value="1">
+            <div class="portion half">
+                <div class="ff-form-unit">
+                    <input class="ff-button shape-rounded bg-red-80 shadow-hard full-width" type="submit" value="yes" formaction="/admin/install.php" />
+                </div>
+            </div>
+
+            <div class="portion half">
+                <div class="ff-form-unit">
+                    <input class="ff-button shape-rounded bg-pistachio-60 shadow-hard full-width" type="submit" value="no" formaction="/admin/" /></div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+

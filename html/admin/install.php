@@ -5,7 +5,8 @@ use Datagator\Config;
 
 Config::load();
 
-$step = isset($_GET['step']) ? $_GET['step'] : 1;
+$step = isset($_POST['step']) ? $_POST['step'] : 0;
+$confirm = isset($_POST['confirm']) ? $_POST['confirm'] : '';
 
 $dsnOptions = '';
 if (sizeof(Config::$dboptions) > 0) {
@@ -14,20 +15,15 @@ if (sizeof(Config::$dboptions) > 0) {
     $dsnOptions .= "$k=$v";
   }
 }
+$dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptions) : '';
+$dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
+$db = \ADONewConnection($dsn);
 
 $loader = new Twig_Loader_Filesystem(Config::$adminTemplates);
 //$twig = new Twig_Environment($loader, array(
 //  'cache' => Config::$twigCache,
 //));
 $twig = new Twig_Environment($loader);
-$template = $twig->load('install.html');
-
-$dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptions) : '';
-$dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
-$db = \ADONewConnection($dsn);
-//$db = newADOConnection(Config::$dbdriver);
-//$db->debug = true;
-//$db->connect(Config::$dbhost, Config::$dbuser, Config::$dbpass, Config::$dbname);
 
 $menu = ['Login' => '/admin/login.php'];
 
@@ -41,6 +37,12 @@ if (!$db) {
 }
 
 switch ($step) {
+  case 0:
+    $template = $twig->load('install_0.html');
+    $message['text'] = "WARNING!";
+    $message['type'] = 'error';
+    echo $template->render(['message' => $message, 'menu' => $menu]);
+    exit;
   case 1:
     $yaml = file_get_contents(Config::$dbBase);
     $definition = \Spyc::YAMLLoadString($yaml);
@@ -54,6 +56,14 @@ switch ($step) {
       $sqlColumns = [];
       foreach ($tableData['columns'] as $column => $columnData) {
         $sqlColumn = "`$column` ";
+        if (!isset($columnData['type'])) {
+          $template = $twig->load('install_0.html');
+          $message['text'] .= "Create `$table` fail!<br />";
+          $message['text'] .= "Type missing in the metadata.";
+          $message['type'] = 'error';
+          echo $template->render(['message' => $message, 'menu' => $menu]);
+          exit;
+        }
         $sqlColumn .= ' ' . $columnData['type'];
         $sqlColumn .= isset($columnData['notnull']) && $columnData['notnull'] ? ' NOT NULL' : '';
         $sqlColumn .= isset($columnData['default']) ? (' DEFAULT ' . $columnData['default']) : '';
@@ -64,7 +74,9 @@ switch ($step) {
       }
       $sqlCreate = "CREATE TABLE IF NOT EXISTS `$table` (" . implode(', ', $sqlColumns) . ');';
       if (empty($db->execute($sqlCreate))) {
+        $template = $twig->load('install_0.html');
         $message['text'] .= "Create `$table` fail!<br />";
+        $message['text'] .= "Processing halted. Please check the logs and retry.";
         $message['type'] = 'error';
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
@@ -83,8 +95,9 @@ switch ($step) {
           }
           $sqlRow = "INSERT INTO `$table` (" . implode(', ', $keys) . ') VALUES (' . implode(', ', $values) . ');';
           if (empty($db->execute($sqlRow))) {
+            $template = $twig->load('install_0.html');
             $message['text'] .= "Populate `$table` fail!<br />";
-            $message['text'] .= "Processing halted. Please check the logs.";
+            $message['text'] .= "Processing halted. Please check the logs and retry.";
             $message['type'] = 'error';
             echo $template->render(['message' => $message, 'menu' => $menu]);
             exit;
@@ -93,7 +106,9 @@ switch ($step) {
         $message['text'] .= "Populate `$table` success!<br />";
       }
     }
+    $template = $twig->load('install_1.html');
     $message['text'] .= "Database Successfully created!";
     echo $template->render(['message' => $message, 'menu' => $menu]);
     exit;
+    break;
 }
