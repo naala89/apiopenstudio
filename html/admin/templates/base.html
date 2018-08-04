@@ -43,7 +43,7 @@
       {% endif %}
       <div class="portion one-third horizontally-center-this">
         <div class="ff-card shape-rounded {{ message_class }} shadow-hard padding-small">
-          {{ message.text }}
+          {{ message.text | raw }}
         </div>
       </div>
     {% endif %}
