@@ -82,6 +82,25 @@ class User
     $db = \ADONewConnection($dsn);
 
     $userMapper = new Db\UserMapper($db);
-    return $userMapper->save($user);
+    $result = $userMapper->save($user);
+    if (!$result) {
+      return FALSE;
+    }
+
+    $user = $userMapper->findByUsername($username);
+    $uid = $user->getUid();
+
+    $roleMapper = new Db\RoleMapper($db);
+    $role = $roleMapper->findByName('Owner');
+    $rid = $role->getRid();
+
+    $userRole = new Db\UserRole(NULL, $uid, $rid);
+    $userRoleMapper = new Db\UserRoleMapper($db);
+    $result = $userRoleMapper->save($userRole);
+    if (!$result) {
+      return FALSE;
+    }
+
+    return TRUE;
   }
 }

@@ -147,7 +147,7 @@ switch ($step) {
     );
     if (!$result) {
       $template = $twig->load('install_2.html');
-      $message['text'] .= "Failed to save your use to the DB. Please check the logs.";
+      $message['text'] = "Failed to save your use to the DB. Please check the logs.";
       $message['type'] = 'error';
       echo $template->render(['message' => $message, 'menu' => $menu]);
       exit;
