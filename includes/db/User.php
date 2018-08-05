@@ -125,6 +125,19 @@ class User
   }
 
   /**
+   * @param $password
+   */
+  public function setPassword($password)
+  {
+    // set up salt if not defined
+    if ($this->getSalt() == NULL) {
+      $this->setSalt(Core\Hash::generateSalt());
+    }
+    // generate hash
+    $this->hash = Core\Hash::generateHash($password, $this->getSalt());
+  }
+
+  /**
    * @return mixed salt
    */
   public function getSalt()

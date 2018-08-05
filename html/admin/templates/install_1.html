@@ -1,41 +1,37 @@
-{% extends "base.html" %}
+{% extends "install.html" %}
 
-{% set title = "Install the DB (step 1)" %}
+{% set title = "Step 1: Setup the DB" %}
 
 {% block content %}
 <div class="row margin-top-medium">
-    <form class="ff-form horizontally-center-this" method="post">
-        {% if message.type == "error" %}
-        <div class="ff-input-unit">
-            <p>Database creation failed. Retry?</p>
-        </div>
-        <input type="hidden" name="step" value="1">
-        <div class="row ff-form-multi-unit">
-            <div class="portion half">
-                <div class="ff-form-unit">
-                    <input class="ff-button shape-rounded bg-red-80 shadow-hard" type="submit" value="yes" formaction="/admin/install.php" />
-                </div>
-            </div>
-
-            <div class="portion half">
-                <div class="ff-form-unit">
-                    <input class="ff-button shape-rounded bg-pistachio-60 shadow-hard" type="submit" value="no" formaction="/admin/" />
-                </div>
-            </div>
-        </div>
-        {% else %}
-        <div class="ff-input-unit">
-            <p>Database successfully created!</p>
-        </div>
-        <div class="row ff-form">
+  <form class="uk-form" method="post">
+    <div class="uk-grid">
+      <div class="uk-width-1-3"></div>
+      <div class="uk-width-1-3">
+        <form class="uk-form" method="post">
+          {% if message.type == "error" %}
+            <input type="hidden" name="step" value="1">
+            <fieldset data-uk-margin>
+              <legend>Database creation failed. Retry?</legend>
+              <div class="uk-button-group uk-width-1-1">
+                <button class="uk-button uk-button-danger uk-width-1-2" type="submit" value="no" formaction="/admin/install.php">Yes</button>
+                <button class="uk-button uk-button-success uk-width-1-2" type="submit" value="no" formaction="/admin/">No</button>
+              </div>
+            </fieldset>
+          {% else %}
             <input type="hidden" name="step" value="2">
-
-            <div class="ff-input-unit">
-                <input class="ff-button shape-rounded bg-indigo shadow-hard full-width" type="submit" value="Continue" />
-            </div>
-        </div>
-        {% endif %}
-    </form>
+            <fieldset data-uk-margin>
+              <legend>Database successfully created!</legend>
+              <div class="uk-button-group uk-width-1-1">
+                <button class="uk-button uk-button-success uk-width-1-2 uk-align-center" type="submit" formaction="/admin/install.php">Continue</button>
+              </div>
+            </fieldset>
+          {% endif %}
+        </form>
+      </div>
+      <div class="uk-width-1-3"></div>
+    </div>
+  </form>
 </div>
 {% endblock %}
 

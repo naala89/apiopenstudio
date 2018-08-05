@@ -6,7 +6,6 @@ use Datagator\Config;
 Config::load();
 
 $step = isset($_POST['step']) ? $_POST['step'] : 0;
-$confirm = isset($_POST['confirm']) ? $_POST['confirm'] : '';
 
 $dsnOptions = '';
 if (sizeof(Config::$dboptions) > 0) {
@@ -25,13 +24,14 @@ $loader = new Twig_Loader_Filesystem(Config::$adminTemplates);
 //));
 $twig = new Twig_Environment($loader);
 
-$menu = ['Login' => '/admin/login.php'];
+$menu = ['Login' => '/admin/'];
 
 if (!$db) {
   $message = [
     'type' => 'error',
     'text' => 'DB connection failed, please check your config settings.'
   ];
+  $template = $twig->load('install_0.html');
   echo $template->render(['message' => $message, 'menu' => $menu]);
   exit;
 }
@@ -39,8 +39,8 @@ if (!$db) {
 switch ($step) {
   case 0:
     $template = $twig->load('install_0.html');
-    $message['text'] = "WARNING!";
-    $message['type'] = 'error';
+    $message['text'] = "Continuing will erase any existing data in the database.";
+    $message['type'] = 'warning';
     echo $template->render(['message' => $message, 'menu' => $menu]);
     exit;
   case 1:
@@ -113,6 +113,46 @@ switch ($step) {
     break;
   case 2:
     $template = $twig->load('install_2.html');
+    $message['text'] = "Enter your personal details. Username & password are required.";
+    $message['type'] = 'info';
+    echo $template->render(['message' => $message, 'menu' => $menu]);
+    exit;
+    break;
+  case 3:
+    if (!isset($_POST['username']) || !isset($_POST['password'])) {
+      $template = $twig->load('install_2.html');
+      $message['text'] .= "Required username and password not entered.";
+      $message['type'] = 'error';
+      echo $template->render(['message' => $message, 'menu' => $menu]);
+      exit;
+    }
+    $user = new \Datagator\Admin\User();
+    $result = $user->create(
+      !empty($_POST['username']) ? $_POST['username'] : NULL,
+      !empty($_POST['password']) ? $_POST['password'] : NULL,
+      !empty($_POST['email']) ? $_POST['email'] : NULL,
+      !empty($_POST['honorific']) ? $_POST['honorific'] : NULL,
+      !empty($_POST['name_first']) ? $_POST['name_first'] : NULL,
+      !empty($_POST['name_last']) ? $_POST['name_last'] : NULL,
+      !empty($_POST['company']) ? $_POST['company'] : NULL,
+      !empty($_POST['website']) ? $_POST['website'] : NULL,
+      !empty($_POST['address_street']) ? $_POST['address_street'] : NULL,
+      !empty($_POST['address_suburb']) ? $_POST['address_suburb'] : NULL,
+      !empty($_POST['address_city']) ? $_POST['address_city'] : NULL,
+      !empty($_POST['address_state']) ? $_POST['address_state'] : NULL,
+      !empty($_POST['address_country']) ? $_POST['address_country'] : NULL,
+      !empty($_POST['address_postcode']) ? $_POST['address_postcode'] : NULL,
+      !empty($_POST['phone_mobile']) ? $_POST['phone_mobile'] : 0,
+      !empty($_POST['phone_work']) ? $_POST['phone_work'] : 0
+    );
+    if (!$result) {
+      $template = $twig->load('install_2.html');
+      $message['text'] .= "Failed to save your use to the DB. Please check the logs.";
+      $message['type'] = 'error';
+      echo $template->render(['message' => $message, 'menu' => $menu]);
+      exit;
+    }
+    $template = $twig->load('install_3.html');
     echo $template->render(['menu' => $menu]);
     exit;
     break;
