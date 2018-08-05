@@ -114,7 +114,7 @@ user_role:
     id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: user role id }
     uid: { type: int(10) unsigned, notnull: true, comment: user id }
     rid: { type: int(10) unsigned, notnull: true, comment: role id }
-    appid: { type: int(10) unsigned, notnull: true, comment: application id }
+    appid: { type: int(10) unsigned, default: NULL, comment: application id }
 
 vars:
   columns:
