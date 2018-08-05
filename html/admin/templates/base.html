@@ -1,61 +1,49 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Datagator Admin</title>
-
-  <link rel="stylesheet" href="uikit.min.css" />
-  <script src="jquery.js"></script>
-  <script src="uikit.min.js"></script>
-</head>
 
 <body>
-  <header class="ff-header bg-blue-10 shadow-hard">
-    <div id="header-logo">
-      <img src="images/logo.png">
-    </div>
-    <h2>Datagator</h2>
-    <label for="menu-toggle" class="links-toggle">
-      <img class="icon-small" src="vendor/css/fictoan/docs/icons/icon-menu.svg">
-    </label>
-    <input type="checkbox" id="menu-toggle"/>
-    <nav class="header-links">
-      <ul>
-        {% for key,value in menu %}
-        <li>
-          <a href="{{ value }}">{{ key }}</a>
-        </li>
-        {% endfor %}
-      </ul>
-    </nav>
-  </header>
+<header class="ff-header bg-blue-10 shadow-hard">
+  <div id="header-logo">
+    <img src="images/logo.png">
+  </div>
+  <h2>Datagator</h2>
+  <label for="menu-toggle" class="links-toggle">
+    <img class="icon-small" src="vendor/css/fictoan/docs/icons/icon-menu.svg">
+  </label>
+  <input type="checkbox" id="menu-toggle"/>
+  <nav class="header-links">
+    <ul>
+      {% for key,value in menu %}
+      <li>
+        <a href="{{ value }}">{{ key }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </nav>
+</header>
 
-  <div class="row">
-    {% if message is defined %}
-      {% if message.type == 'info' %}
-        {% set message_class = 'bg-pistachio-60' %}
-      {% endif %}
-      {% if message.type == 'warning' %}
-        {% set message_class = 'bg-yellow-50' %}
-      {% endif %}
-      {% if message.type == 'error' %}
-        {% set message_class = 'bg-red-80' %}
-      {% endif %}
-      <div class="portion one-third horizontally-center-this">
-        <div class="ff-card shape-rounded {{ message_class }} shadow-hard padding-small">
-          {{ message.text | raw }}
-        </div>
-      </div>
-    {% endif %}
+<div class="row">
+  {% if message is defined %}
+  {% if message.type == 'info' %}
+  {% set message_class = 'bg-pistachio-60' %}
+  {% endif %}
+  {% if message.type == 'warning' %}
+  {% set message_class = 'bg-yellow-50' %}
+  {% endif %}
+  {% if message.type == 'error' %}
+  {% set message_class = 'bg-red-80' %}
+  {% endif %}
+  <div class="portion one-third horizontally-center-this">
+    <div class="ff-card shape-rounded {{ message_class }} shadow-hard padding-small">
+      {{ message.text | raw }}
+    </div>
   </div>
-    <h3>Page: {{ title }}</h3>
-    {% block content %}{% endblock %}
-  <div id="footer">
-    {% block footer %}
-    &copy; Copyright 2011 by <a href="http://domain.invalid/">you</a>.
-    {% endblock %}
-  </div>
+  {% endif %}
+</div>
+<h3>Page: {{ title }}</h3>
+{% block content %}{% endblock %}
+<div id="footer">
+  {% block footer %}
+  &copy; Copyright 2011 by <a href="http://domain.invalid/">you</a>.
+  {% endblock %}
+</div>
 </body>
 </html>

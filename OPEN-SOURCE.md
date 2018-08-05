@@ -8,6 +8,9 @@ config
 
 change Config.php to be a single file, with Config.example.php 
 
+newsletter/mailing list
+-----------------------
+
 web
 ---
 
@@ -137,3 +140,13 @@ questions
 - how costly is ddos protection
 - need to finish the tracking stream solution
 - need to create the app
+
+roadmap
+=======
+
+- angular app
+- enterprise
+    - dashboard
+    - remade inteface cms
+    - api tracking
+- rebuilt core haskell

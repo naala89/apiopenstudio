@@ -2,7 +2,9 @@
 
 namespace Datagator\Admin;
 
+use Datagator\Config;
 use GuzzleHttp;
+use Datagator\Db;
 
 class User
 {
@@ -40,5 +42,46 @@ class User
   public function isLoggedIn()
   {
     return $_SESSION['token'] != '';
+  }
+
+  public function create($username=NULL, $password=NULL, $email=NULL, $honorific=NULL, $nameFirst=NULL, $nameLast=NULL, $company=NULL, $website=NULL, $addressStreet=NULL, $addressSuburb=NULL, $addressCity=NULL, $addressState=NULL, $addressPostcode=NULL, $phoneMobile=NULL, $phoneWork=NULL)
+  {
+    $user = new Db\User(
+      NULL,
+      1,
+      $username,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      $email,
+      $honorific,
+      $nameFirst,
+      $nameLast,
+      $company,
+      $website,
+      $addressStreet,
+      $addressSuburb,
+      $addressCity,
+      $addressState,
+      $addressPostcode,
+      $phoneMobile,
+      $phoneWork
+    );
+    $user->setPassword($password);
+
+    $dsnOptions = '';
+    if (sizeof(Config::$dboptions) > 0) {
+      foreach (Config::$dboptions as $k => $v) {
+        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
+        $dsnOptions .= "$k=$v";
+      }
+    }
+    $dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptions) : '';
+    $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
+    $db = \ADONewConnection($dsn);
+
+    $userMapper = new Db\UserMapper($db);
+    return $userMapper->save($user);
   }
 }
