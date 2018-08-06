@@ -163,9 +163,9 @@ class Config
     self::$tokenLife = '+1 hour';
     self::$dirYaml = '/resources/';
     self::$dirUploads = '/uploads/';
-    self::$twigCache = '/twig_cache/';
+    self::$twigCache = dirname(__DIR__) . '/twig_cache/';
     self::$dbBase = dirname(__DIR__) . '/includes/scripts/db/dbBase.yaml';
-    self::$adminTemplates = dirname(__DIR__) . '/html/admin/templates';
+    self::$adminTemplates = dirname(__DIR__) . '/includes/admin/templates';
   }
 
   /**

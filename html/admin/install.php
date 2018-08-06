@@ -20,10 +20,9 @@ $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@'
 $db = \ADONewConnection($dsn);
 
 $loader = new Twig_Loader_Filesystem(Config::$adminTemplates . '/install');
-//$twig = new Twig_Environment($loader, array(
-//  'cache' => Config::$twigCache,
-//));
-$twig = new Twig_Environment($loader);
+$twig = new Twig_Environment($loader, array(
+  'cache' => Config::$twigCache,
+));
 
 $menu = ['Login' => '/admin/'];
 
