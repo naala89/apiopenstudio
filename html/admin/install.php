@@ -5,7 +5,8 @@ use Datagator\Config;
 
 Config::load();
 
-$step = isset($_POST['step']) ? $_POST['step'] : 0;
+$from = isset($_POST['from_step']) ? $_POST['from_step'] : 0;
+$step = isset($_POST['next_step']) ? $_POST['next_step'] : 0;
 
 $dsnOptions = '';
 if (sizeof(Config::$dboptions) > 0) {
@@ -46,6 +47,7 @@ switch ($step) {
   case 1:
     $yaml = file_get_contents(Config::$dbBase);
     $definition = \Spyc::YAMLLoadString($yaml);
+    $template = $twig->load('install_1.html');
     $message = [
       'type' => 'info',
       'text' => 'Creating database tables...<br />'
@@ -57,7 +59,6 @@ switch ($step) {
       foreach ($tableData['columns'] as $column => $columnData) {
         $sqlColumn = "`$column` ";
         if (!isset($columnData['type'])) {
-          $template = $twig->load('install_1.html');
           $message['text'] .= "Create `$table` fail!<br />";
           $message['text'] .= "Type missing in the metadata.";
           $message['type'] = 'error';
@@ -74,7 +75,6 @@ switch ($step) {
       }
       $sqlCreate = "CREATE TABLE IF NOT EXISTS `$table` (" . implode(', ', $sqlColumns) . ');';
       if (empty($db->execute($sqlCreate))) {
-        $template = $twig->load('install_1.html');
         $message['text'] .= "Create `$table` fail!<br />";
         $message['text'] .= "Processing halted. Please check the logs and retry.";
         $message['type'] = 'error';
@@ -95,7 +95,6 @@ switch ($step) {
           }
           $sqlRow = "INSERT INTO `$table` (" . implode(', ', $keys) . ') VALUES (' . implode(', ', $values) . ');';
           if (empty($db->execute($sqlRow))) {
-            $template = $twig->load('install_1.html');
             $message['text'] .= "Populate `$table` fail!<br />";
             $message['text'] .= "Processing halted. Please check the logs and retry.";
             $message['type'] = 'error';
@@ -106,54 +105,85 @@ switch ($step) {
         $message['text'] .= "Populate `$table` success!<br />";
       }
     }
-    $template = $twig->load('install_1.html');
     $message['text'] .= "Database Successfully created!";
     echo $template->render(['message' => $message, 'menu' => $menu]);
     exit;
     break;
   case 2:
+    if ($from == 2) {
+      if (!isset($_POST['username']) || !isset($_POST['password'])) {
+        $message['text'] .= "Required username and password not entered.";
+        $message['type'] = 'error';
+        $template = $twig->load('install_2.html');
+        echo $template->render(['message' => $message, 'menu' => $menu]);
+        exit;
+      }
+      $user = new \Datagator\Admin\User();
+      $result = $user->create(
+        !empty($_POST['username']) ? $_POST['username'] : NULL,
+        !empty($_POST['password']) ? $_POST['password'] : NULL,
+        !empty($_POST['email']) ? $_POST['email'] : NULL,
+        !empty($_POST['honorific']) ? $_POST['honorific'] : NULL,
+        !empty($_POST['name_first']) ? $_POST['name_first'] : NULL,
+        !empty($_POST['name_last']) ? $_POST['name_last'] : NULL,
+        !empty($_POST['company']) ? $_POST['company'] : NULL,
+        !empty($_POST['website']) ? $_POST['website'] : NULL,
+        !empty($_POST['address_street']) ? $_POST['address_street'] : NULL,
+        !empty($_POST['address_suburb']) ? $_POST['address_suburb'] : NULL,
+        !empty($_POST['address_city']) ? $_POST['address_city'] : NULL,
+        !empty($_POST['address_state']) ? $_POST['address_state'] : NULL,
+        !empty($_POST['address_country']) ? $_POST['address_country'] : NULL,
+        !empty($_POST['address_postcode']) ? $_POST['address_postcode'] : NULL,
+        !empty($_POST['phone_mobile']) ? $_POST['phone_mobile'] : 0,
+        !empty($_POST['phone_work']) ? $_POST['phone_work'] : 0
+      );
+      if (!$result) {
+        $template = $twig->load('install_2.html');
+        $message['text'] = "Failed to save your user to the DB. Please check the logs.";
+        $message['type'] = 'error';
+        echo $template->render(['message' => $message, 'menu' => $menu]);
+        exit;
+      }
+      $template = $twig->load('install_3.html');
+      echo $template->render(['menu' => $menu, 'uid' => $result]);
+      exit;
+    }
     $template = $twig->load('install_2.html');
-    $message['text'] = "Enter your personal details. Username & password are required.";
-    $message['type'] = 'info';
-    echo $template->render(['message' => $message, 'menu' => $menu]);
+    echo $template->render(['menu' => $menu]);
     exit;
     break;
   case 3:
-    if (!isset($_POST['username']) || !isset($_POST['password'])) {
-      $template = $twig->load('install_2.html');
-      $message['text'] .= "Required username and password not entered.";
+    $uid = isset($_POST['uid']) ? $_POST['uid'] : '';
+    if (empty($uid)) {
+      $message['text'] = "Required user id name not received.";
       $message['type'] = 'error';
+      $template = $twig->load('install_3.html');
       echo $template->render(['message' => $message, 'menu' => $menu]);
       exit;
     }
-    $user = new \Datagator\Admin\User();
-    $result = $user->create(
-      !empty($_POST['username']) ? $_POST['username'] : NULL,
-      !empty($_POST['password']) ? $_POST['password'] : NULL,
-      !empty($_POST['email']) ? $_POST['email'] : NULL,
-      !empty($_POST['honorific']) ? $_POST['honorific'] : NULL,
-      !empty($_POST['name_first']) ? $_POST['name_first'] : NULL,
-      !empty($_POST['name_last']) ? $_POST['name_last'] : NULL,
-      !empty($_POST['company']) ? $_POST['company'] : NULL,
-      !empty($_POST['website']) ? $_POST['website'] : NULL,
-      !empty($_POST['address_street']) ? $_POST['address_street'] : NULL,
-      !empty($_POST['address_suburb']) ? $_POST['address_suburb'] : NULL,
-      !empty($_POST['address_city']) ? $_POST['address_city'] : NULL,
-      !empty($_POST['address_state']) ? $_POST['address_state'] : NULL,
-      !empty($_POST['address_country']) ? $_POST['address_country'] : NULL,
-      !empty($_POST['address_postcode']) ? $_POST['address_postcode'] : NULL,
-      !empty($_POST['phone_mobile']) ? $_POST['phone_mobile'] : 0,
-      !empty($_POST['phone_work']) ? $_POST['phone_work'] : 0
-    );
-    if (!$result) {
-      $template = $twig->load('install_2.html');
-      $message['text'] = "Failed to save your use to the DB. Please check the logs.";
-      $message['type'] = 'error';
-      echo $template->render(['message' => $message, 'menu' => $menu]);
+    if ($from == 3) {
+      $accountName = isset($_POST['account_name']) ? $_POST['account_name'] : '';
+      if (empty($accountName)) {
+        $message['text'] = "Required Account name not entered.";
+        $message['type'] = 'error';
+        $template = $twig->load('install_3.html');
+        echo $template->render(['message' => $message, 'menu' => $menu]);
+        exit;
+      }
+      $account = new \Datagator\Admin\Account();
+      $result = $account->create($uid, $accountName);
+      if (!$result) {
+        $message['text'] = "Failed to save your account to the DB. Please check the logs.";
+        $message['type'] = 'error';
+        $template = $twig->load('install_3.html');
+        echo $template->render(['message' => $message, 'menu' => $menu]);
+        exit;
+      }
+      $template = $twig->load('install_4.html');
+      echo $template->render(['menu' => $menu]);
       exit;
     }
     $template = $twig->load('install_3.html');
     echo $template->render(['menu' => $menu]);
     exit;
-    break;
 }

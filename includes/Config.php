@@ -103,6 +103,7 @@ class Config
   /**
    * api
    */
+  static public $domainName;
   static public $defaultFormat;
   static public $tokenLife;
   static public $dirYaml;
@@ -187,6 +188,7 @@ class Config
     self::$dbuser = 'datagator';
     self::$dbpass = 'datagator';
     self::$dboptions = array();
+    self::$domainName = 'http://datagator.local';
 
     self::$emailService = 'mail'; //'qmail', 'sendmail', 'smtp', 'mail'
     self::$emailHost = '';
