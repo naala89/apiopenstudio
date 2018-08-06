@@ -1,14 +1,14 @@
 <?php
 
 require_once dirname(__DIR__) . '/../vendor/autoload.php';
-
 use Datagator\Admin\User;
+use Datagator\Config;
 
-$dir_templates = dirname(__DIR__) . '/admin/templates';
-$dir_cache = dirname(__DIR__) . '/../../twig_cache';
-$loader = new Twig_Loader_Filesystem($dir_templates);
+Config::load();
+
+$loader = new Twig_Loader_Filesystem(Config::$adminTemplates);
 //$twig = new Twig_Environment($loader, array(
-//  'cache' => $dir_cache,
+//  'cache' => Config::$twigCache,
 //));
 $twig = new Twig_Environment($loader);
 
