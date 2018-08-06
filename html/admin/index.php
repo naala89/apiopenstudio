@@ -13,6 +13,20 @@ $loader = new Twig_Loader_Filesystem($dir_templates);
 $twig = new Twig_Environment($loader);
 
 $user = new User();
+if (isset($_POST['username']) && isset($_POST['password'])) {
+  $username = !empty($_POST['username']) ? $_POST['username'] : '';
+  $password = !empty($_POST['password']) ? $_POST['password'] : '';
+  $result = $user->login($username, $password);
+  if (!$result) {
+    $message['type'] = 'error';
+    $message['text'] = 'Invalid username or password';
+    $menu = ['Login' => '/admin/login'];
+    $template = $twig->load('login.html');
+    echo $template->render(['menu' => $menu, 'message' => $message]);
+    exit;
+  }
+}
+
 if (!$user->isLoggedIn()) {
   $menu = ['Login' => '/admin/login'];
   $template = $twig->load('login.html');

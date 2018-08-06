@@ -2,9 +2,11 @@
 
 namespace Datagator\Admin;
 
+use Datagator\Db;
 use Datagator\Config;
 use GuzzleHttp;
-use Datagator\Db;
+
+Config::load();
 
 class User
 {
@@ -19,11 +21,12 @@ class User
       'username' => $username,
       'password' => $password
     ]];
-    $url = '/api/user/login';
+    $url = Config::$domainName . '/api/user/login';
     $client = new GuzzleHttp\Client();
     try {
-      $result = json_decode($client->request('POST', $url, $payload));
+      $result = json_decode($client->post($url, $payload));
     } catch (\Exception $e) {
+      var_dump($e->getMessage());exit;
       return FALSE;
     }
     if (is_array($result) && isset($result['token'])) {
@@ -44,7 +47,7 @@ class User
     return $_SESSION['token'] != '';
   }
 
-  public function create($username=NULL, $password=NULL, $email=NULL, $honorific=NULL, $nameFirst=NULL, $nameLast=NULL, $company=NULL, $website=NULL, $addressStreet=NULL, $addressSuburb=NULL, $addressCity=NULL, $addressState=NULL, $addressPostcode=NULL, $phoneMobile=NULL, $phoneWork=NULL)
+  public function create($username, $password, $email=NULL, $honorific=NULL, $nameFirst=NULL, $nameLast=NULL, $company=NULL, $website=NULL, $addressStreet=NULL, $addressSuburb=NULL, $addressCity=NULL, $addressState=NULL, $addressPostcode=NULL, $phoneMobile=NULL, $phoneWork=NULL)
   {
     $user = new Db\User(
       NULL,
@@ -86,21 +89,7 @@ class User
     if (!$result) {
       return FALSE;
     }
-
     $user = $userMapper->findByUsername($username);
-    $uid = $user->getUid();
-
-    $roleMapper = new Db\RoleMapper($db);
-    $role = $roleMapper->findByName('Owner');
-    $rid = $role->getRid();
-
-    $userRole = new Db\UserRole(NULL, $uid, $rid);
-    $userRoleMapper = new Db\UserRoleMapper($db);
-    $result = $userRoleMapper->save($userRole);
-    if (!$result) {
-      return FALSE;
-    }
-
-    return TRUE;
+    return $user->getUid();
   }
 }

@@ -27,9 +27,7 @@ web
 
 #### install
 
-- need a page with script to install DB.
-- multi-step form
-- db created with single user with owner & administrator access
+- tidy install pages html layout
 
 #### update
 
@@ -64,6 +62,15 @@ web
 - visible to owner & administrator
 - list all users and their roles and accounts they are associated with
 - add/edit/delete users in modals
+
+processors
+----------
+
+- create user processor to deal with user crud
+- create user_role processor to deal with user/role crud
+- create role processor to deal with role crud
+  - Update admin and install to use these crud services
+- review processor grouping
 
 nginx
 -----

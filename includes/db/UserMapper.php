@@ -27,7 +27,7 @@ class UserMapper
   public function save(User $user)
   {
     if (empty($user->getUid())) {
-      $sql = 'INSERT INTO user (active, username, salt, hash, token, token_ttl, email, honorific, name_first, name_last, company, website, address_street, address_suburb, address_city, address_state, address_postcode, phone_mobile, phone_work) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      $sql = 'INSERT INTO user (active, username, salt, hash, token, token_ttl, email, honorific, name_first, name_last, company, website, address_street, address_suburb, address_city, address_state, address_country, address_postcode, phone_mobile, phone_work) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
       $bindParams = array(
         $user->getActive(),
         $user->getUsername(),
@@ -45,13 +45,14 @@ class UserMapper
         $user->getAddressSuburb(),
         $user->getAddressCity(),
         $user->getAddressState(),
+        $user->getAddressCountry(),
         $user->getAddressPostcode(),
         $user->getPhoneMobile(),
         $user->getPhoneWork()
       );
       $result = $this->db->Execute($sql, $bindParams);
     } else {
-      $sql = 'UPDATE user SET active=?, username=?, salt=?, hash=?, token=?, token_ttl=?, email=?, honorific=?, name_first=?, name_last=?, company=?, website=?, address_street=?, address_suburb=?, address_city=?, address_state=?, address_postcode=?, phone_mobile=?, phone_work=?  WHERE uid=?';
+      $sql = 'UPDATE user SET active=?, username=?, salt=?, hash=?, token=?, token_ttl=?, email=?, honorific=?, name_first=?, name_last=?, company=?, website=?, address_street=?, address_suburb=?, address_city=?, address_state=?, address_country=?, address_postcode=?, phone_mobile=?, phone_work=?  WHERE uid=?';
       $bindParams = array(
         $user->getActive(),
         $user->getUsername(),
@@ -69,6 +70,7 @@ class UserMapper
         $user->getAddressSuburb(),
         $user->getAddressCity(),
         $user->getAddressState(),
+        $user->getAddressCountry(),
         $user->getAddressPostcode(),
         $user->getPhoneMobile(),
         $user->getPhoneWork(),
@@ -184,6 +186,7 @@ class UserMapper
     $user->setAddressSuburb(!empty($row['address_suburb']) ? $row['address_suburb'] : NULL);
     $user->setAddressCity(!empty($row['address_city']) ? $row['address_city'] : NULL);
     $user->setAddressState(!empty($row['address_state']) ? $row['address_state'] : NULL);
+    $user->setAddressCountry(!empty($row['address_country']) ? $row['address_country'] : NULL);
     $user->setAddressPostcode(!empty($row['address_postcode']) ? $row['address_postcode'] : NULL);
     $user->setPhoneMobile(!empty($row['phone_mobile']) ? $row['phone_mobile'] : NULL);
     $user->setPhoneWork(!empty($row['phone_work']) ? $row['phone_work'] : NULL);

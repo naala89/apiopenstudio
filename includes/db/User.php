@@ -26,6 +26,7 @@ class User
   protected $addressSuburb;
   protected $addressCity;
   protected $addressState;
+  protected $addressCountry;
   protected $addressPostcode;
   protected $phoneMobile;
   protected $phoneWork;
@@ -48,11 +49,12 @@ class User
    * @param null $addressSuburb
    * @param null $addressCity
    * @param null $addressState
+   * @param null $addressCountry
    * @param null $addressPostcode
    * @param null $phoneMobile
    * @param null $phoneWork
    */
-  public function __construct($uid=NULL, $active=NULL, $username=NULL, $salt=NULL, $hash=NULL, $token=NULL, $tokenTtl=NULL, $email=NULL, $honorific=NULL, $nameFirst=NULL, $nameLast=NULL, $company=NULL, $website=NULL, $addressStreet=NULL, $addressSuburb=NULL, $addressCity=NULL, $addressState=NULL, $addressPostcode=NULL, $phoneMobile=NULL, $phoneWork=NULL)
+  public function __construct($uid=NULL, $active=NULL, $username=NULL, $salt=NULL, $hash=NULL, $token=NULL, $tokenTtl=NULL, $email=NULL, $honorific=NULL, $nameFirst=NULL, $nameLast=NULL, $company=NULL, $website=NULL, $addressStreet=NULL, $addressSuburb=NULL, $addressCity=NULL, $addressState=NULL, $addressCountry=NULL, $addressPostcode=NULL, $phoneMobile=NULL, $phoneWork=NULL)
   {
     $this->uid = $uid;
     $this->active = $active;
@@ -71,6 +73,7 @@ class User
     $this->addressSuburb = $addressSuburb;
     $this->addressCity = $addressCity;
     $this->addressState = $addressState;
+    $this->addressCountry = $addressCountry;
     $this->addressPostcode = $addressPostcode;
     $this->phoneMobile = $phoneMobile;
     $this->phoneWork = $phoneWork;
@@ -362,6 +365,22 @@ class User
   }
 
   /**
+   * @return int address_country
+   */
+  public function getAddressCountry()
+  {
+    return $this->addressCountry;
+  }
+
+  /**
+   * @param $addressCountry
+   */
+  public function setAddressCountry($addressCountry)
+  {
+    $this->addressCountry = $addressCountry;
+  }
+
+  /**
    * @return int address_postcode
    */
   public function getAddressPostcode()
@@ -432,6 +451,7 @@ class User
       'addressSuburb' => $this->addressSuburb,
       'addressCity' => $this->addressCity,
       'addressState' => $this->addressState,
+      'addressCountry' => $this->addressCountry,
       'addressPostcode' => $this->addressPostcode,
       'phoneMobile' => $this->phoneMobile,
       'phoneWork' => $this->phoneWork,
