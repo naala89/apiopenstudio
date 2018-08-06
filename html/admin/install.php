@@ -19,7 +19,7 @@ $dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptio
 $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
 $db = \ADONewConnection($dsn);
 
-$loader = new Twig_Loader_Filesystem(Config::$adminTemplates);
+$loader = new Twig_Loader_Filesystem(Config::$adminTemplates . '/install');
 //$twig = new Twig_Environment($loader, array(
 //  'cache' => Config::$twigCache,
 //));
@@ -180,7 +180,7 @@ switch ($step) {
         exit;
       }
       $template = $twig->load('install_4.html');
-      echo $template->render(['menu' => $menu]);
+      echo $template->render(['menu' => $menu, 'account_name' => $accountName]);
       exit;
     }
     $template = $twig->load('install_3.html');
