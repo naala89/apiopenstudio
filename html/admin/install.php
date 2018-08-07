@@ -58,7 +58,7 @@ switch ($step) {
       foreach ($tableData['columns'] as $column => $columnData) {
         $sqlColumn = "`$column` ";
         if (!isset($columnData['type'])) {
-          $message['text'] .= "Create `$table` fail!<br />";
+          $message['text'] = "Create `$table` fail!<br />";
           $message['text'] .= "Type missing in the metadata.";
           $message['type'] = 'error';
           echo $template->render(['message' => $message, 'menu' => $menu]);
@@ -74,7 +74,7 @@ switch ($step) {
       }
       $sqlCreate = "CREATE TABLE IF NOT EXISTS `$table` (" . implode(', ', $sqlColumns) . ');';
       if (empty($db->execute($sqlCreate))) {
-        $message['text'] .= "Create `$table` fail!<br />";
+        $message['text'] = "Create `$table` fail!<br />";
         $message['text'] .= "Processing halted. Please check the logs and retry.";
         $message['type'] = 'error';
         echo $template->render(['message' => $message, 'menu' => $menu]);
@@ -94,7 +94,7 @@ switch ($step) {
           }
           $sqlRow = "INSERT INTO `$table` (" . implode(', ', $keys) . ') VALUES (' . implode(', ', $values) . ');';
           if (empty($db->execute($sqlRow))) {
-            $message['text'] .= "Populate `$table` fail!<br />";
+            $message['text'] = "Populate `$table` fail!<br />";
             $message['text'] .= "Processing halted. Please check the logs and retry.";
             $message['type'] = 'error';
             echo $template->render(['message' => $message, 'menu' => $menu]);
@@ -111,14 +111,14 @@ switch ($step) {
   case 2:
     if ($from == 2) {
       if (!isset($_POST['username']) || !isset($_POST['password'])) {
-        $message['text'] .= "Required username and password not entered.";
+        $message['text'] = "Required username and password not entered.";
         $message['type'] = 'error';
         $template = $twig->load('install_2.html');
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
       $user = new \Datagator\Admin\User();
-      $result = $user->create(
+      $uid = $user->create(
         !empty($_POST['username']) ? $_POST['username'] : NULL,
         !empty($_POST['password']) ? $_POST['password'] : NULL,
         !empty($_POST['email']) ? $_POST['email'] : NULL,
@@ -136,7 +136,7 @@ switch ($step) {
         !empty($_POST['phone_mobile']) ? $_POST['phone_mobile'] : 0,
         !empty($_POST['phone_work']) ? $_POST['phone_work'] : 0
       );
-      if (!$result) {
+      if (!$uid) {
         $template = $twig->load('install_2.html');
         $message['text'] = "Failed to save your user to the DB. Please check the logs.";
         $message['type'] = 'error';
@@ -144,7 +144,7 @@ switch ($step) {
         exit;
       }
       $template = $twig->load('install_3.html');
-      echo $template->render(['menu' => $menu, 'uid' => $result]);
+      echo $template->render(['menu' => $menu, 'uid' => $uid, 'username' => $_POST['username']]);
       exit;
     }
     $template = $twig->load('install_2.html');
