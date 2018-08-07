@@ -20,9 +20,9 @@ $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@'
 $db = \ADONewConnection($dsn);
 
 $loader = new Twig_Loader_Filesystem(Config::$adminTemplates . '/install');
-$twig = new Twig_Environment($loader, array(
+$twig = new Twig_Environment($loader/*, array(
   'cache' => Config::$twigCache,
-));
+)*/);
 
 $menu = ['Login' => '/admin/'];
 
@@ -153,8 +153,9 @@ switch ($step) {
     break;
   case 3:
     $uid = isset($_POST['uid']) ? $_POST['uid'] : '';
-    if (empty($uid)) {
-      $message['text'] = "Required user id name not received.";
+    $username = isset($_POST['username']) ? $_POST['username'] : '';
+    if (empty($uid) || empty($username)) {
+      $message['text'] = "Required user id & name not received.";
       $message['type'] = 'error';
       $template = $twig->load('install_3.html');
       echo $template->render(['message' => $message, 'menu' => $menu]);
@@ -170,9 +171,18 @@ switch ($step) {
         exit;
       }
       $account = new \Datagator\Admin\Account();
-      $result = $account->create($uid, $accountName);
-      if (!$result) {
+      $accId = $account->create($accountName);
+      if (!$accId) {
         $message['text'] = "Failed to save your account to the DB. Please check the logs.";
+        $message['type'] = 'error';
+        $template = $twig->load('install_3.html');
+        echo $template->render(['message' => $message, 'menu' => $menu]);
+        exit;
+      }
+      $userRole = new \Datagator\Admin\UserRole();
+      $result = $userRole->create($uid, 'Owner', NULL, $accId);
+      if (!$result) {
+        $message['text'] = "Failed to Create the owner role for your user in your account. Please check the logs.";
         $message['type'] = 'error';
         $template = $twig->load('install_3.html');
         echo $template->render(['message' => $message, 'menu' => $menu]);
