@@ -3,7 +3,7 @@ account:
     aid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: account id }
     name: { type: varchar(255), notnull: true, comment: account name }
   data:
-    - { accid: 1, name: Datagator }
+    - { name: Datagator }
 
 application:
   columns:

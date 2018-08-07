@@ -10,18 +10,15 @@ use Datagator\Core;
 class Account
 {
   protected $accId;
-  protected $uid;
   protected $name;
 
   /**
    * @param null $accId
-   * @param null $uid
    * @param null $name
    */
-  public function __construct($accId=NULL, $uid=NULL, $name=NULL)
+  public function __construct($accId=NULL, $name=NULL)
   {
     $this->accId = $accId;
-    $this->uid = $uid;
     $this->name = $name;
   }
 
@@ -39,22 +36,6 @@ class Account
   public function setAccId($accId)
   {
     $this->accId = $accId;
-  }
-
-  /**
-   * @return int uid
-   */
-  public function getUid()
-  {
-    return $this->uid;
-  }
-
-  /**
-   * @param $uid
-   */
-  public function setUid($uid)
-  {
-    $this->uid = $uid;
   }
 
   /**
@@ -80,7 +61,6 @@ class Account
   {
     return array(
       'accid' => $this->accId,
-      'uid' => $this->uid,
       'name' => $this->name,
     );
   }

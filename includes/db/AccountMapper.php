@@ -27,16 +27,14 @@ class AccountMapper
   public function save(Account $account)
   {
     if ($account->getAccId() == NULL) {
-      $sql = 'INSERT INTO account (uid, name) VALUES (?, ?)';
+      $sql = 'INSERT INTO account (uid, name) VALUES (?)';
       $bindParams = array(
-        $account->getUid(),
         $account->getName()
       );
       $result = $this->db->Execute($sql, $bindParams);
     } else {
-      $sql = 'UPDATE account SET uid = ?, name = ? WHERE accid = ?';
+      $sql = 'UPDATE account SET name = ? WHERE accid = ?';
       $bindParams = array(
-        $account->getUid(),
         $account->getName(),
         $account->getAccId()
       );
@@ -78,26 +76,6 @@ class AccountMapper
   }
 
   /**
-   * @param $uid
-   * @return array
-   */
-  public function findByUid($uid)
-  {
-    $sql = 'SELECT * FROM account WHERE uid = ?';
-    $bindParams = array($uid);
-
-    $recordSet = $this->db->Execute($sql, $bindParams);
-
-    $entries = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-      $recordSet->moveNext();
-    }
-
-    return $entries;
-  }
-
-  /**
    * @param $name
    * @return \Datagator\Db\Account
    */
@@ -105,19 +83,6 @@ class AccountMapper
   {
     $sql = 'SELECT * FROM account WHERE name = ?';
     $bindParams = array($name);
-    $row = $this->db->GetRow($sql, $bindParams);
-    return $this->mapArray($row);
-  }
-
-  /**
-   * @param $uid
-   * @param $name
-   * @return \Datagator\Db\Account
-   */
-  public function findByUidName($uid, $name)
-  {
-    $sql = 'SELECT * FROM account WHERE uid = ? AND name = ?';
-    $bindParams = array($uid, $name);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
   }
@@ -144,7 +109,6 @@ class AccountMapper
     $account = new Account();
 
     $account->setAccId(!empty($row['accid']) ? $row['accid'] : NULL);
-    $account->setUid(!empty($row['uid']) ? $row['uid'] : NULL);
     $account->setName(!empty($row['name']) ? $row['name'] : NULL);
 
     return $account;
