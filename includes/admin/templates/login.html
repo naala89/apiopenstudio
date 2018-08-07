@@ -38,15 +38,23 @@
         <p>{{ message.text | raw }}</p>
       </div>
       {% endif %}
+
       <div class="uk-form-row">
-        <input class="uk-width-1-1 uk-form-large" type="text" name="username" placeholder="Username">
+        <input class="uk-width-1-1 uk-form-large" type="text" name="account" placeholder="Account" required>
       </div>
+
       <div class="uk-form-row">
-        <input class="uk-width-1-1 uk-form-large" type="password" name="password" placeholder="Password">
+        <input class="uk-width-1-1 uk-form-large" type="text" name="username" placeholder="Username" required>
       </div>
+
+      <div class="uk-form-row">
+        <input class="uk-width-1-1 uk-form-large" type="password" name="password" placeholder="Password" required>
+      </div>
+
       <div class="uk-form-row">
         <button class="uk-width-1-1 uk-button uk-button-primary uk-button-large" type="submit">Login</button>
       </div>
+
       <div class="uk-form-row uk-text-small">
         <a class="uk-float-right uk-link uk-link-muted" href="#">Forgot Password?</a>
       </div>

@@ -164,7 +164,7 @@ class Config
     self::$dirYaml = '/resources/';
     self::$dirUploads = '/uploads/';
     self::$twigCache = dirname(__DIR__) . '/twig_cache/';
-    self::$dbBase = dirname(__DIR__) . '/includes/scripts/db/dbBase.yaml';
+    self::$dbBase = dirname(__DIR__) . '/includes/db/dbBase.yaml';
     self::$adminTemplates = dirname(__DIR__) . '/includes/admin/templates';
   }
 
