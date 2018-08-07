@@ -22,5 +22,8 @@
       "Datagator\\Processor\\": "includes/processor/",
       "Datagator\\Security\\": "includes/security/"
     }
+  },
+  "require-dev": {
+    "uikit/uikit": "^2.27"
   }
 }
