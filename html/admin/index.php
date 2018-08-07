@@ -5,6 +5,7 @@ use Datagator\Admin\User;
 use Datagator\Config;
 
 Config::load();
+session_start();
 
 $loader = new Twig_Loader_Filesystem(Config::$adminTemplates);
 //$twig = new Twig_Environment($loader, array(
@@ -13,10 +14,12 @@ $loader = new Twig_Loader_Filesystem(Config::$adminTemplates);
 $twig = new Twig_Environment($loader);
 
 $user = new User();
-if (isset($_POST['username']) && isset($_POST['password'])) {
+
+if (isset($_POST['username']) || isset($_POST['password']) || isset($_POST['account'])) {
   $username = !empty($_POST['username']) ? $_POST['username'] : '';
   $password = !empty($_POST['password']) ? $_POST['password'] : '';
-  $result = $user->login($username, $password);
+  $account = !empty($_POST['account']) ? $_POST['account'] : '';
+  $result = $user->login($account, $username, $password);
   if (!$result) {
     $message['type'] = 'error';
     $message['text'] = 'Invalid username or password';
