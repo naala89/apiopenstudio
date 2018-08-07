@@ -13,11 +13,17 @@ class Account
   public function __construct()
   {}
 
-  public function create($uid=NULL, $name=NULL)
+  /**
+   * Create an account.
+   *
+   * @param null $name
+   *
+   * @return bool|int
+   */
+  public function create($name=NULL)
   {
     $account = new Db\Account(
       NULL,
-      $uid,
       $name
     );
 
@@ -39,11 +45,11 @@ class Account
     }
 
     $account = $accountMapper->findByName($name);
-    $result = $account->getAccId();
-    if (!$result) {
+    $accId = $account->getAccId();
+    if (!$accId) {
       return FALSE;
     }
 
-    return $result;
+    return $accId;
   }
 }
