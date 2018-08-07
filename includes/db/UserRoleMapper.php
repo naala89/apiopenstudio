@@ -5,7 +5,6 @@
  */
 
 namespace Datagator\Db;
-use Codeception\Util\Debug;
 use Datagator\Core;
 
 class UserRoleMapper
@@ -27,21 +26,23 @@ class UserRoleMapper
    */
   public function save(UserRole $userRole)
   {
-    if ($userRole->getId() == NULL) {
-      $sql = 'INSERT INTO user_role (uid, rid, appid) VALUES (?, ?, ?)';
-      $bindParams = array(
-        $userRole->getUid(),
-        $userRole->getRid(),
-        $userRole->getAppId()
-      );
-      $result = $this->db->Execute($sql, $bindParams);
-    } else {
-      $sql = 'UPDATE user_role SET uid=?, rid=?, appid=? WHERE id = ?';
+    if ($userRole->getUrid() == NULL) {
+      $sql = 'INSERT INTO user_role (uid, rid, appid, accid) VALUES (?, ?, ?, ?)';
       $bindParams = array(
         $userRole->getUid(),
         $userRole->getRid(),
         $userRole->getAppId(),
-        $userRole->getId()
+        $userRole->getAccId()
+      );
+      $result = $this->db->Execute($sql, $bindParams);
+    } else {
+      $sql = 'UPDATE user_role SET uid=?, rid=?, appid=?, accid=? WHERE urid = ?';
+      $bindParams = array(
+        $userRole->getUid(),
+        $userRole->getRid(),
+        $userRole->getAppId(),
+        $userRole->getAccId(),
+        $userRole->getUrid()
       );
       $result = $this->db->Execute($sql, $bindParams);
     }
@@ -58,8 +59,8 @@ class UserRoleMapper
    */
   public function delete(UserRole $userRole)
   {
-    $sql = 'DELETE FROM user_role WHERE id = ?';
-    $bindParams = array($userRole->getId());
+    $sql = 'DELETE FROM user_role WHERE urid = ?';
+    $bindParams = array($userRole->getUrid());
     $result = $this->db->Execute($sql, $bindParams);
     if (!$result) {
       throw new Core\ApiException($this->db->ErrorMsg(), 2);
@@ -68,13 +69,13 @@ class UserRoleMapper
   }
 
   /**
-   * @param $id
+   * @param $urid
    * @return \Datagator\Db\UserRole
    */
-  public function findById($id)
+  public function findByUrid($urid)
   {
-    $sql = 'SELECT * FROM user_role WHERE id = ?';
-    $bindParams = array($id);
+    $sql = 'SELECT * FROM user_role WHERE urid = ?';
+    $bindParams = array($urid);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
   }
@@ -107,6 +108,26 @@ class UserRoleMapper
   {
     $sql = 'SELECT * FROM user_role WHERE appid = ?';
     $bindParams = array($appId);
+
+    $recordSet = $this->db->Execute($sql, $bindParams);
+
+    $entries = array();
+    while (!$recordSet->EOF) {
+      $entries[] = $this->mapArray($recordSet->fields);
+      $recordSet->moveNext();
+    }
+
+    return $entries;
+  }
+
+  /**
+   * @param $accId
+   * @return array
+   */
+  public function findByAccId($accId)
+  {
+    $sql = 'SELECT * FROM user_role WHERE accid = ?';
+    $bindParams = array($accId);
 
     $recordSet = $this->db->Execute($sql, $bindParams);
 
@@ -200,10 +221,11 @@ class UserRoleMapper
   {
     $userRole = new UserRole();
 
-    $userRole->setId(!empty($row['id']) ? $row['id'] : NULL);
+    $userRole->setId(!empty($row['urid']) ? $row['urid'] : NULL);
     $userRole->setUid(!empty($row['uid']) ? $row['uid'] : NULL);
     $userRole->setRid(!empty($row['rid']) ? $row['rid'] : NULL);
     $userRole->setAppId(!empty($row['appid']) ? $row['appid'] : NULL);
+    $userRole->setAccId(!empty($row['accid']) ? $row['accid'] : NULL);
 
     return $userRole;
   }

@@ -1,6 +1,6 @@
 {% extends "install.html" %}
 
-{% set title = "Step 3: Create your application" %}
+{% set title = "Step 3: Create your account" %}
 
 {% block content %}
 
@@ -15,6 +15,7 @@
         <input type="hidden" name="from_step" value="3">
         <input type="hidden" name="next_step" value="3">
         <input type="hidden" name="uid" value="{{ uid }}">
+        <input type="hidden" name="username" value="{{ username }}">
 
         <div class="uk-margin">
           <p>This will be the name of of your account.</p>

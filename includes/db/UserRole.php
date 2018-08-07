@@ -5,7 +5,6 @@
  */
 
 namespace Datagator\Db;
-use Datagator\Core;
 
 class UserRole
 {
@@ -13,35 +12,38 @@ class UserRole
   protected $uid;
   protected $rid;
   protected $appId;
+  protected $accId;
 
   /**
-   * @param null $id
+   * @param null $urid
    * @param null $uid
    * @param null $rid
    * @param null $appId
+   * @param null $accId
    */
-  public function __construct($id=NULL, $uid=NULL, $rid=NULL, $appId=NULL)
+  public function __construct($urid=NULL, $uid=NULL, $rid=NULL, $appId=NULL, $accId=NULL)
   {
-    $this->id = $id;
+    $this->urid = $urid;
     $this->uid = $uid;
     $this->rid = $rid;
     $this->appId = $appId;
+    $this->accId = $accId;
   }
 
   /**
-   * @return int id
+   * @return int utid
    */
-  public function getId()
+  public function getUrid()
   {
-    return $this->id;
+    return $this->urid;
   }
 
   /**
-   * @param $id
+   * @param $urid
    */
-  public function setId($id)
+  public function setId($urid)
   {
-    $this->id = $id;
+    $this->urid = $urid;
   }
 
   /**
@@ -93,15 +95,32 @@ class UserRole
   }
 
   /**
+   * @return int accId
+   */
+  public function getAccId()
+  {
+    return $this->accId;
+  }
+
+  /**
+   * @param $accId
+   */
+  public function setAccId($accId)
+  {
+    $this->appId = $accId;
+  }
+
+  /**
    * Display contents for debugging
    */
   public function debug()
   {
     return array(
-      'id' => $this->id,
+      'urid' => $this->urid,
       'uid' => $this->uid,
       'rid' => $this->rid,
-      'appId' => $this->appId,
+      'appid' => $this->appId,
+      'accid' => $this->accId,
     );
   }
 }

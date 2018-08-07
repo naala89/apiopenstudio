@@ -27,13 +27,13 @@ class AccountMapper
   public function save(Account $account)
   {
     if ($account->getAccId() == NULL) {
-      $sql = 'INSERT INTO account (uid, name) VALUES (?)';
+      $sql = 'INSERT INTO account (name) VALUES (?)';
       $bindParams = array(
         $account->getName()
       );
       $result = $this->db->Execute($sql, $bindParams);
     } else {
-      $sql = 'UPDATE account SET name = ? WHERE accid = ?';
+      $sql = 'UPDATE account SET name = ? WHERE aid = ?';
       $bindParams = array(
         $account->getName(),
         $account->getAccId()
