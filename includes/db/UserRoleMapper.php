@@ -198,7 +198,7 @@ class UserRoleMapper
       $bindParams[] = $rid;
     }
     if (!empty($accId)) {
-      $sqlWhere[] = 'accic = ?';
+      $sqlWhere[] = 'accid = ?';
       $bindParams[] = $accId;
     }
     $sql = 'SELECT * FROM user_role WHERE ' . implode(' AND ', $sqlWhere);
