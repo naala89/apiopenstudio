@@ -18,30 +18,44 @@ class User
   /**
    * Log a user in.
    *
+   * @param $account
    * @param $username
    * @param $password
    *
-   * @return bool|mixed
+   * @return bool
    */
-  public function login($username, $password)
+  public function adminLogin($account, $username, $password)
   {
-    $payload = ['form_params' => [
-      'username' => $username,
-      'password' => $password
-    ]];
-    $url = Config::$domainName . '/api/user/login';
-    $client = new GuzzleHttp\Client();
-    try {
-      $result = json_decode($client->post($url, $payload));
-    } catch (\Exception $e) {
-      var_dump($e->getMessage());exit;
+    $dsnOptions = '';
+    if (sizeof(Config::$dboptions) > 0) {
+      foreach (Config::$dboptions as $k => $v) {
+        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
+        $dsnOptions .= "$k=$v";
+      }
+    }
+    $dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptions) : '';
+    $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
+    $db = \ADONewConnection($dsn);
+
+    $accountMapper = new Db\AccountMapper($db);
+    $account = $accountMapper->findByName($account);
+    if (empty($account->getAccId())) {
       return FALSE;
     }
-    if (is_array($result) && isset($result['token'])) {
-      $_SESSION['token'] = $result['token'];
-      return $result;
+
+    $userMapper = new Db\UserMapper($db);
+    $user = $userMapper->findByUsername($username);
+    if (empty($user->getUid())) {
+      return FALSE;
     }
-    return FALSE;
+
+    $userRoleMapper = new Db\UserRoleMapper($db);
+    $userRoles = $userRoleMapper->findBy($user->getUid(), NULL, NULL, $account->getAccId());
+    if (empty($userRoles)) {
+      return FALSE;
+    }
+
+    return TRUE;
   }
 
   /**
