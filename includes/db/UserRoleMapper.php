@@ -176,12 +176,13 @@ class UserRoleMapper
 
   /**
    * @param null $uid
-   * @param null $appId
    * @param null $rid
+   * @param null $appId
+   * @param null $accId
    * @return array
    * @throws \Datagator\Core\ApiException
    */
-  public function findByMixed($uid=null, $appId=null, $rid=null)
+  public function findBy($uid=null, $rid=null, $appId=null, $accId=null)
   {
     if (empty($uid) && empty($appId) && empty($rid)) {
       throw new Core\ApiException('cannot search for user role without at least user, role or application');
@@ -192,13 +193,13 @@ class UserRoleMapper
       $sqlWhere[] = 'uid = ?';
       $bindParams[] = $uid;
     }
-    if (!empty($appId)) {
-      $sqlWhere[] = 'appid = ?';
-      $bindParams[] = $appId;
-    }
     if (!empty($rid)) {
       $sqlWhere[] = 'rid = ?';
       $bindParams[] = $rid;
+    }
+    if (!empty($accId)) {
+      $sqlWhere[] = 'accic = ?';
+      $bindParams[] = $accId;
     }
     $sql = 'SELECT * FROM user_role WHERE ' . implode(' AND ', $sqlWhere);
 

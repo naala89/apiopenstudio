@@ -19,7 +19,7 @@ if (isset($_POST['username']) || isset($_POST['password']) || isset($_POST['acco
   $username = !empty($_POST['username']) ? $_POST['username'] : '';
   $password = !empty($_POST['password']) ? $_POST['password'] : '';
   $account = !empty($_POST['account']) ? $_POST['account'] : '';
-  $result = $user->login($account, $username, $password);
+  $result = $user->adminLogin($account, $username, $password);
   if (!$result) {
     $message['type'] = 'error';
     $message['text'] = 'Invalid username or password';
