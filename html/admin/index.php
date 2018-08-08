@@ -20,14 +20,17 @@ if (isset($_POST['username']) || isset($_POST['password']) || isset($_POST['acco
   $password = !empty($_POST['password']) ? $_POST['password'] : '';
   $account = !empty($_POST['account']) ? $_POST['account'] : '';
   $result = $user->adminLogin($account, $username, $password);
+
   if (!$result) {
     $message['type'] = 'error';
-    $message['text'] = 'Invalid username or password';
+    $message['text'] = 'Invalid account, username or password';
     $menu = ['Login' => '/admin/login'];
     $template = $twig->load('login.html');
     echo $template->render(['menu' => $menu, 'message' => $message]);
     exit;
   }
+
+  $_SESSION['token'] = $result;
 }
 
 if (!$user->isLoggedIn()) {
@@ -42,5 +45,5 @@ $menu = [
   'Accounts' => '/accounts',
   'Resources' => '/resources',
   'Users' => '/users'];
-$template = $twig->load('page.html');
-
+$template = $twig->load('index.html');
+echo $template->render(['menu' => $menu]);

@@ -4,7 +4,7 @@ namespace Datagator\Admin;
 
 use Datagator\Db;
 use Datagator\Config;
-use GuzzleHttp;
+use Datagator\Core;
 
 Config::load();
 
@@ -55,7 +55,33 @@ class User
       return FALSE;
     }
 
-    return TRUE;
+    // set up salt if not defined
+    if ($user->getSalt() == NULL) {
+      $user->setSalt(Core\Hash::generateSalt());
+    }
+
+    // generate hash and compare to stored hash this prevents refreshing token with a fake password.
+    $hash = Core\Hash::generateHash($password, $user->getSalt());
+    if ($user->getHash() != null && $user->getHash() != $hash) {
+      return FALSE;
+    }
+
+    // if token exists and is active, return it
+    if (!empty($user->getToken())
+      && !empty($user->getTokenTtl())
+      && Core\Utilities::date_mysql2php($user->getTokenTtl()) > time()) {
+      $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime(Config::$tokenLife)));
+      return $user->getToken();
+    }
+
+    //perform login
+    $user->setHash($hash);
+    $token = Core\Hash::generateToken($username);
+    $user->setToken($token);
+    $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime(Config::$tokenLife)));
+    $userMapper->save($user);
+
+    return $token;
   }
 
   /**

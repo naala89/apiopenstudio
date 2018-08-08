@@ -81,7 +81,7 @@ class UserLogin extends Core\ProcessorEntity
 
     //perform login
     $user->setHash($hash);
-    $token = md5(time() . $username);
+    $token = Core\Hash::generateToken($username);
     $user->setToken($token);
     $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime(Config::$tokenLife)));
     $userMapper->save($user);
