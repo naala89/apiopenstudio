@@ -1,14 +1,32 @@
 <?php
-use \Psr\Http\Message\ServerRequestInterface as Request;
-use \Psr\Http\Message\ResponseInterface as Response;
-
 require_once dirname(__DIR__) . '/../vendor/autoload.php';
 
-$app = new \Slim\App;
-$app->get('/hello/{name}', function (Request $request, Response $response, array $args) {
-  $name = $args['name'];
-  $response->getBody()->write("Hello, $name");
+use \Psr\Http\Message\ServerRequestInterface;
+use \Psr\Http\Message\ResponseInterface;
+use Datagator\Config;
 
-  return $response;
+Config::load();
+$app = new \Slim\App();
+
+$container = $app->getContainer();
+$container['view'] = function ($container) {
+  $view = new \Slim\Views\Twig(Config::$adminTemplates, [
+    'cache' => FALSE//Config::$twigCache
+  ]);
+  // Instantiate and add Slim specific extension
+  $basePath = rtrim(str_ireplace('index.php', '', $container->get('request')->getUri()->getBasePath()), '/');
+  $view->addExtension(new Slim\Views\TwigExtension($container->get('router'), $basePath));
+  return $view;
+};
+
+$app->get('/hello/{name}', function (ServerRequestInterface $request, ResponseInterface $response, array $args) {
+  return $this->view->render($response, 'hello.html', [
+    'name' => $args['name']
+  ]);
+  //$name = $args['name'];
+  //$response->getBody()->write("Hello, $name");
+
+  //return $response;
 });
+
 $app->run();
