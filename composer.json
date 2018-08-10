@@ -1,5 +1,6 @@
 {
-  "name": "naala/datagator",
+  "name": "naala/gatordata",
+  "description": "An Api for APIs",
   "require": {
     "adodb/adodb-php": "^5.20",
     "mustangostang/spyc": "^0.5.1",
