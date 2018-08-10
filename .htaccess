@@ -39,7 +39,6 @@ Header set Access-Control-Allow-Methods "PUT, GET, POST, DELETE, OPTIONS"
 
   # Rewrite rule for admin web interface
   RewriteRule ^admin/(.*)$ /html/admin/$1 [NC,L]
-
   RewriteRule ^admin-test(.*) /html/admin-test$1 [QSA,NC,L]
 
 </IfModule>

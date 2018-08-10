@@ -23,10 +23,6 @@ $app->get('/hello/{name}', function (ServerRequestInterface $request, ResponseIn
   return $this->view->render($response, 'hello.html', [
     'name' => $args['name']
   ]);
-  //$name = $args['name'];
-  //$response->getBody()->write("Hello, $name");
-
-  //return $response;
 });
 
 $app->run();
