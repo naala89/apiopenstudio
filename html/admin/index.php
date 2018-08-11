@@ -1,49 +1,35 @@
 <?php
 
-require_once dirname(__DIR__) . '/../vendor/autoload.php';
-use Datagator\Admin\User;
-use Datagator\Config;
+/** @var Slim\App $app */
+$app = require dirname(__DIR__) . '/../includes/admin/bootstrap.php';
 
-Config::load();
-session_start();
+// Start
+$app->run();
 
-$loader = new Twig_Loader_Filesystem(Config::$adminTemplates);
-//$twig = new Twig_Environment($loader, array(
-//  'cache' => Config::$twigCache,
-//));
-$twig = new Twig_Environment($loader);
-
-$user = new User();
-
-if (isset($_POST['username']) || isset($_POST['password']) || isset($_POST['account'])) {
-  $username = !empty($_POST['username']) ? $_POST['username'] : '';
-  $password = !empty($_POST['password']) ? $_POST['password'] : '';
-  $account = !empty($_POST['account']) ? $_POST['account'] : '';
-  $result = $user->adminLogin($account, $username, $password);
-
-  if (!$result) {
-    $message['type'] = 'error';
-    $message['text'] = 'Invalid account, username or password';
-    $menu = ['Login' => '/admin/login'];
-    $template = $twig->load('login.html');
-    echo $template->render(['menu' => $menu, 'message' => $message]);
-    exit;
-  }
-
-  $_SESSION['token'] = $result;
-}
-
-if (!$user->isLoggedIn()) {
-  $menu = ['Login' => '/admin/login'];
-  $template = $twig->load('login.html');
-  echo $template->render(['menu' => $menu]);
-  exit;
-}
-
-$menu = [
-  'Login' => '/login',
-  'Accounts' => '/accounts',
-  'Resources' => '/resources',
-  'Users' => '/users'];
-$template = $twig->load('index.html');
-echo $template->render(['menu' => $menu]);
+//require_once dirname(__DIR__) . '/../vendor/autoload.php';
+//
+//use \Psr\Http\Message\ServerRequestInterface;
+//use \Psr\Http\Message\ResponseInterface;
+//use Datagator\Config;
+//
+//Config::load();
+//$app = new \Slim\App();
+//
+//$container = $app->getContainer();
+//$container['view'] = function ($container) {
+//  $view = new \Slim\Views\Twig(Config::$adminTemplates, [
+//    'cache' => FALSE//Config::$twigCache
+//  ]);
+//  // Instantiate and add Slim specific extension
+//  $basePath = rtrim(str_ireplace('index.php', '', $container->get('request')->getUri()->getBasePath()), '/');
+//  $view->addExtension(new Slim\Views\TwigExtension($container->get('router'), $basePath));
+//  return $view;
+//};
+//
+//$app->get('/hello/{name}', function (ServerRequestInterface $request, ResponseInterface $response, array $args) {
+//  return $this->view->render($response, 'hello.html', [
+//    'name' => $args['name']
+//  ]);
+//});
+//
+//$app->run();
