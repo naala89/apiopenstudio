@@ -6,3 +6,4 @@ vendor
 composer.lock
 tests/_output/*
 tmp/*
+config/settings.php
