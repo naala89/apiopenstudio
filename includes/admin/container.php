@@ -4,6 +4,7 @@ use Slim\Container;
 
 /** @var \Slim\App $app */
 $container = $app->getContainer();
+
 // Activating routes in a subfolder
 $container['environment'] = function () {
   $_SERVER['SCRIPT_NAME'] = $_SERVER['REDIRECT_URL'];
