@@ -1,6 +1,9 @@
 {
   "name": "naala/gatordata",
   "description": "An Api for APIs",
+  "require-dev": {
+    "codeception/codeception": "^2.4"
+  },
   "require": {
     "adodb/adodb-php": "^5.20",
     "mustangostang/spyc": "^0.5.1",
@@ -15,16 +18,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Datagator\\": "includes/",
-      "Datagator\\Core\\": "includes/core/",
-      "Datagator\\Db\\": "includes/db/",
-      "Datagator\\Endpoint\\": "includes/endpoint/",
-      "Datagator\\Output\\": "includes/output/",
-      "Datagator\\Processor\\": "includes/processor/",
-      "Datagator\\Security\\": "includes/security/"
+      "Datagator\\": "includes"
     }
-  },
-  "require-dev": {
-    "codeception/codeception": "^2.4"
   }
 }

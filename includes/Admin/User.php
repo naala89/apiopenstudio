@@ -3,15 +3,15 @@
 namespace Datagator\Admin;
 
 use Datagator\Db;
-use Datagator\Config;
 use Datagator\Core;
-
-Config::load();
 
 class User
 {
-  public function __construct()
+  private $settings;
+
+  public function __construct($settings)
   {
+    $this->settings = $settings;
     $_SESSION['token'] = '';
   }
 
@@ -27,14 +27,18 @@ class User
   public function adminLogin($account, $username, $password)
   {
     $dsnOptions = '';
-    if (sizeof(Config::$dboptions) > 0) {
-      foreach (Config::$dboptions as $k => $v) {
+    if (sizeof($this->settings['db']['options']) > 0) {
+      foreach ($this->settings['db']['options'] as $k => $v) {
         $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
         $dsnOptions .= "$k=$v";
       }
     }
-    $dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptions) : '';
-    $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
+    $dsnOptions = sizeof($this->settings['db']['options']) > 0 ? '?'.implode('&', $this->settings['db']['options']) : '';
+    $dsn = $this->settings['db']['driver'] . '://'
+      . $this->settings['db']['username'] . ':'
+      . $this->settings['db']['password'] . '@'
+      . $this->settings['db']['host'] . '/'
+      . $this->settings['db']['database'] . $dsnOptions;
     $db = \ADONewConnection($dsn);
 
     $accountMapper = new Db\AccountMapper($db);
