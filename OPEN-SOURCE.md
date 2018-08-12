@@ -6,7 +6,8 @@ Code only, setting up the infrastructure is up to the user/devs.
 config
 ------
 
-change Config.php to be a single file, with Config.example.php 
+- change Config.php to be a single file, with Config.example.php 
+- Datagator to use /config/
 
 newsletter/mailing list
 -----------------------
@@ -62,6 +63,15 @@ web
 - visible to owner & administrator
 - list all users and their roles and accounts they are associated with
 - add/edit/delete users in modals
+
+autoload
+--------
+
+IMPORTANT:
+
+- Admin changes autoload to have base namespace only
+  - Rename all /includes/* directories to be uc_first
+  - Use appropriate dir nesting
 
 processors
 ----------
