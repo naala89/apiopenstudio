@@ -6,12 +6,22 @@ use Datagator\Admin\User;
 
 class Authentication
 {
-  public function __construct($settings){
+  private $settings;
+  private $uri;
+
+  /**
+   * Authentication constructor.
+   *
+   * @param $settings
+   * @param $uri
+   */
+  public function __construct($settings, $uri)
+  {
     $this->settings = $settings;
+    $this->uri = $uri;
   }
 
   /**
-   * Example middleware invokable class
    *
    * @param  \Psr\Http\Message\ServerRequestInterface $request  PSR7 request
    * @param  \Psr\Http\Message\ResponseInterface      $response PSR7 response
@@ -21,12 +31,26 @@ class Authentication
    */
   public function __invoke($request, $response, $next)
   {
-    $user = new User($this->settings);
-    $user->adminLogin('myacc', 'john', 'pass');
-    $response->getBody()->write('BEFORE');
-    $response = $next($request, $response);
-    $response->getBody()->write('AFTER');
+    $data = $request->getParsedBody();
+    $account = isset($data['account']) ? $data['account'] : '';
+    $username = isset($data['username']) ? $data['username'] : '';
+    $password = isset($data['password']) ? $data['password'] : '';
 
-    return $response;
+    if (!empty($account) || !empty($username) || !empty($password)) {
+      $user = new User($this->settings);
+      $token = $user->adminLogin($account, $username, $password);
+      if (!$token) {
+        unset($_SESSION['token']);
+        $uri = $request->getUri()->withPath($this->uri);
+        return $response = $response->withRedirect($uri);
+      }
+      $_SESSION['token'] = $token;
+    }
+
+    if (!isset($_SESSION['token']) || empty($_SESSION['token'])) {
+      $uri = $request->getUri()->withPath($this->uri);
+      return $response = $response->withRedirect($uri);
+    }
+    return $next($request, $response);
   }
 }
