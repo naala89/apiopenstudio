@@ -16,24 +16,27 @@ Installation
 ------------
 
 1. ```$ git clone gitolite@naala.com.au:datagator```
-2. If Production:
-   1. ```$ cd datagator```
-   2. ```$ rm -R README.md CHANGELOG.md codeception.yml resources tests```
 3. ```$ chmod 775 uploads```
 4. Install [Composer](https://getcomposer.org/).
-5. ```$ composer install```
-6. ```$ composer dump-autoload```
+5. Run composer install in the docroot:
+    1. ```$ cd /path/to/datagator```
+    3. ```$ composer install```
 7. Create an empty database and user. Give the user full permission for the DB.
-8. Update ```includes/config.php```:
-   1. Set the server role by editing the ```$_server``` array so that the LHS values contain the server hostname, and the RHS indicate the server role (development, staging or production).
-   2. Set the database credentials that you created in step 5 in the server role function you defined in step 5.1.
-   3. Set any other desired values you require in the role function you defined in ```$_server``` (see Config section for details)
-9. Run ```includes/scripts/db/dbBase.sql```.
+8. Copy ```config/settings.example.php``` to ``config/settings.php```, and update the values.
+9. open a 
 10. Update ```php.ini``` (if using non-apache server, see [Hardening your HTTP response headers](https://scotthelme.co.uk/hardening-your-http-response-headers/#removingheaders)):
     1. ```expose_php = Off```
 11. Update ```httpd.conf```
     2. ```ServerSignature Off```
     3. ```ServerTokens Prod```
+    
+Production
+----------
+
+Remove the production non-critical files and directories:
+
+1. ```$ cd datagator```
+2. ```$ rm -R ./*.md codeception.yml resources tests```
 
 Config
 ------
