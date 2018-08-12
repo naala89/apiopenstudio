@@ -36,9 +36,4 @@ Header set Access-Control-Allow-Methods "PUT, GET, POST, DELETE, OPTIONS"
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^api/([a-zA-Z0-9\/\-_\%\.]*)$ /html/index.php?request=$1 [QSA,NC,L]
-
-  # Rewrite rule for admin web interface
-  RewriteRule ^admin$ /html/admin/ [QSA,L]
-  RewriteRule ^admin(.*) /html/admin$1 [QSA,L]
-
 </IfModule>

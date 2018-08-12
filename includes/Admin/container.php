@@ -5,19 +5,13 @@ use Slim\Container;
 /** @var \Slim\App $app */
 $container = $app->getContainer();
 
-// Activating routes in a subfolder
-$container['environment'] = function () {
-  $_SERVER['SCRIPT_NAME'] = $_SERVER['REDIRECT_URL'];
-  return new Slim\Http\Environment($_SERVER);
-};
-
 // Register Twig View helper
 $container['view'] = function (Container $container) {
   $settings = $container->get('settings');
   $viewPath = $settings['twig']['path'];
 
   $twig = new \Slim\Views\Twig($viewPath, [
-    'cache' => $settings['twig']['cache_enabled'] ? $settings['twig']['cache_path'] : false
+    'cache' => $settings['twig']['cache_enabled'] ? $settings['twig']['cache_path'] : FALSE
   ]);
 
   /** @var Twig_Loader_Filesystem $loader */
