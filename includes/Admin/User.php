@@ -9,6 +9,11 @@ class User
 {
   private $settings;
 
+  /**
+   * User constructor.
+   *
+   * @param $settings
+   */
   public function __construct($settings)
   {
     $this->settings = $settings;
@@ -74,7 +79,7 @@ class User
     if (!empty($user->getToken())
       && !empty($user->getTokenTtl())
       && Core\Utilities::date_mysql2php($user->getTokenTtl()) > time()) {
-      $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime(Config::$tokenLife)));
+      $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime($this->settings['user']['token_life'])));
       return $user->getToken();
     }
 
@@ -82,7 +87,7 @@ class User
     $user->setHash($hash);
     $token = Core\Hash::generateToken($username);
     $user->setToken($token);
-    $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime(Config::$tokenLife)));
+    $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime($this->settings['user']['token_life'])));
     $userMapper->save($user);
 
     return $token;
@@ -157,14 +162,18 @@ class User
     $user->setPassword($password);
 
     $dsnOptions = '';
-    if (sizeof(Config::$dboptions) > 0) {
-      foreach (Config::$dboptions as $k => $v) {
+    if (sizeof($this->settings['db']['options']) > 0) {
+      foreach ($this->settings['db']['options'] as $k => $v) {
         $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
         $dsnOptions .= "$k=$v";
       }
     }
-    $dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptions) : '';
-    $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
+    $dsnOptions = sizeof($this->settings['db']['options']) > 0 ? '?'.implode('&', $this->settings['db']['options']) : '';
+    $dsn = $this->settings['db']['driver'] . '://'
+      . $this->settings['db']['username'] . ':'
+      . $this->settings['db']['password'] . '@'
+      . $this->settings['db']['host'] . '/'
+      . $this->settings['db']['database'] . $dsnOptions;
     $db = \ADONewConnection($dsn);
 
     $userMapper = new Db\UserMapper($db);

@@ -4,14 +4,21 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Datagator\Admin;
 
+// Login
 $app->get('/login', function (Request $request, Response $response) {
-  return $this->get('view')->render($response, 'login.twig', []);
-});
+  return $this->get('view')->render($response, 'login.twig');
+})->setName('route.login');
+
+$app->post('/login', function (Request $request, Response $response) {
+  $message = $request->getAttribute('foo');
+  return $this->get('view')->render($response, 'login.twig', ['message' => $message]);
+})->setName('route.login');
 
 $app->get('/', function (Request $request, Response $response) {
   $response->getBody()->write("It works! This is the default welcome page.");
   return $response;
-})->add(new Admin\Middleware\Authentication($settings, '/login'));
+})->setName('route.home')
+  ->add(new Admin\Middleware\Authentication($settings, '/login'));
 
 $app->get('/hello/{name}', function (Request $request, Response $response) {
   $name = $request->getAttribute('name');

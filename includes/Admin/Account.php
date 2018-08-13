@@ -3,15 +3,20 @@
 namespace Datagator\Admin;
 
 use Datagator\Db;
-use Datagator\Config;
-use GuzzleHttp;
-
-Config::load();
 
 class Account
 {
-  public function __construct()
-  {}
+  private $settings;
+
+  /**
+   * Account constructor.
+   *
+   * @param $settings
+   */
+  public function __construct($settings)
+  {
+    $this->settings = $settings;
+  }
 
   /**
    * Create an account.
@@ -22,22 +27,25 @@ class Account
    */
   public function create($name=NULL)
   {
-    $account = new Db\Account(
-      NULL,
-      $name
-    );
-
     $dsnOptions = '';
-    if (sizeof(Config::$dboptions) > 0) {
-      foreach (Config::$dboptions as $k => $v) {
+    if (sizeof($this->settings['db']['options']) > 0) {
+      foreach ($this->settings['db']['options'] as $k => $v) {
         $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
         $dsnOptions .= "$k=$v";
       }
     }
-    $dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptions) : '';
-    $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
+    $dsnOptions = sizeof($this->settings['db']['options']) > 0 ? '?'.implode('&', $this->settings['db']['options']) : '';
+    $dsn = $this->settings['db']['driver'] . '://'
+      . $this->settings['db']['username'] . ':'
+      . $this->settings['db']['password'] . '@'
+      . $this->settings['db']['host'] . '/'
+      . $this->settings['db']['database'] . $dsnOptions;
     $db = \ADONewConnection($dsn);
 
+    $account = new Db\Account(
+      NULL,
+      $name
+    );
     $accountMapper = new Db\AccountMapper($db);
     $result = $accountMapper->save($account);
     if (!$result) {
