@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-gb" dir="ltr">
+
+<head>
+  <head>
+    <title>Gaterdata</title>
+    <meta name="robots" content="noindex,nofollow" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/materialize.min.css">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/materialize.min.js"></script>
+    <script src="/js/main.js"></script>
+  </head>
+
+<body>
+
+<div class="container">
+
+  <nav>
+    <div class="nav-wrapper grey darken-3 black-text">
+      <a href="/" class="brand-logo">Gaterdata</a>
+      <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+      <ul class="right hide-on-med-and-down">
+        {% for key,value in menu %}
+          <li>
+            <a href="{{ value }}">{{ key }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </nav>
+  <ul class="sidenav grey darken-3" id="mobile-demo">
+    {% for key,value in menu %}
+      <li >
+        <a href="{{ value }}" class=" white-text">{{ key }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <main>
+
+    <div class="row">
+      <div class="col s12">
+        <h5>{{ title }}</h5>
+      </div>
+    </div>
+
+    {% if message is defined %}
+      {% if message.type == 'info' %}
+        {% set message_colour = 'green accent-2' %}
+      {% endif %}
+      {% if message.type == 'warning' %}
+        {% set message_colour = 'yellow lighten-3' %}
+      {% endif %}
+      {% if message.type == 'error' %}
+        {% set message_colour = 'red lighten-4' %}
+      {% endif %}
+      <div class="section"></div>
+      <div class="row">
+        <div class="col s12 m6 offset-m3">
+          <div class="{{  message_colour }}">
+            <div class="card-content black-text">
+              <h5 class="card-title">{{ message.type }}</h5>
+              <p>{{ message.text | raw }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section"></div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+  </main>
+
+  <footer>
+    {% block footer %}
+      &copy; Copyright 2018 by <a href="http://gaterdata.com/">Gaterdata</a>.
+    {% endblock %}
+  </footer>
+
+</div>
+
+</body>

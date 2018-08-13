@@ -27,7 +27,7 @@ class User
    * @param $username
    * @param $password
    *
-   * @return bool
+   * @return bool|string
    */
   public function adminLogin($account, $username, $password)
   {

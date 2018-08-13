@@ -1,63 +1,47 @@
-<html>
+{% extends "page.twig" %}
 
-<head>
-  <title>Datagator Login</title>
-  <meta name="robots" content="noindex,nofollow" />
-  <link rel="stylesheet" type="text/css" href="/css/materialize.min.css">
-  <script src="/js/materialize.min.js"></script>
-</head>
+{% block content %}
+  <center>
+    <div class="container">
+      <div class="z-depth-3 y-depth-3 x-depth-3 grey green-text lighten-4 row" style="display: inline-block; padding: 32px 48px 0px 48px; border: 1px; margin-top: 100px; solid #EEE;">
 
-<body>
-<div class="container">
-  <div class="row">
-    <div class="section"></div>
-    <main>
-      <center>
-        <div class="container">
-          <div class="z-depth-3 y-depth-3 x-depth-3 grey green-text lighten-4 row" style="display: inline-block; padding: 32px 48px 0px 48px; border: 1px; margin-top: 100px; solid #EEE;">
+        <form method="post" action="/">
 
-            <form method="post" action="/">
-
-              <div class='row'>
-                <div class='input-field col s12'>
-                  <input type="text" name='account' id='account' required />
-                  <label for='account'>Account</label>
-                </div>
-              </div>
-
-              <div class='row'>
-                <div class='input-field col s12'>
-                  <input type="text" name='username' id='username' required />
-                  <label for='email'>Username</label>
-                </div>
-              </div>
-
-              <div class='row'>
-                <div class='input-field col m12'>
-                  <input type='password' name='password' id='password' required />
-                  <label for='password'>Password</label>
-                </div>
-                <label style='float: right;'>
-                  <a><b>Forgot Password?</b></a>
-                </label>
-              </div>
-
-              <br/>
-
-              <center>
-                <div class='row'>
-                  <button style="margin-left:65px;"  type='submit' name='btn_login' class='col  s6 btn btn-small white black-text  waves-effect z-depth-1 y-depth-1'>Login</button>
-                </div>
-              </center>
-
-            </form>
-
+          <div class='row'>
+            <div class='input-field col s12'>
+              <input type="text" name='account' id='account' required />
+              <label for='account'>Account</label>
+            </div>
           </div>
-        </div>
-      </center>
-    </main>
-  </div>
-</div>
-</body>
 
-</html>
+          <div class='row'>
+            <div class='input-field col s12'>
+              <input type="text" name='username' id='username' required />
+              <label for='email'>Username</label>
+            </div>
+          </div>
+
+          <div class='row'>
+            <div class='input-field col m12'>
+              <input type='password' name='password' id='password' required />
+              <label for='password'>Password</label>
+            </div>
+            <label style='float: right;'>
+              <a><b>Forgot Password?</b></a>
+            </label>
+          </div>
+
+          <br/>
+
+          <center>
+            <div class='row'>
+              <button style="margin-left:65px;"  type='submit' name='btn_login' class='col  s6 btn btn-small white black-text  waves-effect z-depth-1 y-depth-1'>Login</button>
+            </div>
+          </center>
+
+        </form>
+
+      </div>
+    </div>
+  </center>
+{% endblock %}

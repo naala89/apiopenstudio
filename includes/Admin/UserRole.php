@@ -4,40 +4,48 @@ namespace Datagator\Admin;
 
 use Datagator\Db;
 
-class UserRole
-{
+/**
+ * Class UserRole.
+ *
+ * @package Datagator\Admin
+ */
+class UserRole {
   private $settings;
 
   /**
    * UserRole constructor.
    *
-   * @param $settings
+   * @param array $settings
+   *   Settings array.
    */
-  public function __construct($settings)
-  {
+  public function __construct(array $settings) {
     $this->settings = $settings;
   }
 
   /**
    * Create a user role.
    *
-   * @param $uid
-   * @param $roleName
+   * @param int $uid
+   *   User ID.
+   * @param int $roleName
+   *   Role name.
    * @param null $appid
+   *   Application ID.
    * @param null $accid
+   *   Account ID.
    *
    * @return bool
+   *   Success.
    */
-  public function create($uid, $roleName, $appid=NULL, $accid=NULL)
-  {
+  public function create($uid, $roleName, $appid = NULL, $accid = NULL) {
     $dsnOptions = '';
-    if (sizeof($this->settings['db']['options']) > 0) {
+    if (count($this->settings['db']['options']) > 0) {
       foreach ($this->settings['db']['options'] as $k => $v) {
-        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
+        $dsnOptions .= count($dsnOptions) == 0 ? '?' : '&';
         $dsnOptions .= "$k=$v";
       }
     }
-    $dsnOptions = sizeof($this->settings['db']['options']) > 0 ? '?'.implode('&', $this->settings['db']['options']) : '';
+    $dsnOptions = count($this->settings['db']['options']) > 0 ? '?' . implode('&', $this->settings['db']['options']) : '';
     $dsn = $this->settings['db']['driver'] . '://'
       . $this->settings['db']['username'] . ':'
       . $this->settings['db']['password'] . '@'
@@ -65,4 +73,5 @@ class UserRole
 
     return TRUE;
   }
+
 }
