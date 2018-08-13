@@ -2,18 +2,51 @@
 
 namespace Datagator\Admin\Controllers;
 
+/**
+ * Class Login
+ * @package Datagator\Admin\Controllers
+ */
 class Login extends Base
 {
+  /**
+   * Login page controller.
+   *
+   * @param $request
+   *   Request object.
+   * @param $response
+   *   Response object.
+   * @param $args
+   *   Request args,
+   *
+   * @return \Psr\Http\Message\ResponseInterface
+   *   Response.
+   */
   public function login($request, $response, $args) {
     $title = 'Login';
-    $menu = ['Login' => '/login'];
-    return $this->view->render($response, 'home.twig', ['menu' => $menu, 'title' => $title]);
-  }
-
-  public function logout($request, $response, $args) {
-    $title = 'Logout';
     $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
     $menu = $this->getMenus($roles);
-    return $this->view->render($response, 'home.twig', ['menu' => $menu, 'title' => $title]);
+    return $this->view->render($response, 'login.twig', ['menu' => $menu, 'title' => $title]);
   }
+
+  /**
+   * Logout page controller.
+   *
+   * @param $request
+   *   Request object.
+   * @param $response
+   *   Response object.
+   * @param $args
+   *   Request args,
+   *
+   * @return \Psr\Http\Message\ResponseInterface
+   *   Response.
+   */
+  public function logout($request, $response, $args) {
+    $title = 'Login';
+    $menu = $this->getMenus([]);
+    unset($_SESSION['token']);
+    unset($_SESSION['account']);
+    return $this->view->render($response, 'login.twig', ['menu' => $menu, 'title' => $title]);
+  }
+
 }

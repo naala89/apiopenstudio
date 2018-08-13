@@ -87,20 +87,29 @@ class Base {
   protected function getMenus($roles) {
     $result = [];
 
-    if (in_array('Owner', $roles)) {
+    if (empty($roles)) {
       $result += [
-        'Applications' => '/applications',
-        'Users' => '/users'
+        'Login' => '/login'
       ];
-    }
-    if (in_array('Administrator', $roles)) {
+    } else {
+      if (in_array('Owner', $roles)) {
+        $result += [
+          'Applications' => '/applications',
+          'Users' => '/users'
+        ];
+      }
+      if (in_array('Administrator', $roles)) {
+        $result += [
+          'Users' => '/users'
+        ];
+      }
+      if (in_array('Developer', $roles)) {
+        $result += [
+          'Resources' => '/resources'
+        ];
+      }
       $result += [
-        'Users' => '/users'
-      ];
-    }
-    if (in_array('Developer', $roles)) {
-      $result += [
-        'Resources' => '/resources'
+        'Logout' => '/logout'
       ];
     }
 
