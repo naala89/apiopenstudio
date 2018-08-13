@@ -5,6 +5,7 @@ use Slim\Views\TwigExtension;
 use Slim\Http\Uri;
 use Slim\Views\Twig;
 use Datagator\Admin\Controllers\Home;
+use Datagator\Admin\Controllers\Login;
 
 /** @var \Slim\App $app */
 $container = $app->getContainer();
@@ -41,4 +42,11 @@ $container['Home'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $view = $container->get('view');
   return new Home($dbSettings, $view);
+};
+
+// Register Login controller.
+$container['Login'] = function (Container $container) {
+  $dbSettings = $container->get('settings')['db'];
+  $view = $container->get('view');
+  return new Login($dbSettings, $view);
 };
