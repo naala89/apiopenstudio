@@ -13,12 +13,12 @@ class Authentication
    * Authentication constructor.
    *
    * @param $settings
-   * @param $uri
+   * @param $loginPath
    */
-  public function __construct($settings, $uri)
+  public function __construct($settings, $loginPath)
   {
     $this->settings = $settings;
-    $this->uri = $uri;
+    $this->loginPath = $loginPath;
   }
 
   /**
@@ -41,14 +41,14 @@ class Authentication
       $token = $user->adminLogin($account, $username, $password);
       if (!$token) {
         unset($_SESSION['token']);
-        $uri = $request->getUri()->withPath($this->uri);
+        $uri = $request->getUri()->withPath($this->loginPath);
         return $response = $response->withRedirect($uri);
       }
       $_SESSION['token'] = $token;
     }
 
     if (!isset($_SESSION['token']) || empty($_SESSION['token'])) {
-      $uri = $request->getUri()->withPath($this->uri);
+      $uri = $request->getUri()->withPath($this->loginPath);
       return $response = $response->withRedirect($uri);
     }
     return $next($request, $response);

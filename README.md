@@ -1,4 +1,4 @@
-Datagator
+Gaterdata
 =========
 
 Requirements
@@ -35,8 +35,8 @@ Production
 
 Remove the production non-critical files and directories:
 
-1. ```$ cd datagator```
-2. ```$ rm -R ./*.md codeception.yml resources tests```
+1. ```$ cd gaterdata```
+2. ```$ rm -R html/admin/install.php ./*.md codeception.yml resources tests```
 
 Config
 ------
