@@ -1,0 +1,103 @@
+{% extends "install.twig" %}
+
+{% set title = "Step 2: Create your user" %}
+
+{% block content %}
+
+<div class="row">
+  <form method="post" action="/install.php">
+    <input type="hidden" name="from_step" value="2">
+    <input type="hidden" name="next_step" value="2">
+
+    <div class="col s12 m6 offset-m3">
+      <p>We will create your account that you will use to login with.</p>
+      <p>This user will be the primary account that controls the account.</p>
+    </div>
+
+    <div class="col s6">
+      <div class="input-field col s12">
+        <label for="username">Username <span>*</span></label>
+        <input id="username" name="username" type="text" placeholder="" required>
+      </div>
+      <div class="input-field col s12">
+        <label for="password">Password <span>*</span></label>
+        <input id="password" name="password" type="password" placeholder="" required>
+      </div>
+      <div class="input-field col s12">
+        <select id="honorific" name="honorific">
+          <option value="" disabled selected>Please select</option>
+          <option value="mr">Mr</option>
+          <option value="ms">Ms</option>
+          <option value="miss">Miss</option>
+          <option value="mrs">Mrs</option>
+          <option value="dr">Dr</option>
+          <option value="prof">Prof</option>
+          <option value="hon">Hon</option>
+        </select>
+        <label for="honorific">Title</label>
+      </div>
+      <div class="input-field col s12">
+        <label for="name_first">First Name</label>
+        <input id="name_first" name="name_first" type="text" placeholder="">
+      </div>
+      <div class="input-field col s12">
+        <label for="name_last">Last Name</label>
+        <input id="name_last" name="name_last" type="text" placeholder="">
+      </div>
+      <div class="input-field col s12">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="text" placeholder="">
+      </div>
+      <div class="input-field col s12">
+        <label for="phone_mobile">Mobile Phone</label>
+        <input id="phone_mobile" name="phone_mobile" type="text" placeholder="">
+      </div>
+      <div class="input-field col s12">
+        <label for="phone_work">Work Phone</label>
+        <input id="phone_work" name="phone_work" type="text" placeholder="">
+      </div>
+    </div>
+    
+    <div class="col s6">
+      <div class="input-field col s12">
+        <label for="company">Company</label>
+        <input id="company" name="company" type="text" placeholder="">
+      </div>
+      <div class="input-field col s12">
+        <label for="website">Website</label>
+        <input id="website" name="website" type="text" placeholder="">
+      </div>
+      <div class="input-field col s12">
+        <label for="address_street">Street Address</label>
+        <input id="address_street" name="address_street" type="text" placeholder="">
+      </div>
+      <div class="input-field col s12">
+        <label for="address_suburb">Suburb</label>
+        <input id="address_suburb" name="address_suburb" type="text" placeholder="">
+      </div>
+      <div class="input-field col s12">
+        <label for="address_city">City</label>
+        <input id="address_city" name="address_city" type="text" placeholder="">
+      </div>
+      <div class="input-field col s12">
+        <label for="address_state">State</label>
+        <input id="address_state" name="address_state" type="text" placeholder="">
+      </div>
+      <div class="input-field col s12">
+        <label for="address_country">Country</label>
+        <input id="address_country" name="address_country" type="text" placeholder="">
+      </div>
+      <div class="input-field col s12">
+        <label for="address_postcode">Postcode</label>
+        <input id="address_postcode" name="address_postcode" type="text" placeholder="">
+      </div>
+    </div>
+
+    <div class="col s12 m6 offset-m3">
+      <button class="btn green lighten-4 black-text" type="submit">Next</button>
+    </div>
+    
+  </form>
+</div>
+{% endblock %}
+

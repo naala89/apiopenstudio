@@ -1,0 +1,30 @@
+{% extends "install.twig" %}
+
+{% set title = "Step 3: Create your account" %}
+
+{% block content %}
+<div class="row">
+  <form method="post" action="/install.php">
+    <input type="hidden" name="from_step" value="3">
+    <input type="hidden" name="next_step" value="3">
+    <input type="hidden" name="uid" value="{{ uid }}">
+    <input type="hidden" name="username" value="{{ username }}">
+
+    <div class="col s12 m6 offset-m3">
+      <p>We will be the name of of your account.</p>
+      <p>An account can have multiple applications (applications can be used for business units or projects).</p>
+
+      <div class="input-field col s12">
+        <label for="account_name">Account name <span class="uk-text-danger">*</span></label>
+        <input id="account_name" name="account_name" type="text" placeholder="" required>
+      </div>
+
+      <div class="col s12 m6 offset-m3">
+        <button class="btn green lighten-4 black-text" type="submit">Next</button>
+      </div>
+
+    </div>
+  </form>
+</div>
+{% endblock %}
+

@@ -21,6 +21,7 @@ $settings['twig'] = [
 
 // Database settings
 $settings['db'] = [
+  'base' => $settings['datagator'] . '/db/dbBase.yaml',
   'driver' => 'mysqli',
   'host' => 'localhost',
   'username' => 'root',

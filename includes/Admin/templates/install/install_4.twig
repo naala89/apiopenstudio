@@ -1,0 +1,26 @@
+{% extends "install.twig" %}
+
+{% set title = "Step 4: Install complete" %}
+
+{% block content %}
+<div class="row">
+  <form method="get" action="/index.php">
+
+    <div class="col s12 m6 offset-m3">
+      <p>You have been granted the `Owner` role for {{ account_name }}.</p>
+      <p>This gives you permissions to create accounts and grant administrator access to other users for your accounts.</p>
+      <p>Click continue to go to the admin area to set up your applications and administrators.</p>
+
+      <div class="input-field col s12">
+        <legend class="uk-legend">Congratulations install complete!</legend>
+      </div>
+
+      <div class="col s12 m6 offset-m3">
+        <button class="btn green lighten-4 black-text" type="submit">Next</button>
+      </div>
+
+    </div>
+  </form>
+</div>
+{% endblock %}
+
