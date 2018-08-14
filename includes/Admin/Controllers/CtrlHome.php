@@ -2,11 +2,14 @@
 
 namespace Datagator\Admin\Controllers;
 
+use Slim\Http\Request;
+use Slim\Http\Response;
+
 /**
  * Class Home
  * @package Datagator\Admin\Controllers
  */
-class Home extends Base
+class CtrlHome extends CtrlBase
 {
   /**
    * Display the home page.
@@ -21,7 +24,7 @@ class Home extends Base
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
    */
-  public function index($request, $response, $args) {
+  public function index(Request $request, Response $response, $args) {
     $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
     $menu = $this->getMenus($roles);
     $title = 'Home';

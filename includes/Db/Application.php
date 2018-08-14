@@ -1,12 +1,13 @@
 <?php
 
-/**
- * Container for data for an application row.
- */
-
 namespace Datagator\Db;
-use Datagator\Core;
 
+/**
+ * Class Application
+ * Container for data for an application row.
+ *
+ * @package Datagator\Db
+ */
 class Application
 {
   protected $appId;
@@ -84,4 +85,5 @@ class Application
       'name' => $this->name,
     );
   }
+
 }

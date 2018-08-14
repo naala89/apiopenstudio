@@ -1,12 +1,18 @@
 <?php
 
 /**
- * Fetch and save application data.
  */
 
 namespace Datagator\Db;
+
 use Datagator\Core;
 
+/**
+ * Class ApplicationMapper
+ * Fetch and save application data.
+ *
+ * @package Datagator\Db
+ */
 class ApplicationMapper
 {
   protected $db;

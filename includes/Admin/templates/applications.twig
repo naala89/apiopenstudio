@@ -1,0 +1,31 @@
+{% extends "page.twig" %}
+
+{% block content %}
+<div class="row">
+  <a class="btn-floating btn-large waves-effect waves-light green modal-trigger" href="#modal-create"><i class="material-icons">add</i></a>
+</div>
+{% for key,value in applications %}
+  <div class="row">
+    {{ value.name }}
+  </div>
+{% endfor %}
+
+  <!-- Create modal -->
+<div id="modal-create" class="modal">
+  <form method="post" action="/applications/create">
+    <div class="modal-content">
+      <h4>Create Application</h4>
+      <p>Enter the name of your application</p>
+      <div class="input-field">
+        <input id="name" type="text" class="validate" name="name">
+        <label for="name">Application Name</label>
+      </div>
+    </div>
+    <div class="modal-footer"
+      <div class="input-field col s6">
+        <button class="btn waves-effect waves-light" type="submit" name="create">Create</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

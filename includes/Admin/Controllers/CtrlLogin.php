@@ -6,7 +6,7 @@ namespace Datagator\Admin\Controllers;
  * Class Login
  * @package Datagator\Admin\Controllers
  */
-class Login extends Base
+class CtrlLogin extends CtrlBase
 {
   /**
    * Login page controller.
@@ -46,6 +46,7 @@ class Login extends Base
     $menu = $this->getMenus([]);
     unset($_SESSION['token']);
     unset($_SESSION['account']);
+    unset($_SESSION['accountId']);
     return $this->view->render($response, 'login.twig', ['menu' => $menu, 'title' => $title]);
   }
 
