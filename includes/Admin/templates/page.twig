@@ -7,6 +7,7 @@
     <meta name="robots" content="noindex,nofollow" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
     <script src="/js/jquery.min.js"></script>
     <script src="/js/materialize.min.js"></script>
     <script src="/js/main.js"></script>
@@ -16,32 +17,34 @@
 
 <div class="container">
 
-  <nav>
-    <div class="nav-wrapper grey darken-3 black-text">
-      <a href="/" class="brand-logo">Gaterdata</a>
-      <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-      <ul class="right hide-on-med-and-down">
-        {% for key,value in menu %}
-          <li>
-            <a href="{{ value }}">{{ key }}</a>
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
-  </nav>
-  <ul class="sidenav grey darken-3" id="mobile-demo">
-    {% for key,value in menu %}
-      <li >
-        <a href="{{ value }}" class=" white-text">{{ key }}</a>
-      </li>
-    {% endfor %}
-  </ul>
+  <header>
+    <nav>
+      <div class="nav-wrapper grey darken-3 black-text">
+        <a href="/" class="brand-logo">Gaterdata</a>
+        <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        <ul class="right hide-on-med-and-down">
+          {% for key,value in menu %}
+            <li>
+              <a href="{{ value }}">{{ key }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </nav>
+    <ul class="sidenav grey darken-3" id="mobile-demo">
+      {% for key,value in menu %}
+        <li >
+          <a href="{{ value }}" class=" white-text">{{ key }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </header>
 
   <main>
 
     <div class="row">
       <div class="col s12">
-        <h5>{{ title }}</h5>
+        <h5>{{ title | raw }}</h5>
       </div>
     </div>
 
@@ -55,6 +58,7 @@
       {% if message.type == 'error' %}
         {% set message_colour = 'red lighten-4' %}
       {% endif %}
+
       <div class="section"></div>
       <div class="row">
         <div class="col s12 m6 offset-m3">
@@ -73,10 +77,30 @@
 
   </main>
 
-  <footer>
-    {% block footer %}
-      &copy; Copyright 2018 by <a href="http://gaterdata.com/">Gaterdata</a>.
-    {% endblock %}
+  <footer class="page-footer">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">Footer Content</h5>
+          <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
+        </div>
+        <div class="col l4 offset-l2 s12">
+          <h5 class="white-text">Links</h5>
+          <ul>
+            <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
+            <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
+            <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
+            <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+        &copy; Copyright 2018 by <a href="http://gaterdata.com/">Gaterdata</a>
+        <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+      </div>
+    </div>
   </footer>
 
 </div>

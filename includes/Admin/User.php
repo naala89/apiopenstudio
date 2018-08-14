@@ -90,7 +90,7 @@ class User
     $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime($this->settings['user']['token_life'])));
     $userMapper->save($user);
 
-    return $token;
+    return ['token' => $token, 'account' => $account->getName(), 'accountId' => $account->getAccId()];
   }
 
   /**

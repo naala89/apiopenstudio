@@ -4,8 +4,7 @@ use Slim\Container;
 use Slim\Views\TwigExtension;
 use Slim\Http\Uri;
 use Slim\Views\Twig;
-use Datagator\Admin\Controllers\Home;
-use Datagator\Admin\Controllers\Login;
+use Datagator\Admin\Controllers;
 
 /** @var \Slim\App $app */
 $container = $app->getContainer();
@@ -38,15 +37,22 @@ $container['view'] = function (Container $container) {
 };
 
 // Register Home controller.
-$container['Home'] = function (Container $container) {
+$container['CtrlHome'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $view = $container->get('view');
-  return new Home($dbSettings, $view);
+  return new Controllers\CtrlHome($dbSettings, $view);
 };
 
 // Register Login controller.
-$container['Login'] = function (Container $container) {
+$container['CtrlLogin'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $view = $container->get('view');
-  return new Login($dbSettings, $view);
+  return new Controllers\CtrlLogin($dbSettings, $view);
+};
+
+// Register Application controller.
+$container['CtrlApplication'] = function (Container $container) {
+  $dbSettings = $container->get('settings')['db'];
+  $view = $container->get('view');
+  return new Controllers\CtrlApplication($dbSettings, $view);
 };

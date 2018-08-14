@@ -47,15 +47,17 @@ class Authentication {
 
     if (!empty($account) || !empty($username) || !empty($password)) {
       $user = new User($this->settings);
-      $token = $user->adminLogin($account, $username, $password);
-      if (!$token) {
+      $result = $user->adminLogin($account, $username, $password);
+      if (!$result) {
         unset($_SESSION['token']);
+        unset($_SESSION['accountId']);
         unset($_SESSION['account']);
         $uri = $request->getUri()->withPath($this->loginPath);
         return $response = $response->withRedirect($uri);
       }
-      $_SESSION['token'] = $token;
-      $_SESSION['account'] = $account;
+      $_SESSION['token'] = $result['token'];
+      $_SESSION['account'] = $result['account'];
+      $_SESSION['accountId'] = $result['accountId'];
     }
 
     if (!isset($_SESSION['token']) || empty($_SESSION['token'])) {

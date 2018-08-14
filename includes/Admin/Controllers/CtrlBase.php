@@ -13,7 +13,7 @@ use Slim\Views\Twig;
  *
  * @package Datagator\Admin\Controllers
  */
-class Base {
+class CtrlBase {
   protected $dbSettings;
   protected $db;
   protected $view;
