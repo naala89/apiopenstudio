@@ -14,10 +14,10 @@ use Slim\Views\Twig;
  * @package Datagator\Admin\Controllers
  */
 class CtrlBase {
-  protected $dbSettings;
   protected $db;
   protected $view;
   protected $menu;
+  protected $permittedRoles = [];
 
   /**
    * Base constructor.
@@ -28,7 +28,6 @@ class CtrlBase {
    *   View container.
    */
   public function __construct(array $dbSettings, Twig $view) {
-    $this->dbSettings = $dbSettings;
     $this->view = $view;
 
     $dsnOptions = '';
@@ -84,7 +83,16 @@ class CtrlBase {
     return $result;
   }
 
-  protected function getMenus($roles) {
+  /**
+   * Get available menu items for user's roles.
+   *
+   * @param array $roles
+   *   Array of users roles.
+   *
+   * @return array
+   *   Associative array of menu title and links.
+   */
+  protected function getMenus(array $roles) {
     $result = [];
 
     if (empty($roles)) {
@@ -114,6 +122,24 @@ class CtrlBase {
     }
 
     return $result;
+  }
+
+  /**
+   * Validate user access by role.
+   *
+   * @param array $roles
+   *   Array of user roles (text).
+   *
+   * @return bool
+   *   Access validated.
+   */
+  protected function checkAccess(array $roles) {
+    foreach ($this->permittedRoles as $permittedRole) {
+      if (in_array($permittedRole, $roles)) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
 }
