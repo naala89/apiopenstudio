@@ -21,3 +21,4 @@ $app->post('/logout', 'CtrlLogin:logout');
  */
 $app->get('/applications', 'CtrlApplication:index')->add(new Authentication($settings, '/login'));
 $app->post('/applications/create', 'CtrlApplication:create')->add(new Authentication($settings, '/login'));
+$app->post('/applications/edit', 'CtrlApplication:edit')->add(new Authentication($settings, '/login'));
