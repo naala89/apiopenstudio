@@ -23,8 +23,7 @@ class CtrlLogin extends CtrlBase
    */
   public function login($request, $response, $args) {
     $title = 'Login';
-    $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
-    $menu = $this->getMenus($roles);
+    $menu = $this->getMenus([]);
     return $this->view->render($response, 'login.twig', ['menu' => $menu, 'title' => $title]);
   }
 
