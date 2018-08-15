@@ -13,10 +13,10 @@
           {{ value.name }}
         </div>
         <div class="col s1">
-          <i class="material-icons modal-app-edit" app-id="{{ value.appId }}" app-name="{{ value.name }}">edit</i>
+          <i class="material-icons modal-app-edit-trigger" app-id="{{ value.appId }}" app-name="{{ value.name }}">edit</i>
         </div>
         <div class="col s1">
-          <i class="material-icons modal-app-delete">delete</i>
+          <i class="material-icons modal-app-delete-trigger" app-id="{{ value.appId }}" app-name="{{ value.name }}">delete</i></a>
         </div>
       </div>
     </div>
@@ -44,7 +44,7 @@
   </div>
 
   <!-- Edit modal -->
-  <div id="modal-edit" class="modal">
+  <div id="modal-app-edit" class="modal">
     <form method="post" action="/applications/edit" id="application-edit">
       <input type="hidden" name="edit-app-id" id="edit-app-id" value="">
       <div class="modal-content">
@@ -57,8 +57,26 @@
       </div>
       <div class="modal-footer">
         <div class="input-field col s6">
-          <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+          <a class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
           <button class="btn waves-effect waves-light" type="submit" name="create">Edit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Delete modal -->
+  <div id="modal-app-delete" class="modal">
+    <form method="post" action="/applications/delete" id="application-delete">
+      <input type="hidden" name="delete-app-id" id="delete-app-id" value="">
+      <div class="modal-content">
+        <h4>Delete Application</h4>
+        <p>Delete application "<span id="delete-app-name"></span>"?</p>
+        <p>WARNING: this will also delete any resources belonging to the application!</p>
+      </div>
+      <div class="modal-footer">
+        <div class="input-field col s6">
+          <a class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+          <button class="btn waves-effect waves-light" type="submit" name="create">Delete</button>
         </div>
       </div>
     </form>

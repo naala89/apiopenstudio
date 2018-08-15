@@ -112,7 +112,7 @@ class CtrlApplication extends CtrlBase
 
     $message = [
       'type' => 'info',
-      'text' => 'Application edit'
+      'text' => 'Application edited'
     ];
     if (!empty($allPostVars['edit-app-id']) && !empty($allPostVars['edit-app-name'])) {
       $result = $application->update($allPostVars['edit-app-id'], $allPostVars['edit-app-name']);
@@ -126,6 +126,53 @@ class CtrlApplication extends CtrlBase
       $message = [
         'type' => 'error',
         'text' => 'Could not edit application - no name or ID received'
+      ];
+    }
+
+    $applications = $application->getByAccount($_SESSION['accountId']);
+    return $this->view->render($response, 'applications.twig', ['menu' => $menu, 'title' => $title, 'applications' => $applications, 'message' => $message]);
+  }
+
+  /**
+   * Delete an application.
+   *
+   * @param $request
+   *   Request object.
+   * @param $response
+   *   Response object.
+   * @param $args
+   *   Request args,
+   *
+   * @return \Psr\Http\Message\ResponseInterface
+   *   Response.
+   */
+  public function delete(Request $request, Response $response, $args) {
+    $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
+    if (!in_array('Owner', $roles)) {
+      $response->withRedirect('/');
+    }
+
+    $menu = $this->getMenus($roles);
+    $title = 'Applications';
+    $allPostVars = $request->getParsedBody();
+    $application = new Admin\Application($this->dbSettings);
+
+    $message = [
+      'type' => 'info',
+      'text' => 'Application deleted'
+    ];
+    if (!empty($allPostVars['delete-app-id'])) {
+      $result = $application->delete($allPostVars['delete-app-id']);
+      if (!$result) {
+        $message = [
+          'type' => 'error',
+          'text' => 'Failed to edit application'
+        ];
+      }
+    } else {
+      $message = [
+        'type' => 'error',
+        'text' => 'Could not delete application - no ID received'
       ];
     }
 
