@@ -104,4 +104,18 @@ class Application
     return $appId;
   }
 
+  /**
+   * Delete an application.
+   *
+   * @param string $appId
+   *   ID of the application.
+   *
+   * @return bool|int
+   */
+  public function delete($appId) {
+    $application = new Db\Application($appId, NULL, NULL);
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    return $applicationMapper->delete($application);
+  }
+
 }
