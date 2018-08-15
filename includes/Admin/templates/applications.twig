@@ -6,26 +6,55 @@
 </div>
 {% for key,value in applications %}
   <div class="row">
-    {{ value.name }}
+    <div class="col s6 offset-l3">
+      <div class="divider"></div>
+      <div class="row">
+        <div class="col s8">
+          {{ value.name }}
+        </div>
+        <div class="col s2">
+          <a class="btn-floating btn-medium waves-effect waves-light green modal-trigger" href="#modal-edit"><i class="material-icons">edit</i></a>
+        </div>
+      </div>
+    </div>
   </div>
 {% endfor %}
 
   <!-- Create modal -->
-<div id="modal-create" class="modal">
-  <form method="post" action="/applications/create">
-    <div class="modal-content">
-      <h4>Create Application</h4>
-      <p>Enter the name of your application</p>
-      <div class="input-field">
-        <input id="name" type="text" class="validate" name="name">
-        <label for="name">Application Name</label>
+  <div id="modal-create" class="modal">
+    <form method="post" action="/applications/create">
+      <div class="modal-content">
+        <h4>Create Application</h4>
+        <p>Enter the name of your application</p>
+        <div class="input-field">
+          <input id="name" type="text" class="validate" name="name">
+          <label for="name">Application Name</label>
+        </div>
       </div>
-    </div>
-    <div class="modal-footer"
+      <div class="modal-footer"
       <div class="input-field col s6">
         <button class="btn waves-effect waves-light" type="submit" name="create">Create</button>
       </div>
-    </div>
+  </div>
   </form>
-</div>
+  </div>
+
+  <!-- Edit modal -->
+  <div id="modal-edit" class="modal">
+    <form method="post" action="/applications/edit">
+      <div class="modal-content">
+        <h4>Create Application</h4>
+        <p>Enter the name of your application</p>
+        <div class="input-field">
+          <input id="name" type="text" class="validate" name="name">
+          <label for="name">Application Name</label>
+        </div>
+      </div>
+      <div class="modal-footer"
+      <div class="input-field col s6">
+        <button class="btn waves-effect waves-light" type="submit" name="create">Create</button>
+      </div>
+  </div>
+  </form>
+  </div>
 {% endblock %}
