@@ -11,15 +11,31 @@ use Datagator\Db;
  */
 class UserRole {
   private $settings;
+  private $db;
 
   /**
    * UserRole constructor.
    *
    * @param array $settings
-   *   Settings array.
    */
-  public function __construct(array $settings) {
+  public function __construct(array $settings)
+  {
     $this->settings = $settings;
+
+    $dsnOptions = '';
+    if (sizeof($this->settings['db']['options']) > 0) {
+      foreach ($this->settings['db']['options'] as $k => $v) {
+        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
+        $dsnOptions .= "$k=$v";
+      }
+    }
+    $dsnOptions = sizeof($this->settings['db']['options']) > 0 ? '?'.implode('&', $this->settings['db']['options']) : '';
+    $dsn = $this->settings['db']['driver'] . '://'
+      . $this->settings['db']['username'] . ':'
+      . $this->settings['db']['password'] . '@'
+      . $this->settings['db']['host'] . '/'
+      . $this->settings['db']['database'] . $dsnOptions;
+    $this->db = \ADONewConnection($dsn);
   }
 
   /**
@@ -38,22 +54,7 @@ class UserRole {
    *   Success.
    */
   public function create($uid, $roleName, $appid = NULL, $accid = NULL) {
-    $dsnOptions = '';
-    if (count($this->settings['db']['options']) > 0) {
-      foreach ($this->settings['db']['options'] as $k => $v) {
-        $dsnOptions .= count($dsnOptions) == 0 ? '?' : '&';
-        $dsnOptions .= "$k=$v";
-      }
-    }
-    $dsnOptions = count($this->settings['db']['options']) > 0 ? '?' . implode('&', $this->settings['db']['options']) : '';
-    $dsn = $this->settings['db']['driver'] . '://'
-      . $this->settings['db']['username'] . ':'
-      . $this->settings['db']['password'] . '@'
-      . $this->settings['db']['host'] . '/'
-      . $this->settings['db']['database'] . $dsnOptions;
-    $db = \ADONewConnection($dsn);
-
-    $roleMapper = new Db\RoleMapper($db);
+    $roleMapper = new Db\RoleMapper($this->db);
     $role = $roleMapper->findByName($roleName);
     $rid = $role->getRid();
 
@@ -65,7 +66,7 @@ class UserRole {
       $accid
     );
 
-    $userRoleMapper = new Db\UserRoleMapper($db);
+    $userRoleMapper = new Db\UserRoleMapper($this->db);
     $result = $userRoleMapper->save($userRole);
     if (!$result) {
       return FALSE;
