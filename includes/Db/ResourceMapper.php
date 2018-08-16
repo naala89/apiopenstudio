@@ -5,16 +5,20 @@
  */
 
 namespace Datagator\Db;
+
 use Datagator\Core;
+use \ADOConnection;
 
 class ResourceMapper
 {
   protected $db;
 
   /**
-   * @param $dbLayer
+   * ResourceMapper constructor.
+   *
+   * @param ADOConnection $dbLayer
    */
-  public function __construct($dbLayer)
+  public function __construct(ADOConnection $dbLayer)
   {
     $this->db = $dbLayer;
   }

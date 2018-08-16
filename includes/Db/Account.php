@@ -55,9 +55,10 @@ class Account
   }
 
   /**
-   * Display contents for debugging
+   * Return the values as an associative array.
+   * @return array
    */
-  public function debug()
+  public function dump()
   {
     return array(
       'accid' => $this->accId,

@@ -5,16 +5,20 @@
  */
 
 namespace Datagator\Db;
+
 use Datagator\Core;
+use \ADOConnection;
 
 class VarsMapper
 {
   protected $db;
 
   /**
-   * @param $dbLayer
+   * VarsMapper constructor.
+   *
+   * @param ADOConnection $dbLayer
    */
-  public function __construct($dbLayer)
+  public function __construct(ADOConnection $dbLayer)
   {
     $this->db = $dbLayer;
   }

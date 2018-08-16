@@ -6,6 +6,7 @@
 namespace Datagator\Db;
 
 use Datagator\Core;
+use \ADOConnection;
 
 /**
  * Class ApplicationMapper
@@ -18,9 +19,11 @@ class ApplicationMapper
   protected $db;
 
   /**
-   * @param $dbLayer
+   * ApplicationMapper constructor.
+   *
+   * @param ADOConnection $dbLayer
    */
-  public function __construct($dbLayer)
+  public function __construct(ADOConnection $dbLayer)
   {
     $this->db = $dbLayer;
   }
