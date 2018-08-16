@@ -12,6 +12,8 @@ use Datagator\Admin;
  */
 class CtrlApplication extends CtrlBase
 {
+  protected $permittedRoles = ['Owner'];
+
   /**
    * Display the applications page.
    *
@@ -27,13 +29,13 @@ class CtrlApplication extends CtrlBase
    */
   public function index(Request $request, Response $response, $args) {
     $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
-    if (!in_array('Owner', $roles)) {
+    if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
     }
 
     $menu = $this->getMenus($roles);
     $title = 'Applications';
-    $application = new Admin\Application($this->dbSettings);
+    $application = new Admin\Application($this->db);
     $applications = $application->getByAccount($_SESSION['accountId']);
 
     return $this->view->render($response, 'applications.twig', ['menu' => $menu, 'title' => $title, 'applications' => $applications]);
@@ -54,14 +56,14 @@ class CtrlApplication extends CtrlBase
    */
   public function create(Request $request, Response $response, $args) {
     $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
-    if (!in_array('Owner', $roles)) {
+    if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
     }
 
     $menu = $this->getMenus($roles);
     $title = 'Applications';
     $allPostVars = $request->getParsedBody();
-    $application = new Admin\Application($this->dbSettings);
+    $application = new Admin\Application($this->db);
 
     $message = [
       'type' => 'info',
@@ -101,14 +103,14 @@ class CtrlApplication extends CtrlBase
    */
   public function edit(Request $request, Response $response, $args) {
     $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
-    if (!in_array('Owner', $roles)) {
+    if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
     }
 
     $menu = $this->getMenus($roles);
     $title = 'Applications';
     $allPostVars = $request->getParsedBody();
-    $application = new Admin\Application($this->dbSettings);
+    $application = new Admin\Application($this->db);
 
     $message = [
       'type' => 'info',
@@ -148,14 +150,14 @@ class CtrlApplication extends CtrlBase
    */
   public function delete(Request $request, Response $response, $args) {
     $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
-    if (!in_array('Owner', $roles)) {
+    if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
     }
 
     $menu = $this->getMenus($roles);
     $title = 'Applications';
     $allPostVars = $request->getParsedBody();
-    $application = new Admin\Application($this->dbSettings);
+    $application = new Admin\Application($this->db);
 
     $message = [
       'type' => 'info',

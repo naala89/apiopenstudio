@@ -17,7 +17,6 @@ class User
   public function __construct($settings)
   {
     $this->settings = $settings;
-    $_SESSION['token'] = '';
   }
 
   /**
@@ -80,7 +79,7 @@ class User
       && !empty($user->getTokenTtl())
       && Core\Utilities::date_mysql2php($user->getTokenTtl()) > time()) {
       $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime($this->settings['user']['token_life'])));
-      return $user->getToken();
+      return ['token' => $user->getToken(), 'account' => $account->getName(), 'accountId' => $account->getAccId()];
     }
 
     //perform login
@@ -91,27 +90,6 @@ class User
     $userMapper->save($user);
 
     return ['token' => $token, 'account' => $account->getName(), 'accountId' => $account->getAccId()];
-  }
-
-  /**
-   * Log a user out.
-   *
-   * @return bool
-   */
-  public function logout()
-  {
-    $_SESSION['token'] = '';
-    return TRUE;
-  }
-
-  /**
-   * Check if a user is logged in.
-   *
-   * @return bool
-   */
-  public function isLoggedIn()
-  {
-    return $_SESSION['token'] != '';
   }
 
   /**
