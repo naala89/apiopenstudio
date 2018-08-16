@@ -29,6 +29,42 @@ Installation
 11. Update ```httpd.conf```
     2. ```ServerSignature Off```
     3. ```ServerTokens Prod```
+
+### Apache vhost
+
+#### Admin
+
+    <VirtualHost *:80>
+        ServerName admin.gaterdata.com
+        ServerAdmin webmaster@gaterdata.com
+        DocumentRoot /path/to/gaterdata/html/admin
+        
+        <Directory /path/to/gaterdata/html/admin>
+            AllowOverride All
+            Order allow,deny
+            Allow from all
+        </Directory>
+    
+        ErrorLog ${APACHE_LOG_DIR}/admin.gaterdata.error.log
+        CustomLog ${APACHE_LOG_DIR}/admin.gaterdata.access.log combined
+    </VirtualHost>
+
+#### Api
+
+    <VirtualHost *:80>
+        ServerName datagator.local.com
+        ServerAdmin webmaster@localhost
+        DocumentRoot /path/to/gaterdata
+        
+        <Directory /path/to/gaterdata>
+            AllowOverride All
+            Order allow,deny
+            Allow from all
+        </Directory>
+        
+        ErrorLog ${APACHE_LOG_DIR}/gaterdata.error.log
+        CustomLog ${APACHE_LOG_DIR}/gaterdata.access.log combined
+    </VirtualHost>
     
 Production
 ----------

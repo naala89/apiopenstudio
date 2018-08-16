@@ -25,7 +25,6 @@ class CtrlHome extends CtrlBase
    *   Response.
    */
   public function index(Request $request, Response $response, $args) {
-    var_dump($_SESSION);exit;
     $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
     $menu = $this->getMenus($roles);
     $title = 'Home';
