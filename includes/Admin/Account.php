@@ -7,26 +7,17 @@ use Datagator\Db;
 class Account
 {
   private $settings;
+  private $db;
 
   /**
    * Account constructor.
    *
-   * @param $settings
+   * @param array $settings
    */
-  public function __construct($settings)
+  public function __construct(array $settings)
   {
     $this->settings = $settings;
-  }
 
-  /**
-   * Create an account.
-   *
-   * @param null $name
-   *
-   * @return bool|int
-   */
-  public function create($name=NULL)
-  {
     $dsnOptions = '';
     if (sizeof($this->settings['db']['options']) > 0) {
       foreach ($this->settings['db']['options'] as $k => $v) {
@@ -40,13 +31,23 @@ class Account
       . $this->settings['db']['password'] . '@'
       . $this->settings['db']['host'] . '/'
       . $this->settings['db']['database'] . $dsnOptions;
-    $db = \ADONewConnection($dsn);
+    $this->db = \ADONewConnection($dsn);
+  }
 
+  /**
+   * Create an account.
+   *
+   * @param null $name
+   *
+   * @return bool|int
+   */
+  public function create($name=NULL)
+  {
     $account = new Db\Account(
       NULL,
       $name
     );
-    $accountMapper = new Db\AccountMapper($db);
+    $accountMapper = new Db\AccountMapper($this->db);
     $result = $accountMapper->save($account);
     if (!$result) {
       return FALSE;

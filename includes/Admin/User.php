@@ -4,32 +4,22 @@ namespace Datagator\Admin;
 
 use Datagator\Db;
 use Datagator\Core;
+use ADOConnection;
 
 class User
 {
   private $settings;
+  private $db;
 
   /**
    * User constructor.
    *
-   * @param $settings
+   * @param array $settings
    */
-  public function __construct($settings)
+  public function __construct(array $settings)
   {
     $this->settings = $settings;
-  }
 
-  /**
-   * Log a user in.
-   *
-   * @param $account
-   * @param $username
-   * @param $password
-   *
-   * @return bool|string
-   */
-  public function adminLogin($account, $username, $password)
-  {
     $dsnOptions = '';
     if (sizeof($this->settings['db']['options']) > 0) {
       foreach ($this->settings['db']['options'] as $k => $v) {
@@ -43,21 +33,33 @@ class User
       . $this->settings['db']['password'] . '@'
       . $this->settings['db']['host'] . '/'
       . $this->settings['db']['database'] . $dsnOptions;
-    $db = \ADONewConnection($dsn);
+    $this->db = \ADONewConnection($dsn);
+  }
 
-    $accountMapper = new Db\AccountMapper($db);
+  /**
+   * Log a user in.
+   *
+   * @param $account
+   * @param $username
+   * @param $password
+   *
+   * @return bool|string
+   */
+  public function adminLogin($account, $username, $password)
+  {
+    $accountMapper = new Db\AccountMapper($this->db);
     $account = $accountMapper->findByName($account);
     if (empty($account->getAccId())) {
       return FALSE;
     }
 
-    $userMapper = new Db\UserMapper($db);
+    $userMapper = new Db\UserMapper($this->db);
     $user = $userMapper->findByUsername($username);
     if (empty($user->getUid())) {
       return FALSE;
     }
 
-    $userRoleMapper = new Db\UserRoleMapper($db);
+    $userRoleMapper = new Db\UserRoleMapper($this->db);
     $userRoles = $userRoleMapper->findBy($user->getUid(), NULL, NULL, $account->getAccId());
     if (empty($userRoles)) {
       return FALSE;
@@ -139,22 +141,7 @@ class User
     );
     $user->setPassword($password);
 
-    $dsnOptions = '';
-    if (sizeof($this->settings['db']['options']) > 0) {
-      foreach ($this->settings['db']['options'] as $k => $v) {
-        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
-        $dsnOptions .= "$k=$v";
-      }
-    }
-    $dsnOptions = sizeof($this->settings['db']['options']) > 0 ? '?'.implode('&', $this->settings['db']['options']) : '';
-    $dsn = $this->settings['db']['driver'] . '://'
-      . $this->settings['db']['username'] . ':'
-      . $this->settings['db']['password'] . '@'
-      . $this->settings['db']['host'] . '/'
-      . $this->settings['db']['database'] . $dsnOptions;
-    $db = \ADONewConnection($dsn);
-
-    $userMapper = new Db\UserMapper($db);
+    $userMapper = new Db\UserMapper($this->db);
     $result = $userMapper->save($user);
     if (!$result) {
       return FALSE;
@@ -162,4 +149,65 @@ class User
     $user = $userMapper->findByUsername($username);
     return $user->getUid();
   }
+
+  /**
+   * Find all users associated with am account.
+   *
+   * @param int $accId
+   *   Account ID.
+   *
+   * @return array
+   *   Array of users.
+   */
+  public function findByAccount($accId) {
+    $userRoles = [];
+    $users = [];
+
+    // Find account user roles.
+    $userRoleMapper = new Db\UserRoleMapper($this->db);
+    $results = $userRoleMapper->findByAccId($accId);
+    foreach ($results as $result) {
+      $userRoles += $this->findByApplication($result->getAppId());
+    }
+    $userRoles += $result->dump();
+
+    var_dump($userRoles);exit;
+
+    // Find applications associated with the account.
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    $applications = $applicationMapper->findByAccId($accId);
+    // Find user roles associated with each application.
+    foreach ($applications as $application) {
+      $userRoles += $this->findByApplication($application->getAppId());
+    }
+
+    // Find users from $userRoles.
+    $userMapper = new Db\UserMapper($this->db);
+    foreach ($userRoles as $userRole) {
+      $result = $userMapper->findByUid($userRole['uid']);
+      $users += $result->dump();
+    }
+
+    return $users;
+  }
+
+  /**
+   * Find all users associated with am application.
+   *
+   * @param int $appId
+   *   Application ID.
+   *
+   * @return array
+   *   Array of users.
+   */
+  public function findByApplication($appId) {
+    $userRoles = [];
+    $userRoleMapper = new Db\UserRoleMapper($this->db);
+    $results = $userRoleMapper->findByAppId($appId);
+    foreach ($results as $result) {
+      $userRoles += $result->dump();
+    }
+    return $userRoles;
+  }
+
 }

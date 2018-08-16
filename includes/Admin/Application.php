@@ -6,15 +6,32 @@ use Datagator\Db;
 
 class Application
 {
+  private $settings;
   private $db;
 
   /**
    * Application constructor.
    *
-   * @param $db
+   * @param array $settings
    */
-  public function __construct($db) {
-    $this->db = $db;
+  public function __construct(array $settings)
+  {
+    $this->settings = $settings;
+
+    $dsnOptions = '';
+    if (sizeof($this->settings['db']['options']) > 0) {
+      foreach ($this->settings['db']['options'] as $k => $v) {
+        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
+        $dsnOptions .= "$k=$v";
+      }
+    }
+    $dsnOptions = sizeof($this->settings['db']['options']) > 0 ? '?'.implode('&', $this->settings['db']['options']) : '';
+    $dsn = $this->settings['db']['driver'] . '://'
+      . $this->settings['db']['username'] . ':'
+      . $this->settings['db']['password'] . '@'
+      . $this->settings['db']['host'] . '/'
+      . $this->settings['db']['database'] . $dsnOptions;
+    $this->db = \ADONewConnection($dsn);
   }
 
   /**
@@ -30,7 +47,7 @@ class Application
     $results = $applicationMapper->findByAccId($accId);
     $applications = [];
     foreach ($results as $result) {
-      $applications[] = $result->debug();
+      $applications[] = $result->dump();
     }
 
     return $applications;
