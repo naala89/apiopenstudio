@@ -6,35 +6,21 @@ use Datagator\Db;
 
 class Application
 {
-  private $dbSettings;
+  private $db;
 
   /**
    * Application constructor.
-   * 
-   * @param $dbSettings
+   *
+   * @param $db
    */
-  public function __construct($dbSettings) {
-    $this->dbSettings = $dbSettings;
-    $dsnOptions = '';
-    if (sizeof($this->dbSettings['options']) > 0) {
-      foreach ($this->dbSettings['options'] as $k => $v) {
-        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
-        $dsnOptions .= "$k=$v";
-      }
-    }
-    $dsnOptions = sizeof($this->dbSettings['options']) > 0 ? '?'.implode('&', $this->dbSettings['options']) : '';
-    $dsn = $this->dbSettings['driver'] . '://'
-      . $this->dbSettings['username'] . ':'
-      . $this->dbSettings['password'] . '@'
-      . $this->dbSettings['host'] . '/'
-      . $this->dbSettings['database'] . $dsnOptions;
-    $this->db = \ADONewConnection($dsn);
+  public function __construct($db) {
+    $this->db = $db;
   }
 
   /**
    * Get all an applications for an account.
    *
-   * @param string $accId
+   * @param int $accId
    *   ID of the account.
    *
    * @return array

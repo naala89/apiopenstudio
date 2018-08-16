@@ -31,18 +31,18 @@ class CtrlBase {
     $this->view = $view;
 
     $dsnOptions = '';
-    if (count($this->dbSettings['options']) > 0) {
-      foreach ($this->dbSettings['options'] as $k => $v) {
+    if (count($dbSettings['options']) > 0) {
+      foreach ($dbSettings['options'] as $k => $v) {
         $dsnOptions .= count($dsnOptions) == 0 ? '?' : '&';
         $dsnOptions .= "$k=$v";
       }
     }
-    $dsnOptions = count($this->dbSettings['options']) > 0 ? '?' . implode('&', $this->dbSettings['options']) : '';
-    $dsn = $this->dbSettings['driver'] . '://'
-      . $this->dbSettings['username'] . ':'
-      . $this->dbSettings['password'] . '@'
-      . $this->dbSettings['host'] . '/'
-      . $this->dbSettings['database'] . $dsnOptions;
+    $dsnOptions = count($dbSettings['options']) > 0 ? '?' . implode('&', $dbSettings['options']) : '';
+    $dsn = $dbSettings['driver'] . '://'
+      . $dbSettings['username'] . ':'
+      . $dbSettings['password'] . '@'
+      . $dbSettings['host'] . '/'
+      . $dbSettings['database'] . $dsnOptions;
     $this->db = \ADONewConnection($dsn);
   }
 
@@ -134,6 +134,9 @@ class CtrlBase {
    *   Access validated.
    */
   protected function checkAccess(array $roles) {
+    if (empty($this->permittedRoles)) {
+      return TRUE;
+    }
     foreach ($this->permittedRoles as $permittedRole) {
       if (in_array($permittedRole, $roles)) {
         return TRUE;
