@@ -55,8 +55,8 @@ switch ($step) {
   case 1:
     // Create and pre-populate the database.
     // If re-installation, remove any current logins.
-    if (isset($_SESSION['account'])) {
-      unset ($_SESSION['account']);
+    if (isset($_SESSION['accountName'])) {
+      unset ($_SESSION['accountName']);
     }
     if (isset($_SESSION['accountId'])) {
       unset ($_SESSION['accountId']);
