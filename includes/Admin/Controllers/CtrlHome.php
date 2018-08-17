@@ -6,25 +6,26 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 
 /**
- * Class Home
+ * Class Home.
+ *
  * @package Datagator\Admin\Controllers
  */
-class CtrlHome extends CtrlBase
-{
+class CtrlHome extends CtrlBase {
+
   /**
    * Display the home page.
    *
-   * @param $request
+   * @param \Slim\Http\Request $request
    *   Request object.
-   * @param $response
+   * @param \Slim\Http\Response $response
    *   Response object.
-   * @param $args
-   *   Request args,
+   * @param array $args
+   *   Request args.
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
    */
-  public function index(Request $request, Response $response, $args) {
+  public function index(Request $request, Response $response, array $args) {
     $token = isset($_SESSION['token']) ? $_SESSION['token'] : '';
     $accountId = isset($_SESSION['accountId']) ? $_SESSION['accountId'] : '';
     $roles = $this->getRoles($token, $accountId);

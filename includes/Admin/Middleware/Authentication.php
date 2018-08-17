@@ -3,6 +3,8 @@
 namespace Datagator\Admin\Middleware;
 
 use Datagator\Admin\User;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class Authentication.
@@ -39,14 +41,14 @@ class Authentication {
    * @return \Psr\Http\Message\ResponseInterface
    *   Response Interface.
    */
-  public function __invoke($request, $response, callable $next) {
+  public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next) {
     // If login post, get login the values.
     $data = $request->getParsedBody();
     $accountName = isset($data['account']) ? $data['account'] : '';
     $username = isset($data['username']) ? $data['username'] : '';
     $password = isset($data['password']) ? $data['password'] : '';
 
-    // This is a login attempt
+    // This is a login attempt.
     if (!empty($accountName) || !empty($username) || !empty($password)) {
       $userHelper = new User($this->settings['db']);
       $result = $userHelper->adminLogin($accountName, $username, $password, $this->settings['user']['token_life']);

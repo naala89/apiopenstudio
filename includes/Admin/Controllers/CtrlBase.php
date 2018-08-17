@@ -23,7 +23,7 @@ class CtrlBase {
    *
    * @param array $dbSettings
    *   DB settings array.
-   * @param Twig $view
+   * @param \Slim\Views\Twig $view
    *   View container.
    */
   public function __construct(array $dbSettings, Twig $view) {
@@ -45,12 +45,12 @@ class CtrlBase {
   protected function getRoles($token, $accId) {
     $roleNames = [];
 
-    // If no account, no roles
+    // If no account, no roles.
     if (empty($accId)) {
       return $roleNames;
     }
 
-    // Get uid for user token. If user does not exist, no roles
+    // Get uid for user token. If user does not exist, no roles.
     $userHelper = new User($this->dbSettings);
     $user = $userHelper->findByToken($token);
     if (empty($uid = $user['uid'])) {
@@ -90,30 +90,31 @@ class CtrlBase {
 
     if (empty($roles)) {
       $menus += [
-        'Login' => '/login'
+        'Login' => '/login',
       ];
-    } else {
+    }
+    else {
       $menus += [
-        'Home' => '/'
+        'Home' => '/',
       ];
       if (in_array('Owner', $roles)) {
         $menus += [
           'Applications' => '/applications',
-          'Users' => '/users'
+          'Users' => '/users',
         ];
       }
       if (in_array('Administrator', $roles)) {
         $menus += [
-          'Users' => '/users'
+          'Users' => '/users',
         ];
       }
       if (in_array('Developer', $roles)) {
         $menus += [
-          'Resources' => '/resources'
+          'Resources' => '/resources',
         ];
       }
       $menus += [
-        'Logout' => '/logout'
+        'Logout' => '/logout',
       ];
     }
 

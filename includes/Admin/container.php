@@ -4,27 +4,30 @@ use Slim\Container;
 use Slim\Views\TwigExtension;
 use Slim\Http\Uri;
 use Slim\Views\Twig;
-use Datagator\Admin\Controllers;
+use Datagator\Admin\Controllers\CtrlUser;
+use Datagator\Admin\Controllers\CtrlApplication;
+use Datagator\Admin\Controllers\CtrlLogin;
+use Datagator\Admin\Controllers\CtrlHome;
 
-/** @var \Slim\App $app */
 $container = $app->getContainer();
 
 /**
  * Register Twig View helper.
  *
- * @param Container $container
+ * @param \Slim\Container $container
+ *   Slim container.
  *
  * @return \Slim\Views\Twig
+ *   Twig object.
  */
 $container['view'] = function (Container $container) {
   $settings = $container->get('settings');
   $viewPath = $settings['twig']['path'];
 
   $twig = new Twig($viewPath, [
-    'cache' => $settings['twig']['cache_enabled'] ? $settings['twig']['cache_path'] : FALSE
+    'cache' => $settings['twig']['cache_enabled'] ? $settings['twig']['cache_path'] : FALSE,
   ]);
 
-  /** @var Twig_Loader_Filesystem $loader */
   $loader = $twig->getLoader();
   $loader->addPath($settings['public'], 'public');
 
@@ -40,26 +43,26 @@ $container['view'] = function (Container $container) {
 $container['CtrlHome'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $view = $container->get('view');
-  return new Controllers\CtrlHome($dbSettings, $view);
+  return new CtrlHome($dbSettings, $view);
 };
 
 // Register Login controller.
 $container['CtrlLogin'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $view = $container->get('view');
-  return new Controllers\CtrlLogin($dbSettings, $view);
+  return new CtrlLogin($dbSettings, $view);
 };
 
 // Register Application controller.
 $container['CtrlApplication'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $view = $container->get('view');
-  return new Controllers\CtrlApplication($dbSettings, $view);
+  return new CtrlApplication($dbSettings, $view);
 };
 
 // Register User controller.
 $container['CtrlUser'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $view = $container->get('view');
-  return new Controllers\CtrlUser($dbSettings, $view);
+  return new CtrlUser($dbSettings, $view);
 };

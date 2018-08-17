@@ -2,26 +2,30 @@
 
 namespace Datagator\Admin\Controllers;
 
+use Slim\Http\Request;
+use Slim\Http\Response;
+
 /**
- * Class Login
+ * Class Login.
+ *
  * @package Datagator\Admin\Controllers
  */
-class CtrlLogin extends CtrlBase
-{
+class CtrlLogin extends CtrlBase {
+
   /**
    * Login page controller.
    *
-   * @param $request
+   * @param \Slim\Http\Request $request
    *   Request object.
-   * @param $response
+   * @param \Slim\Http\Response $response
    *   Response object.
-   * @param $args
-   *   Request args,
+   * @param array $args
+   *   Request args.
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
    */
-  public function login($request, $response, $args) {
+  public function login(Request $request, Response $response, array $args) {
     $title = 'Login';
     $menu = $this->getMenus([]);
     return $this->view->render($response, 'login.twig', ['menu' => $menu, 'title' => $title]);
@@ -30,17 +34,17 @@ class CtrlLogin extends CtrlBase
   /**
    * Logout page controller.
    *
-   * @param $request
+   * @param \Slim\Http\Request $request
    *   Request object.
-   * @param $response
+   * @param \Slim\Http\Response $response
    *   Response object.
-   * @param $args
-   *   Request args,
+   * @param array $args
+   *   Request args.
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
    */
-  public function logout($request, $response, $args) {
+  public function logout(Request $request, Response $response, array $args) {
     $title = 'Login';
     $menu = $this->getMenus([]);
     unset($_SESSION['token']);

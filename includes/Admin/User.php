@@ -3,10 +3,16 @@
 namespace Datagator\Admin;
 
 use Datagator\Db;
-use Datagator\Core;
+use Datagator\Core\Utilities;
+use Datagator\Core\Hash;
 
-class User
-{
+/**
+ * Class User.
+ *
+ * @package Datagator\Admin
+ */
+class User {
+
   private $dbSettings;
   private $db;
 
@@ -16,23 +22,22 @@ class User
    * @param array $dbSettings
    *   Database settings.
    */
-  public function __construct(array $dbSettings)
-  {
+  public function __construct(array $dbSettings) {
     $this->dbSettings = $dbSettings;
 
     $dsnOptions = '';
-    if (sizeof($this->dbSettings['options']) > 0) {
-      foreach ($this->dbSettings['options'] as $k => $v) {
-        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
+    if (count($dbSettings['options']) > 0) {
+      foreach ($dbSettings['options'] as $k => $v) {
+        $dsnOptions .= count($dsnOptions) == 0 ? '?' : '&';
         $dsnOptions .= "$k=$v";
       }
     }
-    $dsnOptions = sizeof($this->dbSettings['options']) > 0 ? '?'.implode('&', $this->dbSettings['options']) : '';
-    $dsn = $this->dbSettings['driver'] . '://'
-      . $this->dbSettings['username'] . ':'
-      . $this->dbSettings['password'] . '@'
-      . $this->dbSettings['host'] . '/'
-      . $this->dbSettings['database'] . $dsnOptions;
+    $dsnOptions = count($dbSettings['options']) > 0 ? '?' . implode('&', $dbSettings['options']) : '';
+    $dsn = $dbSettings['driver'] . '://' .
+      $dbSettings['username'] . ':' .
+      $dbSettings['password'] . '@' .
+      $dbSettings['host'] . '/' .
+      $dbSettings['database'] . $dsnOptions;
     $this->db = \ADONewConnection($dsn);
   }
 
@@ -49,9 +54,9 @@ class User
    *   Token life. Example: '+1 hour'.
    *
    * @return array|bool
+   *   False or user/account details.
    */
-  public function adminLogin($accountName, $username, $password, $ttl)
-  {
+  public function adminLogin($accountName, $username, $password, $ttl) {
     $accountMapper = new Db\AccountMapper($this->db);
     $account = $accountMapper->findByName($accountName);
     if (empty($account->getAccId())) {
@@ -70,58 +75,82 @@ class User
       return FALSE;
     }
 
-    // set up salt if not defined
+    // Set up salt if not defined.
     if ($user->getSalt() == NULL) {
-      $user->setSalt(Core\Hash::generateSalt());
+      $user->setSalt(Hash::generateSalt());
     }
 
-    // generate hash and compare to stored hash this prevents refreshing token with a fake password.
-    $hash = Core\Hash::generateHash($password, $user->getSalt());
-    if ($user->getHash() != null && $user->getHash() != $hash) {
+    // Generate hash and compare to stored hash.
+    // This prevents refreshing token with a fake password.
+    $hash = Hash::generateHash($password, $user->getSalt());
+    if ($user->getHash() != NULL && $user->getHash() != $hash) {
       return FALSE;
     }
 
-    // if token exists and is active, return it
+    // If token exists and is active, return it.
     if (!empty($user->getToken())
       && !empty($user->getTokenTtl())
-      && Core\Utilities::date_mysql2php($user->getTokenTtl()) > time()) {
-      $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime($ttl)));
-      return ['token' => $user->getToken(), 'accountName' => $account->getName(), 'accountId' => $account->getAccId()];
+      && Utilities::date_mysql2php($user->getTokenTtl()) > time()) {
+      $user->setTokenTtl(Utilities::date_php2mysql(strtotime($ttl)));
+      return [
+        'token' => $user->getToken(),
+        'accountName' => $account->getName(),
+        'accountId' => $account->getAccId(),
+      ];
     }
 
-    //perform login
+    // Perform login.
     $user->setHash($hash);
-    $token = Core\Hash::generateToken($username);
+    $token = Hash::generateToken($username);
     $user->setToken($token);
-    $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime($ttl)));
+    $user->setTokenTtl(Utilities::date_php2mysql(strtotime($ttl)));
     $userMapper->save($user);
 
-    return ['token' => $token, 'accountName' => $account->getName(), 'accountId' => $account->getAccId()];
+    return [
+      'token' => $token,
+      'accountName' => $account->getName(),
+      'accountId' => $account->getAccId(),
+    ];
   }
 
   /**
    * Create a user.
    *
-   * @param $username
-   * @param $password
-   * @param null $email
-   * @param null $honorific
-   * @param null $nameFirst
-   * @param null $nameLast
-   * @param null $company
-   * @param null $website
-   * @param null $addressStreet
-   * @param null $addressSuburb
-   * @param null $addressCity
-   * @param null $addressState
-   * @param null $addressPostcode
-   * @param null $phoneMobile
-   * @param null $phoneWork
+   * @param string $username
+   *   User name.
+   * @param string $password
+   *   User password.
+   * @param string $email
+   *   User email.
+   * @param string $honorific
+   *   User honorific.
+   * @param string $nameFirst
+   *   User first name.
+   * @param string $nameLast
+   *   User last name.
+   * @param string $company
+   *   User company.
+   * @param string $website
+   *   User website.
+   * @param string $addressStreet
+   *   User address street.
+   * @param string $addressSuburb
+   *   User address suburb.
+   * @param string $addressCity
+   *   User address city.
+   * @param string $addressState
+   *   User address state.
+   * @param string $addressPostcode
+   *   User address postcode.
+   * @param string $phoneMobile
+   *   User mobile phone number.
+   * @param string $phoneWork
+   *   User work phone number.
    *
    * @return bool|int
+   *   False or account ID.
    */
-  public function create($username, $password, $email=NULL, $honorific=NULL, $nameFirst=NULL, $nameLast=NULL, $company=NULL, $website=NULL, $addressStreet=NULL, $addressSuburb=NULL, $addressCity=NULL, $addressState=NULL, $addressPostcode=NULL, $phoneMobile=NULL, $phoneWork=NULL)
-  {
+  public function create($username, $password, $email = NULL, $honorific = NULL, $nameFirst = NULL, $nameLast = NULL, $company = NULL, $website = NULL, $addressStreet = NULL, $addressSuburb = NULL, $addressCity = NULL, $addressState = NULL, $addressPostcode = NULL, $phoneMobile = NULL, $phoneWork = NULL) {
     $user = new Db\User(
       NULL,
       1,
@@ -217,9 +246,10 @@ class User
    * Find user associated with a token.
    *
    * @param string $token
-   *   $user login token.
+   *   Login token.
    *
    * @return array
+   *   The user.
    */
   public function findByToken($token) {
     $userMapper = new Db\UserMapper($this->db);

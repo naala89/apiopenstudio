@@ -4,30 +4,31 @@ namespace Datagator\Admin\Controllers;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Datagator\Admin;
+use Datagator\Admin\Application;
+use Datagator\Admin\User;
 
 /**
- * Class User
+ * Class User.
+ *
  * @package Datagator\Admin\Controllers
  */
-class CtrlUser extends CtrlBase
-{
+class CtrlUser extends CtrlBase {
   protected $permittedRoles = ['Owner'];
 
   /**
    * Display the users page.
    *
-   * @param $request
+   * @param \Slim\Http\Request $request
    *   Request object.
-   * @param $response
+   * @param \Slim\Http\Response $response
    *   Response object.
-   * @param $args
-   *   Request args,
+   * @param array $args
+   *   Request args.
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
    */
-  public function index(Request $request, Response $response, $args) {
+  public function index(Request $request, Response $response, array $args) {
     $roles = $this->getRoles($_SESSION['token'], $_SESSION['accountId']);
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
@@ -35,26 +36,30 @@ class CtrlUser extends CtrlBase
 
     $menu = $this->getMenus($roles);
     $title = 'Users';
-    $user = new Admin\User($this->dbSettings);
+    $user = new User($this->dbSettings);
     $users = $user->findByAccount($_SESSION['accountId']);
 
-    return $this->view->render($response, 'users.twig', ['menu' => $menu, 'title' => $title, 'users' => $users]);
+    return $this->view->render($response, 'users.twig', [
+      'menu' => $menu,
+      'title' => $title,
+      'users' => $users,
+    ]);
   }
 
   /**
    * Create an application.
    *
-   * @param $request
+   * @param \Slim\Http\Request $request
    *   Request object.
-   * @param $response
+   * @param \Slim\Http\Response $response
    *   Response object.
-   * @param $args
-   *   Request args,
+   * @param array $args
+   *   Request args.
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
    */
-  public function create(Request $request, Response $response, $args) {
+  public function create(Request $request, Response $response, array $args) {
     $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
@@ -63,45 +68,51 @@ class CtrlUser extends CtrlBase
     $menu = $this->getMenus($roles);
     $title = 'Applications';
     $allPostVars = $request->getParsedBody();
-    $application = new Admin\Application($this->db);
+    $application = new Application($this->db);
 
     $message = [
       'type' => 'info',
-      'text' => 'Application created'
+      'text' => 'Application created',
     ];
     if (!empty($allPostVars['create-app-name'])) {
       $result = $application->create($_SESSION['accountId'], $allPostVars['create-app-name']);
       if (!$result) {
         $message = [
           'type' => 'error',
-          'text' => 'Failed to create application'
+          'text' => 'Failed to create application',
         ];
       }
-    } else {
+    }
+    else {
       $message = [
         'type' => 'error',
-        'text' => 'Could not create application - no name received'
+        'text' => 'Could not create application - no name received',
       ];
     }
 
     $applications = $application->getByAccount($_SESSION['accountId']);
-    return $this->view->render($response, 'users.twig', ['menu' => $menu, 'title' => $title, 'applications' => $applications, 'message' => $message]);
+    return $this->view->render($response, 'users.twig', [
+      'menu' => $menu,
+      'title' => $title,
+      'applications' => $applications,
+      'message' => $message,
+    ]);
   }
 
   /**
    * Edit an application.
    *
-   * @param $request
+   * @param \Slim\Http\Request $request
    *   Request object.
-   * @param $response
+   * @param \Slim\Http\Response $response
    *   Response object.
-   * @param $args
-   *   Request args,
+   * @param array $args
+   *   Request args.
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
    */
-  public function edit(Request $request, Response $response, $args) {
+  public function edit(Request $request, Response $response, array $args) {
     $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
@@ -110,45 +121,51 @@ class CtrlUser extends CtrlBase
     $menu = $this->getMenus($roles);
     $title = 'Applications';
     $allPostVars = $request->getParsedBody();
-    $application = new Admin\Application($this->db);
+    $application = new Application($this->db);
 
     $message = [
       'type' => 'info',
-      'text' => 'Application edited'
+      'text' => 'Application edited',
     ];
     if (!empty($allPostVars['edit-app-id']) && !empty($allPostVars['edit-app-name'])) {
       $result = $application->update($allPostVars['edit-app-id'], $allPostVars['edit-app-name']);
       if (!$result) {
         $message = [
           'type' => 'error',
-          'text' => 'Failed to edit application'
+          'text' => 'Failed to edit application',
         ];
       }
-    } else {
+    }
+    else {
       $message = [
         'type' => 'error',
-        'text' => 'Could not edit application - no name or ID received'
+        'text' => 'Could not edit application - no name or ID received',
       ];
     }
 
     $applications = $application->getByAccount($_SESSION['accountId']);
-    return $this->view->render($response, 'applications.twig', ['menu' => $menu, 'title' => $title, 'applications' => $applications, 'message' => $message]);
+    return $this->view->render($response, 'applications.twig', [
+      'menu' => $menu,
+      'title' => $title,
+      'applications' => $applications,
+      'message' => $message,
+    ]);
   }
 
   /**
    * Delete an application.
    *
-   * @param $request
+   * @param \Slim\Http\Request $request
    *   Request object.
-   * @param $response
+   * @param \Slim\Http\Response $response
    *   Response object.
-   * @param $args
-   *   Request args,
+   * @param array $args
+   *   Request args.
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
    */
-  public function delete(Request $request, Response $response, $args) {
+  public function delete(Request $request, Response $response, array $args) {
     $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
@@ -157,29 +174,35 @@ class CtrlUser extends CtrlBase
     $menu = $this->getMenus($roles);
     $title = 'Applications';
     $allPostVars = $request->getParsedBody();
-    $application = new Admin\Application($this->db);
+    $application = new Application($this->db);
 
     $message = [
       'type' => 'info',
-      'text' => 'Application deleted'
+      'text' => 'Application deleted',
     ];
     if (!empty($allPostVars['delete-app-id'])) {
       $result = $application->delete($allPostVars['delete-app-id']);
       if (!$result) {
         $message = [
           'type' => 'error',
-          'text' => 'Failed to edit application'
+          'text' => 'Failed to edit application',
         ];
       }
-    } else {
+    }
+    else {
       $message = [
         'type' => 'error',
-        'text' => 'Could not delete application - no ID received'
+        'text' => 'Could not delete application - no ID received',
       ];
     }
 
     $applications = $application->getByAccount($_SESSION['accountId']);
-    return $this->view->render($response, 'applications.twig', ['menu' => $menu, 'title' => $title, 'applications' => $applications, 'message' => $message]);
+    return $this->view->render($response, 'applications.twig', [
+      'menu' => $menu,
+      'title' => $title,
+      'applications' => $applications,
+      'message' => $message,
+    ]);
   }
 
 }
