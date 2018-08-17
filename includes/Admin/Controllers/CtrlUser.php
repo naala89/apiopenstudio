@@ -28,14 +28,14 @@ class CtrlUser extends CtrlBase
    *   Response.
    */
   public function index(Request $request, Response $response, $args) {
-    $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
+    $roles = $this->getRoles($_SESSION['token'], $_SESSION['accountId']);
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
     }
 
     $menu = $this->getMenus($roles);
     $title = 'Users';
-    $user = new Admin\User($this->db);
+    $user = new Admin\User($this->dbSettings);
     $users = $user->findByAccount($_SESSION['accountId']);
 
     return $this->view->render($response, 'users.twig', ['menu' => $menu, 'title' => $title, 'users' => $users]);
