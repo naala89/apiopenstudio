@@ -27,4 +27,4 @@ $app->post('/applications/delete', 'CtrlApplication:delete')->add(new Authentica
 /**
  * Users.
  */
-//$app->get('/applications', 'CtrlApplication:index')->add(new Authentication($settings, '/login'));
+$app->get('/users', 'CtrlUser:index')->add(new Authentication($settings, '/login'));

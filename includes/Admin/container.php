@@ -56,3 +56,10 @@ $container['CtrlApplication'] = function (Container $container) {
   $view = $container->get('view');
   return new Controllers\CtrlApplication($dbSettings, $view);
 };
+
+// Register User controller.
+$container['CtrlUser'] = function (Container $container) {
+  $dbSettings = $container->get('settings')['db'];
+  $view = $container->get('view');
+  return new Controllers\CtrlUser($dbSettings, $view);
+};

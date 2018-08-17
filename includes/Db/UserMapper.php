@@ -141,8 +141,13 @@ class UserMapper
   }
 
   /**
-   * @param $token
+   * Find a user by their auth token.
+   *
+   * @param string $token
+   *   User auth token.
+   *
    * @return \Datagator\Db\User
+   *   User object.
    */
   public function findBytoken($token)
   {

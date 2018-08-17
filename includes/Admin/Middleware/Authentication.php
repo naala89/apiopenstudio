@@ -11,7 +11,7 @@ use Datagator\Admin\User;
  */
 class Authentication {
   private $settings;
-  private $uri;
+  private $loginPath;
 
   /**
    * Authentication constructor.
@@ -40,27 +40,30 @@ class Authentication {
    *   Response Interface.
    */
   public function __invoke($request, $response, callable $next) {
+    // If login post, get login the values.
     $data = $request->getParsedBody();
-    $account = isset($data['account']) ? $data['account'] : '';
+    $accountName = isset($data['account']) ? $data['account'] : '';
     $username = isset($data['username']) ? $data['username'] : '';
     $password = isset($data['password']) ? $data['password'] : '';
 
-    if (!empty($account) || !empty($username) || !empty($password)) {
-      $user = new User($this->settings);
-      $result = $user->adminLogin($account, $username, $password);
+    // This is a login attempt
+    if (!empty($accountName) || !empty($username) || !empty($password)) {
+      $userHelper = new User($this->settings['db']);
+      $result = $userHelper->adminLogin($accountName, $username, $password, $this->settings['user']['token_life']);
       if (!$result) {
+        // Login failed.
         unset($_SESSION['token']);
         unset($_SESSION['accountId']);
-        unset($_SESSION['account']);
+        unset($_SESSION['accountName']);
         $uri = $request->getUri()->withPath($this->loginPath);
         return $response = $response->withRedirect($uri);
       }
       $_SESSION['token'] = $result['token'];
-      $_SESSION['account'] = $result['account'];
+      $_SESSION['accountName'] = $result['accountName'];
       $_SESSION['accountId'] = $result['accountId'];
     }
 
-    if (!isset($_SESSION['token']) || empty($_SESSION['token'])) {
+    if (!isset($_SESSION['token'])) {
       $uri = $request->getUri()->withPath($this->loginPath);
       return $response = $response->withRedirect($uri);
     }

@@ -1,0 +1,89 @@
+{% extends "page.twig" %}
+
+{% block content %}
+  <div class="row">
+    <p>Manage your users here. View, invite, remove users and assign them roles in applications.</p>
+  </div>
+  <div class="row">
+    <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-create"><i class="material-icons">add</i></a>
+  </div>
+
+  <ul class="collection">
+    {% for key,value in users %}
+      <li class="collection-item">
+        <div class="row list-row">
+          <div class="col s10">{{ value.name }}</div>
+          <div class="col s1">
+            <a class="btn-floating btn-small white hoverable">
+              <i class="material-icons modal-app-edit-trigger black-text" app-id="{{ value.appId }}" app-name="{{ value.name }}">edit</i>
+            </a>
+          </div>
+          <div class="col s1">
+            <a class="btn-floating btn-small white hoverable">
+              <i class="material-icons modal-app-delete-trigger black-text" app-id="{{ value.appId }}" app-name="{{ value.name }}">delete</i>
+            </a>
+          </div>
+        </div>
+      </li>
+  {% endfor %}
+  </ul>
+
+  <!-- Create modal -->
+  <div id="modal-create" class="modal">
+    <form method="post" action="/applications/create" id="applicatio n-create">
+      <div class="modal-content">
+        <h4>Create Application</h4>
+        <p>Enter the name of your application</p>
+        <div class="input-field">
+          <input id="name" type="text" class="validate" name="create-app-name" id="create-app-name">
+          <label for="name">Application Name</label>
+          <div class="row">
+            <div class="input-field col s4 offset-s8">
+              <a class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+              <button class="btn waves-effect waves-light" type="submit" name="create">Create</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Edit modal -->
+  <div id="modal-app-edit" class="modal">
+    <form method="post" action="/applications/edit" id="application-edit">
+      <input type="hidden" name="edit-app-id" id="edit-app-id" value="">
+      <div class="modal-content">
+        <h4>Edit Application</h4>
+        <p>Edit the name of your application</p>
+        <div class="input-field">
+          <input type="text" class="validate" name="edit-app-name" id="edit-app-name" value="placeholder">
+          <label for="name">Application Name</label>
+        </div>
+        <div class="row">
+          <div class="input-field col s3 offset-l9">
+            <a class=" modal-action modal-close">Cancel</a>
+            <button class="btn waves-effect waves-light" type="submit" name="create">Edit</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Delete modal -->
+  <div id="modal-app-delete" class="modal">
+    <form method="post" action="/applications/delete" id="application-delete">
+      <input type="hidden" name="delete-app-id" id="delete-app-id" value="">
+      <div class="modal-content">
+        <h4>Delete Application</h4>
+        <p>Delete application "<span id="delete-app-name"></span>"?</p>
+        <p>WARNING: this will also delete any resources belonging to the application!</p>
+      </div>
+      <div class="row">
+        <div class="input-field col s3 offset-l9">
+          <a class=" modal-action modal-close">Cancel</a>
+          <button class="btn waves-effect waves-light red" type="submit" name="create">Delete</button>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock %}

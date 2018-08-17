@@ -6,31 +6,32 @@ use Datagator\Db;
 
 class Account
 {
-  private $settings;
+  private $dbSettings;
   private $db;
 
   /**
    * Account constructor.
    *
-   * @param array $settings
+   * @param array $dbSettings
+   *   Database settings.
    */
-  public function __construct(array $settings)
+  public function __construct(array $dbSettings)
   {
-    $this->settings = $settings;
+    $this->dbSettings = $dbSettings;
 
     $dsnOptions = '';
-    if (sizeof($this->settings['db']['options']) > 0) {
-      foreach ($this->settings['db']['options'] as $k => $v) {
+    if (sizeof($dbSettings['options']) > 0) {
+      foreach ($dbSettings['options'] as $k => $v) {
         $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
         $dsnOptions .= "$k=$v";
       }
     }
-    $dsnOptions = sizeof($this->settings['db']['options']) > 0 ? '?'.implode('&', $this->settings['db']['options']) : '';
-    $dsn = $this->settings['db']['driver'] . '://'
-      . $this->settings['db']['username'] . ':'
-      . $this->settings['db']['password'] . '@'
-      . $this->settings['db']['host'] . '/'
-      . $this->settings['db']['database'] . $dsnOptions;
+    $dsnOptions = sizeof($dbSettings['options']) > 0 ? '?'.implode('&', $dbSettings['options']) : '';
+    $dsn = $dbSettings['driver'] . '://'
+      . $dbSettings['username'] . ':'
+      . $dbSettings['password'] . '@'
+      . $dbSettings['host'] . '/'
+      . $dbSettings['database'] . $dsnOptions;
     $this->db = \ADONewConnection($dsn);
   }
 
@@ -60,5 +61,9 @@ class Account
     }
 
     return $accId;
+  }
+
+  public function findByName($name) {
+
   }
 }

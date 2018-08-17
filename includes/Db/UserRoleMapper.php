@@ -178,41 +178,56 @@ class UserRoleMapper
     return $this->mapArray($row);
   }
 
-  /**
-   * @param null $uid
-   * @param null $rid
-   * @param null $appId
-   * @param null $accId
-   * @return array
-   * @throws \Datagator\Core\ApiException
-   */
-  public function findBy($uid=null, $rid=null, $appId=null, $accId=null)
-  {
-    if (empty($uid) && empty($appId) && empty($rid)) {
-      throw new Core\ApiException('cannot search for user role without at least user, role or application');
-    }
-    $sqlWhere = array();
-    $bindParams = array();
-    if (!empty($uid)) {
-      $sqlWhere[] = 'uid = ?';
-      $bindParams[] = $uid;
-    }
-    if (!empty($rid)) {
-      $sqlWhere[] = 'rid = ?';
-      $bindParams[] = $rid;
-    }
-    if (!empty($accId)) {
-      $sqlWhere[] = 'accid = ?';
-      $bindParams[] = $accId;
-    }
-    $sql = 'SELECT * FROM user_role WHERE ' . implode(' AND ', $sqlWhere);
+//  /**
+//   * Find user roles by specified parameters.
+//   *
+//   * @param array $params
+//   *   query select parameters.
+//   *   [col => val,...].
+//   *
+//   * @return array
+//   * @throws Core\ApiException
+//   */
+//  public function findBy(array $params)
+//  {
+//    $sqlWhere = array();
+//    $bindParams = array();
+//
+//    foreach ($params as $col => $val) {
+//      $sqlWhere[] = "$col = ?";
+//      $bindParams[] = $val;
+//    }
+//    $sql = 'SELECT * FROM user_role WHERE ' . implode(' AND ', $sqlWhere);
+//
+//    $recordSet = $this->db->Execute($sql, $bindParams);
+//
+//    $entries = [];
+//    while ($row = $recordSet->fetchRow()) {
+//      $entries[] = $this->mapArray($row);
+//    }
+//
+//    return $entries;
+//  }
 
+  /**
+   * Find all user roles by user ID & account ID.
+   *
+   * @param int $uid
+   *   User ID.
+   * @param $accId
+   *   Account ID.
+   *
+   * @return array
+   *   Array of associative array of user roles.
+   */
+  public function findByUidAccId($uid, $accId) {
+    $sql = 'SELECT * FROM user_role WHERE uid = ? AND accid = ?';
+    $bindParams = array($uid, $accId);
     $recordSet = $this->db->Execute($sql, $bindParams);
 
-    $entries = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-      $recordSet->moveNext();
+    $entries = [];
+    while ($row = $recordSet->fetchRow()) {
+      $entries[] = $this->mapArray($row);
     }
 
     return $entries;
