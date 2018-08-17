@@ -3,9 +3,11 @@
 require_once dirname(__DIR__) . '/../vendor/autoload.php';
 $settings = require dirname(dirname(__DIR__)) . '/config/settings.php';
 
+// Get the user's origin and next step.
 $from = isset($_POST['from_step']) ? $_POST['from_step'] : 0;
 $step = isset($_POST['next_step']) ? $_POST['next_step'] : 0;
 
+// DB link.
 $dsnOptions = '';
 if (sizeof($settings['db']['options']) > 0) {
   foreach ($settings['db']['options'] as $k => $v) {
@@ -21,12 +23,14 @@ $dsn = $settings['db']['driver'] . '://'
   . $settings['db']['database'] . $dsnOptions;
 $db = \ADONewConnection($dsn);
 
+// Twig definition.
 $loader = new Twig_Loader_Filesystem($settings['twig']['path'] . '/install');
 $twig = new Twig_Environment($loader/*, array(
   'cache' => $settings['twig']['cache_path'],
 )*/);
 
-$menu = ['Login' => '/admin/'];
+// User will start not logged in.
+$menu = ['Login' => '/'];
 
 if (!$db) {
   $message = [
@@ -40,12 +44,27 @@ if (!$db) {
 
 switch ($step) {
   case 0:
+    // Check user wants to continue.
     $template = $twig->load('install_0.twig');
-    $message['text'] = "Continuing will erase any existing data in the database.";
-    $message['type'] = 'warning';
+    $message = [
+      'type' => 'warning',
+      'text' => "Continuing will erase any existing data in the database."
+    ];
     echo $template->render(['message' => $message, 'menu' => $menu]);
     exit;
   case 1:
+    // Create and pre-populate the database.
+    // If re-installation, remove any current logins.
+    if (isset($_SESSION['account'])) {
+      unset ($_SESSION['account']);
+    }
+    if (isset($_SESSION['accountId'])) {
+      unset ($_SESSION['accountId']);
+    }
+    if (isset($_SESSION['token'])) {
+      unset ($_SESSION['token']);
+    }
+    // Fetch the DB definition.
     $yaml = file_get_contents($settings['db']['base']);
     $definition = \Spyc::YAMLLoadString($yaml);
     $template = $twig->load('install_1.twig');
@@ -54,10 +73,12 @@ switch ($step) {
       'text' => 'Creating database tables...<br />'
     ];
 
+    // Parse the DB definition array.
     foreach ($definition as $table => $tableData) {
       $sqlPrimary = '';
       $sqlColumns = [];
       foreach ($tableData['columns'] as $column => $columnData) {
+        // Column definitions.
         $sqlColumn = "`$column` ";
         if (!isset($columnData['type'])) {
           $message['text'] = "Create `$table` fail!<br />";
@@ -76,6 +97,7 @@ switch ($step) {
       }
       $sqlCreate = "CREATE TABLE IF NOT EXISTS `$table` (" . implode(', ', $sqlColumns) . ');';
       if (empty($db->execute($sqlCreate))) {
+        // Stop if table create fails.
         $message['text'] = "Create `$table` fail!<br />";
         $message['text'] .= "Processing halted. Please check the logs and retry.";
         $message['type'] = 'error';
@@ -84,9 +106,11 @@ switch ($step) {
       } else {
         $message['text'] .= "Create `$table` success!<br />";
       }
+      // Empty the table in case it already existed.
       $sqlTruncate = "TRUNCATE `$table`;";
       $db->execute($sqlTruncate);
       if (isset($tableData['data'])) {
+        // Populate the table.
         foreach ($tableData['data'] as $row) {
           $keys = [];
           $values = [];
@@ -111,15 +135,18 @@ switch ($step) {
     exit;
     break;
   case 2:
+    // Create user.
     if ($from == 2) {
+      // This is a post from tue user create form.
       if (!isset($_POST['username']) || !isset($_POST['password'])) {
+        // Missing mandatory fields.
         $message['text'] = "Required username and password not entered.";
         $message['type'] = 'error';
         $template = $twig->load('install_2.twig');
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
-      $user = new \Datagator\Admin\User($settings);
+      $user = new \Datagator\Admin\User($settings['db']);
       $uid = $user->create(
         !empty($_POST['username']) ? $_POST['username'] : NULL,
         !empty($_POST['password']) ? $_POST['password'] : NULL,
@@ -139,61 +166,83 @@ switch ($step) {
         !empty($_POST['phone_work']) ? $_POST['phone_work'] : 0
       );
       if (!$uid) {
+        // Failed to create the user
         $template = $twig->load('install_2.twig');
-        $message['text'] = "Failed to save your user to the DB. Please check the logs.";
-        $message['type'] = 'error';
+        $message = [
+          'type' => 'error',
+          'text' => 'Failed to save your user to the DB. Please check the logs.'
+        ];
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
+      // User created, continue to next page.
       $template = $twig->load('install_3.twig');
       echo $template->render(['menu' => $menu, 'uid' => $uid, 'username' => $_POST['username']]);
       exit;
     }
+    // Fallback to rendering the create user form (user is from previous page).
     $template = $twig->load('install_2.twig');
     echo $template->render(['menu' => $menu]);
     exit;
     break;
   case 3:
+    // Create the account.
+    // Data preserved from previous page that we need for user role.
     $uid = isset($_POST['uid']) ? $_POST['uid'] : '';
     $username = isset($_POST['username']) ? $_POST['username'] : '';
     if (empty($uid) || empty($username)) {
-      $message['text'] = "Required user id & name not received.";
-      $message['type'] = 'error';
+      // missing required data from previous page.
+      $message = [
+        'type' => 'error',
+        'text' => 'Required user id & name not received.'
+      ];
       $template = $twig->load('install_3.twig');
       echo $template->render(['message' => $message, 'menu' => $menu]);
       exit;
     }
     if ($from == 3) {
+      // This is a current page submission, so create the account.
       $accountName = isset($_POST['account_name']) ? $_POST['account_name'] : '';
       if (empty($accountName)) {
-        $message['text'] = "Required Account name not entered.";
-        $message['type'] = 'error';
+        // Missing required data.
+        $message = [
+          'type' => 'error',
+          'text' => 'Required Account name not entered.'
+        ];
         $template = $twig->load('install_3.twig');
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
-      $account = new \Datagator\Admin\Account($settings);
+      // Create the account.
+      $account = new \Datagator\Admin\Account($settings['db']);
       $accId = $account->create($accountName);
       if (!$accId) {
-        $message['text'] = "Failed to save your account to the DB. Please check the logs.";
-        $message['type'] = 'error';
+        $message = [
+          'type' => 'error',
+          'text' => 'Failed to save your account to the DB. Please check the logs.'
+        ];
         $template = $twig->load('install_3.twig');
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
-      $userRole = new \Datagator\Admin\UserRole($settings);
+      // Create the user Owner role.
+      $userRole = new \Datagator\Admin\UserRole($settings['db']);
       $result = $userRole->create($uid, 'Owner', NULL, $accId);
       if (!$result) {
-        $message['text'] = "Failed to Create the owner role for your user in your account. Please check the logs.";
-        $message['type'] = 'error';
+        $message = [
+          'type' => 'error',
+          'text' => 'Failed to Create the owner role for your user in your account. Please check the logs.'
+        ];
         $template = $twig->load('install_3.twig');
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
+      // Success, render the success page.
       $template = $twig->load('install_4.twig');
       echo $template->render(['menu' => $menu, 'account_name' => $accountName]);
       exit;
     }
+    // Fallback to render initial create account page (user arrives from previous page).
     $template = $twig->load('install_3.twig');
     echo $template->render(['menu' => $menu]);
     exit;
