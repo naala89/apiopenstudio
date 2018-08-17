@@ -107,7 +107,7 @@ class UserRole
    */
   public function setAccId($accId)
   {
-    $this->appId = $accId;
+    $this->accId = $accId;
   }
 
   /**
@@ -120,8 +120,8 @@ class UserRole
       'urid' => $this->urid,
       'uid' => $this->uid,
       'rid' => $this->rid,
-      'appid' => $this->appId,
-      'accid' => $this->accId,
+      'appId' => $this->appId,
+      'accId' => $this->accId,
     );
   }
 }

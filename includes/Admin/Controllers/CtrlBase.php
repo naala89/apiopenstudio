@@ -2,10 +2,9 @@
 
 namespace Datagator\Admin\Controllers;
 
-use Datagator\Db\UserMapper;
-use Datagator\Db\AccountMapper;
-use Datagator\Db\UserRoleMapper;
-use Datagator\Db\RoleMapper;
+use Datagator\Admin\Role;
+use Datagator\Admin\User;
+use Datagator\Admin\UserRole;
 use Slim\Views\Twig;
 
 /**
@@ -14,7 +13,7 @@ use Slim\Views\Twig;
  * @package Datagator\Admin\Controllers
  */
 class CtrlBase {
-  protected $db;
+  protected $dbSettings;
   protected $view;
   protected $menu;
   protected $permittedRoles = [];
@@ -28,22 +27,8 @@ class CtrlBase {
    *   View container.
    */
   public function __construct(array $dbSettings, Twig $view) {
+    $this->dbSettings = $dbSettings;
     $this->view = $view;
-
-    $dsnOptions = '';
-    if (count($dbSettings['options']) > 0) {
-      foreach ($dbSettings['options'] as $k => $v) {
-        $dsnOptions .= count($dsnOptions) == 0 ? '?' : '&';
-        $dsnOptions .= "$k=$v";
-      }
-    }
-    $dsnOptions = count($dbSettings['options']) > 0 ? '?' . implode('&', $dbSettings['options']) : '';
-    $dsn = $dbSettings['driver'] . '://'
-      . $dbSettings['username'] . ':'
-      . $dbSettings['password'] . '@'
-      . $dbSettings['host'] . '/'
-      . $dbSettings['database'] . $dsnOptions;
-    $this->db = \ADONewConnection($dsn);
   }
 
   /**
@@ -51,36 +36,44 @@ class CtrlBase {
    *
    * @param string $token
    *   User validation Token.
-   * @param string $account
+   * @param int $accId
    *   Account name.
    *
    * @return array
    *   Array of role names.
    */
-  protected function getRoles($token, $account) {
-    $userMapper = new UserMapper($this->db);
-    $user = $userMapper->findBytoken($token);
-    if (empty($uid = $user->getUid())) {
-      return [];
+  protected function getRoles($token, $accId) {
+    $roleNames = [];
+
+    // If no account, no roles
+    if (empty($accId)) {
+      return $roleNames;
     }
 
-    $accountMapper = new AccountMapper($this->db);
-    $account = $accountMapper->findByName($account);
-    if (empty($accId = $account->getAccId())) {
-      return [];
+    // Get uid for user token. If user does not exist, no roles
+    $userHelper = new User($this->dbSettings);
+    $user = $userHelper->findByToken($token);
+    if (empty($uid = $user['uid'])) {
+      return $roleNames;
     }
 
-    $userRoleMapper = new UserRoleMapper($this->db);
-    $roles = $userRoleMapper->findBy($uid, NULL, NULL, $accId);
-
-    $roleMapper = new RoleMapper($this->db);
-    $result = [];
-    foreach ($roles as $role) {
-      $role = $roleMapper->findByRid($role->getRid());
-      $result[] = $role->getName();
+    // Get user roles for uid on account.
+    $userRoleHelper = new UserRole($this->dbSettings);
+    $userRoles = $userRoleHelper->findByUidAccId($uid, $accId);
+    if (empty($userRoles)) {
+      return $roleNames;
     }
 
-    return $result;
+    // Get names for the roles.
+    $roleHelper = new Role($this->dbSettings);
+    foreach ($userRoles as $userRole) {
+      $result = $roleHelper->findByRid($userRole['rid']);
+      if (!in_array($result['name'], $roleNames)) {
+        $roleNames[] = $result['name'];
+      }
+    }
+
+    return $roleNames;
   }
 
   /**
@@ -93,35 +86,38 @@ class CtrlBase {
    *   Associative array of menu title and links.
    */
   protected function getMenus(array $roles) {
-    $result = [];
+    $menus = [];
 
     if (empty($roles)) {
-      $result += [
+      $menus += [
         'Login' => '/login'
       ];
     } else {
+      $menus += [
+        'Home' => '/'
+      ];
       if (in_array('Owner', $roles)) {
-        $result += [
+        $menus += [
           'Applications' => '/applications',
           'Users' => '/users'
         ];
       }
       if (in_array('Administrator', $roles)) {
-        $result += [
+        $menus += [
           'Users' => '/users'
         ];
       }
       if (in_array('Developer', $roles)) {
-        $result += [
+        $menus += [
           'Resources' => '/resources'
         ];
       }
-      $result += [
+      $menus += [
         'Logout' => '/logout'
       ];
     }
 
-    return $result;
+    return $menus;
   }
 
   /**

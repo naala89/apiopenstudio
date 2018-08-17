@@ -44,7 +44,7 @@ class CtrlLogin extends CtrlBase
     $title = 'Login';
     $menu = $this->getMenus([]);
     unset($_SESSION['token']);
-    unset($_SESSION['account']);
+    unset($_SESSION['accountName']);
     unset($_SESSION['accountId']);
     return $this->view->render($response, 'login.twig', ['menu' => $menu, 'title' => $title]);
   }

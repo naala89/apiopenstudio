@@ -7,19 +7,19 @@ use Slim\Http\Response;
 use Datagator\Admin;
 
 /**
- * Class Application
+ * Class User
  * @package Datagator\Admin\Controllers
  */
-class CtrlApplication extends CtrlBase
+class CtrlUser extends CtrlBase
 {
   protected $permittedRoles = ['Owner'];
 
   /**
-   * Display the applications page.
+   * Display the users page.
    *
-   * @param Request $request
+   * @param $request
    *   Request object.
-   * @param Response $response
+   * @param $response
    *   Response object.
    * @param $args
    *   Request args,
@@ -28,25 +28,25 @@ class CtrlApplication extends CtrlBase
    *   Response.
    */
   public function index(Request $request, Response $response, $args) {
-    $roles = $this->getRoles($_SESSION['token'], $_SESSION['accountId']);
+    $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
     }
 
     $menu = $this->getMenus($roles);
-    $title = 'Applications';
-    $application = new Admin\Application($this->dbSettings);
-    $applications = $application->getByAccount($_SESSION['accountId']);
+    $title = 'Users';
+    $user = new Admin\User($this->db);
+    $users = $user->findByAccount($_SESSION['accountId']);
 
-    return $this->view->render($response, 'applications.twig', ['menu' => $menu, 'title' => $title, 'applications' => $applications]);
+    return $this->view->render($response, 'users.twig', ['menu' => $menu, 'title' => $title, 'users' => $users]);
   }
 
   /**
    * Create an application.
    *
-   * @param Request $request
+   * @param $request
    *   Request object.
-   * @param Response $response
+   * @param $response
    *   Response object.
    * @param $args
    *   Request args,
@@ -55,7 +55,7 @@ class CtrlApplication extends CtrlBase
    *   Response.
    */
   public function create(Request $request, Response $response, $args) {
-    $roles = $this->getRoles($_SESSION['token'], $_SESSION['accountId']);
+    $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
     }
@@ -63,7 +63,7 @@ class CtrlApplication extends CtrlBase
     $menu = $this->getMenus($roles);
     $title = 'Applications';
     $allPostVars = $request->getParsedBody();
-    $application = new Admin\Application($this->dbSettings);
+    $application = new Admin\Application($this->db);
 
     $message = [
       'type' => 'info',
@@ -85,15 +85,15 @@ class CtrlApplication extends CtrlBase
     }
 
     $applications = $application->getByAccount($_SESSION['accountId']);
-    return $this->view->render($response, 'applications.twig', ['menu' => $menu, 'title' => $title, 'applications' => $applications, 'message' => $message]);
+    return $this->view->render($response, 'users.twig', ['menu' => $menu, 'title' => $title, 'applications' => $applications, 'message' => $message]);
   }
 
   /**
    * Edit an application.
    *
-   * @param Request $request
+   * @param $request
    *   Request object.
-   * @param Response $response
+   * @param $response
    *   Response object.
    * @param $args
    *   Request args,
@@ -102,7 +102,7 @@ class CtrlApplication extends CtrlBase
    *   Response.
    */
   public function edit(Request $request, Response $response, $args) {
-    $roles = $this->getRoles($_SESSION['token'], $_SESSION['accountId']);
+    $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
     }
@@ -110,7 +110,7 @@ class CtrlApplication extends CtrlBase
     $menu = $this->getMenus($roles);
     $title = 'Applications';
     $allPostVars = $request->getParsedBody();
-    $application = new Admin\Application($this->dbSettings);
+    $application = new Admin\Application($this->db);
 
     $message = [
       'type' => 'info',
@@ -138,9 +138,9 @@ class CtrlApplication extends CtrlBase
   /**
    * Delete an application.
    *
-   * @param Request $request
+   * @param $request
    *   Request object.
-   * @param Response $response
+   * @param $response
    *   Response object.
    * @param $args
    *   Request args,
@@ -157,7 +157,7 @@ class CtrlApplication extends CtrlBase
     $menu = $this->getMenus($roles);
     $title = 'Applications';
     $allPostVars = $request->getParsedBody();
-    $application = new Admin\Application($this->dbSettings);
+    $application = new Admin\Application($this->db);
 
     $message = [
       'type' => 'info',

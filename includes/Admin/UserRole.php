@@ -10,31 +10,32 @@ use Datagator\Db;
  * @package Datagator\Admin
  */
 class UserRole {
-  private $settings;
+  private $dbSettings;
   private $db;
 
   /**
    * UserRole constructor.
    *
-   * @param array $settings
+   * @param array $dbSettings
+   *   Database settings.
    */
-  public function __construct(array $settings)
+  public function __construct(array $dbSettings)
   {
-    $this->settings = $settings;
+    $this->dbSettings = $dbSettings;
 
     $dsnOptions = '';
-    if (sizeof($this->settings['db']['options']) > 0) {
-      foreach ($this->settings['db']['options'] as $k => $v) {
+    if (sizeof($this->dbSettings['options']) > 0) {
+      foreach ($this->dbSettings['options'] as $k => $v) {
         $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
         $dsnOptions .= "$k=$v";
       }
     }
-    $dsnOptions = sizeof($this->settings['db']['options']) > 0 ? '?'.implode('&', $this->settings['db']['options']) : '';
-    $dsn = $this->settings['db']['driver'] . '://'
-      . $this->settings['db']['username'] . ':'
-      . $this->settings['db']['password'] . '@'
-      . $this->settings['db']['host'] . '/'
-      . $this->settings['db']['database'] . $dsnOptions;
+    $dsnOptions = sizeof($this->dbSettings['options']) > 0 ? '?'.implode('&', $this->dbSettings['options']) : '';
+    $dsn = $this->dbSettings['driver'] . '://'
+      . $this->dbSettings['username'] . ':'
+      . $this->dbSettings['password'] . '@'
+      . $this->dbSettings['host'] . '/'
+      . $this->dbSettings['database'] . $dsnOptions;
     $this->db = \ADONewConnection($dsn);
   }
 
@@ -73,6 +74,29 @@ class UserRole {
     }
 
     return TRUE;
+  }
+
+  /**
+   * Find user roles by uid and accId.
+   *
+   * @param int $uid
+   *   User ID.
+   * @param $accId
+   *   Account ID.
+   *
+   * @return array
+   *   Array of user roles.
+   */
+  public function findByUidAccId($uid, $accId) {
+    $userRoles = [];
+
+    $userRoleMapper = new Db\UserRoleMapper($this->db);
+    $results = $userRoleMapper->findByUidAccId($uid, $accId);
+    foreach ($results as $result) {
+      $userRoles[] = $result->dump();
+    }
+
+    return $userRoles;
   }
 
 }

@@ -4,51 +4,56 @@ namespace Datagator\Admin;
 
 use Datagator\Db;
 use Datagator\Core;
-use ADOConnection;
 
 class User
 {
-  private $settings;
+  private $dbSettings;
   private $db;
 
   /**
    * User constructor.
    *
-   * @param array $settings
+   * @param array $dbSettings
+   *   Database settings.
    */
-  public function __construct(array $settings)
+  public function __construct(array $dbSettings)
   {
-    $this->settings = $settings;
+    $this->dbSettings = $dbSettings;
 
     $dsnOptions = '';
-    if (sizeof($this->settings['db']['options']) > 0) {
-      foreach ($this->settings['db']['options'] as $k => $v) {
+    if (sizeof($this->dbSettings['options']) > 0) {
+      foreach ($this->dbSettings['options'] as $k => $v) {
         $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
         $dsnOptions .= "$k=$v";
       }
     }
-    $dsnOptions = sizeof($this->settings['db']['options']) > 0 ? '?'.implode('&', $this->settings['db']['options']) : '';
-    $dsn = $this->settings['db']['driver'] . '://'
-      . $this->settings['db']['username'] . ':'
-      . $this->settings['db']['password'] . '@'
-      . $this->settings['db']['host'] . '/'
-      . $this->settings['db']['database'] . $dsnOptions;
+    $dsnOptions = sizeof($this->dbSettings['options']) > 0 ? '?'.implode('&', $this->dbSettings['options']) : '';
+    $dsn = $this->dbSettings['driver'] . '://'
+      . $this->dbSettings['username'] . ':'
+      . $this->dbSettings['password'] . '@'
+      . $this->dbSettings['host'] . '/'
+      . $this->dbSettings['database'] . $dsnOptions;
     $this->db = \ADONewConnection($dsn);
   }
 
   /**
    * Log a user in.
    *
-   * @param $account
-   * @param $username
-   * @param $password
+   * @param string $accountName
+   *   Account bane.
+   * @param string $username
+   *   User name.
+   * @param string $password
+   *   User password.
+   * @param string $ttl
+   *   Token life. Example: '+1 hour'.
    *
-   * @return bool|string
+   * @return array|bool
    */
-  public function adminLogin($account, $username, $password)
+  public function adminLogin($accountName, $username, $password, $ttl)
   {
     $accountMapper = new Db\AccountMapper($this->db);
-    $account = $accountMapper->findByName($account);
+    $account = $accountMapper->findByName($accountName);
     if (empty($account->getAccId())) {
       return FALSE;
     }
@@ -60,7 +65,7 @@ class User
     }
 
     $userRoleMapper = new Db\UserRoleMapper($this->db);
-    $userRoles = $userRoleMapper->findBy($user->getUid(), NULL, NULL, $account->getAccId());
+    $userRoles = $userRoleMapper->findByUidAccId($user->getUid(), $account->getAccId());
     if (empty($userRoles)) {
       return FALSE;
     }
@@ -80,18 +85,18 @@ class User
     if (!empty($user->getToken())
       && !empty($user->getTokenTtl())
       && Core\Utilities::date_mysql2php($user->getTokenTtl()) > time()) {
-      $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime($this->settings['user']['token_life'])));
-      return ['token' => $user->getToken(), 'account' => $account->getName(), 'accountId' => $account->getAccId()];
+      $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime($ttl)));
+      return ['token' => $user->getToken(), 'accountName' => $account->getName(), 'accountId' => $account->getAccId()];
     }
 
     //perform login
     $user->setHash($hash);
     $token = Core\Hash::generateToken($username);
     $user->setToken($token);
-    $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime($this->settings['user']['token_life'])));
+    $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime($ttl)));
     $userMapper->save($user);
 
-    return ['token' => $token, 'account' => $account->getName(), 'accountId' => $account->getAccId()];
+    return ['token' => $token, 'accountName' => $account->getName(), 'accountId' => $account->getAccId()];
   }
 
   /**
@@ -171,8 +176,6 @@ class User
     }
     $userRoles += $result->dump();
 
-    var_dump($userRoles);exit;
-
     // Find applications associated with the account.
     $applicationMapper = new Db\ApplicationMapper($this->db);
     $applications = $applicationMapper->findByAccId($accId);
@@ -192,7 +195,7 @@ class User
   }
 
   /**
-   * Find all users associated with am application.
+   * Find all users associated with an application.
    *
    * @param int $appId
    *   Application ID.
@@ -208,6 +211,20 @@ class User
       $userRoles += $result->dump();
     }
     return $userRoles;
+  }
+
+  /**
+   * Find user associated with a token.
+   *
+   * @param string $token
+   *   $user login token.
+   *
+   * @return array
+   */
+  public function findByToken($token) {
+    $userMapper = new Db\UserMapper($this->db);
+    $user = $userMapper->findBytoken($token);
+    return $user->dump();
   }
 
 }
