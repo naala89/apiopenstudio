@@ -19,18 +19,17 @@ class UserRole {
    * @param array $dbSettings
    *   Database settings.
    */
-  public function __construct(array $dbSettings)
-  {
+  public function __construct(array $dbSettings) {
     $this->dbSettings = $dbSettings;
 
     $dsnOptions = '';
-    if (sizeof($this->dbSettings['options']) > 0) {
+    if (count($this->dbSettings['options']) > 0) {
       foreach ($this->dbSettings['options'] as $k => $v) {
-        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
+        $dsnOptions .= count($dsnOptions) == 0 ? '?' : '&';
         $dsnOptions .= "$k=$v";
       }
     }
-    $dsnOptions = sizeof($this->dbSettings['options']) > 0 ? '?'.implode('&', $this->dbSettings['options']) : '';
+    $dsnOptions = count($this->dbSettings['options']) > 0 ? '?' . implode('&', $this->dbSettings['options']) : '';
     $dsn = $this->dbSettings['driver'] . '://'
       . $this->dbSettings['username'] . ':'
       . $this->dbSettings['password'] . '@'
@@ -46,9 +45,9 @@ class UserRole {
    *   User ID.
    * @param int $roleName
    *   Role name.
-   * @param null $appid
+   * @param int $appid
    *   Application ID.
-   * @param null $accid
+   * @param int $accid
    *   Account ID.
    *
    * @return bool

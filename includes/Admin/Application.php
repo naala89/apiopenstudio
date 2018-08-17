@@ -4,8 +4,8 @@ namespace Datagator\Admin;
 
 use Datagator\Db;
 
-class Application
-{
+class Application {
+
   private $dbSettings;
   private $db;
 
@@ -15,23 +15,22 @@ class Application
    * @param array $dbSettings
    *   Database settings.
    */
-  public function __construct(array $dbSettings)
-  {
+  public function __construct(array $dbSettings) {
     $this->dbSettings = $dbSettings;
 
     $dsnOptions = '';
-    if (sizeof($this->dbSettings['options']) > 0) {
-      foreach ($this->dbSettings['options'] as $k => $v) {
-        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
+    if (count($dbSettings['options']) > 0) {
+      foreach ($dbSettings['options'] as $k => $v) {
+        $dsnOptions .= count($dsnOptions) == 0 ? '?' : '&';
         $dsnOptions .= "$k=$v";
       }
     }
-    $dsnOptions = sizeof($this->dbSettings['options']) > 0 ? '?'.implode('&', $this->dbSettings['options']) : '';
-    $dsn = $this->dbSettings['driver'] . '://'
-      . $this->dbSettings['username'] . ':'
-      . $this->dbSettings['password'] . '@'
-      . $this->dbSettings['host'] . '/'
-      . $this->dbSettings['database'] . $dsnOptions;
+    $dsnOptions = count($dbSettings['options']) > 0 ? '?' . implode('&', $dbSettings['options']) : '';
+    $dsn = $dbSettings['driver'] . '://' .
+      $dbSettings['username'] . ':' .
+      $dbSettings['password'] . '@' .
+      $dbSettings['host'] . '/' .
+      $dbSettings['database'] . $dsnOptions;
     $this->db = \ADONewConnection($dsn);
   }
 
@@ -42,6 +41,7 @@ class Application
    *   ID of the account.
    *
    * @return array
+   *   Array of associative arrays of applications.
    */
   public function getByAccount($accId) {
     $applicationMapper = new Db\ApplicationMapper($this->db);
@@ -63,6 +63,7 @@ class Application
    *   Name of the application.
    *
    * @return bool|int
+   *   Success or failure of the operation.
    */
   public function create($accId, $name) {
     $application = new Db\Application(
@@ -95,6 +96,7 @@ class Application
    *   Name of the application.
    *
    * @return bool|int
+   *   Success or failure of the operation.
    */
   public function update($appId, $appName) {
     $applicationMapper = new Db\ApplicationMapper($this->db);
@@ -115,6 +117,7 @@ class Application
    *   ID of the application.
    *
    * @return bool|int
+   *   Success or failure of the operation.
    */
   public function delete($appId) {
     $application = new Db\Application($appId, NULL, NULL);

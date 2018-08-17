@@ -2,7 +2,7 @@
 
 namespace Datagator\Admin;
 
-use Datagator\Db;
+use Datagator\Db\RoleMapper;
 
 /**
  * Class UserRole.
@@ -19,29 +19,37 @@ class Role {
    * @param array $dbSettings
    *   Database settings.
    */
-  public function __construct(array $dbSettings)
-  {
+  public function __construct(array $dbSettings) {
     $this->dbSettings = $dbSettings;
 
     $dsnOptions = '';
-    if (sizeof($this->dbSettings['options']) > 0) {
+    if (count($this->dbSettings['options']) > 0) {
       foreach ($this->dbSettings['options'] as $k => $v) {
-        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
+        $dsnOptions .= count($dsnOptions) == 0 ? '?' : '&';
         $dsnOptions .= "$k=$v";
       }
     }
-    $dsnOptions = sizeof($this->dbSettings['options']) > 0 ? '?'.implode('&', $this->dbSettings['options']) : '';
-    $dsn = $this->dbSettings['driver'] . '://'
-      . $this->dbSettings['username'] . ':'
-      . $this->dbSettings['password'] . '@'
-      . $this->dbSettings['host'] . '/'
-      . $this->dbSettings['database'] . $dsnOptions;
+    $dsnOptions = count($this->dbSettings['options']) > 0 ? '?' . implode('&', $this->dbSettings['options']) : '';
+    $dsn = $this->dbSettings['driver'] . '://' .
+      $this->dbSettings['username'] . ':' .
+      $this->dbSettings['password'] . '@' .
+      $this->dbSettings['host'] . '/' .
+      $this->dbSettings['database'] . $dsnOptions;
     $this->db = \ADONewConnection($dsn);
   }
 
+  /**
+   * Find a role by its ID.
+   *
+   * @param int $rid
+   *   Role ID.
+   *
+   * @return array
+   *   The role attributes.
+   */
   public function findByRid($rid) {
     $roles = [];
-    $roleMapper = new Db\RoleMapper($this->db);
+    $roleMapper = new RoleMapper($this->db);
     $role = $roleMapper->findByRid($rid);
     return $role->dump();
   }

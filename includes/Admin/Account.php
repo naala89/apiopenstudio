@@ -4,8 +4,13 @@ namespace Datagator\Admin;
 
 use Datagator\Db;
 
-class Account
-{
+/**
+ * Class Account.
+ *
+ * @package Datagator\Admin
+ */
+class Account {
+
   private $dbSettings;
   private $db;
 
@@ -15,35 +20,35 @@ class Account
    * @param array $dbSettings
    *   Database settings.
    */
-  public function __construct(array $dbSettings)
-  {
+  public function __construct(array $dbSettings) {
     $this->dbSettings = $dbSettings;
 
     $dsnOptions = '';
-    if (sizeof($dbSettings['options']) > 0) {
+    if (count($dbSettings['options']) > 0) {
       foreach ($dbSettings['options'] as $k => $v) {
-        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
+        $dsnOptions .= count($dsnOptions) == 0 ? '?' : '&';
         $dsnOptions .= "$k=$v";
       }
     }
-    $dsnOptions = sizeof($dbSettings['options']) > 0 ? '?'.implode('&', $dbSettings['options']) : '';
-    $dsn = $dbSettings['driver'] . '://'
-      . $dbSettings['username'] . ':'
-      . $dbSettings['password'] . '@'
-      . $dbSettings['host'] . '/'
-      . $dbSettings['database'] . $dsnOptions;
+    $dsnOptions = count($dbSettings['options']) > 0 ? '?' . implode('&', $dbSettings['options']) : '';
+    $dsn = $dbSettings['driver'] . '://' .
+      $dbSettings['username'] . ':' .
+      $dbSettings['password'] . '@' .
+      $dbSettings['host'] . '/' .
+      $dbSettings['database'] . $dsnOptions;
     $this->db = \ADONewConnection($dsn);
   }
 
   /**
    * Create an account.
    *
-   * @param null $name
+   * @param string $name
+   *   Account name.
    *
    * @return bool|int
+   *   FALSE or the account ID.
    */
-  public function create($name=NULL)
-  {
+  public function create($name = NULL) {
     $account = new Db\Account(
       NULL,
       $name
@@ -63,7 +68,4 @@ class Account
     return $accId;
   }
 
-  public function findByName($name) {
-
-  }
 }
