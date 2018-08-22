@@ -1,68 +1,81 @@
 <?php
 
-/**
- * Container for data for an account row.
- */
-
 namespace Datagator\Db;
-use Datagator\Core;
 
-class Account
-{
+/**
+ * Class Account.
+ *
+ * @package Datagator\Db
+ */
+class Account {
+
   protected $accId;
   protected $name;
 
   /**
-   * @param null $accId
-   * @param null $name
+   * Account constructor.
+   *
+   * @param int $accId
+   *   Account ID.
+   * @param string $name
+   *   Account name.
    */
-  public function __construct($accId=NULL, $name=NULL)
-  {
+  public function __construct($accId = NULL, $name = NULL) {
     $this->accId = $accId;
     $this->name = $name;
   }
 
   /**
-   * @return int accid
+   * Get the account ID.
+   *
+   * @return int
+   *   Account ID.
    */
-  public function getAccId()
-  {
+  public function getAccId() {
     return $this->accId;
   }
 
   /**
-   * @param $accId
+   * Set the account ID.
+   *
+   * @param int $accId
+   *   Account ID.
    */
-  public function setAccId($accId)
-  {
+  public function setAccId($accId) {
     $this->accId = $accId;
   }
 
   /**
-   * @return int name
+   * Get the account name.
+   *
+   * @return string
+   *   Account name.
    */
-  public function getName()
-  {
+  public function getName() {
     return $this->name;
   }
 
   /**
-   * @param $name
+   * Set the account name.
+   *
+   * @param string $name
+   *   Account name.
    */
-  public function setName($name)
-  {
+  public function setName($name) {
     $this->name = $name;
   }
 
   /**
    * Return the values as an associative array.
+   *
    * @return array
+   *   Account.
    */
-  public function dump()
-  {
+  public function dump() {
     return array(
       'accid' => $this->accId,
       'name' => $this->name,
     );
   }
+
 }

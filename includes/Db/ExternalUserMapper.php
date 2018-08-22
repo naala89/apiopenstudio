@@ -1,35 +1,41 @@
 <?php
 
-/**
- * Fetch and save external_user data.
- */
-
 namespace Datagator\Db;
 
-use Datagator\Core;
-use \ADOConnection;
+use Datagator\Core\ApiException;
+use ADOConnection;
 
-class ExternalUserMapper
-{
+/**
+ * Class ExternalUserMapper.
+ *
+ * @package Datagator\Db
+ */
+class ExternalUserMapper {
+
   protected $db;
 
   /**
    * ExternalUserMapper constructor.
    *
-   * @param ADOConnection $dbLayer
+   * @param \ADOConnection $dbLayer
+   *   DB connection object.
    */
-  public function __construct(ADOConnection $dbLayer)
-  {
+  public function __construct(ADOConnection $dbLayer) {
     $this->db = $dbLayer;
   }
 
   /**
+   * Save an external user object.
+   *
    * @param \Datagator\Db\ExternalUser $user
+   *   ExternalUser object.
+   *
    * @return bool
+   *   Success.
+   *
    * @throws \Datagator\Core\ApiException
    */
-  public function save(ExternalUser $user)
-  {
+  public function save(ExternalUser $user) {
     if ($user->getId() == NULL) {
       $sql = 'INSERT INTO external_user (appid, external_id, external_entity, data_field_1, data_field_2, data_field_3) VALUES (?, ?, ?, ?, ?, ?)';
       $bindParams = array(
@@ -38,10 +44,11 @@ class ExternalUserMapper
         $user->getExternalEntity(),
         $user->getDataField1(),
         $user->getDataField2(),
-        $user->getDataField3()
+        $user->getDataField3(),
       );
       $result = $this->db->Execute($sql, $bindParams);
-    } else {
+    }
+    else {
       $sql = 'UPDATE external_user SET appid = ?, external_id = ?, external_entity = ?, data_field_1 = ?, data_field_2 = ?, data_field_3 = ? WHERE id = ?';
       $bindParams = array(
         $user->getAppId(),
@@ -50,22 +57,26 @@ class ExternalUserMapper
         $user->getDataField1(),
         $user->getDataField2(),
         $user->getDataField3(),
-        $user->getId()
+        $user->getId(),
       );
       $result = $this->db->Execute($sql, $bindParams);
     }
     if (!$result) {
-      throw new Core\ApiException($this->db->ErrorMsg(), 2);
+      throw new ApiException($this->db->ErrorMsg(), 2);
     }
     return TRUE;
   }
 
   /**
-   * @param $id
+   * Find an external user by ID.
+   *
+   * @param int $id
+   *   External user ID.
+   *
    * @return \Datagator\Db\ExternalUser
+   *   External user object.
    */
-  public function findById($id)
-  {
+  public function findById($id) {
     $sql = 'SELECT * FROM external_user WHERE id = ?';
     $bindParams = array($id);
     $row = $this->db->GetRow($sql, $bindParams);
@@ -73,13 +84,19 @@ class ExternalUserMapper
   }
 
   /**
-   * @param $appId
-   * @param $externalEntity
-   * @param $externalId
+   * Find an external user by app ID, external entity name and external ID.
+   *
+   * @param int $appId
+   *   Application ID.
+   * @param string $externalEntity
+   *   External entity name.
+   * @param int $externalId
+   *   External ID.
+   *
    * @return \Datagator\Db\ExternalUser
+   *   External user object.
    */
-  public function findByAppIdEntityExternalId($appId, $externalEntity, $externalId)
-  {
+  public function findByAppIdEntityExternalId($appId, $externalEntity, $externalId) {
     $sql = 'SELECT * FROM external_user WHERE appid = ? AND external_entity = ? AND external_id = ?';
     $bindParams = array($appId, $externalEntity, $externalId);
     $row = $this->db->GetRow($sql, $bindParams);
@@ -87,11 +104,15 @@ class ExternalUserMapper
   }
 
   /**
-   * @param $appId
+   * Find an external user by application ID.
+   *
+   * @param int $appId
+   *   Application ID.
+   *
    * @return array
+   *   External user object.
    */
-  public function findByCid($appId)
-  {
+  public function findByAppid($appId) {
     $sql = 'SELECT * FROM external_user WHERE appid = ?';
     $bindParams = array($appId);
 
@@ -107,11 +128,15 @@ class ExternalUserMapper
   }
 
   /**
+   * Map a DB results row to this object.
+   *
    * @param array $row
+   *   DB row results object.
+   *
    * @return \Datagator\Db\ExternalUser
+   *   ExternalUser object.
    */
-  protected function mapArray(array $row)
-  {
+  protected function mapArray(array $row) {
     $user = new ExternalUser();
 
     $user->setId(!empty($row['id']) ? $row['id'] : NULL);
@@ -124,4 +149,5 @@ class ExternalUserMapper
 
     return $user;
   }
+
 }

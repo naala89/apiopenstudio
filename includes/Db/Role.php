@@ -1,68 +1,81 @@
 <?php
 
-/**
- * Container for data for an role row.
- */
-
 namespace Datagator\Db;
-use Datagator\Core;
 
-class Role
-{
+/**
+ * Class Role.
+ *
+ * @package Datagator\Db
+ */
+class Role {
+
   protected $rid;
   protected $name;
 
   /**
-   * @param null $rid
-   * @param null $name
+   * Role constructor.
+   *
+   * @param int $rid
+   *   Role ID.
+   * @param string $name
+   *   Role name.
    */
-  public function __construct($rid=NULL, $name=NULL)
-  {
+  public function __construct($rid = NULL, $name = NULL) {
     $this->rid = $rid;
     $this->name = $name;
   }
 
   /**
-   * @return int rid
+   * Get the role ID.
+   *
+   * @return int
+   *   Role ID.
    */
-  public function getRid()
-  {
+  public function getRid() {
     return $this->rid;
   }
 
   /**
-   * @param $rid
+   * Set the role ID.
+   *
+   * @param int $rid
+   *   Role ID.
    */
-  public function setRid($rid)
-  {
+  public function setRid($rid) {
     $this->rid = $rid;
   }
 
   /**
-   * @return int name
+   * Get the role name.
+   *
+   * @return int
+   *   Name
    */
-  public function getName()
-  {
+  public function getName() {
     return $this->name;
   }
 
   /**
-   * @param $name
+   * Set the role name.
+   *
+   * @param string $name
+   *   Role name.
    */
-  public function setName($name)
-  {
+  public function setName($name) {
     $this->name = $name;
   }
 
   /**
    * Return the values as an associative array.
+   *
    * @return array
+   *   Role object.
    */
-  public function dump()
-  {
+  public function dump() {
     return array(
       'rid' => $this->rid,
       'name' => $this->name,
     );
   }
+
 }

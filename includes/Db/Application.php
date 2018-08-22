@@ -3,83 +3,99 @@
 namespace Datagator\Db;
 
 /**
- * Class Application
- * Container for data for an application row.
+ * Class Application.
  *
  * @package Datagator\Db
  */
-class Application
-{
+class Application {
+
   protected $appId;
   protected $accId;
   protected $name;
 
   /**
-   * @param null $appId
-   * @param null $accId
-   * @param null $name
+   * Application constructor.
+   *
+   * @param int $appId
+   *   Application ID.
+   * @param int $accId
+   *   Account ID.
+   * @param string $name
+   *   Application name.
    */
-  public function __construct($appId=NULL, $accId=NULL, $name=NULL)
-  {
+  public function __construct($appId = NULL, $accId = NULL, $name = NULL) {
     $this->appId = $appId;
     $this->accId = $accId;
     $this->name = $name;
   }
 
   /**
-   * @return int appid
+   * Get application IOD.
+   *
+   * @return int
+   *   Application ID.
    */
-  public function getAppId()
-  {
+  public function getAppId() {
     return $this->appId;
   }
 
   /**
-   * @param $appId
+   * Set the application ID.
+   *
+   * @param int $appId
+   *   Application ID.
    */
-  public function setAppId($appId)
-  {
+  public function setAppId($appId) {
     $this->appId = $appId;
   }
 
   /**
-   * @return int accid
+   * Get the account ID.
+   *
+   * @return int
+   *   Account ID.
    */
-  public function getAccId()
-  {
+  public function getAccId() {
     return $this->accId;
   }
 
   /**
-   * @param $accId
+   * Set the account ID.
+   *
+   * @param int $accId
+   *   Account ID.
    */
-  public function setAccId($accId)
-  {
+  public function setAccId($accId) {
     $this->accId = $accId;
   }
 
   /**
-   * @return int name
+   * Get the application name.
+   *
+   * @return int
+   *   Application name.
    */
-  public function getName()
-  {
+  public function getName() {
     return $this->name;
   }
 
   /**
-   * @param $name
+   * Set the application name.
+   *
+   * @param string $name
+   *   Application name.
    */
-  public function setName($name)
-  {
+  public function setName($name) {
     $this->name = $name;
   }
 
   /**
    * Return the values as an associative array.
+   *
    * @return array
+   *   Application.
    */
-  public function dump()
-  {
+  public function dump() {
     return array(
       'appId' => $this->appId,
       'accId' => $this->accId,
