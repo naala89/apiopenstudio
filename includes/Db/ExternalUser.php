@@ -1,14 +1,14 @@
 <?php
 
-/**
- * Container for data for an external_user row.
- */
-
 namespace Datagator\Db;
-use Datagator\Core;
 
-class ExternalUser
-{
+/**
+ * Class ExternalUser.
+ *
+ * @package Datagator\Db
+ */
+class ExternalUser {
+
   protected $id;
   protected $appId;
   protected $externalId;
@@ -18,16 +18,24 @@ class ExternalUser
   protected $dataField3;
 
   /**
-   * @param null $id
-   * @param null $appid
-   * @param null $externalId
-   * @param null $externalEntity
-   * @param null $dataField1
-   * @param null $dataField2
-   * @param null $dataField3
+   * ExternalUser constructor.
+   *
+   * @param int $id
+   *   External entity ID.
+   * @param int $appId
+   *   Application ID.
+   * @param int $externalId
+   *   External ID.
+   * @param string $externalEntity
+   *   External entity name.
+   * @param string $dataField1
+   *   Spare data field 1.
+   * @param string $dataField2
+   *   Spare data field 2.
+   * @param string $dataField3
+   *   Spare data field 3.
    */
-  public function __construct($id=NULL, $appId=NULL, $externalId=NULL, $externalEntity=NULL, $dataField1=NULL, $dataField2=NULL, $dataField3=NULL)
-  {
+  public function __construct($id = NULL, $appId = NULL, $externalId = NULL, $externalEntity = NULL, $dataField1 = NULL, $dataField2 = NULL, $dataField3 = NULL) {
     $this->id = $id;
     $this->appId = $appId;
     $this->externalId = $externalId;
@@ -38,123 +46,152 @@ class ExternalUser
   }
 
   /**
-   * @return int id
+   * Get External user ID.
+   *
+   * @return int
+   *   External user ID.
    */
-  public function getId()
-  {
+  public function getId() {
     return $this->id;
   }
 
   /**
-   * @param $id
+   * Set External user ID.
+   *
+   * @param int $id
+   *   External user ID.
    */
-  public function setId($id)
-  {
+  public function setId($id) {
     $this->id = $id;
   }
 
   /**
-   * @return int appid
+   * Get Application ID.
+   *
+   * @return int
+   *   Application ID.
    */
-  public function getAppId()
-  {
+  public function getAppId() {
     return $this->appId;
   }
 
   /**
-   * @param $appId
+   * Set application ID.
+   *
+   * @param int $appId
+   *   Application ID.
    */
-  public function setAppId($appId)
-  {
+  public function setAppId($appId) {
     $this->appId = $appId;
   }
 
   /**
-   * @return mixed external_id
+   * Get External ID.
+   *
+   * @return mixed
+   *   External ID.
    */
-  public function getExternalId()
-  {
+  public function getExternalId() {
     return $this->externalId;
   }
 
   /**
-   * @param $externalId
+   * Set External ID.
+   *
+   * @param mixed $externalId
+   *   External ID.
    */
-  public function setExternalId($externalId)
-  {
+  public function setExternalId($externalId) {
     $this->externalId = $externalId;
   }
 
   /**
-   * @return mixed external_entity
+   * Get External entity.
+   *
+   * @return mixed
+   *   External entity.
    */
-  public function getExternalEntity()
-  {
+  public function getExternalEntity() {
     return $this->externalEntity;
   }
 
   /**
-   * @param $externalEntity
+   * Set External entity.
+   *
+   * @param string $externalEntity
+   *   External entity.
    */
-  public function setExternalEntity($externalEntity)
-  {
+  public function setExternalEntity($externalEntity) {
     $this->externalEntity = $externalEntity;
   }
 
   /**
-   * @return mixed data_field_1
+   * Get data field 1.
+   *
+   * @return mixed
+   *   Data field 1.
    */
-  public function getDataField1()
-  {
+  public function getDataField1() {
     return $this->dataField1;
   }
 
   /**
-   * @param $dataField1
+   * Set data field 1.
+   *
+   * @param mixed $dataField1
+   *   Data field 1.
    */
-  public function setDataField1($dataField1)
-  {
+  public function setDataField1($dataField1) {
     $this->dataField1 = $dataField1;
   }
 
   /**
-   * @return mixed data_field_2
+   * Get data field 2.
+   *
+   * @return mixed
+   *   Data field 2.
    */
-  public function getDataField2()
-  {
+  public function getDataField2() {
     return $this->dataField2;
   }
 
   /**
-   * @param $dataField2
+   * Set data field 2.
+   *
+   * @param mixed $dataField2
+   *   Data field 2.
    */
-  public function setDataField2($dataField2)
-  {
+  public function setDataField2($dataField2) {
     $this->dataField2 = $dataField2;
   }
 
   /**
-   * @return mixed data_field_3
+   * Get data field 3.
+   *
+   * @return mixed
+   *   Data field 3.
    */
-  public function getDataField3()
-  {
+  public function getDataField3() {
     return $this->dataField3;
   }
 
   /**
-   * @param $dataField3
+   * Set data field 3.
+   *
+   * @param mixed $dataField3
+   *   Data field 3.
    */
-  public function setDataField3($dataField3)
-  {
+  public function setDataField3($dataField3) {
     $this->dataField3 = $dataField3;
   }
 
   /**
    * Return the values as an associative array.
+   *
    * @return array
+   *   External user.
    */
-  public function dump()
-  {
+  public function dump() {
     return array(
       'uid' => $this->uid,
       'appId' => $this->appId,
@@ -165,4 +202,5 @@ class ExternalUser
       'dataField3' => $this->dataField3,
     );
   }
+
 }

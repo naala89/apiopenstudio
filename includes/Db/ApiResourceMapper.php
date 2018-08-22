@@ -1,35 +1,41 @@
 <?php
 
-/**
- * Fetch and save resource data.
- */
-
 namespace Datagator\Db;
 
-use Datagator\Core;
-use \ADOConnection;
+use Datagator\Core\ApiException;
+use ADOConnection;
 
-class ResourceMapper
-{
+/**
+ * Class ApiResourceMapper.
+ *
+ * @package Datagator\Db
+ */
+class ApiResourceMapper {
+
   protected $db;
 
   /**
    * ResourceMapper constructor.
    *
-   * @param ADOConnection $dbLayer
+   * @param \ADOConnection $dbLayer
+   *   DB connection object.
    */
-  public function __construct(ADOConnection $dbLayer)
-  {
+  public function __construct(ADOConnection $dbLayer) {
     $this->db = $dbLayer;
   }
 
   /**
-   * @param \Datagator\Db\Resource $resource
+   * Save an API Resource.
+   *
+   * @param \Datagator\Db\ApiResource $resource
+   *   The API Resource.
+   *
    * @return bool
+   *   Success.
+   *
    * @throws \Datagator\Core\ApiException
    */
-  public function save(Resource $resource)
-  {
+  public function save(ApiResource $resource) {
     if ($resource->getId() == NULL) {
       $sql = 'INSERT INTO resource (appid, name, description, method, identifier, meta, ttl) VALUES (?, ?, ?, ?, ?, ?, ?)';
       $bindParams = array(
@@ -39,10 +45,11 @@ class ResourceMapper
         $resource->getMethod(),
         $resource->getIdentifier(),
         $resource->getMeta(),
-        $resource->getTtl()
+        $resource->getTtl(),
       );
       $result = $this->db->Execute($sql, $bindParams);
-    } else {
+    }
+    else {
       $sql = 'UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, identifier = ?, meta = ?, ttl = ? WHERE id = ?';
       $bindParams = array(
         $resource->getAppId(),
@@ -52,41 +59,50 @@ class ResourceMapper
         $resource->getIdentifier(),
         $resource->getMeta(),
         $resource->getTtl(),
-        $resource->getId()
+        $resource->getId(),
       );
       $result = $this->db->Execute($sql, $bindParams);
     }
     if (!$result) {
-      throw new Core\ApiException($this->db->ErrorMsg(), 2);
+      throw new ApiException($this->db->ErrorMsg(), 2);
     }
     return TRUE;
   }
 
   /**
-   * @param \Datagator\Db\Resource $resource
+   * Delete an API resource.
+   *
+   * @param \Datagator\Db\ApiResource $resource
+   *   API resoure object.
+   *
    * @return bool
-   * @throws \Datagator\Core\ApiException
+   *   Success.
+   *
+   * @throws ApiException
    */
-  public function delete(Resource $resource)
-  {
+  public function delete(ApiResource $resource) {
     if ($resource->getId() == NULL) {
-      throw new Core\ApiException('could not delete resource, not found', 2);
+      throw new ApiException('could not delete resource, not found', 2);
     }
     $sql = 'DELETE FROM resource WHERE id = ?';
     $bindParams = array($resource->getId());
     $result = $this->db->Execute($sql, $bindParams);
     if (!$result) {
-      throw new Core\ApiException($this->db->ErrorMsg(), 2);
+      throw new ApiException($this->db->ErrorMsg(), 2);
     }
     return TRUE;
   }
 
   /**
-   * @param $id
-   * @return \Datagator\Db\Resource
+   * Find an API resource by its ID.
+   *
+   * @param int $id
+   *   API  resource ID.
+   *
+   * @return \Datagator\Db\ApiResource
+   *   ApiResource object.
    */
-  public function findId($id)
-  {
+  public function findId($id) {
     $sql = 'SELECT * FROM resource WHERE id = ?';
     $bindParams = array($id);
     $row = $this->db->GetRow($sql, $bindParams);
@@ -94,13 +110,19 @@ class ResourceMapper
   }
 
   /**
-   * @param $appId
-   * @param $method
-   * @param $identifier
-   * @return \Datagator\Db\Resource
+   * Find an API resopurce by application ID, method and identifier.
+   *
+   * @param int $appId
+   *   Application ID.
+   * @param string $method
+   *   API resource method.
+   * @param string $identifier
+   *   API resource identifier.
+   *
+   * @return \Datagator\Db\ApiResource
+   *   ApiResource object.
    */
-  public function findByAppIdMethodIdentifier($appId, $method, $identifier)
-  {
+  public function findByAppIdMethodIdentifier($appId, $method, $identifier) {
     $sql = 'SELECT r.* FROM resource AS r WHERE r.appid = ? AND r.method = ? AND r.identifier = ?';
     $bindParams = array($appId, $method, $identifier);
     $row = $this->db->GetRow($sql, $bindParams);
@@ -108,23 +130,30 @@ class ResourceMapper
   }
 
   /**
-   * @param $appNames
-   * @param $method
-   * @param $identifier
+   * Find a resource by application name/s, method and identifier.
+   *
+   * @param array|string $appNames
+   *   Application name or array of application names.
+   * @param string $method
+   *   Resource method.
+   * @param string $identifier
+   *   Resource identifier.
+   *
    * @return array
+   *   Array of ApiResource objects.
    */
-  public function findByAppNamesMethodIdentifier($appNames, $method, $identifier)
-  {
+  public function findByAppNamesMethodIdentifier($appNames, $method, $identifier) {
     $sql = 'SELECT r.* FROM resource AS r INNER JOIN application AS a ON r.appid=a.appid WHERE';
     $bindParams = array();
     if (is_array($appNames)) {
       $q = array();
-      for ($i = 0; $i < sizeof($appNames); $i++) {
+      for ($i = 0; $i < count($appNames); $i++) {
         $q[] = '?';
         $bindParams[] = $appNames[$i];
       }
       $sql .= ' a.name in (' . implode(',', $q) . ')';
-    } else {
+    }
+    else {
       $sql .= ' a.name=?';
       $bindParams[] = $appNames;
     }
@@ -144,11 +173,15 @@ class ResourceMapper
   }
 
   /**
-   * @param $appId
+   * Find API Resources by an application ID.
+   *
+   * @param int $appId
+   *   Application ID.
+   *
    * @return array
+   *   Array of ApiResource objects.
    */
-  public function findByAppId($appId)
-  {
+  public function findByAppId($appId) {
     $sql = 'SELECT * FROM resource WHERE appid = ?';
     $bindParams = array($appId);
 
@@ -164,12 +197,16 @@ class ResourceMapper
   }
 
   /**
+   * Map a DB row to this object.
+   *
    * @param array $row
-   * @return \Datagator\Db\Resource
+   *   DB row object.
+   *
+   * @return \Datagator\Db\ApiResource
+   *   ApiResource object.
    */
-  protected function mapArray(array $row)
-  {
-    $resource = new Resource();
+  protected function mapArray(array $row) {
+    $resource = new ApiResource();
 
     $resource->setId(!empty($row['id']) ? $row['id'] : NULL);
     $resource->setAppId(!empty($row['appid']) ? $row['appid'] : NULL);
@@ -182,4 +219,5 @@ class ResourceMapper
 
     return $resource;
   }
+
 }

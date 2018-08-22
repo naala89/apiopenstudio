@@ -1,35 +1,42 @@
 <?php
 
-/**
- * Fetch and save user data.
- */
-
 namespace Datagator\Db;
 
-use Datagator\Core;
-use \ADOConnection;
+use Datagator\Core\Utilities;
+use Datagator\Core\ApiException;
+use ADOConnection;
 
-class UserMapper
-{
+/**
+ * Class UserMapper.
+ *
+ * @package Datagator\Db
+ */
+class UserMapper {
+
   protected $db;
 
   /**
    * UserMapper constructor.
    *
-   * @param ADOConnection $dbLayer
+   * @param \ADOConnection $dbLayer
+   *   DB connection object.
    */
-  public function __construct(ADOConnection $dbLayer)
-  {
+  public function __construct(ADOConnection $dbLayer) {
     $this->db = $dbLayer;
   }
 
   /**
+   * Save the user.
+   *
    * @param \Datagator\Db\User $user
+   *   User object.
+   *
    * @return bool
+   *   Success.
+   *
    * @throws \Datagator\Core\ApiException
    */
-  public function save(User $user)
-  {
+  public function save(User $user) {
     if (empty($user->getUid())) {
       $sql = 'INSERT INTO user (active, username, salt, hash, token, token_ttl, email, honorific, name_first, name_last, company, website, address_street, address_suburb, address_city, address_state, address_country, address_postcode, phone_mobile, phone_work) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
       $bindParams = array(
@@ -52,10 +59,11 @@ class UserMapper
         $user->getAddressCountry(),
         $user->getAddressPostcode(),
         $user->getPhoneMobile(),
-        $user->getPhoneWork()
+        $user->getPhoneWork(),
       );
       $result = $this->db->Execute($sql, $bindParams);
-    } else {
+    }
+    else {
       $sql = 'UPDATE user SET active=?, username=?, salt=?, hash=?, token=?, token_ttl=?, email=?, honorific=?, name_first=?, name_last=?, company=?, website=?, address_street=?, address_suburb=?, address_city=?, address_state=?, address_country=?, address_postcode=?, phone_mobile=?, phone_work=?  WHERE uid=?';
       $bindParams = array(
         $user->getActive(),
@@ -78,38 +86,47 @@ class UserMapper
         $user->getAddressPostcode(),
         $user->getPhoneMobile(),
         $user->getPhoneWork(),
-        $user->getUid()
+        $user->getUid(),
       );
       $result = $this->db->Execute($sql, $bindParams);
     }
     if (!$result) {
-      throw new Core\ApiException($this->db->ErrorMsg(), 2);
+      throw new ApiException($this->db->ErrorMsg(), 2);
     }
     return TRUE;
   }
 
   /**
+   * Delete a user.
+   *
    * @param \Datagator\Db\User $user
+   *   The user object.
+   *
    * @return bool
+   *   Success.
+   *
    * @throws \Datagator\Core\ApiException
    */
-  public function delete(User $user)
-  {
+  public function delete(User $user) {
     $sql = 'DELETE FROM user WHERE uid = ?';
     $bindParams = array($user->getUid());
     $result = $this->db->Execute($sql, $bindParams);
     if (!$result) {
-      throw new Core\ApiException($this->db->ErrorMsg(), 2);
+      throw new ApiException($this->db->ErrorMsg(), 2);
     }
-    return true;
+    return TRUE;
   }
 
   /**
-   * @param $uid
+   * Find a user by user ID.
+   *
+   * @param int $uid
+   *   User ID.
+   *
    * @return \Datagator\Db\User
+   *   User object.
    */
-  public function findByUid($uid)
-  {
+  public function findByUid($uid) {
     $sql = 'SELECT * FROM user WHERE uid = ?';
     $bindParams = array($uid);
     $row = $this->db->GetRow($sql, $bindParams);
@@ -117,11 +134,15 @@ class UserMapper
   }
 
   /**
-   * @param $email
+   * Find a user by email address.
+   *
+   * @param string $email
+   *   Users email.
+   *
    * @return \Datagator\Db\User
+   *   User object.
    */
-  public function findByEmail($email)
-  {
+  public function findByEmail($email) {
     $sql = 'SELECT * FROM user WHERE email = ?';
     $bindParams = array($email);
     $row = $this->db->GetRow($sql, $bindParams);
@@ -129,11 +150,15 @@ class UserMapper
   }
 
   /**
-   * @param $username
+   * Find user bu username.
+   *
+   * @param string $username
+   *   Users usdername.
+   *
    * @return \Datagator\Db\User
+   *   User object.
    */
-  public function findByUsername($username)
-  {
+  public function findByUsername($username) {
     $sql = 'SELECT * FROM user WHERE username = ?';
     $bindParams = array($username);
     $row = $this->db->GetRow($sql, $bindParams);
@@ -149,22 +174,27 @@ class UserMapper
    * @return \Datagator\Db\User
    *   User object.
    */
-  public function findBytoken($token)
-  {
+  public function findBytoken($token) {
     $sql = 'SELECT * FROM user WHERE token = ? AND token_ttl > ?';
-    $bindParams = array($token, Core\Utilities::mysqlNow());
+    $bindParams = array($token, Utilities::mysqlNow());
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
   }
 
   /**
-   * @param $uid
-   * @param $appId
-   * @param $rid
+   * Validate that a user has a role.
+   *
+   * @param int $uid
+   *   User ID.
+   * @param int $appId
+   *   Application ID.
+   * @param int $rid
+   *   Role ID.
+   *
    * @return bool
+   *   Result.
    */
-  public function hasRole($uid, $appId, $rid)
-  {
+  public function hasRole($uid, $appId, $rid) {
     $sql = 'SELECT u.* FROM user AS u INNER JOIN user_role AS ur ON u.uid=ur.uid WHERE u.uid=? AND ur.appid=? AND ur.rid=?';
     $bindParams = array($uid, $appId, $rid);
     $row = $this->db->GetRow($sql, $bindParams);
@@ -172,11 +202,15 @@ class UserMapper
   }
 
   /**
+   * Map a DB row to this object.
+   *
    * @param array $row
+   *   DB row object.
+   *
    * @return \Datagator\Db\User
+   *   Mapped User object.
    */
-  protected function mapArray($row)
-  {
+  protected function mapArray(array $row) {
     $user = new User();
     $user->setUid(!empty($row['uid']) ? $row['uid'] : NULL);
     $user->setActive(!empty($row['active']) ? $row['active'] : NULL);
@@ -201,4 +235,5 @@ class UserMapper
     $user->setPhoneWork(!empty($row['phone_work']) ? $row['phone_work'] : NULL);
     return $user;
   }
+
 }

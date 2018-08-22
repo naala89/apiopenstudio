@@ -1,14 +1,16 @@
 <?php
 
-/**
- * Container for data for an user row.
- */
-
 namespace Datagator\Db;
-use Datagator\Core;
 
-class User
-{
+use Datagator\Core\Hash;
+
+/**
+ * Class User.
+ *
+ * @package Datagator\Db
+ */
+class User {
+
   protected $uid;
   protected $active;
   protected $username;
@@ -32,30 +34,52 @@ class User
   protected $phoneWork;
 
   /**
-   * @param null $uid
-   * @param null $active
-   * @param null $username
-   * @param null $salt
-   * @param null $hash
-   * @param null $token
-   * @param null $tokenTtl
-   * @param null $email
-   * @param null $honorific
-   * @param null $nameFirst
-   * @param null $nameLast
-   * @param null $company
-   * @param null $website
-   * @param null $addressStreet
-   * @param null $addressSuburb
-   * @param null $addressCity
-   * @param null $addressState
-   * @param null $addressCountry
-   * @param null $addressPostcode
-   * @param null $phoneMobile
-   * @param null $phoneWork
+   * User constructor.
+   *
+   * @param int $uid
+   *   User ID.
+   * @param int $active
+   *   Active status.
+   * @param string $username
+   *   Username.
+   * @param string $salt
+   *   Salt.
+   * @param string $hash
+   *   Password hash.
+   * @param string $token
+   *   Access token.
+   * @param string $tokenTtl
+   *   Access token stale date.
+   * @param string $email
+   *   User email.
+   * @param string $honorific
+   *   User honorific.
+   * @param string $nameFirst
+   *   First name.
+   * @param string $nameLast
+   *   Last name.
+   * @param string $company
+   *   Company.
+   * @param string $website
+   *   Website.
+   * @param string $addressStreet
+   *   Street address.
+   * @param string $addressSuburb
+   *   Suburb.
+   * @param string $addressCity
+   *   City.
+   * @param string $addressState
+   *   State.
+   * @param string $addressCountry
+   *   Country.
+   * @param string $addressPostcode
+   *   Postcode.
+   * @param string $phoneMobile
+   *   Mobile number.
+   * @param string $phoneWork
+   *   Business number.
    */
-  public function __construct($uid=NULL, $active=NULL, $username=NULL, $salt=NULL, $hash=NULL, $token=NULL, $tokenTtl=NULL, $email=NULL, $honorific=NULL, $nameFirst=NULL, $nameLast=NULL, $company=NULL, $website=NULL, $addressStreet=NULL, $addressSuburb=NULL, $addressCity=NULL, $addressState=NULL, $addressCountry=NULL, $addressPostcode=NULL, $phoneMobile=NULL, $phoneWork=NULL)
-  {
+  public function __construct($uid = NULL, $active = NULL, $username = NULL, $salt = NULL, $hash = NULL, $token = NULL, $tokenTtl = NULL, $email = NULL, $honorific = NULL, $nameFirst = NULL, $nameLast = NULL, $company = NULL, $website = NULL, $addressStreet = NULL, $addressSuburb = NULL, $addressCity = NULL, $addressState = NULL, $addressCountry = NULL, $addressPostcode = NULL, $phoneMobile = NULL, $phoneWork = NULL) {
     $this->uid = $uid;
     $this->active = $active;
     $this->username = $username;
@@ -80,360 +104,447 @@ class User
   }
 
   /**
-   * @return int uid
+   * Get user ID.
+   *
+   * @return int
+   *   User ID.
    */
-  public function getUid()
-  {
+  public function getUid() {
     return $this->uid;
   }
 
   /**
-   * @param $uid
+   * Set the user ID.
+   *
+   * @param int $uid
+   *   User ID.
    */
-  public function setUid($uid)
-  {
+  public function setUid($uid) {
     $this->uid = $uid;
   }
 
   /**
-   * @return int active
+   * Get the active status.
+   *
+   * @return int
+   *   Active status.
    */
-  public function getActive()
-  {
+  public function getActive() {
     return $this->active;
   }
 
   /**
-   * @param $active
+   * Set the active status.
+   *
+   * @param int $active
+   *   Active status.
    */
-  public function setActive($active)
-  {
+  public function setActive($active) {
     $this->active = $active;
   }
 
   /**
-   * @return mixed username
+   * Get the username.
+   *
+   * @return string
+   *   Username.
    */
-  public function getUsername()
-  {
+  public function getUsername() {
     return $this->username;
   }
 
   /**
-   * @param $userName
+   * Set the username.
+   *
+   * @param string $userName
+   *   Username.
    */
-  public function setUsername($userName)
-  {
+  public function setUsername($userName) {
     $this->username = $userName;
   }
 
   /**
-   * @param $password
+   * Set the password. This will also create the salt and hash.
+   *
+   * @param string $password
+   *   Password.
    */
-  public function setPassword($password)
-  {
-    // set up salt if not defined
+  public function setPassword($password) {
+    // Set up salt if not defined.
     if ($this->getSalt() == NULL) {
-      $this->setSalt(Core\Hash::generateSalt());
+      $this->setSalt(Hash::generateSalt());
     }
-    // generate hash
-    $this->hash = Core\Hash::generateHash($password, $this->getSalt());
+    // Generate hash.
+    $this->hash = Hash::generateHash($password, $this->getSalt());
   }
 
   /**
-   * @return mixed salt
+   * Get the salt.
+   *
+   * @return string
+   *   Salt.
    */
-  public function getSalt()
-  {
+  public function getSalt() {
     return $this->salt;
   }
 
   /**
-   * @param $salt
+   * Set the salt.
+   *
+   * @param string $salt
+   *   Salt.
    */
-  public function setSalt($salt)
-  {
+  public function setSalt($salt) {
     $this->salt = $salt;
   }
 
   /**
-   * @return mixed hash
+   * Get the hash.
+   *
+   * @return string
+   *   Hash.
    */
-  public function getHash()
-  {
+  public function getHash() {
     return $this->hash;
   }
 
   /**
-   * @param $hash
+   * Set the hash.
+   *
+   * @param string $hash
+   *   Hash.
    */
-  public function setHash($hash)
-  {
+  public function setHash($hash) {
     $this->hash = $hash;
   }
 
   /**
-   * @return mixed token
+   * Get the token.
+   *
+   * @return string
+   *   Token.
    */
-  public function getToken()
-  {
+  public function getToken() {
     return $this->token;
   }
 
   /**
-   * @param $token
+   * Set the token.
+   *
+   * @param string $token
+   *   Token.
    */
-  public function setToken($token)
-  {
+  public function setToken($token) {
     $this->token = $token;
   }
 
   /**
-   * @return mixed token
+   * Get the token stale date.
+   *
+   * @return string
+   *   token stale date.
    */
-  public function getTokenTtl()
-  {
+  public function getTokenTtl() {
     return $this->tokenTtl;
   }
 
   /**
-   * @param $tokenTtl
+   * Set the token stale date.
+   *
+   * @param string $tokenTtl
+   *   Token stale date.
    */
-  public function setTokenTtl($tokenTtl)
-  {
+  public function setTokenTtl($tokenTtl) {
     $this->tokenTtl = $tokenTtl;
   }
 
   /**
-   * @return mixed email
+   * Get the user email.
+   *
+   * @return string
+   *   Email.
    */
-  public function getEmail()
-  {
+  public function getEmail() {
     return $this->email;
   }
 
   /**
-   * @param $email
+   * Set the email.
+   *
+   * @param string $email
+   *   Email.
    */
-  public function setEmail($email)
-  {
+  public function setEmail($email) {
     $this->email = $email;
   }
 
   /**
-   * @return int honorific
+   * Get the honorific.
+   *
+   * @return string
+   *   Honorific.
    */
-  public function getHonorific()
-  {
+  public function getHonorific() {
     return $this->honorific;
   }
 
   /**
-   * @param $honorific
+   * Set the honorific.
+   *
+   * @param string $honorific
+   *   Honorific.
    */
-  public function setHonorific($honorific)
-  {
+  public function setHonorific($honorific) {
     $this->honorific = $honorific;
   }
 
   /**
-   * @return int name_first
+   * Get the first name.
+   *
+   * @return string
+   *   First name.
    */
-  public function getNameFirst()
-  {
+  public function getNameFirst() {
     return $this->nameFirst;
   }
 
   /**
-   * @param $nameFirst
+   * Set the first name.
+   *
+   * @param string $nameFirst
+   *   First name.
    */
-  public function setNameFirst($nameFirst)
-  {
+  public function setNameFirst($nameFirst) {
     $this->nameFirst = $nameFirst;
   }
 
   /**
-   * @return int name_last
+   * Get the last name.
+   *
+   * @return string
+   *   Last name.
    */
-  public function getNameLast()
-  {
+  public function getNameLast() {
     return $this->nameLast;
   }
 
   /**
-   * @param $nameLast
+   * Set the last name.
+   *
+   * @param string $nameLast
+   *   Last name.
    */
-  public function setNameLast($nameLast)
-  {
+  public function setNameLast($nameLast) {
     $this->nameLast = $nameLast;
   }
 
   /**
-   * @return int company
+   * Get the company.
+   *
+   * @return string
+   *   Company.
    */
-  public function getCompany()
-  {
+  public function getCompany() {
     return $this->company;
   }
 
   /**
-   * @param $company
+   * Set the company.
+   *
+   * @param string $company
+   *   Company.
    */
-  public function setCompany($company)
-  {
+  public function setCompany($company) {
     $this->company = $company;
   }
 
   /**
-   * @return int website
+   * Get the website.
+   *
+   * @return string
+   *   Website.
    */
-  public function getWebsite()
-  {
+  public function getWebsite() {
     return $this->website;
   }
 
   /**
-   * @param $website
+   * Set the website.
+   *
+   * @param string $website
+   *   Website.
    */
-  public function setWebsite($website)
-  {
+  public function setWebsite($website) {
     $this->website = $website;
   }
 
   /**
-   * @return int address_street
+   * Get the street address.
+   *
+   * @return string
+   *   Street address.
    */
-  public function getAddressStreet()
-  {
+  public function getAddressStreet() {
     return $this->addressStreet;
   }
 
   /**
-   * @param $addressStreet
+   * Set the street address.
+   *
+   * @param string $addressStreet
+   *   Street address.
    */
-  public function setAddressStreet($addressStreet)
-  {
+  public function setAddressStreet($addressStreet) {
     $this->addressStreet = $addressStreet;
   }
 
   /**
-   * @return int address_suburb
+   * Get the suburb.
+   *
+   * @return string
+   *   Suburb.
    */
-  public function getAddressSuburb()
-  {
+  public function getAddressSuburb() {
     return $this->addressSuburb;
   }
 
   /**
-   * @param $addressSuburb
+   * Set the suburb.
+   *
+   * @param string $addressSuburb
+   *   Suburb.
    */
-  public function setAddressSuburb($addressSuburb)
-  {
+  public function setAddressSuburb($addressSuburb) {
     $this->addressSuburb = $addressSuburb;
   }
 
   /**
-   * @return int address_city
+   * Get the city.
+   *
+   * @return string
+   *   City.
    */
-  public function getAddressCity()
-  {
+  public function getAddressCity() {
     return $this->addressCity;
   }
 
   /**
-   * @param $addressCity
+   * Set the city.
+   *
+   * @param string $addressCity
+   *   City.
    */
-  public function setAddressCity($addressCity)
-  {
+  public function setAddressCity($addressCity) {
     $this->addressCity = $addressCity;
   }
 
   /**
-   * @return int address_state
+   * Get the state.
+   *
+   * @return string
+   *   State.
    */
-  public function getAddressState()
-  {
+  public function getAddressState() {
     return $this->addressState;
   }
 
   /**
-   * @param $addressState
+   * Set the state.
+   *
+   * @param string $addressState
+   *   State.
    */
-  public function setAddressState($addressState)
-  {
+  public function setAddressState($addressState) {
     $this->addressState = $addressState;
   }
 
   /**
-   * @return int address_country
+   * Get the country.
+   *
+   * @return string
+   *   Country.
    */
-  public function getAddressCountry()
-  {
+  public function getAddressCountry() {
     return $this->addressCountry;
   }
 
   /**
-   * @param $addressCountry
+   * Set the country.
+   *
+   * @param string $addressCountry
+   *   Country.
    */
-  public function setAddressCountry($addressCountry)
-  {
+  public function setAddressCountry($addressCountry) {
     $this->addressCountry = $addressCountry;
   }
 
   /**
-   * @return int address_postcode
+   * Get the postcode.
+   *
+   * @return string
+   *   Postcode.
    */
-  public function getAddressPostcode()
-  {
+  public function getAddressPostcode() {
     return $this->addressPostcode;
   }
 
   /**
-   * @param $addressPostcode
+   * Set the postcode.
+   *
+   * @param string $addressPostcode
+   *   Postcode.
    */
-  public function setAddressPostcode($addressPostcode)
-  {
+  public function setAddressPostcode($addressPostcode) {
     $this->addressPostcode = $addressPostcode;
   }
 
   /**
-   * @return int phone_mobile
+   * Get the mobile phone number.
+   *
+   * @return string
+   *   Mobile phone number.
    */
-  public function getPhoneMobile()
-  {
+  public function getPhoneMobile() {
     return $this->phoneMobile;
   }
 
   /**
-   * @param $phoneMobile
+   * Set the mobile phone number.
+   *
+   * @param string $phoneMobile
+   *   Mobile phone number.
    */
-  public function setPhoneMobile($phoneMobile)
-  {
+  public function setPhoneMobile($phoneMobile) {
     $this->phoneMobile = $phoneMobile;
   }
 
   /**
-   * @return int phone_work
+   * Get the work phone number.
+   *
+   * @return string
+   *   Work phone number.
    */
-  public function getPhoneWork()
-  {
+  public function getPhoneWork() {
     return $this->phoneWork;
   }
 
   /**
-   * @param $phoneWork
+   * Set the work phone number.
+   *
+   * @param string $phoneWork
+   *   Work phone number.
    */
-  public function setPhoneWork($phoneWork)
-  {
+  public function setPhoneWork($phoneWork) {
     $this->phoneWork = $phoneWork;
   }
 
   /**
    * Return the values as an associative array.
+   *
    * @return array
+   *   User.
    */
-  public function dump()
-  {
+  public function dump() {
     return array(
       'uid' => $this->uid,
       'active' => $this->active,
@@ -458,4 +569,5 @@ class User
       'phoneWork' => $this->phoneWork,
     );
   }
+
 }

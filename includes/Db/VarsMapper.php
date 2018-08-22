@@ -1,84 +1,100 @@
 <?php
 
-/**
- * Fetch and save vars data.
- */
-
 namespace Datagator\Db;
 
-use Datagator\Core;
-use \ADOConnection;
+use Datagator\Core\ApiException;
+use ADOConnection;
 
-class VarsMapper
-{
+/**
+ * Class VarsMapper.
+ *
+ * @package Datagator\Db
+ */
+class VarsMapper {
+
   protected $db;
 
   /**
    * VarsMapper constructor.
    *
-   * @param ADOConnection $dbLayer
+   * @param \ADOConnection $dbLayer
+   *   DB connection object.
    */
-  public function __construct(ADOConnection $dbLayer)
-  {
+  public function __construct(ADOConnection $dbLayer) {
     $this->db = $dbLayer;
   }
 
   /**
+   * Save the var.
+   *
    * @param \Datagator\Db\Vars $vars
+   *   Vars object.
+   *
    * @return bool
+   *   Success.
+   *
    * @throws \Datagator\Core\ApiException
    */
-  public function save(Vars $vars)
-  {
+  public function save(Vars $vars) {
     if ($vars->getId() == NULL) {
       $sql = 'INSERT INTO vars (appid, name, val) VALUES (?, ?, ?)';
       $bindParams = array(
         $vars->getAppId(),
         $vars->getName(),
-        $vars->getval()
+        $vars->getval(),
       );
       $result = $this->db->Execute($sql, $bindParams);
-    } else {
+    }
+    else {
       $sql = 'UPDATE vars SET appid=?, name=?, val=? WHERE id = ?';
       $bindParams = array(
         $vars->getAppId(),
         $vars->getName(),
         $vars->getVal(),
-        $vars->getId()
+        $vars->getId(),
       );
       $result = $this->db->Execute($sql, $bindParams);
     }
     if (!$result) {
-      throw new Core\ApiException($this->db->ErrorMsg(), 2);
+      throw new ApiException($this->db->ErrorMsg(), 2);
     }
     return TRUE;
   }
 
   /**
+   * Delete the vars.
+   *
    * @param \Datagator\Db\Vars $vars
+   *   Vars object.
+   *
    * @return bool
+   *   Success.
+   *
    * @throws \Datagator\Core\ApiException
    */
-  public function delete(Vars $vars)
-  {
+  public function delete(Vars $vars) {
     if ($vars->getId() === NULL) {
-      throw new Core\ApiException('cannot delete var - empty ID', 2);
+      throw new ApiException('cannot delete var - empty ID', 2);
     }
     $sql = 'DELETE FROM vars WHERE id = ?';
     $bindParams = array($vars->getId());
     $result = $this->db->Execute($sql, $bindParams);
     if (!$result) {
-      throw new Core\ApiException($this->db->ErrorMsg(), 2);
+      throw new ApiException($this->db->ErrorMsg(), 2);
     }
     return TRUE;
   }
 
   /**
-   * @param $id
+   * Find a var by its ID.
+   *
+   * @param int $id
+   *   Var ID.
+   *
    * @return \Datagator\Db\Vars
+   *   Vars object.
    */
-  public function findById($id)
-  {
+  public function findById($id) {
     $sql = 'SELECT * FROM vars WHERE id = ?';
     $bindParams = array($id);
     $row = $this->db->GetRow($sql, $bindParams);
@@ -86,12 +102,17 @@ class VarsMapper
   }
 
   /**
-   * @param $appId
-   * @param $name
+   * Find a var by application ID and var name.
+   *
+   * @param int $appId
+   *   Application ID.
+   * @param string $name
+   *   Var name.
+   *
    * @return \Datagator\Db\Vars
+   *   Vars object.
    */
-  public function findByAppIdName($appId, $name)
-  {
+  public function findByAppIdName($appId, $name) {
     $sql = 'SELECT * FROM vars WHERE appid = ? AND name = ?';
     $bindParams = array($appId, $name);
     $row = $this->db->GetRow($sql, $bindParams);
@@ -99,11 +120,15 @@ class VarsMapper
   }
 
   /**
-   * @param $appId
+   * Find the vars belonging to an application.
+   *
+   * @param int $appId
+   *   Application ID.
+   *
    * @return array
+   *   Array of Vars objects.
    */
-  public function findByAppId($appId)
-  {
+  public function findByAppId($appId) {
     $sql = 'SELECT * FROM vars WHERE appid = ?';
     $bindParams = array($appId);
 
@@ -119,11 +144,15 @@ class VarsMapper
   }
 
   /**
+   * Map a results row to attributes.
+   *
    * @param array $row
+   *   DB results row.
+   *
    * @return \Datagator\Db\Vars
+   *   Vars object.
    */
-  protected function mapArray(array $row)
-  {
+  protected function mapArray(array $row) {
     $vars = new Vars();
 
     $vars->setId(!empty($row['id']) ? $row['id'] : NULL);
@@ -133,4 +162,5 @@ class VarsMapper
 
     return $vars;
   }
+
 }

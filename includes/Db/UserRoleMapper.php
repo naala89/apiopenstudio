@@ -1,83 +1,99 @@
 <?php
 
-/**
- * Fetch and save user_role data.
- */
-
 namespace Datagator\Db;
 
-use Datagator\Core;
-use \ADOConnection;
+use Datagator\Core\ApiException;
+use ADOConnection;
 
-class UserRoleMapper
-{
+/**
+ * Class UserRoleMapper.
+ *
+ * @package Datagator\Db
+ */
+class UserRoleMapper {
+
   protected $db;
 
   /**
    * UserRoleMapper constructor.
    *
-   * @param ADOConnection $dbLayer
+   * @param \ADOConnection $dbLayer
+   *   DB connection object.
    */
-  public function __construct(ADOConnection $dbLayer)
-  {
+  public function __construct(ADOConnection $dbLayer) {
     $this->db = $dbLayer;
   }
 
   /**
+   * Save the userRole.
+   *
    * @param \Datagator\Db\UserRole $userRole
+   *   UserRole object.
+   *
    * @return bool
+   *   Result of the save.
+   *
    * @throws \Datagator\Core\ApiException
    */
-  public function save(UserRole $userRole)
-  {
+  public function save(UserRole $userRole) {
     if ($userRole->getUrid() == NULL) {
       $sql = 'INSERT INTO user_role (uid, rid, appid, accid) VALUES (?, ?, ?, ?)';
       $bindParams = array(
         $userRole->getUid(),
         $userRole->getRid(),
         $userRole->getAppId(),
-        $userRole->getAccId()
+        $userRole->getAccId(),
       );
       $result = $this->db->Execute($sql, $bindParams);
-    } else {
+    }
+    else {
       $sql = 'UPDATE user_role SET uid=?, rid=?, appid=?, accid=? WHERE urid = ?';
       $bindParams = array(
         $userRole->getUid(),
         $userRole->getRid(),
         $userRole->getAppId(),
         $userRole->getAccId(),
-        $userRole->getUrid()
+        $userRole->getUrid(),
       );
       $result = $this->db->Execute($sql, $bindParams);
     }
     if (!$result) {
-      throw new Core\ApiException($this->db->ErrorMsg(), 2);
+      throw new ApiException($this->db->ErrorMsg(), 2);
     }
     return TRUE;
   }
 
   /**
+   * Delete a user role.
+   *
    * @param \Datagator\Db\UserRole $userRole
+   *   UserRole object.
+   *
    * @return bool
+   *   Success.
+   *
    * @throws \Datagator\Core\ApiException
    */
-  public function delete(UserRole $userRole)
-  {
+  public function delete(UserRole $userRole) {
     $sql = 'DELETE FROM user_role WHERE urid = ?';
     $bindParams = array($userRole->getUrid());
     $result = $this->db->Execute($sql, $bindParams);
     if (!$result) {
-      throw new Core\ApiException($this->db->ErrorMsg(), 2);
+      throw new ApiException($this->db->ErrorMsg(), 2);
     }
-    return true;
+    return TRUE;
   }
 
   /**
-   * @param $urid
+   * Find a user role by its ID.
+   *
+   * @param int $urid
+   *   User role ID.
+   *
    * @return \Datagator\Db\UserRole
+   *   Mapped UserRole object.
    */
-  public function findByUrid($urid)
-  {
+  public function findByUrid($urid) {
     $sql = 'SELECT * FROM user_role WHERE urid = ?';
     $bindParams = array($urid);
     $row = $this->db->GetRow($sql, $bindParams);
@@ -85,11 +101,15 @@ class UserRoleMapper
   }
 
   /**
-   * @param $uid
+   * Find all user roles for a user.
+   *
+   * @param int $uid
+   *   User ID.
+   *
    * @return array
+   *   Array of mapped UserRole objects.
    */
-  public function findByUid($uid)
-  {
+  public function findByUid($uid) {
     $sql = 'SELECT * FROM user_role WHERE uid = ?';
     $bindParams = array($uid);
 
@@ -105,11 +125,15 @@ class UserRoleMapper
   }
 
   /**
-   * @param $appId
+   * Find all user roles for an application.
+   *
+   * @param int $appId
+   *   Application ID.
+   *
    * @return array
+   *   Array of mapped UserRole objects.
    */
-  public function findByAppId($appId)
-  {
+  public function findByAppId($appId) {
     $sql = 'SELECT * FROM user_role WHERE appid = ?';
     $bindParams = array($appId);
 
@@ -125,11 +149,15 @@ class UserRoleMapper
   }
 
   /**
-   * @param $accId
+   * Find all user roles for an account.
+   *
+   * @param int $accId
+   *   Account ID.
+   *
    * @return array
+   *   Array of mapped UserRole objects.
    */
-  public function findByAccId($accId)
-  {
+  public function findByAccId($accId) {
     $sql = 'SELECT * FROM user_role WHERE accid = ?';
     $bindParams = array($accId);
 
@@ -145,80 +173,32 @@ class UserRoleMapper
   }
 
   /**
-   * @param $rid
-   * @return array
+   * Find a user role by its ID.
+   *
+   * @param int $rid
+   *   Role ID.
+   *
+   * @return \Datagator\Db\UserRole
+   *   Mapped UserRole object
    */
-  public function findByRid($rid)
-  {
+  public function findByRid($rid) {
     $sql = 'SELECT * FROM user_role WHERE rid = ?';
     $bindParams = array($rid);
 
-    $recordSet = $this->db->Execute($sql, $bindParams);
-
-    $entries = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-      $recordSet->moveNext();
-    }
-
-    return $entries;
-  }
-
-  /**
-   * @param $uid
-   * @param $appId
-   * @param $rid
-   * @return \Datagator\Db\UserRole
-   */
-  public function findByUserAppRole($uid, $appId, $rid)
-  {
-    $sql = 'SELECT * FROM user_role WHERE uid = ? AND appid = ? AND rid = ?';
-    $bindParams = array($uid, $appId, $rid);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
   }
-
-//  /**
-//   * Find user roles by specified parameters.
-//   *
-//   * @param array $params
-//   *   query select parameters.
-//   *   [col => val,...].
-//   *
-//   * @return array
-//   * @throws Core\ApiException
-//   */
-//  public function findBy(array $params)
-//  {
-//    $sqlWhere = array();
-//    $bindParams = array();
-//
-//    foreach ($params as $col => $val) {
-//      $sqlWhere[] = "$col = ?";
-//      $bindParams[] = $val;
-//    }
-//    $sql = 'SELECT * FROM user_role WHERE ' . implode(' AND ', $sqlWhere);
-//
-//    $recordSet = $this->db->Execute($sql, $bindParams);
-//
-//    $entries = [];
-//    while ($row = $recordSet->fetchRow()) {
-//      $entries[] = $this->mapArray($row);
-//    }
-//
-//    return $entries;
-//  }
 
   /**
    * Find all user roles by user ID & account ID.
    *
    * @param int $uid
    *   User ID.
-   * @param $accId
+   * @param int $accId
    *   Account ID.
    *
    * @return array
-   *   Array of associative array of user roles.
+   *   Array of mapped of UserRole objects.
    */
   public function findByUidAccId($uid, $accId) {
     $sql = 'SELECT * FROM user_role WHERE uid = ? AND accid = ?';
@@ -234,11 +214,15 @@ class UserRoleMapper
   }
 
   /**
+   * Map a DB row to the internal attributes.
+   *
    * @param array $row
+   *   DB Row.
+   *
    * @return \Datagator\Db\UserRole
+   *   UserRole object.
    */
-  protected function mapArray(array $row)
-  {
+  protected function mapArray(array $row) {
     $userRole = new UserRole();
 
     $userRole->setId(!empty($row['urid']) ? $row['urid'] : NULL);
@@ -249,4 +233,5 @@ class UserRoleMapper
 
     return $userRole;
   }
+
 }
