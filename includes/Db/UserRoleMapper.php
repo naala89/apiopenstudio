@@ -115,10 +115,9 @@ class UserRoleMapper {
 
     $recordSet = $this->db->Execute($sql, $bindParams);
 
-    $entries = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-      $recordSet->moveNext();
+    $entries = [];
+    while ($row = $recordSet->fetchRow()) {
+      $entries[] = $this->mapArray($row);
     }
 
     return $entries;
@@ -139,10 +138,9 @@ class UserRoleMapper {
 
     $recordSet = $this->db->Execute($sql, $bindParams);
 
-    $entries = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-      $recordSet->moveNext();
+    $entries = [];
+    while ($row = $recordSet->fetchRow()) {
+      $entries[] = $this->mapArray($row);
     }
 
     return $entries;

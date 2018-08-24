@@ -2,7 +2,8 @@
 
 namespace Datagator\Admin;
 
-use Datagator\Db;
+use Datagator\Db\RoleMapper;
+use Datagator\Db\UserRoleMapper;
 
 /**
  * Class UserRole.
@@ -54,11 +55,11 @@ class UserRole {
    *   Success.
    */
   public function create($uid, $roleName, $appid = NULL, $accid = NULL) {
-    $roleMapper = new Db\RoleMapper($this->db);
+    $roleMapper = new RoleMapper($this->db);
     $role = $roleMapper->findByName($roleName);
     $rid = $role->getRid();
 
-    $userRole = new Db\UserRole(
+    $userRole = new UserRole(
       NULL,
       $uid,
       $rid,
@@ -66,7 +67,7 @@ class UserRole {
       $accid
     );
 
-    $userRoleMapper = new Db\UserRoleMapper($this->db);
+    $userRoleMapper = new UserRoleMapper($this->db);
     $result = $userRoleMapper->save($userRole);
     if (!$result) {
       return FALSE;
@@ -76,7 +77,7 @@ class UserRole {
   }
 
   /**
-   * Find user roles by uid and accId.
+   * Find user roles by User ID and Account ID.
    *
    * @param int $uid
    *   User ID.
@@ -89,8 +90,50 @@ class UserRole {
   public function findByUidAccId($uid, $accId) {
     $userRoles = [];
 
-    $userRoleMapper = new Db\UserRoleMapper($this->db);
+    $userRoleMapper = new UserRoleMapper($this->db);
     $results = $userRoleMapper->findByUidAccId($uid, $accId);
+    foreach ($results as $result) {
+      $userRoles[] = $result->dump();
+    }
+
+    return $userRoles;
+  }
+
+  /**
+   * Find all user roles by the account ID.
+   *
+   * @param $accId
+   *   Account ID.
+   *
+   * @return array
+   *   Array of UserRole objects.
+   */
+  public function findByAccId($accId) {
+    $userRoles = [];
+
+    $userRoleMapper = new UserRoleMapper($this->db);
+    $results = $userRoleMapper->findByAccId($accId);
+    foreach ($results as $result) {
+      $userRoles[] = $result->dump();
+    }
+
+    return $userRoles;
+  }
+
+  /**
+   * Find all user roles by the application ID.
+   *
+   * @param $appId
+   *   Application ID.
+   *
+   * @return array
+   *   Array of UserRole objects.
+   */
+  public function findByAppId($appId) {
+    $userRoles = [];
+
+    $userRoleMapper = new UserRoleMapper($this->db);
+    $results = $userRoleMapper->findByAppId($appId);
     foreach ($results as $result) {
       $userRoles[] = $result->dump();
     }

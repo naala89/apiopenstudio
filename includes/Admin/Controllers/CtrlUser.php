@@ -4,8 +4,10 @@ namespace Datagator\Admin\Controllers;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Datagator\Admin\Application;
 use Datagator\Admin\User;
+use Datagator\Admin\UserRole;
+use Datagator\Admin\Role;
+use Datagator\Admin\Application;
 
 /**
  * Class User.
@@ -33,175 +35,66 @@ class CtrlUser extends CtrlBase {
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
     }
-
     $menu = $this->getMenus($roles);
     $title = 'Users';
-    $user = new User($this->dbSettings);
-    $users = $user->findByAccount($_SESSION['accountId']);
+    $accId = $_SESSION['accountId'];
+
+    // Fetch all applications for the account.
+    $applicationHlp = new Application($this->dbSettings);
+    $applications = $applicationHlp->getByAccount($accId);
+
+    // fetch all roles.
+    $roleHlp = new Role($this->dbSettings);
+    $roles = $roleHlp->findAll();
+
+    // Fetch all user roles for the account
+    $userRoleHlp = new UserRole($this->dbSettings);
+    $userRoles = $userRoleHlp->findByAccId($accId);
+
+    // Fetch all user roles for each application.
+    foreach ($applications as $appId => $application) {
+      $results = $userRoleHlp->findByAppId($appId);
+      foreach ($results as $result) {
+        $userRoles[] = $result;
+      }
+    }
+
+    // Fetch distinct users for each user role.
+    $userHlp = new User($this->dbSettings);
+    $users = [];
+    foreach ($userRoles as $userRole) {
+      $uid = $userRole['uid'];
+      if (!isset($user[$uid])) {
+        $users[$uid] = $userHlp->findByUid($uid);
+      }
+    }
+
+    // Add applications => roles to users array.
+    foreach ($users as $uid => $user) {
+      $user['applications'] = [];
+      // Find all user roles for this user.
+      echo "<pre>";
+      var_dump($userRoles);
+      foreach ($userRoles as $userRole) {
+        if ($userRole['uid'] == $uid) {
+          // Add application if not exists.
+          $application = $applications[$userRole['appId']];
+          $appId = $application['appId'];
+          if (!isset($user['applications'][$appId])) {
+            $user['applications'][$appId] = $application;
+          }
+          // Add role.
+          $roleId = $userRole['rid'];
+          $user['applications'][$appId]['roles'][$roleId] = $roles[$roleId];
+        }
+      }
+    }
 
     return $this->view->render($response, 'users.twig', [
       'menu' => $menu,
       'title' => $title,
+      'applications' => $applications,
       'users' => $users,
-    ]);
-  }
-
-  /**
-   * Create an application.
-   *
-   * @param \Slim\Http\Request $request
-   *   Request object.
-   * @param \Slim\Http\Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return \Psr\Http\Message\ResponseInterface
-   *   Response.
-   */
-  public function create(Request $request, Response $response, array $args) {
-    $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
-    if (!$this->checkAccess($roles)) {
-      $response->withRedirect('/');
-    }
-
-    $menu = $this->getMenus($roles);
-    $title = 'Applications';
-    $allPostVars = $request->getParsedBody();
-    $application = new Application($this->db);
-
-    $message = [
-      'type' => 'info',
-      'text' => 'Application created',
-    ];
-    if (!empty($allPostVars['create-app-name'])) {
-      $result = $application->create($_SESSION['accountId'], $allPostVars['create-app-name']);
-      if (!$result) {
-        $message = [
-          'type' => 'error',
-          'text' => 'Failed to create application',
-        ];
-      }
-    }
-    else {
-      $message = [
-        'type' => 'error',
-        'text' => 'Could not create application - no name received',
-      ];
-    }
-
-    $applications = $application->getByAccount($_SESSION['accountId']);
-    return $this->view->render($response, 'users.twig', [
-      'menu' => $menu,
-      'title' => $title,
-      'applications' => $applications,
-      'message' => $message,
-    ]);
-  }
-
-  /**
-   * Edit an application.
-   *
-   * @param \Slim\Http\Request $request
-   *   Request object.
-   * @param \Slim\Http\Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return \Psr\Http\Message\ResponseInterface
-   *   Response.
-   */
-  public function edit(Request $request, Response $response, array $args) {
-    $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
-    if (!$this->checkAccess($roles)) {
-      $response->withRedirect('/');
-    }
-
-    $menu = $this->getMenus($roles);
-    $title = 'Applications';
-    $allPostVars = $request->getParsedBody();
-    $application = new Application($this->db);
-
-    $message = [
-      'type' => 'info',
-      'text' => 'Application edited',
-    ];
-    if (!empty($allPostVars['edit-app-id']) && !empty($allPostVars['edit-app-name'])) {
-      $result = $application->update($allPostVars['edit-app-id'], $allPostVars['edit-app-name']);
-      if (!$result) {
-        $message = [
-          'type' => 'error',
-          'text' => 'Failed to edit application',
-        ];
-      }
-    }
-    else {
-      $message = [
-        'type' => 'error',
-        'text' => 'Could not edit application - no name or ID received',
-      ];
-    }
-
-    $applications = $application->getByAccount($_SESSION['accountId']);
-    return $this->view->render($response, 'applications.twig', [
-      'menu' => $menu,
-      'title' => $title,
-      'applications' => $applications,
-      'message' => $message,
-    ]);
-  }
-
-  /**
-   * Delete an application.
-   *
-   * @param \Slim\Http\Request $request
-   *   Request object.
-   * @param \Slim\Http\Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return \Psr\Http\Message\ResponseInterface
-   *   Response.
-   */
-  public function delete(Request $request, Response $response, array $args) {
-    $roles = $this->getRoles($_SESSION['token'], $_SESSION['account']);
-    if (!$this->checkAccess($roles)) {
-      $response->withRedirect('/');
-    }
-
-    $menu = $this->getMenus($roles);
-    $title = 'Applications';
-    $allPostVars = $request->getParsedBody();
-    $application = new Application($this->db);
-
-    $message = [
-      'type' => 'info',
-      'text' => 'Application deleted',
-    ];
-    if (!empty($allPostVars['delete-app-id'])) {
-      $result = $application->delete($allPostVars['delete-app-id']);
-      if (!$result) {
-        $message = [
-          'type' => 'error',
-          'text' => 'Failed to edit application',
-        ];
-      }
-    }
-    else {
-      $message = [
-        'type' => 'error',
-        'text' => 'Could not delete application - no ID received',
-      ];
-    }
-
-    $applications = $application->getByAccount($_SESSION['accountId']);
-    return $this->view->render($response, 'applications.twig', [
-      'menu' => $menu,
-      'title' => $title,
-      'applications' => $applications,
-      'message' => $message,
     ]);
   }
 

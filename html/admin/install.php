@@ -138,9 +138,14 @@ switch ($step) {
     // Create user.
     if ($from == 2) {
       // This is a post from tue user create form.
-      if (!isset($_POST['username']) || !isset($_POST['password'])) {
+      if (!isset($_POST['username']) ||
+        !isset($_POST['password']) ||
+        !isset($_POST['honorific']) ||
+        !isset($_POST['email']) ||
+        !isset($_POST['name_first']) ||
+        !isset($_POST['name_last'])) {
         // Missing mandatory fields.
-        $message['text'] = "Required username and password not entered.";
+        $message['text'] = "Required fields not entered.";
         $message['type'] = 'error';
         $template = $twig->load('install_2.twig');
         echo $template->render(['message' => $message, 'menu' => $menu]);

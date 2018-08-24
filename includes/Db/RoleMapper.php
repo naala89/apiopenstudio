@@ -58,6 +58,26 @@ class RoleMapper {
   }
 
   /**
+   * Find all roles.
+   *
+   * @return \Datagator\Db\Role
+   *   Array of role objects.
+   */
+  public function findAll() {
+    $sql = 'SELECT * FROM role';
+
+    $recordSet = $this->db->Execute($sql);
+
+    $entries = array();
+    while (!$recordSet->EOF) {
+      $entries[] = $this->mapArray($recordSet->fields);
+      $recordSet->moveNext();
+    }
+
+    return $entries;
+  }
+
+  /**
    * Find a role by its ID.
    *
    * @param int $rid
