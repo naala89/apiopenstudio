@@ -2,24 +2,24 @@
 
 $settings = [];
 
-// Slim settings
+// Slim settings.
 $settings['displayErrorDetails'] = true;
 $settings['determineRouteBeforeAppMiddleware'] = true;
 
-// Path settings
+// Path settings.
 $settings['root'] = dirname(__DIR__);
 $settings['datagator'] = $settings['root'] . '/includes';
 $settings['temp'] = $settings['root'] . '/tmp';
 $settings['public'] = $settings['root'] . '/html';
 
-// View settings
+// View settings.
 $settings['twig'] = [
   'path' => $settings['datagator'] . '/admin/templates',
   'cache_enabled' => false,
-  'cache_path' =>  $settings['temp'] . '/twig_cache'
+  'cache_path' =>  $settings['temp'] . '/twig_cache',
 ];
 
-// Database settings
+// Database settings.
 $settings['db'] = [
   'base' => $settings['datagator'] . '/db/dbBase.yaml',
   'driver' => 'mysqli',
@@ -29,10 +29,26 @@ $settings['db'] = [
   'database' => 'test',
   'options' => [],
   'charset' => 'utf8',
-  'collation' => 'utf8_unicode_ci'
+  'collation' => 'utf8_unicode_ci',
 ];
 
-// User settings
+// User settings.
 $settings['user']['token_life'] = '+1 hour';
+
+// Email settings.
+$settings['mail'] = [
+  'from' => [
+    'email' => 'example@gaterdata.com',
+    'name' => 'GaterData',
+  ],
+  'smtp' => TRUE,
+  'host' => 'smtp1.example.com;smtp2.example.com',
+  'auth' => TRUE,
+  'username' => 'example@gaterdata.com',
+  'password' => 'secret',
+  'smtpSecure' => 'tls',
+  'port' => 587,
+  'debug' => 0,
+];
 
 return $settings;
