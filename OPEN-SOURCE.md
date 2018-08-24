@@ -7,7 +7,7 @@ config
 ------
 
 - change Config.php to be a single file, with Config.example.php 
-- Datagator to use /config/
+- Datagator to use /config/settings.php
 
 newsletter/mailing list
 -----------------------
@@ -28,8 +28,6 @@ web
 
 #### install
 
-- tidy install pages html layout
-
 #### update
 
 - need a page with script to deal with version upgrades that involve composer or db updates.
@@ -38,31 +36,31 @@ web
 
 #### login
 
-- use datagator native resources for validation.
-- visible to all
+#### applications
 
-#### accounts
-
-- owner can view all accounts
-- administrator can only view the accounts they are associated with
-- select list at the top to filter by account
-- list users assigned to accounts and their roles (link to account)
-- owner role able to add/edit/delete accounts in modals
+- administrator can only view the applications they are associated with
+- select list at the top to filter by applications
+- list users assigned to applications and their roles (link to account)
+- owner role able to add/edit/delete applications in modals
 
 #### resources
 
 - owner can view all resources
 - administrator can only view resources for the accounts they are associated with
-- developer can only view resources for the accounts they are associated with
-- select list at the top to filter by account
-- if no account selected then list of all resources
+- developer can only view resources for the applications they are associated with
+- select list at the top to filter by applications
+- if no applications selected then list of all resources
 - developer role can view/add/edit/delete resources in modals
 
 #### users
 
 - visible to owner & administrator
-- list all users and their roles and accounts they are associated with
+- list all users and their roles and applications they are associated with
 - add/edit/delete users in modals
+
+#### profile
+
+- form page to edit your own user details
 
 autoload
 --------

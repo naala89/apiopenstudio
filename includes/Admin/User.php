@@ -185,7 +185,7 @@ class User {
   }
 
   /**
-   * Find all users associated with am account.
+   * Find all users associated with an account.
    *
    * @param int $accId
    *   Account ID.
@@ -194,33 +194,8 @@ class User {
    *   Array of users.
    */
   public function findByAccount($accId) {
-    $userRoles = [];
-    $users = [];
-
-    // Find account user roles.
     $userRoleMapper = new Db\UserRoleMapper($this->db);
-    $results = $userRoleMapper->findByAccId($accId);
-    foreach ($results as $result) {
-      $userRoles += $this->findByApplication($result->getAppId());
-    }
-    $userRoles += $result->dump();
-
-    // Find applications associated with the account.
-    $applicationMapper = new Db\ApplicationMapper($this->db);
-    $applications = $applicationMapper->findByAccId($accId);
-    // Find user roles associated with each application.
-    foreach ($applications as $application) {
-      $userRoles += $this->findByApplication($application->getAppId());
-    }
-
-    // Find users from $userRoles.
-    $userMapper = new Db\UserMapper($this->db);
-    foreach ($userRoles as $userRole) {
-      $result = $userMapper->findByUid($userRole['uid']);
-      $users += $result->dump();
-    }
-
-    return $users;
+    return $userRoleMapper->findByAccId($accId);
   }
 
   /**
@@ -237,13 +212,13 @@ class User {
     $userRoleMapper = new Db\UserRoleMapper($this->db);
     $results = $userRoleMapper->findByAppId($appId);
     foreach ($results as $result) {
-      $userRoles += $result->dump();
+      $userRoles[] = $result->dump();
     }
     return $userRoles;
   }
 
   /**
-   * Find user associated with a token.
+   * Find a user by auth token.
    *
    * @param string $token
    *   Login token.
@@ -254,6 +229,21 @@ class User {
   public function findByToken($token) {
     $userMapper = new Db\UserMapper($this->db);
     $user = $userMapper->findBytoken($token);
+    return $user->dump();
+  }
+
+  /**
+   * Find a user by their user ID.
+   *
+   * @param string $uid
+   *   User ID.
+   *
+   * @return array
+   *   The user.
+   */
+  public function findByUid($uid) {
+    $userMapper = new Db\UserMapper($this->db);
+    $user = $userMapper->findByUid($uid);
     return $user->dump();
   }
 

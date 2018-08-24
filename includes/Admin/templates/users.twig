@@ -5,28 +5,77 @@
     <p>Manage your users here. View, invite, remove users and assign them roles in applications.</p>
   </div>
   <div class="row">
-    <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-create"><i class="material-icons">add</i></a>
+    <div class="col s1">
+      <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-create"><i class="material-icons">add</i></a>
+    </div>
+    <div class="input-field col s4">
+      <select>
+        <option value="all" selected>All</option>
+        {% for key,value in applications %}
+          <option value="{{ value.appid }}">{{ value.name }}</option>
+        {% endfor %}
+      </select>
+      <label>Filter by Application</label>
+    </div>
   </div>
 
-  <ul class="collection">
-    {% for key,value in users %}
-      <li class="collection-item">
-        <div class="row list-row">
-          <div class="col s10">{{ value.name }}</div>
-          <div class="col s1">
+  <div class="row">
+    <table class="responsive-table highlight">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>First name</th>
+          <th>Last name</th>
+          <th>Email</th>
+          <th>&nbsp;</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+      {% for userId,user in users %}
+        <tr>
+          <td>{{ user.username }}</td>
+          <td>{{ user.nameFirst }}</td>
+          <td>{{ user.nameLast }}</td>
+          <td>{{ user.email }}</td>
+          {% for appId,application in users.applications %}
+            <table class="responsive-table highlight">
+              <thead>
+                <tr>
+                  <th>Application</th>
+                  <th>Role</th>
+                </tr>
+                <tbody>
+                  <td>{{ application.name }}</td>
+                  <td>
+                    {% for roleId,role in application.roles %}
+                      <table>
+                        <tbody>
+                          <td>{{ role.name }}</td>
+                        </tbody>
+                      </table>
+                    {% endfor %}
+                  </td>
+                </tbody>
+            </table>
+          {% endfor %}
+
+          <!--td>{{ value.application }}</td>
+          <td>{{ value.roles }}</td-->
+          <td>
             <a class="btn-floating btn-small white hoverable">
               <i class="material-icons modal-app-edit-trigger black-text" app-id="{{ value.appId }}" app-name="{{ value.name }}">edit</i>
             </a>
-          </div>
-          <div class="col s1">
             <a class="btn-floating btn-small white hoverable">
               <i class="material-icons modal-app-delete-trigger black-text" app-id="{{ value.appId }}" app-name="{{ value.name }}">delete</i>
             </a>
-          </div>
-        </div>
-      </li>
-  {% endfor %}
-  </ul>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
   <!-- Create modal -->
   <div id="modal-create" class="modal">

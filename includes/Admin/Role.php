@@ -39,6 +39,23 @@ class Role {
   }
 
   /**
+   * Find all Roles.
+   *
+   * @return array
+   *   Array of roles.
+   */
+  public function findAll() {
+    $roles = [];
+    $roleMapper = new RoleMapper($this->db);
+    $results = $roleMapper->findAll();
+    foreach ($results as $result) {
+      $role = $result->dump();
+      $roles[$role['rid']] = $role;
+    }
+    return $roles;
+  }
+
+  /**
    * Find a role by its ID.
    *
    * @param int $rid
@@ -48,7 +65,6 @@ class Role {
    *   The role attributes.
    */
   public function findByRid($rid) {
-    $roles = [];
     $roleMapper = new RoleMapper($this->db);
     $role = $roleMapper->findByRid($rid);
     return $role->dump();

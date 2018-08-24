@@ -16,15 +16,19 @@
 
     <div class="col s6">
       <div class="input-field col s12">
-        <label for="username">Username <span>*</span></label>
+        <label for="username">Username <span class="red-text">*</span></label>
         <input id="username" name="username" type="text" placeholder="" required>
       </div>
       <div class="input-field col s12">
-        <label for="password">Password <span>*</span></label>
+        <label for="password">Password <span class="red-text">*</span></label>
         <input id="password" name="password" type="password" placeholder="" required>
       </div>
       <div class="input-field col s12">
-        <select id="honorific" name="honorific">
+        <label for="email">Email <span class="red-text">*</span></label>
+        <input id="email" name="email" type="text" placeholder="" required>
+      </div>
+      <div class="input-field col s12">
+        <select id="honorific" name="honorific" required>
           <option value="" disabled selected>Please select</option>
           <option value="mr">Mr</option>
           <option value="ms">Ms</option>
@@ -34,19 +38,15 @@
           <option value="prof">Prof</option>
           <option value="hon">Hon</option>
         </select>
-        <label for="honorific">Title</label>
+        <label for="honorific">Title <span class="red-text">*</span></label>
       </div>
       <div class="input-field col s12">
-        <label for="name_first">First Name</label>
+        <label for="name_first">First Name <span class="red-text">*</span></label>
         <input id="name_first" name="name_first" type="text" placeholder="">
       </div>
       <div class="input-field col s12">
-        <label for="name_last">Last Name</label>
+        <label for="name_last">Last Name <span class="red-text">*</span></label>
         <input id="name_last" name="name_last" type="text" placeholder="">
-      </div>
-      <div class="input-field col s12">
-        <label for="email">Email</label>
-        <input id="email" name="email" type="text" placeholder="">
       </div>
       <div class="input-field col s12">
         <label for="phone_mobile">Mobile Phone</label>

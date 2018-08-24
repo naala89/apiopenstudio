@@ -48,7 +48,8 @@ class Application {
     $results = $applicationMapper->findByAccId($accId);
     $applications = [];
     foreach ($results as $result) {
-      $applications[] = $result->dump();
+      $application = $result->dump();
+      $applications[$application['appId']] = $application;
     }
 
     return $applications;
