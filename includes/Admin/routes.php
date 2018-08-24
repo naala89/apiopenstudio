@@ -28,3 +28,4 @@ $app->post('/applications/delete', 'CtrlApplication:delete')->add(new Authentica
  * Users.
  */
 $app->get('/users', 'CtrlUser:index')->add(new Authentication($settings, '/login'));
+$app->post('/user/invite', 'CtrlUser:invite')->add(new Authentication($settings, '/login'));

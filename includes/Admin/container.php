@@ -63,6 +63,7 @@ $container['CtrlApplication'] = function (Container $container) {
 // Register User controller.
 $container['CtrlUser'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
+  $mailSettings = $container->get('settings')['mail'];
   $view = $container->get('view');
-  return new CtrlUser($dbSettings, $view);
+  return new CtrlUser($dbSettings, $mailSettings, $view);
 };
