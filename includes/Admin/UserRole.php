@@ -2,8 +2,7 @@
 
 namespace Datagator\Admin;
 
-use Datagator\Db\RoleMapper;
-use Datagator\Db\UserRoleMapper;
+use Datagator\Db;
 
 /**
  * Class UserRole.
@@ -11,6 +10,7 @@ use Datagator\Db\UserRoleMapper;
  * @package Datagator\Admin
  */
 class UserRole {
+
   private $dbSettings;
   private $db;
 
@@ -55,11 +55,11 @@ class UserRole {
    *   Success.
    */
   public function create($uid, $roleName, $appid = NULL, $accid = NULL) {
-    $roleMapper = new RoleMapper($this->db);
+    $roleMapper = new Db\RoleMapper($this->db);
     $role = $roleMapper->findByName($roleName);
     $rid = $role->getRid();
 
-    $userRole = new UserRole(
+    $userRole = new Db\UserRole(
       NULL,
       $uid,
       $rid,
@@ -67,7 +67,7 @@ class UserRole {
       $accid
     );
 
-    $userRoleMapper = new UserRoleMapper($this->db);
+    $userRoleMapper = new Db\UserRoleMapper($this->db);
     $result = $userRoleMapper->save($userRole);
     if (!$result) {
       return FALSE;
@@ -90,7 +90,7 @@ class UserRole {
   public function findByUidAccId($uid, $accId) {
     $userRoles = [];
 
-    $userRoleMapper = new UserRoleMapper($this->db);
+    $userRoleMapper = new Db\UserRoleMapper($this->db);
     $results = $userRoleMapper->findByUidAccId($uid, $accId);
     foreach ($results as $result) {
       $userRoles[] = $result->dump();
@@ -111,7 +111,7 @@ class UserRole {
   public function findByAccId($accId) {
     $userRoles = [];
 
-    $userRoleMapper = new UserRoleMapper($this->db);
+    $userRoleMapper = new Db\UserRoleMapper($this->db);
     $results = $userRoleMapper->findByAccId($accId);
     foreach ($results as $result) {
       $userRoles[] = $result->dump();
@@ -132,7 +132,7 @@ class UserRole {
   public function findByAppId($appId) {
     $userRoles = [];
 
-    $userRoleMapper = new UserRoleMapper($this->db);
+    $userRoleMapper = new Db\UserRoleMapper($this->db);
     $results = $userRoleMapper->findByAppId($appId);
     foreach ($results as $result) {
       $userRoles[] = $result->dump();
