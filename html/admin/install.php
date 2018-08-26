@@ -81,7 +81,7 @@ switch ($step) {
         // Column definitions.
         $sqlColumn = "`$column` ";
         if (!isset($columnData['type'])) {
-          $message['text'] = "Create `$table` fail!<br />";
+          $message['text'] = "CREATE TABLE `$table` fail!<br />";
           $message['text'] .= "Type missing in the metadata.";
           $message['type'] = 'error';
           echo $template->render(['message' => $message, 'menu' => $menu]);
@@ -98,13 +98,13 @@ switch ($step) {
       $sqlCreate = "CREATE TABLE IF NOT EXISTS `$table` (" . implode(', ', $sqlColumns) . ');';
       if (empty($db->execute($sqlCreate))) {
         // Stop if table create fails.
-        $message['text'] = "Create `$table` fail!<br />";
+        $message['text'] = "CREATE TABLE `$table` fail!<br />";
         $message['text'] .= "Processing halted. Please check the logs and retry.";
         $message['type'] = 'error';
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       } else {
-        $message['text'] .= "Create `$table` success!<br />";
+        $message['text'] .= "CREATE TABLE `$table` success!<br />";
       }
       // Empty the table in case it already existed.
       $sqlTruncate = "TRUNCATE `$table`;";
@@ -120,14 +120,14 @@ switch ($step) {
           }
           $sqlRow = "INSERT INTO `$table` (" . implode(', ', $keys) . ') VALUES (' . implode(', ', $values) . ');';
           if (empty($db->execute($sqlRow))) {
-            $message['text'] = "Populate `$table` fail!<br />";
+            $message['text'] = "INSERT into `$table` fail!<br />";
             $message['text'] .= "Processing halted. Please check the logs and retry.";
             $message['type'] = 'error';
             echo $template->render(['message' => $message, 'menu' => $menu]);
             exit;
           }
         }
-        $message['text'] .= "Populate `$table` success!<br />";
+        $message['text'] .= "INSERT into `$table` success!<br />";
       }
     }
     $message['text'] .= "Database Successfully created!";
@@ -138,12 +138,12 @@ switch ($step) {
     // Create user.
     if ($from == 2) {
       // This is a post from tue user create form.
-      if (!isset($_POST['username']) ||
-        !isset($_POST['password']) ||
-        !isset($_POST['honorific']) ||
-        !isset($_POST['email']) ||
-        !isset($_POST['name_first']) ||
-        !isset($_POST['name_last'])) {
+      if (empty($_POST['username']) ||
+        empty($_POST['password']) ||
+        empty($_POST['honorific']) ||
+        empty($_POST['email']) ||
+        empty($_POST['name_first']) ||
+        empty($_POST['name_last'])) {
         // Missing mandatory fields.
         $message['text'] = "Required fields not entered.";
         $message['type'] = 'error';

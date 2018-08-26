@@ -1,4 +1,5 @@
 $(document).ready(function(){
+
   M.AutoInit();
 
   // Edit application modal.
@@ -18,4 +19,5 @@ $(document).ready(function(){
     modal.find('#delete-app-name').text(self.attr('app-name'));
     modal.modal('open');
   });
+
 });

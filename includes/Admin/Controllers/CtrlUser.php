@@ -121,7 +121,7 @@ class CtrlUser extends CtrlBase {
   /**
    * Send a user an email with a token to register.
    *
-   * The email templates are in /includes/Admin/templates/invite-user.twig.
+   * The email templates are in /includes/Admin/templates/invite-user.email.twig.
    *
    * @param \Slim\Http\Request $request
    *   Request object.
@@ -171,13 +171,18 @@ class CtrlUser extends CtrlBase {
       $mail->Port = $this->mailSettings['port'];
 
       //Recipients
+      $mail->addAddress($email);
       $mail->setFrom($this->mailSettings['from']['email'], $this->mailSettings['email']['name']);
       $mail->addReplyTo($this->mailSettings['from']['email'], $this->mailSettings['email']['name']);
 
       //Content
-      $mail->Subject = $this->view->fetchBlock('subject');
-      $mail->Body = $this->view->fetchBlock('body_html');
-      $mail->AltBody = $this->view->fetchBlock('body_text');
+      $mail->Subject = $this->view->fetchBlock('invite-user.email.twig', 'subject');
+      $mail->Body = $this->view->fetchBlock('invite-user.email.twig', 'body_html', [
+        'link' => $link,
+      ]);
+      $mail->AltBody = $this->view->fetchBlock('invite-user.email.twig', 'body_text', [
+        'link' => $link,
+      ]);
 
       $mail->send();
       echo 'Message has been sent';
