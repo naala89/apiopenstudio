@@ -250,4 +250,19 @@ class User {
     return $user->dump();
   }
 
+  /**
+   * Find a user by their email.
+   *
+   * @param string $email
+   *   User email.
+   *
+   * @return array
+   *   The user.
+   */
+  public function findByEmail($email) {
+    $userMapper = new Db\UserMapper($this->db);
+    $user = $userMapper->findByEmail($email);
+    return $user->dump();
+  }
+
 }
