@@ -93,10 +93,10 @@ user:
     hash: { type: varchar(32), default: NULL, comment: pasword hash }
     token: { type: varchar(32), default: NULL, comment: temporary access token }
     token_ttl: { type: timestamp, default: NULL, comment: end of life for token }
-    email: { type: varchar(255), default: NULL, comment: user email address }
-    honorific: { type: varchar(16), default: NULL, comment: users title }
-    name_first: { type: varchar(255), default: NULL, comment: first name }
-    name_last: { type: varchar(255), default: NULL, comment: last name }
+    email: { type: varchar(255), notnull: true, comment: user email address }
+    honorific: { type: varchar(16), notnull: true, comment: users title }
+    name_first: { type: varchar(255), notnull: true, comment: first name }
+    name_last: { type: varchar(255), notnull: true, comment: last name }
     company: { type: varchar(255), default: NULL, comment: company name }
     website: { type: varchar(255), default: NULL, comment: company url }
     address_street: { type: varchar(255), default: NULL, comment: user number and street name }
@@ -104,9 +104,9 @@ user:
     address_city: { type: varchar(255), default: NULL, comment: user city }
     address_state: { type: varchar(255), default: NULL, comment: user state }
     address_country: { type: varchar(255), default: NULL, comment: user country }
-    address_postcode: { type: varchar(8), default: NULL, comment: user postcode }
-    phone_mobile: { type: int(11), default: NULL, comment: user mobile number }
-    phone_work: { type: int(11), default: NULL, comment: user work number }
+    address_postcode: { type: varchar(16), default: NULL, comment: user postcode }
+    phone_mobile: { type: varchar(32), default: NULL, comment: user mobile number }
+    phone_work: { type: varchar(32), default: NULL, comment: user work number }
 
 user_role:
   columns:

@@ -71,7 +71,6 @@ class InviteMapper {
    * @throws \Datagator\Core\ApiException
    */
   public function delete(Invite $invite) {
-
     $sql = 'DELETE FROM invite WHERE id = ?';
     $bindParams = array($invite->getId());
     $result = $this->db->Execute($sql, $bindParams);
@@ -130,7 +129,26 @@ class InviteMapper {
    */
   public function findByToken($token) {
     $sql = 'SELECT * FROM invite WHERE token = ?';
-    $bindParams = array($token);
+    $bindParams = [$token];
+    $row = $this->db->GetRow($sql, $bindParams);
+    return $this->mapArray($row);
+  }
+
+  /**
+   * Find an invite by email and token.
+   *
+   * @param string $email
+   *   Invite email.
+   *
+   * @param string $token
+   *   Invite token.
+   *
+   * @return \Datagator\Db\Invite
+   *   Invite object.
+   */
+  public function findByEmailToken($email, $token) {
+    $sql = 'SELECT * FROM invite WHERE email = ? AND token = ?';
+    $bindParams = [$email, $token];
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
   }
