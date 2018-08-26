@@ -108,7 +108,7 @@ class InviteMapper {
    */
   public function findByEmail($email) {
     $sql = 'SELECT * FROM invite WHERE email = ?';
-    $bindParams = array($email);
+    $bindParams = [$email];
     $recordSet = $this->db->Execute($sql, $bindParams);
 
     $entries = [];

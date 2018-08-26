@@ -81,16 +81,22 @@
   <div id="modal-create" class="modal">
     <form method="post" action="/user/invite" id="applicatio n-create">
       <div class="modal-content">
-        <h4>Add user</h4>
-        <p>Please enter the email address of the user</p>
-        <div class="input-field">
-          <input \type="text" class="validate" name="invite-email" id="invite-email">
-          <label for="name">Invite user email</label>
-          <div class="row">
-            <div class="input-field col s4 offset-s8">
-              <a class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
-              <button class="btn waves-effect waves-light" type="submit" name="create">Invite</button>
-            </div>
+        <div class="row">
+          <h4>Add user</h4>
+          <p>Please enter the email address of the user</p>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s6">
+            <input \type="text" class="validate" name="invite-email" id="invite-email">
+            <label for="name">Invite user email</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s4 offset-s8">
+            <a class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+            <button class="btn waves-effect waves-light" type="submit" name="create">Invite</button>
           </div>
         </div>
       </div>
