@@ -265,4 +265,19 @@ class User {
     return $user->dump();
   }
 
+  /**
+   * Find a user by their username.
+   *
+   * @param string $username
+   *   User username.
+   *
+   * @return array
+   *   The user.
+   */
+  public function findByUsername($username) {
+    $userMapper = new Db\UserMapper($this->db);
+    $user = $userMapper->findByUsername($username);
+    return $user->dump();
+  }
+
 }
