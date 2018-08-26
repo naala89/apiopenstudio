@@ -269,7 +269,7 @@ class CtrlUser extends CtrlBase {
       // Missing mandatory fields.
       $message['text'] = "Required fields not entered.";
       $message['type'] = 'error';
-      return $this->view->render($response, 'users.twig', [
+      return $this->view->render($response, 'register.twig', [
         'menu' => $menu,
         'title' => $title,
         'message' => $message,
@@ -277,10 +277,9 @@ class CtrlUser extends CtrlBase {
       ]);
     }
 
+    // Ensure email matches the invite token.
     $inviteHlp = new Invite($this->dbSettings);
     $invite = $inviteHlp->findByEmailToken($allPostVars['email'], $allPostVars['token']);
-
-    // Ensure email matches the invite token.
     if (empty($invite['id'])) {
       // Delete the invite.
       $inviteHlp->deleteByToken($allPostVars['token']);
@@ -294,7 +293,33 @@ class CtrlUser extends CtrlBase {
       ]);
     }
 
+    // Validate username and email does not exist.
     $userHlp = new User($this->dbSettings);
+    $user = $userHlp->findByEmail($allPostVars['email']);
+    if (!empty($user['uid'])) {
+      $message['text'] = 'A user already exists with this email: ' . $allPostVars['email'] . '.';
+      $message['text'] .= 'Please use a different address.';
+      $message['type'] = 'error';
+      return $this->view->render($response, 'register.twig', [
+        'menu' => $menu,
+        'title' => $title,
+        'message' => $message,
+        'token' => $allPostVars['token'],
+      ]);
+    }
+    $user = $userHlp->findByUsername($allPostVars['username']);
+    if (!empty($user['uid'])) {
+      $message['text'] = 'A user already exists with this username: ' . $allPostVars['username'] . '.';
+      $message['text'] .= 'Please use a different username.';
+      $message['type'] = 'error';
+      return $this->view->render($response, 'register.twig', [
+        'menu' => $menu,
+        'title' => $title,
+        'message' => $message,
+        'token' => $allPostVars['token'],
+      ]);
+    }
+
     $uid = $userHlp->create(
       !empty($allPostVars['username']) ? $allPostVars['username'] : '',
       !empty($allPostVars['password']) ? $allPostVars['password'] : '',
