@@ -29,3 +29,5 @@ $app->post('/applications/delete', 'CtrlApplication:delete')->add(new Authentica
  */
 $app->get('/users', 'CtrlUser:index')->add(new Authentication($settings, '/login'));
 $app->post('/user/invite', 'CtrlUser:invite')->add(new Authentication($settings, '/login'));
+$app->get('/user/register/{token}', 'CtrlUser:register');
+$app->post('/user/register', 'CtrlUser:register');

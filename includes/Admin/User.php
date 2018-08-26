@@ -140,6 +140,8 @@ class User {
    *   User address city.
    * @param string $addressState
    *   User address state.
+   * @param string $addressCountry
+   *   User address country.
    * @param string $addressPostcode
    *   User address postcode.
    * @param string $phoneMobile
@@ -150,7 +152,7 @@ class User {
    * @return bool|int
    *   False or account ID.
    */
-  public function create($username, $password, $email = NULL, $honorific = NULL, $nameFirst = NULL, $nameLast = NULL, $company = NULL, $website = NULL, $addressStreet = NULL, $addressSuburb = NULL, $addressCity = NULL, $addressState = NULL, $addressPostcode = NULL, $phoneMobile = NULL, $phoneWork = NULL) {
+  public function create($username, $password, $email = NULL, $honorific = NULL, $nameFirst = NULL, $nameLast = NULL, $company = NULL, $website = NULL, $addressStreet = NULL, $addressSuburb = NULL, $addressCity = NULL, $addressState = NULL, $addressCountry = NULL, $addressPostcode = NULL, $phoneMobile = NULL, $phoneWork = NULL) {
     $user = new Db\User(
       NULL,
       1,
@@ -169,6 +171,7 @@ class User {
       $addressSuburb,
       $addressCity,
       $addressState,
+      $addressCountry,
       $addressPostcode,
       $phoneMobile,
       $phoneWork

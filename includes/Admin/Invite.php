@@ -86,6 +86,22 @@ class Invite {
   }
 
   /**
+   * Delete all invites by token.
+   *
+   * @param string $token
+   *   Invite token.
+   *
+   * @return bool
+   *   Success.
+   */
+  public function deleteByToken($token) {
+    $inviteMapper = new Db\InviteMapper($this->db);
+    $result = $inviteMapper->findByToken($token);
+    $inviteMapper->delete($result);
+    return TRUE;
+  }
+
+  /**
    * Find by id.
    *
    * @param int $id
@@ -94,9 +110,10 @@ class Invite {
    * @return array
    *   Invite.
    */
-  public function findByAccount($id) {
+  public function findById($id) {
     $inviteMapper = new Db\InviteMapper($this->db);
-    return $inviteMapper->findById($id);
+    $invite = $inviteMapper->findById($id);
+    return $invite->dump();
   }
 
   /**
@@ -110,7 +127,8 @@ class Invite {
    */
   public function findByEmail($email) {
     $inviteMapper = new Db\InviteMapper($this->db);
-    return $inviteMapper->findByEmail($email);
+    $invite = $inviteMapper->findByEmail($email);
+    return $invite->dump();
   }
 
   /**
@@ -120,11 +138,30 @@ class Invite {
    *   Invite token.
    *
    * @return array
-   *   Invite
+   *   Invite.
    */
   public function findByToken($token) {
     $inviteMapper = new Db\InviteMapper($this->db);
-    return $inviteMapper->findByToken($token);
+    $invite = $inviteMapper->findByToken($token);
+    return $invite->dump();
+  }
+
+  /**
+   * Find by email and token.
+   *
+   * @param string $email
+   *   Invite email.
+   *
+   * @param string $token
+   *   Invite token.
+   *
+   * @return array
+   *   Invite.
+   */
+  public function findByEmailToken($email, $token) {
+    $inviteMapper = new Db\InviteMapper($this->db);
+    $invite = $inviteMapper->findByEmailToken($email, $token);
+    return $invite->dump();
   }
 
 }

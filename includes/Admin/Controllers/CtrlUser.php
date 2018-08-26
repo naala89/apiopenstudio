@@ -136,9 +136,11 @@ class CtrlUser extends CtrlBase {
   public function invite(Request $request, Response $response, array $args) {
     $roles = $this->getRoles($_SESSION['token'], $_SESSION['accountId']);
     if (!$this->checkAccess($roles)) {
-      $response->withRedirect('/');
+      return $response->withRedirect('/');
     }
 
+    $menu = $this->getMenus($roles);
+    $title = 'Users';
     $allPostVars = $request->getParsedBody();
     if (!isset($allPostVars['invite-email']) || empty($allPostVars['invite-email'])) {
       return $response = $response->withRedirect('/users');
@@ -148,7 +150,7 @@ class CtrlUser extends CtrlBase {
     $email = $allPostVars['invite-email'];
     $token = Hash::generateToken($email);
     $host = $this->getHost();
-    $link = $host . '/user/register?token=' . $token;
+    $link = $host . '/user/register/' . $token;
 
     // Add invite to DB.
     $invite = new Invite($this->dbSettings);
@@ -185,12 +187,131 @@ class CtrlUser extends CtrlBase {
       ]);
 
       $mail->send();
-      echo 'Message has been sent';
+
+      $message['text'] = 'Invite has been sent to ' . $email;
+      $message['type'] = 'info';
+      return $this->view->render($response, 'users.twig', [
+        'menu' => $menu,
+        'title' => $title,
+        'message' => $message,
+      ]);
     } catch (Exception $e) {
-      echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+      $message['text'] = 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo;
+      $message['type'] = 'info';
+      return $this->view->render($response, 'users.twig', [
+        'menu' => $menu,
+        'title' => $title,
+        'message' => $message,
+      ]);
+    }
+  }
+
+  /**
+   * Allow a user with a valid token to register.
+   *
+   * @param \Slim\Http\Request $request
+   *   Request object.
+   * @param \Slim\Http\Response $response
+   *   Response object.
+   * @param array $args
+   *   Request args.
+   *
+   * @return \Psr\Http\Message\ResponseInterface
+   *   Response.
+   */
+  public function register(Request $request, Response $response, array $args) {
+    $menu = $this->getMenus([]);
+    $title = 'Register';
+
+    if ($request->isGet()) {
+      // Initial form display.
+      if (empty($args['token'])) {
+        return $response->withRedirect('/login');
+      }
+      $token = $args['token'];
+
+      $inviteHlp = new Invite($this->dbSettings);
+      $invite = $inviteHlp->findByToken($token);
+      if (empty($invite['id'])) {
+        return $response->withRedirect('/login');
+      }
+
+      return $this->view->render($response, 'register.twig', [
+        'menu' => $menu,
+        'title' => $title,
+        'token' => $token,
+      ]);
     }
 
-    // TODO: render/redirect? setup post form in popup.
+    // Fall through to register post form submission.
+    $allPostVars = $request->getParsedBody();
+
+    if (empty($allPostVars['token']) ||
+      empty($allPostVars['username']) ||
+      empty($allPostVars['password']) ||
+      empty($allPostVars['honorific']) ||
+      empty($allPostVars['email']) ||
+      empty($allPostVars['name_first']) ||
+      empty($allPostVars['name_last'])) {
+      // Missing mandatory fields.
+      $message['text'] = "Required fields not entered.";
+      $message['type'] = 'error';
+      return $this->view->render($response, 'users.twig', [
+        'menu' => $menu,
+        'title' => $title,
+        'message' => $message,
+        'token' => $allPostVars['token'],
+      ]);
+    }
+
+    $inviteHlp = new Invite($this->dbSettings);
+    $invite = $inviteHlp->findByEmailToken($allPostVars['email'], $allPostVars['token']);
+
+    // Ensure email matches the invite token.
+    if (empty($invite['id'])) {
+      // Delete the invite.
+      $inviteHlp->deleteByToken($allPostVars['token']);
+      // Redirect to login.
+      $message['text'] = "Your email does not match the invite email. Please resend the invite.";
+      $message['type'] = 'error';
+      return $this->view->render($response, 'login.twig', [
+        'menu' => $menu,
+        'title' => $title,
+        'message' => $message,
+      ]);
+    }
+
+    $userHlp = new User($this->dbSettings);
+    $uid = $userHlp->create(
+      !empty($allPostVars['username']) ? $allPostVars['username'] : '',
+      !empty($allPostVars['password']) ? $allPostVars['password'] : '',
+      !empty($allPostVars['email']) ? $allPostVars['email'] : '',
+      !empty($allPostVars['honorific']) ? $allPostVars['honorific'] : '',
+      !empty($allPostVars['name_first']) ? $allPostVars['name_first'] : '',
+      !empty($allPostVars['name_last']) ? $allPostVars['name_last'] : '',
+      !empty($allPostVars['company']) ? $allPostVars['company'] : '',
+      !empty($allPostVars['website']) ? $allPostVars['website'] : '',
+      !empty($allPostVars['address_street']) ? $allPostVars['address_street'] : '',
+      !empty($allPostVars['address_suburb']) ? $allPostVars['address_suburb'] : '',
+      !empty($allPostVars['address_city']) ? $allPostVars['address_city'] : '',
+      !empty($allPostVars['address_state']) ? $allPostVars['address_state'] : '',
+      !empty($allPostVars['address_country']) ? $allPostVars['address_country'] : '',
+      !empty($allPostVars['address_postcode']) ? $allPostVars['address_postcode'] : '',
+      !empty($allPostVars['phone_mobile']) ? $allPostVars['phone_mobile'] : '',
+      !empty($allPostVars['phone_work']) ? $allPostVars['phone_work'] : ''
+    );
+
+    // Delete the invite.
+    $inviteHlp->deleteByToken($allPostVars['token']);
+
+    // Redirect to login.
+    $message['text'] = "Congratulations, you are registered. Please login.";
+    $message['type'] = 'info';
+    return $this->view->render($response, 'login.twig', [
+      'menu' => $menu,
+      'title' => $title,
+      'message' => $message,
+    ]);
   }
 
   /**
