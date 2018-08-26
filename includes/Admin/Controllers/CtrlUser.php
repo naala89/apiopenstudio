@@ -152,6 +152,19 @@ class CtrlUser extends CtrlBase {
     $host = $this->getHost();
     $link = $host . '/user/register/' . $token;
 
+    // Check if user already exists.
+    $userHlp = new User($this->dbSettings);
+    $user = $userHlp->findByEmail($email);
+    if (!empty($user['uid'])) {
+      $message['text'] = 'A user already exists with this email: ' . $email;
+      $message['type'] = 'warning';
+      return $this->view->render($response, 'users.twig', [
+        'menu' => $menu,
+        'title' => $title,
+        'message' => $message,
+      ]);
+    }
+
     // Add invite to DB.
     $invite = new Invite($this->dbSettings);
     // Remove any old invites.
