@@ -116,15 +116,15 @@ user_role:
     appid: { type: int(10) unsigned, default: NULL, comment: application id }
     accid: { type: int(10) unsigned, default: NULL, comment: account id }
 
-vars:
+var:
   columns:
     id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: var id }
     appid: { type: int(10) unsigned, notnull: true, comment: application id }
     name: { type: varchar(255), notnull: true, comment: name of the var }
     val: { type: varchar(255), notnull: true, comment: value of the var }
 
-invites:
+invite:
   columns:
     id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: invite id }
-    email: { type: varchar(255), default: NULL, comment: invite email address }
+    email: { type: varchar(255), default: true, comment: invite email address }
     token: { type: varchar(255), notnull: true, comment: invite token }
