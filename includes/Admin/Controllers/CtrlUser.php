@@ -115,6 +115,7 @@ class CtrlUser extends CtrlBase {
       'title' => $title,
       'applications' => $applications,
       'users' => $users,
+      'roles' => $roles,
     ]);
   }
 
@@ -238,17 +239,27 @@ class CtrlUser extends CtrlBase {
 
     if ($request->isGet()) {
       // Initial form display.
+
+      // Validate token is good.
       if (empty($args['token'])) {
         return $response->withRedirect('/login');
       }
       $token = $args['token'];
-
       $inviteHlp = new Invite($this->dbSettings);
       $invite = $inviteHlp->findByToken($token);
       if (empty($invite['id'])) {
         return $response->withRedirect('/login');
       }
 
+      $userHlp = new User($this->dbSettings);
+      $user = $userHlp->findByEmail($invite['email']);
+
+      if (!empty($user['uid'])) {
+        // Email already in the system, add new role.
+        return $this->addUserAccount($invite, $user);
+      }
+
+      // This is a new user, display the register form.
       return $this->view->render($response, 'register.twig', [
         'menu' => $menu,
         'title' => $title,
@@ -256,9 +267,13 @@ class CtrlUser extends CtrlBase {
       ]);
     }
 
-    // Fall through to register post form submission.
-    $allPostVars = $request->getParsedBody();
+    // Fall through to new user register post form submission.
 
+    $allPostVars = $request->getParsedBody();
+    return $this->createUser($allPostVars);
+  }
+
+  private function createUser() {
     if (empty($allPostVars['token']) ||
       empty($allPostVars['username']) ||
       empty($allPostVars['password']) ||
@@ -350,6 +365,10 @@ class CtrlUser extends CtrlBase {
       'title' => $title,
       'message' => $message,
     ]);
+  }
+
+  private function addUserAccount() {
+
   }
 
   /**
