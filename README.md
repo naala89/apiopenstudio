@@ -206,6 +206,30 @@ Response error codes
 6. Invalid processor input
 7. Invalid application
 
+Styling Admin
+-------------
+
+Ensure npm and gulp are up to date.
+
+    npm i -g npm
+    npm install gulp
+
+Install the node dependencies.
+
+    cd gaterdata
+    npm install
+    
+Edit and Compile.
+
+    gulp watch
+
+The gulpfile.js includes compilation of sass and minification of js and css
+files.
+
+You can add your own css to ```/src/css/main.css```.
+
+TODO: minify image assets.
+
 Testing
 -------
 

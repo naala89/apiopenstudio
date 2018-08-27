@@ -143,6 +143,7 @@ class CtrlUser extends CtrlBase {
     $menu = $this->getMenus($roles);
     $title = 'Users';
     $allPostVars = $request->getParsedBody();
+    var_dump($allPostVars);exit;
     if (!isset($allPostVars['invite-email']) || empty($allPostVars['invite-email'])) {
       return $response = $response->withRedirect('/users');
     }
@@ -268,12 +269,26 @@ class CtrlUser extends CtrlBase {
     }
 
     // Fall through to new user register post form submission.
-
     $allPostVars = $request->getParsedBody();
-    return $this->createUser($allPostVars);
+    return $this->createUser($allPostVars, $menu, $title, $response);
   }
 
-  private function createUser() {
+  /**
+   * Create a new user form form submission.
+   *
+   * @param array $allPostVars
+   *   Post vars.
+   * @param array $menu
+   *   Menu items.
+   * @param string $title
+   *   Page title.
+   * @param \Slim\Http\Response $response
+   *   Response object.
+   *
+   * @return \Psr\Http\Message\ResponseInterface
+   *   Response.
+   */
+  private function createUser($allPostVars, $menu, $title, $response) {
     if (empty($allPostVars['token']) ||
       empty($allPostVars['username']) ||
       empty($allPostVars['password']) ||
@@ -353,6 +368,15 @@ class CtrlUser extends CtrlBase {
       !empty($allPostVars['phone_mobile']) ? $allPostVars['phone_mobile'] : '',
       !empty($allPostVars['phone_work']) ? $allPostVars['phone_work'] : ''
     );
+    if (!$uid) {
+      $message['text'] = "Sorry, there was an error creating your user. Please speak to your administrator.";
+      $message['type'] = 'error';
+      return $this->view->render($response, 'login.twig', [
+        'menu' => $menu,
+        'title' => $title,
+        'message' => $message,
+      ]);
+    }
 
     // Delete the invite.
     $inviteHlp->deleteByToken($allPostVars['token']);

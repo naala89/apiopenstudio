@@ -95,10 +95,10 @@
 
         <div class="row">
           <div class="input-field col s6">
-            <select multiple>
+            <select name="roles" multiple>
               <option value="" disabled selected>Choose your option</option>
               {% for rid,role in roles %}
-                <option value="{{ rid }}">{{ role }}</option>
+                <option value="{{ rid }}">{{ role.name }}</option>
               {% endfor %}
             </select>
             <label>Roles</label>

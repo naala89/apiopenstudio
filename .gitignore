@@ -7,3 +7,5 @@ composer.lock
 tests/_output/*
 tmp/*
 config/settings.php
+node_modules
+package-lock.json
