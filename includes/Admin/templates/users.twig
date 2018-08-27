@@ -89,7 +89,19 @@
         <div class="row">
           <div class="input-field col s6">
             <input type="email" class="validate" name="invite-email" id="invite-email">
-            <label for="name">Invite user email</label>
+            <label for="invite-email">Email</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s6">
+            <select multiple>
+              <option value="" disabled selected>Choose your option</option>
+              {% for rid,role in roles %}
+                <option value="{{ rid }}">{{ role }}</option>
+              {% endfor %}
+            </select>
+            <label>Roles</label>
           </div>
         </div>
 
