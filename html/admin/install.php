@@ -205,6 +205,7 @@ switch ($step) {
       echo $template->render(['message' => $message, 'menu' => $menu]);
       exit;
     }
+
     if ($from == 3) {
       // This is a current page submission, so create the account.
       $accountName = isset($_POST['account_name']) ? $_POST['account_name'] : '';
@@ -218,6 +219,7 @@ switch ($step) {
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
+
       // Create the account.
       $account = new \Datagator\Admin\Account($settings['db']);
       $accId = $account->create($accountName);
@@ -230,9 +232,24 @@ switch ($step) {
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
-      // Create the user Owner role.
+
+      // Assign the user to the account.
+      $userAccountHlp = new \Datagator\Admin\UserAccount($settings['db']);
+      $uaid = $userAccountHlp->create($_POST['uid'], $accId);
+      if (!$uaid) {
+        $message = [
+          'type' => 'error',
+          'text' => 'Failed to assign your user account to the DB. Please check the logs.'
+        ];
+        $template = $twig->load('install_3.twig');
+        echo $template->render(['message' => $message, 'menu' => $menu]);
+        exit;
+      }
+
+      // Create the user Owner role for the user account.
       $userRole = new \Datagator\Admin\UserRole($settings['db']);
-      $result = $userRole->create($uid, 'Owner', NULL, $accId);
+      var_dump($uaid);exit;
+      $result = $userRole->create($uaid, 'Owner', NULL);
       if (!$result) {
         $message = [
           'type' => 'error',
@@ -242,11 +259,13 @@ switch ($step) {
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
+
       // Success, render the success page.
       $template = $twig->load('install_4.twig');
       echo $template->render(['menu' => $menu, 'account_name' => $accountName]);
       exit;
     }
+
     // Fallback to render initial create account page (user arrives from previous page).
     $template = $twig->load('install_3.twig');
     echo $template->render(['menu' => $menu]);

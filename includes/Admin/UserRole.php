@@ -42,29 +42,29 @@ class UserRole {
   /**
    * Create a user role.
    *
-   * @param int $uid
-   *   User ID.
-   * @param string $roleName
-   *   Role name.
+   * @param int $uaid
+   *   User account ID.
+   * @param mixed $role
+   *   Role name (string) or ID (int).
    * @param int $appid
    *   Application ID.
-   * @param int $accid
-   *   Account ID.
    *
    * @return bool
    *   Success.
    */
-  public function create($uid, $roleName, $appid = NULL, $accid = NULL) {
-    $roleMapper = new Db\RoleMapper($this->db);
-    $role = $roleMapper->findByName($roleName);
-    $rid = $role->getRid();
+  public function create($uaid, $role, $appid = NULL) {
+    $rid = $role;
+    if (is_string($role)) {
+      $roleMapper = new Db\RoleMapper($this->db);
+      $role = $roleMapper->findByName($role);
+      $rid = $role->getRid();
+    }
 
     $userRole = new Db\UserRole(
       NULL,
-      $uid,
+      $uaid,
       $rid,
-      $appid,
-      $accid
+      $appid
     );
 
     $userRoleMapper = new Db\UserRoleMapper($this->db);

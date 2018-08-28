@@ -15,31 +15,59 @@ application:
     - { appid: 2, accid: 1, name: Common }
     - { appid: 3, accid: 1, name: Testing }
 
-blacklist:
+user:
   columns:
-    id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: blacklist id }
-    appid: { type: int(10) unsigned, notnull: true, comment: application id }
-    min_ip: { type: varchar(32), notnull: true, comment: ip range minimum }
-    max_ip: { type: varchar(32), notnull: true, comment: ip range maximum }
+    uid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: user id }
+    active: { type: tinyint(4), notnull: true, default: 1, comment: user status }
+    username: { type: varchar(255), notnull: true, comment: user name }
+    salt: { type: varchar(16), default: NULL, comment: salt for the password hash }
+    hash: { type: varchar(32), default: NULL, comment: pasword hash }
+    token: { type: varchar(32), default: NULL, comment: temporary access token }
+    token_ttl: { type: timestamp, default: NULL, comment: end of life for token }
+    email: { type: varchar(255), notnull: true, comment: user email address }
+    honorific: { type: varchar(16), notnull: true, comment: users title }
+    name_first: { type: varchar(255), notnull: true, comment: first name }
+    name_last: { type: varchar(255), notnull: true, comment: last name }
+    company: { type: varchar(255), default: NULL, comment: company name }
+    website: { type: varchar(255), default: NULL, comment: company url }
+    address_street: { type: varchar(255), default: NULL, comment: user number and street name }
+    address_suburb: { type: varchar(255), default: NULL, comment: user address and suburb }
+    address_city: { type: varchar(255), default: NULL, comment: user city }
+    address_state: { type: varchar(255), default: NULL, comment: user state }
+    address_country: { type: varchar(255), default: NULL, comment: user country }
+    address_postcode: { type: varchar(16), default: NULL, comment: user postcode }
+    phone_mobile: { type: varchar(32), default: NULL, comment: user mobile number }
+    phone_work: { type: varchar(32), default: NULL, comment: user work number }
 
-external_user:
+role:
   columns:
-    id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: external user id }
-    appid: { type: int(10) unsigned, notnull: true, comment: application id }
-    external_id: { type: varchar(255), notnull: true, comment: user id in external entity }
-    external_entity: { type: varchar(255), notnull: true, comment: name of the external entity }
-    data_field_1: { type: varchar(255), notnull: false, comment: extra data field 1 }
-    data_field_2: { type: varchar(255), notnull: false, comment: extra data field 2 }
-    data_field_3: { type: varchar(255), notnull: false, comment: extra data field 3 }
+    rid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: role id }
+    name: { type: varchar(255), notnull: true, comment: title of role }
+  data:
+    - { rid: 1, name: SysAdmin }
+    - { rid: 3, name: Owner }
+    - { rid: 2, name: Administrator }
+    - { rid: 4, name: Developer }
+    - { rid: 5, name: Consumer }
 
-log:
+user_account:
   columns:
-    id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: log identifier id }
-    datetime: { type: timestamp, notnull: true, default: CURRENT_TIMESTAMP, comment: log time and date }
-    user: { type: varchar(255), notnull: true, comment: user name }
-    ip: { type: varchar(11), notnull: true, comment: user id }
-    type: { type: varchar(64), notnull: true, comment: call type }
-    text: { type: varchar(1024), notnull: true, comment: log text }
+    uaid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: user account id }
+    uid: { type: int(10) unsigned, notnull: true, comment: user id }
+    accid: { type: int(10) unsigned, notnull: true, comment: account id }
+
+user_role:
+  columns:
+    urid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: user role id }
+    uaid: { type: int(10) unsigned, notnull: true, comment: user account id }
+    rid: { type: int(10) unsigned, notnull: true, comment: role id }
+    appid: { type: int(10) unsigned, default: NULL, comment: application id }
+
+invite:
+  columns:
+    iid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: invite id }
+    email: { type: varchar(255), default: true, comment: invite email address }
+    token: { type: varchar(255), notnull: true, comment: invite token }
 
 resource:
   columns:
@@ -73,49 +101,31 @@ resource:
     - { id: 19, appid: 2, name: Resource import YAML, description: Create a resource from a document or string in YAML format, method: post, identifier: resource/yaml, ttl: 0, meta: "{'security':{'function':'tokenDeveloper','id':1,'token':{'function':'varPost','id':2,'name':{'function':'literal','id':3,'value':'token'}}},'process':{'function':'resourceYaml','id':4,'resource':{'function':'literal','id':3,'value':'resource'}}}' }
     - { id: 20, appid: 2, name: User login, description: Login a user to Datagator using username/password, method: post, identifier: user/login, ttl: 0, meta: "{'process':{'function':'UserLogin','id':1,'username':{'function':'VarPost','id':2,'name':'username'},'password':{'function':'VarPost','id':3,'name':'password'}}}' }
 
-role:
+external_user:
   columns:
-    rid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: role id }
-    name: { type: varchar(255), notnull: true, comment: title of role }
-  data:
-    - { rid: 1, name: SysAdmin }
-    - { rid: 3, name: Owner }
-    - { rid: 2, name: Administrator }
-    - { rid: 4, name: Developer }
-    - { rid: 5, name: Consumer }
-    - { rid: 6, name: No role }
+    id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: external user id }
+    appid: { type: int(10) unsigned, notnull: true, comment: application id }
+    external_id: { type: varchar(255), notnull: true, comment: user id in external entity }
+    external_entity: { type: varchar(255), notnull: true, comment: name of the external entity }
+    data_field_1: { type: varchar(255), notnull: false, comment: extra data field 1 }
+    data_field_2: { type: varchar(255), notnull: false, comment: extra data field 2 }
+    data_field_3: { type: varchar(255), notnull: false, comment: extra data field 3 }
 
-user:
+blacklist:
   columns:
-    uid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: user id }
-    active: { type: tinyint(4), notnull: true, default: 1, comment: user status }
-    username: { type: varchar(255), notnull: true, comment: user name }
-    salt: { type: varchar(16), default: NULL, comment: salt for the password hash }
-    hash: { type: varchar(32), default: NULL, comment: pasword hash }
-    token: { type: varchar(32), default: NULL, comment: temporary access token }
-    token_ttl: { type: timestamp, default: NULL, comment: end of life for token }
-    email: { type: varchar(255), notnull: true, comment: user email address }
-    honorific: { type: varchar(16), notnull: true, comment: users title }
-    name_first: { type: varchar(255), notnull: true, comment: first name }
-    name_last: { type: varchar(255), notnull: true, comment: last name }
-    company: { type: varchar(255), default: NULL, comment: company name }
-    website: { type: varchar(255), default: NULL, comment: company url }
-    address_street: { type: varchar(255), default: NULL, comment: user number and street name }
-    address_suburb: { type: varchar(255), default: NULL, comment: user address and suburb }
-    address_city: { type: varchar(255), default: NULL, comment: user city }
-    address_state: { type: varchar(255), default: NULL, comment: user state }
-    address_country: { type: varchar(255), default: NULL, comment: user country }
-    address_postcode: { type: varchar(16), default: NULL, comment: user postcode }
-    phone_mobile: { type: varchar(32), default: NULL, comment: user mobile number }
-    phone_work: { type: varchar(32), default: NULL, comment: user work number }
+    id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: blacklist id }
+    appid: { type: int(10) unsigned, notnull: true, comment: application id }
+    min_ip: { type: varchar(32), notnull: true, comment: ip range minimum }
+    max_ip: { type: varchar(32), notnull: true, comment: ip range maximum }
 
-user_role:
+log:
   columns:
-    urid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: user role id }
-    uid: { type: int(10) unsigned, notnull: true, comment: user id }
-    rid: { type: int(10) unsigned, notnull: true, comment: role id }
-    appid: { type: int(10) unsigned, default: NULL, comment: application id }
-    accid: { type: int(10) unsigned, default: NULL, comment: account id }
+    id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: log identifier id }
+    datetime: { type: timestamp, notnull: true, default: CURRENT_TIMESTAMP, comment: log time and date }
+    user: { type: varchar(255), notnull: true, comment: user name }
+    ip: { type: varchar(11), notnull: true, comment: user id }
+    type: { type: varchar(64), notnull: true, comment: call type }
+    text: { type: varchar(1024), notnull: true, comment: log text }
 
 var:
   columns:
@@ -123,9 +133,3 @@ var:
     appid: { type: int(10) unsigned, notnull: true, comment: application id }
     name: { type: varchar(255), notnull: true, comment: name of the var }
     val: { type: varchar(255), notnull: true, comment: value of the var }
-
-invite:
-  columns:
-    id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: invite id }
-    email: { type: varchar(255), default: true, comment: invite email address }
-    token: { type: varchar(255), notnull: true, comment: invite token }
