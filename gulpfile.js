@@ -11,8 +11,8 @@ const connect = require('gulp-connect');
 const imagemin = require('gulp-imagemin');
 const errorHandler = require('gulp-error-handle');
 // Directories
-const js_src = 'src/js/**/*.js';
-const css_src = 'src/css/**/*.css';
+const js_src = 'src/js/';
+const css_src = 'src/css/';
 const scss_src = 'src/scss/**/*.scss';
 const img_src = 'src/images/*';
 const js_dest = 'html/admin/js';
@@ -21,7 +21,7 @@ const img_dest = 'html/admin/images';
 
 // Js files.
 gulp.task('scripts', function() {
-  return gulp.src(js_src)
+  return gulp.src([js_src + 'jquery.min.js', js_src + 'materialize.min.js', js_src + '**/*.js'])
     .pipe(errorHandler())
     .pipe(concat('gaterdata.min.js'))
     .pipe(striplog())
@@ -31,7 +31,7 @@ gulp.task('scripts', function() {
 
 // CSS and SCSS files.
 gulp.task('styles', function() {
-  return gulp.src([scss_src, css_src])
+  return gulp.src([css_src + 'materialize.min.css', css_src + '**/*.js', scss_src])
     .pipe(errorHandler())
     .pipe(sass({style: 'compressed', errLogToConsole: true}))
     .pipe(concat('gaterdata.min.css'))

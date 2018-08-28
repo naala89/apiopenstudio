@@ -4,6 +4,12 @@ body {
   flex-direction: column;
 }
 
+.brand-logo {
+  background-image: url("/images/Krokodil-lineart.svg");
+  background-repeat: no-repeat;
+  background-size: auto;
+}
+
 main {
   flex: 1 0 auto;
 }
