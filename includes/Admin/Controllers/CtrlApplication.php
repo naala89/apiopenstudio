@@ -35,13 +35,11 @@ class CtrlApplication extends CtrlBase {
     }
 
     $menu = $this->getMenus($roles);
-    $title = 'Applications';
     $application = new Application($this->dbSettings);
     $applications = $application->getByAccount($_SESSION['accountId']);
 
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
-      'title' => $title,
       'applications' => $applications,
     ]);
   }
@@ -66,7 +64,6 @@ class CtrlApplication extends CtrlBase {
     }
 
     $menu = $this->getMenus($roles);
-    $title = 'Applications';
     $allPostVars = $request->getParsedBody();
     $application = new Application($this->dbSettings);
 
@@ -93,7 +90,6 @@ class CtrlApplication extends CtrlBase {
     $applications = $application->getByAccount($_SESSION['accountId']);
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
-      'title' => $title,
       'applications' => $applications,
       'message' => $message,
     ]);
@@ -119,7 +115,6 @@ class CtrlApplication extends CtrlBase {
     }
 
     $menu = $this->getMenus($roles);
-    $title = 'Applications';
     $allPostVars = $request->getParsedBody();
     $application = new Application($this->dbSettings);
 
@@ -146,7 +141,6 @@ class CtrlApplication extends CtrlBase {
     $applications = $application->getByAccount($_SESSION['accountId']);
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
-      'title' => $title,
       'applications' => $applications,
       'message' => $message,
     ]);
@@ -172,7 +166,6 @@ class CtrlApplication extends CtrlBase {
     }
 
     $menu = $this->getMenus($roles);
-    $title = 'Applications';
     $allPostVars = $request->getParsedBody();
     $application = new Application($this->dbSettings);
 
@@ -199,7 +192,6 @@ class CtrlApplication extends CtrlBase {
     $applications = $application->getByAccount($_SESSION['accountId']);
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
-      'title' => $title,
       'applications' => $applications,
       'message' => $message,
     ]);

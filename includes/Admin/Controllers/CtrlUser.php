@@ -58,7 +58,6 @@ class CtrlUser extends CtrlBase {
       $response->withRedirect('/');
     }
     $menu = $this->getMenus($roles);
-    $title = 'Users';
     $accId = $_SESSION['accountId'];
 
     // Fetch all applications for the account.
@@ -112,7 +111,6 @@ class CtrlUser extends CtrlBase {
 
     return $this->view->render($response, 'users.twig', [
       'menu' => $menu,
-      'title' => $title,
       'applications' => $applications,
       'users' => $users,
       'roles' => $roles,
@@ -141,11 +139,11 @@ class CtrlUser extends CtrlBase {
     }
 
     $menu = $this->getMenus($roles);
-    $title = 'Users';
     $allPostVars = $request->getParsedBody();
-    var_dump($allPostVars);exit;
     if (!isset($allPostVars['invite-email']) || empty($allPostVars['invite-email'])) {
-      return $response = $response->withRedirect('/users');
+      return $this->view->render($response, 'users.twig', [
+        'menu' => $menu,
+      ]);
     }
 
     // Generate vars for the email.
@@ -159,20 +157,19 @@ class CtrlUser extends CtrlBase {
     $user = $userHlp->findByEmail($email);
     if (!empty($user['uid'])) {
       $message['text'] = 'A user already exists with this email: ' . $email;
-      $message['type'] = 'warning';
+      $message['type'] = 'error';
       return $this->view->render($response, 'users.twig', [
         'menu' => $menu,
-        'title' => $title,
         'message' => $message,
       ]);
     }
 
     // Add invite to DB.
-    $invite = new Invite($this->dbSettings);
-    // Remove any old invites.
-    $invite->deleteByEmail($email);
+    $inviteHlp = new Invite($this->dbSettings);
+    // Remove any old invites for this email.
+    $inviteHlp->deleteByEmail($email);
     // Add new invite.
-    $invite->create($email, $token);
+    $inviteHlp->create($email, $token);
 
     // Send the email.
     $mail = new PHPMailer(TRUE); // Passing `true` enables exceptions
@@ -207,7 +204,6 @@ class CtrlUser extends CtrlBase {
       $message['type'] = 'info';
       return $this->view->render($response, 'users.twig', [
         'menu' => $menu,
-        'title' => $title,
         'message' => $message,
       ]);
     } catch (Exception $e) {
@@ -215,7 +211,6 @@ class CtrlUser extends CtrlBase {
       $message['type'] = 'info';
       return $this->view->render($response, 'users.twig', [
         'menu' => $menu,
-        'title' => $title,
         'message' => $message,
       ]);
     }
@@ -236,7 +231,6 @@ class CtrlUser extends CtrlBase {
    */
   public function register(Request $request, Response $response, array $args) {
     $menu = $this->getMenus([]);
-    $title = 'Register';
 
     if ($request->isGet()) {
       // Initial form display.
@@ -256,143 +250,138 @@ class CtrlUser extends CtrlBase {
       $user = $userHlp->findByEmail($invite['email']);
 
       if (!empty($user['uid'])) {
-        // Email already in the system, add new role.
-        return $this->addUserAccount($invite, $user);
+        // User is already in the system.
+        $inviteHlp->deleteByEmail($invite['email']);
+        $message['text'] = 'Your user already exists: ' . $invite['email'];
+        $message['type'] = 'error';
+        return $this->view->render($response, 'home.twig', [
+          'menu' => $menu,
+          'message' => $message,
+        ]);
       }
 
       // This is a new user, display the register form.
       return $this->view->render($response, 'register.twig', [
         'menu' => $menu,
-        'title' => $title,
         'token' => $token,
       ]);
     }
 
     // Fall through to new user register post form submission.
     $allPostVars = $request->getParsedBody();
-    return $this->createUser($allPostVars, $menu, $title, $response);
+    return $this->createUser($allPostVars, 'No role', $menu, $response);
   }
 
   /**
    * Create a new user form form submission.
    *
-   * @param array $allPostVars
+   * @param array $user
    *   Post vars.
+   * @param array $role
+   *   User role.
    * @param array $menu
    *   Menu items.
-   * @param string $title
-   *   Page title.
    * @param \Slim\Http\Response $response
    *   Response object.
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
    */
-  private function createUser($allPostVars, $menu, $title, $response) {
-    if (empty($allPostVars['token']) ||
-      empty($allPostVars['username']) ||
-      empty($allPostVars['password']) ||
-      empty($allPostVars['honorific']) ||
-      empty($allPostVars['email']) ||
-      empty($allPostVars['name_first']) ||
-      empty($allPostVars['name_last'])) {
+  private function createUser($user, $role, $menu, $response) {
+    if (empty($user['token']) ||
+      empty($user['username']) ||
+      empty($user['password']) ||
+      empty($user['honorific']) ||
+      empty($user['email']) ||
+      empty($user['name_first']) ||
+      empty($user['name_last'])) {
       // Missing mandatory fields.
       $message['text'] = "Required fields not entered.";
       $message['type'] = 'error';
       return $this->view->render($response, 'register.twig', [
         'menu' => $menu,
-        'title' => $title,
         'message' => $message,
-        'token' => $allPostVars['token'],
+        'token' => $user['token'],
       ]);
     }
 
     // Ensure email matches the invite token.
     $inviteHlp = new Invite($this->dbSettings);
-    $invite = $inviteHlp->findByEmailToken($allPostVars['email'], $allPostVars['token']);
+    $invite = $inviteHlp->findByEmailToken($user['email'], $user['token']);
     if (empty($invite['id'])) {
       // Delete the invite.
-      $inviteHlp->deleteByToken($allPostVars['token']);
+      $inviteHlp->deleteByToken($user['token']);
       // Redirect to login.
       $message['text'] = "Your email does not match the invite email. Please resend the invite.";
       $message['type'] = 'error';
       return $this->view->render($response, 'login.twig', [
         'menu' => $menu,
-        'title' => $title,
         'message' => $message,
       ]);
     }
 
     // Validate username and email does not exist.
     $userHlp = new User($this->dbSettings);
-    $user = $userHlp->findByEmail($allPostVars['email']);
+    $user = $userHlp->findByEmail($user['email']);
     if (!empty($user['uid'])) {
-      $message['text'] = 'A user already exists with this email: ' . $allPostVars['email'] . '.';
+      $message['text'] = 'A user already exists with this email: ' . $user['email'] . '.';
       $message['text'] .= 'Please use a different address.';
       $message['type'] = 'error';
       return $this->view->render($response, 'register.twig', [
         'menu' => $menu,
-        'title' => $title,
         'message' => $message,
-        'token' => $allPostVars['token'],
+        'token' => $user['token'],
       ]);
     }
-    $user = $userHlp->findByUsername($allPostVars['username']);
+    $user = $userHlp->findByUsername($user['username']);
     if (!empty($user['uid'])) {
-      $message['text'] = 'A user already exists with this username: ' . $allPostVars['username'] . '.';
+      $message['text'] = 'A user already exists with this username: ' . $user['username'] . '.';
       $message['text'] .= 'Please use a different username.';
       $message['type'] = 'error';
       return $this->view->render($response, 'register.twig', [
         'menu' => $menu,
-        'title' => $title,
         'message' => $message,
-        'token' => $allPostVars['token'],
+        'token' => $user['token'],
       ]);
     }
 
     $uid = $userHlp->create(
-      !empty($allPostVars['username']) ? $allPostVars['username'] : '',
-      !empty($allPostVars['password']) ? $allPostVars['password'] : '',
-      !empty($allPostVars['email']) ? $allPostVars['email'] : '',
-      !empty($allPostVars['honorific']) ? $allPostVars['honorific'] : '',
-      !empty($allPostVars['name_first']) ? $allPostVars['name_first'] : '',
-      !empty($allPostVars['name_last']) ? $allPostVars['name_last'] : '',
-      !empty($allPostVars['company']) ? $allPostVars['company'] : '',
-      !empty($allPostVars['website']) ? $allPostVars['website'] : '',
-      !empty($allPostVars['address_street']) ? $allPostVars['address_street'] : '',
-      !empty($allPostVars['address_suburb']) ? $allPostVars['address_suburb'] : '',
-      !empty($allPostVars['address_city']) ? $allPostVars['address_city'] : '',
-      !empty($allPostVars['address_state']) ? $allPostVars['address_state'] : '',
-      !empty($allPostVars['address_country']) ? $allPostVars['address_country'] : '',
-      !empty($allPostVars['address_postcode']) ? $allPostVars['address_postcode'] : '',
-      !empty($allPostVars['phone_mobile']) ? $allPostVars['phone_mobile'] : '',
-      !empty($allPostVars['phone_work']) ? $allPostVars['phone_work'] : ''
+      !empty($user['username']) ? $user['username'] : '',
+      !empty($user['password']) ? $user['password'] : '',
+      !empty($user['email']) ? $user['email'] : '',
+      !empty($user['honorific']) ? $user['honorific'] : '',
+      !empty($user['name_first']) ? $user['name_first'] : '',
+      !empty($user['name_last']) ? $user['name_last'] : '',
+      !empty($user['company']) ? $user['company'] : '',
+      !empty($user['website']) ? $user['website'] : '',
+      !empty($user['address_street']) ? $user['address_street'] : '',
+      !empty($user['address_suburb']) ? $user['address_suburb'] : '',
+      !empty($user['address_city']) ? $user['address_city'] : '',
+      !empty($user['address_state']) ? $user['address_state'] : '',
+      !empty($user['address_country']) ? $user['address_country'] : '',
+      !empty($user['address_postcode']) ? $user['address_postcode'] : '',
+      !empty($user['phone_mobile']) ? $user['phone_mobile'] : '',
+      !empty($user['phone_work']) ? $user['phone_work'] : ''
     );
     if (!$uid) {
       $message['text'] = "Sorry, there was an error creating your user. Please speak to your administrator.";
       $message['type'] = 'error';
       return $this->view->render($response, 'login.twig', [
         'menu' => $menu,
-        'title' => $title,
         'message' => $message,
       ]);
     }
 
     // Delete the invite.
-    $inviteHlp->deleteByToken($allPostVars['token']);
+    $inviteHlp->deleteByToken($user['token']);
 
     // Redirect to login.
     $message['text'] = "Congratulations, you are registered. Please login.";
     $message['type'] = 'info';
     return $this->view->render($response, 'login.twig', [
       'menu' => $menu,
-      'title' => $title,
       'message' => $message,
     ]);
-  }
-
-  private function addUserAccount() {
-
   }
 
   /**
