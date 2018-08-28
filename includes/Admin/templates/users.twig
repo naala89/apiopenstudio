@@ -1,5 +1,7 @@
 {% extends "page.twig" %}
 
+{% set title="Users" %}
+
 {% block content %}
   <div class="row">
     <p>Manage your users here. View, invite, remove users and assign them roles in applications.</p>
@@ -93,17 +95,17 @@
           </div>
         </div>
 
-        <div class="row">
+        <!--div class="row">
           <div class="input-field col s6">
             <select name="roles" multiple>
-              <option value="" disabled selected>Choose your option</option>
+              <option value="" disabled>Choose your option</option>
               {% for rid,role in roles %}
                 <option value="{{ rid }}">{{ role.name }}</option>
               {% endfor %}
             </select>
             <label>Roles</label>
           </div>
-        </div>
+        </div-->
 
         <div class="row">
           <div class="input-field col s4 offset-s8">

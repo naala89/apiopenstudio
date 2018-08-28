@@ -30,8 +30,7 @@ class CtrlHome extends CtrlBase {
     $accountId = isset($_SESSION['accountId']) ? $_SESSION['accountId'] : '';
     $roles = $this->getRoles($token, $accountId);
     $menu = $this->getMenus($roles);
-    $title = 'Home';
-    return $this->view->render($response, 'home.twig', ['menu' => $menu, 'title' => $title]);
+    return $this->view->render($response, 'home.twig', ['menu' => $menu]);
   }
 
 }

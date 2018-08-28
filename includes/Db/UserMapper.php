@@ -37,7 +37,6 @@ class UserMapper {
    * @throws \Datagator\Core\ApiException
    */
   public function save(User $user) {
-    $this->db->debug = TRUE;
     if (empty($user->getUid())) {
       $sql = 'INSERT INTO user (active, username, salt, hash, token, token_ttl, email, honorific, name_first, name_last, company, website, address_street, address_suburb, address_city, address_state, address_country, address_postcode, phone_mobile, phone_work) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
       $bindParams = array(

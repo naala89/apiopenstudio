@@ -26,9 +26,8 @@ class CtrlLogin extends CtrlBase {
    *   Response.
    */
   public function login(Request $request, Response $response, array $args) {
-    $title = 'Login';
     $menu = $this->getMenus([]);
-    return $this->view->render($response, 'login.twig', ['menu' => $menu, 'title' => $title]);
+    return $this->view->render($response, 'login.twig', ['menu' => $menu]);
   }
 
   /**
@@ -45,12 +44,11 @@ class CtrlLogin extends CtrlBase {
    *   Response.
    */
   public function logout(Request $request, Response $response, array $args) {
-    $title = 'Login';
     $menu = $this->getMenus([]);
     unset($_SESSION['token']);
     unset($_SESSION['accountName']);
     unset($_SESSION['accountId']);
-    return $this->view->render($response, 'login.twig', ['menu' => $menu, 'title' => $title]);
+    return $this->view->render($response, 'login.twig', ['menu' => $menu]);
   }
 
 }
