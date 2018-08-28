@@ -70,4 +70,19 @@ class Role {
     return $role->dump();
   }
 
+  /**
+   * Find a role by its name.
+   *
+   * @param string $name
+   *   Role name.
+   *
+   * @return array
+   *   The role attributes.
+   */
+  public function fincByName($name) {
+    $roleMapper = new RoleMapper($this->db);
+    $role = $roleMapper->findByName($name);
+    return $role->dump();
+  }
+
 }

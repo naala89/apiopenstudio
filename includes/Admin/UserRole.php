@@ -44,7 +44,7 @@ class UserRole {
    *
    * @param int $uid
    *   User ID.
-   * @param int $roleName
+   * @param string $roleName
    *   Role name.
    * @param int $appid
    *   Application ID.
