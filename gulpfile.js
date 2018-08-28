@@ -12,12 +12,14 @@ const imagemin = require('gulp-imagemin');
 const errorHandler = require('gulp-error-handle');
 // Directories
 const js_src = 'src/js/**/*.js';
-const css_src = 'src/js/**/*.js';
-const scss_src = 'src/js/**/*.js';
+const css_src = 'src/css/**/*.css';
+const scss_src = 'src/scss/**/*.scss';
+const img_src = 'src/images/*';
 const js_dest = 'html/admin/js';
-const css_dest = 'html/admin/js';
+const css_dest = 'html/admin/css';
+const img_dest = 'html/admin/images';
 
-//js files
+// Js files.
 gulp.task('scripts', function() {
   return gulp.src(js_src)
     .pipe(errorHandler())
@@ -27,30 +29,31 @@ gulp.task('scripts', function() {
     .pipe(gulp.dest(js_dest))
 });
 
+// CSS and SCSS files.
 gulp.task('styles', function() {
   return gulp.src([scss_src, css_src])
     .pipe(errorHandler())
     .pipe(sass({style: 'compressed', errLogToConsole: true}))
     .pipe(concat('gaterdata.min.css'))
-    .pipe(cleancss())                                         // Minify the CSS
-    .pipe(gulp.dest(css_dest))                      // Set the destination to assets/css
+    .pipe(cleancss())
+    .pipe(gulp.dest(css_dest))
 });
 
-
+// Images.
 gulp.task('images', function() {
-    return gulp.src('src/images/*')
+    return gulp.src(img_src)
       .pipe(imagemin())
-      .pipe(gulp.dest('html/admin/images'))
+      .pipe(gulp.dest(img_dest))
 });
 
-// Clean all builds
+// Clean all builds.
 gulp.task('clean', function() {
   return gulp.src(['html/admin/'], {read: false})
     .pipe(errorHandler())
     .pipe(clean());
 });
 
-// web server
+// Web server.
 gulp.task('webserver', function() {
   connect.server();
 });
@@ -59,12 +62,10 @@ gulp.task('webserver', function() {
 // Then rebuild the js and css files
 
 gulp.task('watch', function(){
-  gulp
-    .watch(['src/scss/**/*.scss','src/css/**/*.css'], ['styles']); // Watch and run sass on changes
-  gulp
-    .watch('src/js/**/*.js', ['scripts']); // Watch and run javascripts on changes
-  gulp.src('src/*')
-    .pipe(notify('An asset has changed'));
+  gulp.watch([scss_src, css_src], ['styles']);
+  gulp.watch(js_src, ['scripts']);
+  gulp.watch(img_src, ['images']);
+  gulp.src('src/*').pipe(notify('An asset has changed'));
 });
 
-gulp.task('default', ['webserver', 'clean', 'styles', 'scripts', 'watch']);
+gulp.task('default', ['webserver', 'clean', 'styles', 'scripts', 'images', 'watch']);
