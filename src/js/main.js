@@ -1,7 +1,6 @@
 $(document).ready(function(){
 
   M.AutoInit();
-  $('select').material_select();
 
   // Edit application modal.
   $('.modal-app-edit-trigger').click(function() {

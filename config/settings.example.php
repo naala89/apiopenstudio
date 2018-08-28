@@ -19,6 +19,9 @@ $settings['twig'] = [
   'cache_path' =>  $settings['temp'] . '/twig_cache',
 ];
 
+// User settings.
+$settings['user']['token_life'] = '+1 hour';
+
 // Database settings.
 $settings['db'] = [
   'base' => $settings['datagator'] . '/db/dbBase.yaml',
@@ -31,9 +34,6 @@ $settings['db'] = [
   'charset' => 'utf8',
   'collation' => 'utf8_unicode_ci',
 ];
-
-// User settings.
-$settings['user']['token_life'] = '+1 hour';
 
 // Email settings.
 $settings['mail'] = [
