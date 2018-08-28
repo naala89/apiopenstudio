@@ -269,14 +269,16 @@ class CtrlUser extends CtrlBase {
 
     // Fall through to new user register post form submission.
     $allPostVars = $request->getParsedBody();
-    return $this->createUser($allPostVars, 'No role', $menu, $response);
+    return $this->createUser($_SESSION['accountId'], $allPostVars, 'No role', $menu, $response);
   }
 
   /**
    * Create a new user form form submission.
    *
+   * @param array $accountId
+   *   Account ID.
    * @param array $user
-   *   Post vars.
+   *   User vars.
    * @param array $role
    *   User role.
    * @param array $menu
@@ -287,7 +289,7 @@ class CtrlUser extends CtrlBase {
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
    */
-  private function createUser($user, $role, $menu, $response) {
+  private function createUser($accountId, $user, $role, $menu, $response) {
     if (empty($user['token']) ||
       empty($user['username']) ||
       empty($user['password']) ||
@@ -365,6 +367,18 @@ class CtrlUser extends CtrlBase {
     );
     if (!$uid) {
       $message['text'] = "Sorry, there was an error creating your user. Please speak to your administrator.";
+      $message['type'] = 'error';
+      return $this->view->render($response, 'login.twig', [
+        'menu' => $menu,
+        'message' => $message,
+      ]);
+    }
+
+    // Add the role.
+    $userRoleHlp = new UserRole($this->dbSettings);
+    $urid = $userRoleHlp->create($uid, $role, NULL, $accountId);
+    if (!$urid) {
+      $message['text'] = "Sorry, there was an error creating your users role. Please speak to your administrator.";
       $message['type'] = 'error';
       return $this->view->render($response, 'login.twig', [
         'menu' => $menu,
