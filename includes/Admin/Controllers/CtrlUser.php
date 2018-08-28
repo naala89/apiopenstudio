@@ -324,8 +324,8 @@ class CtrlUser extends CtrlBase {
 
     // Validate username and email does not exist.
     $userHlp = new User($this->dbSettings);
-    $user = $userHlp->findByEmail($user['email']);
-    if (!empty($user['uid'])) {
+    $result = $userHlp->findByEmail($user['email']);
+    if (!empty($result['uid'])) {
       $message['text'] = 'A user already exists with this email: ' . $user['email'] . '.';
       $message['text'] .= 'Please use a different address.';
       $message['type'] = 'error';
@@ -335,8 +335,8 @@ class CtrlUser extends CtrlBase {
         'token' => $user['token'],
       ]);
     }
-    $user = $userHlp->findByUsername($user['username']);
-    if (!empty($user['uid'])) {
+    $result = $userHlp->findByUsername($user['username']);
+    if (!empty($result['uid'])) {
       $message['text'] = 'A user already exists with this username: ' . $user['username'] . '.';
       $message['text'] .= 'Please use a different username.';
       $message['type'] = 'error';
