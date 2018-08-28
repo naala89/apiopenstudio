@@ -9,32 +9,28 @@ namespace Datagator\Db;
  */
 class UserRole {
 
-  protected $id;
-  protected $uid;
+  protected $urid;
+  protected $uaid;
   protected $rid;
-  protected $appId;
-  protected $accId;
+  protected $appid;
 
   /**
    * UserRole constructor.
    *
    * @param int $urid
    *   The user role ID.
-   * @param int $uid
-   *   The user ID.
+   * @param int $uaid
+   *   The user account ID.
    * @param int $rid
    *   The role ID.
-   * @param int $appId
+   * @param int $appid
    *   The application ID.
-   * @param int $accId
-   *   The account ID.
    */
-  public function __construct($urid = NULL, $uid = NULL, $rid = NULL, $appId = NULL, $accId = NULL) {
+  public function __construct($urid, $uaid, $rid, $appid) {
     $this->urid = $urid;
-    $this->uid = $uid;
+    $this->uaid = $uaid;
     $this->rid = $rid;
-    $this->appId = $appId;
-    $this->accId = $accId;
+    $this->appid = $appid;
   }
 
   /**
@@ -53,28 +49,28 @@ class UserRole {
    * @param int $urid
    *   The user role ID.
    */
-  public function setId($urid) {
+  public function setUrid($urid) {
     $this->urid = $urid;
   }
 
   /**
-   * Get the user ID.
+   * Get the user account ID.
    *
    * @return int
-   *   The user ID.
+   *   The user account ID.
    */
-  public function getUid() {
-    return $this->uid;
+  public function getUaid() {
+    return $this->urid;
   }
 
   /**
-   * Set the user ID.
+   * Set the user account ID.
    *
-   * @param int $uid
-   *   The user ID.
+   * @param int $uaid
+   *   The user account ID.
    */
-  public function setUid($uid) {
-    $this->uid = $uid;
+  public function setUaid($uaid) {
+    $this->uaid = $uaid;
   }
 
   /**
@@ -104,37 +100,17 @@ class UserRole {
    *   The application ID.
    */
   public function getAppId() {
-    return $this->appId;
+    return $this->appid;
   }
 
   /**
    * Set the application ID.
    *
-   * @param int $appId
+   * @param int $appid
    *   The application ID.
    */
-  public function setAppId($appId) {
-    $this->appId = $appId;
-  }
-
-  /**
-   * Get the account ID.
-   *
-   * @return int
-   *   The account ID.
-   */
-  public function getAccId() {
-    return $this->accId;
-  }
-
-  /**
-   * Set the account ID.
-   *
-   * @param int $accId
-   *   The account ID.
-   */
-  public function setAccId($accId) {
-    $this->accId = $accId;
+  public function setAppId($appid) {
+    $this->appid = $appid;
   }
 
   /**
@@ -146,10 +122,9 @@ class UserRole {
   public function dump() {
     return array(
       'urid' => $this->urid,
-      'uid' => $this->uid,
+      'uaid' => $this->uaid,
       'rid' => $this->rid,
       'appId' => $this->appId,
-      'accId' => $this->accId,
     );
   }
 

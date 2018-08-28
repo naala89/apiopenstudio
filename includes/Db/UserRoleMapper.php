@@ -37,24 +37,22 @@ class UserRoleMapper {
    */
   public function save(UserRole $userRole) {
     if ($userRole->getUrid() == NULL) {
-      $sql = 'INSERT INTO user_role (uid, rid, appid, accid) VALUES (?, ?, ?, ?)';
-      $bindParams = array(
-        $userRole->getUid(),
+      $sql = 'INSERT INTO user_role (uaid, rid, appid) VALUES (?, ?, ?)';
+      $bindParams = [
+        $userRole->getUaid(),
         $userRole->getRid(),
         $userRole->getAppId(),
-        $userRole->getAccId(),
-      );
+      ];
       $result = $this->db->Execute($sql, $bindParams);
     }
     else {
-      $sql = 'UPDATE user_role SET uid=?, rid=?, appid=?, accid=? WHERE urid = ?';
-      $bindParams = array(
-        $userRole->getUid(),
+      $sql = 'UPDATE user_role SET uaid=?, rid=?, appid=? WHERE urid = ?';
+      $bindParams = [
+        $userRole->getUaid(),
         $userRole->getRid(),
         $userRole->getAppId(),
-        $userRole->getAccId(),
         $userRole->getUrid(),
-      );
+      ];
       $result = $this->db->Execute($sql, $bindParams);
     }
     if (!$result) {
@@ -101,26 +99,44 @@ class UserRoleMapper {
   }
 
   /**
-   * Find all user roles for a user.
+   * Find all user roles for a user account.
    *
-   * @param int $uid
-   *   User ID.
+   * @param int $uaid
+   *   User account ID.
    *
    * @return array
    *   Array of mapped UserRole objects.
    */
-  public function findByUid($uid) {
-    $sql = 'SELECT * FROM user_role WHERE uid = ?';
-    $bindParams = array($uid);
+  public function findByUserAccountId($uaid) {
+    $sql = 'SELECT * FROM user_role WHERE uaid = ?';
+    $bindParams = array($uaid);
 
     $recordSet = $this->db->Execute($sql, $bindParams);
 
-    $entries = [];
-    while ($row = $recordSet->fetchRow()) {
-      $entries[] = $this->mapArray($row);
+    $entries = array();
+    while (!$recordSet->EOF) {
+      $entries[] = $this->mapArray($recordSet->fields);
+      $recordSet->moveNext();
     }
 
     return $entries;
+  }
+
+  /**
+   * Find a user role by its role ID.
+   *
+   * @param int $rid
+   *   Role ID.
+   *
+   * @return \Datagator\Db\UserRole
+   *   Mapped UserRole object
+   */
+  public function findByRid($rid) {
+    $sql = 'SELECT * FROM user_role WHERE rid = ?';
+    $bindParams = array($rid);
+
+    $row = $this->db->GetRow($sql, $bindParams);
+    return $this->mapArray($row);
   }
 
   /**
@@ -147,60 +163,19 @@ class UserRoleMapper {
   }
 
   /**
-   * Find all user roles for an account.
+   * Find all user roles by user account ID & application ID.
    *
-   * @param int $accId
-   *   Account ID.
-   *
-   * @return array
-   *   Array of mapped UserRole objects.
-   */
-  public function findByAccId($accId) {
-    $sql = 'SELECT * FROM user_role WHERE accid = ?';
-    $bindParams = array($accId);
-
-    $recordSet = $this->db->Execute($sql, $bindParams);
-
-    $entries = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-      $recordSet->moveNext();
-    }
-
-    return $entries;
-  }
-
-  /**
-   * Find a user role by its ID.
-   *
-   * @param int $rid
-   *   Role ID.
-   *
-   * @return \Datagator\Db\UserRole
-   *   Mapped UserRole object
-   */
-  public function findByRid($rid) {
-    $sql = 'SELECT * FROM user_role WHERE rid = ?';
-    $bindParams = array($rid);
-
-    $row = $this->db->GetRow($sql, $bindParams);
-    return $this->mapArray($row);
-  }
-
-  /**
-   * Find all user roles by user ID & account ID.
-   *
-   * @param int $uid
-   *   User ID.
+   * @param int $uaid
+   *   User account ID.
    * @param int $accId
    *   Account ID.
    *
    * @return array
    *   Array of mapped of UserRole objects.
    */
-  public function findByUidAccId($uid, $accId) {
-    $sql = 'SELECT * FROM user_role WHERE uid = ? AND accid = ?';
-    $bindParams = array($uid, $accId);
+  public function findByUidAccId($uaid, $accId) {
+    $sql = 'SELECT * FROM user_role WHERE uaid = ? AND accid = ?';
+    $bindParams = array($uaid, $accId);
     $recordSet = $this->db->Execute($sql, $bindParams);
 
     $entries = [];
@@ -223,11 +198,10 @@ class UserRoleMapper {
   protected function mapArray(array $row) {
     $userRole = new UserRole();
 
-    $userRole->setId(!empty($row['urid']) ? $row['urid'] : NULL);
-    $userRole->setUid(!empty($row['uid']) ? $row['uid'] : NULL);
+    $userRole->setUrid(!empty($row['urid']) ? $row['urid'] : NULL);
+    $userRole->setUaid(!empty($row['uaid']) ? $row['uaid'] : NULL);
     $userRole->setRid(!empty($row['rid']) ? $row['rid'] : NULL);
     $userRole->setAppId(!empty($row['appid']) ? $row['appid'] : NULL);
-    $userRole->setAccId(!empty($row['accid']) ? $row['accid'] : NULL);
 
     return $userRole;
   }
