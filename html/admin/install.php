@@ -24,7 +24,7 @@ $dsn = $settings['db']['driver'] . '://'
 $db = \ADONewConnection($dsn);
 
 // Twig definition.
-$loader = new Twig_Loader_Filesystem($settings['twig']['path'] . '/install');
+$loader = new Twig_Loader_Filesystem($settings['twig']['path']);
 $twig = new Twig_Environment($loader/*, array(
   'cache' => $settings['twig']['cache_path'],
 )*/);
@@ -37,7 +37,7 @@ if (!$db) {
     'type' => 'error',
     'text' => 'DB connection failed, please check your config settings.'
   ];
-  $template = $twig->load("install_$from.twig");
+  $template = $twig->load("install/install_$from.twig");
   echo $template->render(['message' => $message, 'menu' => $menu]);
   exit;
 }
@@ -45,7 +45,7 @@ if (!$db) {
 switch ($step) {
   case 0:
     // Check user wants to continue.
-    $template = $twig->load('install_0.twig');
+    $template = $twig->load('install/install_0.twig');
     $message = [
       'type' => 'warning',
       'text' => "Continuing will erase any existing data in the database."
@@ -67,7 +67,7 @@ switch ($step) {
     // Fetch the DB definition.
     $yaml = file_get_contents($settings['db']['base']);
     $definition = \Spyc::YAMLLoadString($yaml);
-    $template = $twig->load('install_1.twig');
+    $template = $twig->load('install/install_1.twig');
     $message = [
       'type' => 'info',
       'text' => 'Creating database tables...<br />'
@@ -147,7 +147,7 @@ switch ($step) {
         // Missing mandatory fields.
         $message['text'] = "Required fields not entered.";
         $message['type'] = 'error';
-        $template = $twig->load('install_2.twig');
+        $template = $twig->load('install/install_2.twig');
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
@@ -172,7 +172,7 @@ switch ($step) {
       );
       if (!$uid) {
         // Failed to create the user
-        $template = $twig->load('install_2.twig');
+        $template = $twig->load('install/install_2.twig');
         $message = [
           'type' => 'error',
           'text' => 'Failed to save your user to the DB. Please check the logs.'
@@ -181,12 +181,12 @@ switch ($step) {
         exit;
       }
       // User created, continue to next page.
-      $template = $twig->load('install_3.twig');
+      $template = $twig->load('install/install_3.twig');
       echo $template->render(['menu' => $menu, 'uid' => $uid, 'username' => $_POST['username']]);
       exit;
     }
     // Fallback to rendering the create user form (user is from previous page).
-    $template = $twig->load('install_2.twig');
+    $template = $twig->load('install/install_2.twig');
     echo $template->render(['menu' => $menu]);
     exit;
     break;
@@ -201,7 +201,7 @@ switch ($step) {
         'type' => 'error',
         'text' => 'Required user id & name not received.'
       ];
-      $template = $twig->load('install_3.twig');
+      $template = $twig->load('install/install_3.twig');
       echo $template->render(['message' => $message, 'menu' => $menu]);
       exit;
     }
@@ -215,7 +215,7 @@ switch ($step) {
           'type' => 'error',
           'text' => 'Required Account name not entered.'
         ];
-        $template = $twig->load('install_3.twig');
+        $template = $twig->load('install/install_3.twig');
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
@@ -228,7 +228,7 @@ switch ($step) {
           'type' => 'error',
           'text' => 'Failed to save your account to the DB. Please check the logs.'
         ];
-        $template = $twig->load('install_3.twig');
+        $template = $twig->load('install/install_3.twig');
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
@@ -241,33 +241,32 @@ switch ($step) {
           'type' => 'error',
           'text' => 'Failed to assign your user account to the DB. Please check the logs.'
         ];
-        $template = $twig->load('install_3.twig');
+        $template = $twig->load('install/install_3.twig');
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
 
       // Create the user Owner role for the user account.
-      $userRole = new \Datagator\Admin\UserRole($settings['db']);
-      var_dump($uaid);exit;
-      $result = $userRole->create($uaid, 'Owner', NULL);
+      $userRoleHlp = new \Datagator\Admin\UserRole($settings['db']);
+      $result = $userRoleHlp->create($uaid, 'Owner', NULL);
       if (!$result) {
         $message = [
           'type' => 'error',
           'text' => 'Failed to Create the owner role for your user in your account. Please check the logs.'
         ];
-        $template = $twig->load('install_3.twig');
+        $template = $twig->load('install/install_3.twig');
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
 
       // Success, render the success page.
-      $template = $twig->load('install_4.twig');
+      $template = $twig->load('install/install_4.twig');
       echo $template->render(['menu' => $menu, 'account_name' => $accountName]);
       exit;
     }
 
     // Fallback to render initial create account page (user arrives from previous page).
-    $template = $twig->load('install_3.twig');
+    $template = $twig->load('install/install_3.twig');
     echo $template->render(['menu' => $menu]);
     exit;
 }
