@@ -78,12 +78,6 @@ class User {
       return FALSE;
     }
 
-//    $userRoleMapper = new Db\UserRoleMapper($this->db);
-//    $userRoles = $userRoleMapper->findByUidAccId($user->getUid(), $account->getAccId());
-//    if (empty($userRoles)) {
-//      return FALSE;
-//    }
-
     // Set up salt if not defined.
     if ($user->getSalt() == NULL) {
       $user->setSalt(Hash::generateSalt());
