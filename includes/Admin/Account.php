@@ -60,8 +60,7 @@ class Account {
     }
 
     $account = $accountMapper->findByName($name);
-    $accId = $account->getAccId();
-    if (!$accId) {
+    if (!($accId = $account->getAccId())) {
       return FALSE;
     }
 

@@ -60,7 +60,7 @@ class UserRole {
    *   The user account ID.
    */
   public function getUaid() {
-    return $this->urid;
+    return $this->uaid;
   }
 
   /**
