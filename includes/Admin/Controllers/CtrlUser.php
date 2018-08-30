@@ -134,7 +134,8 @@ class CtrlUser extends CtrlBase {
    *   Response.
    */
   public function invite(Request $request, Response $response, array $args) {
-    $roles = $this->getRoles($_SESSION['token'], $_SESSION['accountId']);
+    $uaid = isset($_SESSION['userAccountId']) ? $_SESSION['userAccountId'] : '';
+    $roles = $this->getRoles($uaid);
     if (!$this->checkAccess($roles)) {
       return $response->withRedirect('/');
     }
