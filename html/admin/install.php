@@ -208,6 +208,7 @@ switch ($step) {
 
     if ($from == 3) {
       // This is a current page submission, so create the account.
+
       $accountName = isset($_POST['account_name']) ? $_POST['account_name'] : '';
       if (empty($accountName)) {
         // Missing required data.
@@ -221,8 +222,8 @@ switch ($step) {
       }
 
       // Create the account.
-      $account = new \Datagator\Admin\Account($settings['db']);
-      $accId = $account->create($accountName);
+      $accountHlp = new \Datagator\Admin\Account($settings['db']);
+      $accId = $accountHlp->create($accountName);
       if (!$accId) {
         $message = [
           'type' => 'error',
@@ -248,8 +249,8 @@ switch ($step) {
 
       // Create the user Owner role for the user account.
       $userRoleHlp = new \Datagator\Admin\UserRole($settings['db']);
-      $result = $userRoleHlp->create($uaid, 'Owner', NULL);
-      if (!$result) {
+      $urid = $userRoleHlp->create($uaid, 'Owner', NULL);
+      if (!$urid) {
         $message = [
           'type' => 'error',
           'text' => 'Failed to Create the owner role for your user in your account. Please check the logs.'

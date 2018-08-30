@@ -47,8 +47,8 @@ class UserAccount {
    * @param int $accid
    *   Account ID.
    *
-   * @return bool
-   *   Success.
+   * @return bool|int
+   *   FALSE or user account ID.
    */
   public function create($uid, $accid) {
     $userAccount = new Db\UserAccount(
@@ -63,7 +63,12 @@ class UserAccount {
       return FALSE;
     }
 
-    return TRUE;
+    $userAccount = $userAccountMapper->findByUidAccId($uid, $accid);
+    if (!($uaid = $userAccount->getUaid())) {
+      return FALSE;
+    }
+
+    return $uaid;
   }
 
   /**

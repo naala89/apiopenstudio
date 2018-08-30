@@ -73,7 +73,12 @@ class UserRole {
       return FALSE;
     }
 
-    return TRUE;
+    $result = $userRoleMapper->findByUaidRid($uaid, $rid);
+    if (!($urid = $result->getUrid())) {
+      return FALSE;
+    }
+
+    return $urid;
   }
 
   /**

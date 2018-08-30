@@ -139,6 +139,26 @@ class UserRoleMapper {
   }
 
   /**
+   * Find all user role ID by User account ID and User role ID.
+   *
+   * @param int $uaid
+   *   User account ID.
+   *
+   * @param int $rid
+   *   Role ID.
+   *
+   * @return array
+   *   Mapped UserRole object.
+   */
+  public function findByUaidRid($uaid, $rid) {
+    $sql = 'SELECT * FROM user_role WHERE uaid = ? AND rid = ?';
+    $bindParams = array($uaid, $rid);
+
+    $row = $this->db->GetRow($sql, $bindParams);
+    return $this->mapArray($row);
+  }
+
+  /**
    * Map a DB row to the internal attributes.
    *
    * @param array $row
