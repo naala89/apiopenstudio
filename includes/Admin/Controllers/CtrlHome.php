@@ -27,8 +27,9 @@ class CtrlHome extends CtrlBase {
    */
   public function index(Request $request, Response $response, array $args) {
     $token = isset($_SESSION['token']) ? $_SESSION['token'] : '';
-    $accountId = isset($_SESSION['accountId']) ? $_SESSION['accountId'] : '';
-    $roles = $this->getRoles($token, $accountId);
+    $userAccId = isset($_SESSION['userAccountId']) ? $_SESSION['userAccountId'] : '';
+    $roles = $this->getRoles($userAccId);
+    var_dump($roles);exit;
     $menu = $this->getMenus($roles);
     return $this->view->render($response, 'home.twig', ['menu' => $menu]);
   }

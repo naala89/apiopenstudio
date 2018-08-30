@@ -99,30 +99,6 @@ class UserRoleMapper {
   }
 
   /**
-   * Find all user roles for a user account.
-   *
-   * @param int $uaid
-   *   User account ID.
-   *
-   * @return array
-   *   Array of mapped UserRole objects.
-   */
-  public function findByUserAccountId($uaid) {
-    $sql = 'SELECT * FROM user_role WHERE uaid = ?';
-    $bindParams = array($uaid);
-
-    $recordSet = $this->db->Execute($sql, $bindParams);
-
-    $entries = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-      $recordSet->moveNext();
-    }
-
-    return $entries;
-  }
-
-  /**
    * Find a user role by its role ID.
    *
    * @param int $rid
@@ -152,30 +128,6 @@ class UserRoleMapper {
     $sql = 'SELECT * FROM user_role WHERE appid = ?';
     $bindParams = array($appId);
 
-    $recordSet = $this->db->Execute($sql, $bindParams);
-
-    $entries = [];
-    while ($row = $recordSet->fetchRow()) {
-      $entries[] = $this->mapArray($row);
-    }
-
-    return $entries;
-  }
-
-  /**
-   * Find all user roles by user account ID & application ID.
-   *
-   * @param int $uaid
-   *   User account ID.
-   * @param int $accId
-   *   Account ID.
-   *
-   * @return array
-   *   Array of mapped of UserRole objects.
-   */
-  public function findByUidAccId($uaid, $accId) {
-    $sql = 'SELECT * FROM user_role WHERE uaid = ? AND accid = ?';
-    $bindParams = array($uaid, $accId);
     $recordSet = $this->db->Execute($sql, $bindParams);
 
     $entries = [];
