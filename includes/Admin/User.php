@@ -57,31 +57,39 @@ class User {
    *   False or user/account details.
    */
   public function adminLogin($accountName, $username, $password, $ttl) {
+    // Validate account and get account ID.
     $accountMapper = new Db\AccountMapper($this->db);
     $account = $accountMapper->findByName($accountName);
-    if (empty($account->getAccId())) {
+    if (empty($accId = $account->getAccId())) {
       return FALSE;
     }
 
+    // Validate username and get user ID.
     $userMapper = new Db\UserMapper($this->db);
     $user = $userMapper->findByUsername($username);
-    if (empty($user->getUid())) {
+    if (empty($uid = $user->getUid())) {
       return FALSE;
     }
 
-    $userRoleMapper = new Db\UserRoleMapper($this->db);
-    $userRoles = $userRoleMapper->findByUidAccId($user->getUid(), $account->getAccId());
-    if (empty($userRoles)) {
+    // Validate user account and het user account ID.
+    $userAccountMapper = new Db\UserAccountMapper($this->db);
+    $userAccount = $userAccountMapper->findByUidAccId($uid, $accId);
+    if (empty($auid = $userAccount->getUaid())) {
       return FALSE;
     }
+
+//    $userRoleMapper = new Db\UserRoleMapper($this->db);
+//    $userRoles = $userRoleMapper->findByUidAccId($user->getUid(), $account->getAccId());
+//    if (empty($userRoles)) {
+//      return FALSE;
+//    }
 
     // Set up salt if not defined.
     if ($user->getSalt() == NULL) {
       $user->setSalt(Hash::generateSalt());
     }
 
-    // Generate hash and compare to stored hash.
-    // This prevents refreshing token with a fake password.
+    // Generate password hash and compare to stored hash.
     $hash = Hash::generateHash($password, $user->getSalt());
     if ($user->getHash() != NULL && $user->getHash() != $hash) {
       return FALSE;
@@ -110,6 +118,7 @@ class User {
       'token' => $token,
       'accountName' => $account->getName(),
       'accountId' => $account->getAccId(),
+      'userAccountId' => $auid,
     ];
   }
 

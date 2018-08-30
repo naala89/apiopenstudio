@@ -47,6 +47,7 @@ class Authentication {
     $accountName = isset($data['account']) ? $data['account'] : '';
     $username = isset($data['username']) ? $data['username'] : '';
     $password = isset($data['password']) ? $data['password'] : '';
+    $uri = $request->getUri()->withPath($this->loginPath);
 
     // This is a login attempt.
     if (!empty($accountName) || !empty($username) || !empty($password)) {
@@ -57,16 +58,17 @@ class Authentication {
         unset($_SESSION['token']);
         unset($_SESSION['accountId']);
         unset($_SESSION['accountName']);
-        $uri = $request->getUri()->withPath($this->loginPath);
-        return $response = $response->withRedirect($uri);
+        unset($_SESSION['userAccountId']);
+      } else {
+        $_SESSION['token'] = $result['token'];
+        $_SESSION['accountName'] = $result['accountName'];
+        $_SESSION['accountId'] = $result['accountId'];
+        $_SESSION['userAccountId'] = $result['userAccountId'];
       }
-      $_SESSION['token'] = $result['token'];
-      $_SESSION['accountName'] = $result['accountName'];
-      $_SESSION['accountId'] = $result['accountId'];
     }
 
+    // Validate token.
     if (!isset($_SESSION['token'])) {
-      $uri = $request->getUri()->withPath($this->loginPath);
       return $response = $response->withRedirect($uri);
     }
     return $next($request, $response);
