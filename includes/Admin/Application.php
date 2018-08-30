@@ -41,7 +41,7 @@ class Application {
    *   ID of the account.
    *
    * @return array
-   *   Array of associative arrays of applications.
+   *   Array of associative arrays of applications, indexed by appId.
    */
   public function getByAccount($accId) {
     $applicationMapper = new Db\ApplicationMapper($this->db);
@@ -89,7 +89,7 @@ class Application {
   }
 
   /**
-   * Update an application.
+   * Update an application name.
    *
    * @param string $appId
    *   ID of the application.

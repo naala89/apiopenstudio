@@ -56,13 +56,9 @@ class Authentication {
       if (!$result) {
         // Login failed.
         unset($_SESSION['token']);
-        unset($_SESSION['accountId']);
-        unset($_SESSION['accountName']);
         unset($_SESSION['userAccountId']);
       } else {
         $_SESSION['token'] = $result['token'];
-        $_SESSION['accountName'] = $result['accountName'];
-        $_SESSION['accountId'] = $result['accountId'];
         $_SESSION['userAccountId'] = $result['userAccountId'];
       }
     }
