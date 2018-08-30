@@ -77,42 +77,19 @@ class UserRole {
   }
 
   /**
-   * Find user roles by User ID and Account ID.
+   * Find all user roles by the user account ID.
    *
-   * @param int $uid
-   *   User ID.
-   * @param $accId
-   *   Account ID.
-   *
-   * @return array
-   *   Array of user roles.
-   */
-  public function findByUidAccId($uid, $accId) {
-    $userRoles = [];
-
-    $userRoleMapper = new Db\UserRoleMapper($this->db);
-    $results = $userRoleMapper->findByUidAccId($uid, $accId);
-    foreach ($results as $result) {
-      $userRoles[] = $result->dump();
-    }
-
-    return $userRoles;
-  }
-
-  /**
-   * Find all user roles by the account ID.
-   *
-   * @param $accId
-   *   Account ID.
+   * @param $uaid
+   *   User account ID.
    *
    * @return array
    *   Array of UserRole objects.
    */
-  public function findByAccId($accId) {
+  public function findByUaid($uaid) {
     $userRoles = [];
 
     $userRoleMapper = new Db\UserRoleMapper($this->db);
-    $results = $userRoleMapper->findByAccId($accId);
+    $results = $userRoleMapper->findByUserAccountId($uaid);
     foreach ($results as $result) {
       $userRoles[] = $result->dump();
     }

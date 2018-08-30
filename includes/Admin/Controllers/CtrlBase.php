@@ -32,34 +32,25 @@ class CtrlBase {
   }
 
   /**
-   * Fetch the roles for a user in an account.
+   * Fetch the roles for a user account.
    *
-   * @param string $token
-   *   User validation Token.
-   * @param int $accId
-   *   Account name.
+   * @param int $uaid
+   *   User account id.
    *
    * @return array
    *   Array of role names.
    */
-  protected function getRoles($token, $accId) {
+  protected function getRoles($uaid) {
     $roleNames = [];
 
     // If no account, no roles.
-    if (empty($accId)) {
+    if (empty($userAccId)) {
       return $roleNames;
     }
 
-    // Get uid for user token. If user does not exist, no roles.
-    $userHelper = new User($this->dbSettings);
-    $user = $userHelper->findByToken($token);
-    if (empty($uid = $user['uid'])) {
-      return $roleNames;
-    }
-
-    // Get user roles for uid on account.
+    // Get user roles for a user account.
     $userRoleHelper = new UserRole($this->dbSettings);
-    $userRoles = $userRoleHelper->findByUidAccId($uid, $accId);
+    $userRoles = $userRoleHelper->findByUaid($uaid);
     if (empty($userRoles)) {
       return $roleNames;
     }
