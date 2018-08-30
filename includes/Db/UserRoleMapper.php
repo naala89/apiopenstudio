@@ -99,20 +99,26 @@ class UserRoleMapper {
   }
 
   /**
-   * Find a user role by its role ID.
+   * Find a user roles by its user account ID.
    *
-   * @param int $rid
-   *   Role ID.
+   * @param int $uaid
+   *   User account ID.
    *
    * @return \Datagator\Db\UserRole
    *   Mapped UserRole object
    */
-  public function findByRid($rid) {
-    $sql = 'SELECT * FROM user_role WHERE rid = ?';
-    $bindParams = array($rid);
+  public function findByUaid($uaid) {
+    $sql = 'SELECT * FROM user_role WHERE uaid = ?';
+    $bindParams = array($uaid);
 
-    $row = $this->db->GetRow($sql, $bindParams);
-    return $this->mapArray($row);
+    $recordSet = $this->db->Execute($sql, $bindParams);
+
+    $entries = [];
+    while ($row = $recordSet->fetchRow()) {
+      $entries[] = $this->mapArray($row);
+    }
+
+    return $entries;
   }
 
   /**
