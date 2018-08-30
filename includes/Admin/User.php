@@ -74,7 +74,7 @@ class User {
     // Validate user account and het user account ID.
     $userAccountMapper = new Db\UserAccountMapper($this->db);
     $userAccount = $userAccountMapper->findByUidAccId($uid, $accId);
-    if (empty($auid = $userAccount->getUaid())) {
+    if (empty($uaid = $userAccount->getUaid())) {
       return FALSE;
     }
 
@@ -98,6 +98,7 @@ class User {
         'token' => $user->getToken(),
         'accountName' => $account->getName(),
         'accountId' => $account->getAccId(),
+        'userAccountId' => $userAccount->getUaid(),
       ];
     }
 
@@ -112,7 +113,7 @@ class User {
       'token' => $token,
       'accountName' => $account->getName(),
       'accountId' => $account->getAccId(),
-      'userAccountId' => $auid,
+      'userAccountId' => $userAccount->getUacid(),
     ];
   }
 

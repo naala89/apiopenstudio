@@ -44,7 +44,7 @@ class CtrlBase {
     $roleNames = [];
 
     // If no account, no roles.
-    if (empty($userAccId)) {
+    if (empty($uaid)) {
       return $roleNames;
     }
 

@@ -94,7 +94,7 @@ class UserRole {
     $userRoles = [];
 
     $userRoleMapper = new Db\UserRoleMapper($this->db);
-    $results = $userRoleMapper->findByUserAccountId($uaid);
+    $results = $userRoleMapper->findByUaid($uaid);
     foreach ($results as $result) {
       $userRoles[] = $result->dump();
     }
