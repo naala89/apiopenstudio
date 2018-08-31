@@ -35,7 +35,7 @@ class Application {
   }
 
   /**
-   * Get all an applications for an account.
+   * Find all an applications for an account.
    *
    * @param int $accId
    *   ID of the account.
@@ -43,7 +43,7 @@ class Application {
    * @return array
    *   Array of associative arrays of applications, indexed by appId.
    */
-  public function getByAccount($accId) {
+  public function findByAccount($accId) {
     $applicationMapper = new Db\ApplicationMapper($this->db);
     $results = $applicationMapper->findByAccId($accId);
     $applications = [];

@@ -97,7 +97,7 @@ class UserAccount {
    */
   public function dump() {
     return array(
-      'urid' => $this->uaid,
+      'uaid' => $this->uaid,
       'uid' => $this->uid,
       'accId' => $this->accId,
     );
