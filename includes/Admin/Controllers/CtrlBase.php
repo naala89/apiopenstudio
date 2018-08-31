@@ -32,7 +32,7 @@ class CtrlBase {
   }
 
   /**
-   * Fetch the roles for a user account.
+   * Fetch the roles for a user account ID.
    *
    * @param int $uaid
    *   User account id.

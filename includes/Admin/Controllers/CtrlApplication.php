@@ -2,6 +2,7 @@
 
 namespace Datagator\Admin\Controllers;
 
+use Datagator\Admin\UserAccount;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Datagator\Admin\Application;
@@ -29,15 +30,17 @@ class CtrlApplication extends CtrlBase {
    *   Response.
    */
   public function index(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['userAccountId']) ? $_SESSION['userAccountId'] : '';
+    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
     $roles = $this->getRoles($uaid);
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
     }
-
     $menu = $this->getMenus($roles);
-    $application = new Application($this->dbSettings);
-    $applications = $application->getByAccount($_SESSION['accountId']);
+
+    $userAccountHlp = new UserAccount($this->dbSettings);
+    $userAccount = $userAccountHlp->findByUserAccountId($uaid);
+    $applicationHlp = new Application($this->dbSettings);
+    $applications = $applicationHlp->findByAccount($userAccount['accId']);
 
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
@@ -59,22 +62,24 @@ class CtrlApplication extends CtrlBase {
    *   Response.
    */
   public function create(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['userAccountId']) ? $_SESSION['userAccountId'] : '';
+    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
     $roles = $this->getRoles($uaid);
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
     }
-
     $menu = $this->getMenus($roles);
+
     $allPostVars = $request->getParsedBody();
     $application = new Application($this->dbSettings);
 
+    $userAccountHlp = new UserAccount($this->dbSettings);
+    $userAccount = $userAccountHlp->findByUserAccountId($uaid);
     $message = [
       'type' => 'info',
       'text' => 'Application created',
     ];
     if (!empty($allPostVars['create-app-name'])) {
-      $result = $application->create($_SESSION['accountId'], $allPostVars['create-app-name']);
+      $result = $application->create($userAccount['accId'], $allPostVars['create-app-name']);
       if (!$result) {
         $message = [
           'type' => 'error',
@@ -89,7 +94,7 @@ class CtrlApplication extends CtrlBase {
       ];
     }
 
-    $applications = $application->getByAccount($_SESSION['accountId']);
+    $applications = $application->findByAccount($userAccount['accId']);
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
       'applications' => $applications,
@@ -111,16 +116,18 @@ class CtrlApplication extends CtrlBase {
    *   Response.
    */
   public function edit(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['userAccountId']) ? $_SESSION['userAccountId'] : '';
+    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
     $roles = $this->getRoles($uaid);
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
     }
-
     $menu = $this->getMenus($roles);
+
     $allPostVars = $request->getParsedBody();
     $application = new Application($this->dbSettings);
 
+    $userAccountHlp = new UserAccount($this->dbSettings);
+    $userAccount = $userAccountHlp->findByUserAccountId($uaid);
     $message = [
       'type' => 'info',
       'text' => 'Application edited',
@@ -141,7 +148,7 @@ class CtrlApplication extends CtrlBase {
       ];
     }
 
-    $applications = $application->getByAccount($_SESSION['accountId']);
+    $applications = $application->findByAccount($userAccount['accId']);
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
       'applications' => $applications,
@@ -165,7 +172,7 @@ class CtrlApplication extends CtrlBase {
    * TODO: Delete all associated resources and remove user roles.
    */
   public function delete(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['userAccountId']) ? $_SESSION['userAccountId'] : '';
+    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
     $roles = $this->getRoles($uaid);
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
@@ -175,6 +182,8 @@ class CtrlApplication extends CtrlBase {
     $allPostVars = $request->getParsedBody();
     $application = new Application($this->dbSettings);
 
+    $userAccountHlp = new UserAccount($this->dbSettings);
+    $userAccount = $userAccountHlp->findByUserAccountId($uaid);
     $message = [
       'type' => 'info',
       'text' => 'Application deleted',
@@ -195,7 +204,7 @@ class CtrlApplication extends CtrlBase {
       ];
     }
 
-    $applications = $application->getByAccount($_SESSION['accountId']);
+    $applications = $application->findByAccount($userAccount['accId']);
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
       'applications' => $applications,

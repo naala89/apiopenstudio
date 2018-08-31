@@ -72,10 +72,25 @@ class UserAccount {
   }
 
   /**
+   * Find user account by the user account ID.
+   *
+   * @param int $uaid
+   *   User account ID.
+   *
+   * @return array
+   *   UserAccount object.
+   */
+  public function findByUserAccountId($uaid) {
+    $userAccountMapper = new Db\UserAccountMapper($this->db);
+    $result = $userAccountMapper->findByUaid($uaid);
+    return $result->dump();
+  }
+
+  /**
    * Find all user accounts by the user ID.
    *
    * @param $uid
-   *   User ID.
+   *   User int ID.
    *
    * @return array
    *   Array of UserAccount objects.
@@ -96,7 +111,7 @@ class UserAccount {
    * Find all user accounts by the account ID.
    *
    * @param $accId
-   *   Account ID.
+   *   Account int ID.
    *
    * @return array
    *   Array of UserAccount objects.
@@ -126,7 +141,8 @@ class UserAccount {
    */
   public function findByUidAccId($uid, $accId) {
     $userAccountMapper = new Db\UserAccountMapper($this->db);
-    return $userAccountMapper->findByUidAccId($uid, $accId);
+    $result = $userAccountMapper->findByUidAccId($uid, $accId);
+    return $result->dump();
   }
 
 }
