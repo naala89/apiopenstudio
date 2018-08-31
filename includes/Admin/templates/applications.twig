@@ -4,30 +4,38 @@
 
 {% block content %}
   <div class="row">
-    <p>Manage your applications here. These are distinct business unit, that will contain API resources and have administrators/developers assigned to them.</p>
+    <p>Manage your applications here. These are distinct business entities or projects, that will contain API resources and have administrators/developers assigned to them.</p>
   </div>
   <div class="row">
     <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-create"><i class="material-icons">add</i></a>
   </div>
 
   <ul class="collection">
-    {% for key,value in applications %}
-      <li class="collection-item">
-        <div class="row list-row">
-          <div class="col s10">{{ value.name }}</div>
-          <div class="col s1">
-            <a class="btn-floating btn-small white hoverable">
-              <i class="material-icons modal-app-edit-trigger black-text" app-id="{{ value.appId }}" app-name="{{ value.name }}">edit</i>
-            </a>
-          </div>
-          <div class="col s1">
-            <a class="btn-floating btn-small white hoverable">
-              <i class="material-icons modal-app-delete-trigger black-text" app-id="{{ value.appId }}" app-name="{{ value.name }}">delete</i>
-            </a>
-          </div>
+    {% if applications is empty %}
+      <div class="row">
+        <div class="col s12">
+          <p>You do not have any applications yet. Click <a class="modal-trigger" href="#modal-create">here</a> to create an application </p>
         </div>
-      </li>
-  {% endfor %}
+      </div>
+    {% else %}
+      {% for key,value in applications %}
+        <li class="collection-item">
+          <div class="row list-row">
+            <div class="col s10">{{ value.name }}</div>
+            <div class="col s1">
+              <a class="btn-floating btn-small white hoverable">
+                <i class="material-icons modal-app-edit-trigger black-text" app-id="{{ value.appId }}" app-name="{{ value.name }}">edit</i>
+              </a>
+            </div>
+            <div class="col s1">
+              <a class="btn-floating btn-small white hoverable">
+                <i class="material-icons modal-app-delete-trigger black-text" app-id="{{ value.appId }}" app-name="{{ value.name }}">delete</i>
+              </a>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    {% endif %}
   </ul>
 
   <!-- Create modal -->
