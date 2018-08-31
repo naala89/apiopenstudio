@@ -56,19 +56,15 @@ class Authentication {
       if (!$result) {
         // Login failed.
         unset($_SESSION['token']);
-        unset($_SESSION['userAccountId']);
-        unset($_SESSION['accountName']);
-        unset($_SESSION['accountId']);
+        unset($_SESSION['uaid']);
       } else {
         $_SESSION['token'] = $result['token'];
-        $_SESSION['userAccountId'] = $result['userAccountId'];
-        $_SESSION['accountName'] = $result['accountName'];
-        $_SESSION['accountId'] = $result['accountId'];
+        $_SESSION['uaid'] = $result['uaid'];
       }
     }
 
     // Validate token.
-    if (!isset($_SESSION['token'])) {
+    if (!isset($_SESSION['token']) || !isset($_SESSION['uaid'])) {
       return $response = $response->withRedirect($uri);
     }
     return $next($request, $response);

@@ -71,7 +71,7 @@ class CtrlUser extends CtrlBase {
 
     // Fetch all user roles for the account
     $userRoleHlp = new UserRole($this->dbSettings);
-    $userRoles = $userRoleHlp->findByAccId($accId);
+    $userRoles = $userRoleHlp->findByUaid($accId);
 
     // Fetch all user roles for each application.
     foreach ($applications as $appId => $application) {
