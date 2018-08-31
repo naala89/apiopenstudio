@@ -2,6 +2,7 @@
 
 namespace Datagator\Admin\Controllers;
 
+use Datagator\Admin\UserAccount;
 use Slim\Views\Twig;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -53,17 +54,18 @@ class CtrlUser extends CtrlBase {
    *   Response.
    */
   public function index(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['userAccountId']) ? $_SESSION['userAccountId'] : '';
+    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
     $roles = $this->getRoles($uaid);
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
     }
     $menu = $this->getMenus($roles);
-    $accId = $_SESSION['accountId'];
 
     // Fetch all applications for the account.
+    $userAccountHlp = new UserAccount($this->dbSettings);
+    $userAccount = $userAccountHlp->findByUserAccountId($uaid);
     $applicationHlp = new Application($this->dbSettings);
-    $applications = $applicationHlp->getByAccount($accId);
+    $applications = $applicationHlp->findByAccount($userAccount['accId']);
 
     // fetch all roles.
     $roleHlp = new Role($this->dbSettings);
@@ -71,21 +73,22 @@ class CtrlUser extends CtrlBase {
 
     // Fetch all user roles for the account
     $userRoleHlp = new UserRole($this->dbSettings);
-    $userRoles = $userRoleHlp->findByUaid($accId);
+    $userRoles = $userRoleHlp->findByUaid($uaid);
 
     // Fetch all user roles for each application.
     foreach ($applications as $appId => $application) {
       $results = $userRoleHlp->findByAppId($appId);
-      foreach ($results as $result) {
-        $userRoles[] = $result;
+      foreach ($results as $urid => $userRole) {
+        $userRoles[$urid] = $userRole;
       }
     }
 
     // Fetch distinct users for each user role.
     $userHlp = new User($this->dbSettings);
     $users = [];
-    foreach ($userRoles as $userRole) {
-      $uid = $userRole['uid'];
+    foreach ($userRoles as $urid => $userRole) {
+      $userAccount = $userAccountHlp->findByUserAccountId($userRole['uaid']);
+      $uid = $userAccount['uid'];
       if (!isset($user[$uid])) {
         $users[$uid] = $userHlp->findByUid($uid);
       }
