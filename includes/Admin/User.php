@@ -71,7 +71,7 @@ class User {
       return FALSE;
     }
 
-    // Validate user account and het user account ID.
+    // Validate user account and the user account ID.
     $userAccountMapper = new Db\UserAccountMapper($this->db);
     $userAccount = $userAccountMapper->findByUidAccId($uid, $accId);
     if (empty($uaid = $userAccount->getUaid())) {
@@ -96,9 +96,7 @@ class User {
       $user->setTokenTtl(Utilities::date_php2mysql(strtotime($ttl)));
       return [
         'token' => $user->getToken(),
-        'accountName' => $account->getName(),
-        'accountId' => $account->getAccId(),
-        'userAccountId' => $userAccount->getUaid(),
+        'uaid' => $userAccount->getUaid(),
       ];
     }
 
@@ -111,9 +109,7 @@ class User {
 
     return [
       'token' => $token,
-      'accountName' => $account->getName(),
-      'accountId' => $account->getAccId(),
-      'userAccountId' => $userAccount->getUaid(),
+      'uaid' => $userAccount->getUaid(),
     ];
   }
 
