@@ -2,6 +2,8 @@
 
 namespace Datagator\Admin\Controllers;
 
+use Datagator\Admin\Application;
+use Datagator\Admin\UserAccount;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -29,7 +31,16 @@ class CtrlHome extends CtrlBase {
     $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
     $roles = $this->getRoles($uaid);
     $menu = $this->getMenus($roles);
-    return $this->view->render($response, 'home.twig', ['menu' => $menu]);
+
+    $userAccountHlp = new UserAccount($this->dbSettings);
+    $userAccount = $userAccountHlp->findByUserAccountId($uaid);
+    $applicationHlp = new Application($this->dbSettings);
+    $applications = $applicationHlp->findByAccount($userAccount['accId']);
+
+    return $this->view->render($response, 'home.twig', [
+      'menu' => $menu,
+      'applications' => $applications,
+    ]);
   }
 
 }
