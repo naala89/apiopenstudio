@@ -113,7 +113,7 @@ class User {
       'token' => $token,
       'accountName' => $account->getName(),
       'accountId' => $account->getAccId(),
-      'userAccountId' => $userAccount->getUacid(),
+      'userAccountId' => $userAccount->getUaid(),
     ];
   }
 
