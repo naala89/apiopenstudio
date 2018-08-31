@@ -161,6 +161,8 @@ class CtrlApplication extends CtrlBase {
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
+   *
+   * TODO: Delete all associated resources and remove user roles.
    */
   public function delete(Request $request, Response $response, array $args) {
     $uaid = isset($_SESSION['userAccountId']) ? $_SESSION['userAccountId'] : '';
