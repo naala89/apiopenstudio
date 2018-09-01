@@ -10,7 +10,7 @@ namespace Datagator\Db;
 class ApiResource {
 
   protected $id;
-  protected $appId;
+  protected $appid;
   protected $name;
   protected $description;
   protected $method;
@@ -23,7 +23,7 @@ class ApiResource {
    *
    * @param int $id
    *   The resource ID.
-   * @param int $appId
+   * @param int $appid
    *   The application ID.
    * @param string $name
    *   The resource name.
@@ -38,9 +38,9 @@ class ApiResource {
    * @param string $ttl
    *   The resource TTL.
    */
-  public function __construct($id = NULL, $appId = NULL, $name = NULL, $description = NULL, $method = NULL, $identifier = NULL, $meta = NULL, $ttl = NULL) {
+  public function __construct($id = NULL, $appid = NULL, $name = NULL, $description = NULL, $method = NULL, $identifier = NULL, $meta = NULL, $ttl = NULL) {
     $this->id = $id;
-    $this->appId = $appId;
+    $this->appid = $appid;
     $this->name = $name;
     $this->description = $description;
     $this->method = $method;
@@ -76,17 +76,17 @@ class ApiResource {
    *   The application ID.
    */
   public function getAppId() {
-    return $this->appId;
+    return $this->appid;
   }
 
   /**
    * Set the resource application ID.
    *
-   * @param int $appId
+   * @param int $appid
    *   The application ID.
    */
-  public function setAppId($appId) {
-    $this->appId = $appId;
+  public function setAppId($appid) {
+    $this->appid = $appid;
   }
 
   /**
@@ -218,7 +218,7 @@ class ApiResource {
   public function dump() {
     return array(
       'id' => $this->id,
-      'appId' => $this->appId,
+      'appid' => $this->appid,
       'method' => $this->method,
       'identifier' => $this->identifier,
       'ttl' => $this->ttl,

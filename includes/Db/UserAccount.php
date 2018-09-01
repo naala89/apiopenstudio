@@ -9,24 +9,24 @@ namespace Datagator\Db;
  */
 class UserAccount {
 
-  protected $id;
+  protected $uaid;
   protected $uid;
-  protected $accId;
+  protected $accid;
 
   /**
-   * UserAccount constructor.
+   * UserRole constructor.
    *
    * @param int $uaid
    *   The user account ID.
    * @param int $uid
    *   The user ID.
-   * @param int $accId
+   * @param int $accid
    *   The account ID.
    */
-  public function __construct($uaid = NULL, $uid = NULL, $accId = NULL) {
+  public function __construct($uaid, $uid, $accid) {
     $this->uaid = $uaid;
     $this->uid = $uid;
-    $this->accId = $accId;
+    $this->accid = $accid;
   }
 
   /**
@@ -76,21 +76,21 @@ class UserAccount {
    *   The account ID.
    */
   public function getAccId() {
-    return $this->accId;
+    return $this->accid;
   }
 
   /**
    * Set the account ID.
    *
-   * @param int $accId
+   * @param int $accid
    *   The account ID.
    */
-  public function setAccId($accId) {
-    $this->accId = $accId;
+  public function setAccId($accid) {
+    $this->accid = $accid;
   }
 
   /**
-   * Return the values of this user account.
+   * Return the user account as an associative array.
    *
    * @return array
    *   Associative array.
@@ -99,7 +99,7 @@ class UserAccount {
     return array(
       'uaid' => $this->uaid,
       'uid' => $this->uid,
-      'accId' => $this->accId,
+      'accidd' => $this->accid,
     );
   }
 

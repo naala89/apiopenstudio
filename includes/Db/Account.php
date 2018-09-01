@@ -9,19 +9,19 @@ namespace Datagator\Db;
  */
 class Account {
 
-  protected $accId;
+  protected $accid;
   protected $name;
 
   /**
    * Account constructor.
    *
-   * @param int $accId
+   * @param int $accid
    *   Account ID.
    * @param string $name
    *   Account name.
    */
-  public function __construct($accId = NULL, $name = NULL) {
-    $this->accId = $accId;
+  public function __construct($accid = NULL, $name = NULL) {
+    $this->accid = $accid;
     $this->name = $name;
   }
 
@@ -32,17 +32,17 @@ class Account {
    *   Account ID.
    */
   public function getAccId() {
-    return $this->accId;
+    return $this->accid;
   }
 
   /**
    * Set the account ID.
    *
-   * @param int $accId
+   * @param int $accid
    *   Account ID.
    */
-  public function setAccId($accId) {
-    $this->accId = $accId;
+  public function setAccId($accid) {
+    $this->accid = $accid;
   }
 
   /**
@@ -73,7 +73,7 @@ class Account {
    */
   public function dump() {
     return array(
-      'accid' => $this->accId,
+      'accid' => $this->accid,
       'name' => $this->name,
     );
   }

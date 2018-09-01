@@ -112,7 +112,7 @@ class ApiResourceMapper {
   /**
    * Find an API resopurce by application ID, method and identifier.
    *
-   * @param int $appId
+   * @param int $appid
    *   Application ID.
    * @param string $method
    *   API resource method.
@@ -122,9 +122,9 @@ class ApiResourceMapper {
    * @return \Datagator\Db\ApiResource
    *   ApiResource object.
    */
-  public function findByAppIdMethodIdentifier($appId, $method, $identifier) {
+  public function findByAppIdMethodIdentifier($appid, $method, $identifier) {
     $sql = 'SELECT r.* FROM resource AS r WHERE r.appid = ? AND r.method = ? AND r.identifier = ?';
-    $bindParams = array($appId, $method, $identifier);
+    $bindParams = array($appid, $method, $identifier);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
   }
@@ -175,15 +175,15 @@ class ApiResourceMapper {
   /**
    * Find API Resources by an application ID.
    *
-   * @param int $appId
+   * @param int $appid
    *   Application ID.
    *
    * @return array
    *   Array of ApiResource objects.
    */
-  public function findByAppId($appId) {
+  public function findByAppId($appid) {
     $sql = 'SELECT * FROM resource WHERE appid = ?';
-    $bindParams = array($appId);
+    $bindParams = array($appid);
 
     $recordSet = $this->db->Execute($sql, $bindParams);
 

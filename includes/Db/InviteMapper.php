@@ -37,19 +37,21 @@ class InviteMapper {
    */
   public function save(Invite $invite) {
     if ($invite->getId() == NULL) {
-      $sql = 'INSERT INTO invite (email, token) VALUES (?, ?)';
+      $sql = 'INSERT INTO invite (accid, email, token) VALUES (?, ?, ?)';
       $bindParams = array(
+        $invite->getAccId(),
         $invite->getEmail(),
         $invite->getToken(),
       );
       $result = $this->db->Execute($sql, $bindParams);
     }
     else {
-      $sql = 'UPDATE invite SET email = ?, token = ? WHERE id = ?';
+      $sql = 'UPDATE invite SET accid= ?, email = ?, token = ? WHERE iid = ?';
       $bindParams = array(
+        $invite->getAccId(),
         $invite->getEmail(),
         $invite->getToken(),
-        $invite->getId(),
+        $invite->getIid(),
       );
       $result = $this->db->Execute($sql, $bindParams);
     }
@@ -71,8 +73,8 @@ class InviteMapper {
    * @throws \Datagator\Core\ApiException
    */
   public function delete(Invite $invite) {
-    $sql = 'DELETE FROM invite WHERE id = ?';
-    $bindParams = array($invite->getId());
+    $sql = 'DELETE FROM invite WHERE iid = ?';
+    $bindParams = array($invite->getIid());
     $result = $this->db->Execute($sql, $bindParams);
     if (!$result) {
       throw new ApiException($this->db->ErrorMsg(), 2);

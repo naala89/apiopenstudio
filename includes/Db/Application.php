@@ -9,23 +9,23 @@ namespace Datagator\Db;
  */
 class Application {
 
-  protected $appId;
-  protected $accId;
+  protected $appid;
+  protected $accid;
   protected $name;
 
   /**
    * Application constructor.
    *
-   * @param int $appId
+   * @param int $appid
    *   Application ID.
-   * @param int $accId
+   * @param int $accid
    *   Account ID.
    * @param string $name
    *   Application name.
    */
-  public function __construct($appId = NULL, $accId = NULL, $name = NULL) {
-    $this->appId = $appId;
-    $this->accId = $accId;
+  public function __construct($appid = NULL, $accid = NULL, $name = NULL) {
+    $this->appid = $appid;
+    $this->accid = $accid;
     $this->name = $name;
   }
 
@@ -36,17 +36,17 @@ class Application {
    *   Application ID.
    */
   public function getAppId() {
-    return $this->appId;
+    return $this->appid;
   }
 
   /**
    * Set the application ID.
    *
-   * @param int $appId
+   * @param int $appid
    *   Application ID.
    */
-  public function setAppId($appId) {
-    $this->appId = $appId;
+  public function setAppId($appid) {
+    $this->appid = $appid;
   }
 
   /**
@@ -56,17 +56,17 @@ class Application {
    *   Account ID.
    */
   public function getAccId() {
-    return $this->accId;
+    return $this->accid;
   }
 
   /**
    * Set the account ID.
    *
-   * @param int $accId
+   * @param int $accid
    *   Account ID.
    */
-  public function setAccId($accId) {
-    $this->accId = $accId;
+  public function setAccId($accid) {
+    $this->accid = $accid;
   }
 
   /**
@@ -97,8 +97,8 @@ class Application {
    */
   public function dump() {
     return array(
-      'appId' => $this->appId,
-      'accId' => $this->accId,
+      'appid' => $this->appid,
+      'accid' => $this->accid,
       'name' => $this->name,
     );
   }

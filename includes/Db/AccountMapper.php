@@ -82,15 +82,15 @@ class AccountMapper {
   /**
    * Find an account by ID.
    *
-   * @param int $accId
+   * @param int $accid
    *   Account Id.
    *
    * @return \Datagator\Db\Account
    *   Account object.
    */
-  public function findByAccId($accId) {
+  public function findByAccId($accid) {
     $sql = 'SELECT * FROM account WHERE accid = ?';
-    $bindParams = array($accId);
+    $bindParams = array($accid);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
   }
@@ -114,7 +114,7 @@ class AccountMapper {
   /**
    * Find an account by user ID and Account ID.
    *
-   * @param int $accId
+   * @param int $accid
    *   Account ID.
    * @param int $uid
    *   User ID.
@@ -122,9 +122,9 @@ class AccountMapper {
    * @return \Datagator\Db\Account
    *   Account object.
    */
-  public function findByAccIdUid($accId, $uid) {
+  public function findByAccIdUid($accid, $uid) {
     $sql = 'SELECT * FROM account WHERE accid = ? AND uid = ?';
-    $bindParams = array($accId, $uid);
+    $bindParams = array($accid, $uid);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
   }

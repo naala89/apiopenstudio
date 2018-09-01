@@ -56,9 +56,9 @@ user_account:
     uid: { type: int(10) unsigned, notnull: true, comment: user id }
     accid: { type: int(10) unsigned, notnull: true, comment: account id }
 
-user_role:
+user_account_role:
   columns:
-    urid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: user role id }
+    uarid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: user account role id }
     uaid: { type: int(10) unsigned, notnull: true, comment: user account id }
     rid: { type: int(10) unsigned, notnull: true, comment: role id }
     appid: { type: int(10) unsigned, default: NULL, comment: application id }
@@ -66,6 +66,7 @@ user_role:
 invite:
   columns:
     iid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: invite id }
+    accid: { type: int(10) unsigned, notnull: true, comment: account id }
     email: { type: varchar(255), default: true, comment: invite email address }
     token: { type: varchar(255), notnull: true, comment: invite token }
 
