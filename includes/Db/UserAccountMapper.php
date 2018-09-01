@@ -25,7 +25,7 @@ class UserAccountMapper {
   }
 
   /**
-   * Save the UserAccount.
+   * Save the user account.
    *
    * @param \Datagator\Db\UserAccount $userAccount
    *   UserAccount object.
@@ -38,19 +38,19 @@ class UserAccountMapper {
   public function save(UserAccount $userAccount) {
     if ($userAccount->getUaid() == NULL) {
       $sql = 'INSERT INTO user_account (uid, accid) VALUES (?, ?)';
-      $bindParams = array(
+      $bindParams = [
         $userAccount->getUid(),
         $userAccount->getAccId(),
-      );
+      ];
       $result = $this->db->Execute($sql, $bindParams);
     }
     else {
       $sql = 'UPDATE user_account SET uid=?, accid=? WHERE uaid = ?';
-      $bindParams = array(
+      $bindParams = [
         $userAccount->getUid(),
         $userAccount->getAccId(),
         $userAccount->getUaid(),
-      );
+      ];
       $result = $this->db->Execute($sql, $bindParams);
     }
     if (!$result) {
@@ -84,79 +84,14 @@ class UserAccountMapper {
    * Find a user account by its ID.
    *
    * @param int $uaid
-   *   User role ID.
+   *   User account ID.
    *
    * @return \Datagator\Db\UserAccount
    *   Mapped UserAccount object.
    */
-  public function findByUaid($uaid) {
+  public function findByUrid($uaid) {
     $sql = 'SELECT * FROM user_account WHERE uaid = ?';
     $bindParams = array($uaid);
-    $row = $this->db->GetRow($sql, $bindParams);
-    return $this->mapArray($row);
-  }
-
-  /**
-   * Find all user accounts for a user.
-   *
-   * @param int $uid
-   *   User ID.
-   *
-   * @return array
-   *   Array of mapped UserAccount objects.
-   */
-  public function findByUid($uid) {
-    $sql = 'SELECT * FROM user_account WHERE uid = ?';
-    $bindParams = array($uid);
-
-    $recordSet = $this->db->Execute($sql, $bindParams);
-
-    $entries = [];
-    while ($row = $recordSet->fetchRow()) {
-      $entries[] = $this->mapArray($row);
-    }
-
-    return $entries;
-  }
-
-  /**
-   * Find all user accounts for an account.
-   *
-   * @param int $accId
-   *   Account ID.
-   *
-   * @return array
-   *   Array of mapped UserAccount objects.
-   */
-  public function findByAccId($accId) {
-    $sql = 'SELECT * FROM user_account WHERE accid = ?';
-    $bindParams = array($accId);
-
-    $recordSet = $this->db->Execute($sql, $bindParams);
-
-    $entries = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-      $recordSet->moveNext();
-    }
-
-    return $entries;
-  }
-
-  /**
-   * Find a user account by user ID & account ID.
-   *
-   * @param int $uid
-   *   User ID.
-   * @param int $accId
-   *   Account ID.
-   *
-   * @return array
-   *   Array of mapped of UserAccount objects.
-   */
-  public function findByUidAccId($uid, $accId) {
-    $sql = 'SELECT * FROM user_account WHERE uid = ? AND accid = ?';
-    $bindParams = array($uid, $accId);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
   }
@@ -175,7 +110,7 @@ class UserAccountMapper {
 
     $userAccount->setUaid(!empty($row['uaid']) ? $row['uaid'] : NULL);
     $userAccount->setUid(!empty($row['uid']) ? $row['uid'] : NULL);
-    $userAccount->setAccId(!empty($row['accid']) ? $row['accid'] : NULL);
+    $userAccount->setAppId(!empty($row['accid']) ? $row['accid'] : NULL);
 
     return $userAccount;
   }

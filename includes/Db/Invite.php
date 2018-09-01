@@ -9,19 +9,26 @@ namespace Datagator\Db;
  */
 class Invite {
 
-  protected $id;
+  protected $iid;
+  protected $accid;
   protected $email;
   protected $token;
 
   /**
    * Invite constructor.
    *
-   * @param int $email
+   * @param int $iid
+   *   Invite ID.
+   * @param int $accid
+   *   Account ID.
+   * @param string $email
    *   Invite email.
    * @param string $token
    *   Invite token.
    */
-  public function __construct($email = NULL, $token = NULL) {
+  public function __construct($iid = NULL, $accid = NULL, $email = NULL, $token = NULL) {
+    $this->iid = $iid;
+    $this->accid = $accid;
     $this->email = $email;
     $this->token = $token;
   }
@@ -32,18 +39,38 @@ class Invite {
    * @return int
    *   Invite ID.
    */
-  public function getId() {
-    return $this->id;
+  public function getIid() {
+    return $this->iid;
   }
 
   /**
    * Set the invite ID.
    *
-   * @param int $id
+   * @param int $iid
    *   Invite ID.
    */
-  public function setId($id) {
-    $this->id = $id;
+  public function setIid($iid) {
+    $this->iid = $iid;
+  }
+
+  /**
+   * Get the account ID.
+   *
+   * @return int
+   *   Account ID.
+   */
+  public function getAccId() {
+    return $this->accid;
+  }
+
+  /**
+   * Set the account ID.
+   *
+   * @param int $accid
+   *   Account ID.
+   */
+  public function setAccId($accid) {
+    $this->accid = $accid;
   }
 
   /**
@@ -94,7 +121,8 @@ class Invite {
    */
   public function dump() {
     return array(
-      'id' => $this->id,
+      'iid' => $this->iid,
+      'accid' => $this->accid,
       'email' => $this->email,
       'token' => $this->token,
     );

@@ -3,54 +3,54 @@
 namespace Datagator\Db;
 
 /**
- * Class UserRole.
+ * Class UserAccountRole.
  *
  * @package Datagator\Db
  */
-class UserRole {
+class UserAccountRole {
 
-  protected $urid;
+  protected $uarid;
   protected $uaid;
   protected $rid;
   protected $appid;
 
   /**
-   * UserRole constructor.
+   * UserAccountRole constructor.
    *
-   * @param int $urid
-   *   The user role ID.
+   * @param int $uarid
+   *   The user account role ID.
    * @param int $uaid
    *   The user account ID.
    * @param int $rid
    *   The role ID.
-   * @param int $appid
+   * @param int $appId
    *   The application ID.
    */
-  public function __construct($urid, $uaid, $rid, $appid) {
-    $this->urid = $urid;
+  public function __construct($uarid = NULL, $uaid = NULL, $rid = NULL, $appId = NULL) {
+    $this->uarid = $uarid;
     $this->uaid = $uaid;
     $this->rid = $rid;
-    $this->appid = $appid;
+    $this->appid = $appId;
   }
 
   /**
-   * Get the user role ID.
+   * Get the user account role ID.
    *
    * @return int
-   *   The user role ID.
+   *   The user account role ID.
    */
-  public function getUrid() {
-    return $this->urid;
+  public function getUarid() {
+    return $this->uarid;
   }
 
   /**
-   * Set the user role ID.
+   * Set the user account role ID.
    *
-   * @param int $urid
-   *   The user role ID.
+   * @param int $uarid
+   *   The user account role ID.
    */
-  public function setUrid($urid) {
-    $this->urid = $urid;
+  public function setUarid($uarid) {
+    $this->uarid = $uarid;
   }
 
   /**
@@ -106,25 +106,25 @@ class UserRole {
   /**
    * Set the application ID.
    *
-   * @param int $appid
+   * @param int $appId
    *   The application ID.
    */
-  public function setAppId($appid) {
-    $this->appid = $appid;
+  public function setAppId($appId) {
+    $this->appid = $appId;
   }
 
   /**
-   * Return the values of this user role.
+   * Return the user account role as an associative array.
    *
    * @return array
    *   Associative array.
    */
   public function dump() {
     return array(
-      'urid' => $this->urid,
+      'uarid' => $this->uarid,
       'uaid' => $this->uaid,
       'rid' => $this->rid,
-      'appId' => $this->appId,
+      'appid' => $this->appid,
     );
   }
 
