@@ -85,7 +85,8 @@
       <div class="modal-content">
         <div class="row">
           <h4>Add user</h4>
-          <p>Please enter the email address of the user</p>
+          <p>Please enter the email address of the user.</p>
+          <p>Once a user has accepted your invite, you can assign them a 'Owner' status or a role in an application</p>
         </div>
 
         <div class="row">
@@ -94,18 +95,6 @@
             <label for="invite-email">Email</label>
           </div>
         </div>
-
-        <!--div class="row">
-          <div class="input-field col s6">
-            <select name="roles" multiple>
-              <option value="" disabled>Choose your option</option>
-              {% for rid,role in roles %}
-                <option value="{{ rid }}">{{ role.name }}</option>
-              {% endfor %}
-            </select>
-            <label>Roles</label>
-          </div>
-        </div-->
 
         <div class="row">
           <div class="input-field col s4 offset-s8">
