@@ -3,6 +3,7 @@
 namespace Datagator\Admin\Controllers;
 
 use Datagator\Admin\Application;
+use Datagator\Admin\User;
 use Datagator\Admin\UserAccount;
 use Slim\Http\Request;
 use Slim\Http\Response;

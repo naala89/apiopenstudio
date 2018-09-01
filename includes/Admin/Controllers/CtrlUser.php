@@ -6,8 +6,8 @@ use Datagator\Admin\UserAccount;
 use Slim\Views\Twig;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+use PHPMailer;
+use phpmailerException;
 use Datagator\Core\Hash;
 use Datagator\Admin\User;
 use Datagator\Admin\UserRole;
@@ -137,13 +137,13 @@ class CtrlUser extends CtrlBase {
    *   Response.
    */
   public function invite(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['userAccountId']) ? $_SESSION['userAccountId'] : '';
+    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
     $roles = $this->getRoles($uaid);
     if (!$this->checkAccess($roles)) {
       return $response->withRedirect('/');
     }
-
     $menu = $this->getMenus($roles);
+
     $allPostVars = $request->getParsedBody();
     if (!isset($allPostVars['invite-email']) || empty($allPostVars['invite-email'])) {
       return $this->view->render($response, 'users.twig', [
@@ -155,7 +155,8 @@ class CtrlUser extends CtrlBase {
     $email = $allPostVars['invite-email'];
     $token = Hash::generateToken($email);
     $host = $this->getHost();
-    $link = $host . '/user/register/' . $token;
+    $scheme = $request->getUri()->getScheme();
+    $link = "$scheme://$host/user/register/$token";
 
     // Check if user already exists.
     $userHlp = new User($this->dbSettings);
@@ -211,7 +212,7 @@ class CtrlUser extends CtrlBase {
         'menu' => $menu,
         'message' => $message,
       ]);
-    } catch (Exception $e) {
+    } catch (phpmailerException $e) {
       $message['text'] = 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo;
       $message['type'] = 'info';
       return $this->view->render($response, 'users.twig', [
