@@ -51,6 +51,8 @@ class Invite {
    *
    * @return bool|int
    *   False | invite ID.
+   *
+   * @throws \Datagator\Core\ApiException
    */
   public function create($email, $token) {
     $invite = new Db\Invite(
@@ -75,6 +77,8 @@ class Invite {
    *
    * @return bool
    *   Success.
+   *
+   * @throws \Datagator\Core\ApiException
    */
   public function deleteByEmail($email) {
     $inviteMapper = new Db\InviteMapper($this->db);
@@ -93,6 +97,8 @@ class Invite {
    *
    * @return bool
    *   Success.
+   *
+   * @throws \Datagator\Core\ApiException
    */
   public function deleteByToken($token) {
     $inviteMapper = new Db\InviteMapper($this->db);
