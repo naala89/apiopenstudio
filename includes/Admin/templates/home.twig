@@ -3,16 +3,25 @@
 {% set title = "Home" %}
 
 {% block content %}
+  <div class="row">
+    <div class="section">
+      <h6>Welcome to GaterData!</h6>
+    </div>
+  </div>
   {% if applications is empty %}
-    <div class="row">
-      <div class="col s12"><h6>Welcome to GaterData!</h6></div>
-      <div class="col s12">
-        <p>You do not have any applications yet.</p>
-        <p>Your next step should be to define at least one application.</p>
-        <p>An application is a project or a client, with it's own administrators, developers and API resources assigned to it.</p>
-        <p>Using multiple applications helps you separate dev and admin responsibilities, monitoring and billing for each business entity.</p>
-        <p>Click here to create your application/s, click <a href="/applications">here</a>.</p>
-      </div>
+    <div class="divider"></div>
+    <div class="section">
+      <p><i>You do not have any applications yet.</i></p>
+      <p>
+        Your next step should be to define at least one application.
+        An application is a project or a client, with it's own administrators, developers and API resources assigned to it.
+        Using multiple applications helps you separate dev and admin responsibilities, monitoring and billing for each business entity.
+      </p>
+      <p>Click <a href="/applications">here</a> to create your application/s.</p>
     </div>
   {% endif %}
+  <div class="divider"></div>
+  <div class="section">
+    <p>To invite and manage users for your account, click <a href="/users">here</a>.</p>
+  </div>
 {% endblock %}
