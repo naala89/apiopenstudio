@@ -5,6 +5,7 @@ namespace Datagator\Db;
 use Datagator\Core\Utilities;
 use Datagator\Core\ApiException;
 use ADOConnection;
+use Monolog\Logger;
 
 /**
  * Class UserMapper.
@@ -13,16 +14,26 @@ use ADOConnection;
  */
 class UserMapper {
 
+  /**
+   * @var \ADOConnection
+   */
   protected $db;
+  /**
+   * @var \Monolog\Logger
+   */
+  protected $logger;
 
   /**
    * UserMapper constructor.
    *
    * @param \ADOConnection $dbLayer
    *   DB connection object.
+   * @param \Monolog\Logger $logger
+   *   Logger object.
    */
-  public function __construct(ADOConnection $dbLayer) {
+  public function __construct(ADOConnection $dbLayer, Logger $logger) {
     $this->db = $dbLayer;
+    $this->logger = $logger;
   }
 
   /**
@@ -91,6 +102,7 @@ class UserMapper {
       $result = $this->db->Execute($sql, $bindParams);
     }
     if (!$result) {
+      $this->logger->error('hi');
       throw new ApiException($this->db->ErrorMsg(), 2);
     }
     return TRUE;

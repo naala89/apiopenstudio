@@ -97,17 +97,19 @@ class ApplicationMapper {
   }
 
   /**
-   * Find application by application name.
+   * Find application by account ID and application name.
    *
+   * @param int $accid
+   *   Account ID.
    * @param string $name
    *   Application name.
    *
    * @return \Datagator\Db\Application
    *   Application object.
    */
-  public function findByName($name) {
-    $sql = 'SELECT * FROM application WHERE name = ?';
-    $bindParams = array($name);
+  public function findByAccIdName($accid, $name) {
+    $sql = 'SELECT * FROM application WHERE accid = ? AND name = ?';
+    $bindParams = array($accid, $name);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
   }

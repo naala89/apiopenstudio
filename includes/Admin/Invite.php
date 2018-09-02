@@ -3,8 +3,7 @@
 namespace Datagator\Admin;
 
 use Datagator\Db;
-use Datagator\Core\Utilities;
-use Datagator\Core\Hash;
+use Monolog\Logger;
 
 /**
  * Class User.
@@ -13,17 +12,30 @@ use Datagator\Core\Hash;
  */
 class Invite {
 
+  /**
+   * @var array
+   */
   private $dbSettings;
+  /**
+   * @var \ADOConnection
+   */
   private $db;
+  /**
+   * @var \Monolog\Logger
+   */
+  private $logger;
 
   /**
    * User constructor.
    *
    * @param array $dbSettings
    *   Database settings.
+   * @param \Monolog\Logger $logger
+   *   Logger.
    */
-  public function __construct(array $dbSettings) {
+  public function __construct(array $dbSettings, Logger $logger) {
     $this->dbSettings = $dbSettings;
+    $this->logger = $logger;
 
     $dsnOptions = '';
     if (count($dbSettings['options']) > 0) {

@@ -2,7 +2,9 @@
 
 namespace Datagator\Admin;
 
+use Datagator\Core\ApiException;
 use Datagator\Db;
+use Monolog\Logger;
 use Datagator\Core\Utilities;
 use Datagator\Core\Hash;
 
@@ -13,17 +15,34 @@ use Datagator\Core\Hash;
  */
 class User {
 
+  /**
+   * @var array
+   */
   private $dbSettings;
+  /**
+   * @var \ADOConnection
+   */
   private $db;
+  /**
+   * @var \Monolog\Logger
+   */
+  private $logger;
+  /**
+   * @var \Datagator\Db\User
+   */
+  private $user;
 
   /**
    * User constructor.
    *
    * @param array $dbSettings
    *   Database settings.
+   * @param \Monolog\Logger $logger
+   *   Logger.
    */
-  public function __construct(array $dbSettings) {
+  public function __construct(array $dbSettings, Logger $logger) {
     $this->dbSettings = $dbSettings;
+    $this->logger = $logger;
 
     $dsnOptions = '';
     if (count($dbSettings['options']) > 0) {
@@ -39,6 +58,13 @@ class User {
       $dbSettings['host'] . '/' .
       $dbSettings['database'] . $dsnOptions;
     $this->db = \ADONewConnection($dsn);
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getUser() {
+    return $this->user->dump();
   }
 
   /**
@@ -71,7 +97,7 @@ class User {
       return FALSE;
     }
 
-    // Validate user account and the user account ID.
+    // Validate user account and het user account ID.
     $userAccountMapper = new Db\UserAccountMapper($this->db);
     $userAccount = $userAccountMapper->findByUidAccId($uid, $accId);
     if (empty($uaid = $userAccount->getUaid())) {
@@ -107,10 +133,8 @@ class User {
     $user->setTokenTtl(Utilities::date_php2mysql(strtotime($ttl)));
     $userMapper->save($user);
 
-    return [
-      'token' => $token,
-      'uaid' => $userAccount->getUaid(),
-    ];
+    $this->user = $user;
+    return $this->user->dump();
   }
 
   /**
@@ -149,8 +173,8 @@ class User {
    * @param string $phoneWork
    *   User work phone number.
    *
-   * @return bool|int
-   *   False or account ID.
+   * @return bool|array
+   *   False or associative user array.
    */
   public function create($username, $password, $email = NULL, $honorific = NULL, $nameFirst = NULL, $nameLast = NULL, $company = NULL, $website = NULL, $addressStreet = NULL, $addressSuburb = NULL, $addressCity = NULL, $addressState = NULL, $addressCountry = NULL, $addressPostcode = NULL, $phoneMobile = NULL, $phoneWork = NULL) {
     $user = new Db\User(
@@ -183,56 +207,11 @@ class User {
     if (!$result) {
       return FALSE;
     }
-    $user = $userMapper->findByUsername($username);
-    return $user->getUid();
-  }
-
-  /**
-   * Find all users associated with an account.
-   *
-   * @param int $accId
-   *   Account ID.
-   *
-   * @return array
-   *   Array of users.
-   */
-  public function findByAccount($accId) {
-    $userRoleMapper = new Db\UserRoleMapper($this->db);
-    return $userRoleMapper->findByAccId($accId);
-  }
-
-  /**
-   * Find all users associated with an application.
-   *
-   * @param int $appId
-   *   Application ID.
-   *
-   * @return array
-   *   Array of users.
-   */
-  public function findByApplication($appId) {
-    $userRoles = [];
-    $userRoleMapper = new Db\UserRoleMapper($this->db);
-    $results = $userRoleMapper->findByAppId($appId);
-    foreach ($results as $result) {
-      $userRoles[] = $result->dump();
+    $this->user = $userMapper->findByUsername($username);
+    if (empty($user->getUid())) {
+      return FALSE;
     }
-    return $userRoles;
-  }
-
-  /**
-   * Find a user by auth token.
-   *
-   * @param string $token
-   *   Login token.
-   *
-   * @return array
-   *   The user.
-   */
-  public function findByToken($token) {
-    $userMapper = new Db\UserMapper($this->db);
-    $user = $userMapper->findBytoken($token);
-    return $user->dump();
+    return $this->user->dump();
   }
 
   /**
@@ -241,13 +220,19 @@ class User {
    * @param string $uid
    *   User ID.
    *
-   * @return array
-   *   The user.
+   * @return array|bool
+   *   FALSE | associative array of the user.
    */
-  public function findByUid($uid) {
+  public function findByUserId($uid) {
     $userMapper = new Db\UserMapper($this->db);
     $user = $userMapper->findByUid($uid);
-    return $user->dump();
+
+    if (empty($user->getUid())) {
+      return FALSE;
+    }
+
+    $this->user = $user;
+    return $this->user->dump();
   }
 
   /**
@@ -256,13 +241,19 @@ class User {
    * @param string $email
    *   User email.
    *
-   * @return array
-   *   The user.
+   * @return array|bool
+   *   FALSE | associative array of the user.
    */
   public function findByEmail($email) {
     $userMapper = new Db\UserMapper($this->db);
     $user = $userMapper->findByEmail($email);
-    return $user->dump();
+
+    if (empty($user->getUid())) {
+      return FALSE;
+    }
+
+    $this->user = $user;
+    return $this->user->dump();
   }
 
   /**
@@ -271,13 +262,121 @@ class User {
    * @param string $username
    *   User username.
    *
-   * @return array
-   *   The user.
+   * @return array|bool
+   *   FALSE | associative array of the user.
    */
   public function findByUsername($username) {
     $userMapper = new Db\UserMapper($this->db);
     $user = $userMapper->findByUsername($username);
-    return $user->dump();
+
+    if (empty($user->getUid())) {
+      return FALSE;
+    }
+
+    $this->user = $user;
+    return $this->user->dump();
+  }
+
+  /**
+   * Assign the user to an account by the account ID.
+   *
+   * @param int $accid
+   *   Account ID.
+   *
+   * @return array|bool
+   *   FALSE | user account associative array.
+   */
+  public function assignToAccountId($accid) {
+    if (empty($this->user) || empty($this->user->getUid())) {
+      return FALSE;
+    }
+    $accountMapper = new Db\AccountMapper($this->db);
+    $account = $accountMapper->findByAccId($accid);
+    if (empty($account->getAccId())) {
+      return FALSE;
+    }
+    $userAccount = new Db\UserAccount(NULL, $this->user->getUid(), $accid);
+    $userAccountMapper = new Db\UserAccountMapper($this->db);
+    try {
+      $userAccountMapper->save($userAccount);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
+
+    $userAccount = $userAccountMapper->findByUidAccId($this->user->getUid(), $accid);
+    if (empty($userAccount->getUaid())) {
+      return FALSE;
+    }
+    return $userAccount->dump();
+  }
+
+  /**
+   * Assign the user to an account by the account name.
+   *
+   * @param string $accountName
+   *   Account name.
+   *
+   * @return array|bool
+   *   FALSE | user account associative array.
+   */
+  public function assignToAccountName($accountName) {
+    $accountMapper = new Db\AccountMapper($this->db);
+    $account = $accountMapper->findByName($accountName);
+    if (empty($account->getAccId())) {
+      return FALSE;
+    }
+    return $this->assignToAccountId($account->getAccId());
+  }
+
+  /**
+   * Assign a role to a user for an account.
+   *
+   * @param string $roleName
+   *   Role name.
+   * @param string $accountName
+   *   Account name.
+   * @param string $applicationName
+   *   Application name.
+   *
+   * @return array|bool
+   *   FALSE | user account role associative array.
+   */
+  public function assignRole($roleName, $accountName, $applicationName = NULL) {
+    // Find the role.
+    $roleMapper = new Db\RoleMapper($this->db);
+    $role = $roleMapper->findByName($roleName);
+    if (empty($role->getRid())) {
+      return FALSE;
+    }
+
+    // Find the account.
+    $accountMapper = new Db\AccountMapper($this->db);
+    $account = $accountMapper->findByName($accountName);
+    if (empty($account->getAccId())) {
+      return FALSE;
+    }
+
+    // Find the user account.
+    $userAccountMapper = new Db\UserAccountMapper($this->db);
+    $userAccount = $userAccountMapper->findByUidAccId($this->user->getUid(), $account->getAccId());
+    if (empty($userAccount->getUaid())) {
+      return FALSE;
+    }
+
+    // Find the application.
+    $appid = NULL;
+    if (!empty($applicationName)) {
+      $applicationMapper = new Db\ApplicationMapper($this->db);
+      $application = $applicationMapper->findByAccIdName($account->getAccId(), $applicationName);
+      $appid = $application->getAppId();
+    }
+
+    // Save the new user account role.
+    $userAccountRole = new Db\UserAccountRole(NULL, $userAccount->getUaid(), $role->getRid(), $appid);
+    if (empty($userAccountRole->getUarid())) {
+      return FALSE;
+    }
+    return $userAccountRole->dump();
   }
 
 }

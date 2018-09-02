@@ -4,8 +4,10 @@ require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
 session_start();
 
-// Instantiate the app
+// Get the settings.
 $settings = require dirname(dirname(__DIR__)) . '/config/settings.php';
+
+// Instantiate the app
 $app = new \Slim\App(['settings' => $settings]);
 
 // Set up dependencies.
