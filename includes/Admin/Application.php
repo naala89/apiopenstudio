@@ -3,20 +3,34 @@
 namespace Datagator\Admin;
 
 use Datagator\Db;
+use Monolog\Logger;
 
 class Application {
 
+  /**
+   * @var array
+   */
   private $dbSettings;
+  /**
+   * @var \ADOConnection
+   */
   private $db;
+  /**
+   * @var \Monolog\Logger
+   */
+  private $logger;
 
   /**
    * Application constructor.
    *
    * @param array $dbSettings
    *   Database settings.
+   * @param \Monolog\Logger $logger
+   *   Logger.
    */
-  public function __construct(array $dbSettings) {
+  public function __construct(array $dbSettings, Logger $logger) {
     $this->dbSettings = $dbSettings;
+    $this->logger = $logger;
 
     $dsnOptions = '';
     if (count($dbSettings['options']) > 0) {

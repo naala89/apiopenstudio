@@ -1,11 +1,28 @@
 <?php
 
 require_once dirname(__DIR__) . '/../vendor/autoload.php';
+
+use ADOConnection;
+use Monolog\Logger;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
+use Cascade\Cascade;
+use Datagator\Admin\User;
+use Datagator\Admin\Account;
+
 $settings = require dirname(dirname(__DIR__)) . '/config/settings.php';
 
 // Get the user's origin and next step.
 $from = isset($_POST['from_step']) ? $_POST['from_step'] : 0;
 $step = isset($_POST['next_step']) ? $_POST['next_step'] : 0;
+
+// Create a logger.
+//$logger = new Logger('GaterData');
+//// Line formatter without empty brackets in the end
+//$formatter = new LineFormatter(null, null, false, true);
+//$handler = new StreamHandler($settings['log']['path'], $settings['log']['level']);
+//$handler->setFormatter($formatter);
+//$logger->pushHandler($handler);
 
 // DB link.
 $dsnOptions = '';
@@ -16,12 +33,19 @@ if (sizeof($settings['db']['options']) > 0) {
   }
 }
 $dsnOptions = sizeof($settings['db']['options']) > 0 ? '?'.implode('&', $settings['db']['options']) : '';
-$dsn = $settings['db']['driver'] . '://'
+$dsn = $settings['db']['driver'] . ':/'
   . $settings['db']['username'] . ':'
   . $settings['db']['password'] . '@'
   . $settings['db']['host'] . '/'
   . $settings['db']['database'] . $dsnOptions;
-$db = \ADONewConnection($dsn);
+define('ADODB_ERROR_LOG_TYPE', 3);
+define('ADODB_ERROR_LOG_DEST', $settings['log']['path']);
+$db = ADONewConnection($dsn);
+if(!db) {
+  var_dump($db->);
+  adodb_backtrace($e->gettrace());
+  exit;
+}
 
 // Twig definition.
 $loader = new Twig_Loader_Filesystem($settings['twig']['path']);
@@ -98,6 +122,8 @@ switch ($step) {
       $sqlCreate = "CREATE TABLE IF NOT EXISTS `$table` (" . implode(', ', $sqlColumns) . ');';
       if (empty($db->execute($sqlCreate))) {
         // Stop if table create fails.
+
+        $logger->error($e->gettrace());
         $message['text'] = "CREATE TABLE `$table` fail!<br />";
         $message['text'] .= "Processing halted. Please check the logs and retry.";
         $message['type'] = 'error';
@@ -136,6 +162,7 @@ switch ($step) {
     break;
   case 2:
     // Create user.
+
     if ($from == 2) {
       // This is a post from tue user create form.
       if (empty($_POST['username']) ||
@@ -151,8 +178,8 @@ switch ($step) {
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
-      $user = new \Datagator\Admin\User($settings['db']);
-      $uid = $user->create(
+      $user = new User($settings['db'], $logger);
+      $newUser = $user->create(
         !empty($_POST['username']) ? $_POST['username'] : NULL,
         !empty($_POST['password']) ? $_POST['password'] : NULL,
         !empty($_POST['email']) ? $_POST['email'] : NULL,
@@ -170,7 +197,8 @@ switch ($step) {
         !empty($_POST['phone_mobile']) ? $_POST['phone_mobile'] : 0,
         !empty($_POST['phone_work']) ? $_POST['phone_work'] : 0
       );
-      if (!$uid) {
+
+      if (!$newUser) {
         // Failed to create the user
         $template = $twig->load('install/install_2.twig');
         $message = [
@@ -180,11 +208,13 @@ switch ($step) {
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
+
       // User created, continue to next page.
       $template = $twig->load('install/install_3.twig');
-      echo $template->render(['menu' => $menu, 'uid' => $uid, 'username' => $_POST['username']]);
+      echo $template->render(['menu' => $menu, 'uid' => $newUser['uid']]);
       exit;
     }
+
     // Fallback to rendering the create user form (user is from previous page).
     $template = $twig->load('install/install_2.twig');
     echo $template->render(['menu' => $menu]);
@@ -192,14 +222,14 @@ switch ($step) {
     break;
   case 3:
     // Create the account.
-    // Data preserved from previous page that we need for user role.
+
+    // Data preserved from previous page that we need for user account.
     $uid = isset($_POST['uid']) ? $_POST['uid'] : '';
-    $username = isset($_POST['username']) ? $_POST['username'] : '';
-    if (empty($uid) || empty($username)) {
-      // missing required data from previous page.
+    if (empty($uid)) {
+      // missing required user id from previous page.
       $message = [
         'type' => 'error',
-        'text' => 'Required user id & name not received.'
+        'text' => 'Required user id.'
       ];
       $template = $twig->load('install/install_3.twig');
       echo $template->render(['message' => $message, 'menu' => $menu]);
@@ -208,7 +238,6 @@ switch ($step) {
 
     if ($from == 3) {
       // This is a current page submission, so create the account.
-
       $accountName = isset($_POST['account_name']) ? $_POST['account_name'] : '';
       if (empty($accountName)) {
         // Missing required data.
@@ -222,12 +251,12 @@ switch ($step) {
       }
 
       // Create the account.
-      $accountHlp = new \Datagator\Admin\Account($settings['db']);
-      $accId = $accountHlp->create($accountName);
-      if (!$accId) {
+      $account = new Account($settings['db'], $logger);
+      $newAccount = $account->create($accountName);
+      if (!$newAccount) {
         $message = [
           'type' => 'error',
-          'text' => 'Failed to save your account to the DB. Please check the logs.'
+          'text' => 'Failed to save your account to the DB. Please check the logs.',
         ];
         $template = $twig->load('install/install_3.twig');
         echo $template->render(['message' => $message, 'menu' => $menu]);
@@ -235,22 +264,31 @@ switch ($step) {
       }
 
       // Assign the user to the account.
-      $userAccountHlp = new \Datagator\Admin\UserAccount($settings['db']);
-      $uaid = $userAccountHlp->create($_POST['uid'], $accId);
-      if (!$uaid) {
+      $user = new User($settings['db'], $logger);
+      $result = $user->findByUserId($uid);
+      if (!$result) {
         $message = [
           'type' => 'error',
-          'text' => 'Failed to assign your user account to the DB. Please check the logs.'
+          'text' => 'Failed to find your user in the db. Please check the logs.',
+        ];
+        $template = $twig->load('install/install_3.twig');
+        echo $template->render(['message' => $message, 'menu' => $menu]);
+        exit;
+      }
+      $result = $user->assignToAccountName($accountName);
+      if (!$result) {
+        $message = [
+          'type' => 'error',
+          'text' => 'Failed to find assign your user the the account. Please check the logs.',
         ];
         $template = $twig->load('install/install_3.twig');
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
 
-      // Create the user Owner role for the user account.
-      $userRoleHlp = new \Datagator\Admin\UserRole($settings['db']);
-      $urid = $userRoleHlp->create($uaid, 'Owner', NULL);
-      if (!$urid) {
+      // Create the user 'Owner' role for the user account.
+      $result = $user->assignRole('Owner', $accountName);
+      if (!$result) {
         $message = [
           'type' => 'error',
           'text' => 'Failed to Create the owner role for your user in your account. Please check the logs.'

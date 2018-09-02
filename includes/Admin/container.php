@@ -4,6 +4,8 @@ use Slim\Container;
 use Slim\Views\TwigExtension;
 use Slim\Http\Uri;
 use Slim\Views\Twig;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 use Datagator\Admin\Controllers\CtrlUser;
 use Datagator\Admin\Controllers\CtrlApplication;
 use Datagator\Admin\Controllers\CtrlLogin;
@@ -39,28 +41,79 @@ $container['view'] = function (Container $container) {
   return $twig;
 };
 
-// Register Home controller.
+/**
+ * Register Logger helper.
+ *
+ * @param \Slim\Container $container
+ *   Slim container.
+ *
+ * @return \Monolog\Logger
+ *   Logger object.
+ */
+$container['Logger'] = function(Container $container) {
+  $settings = $container->get('settings');
+  $logger = new Logger('log');
+  $formatter = new LineFormatter(null, null, false, true);
+  $handler = new StreamHandler($settings['log']['path'], $settings['log']['level']);
+  $handler->setFormatter($formatter);
+  $logger->pushHandler($handler);
+  $logger->debug('Logger started.');
+};
+
+/**
+ * Register Home controller.
+ *
+ * @param \Slim\Container $container
+ *   Slim container.
+ *
+ * @return Datagator\Admin\Controllers\CtrlHome
+ *   CtrlHome object.
+ */
 $container['CtrlHome'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $view = $container->get('view');
   return new CtrlHome($dbSettings, $view);
 };
 
-// Register Login controller.
+/**
+ * Register Login controller.
+ *
+ * @param \Slim\Container $container
+ *   Slim container.
+ *
+ * @return Datagator\Admin\Controllers\CtrlLogin
+ *   CtrlLogin object.
+ */
 $container['CtrlLogin'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $view = $container->get('view');
   return new CtrlLogin($dbSettings, $view);
 };
 
-// Register Application controller.
+/**
+ * Register Application controller.
+ *
+ * @param \Slim\Container $container
+ *   Slim container.
+ *
+ * @return Datagator\Admin\Controllers\CtrlApplication
+ *   CtrlApplication object.
+ */
 $container['CtrlApplication'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $view = $container->get('view');
   return new CtrlApplication($dbSettings, $view);
 };
 
-// Register User controller.
+/**
+ * Register User controller.
+ *
+ * @param \Slim\Container $container
+ *   Slim container.
+ *
+ * @return Datagator\Admin\Controllers\CtrlUser
+ *   CtrlUser object.
+ */
 $container['CtrlUser'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $mailSettings = $container->get('settings')['mail'];

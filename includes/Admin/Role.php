@@ -3,6 +3,7 @@
 namespace Datagator\Admin;
 
 use Datagator\Db\RoleMapper;
+use Monolog\Logger;
 
 /**
  * Class UserRole.
@@ -10,17 +11,31 @@ use Datagator\Db\RoleMapper;
  * @package Datagator\Admin
  */
 class Role {
+
+  /**
+   * @var array
+   */
   private $dbSettings;
+  /**
+   * @var \ADOConnection
+   */
   private $db;
+  /**
+   * @var \Monolog\Logger
+   */
+  private $logger;
 
   /**
    * UserRole constructor.
    *
    * @param array $dbSettings
    *   Database settings.
+   * @param \Monolog\Logger $logger
+   *   Logger.
    */
-  public function __construct(array $dbSettings) {
+  public function __construct(array $dbSettings, Logger $logger) {
     $this->dbSettings = $dbSettings;
+    $this->logger = $logger;
 
     $dsnOptions = '';
     if (count($this->dbSettings['options']) > 0) {

@@ -2,6 +2,7 @@
 
 namespace Datagator\Admin\Controllers;
 
+use Datagator\Admin\Account;
 use Datagator\Admin\UserAccount;
 use Slim\Views\Twig;
 use Slim\Http\Request;
@@ -61,19 +62,24 @@ class CtrlUser extends CtrlBase {
     }
     $menu = $this->getMenus($roles);
 
-    // Fetch all applications for the account.
-    $userAccountHlp = new UserAccount($this->dbSettings);
-    $userAccount = $userAccountHlp->findByUserAccountId($uaid);
-    $applicationHlp = new Application($this->dbSettings);
-    $applications = $applicationHlp->findByAccount($userAccount['accId']);
-
     // fetch all roles.
     $roleHlp = new Role($this->dbSettings);
     $roles = $roleHlp->findAll();
 
+    // Fetch the account ID.
+    $userAccountHlp = new UserAccount($this->dbSettings);
+    $userAccount = $userAccountHlp->findByUserAccountId($uaid);
+    $accountHlp = new Account($this->dbSettings);
+    $account = $accountHlp->findByAccountId($userAccount['accId']);
+    $accId = $account['accId'];
+
     // Fetch all user roles for the account
     $userRoleHlp = new UserRole($this->dbSettings);
     $userRoles = $userRoleHlp->findByUaid($uaid);
+
+    // Fetch all applications for the account.
+    $applicationHlp = new Application($this->dbSettings);
+    $applications = $applicationHlp->findByAccount($userAccount['accId']);
 
     // Fetch all user roles for each application.
     foreach ($applications as $appId => $application) {

@@ -89,9 +89,27 @@ class UserAccountMapper {
    * @return \Datagator\Db\UserAccount
    *   Mapped UserAccount object.
    */
-  public function findByUrid($uaid) {
+  public function findByUaid($uaid) {
     $sql = 'SELECT * FROM user_account WHERE uaid = ?';
     $bindParams = array($uaid);
+    $row = $this->db->GetRow($sql, $bindParams);
+    return $this->mapArray($row);
+  }
+
+  /**
+   * Find a user account by user ID and Account ID.
+   *
+   * @param int $uid
+   *   User ID.
+   * @param int $accid
+   *   Account ID.
+   *
+   * @return \Datagator\Db\UserAccount
+   *   Mapped UserAccount object.
+   */
+  public function findByUidAccId($uid, $accid) {
+    $sql = 'SELECT * FROM user_account WHERE uid = ? AND accid = ?';
+    $bindParams = array($uid, $accid);
     $row = $this->db->GetRow($sql, $bindParams);
     return $this->mapArray($row);
   }
@@ -110,7 +128,7 @@ class UserAccountMapper {
 
     $userAccount->setUaid(!empty($row['uaid']) ? $row['uaid'] : NULL);
     $userAccount->setUid(!empty($row['uid']) ? $row['uid'] : NULL);
-    $userAccount->setAppId(!empty($row['accid']) ? $row['accid'] : NULL);
+    $userAccount->setAccId(!empty($row['accid']) ? $row['accid'] : NULL);
 
     return $userAccount;
   }
