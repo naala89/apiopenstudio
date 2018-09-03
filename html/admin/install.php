@@ -2,15 +2,14 @@
 
 require_once dirname(__DIR__) . '/../vendor/autoload.php';
 
-use ADOConnection;
-use Monolog\Logger;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\StreamHandler;
-use Cascade\Cascade;
 use Datagator\Admin\User;
 use Datagator\Admin\Account;
+use Cascade\Cascade;
 
 $settings = require dirname(dirname(__DIR__)) . '/config/settings.php';
+
+Cascade::fileConfig($settings['log']['settings']);
+Cascade::getLogger('gaterdata')->error('testing');
 
 // Get the user's origin and next step.
 $from = isset($_POST['from_step']) ? $_POST['from_step'] : 0;
@@ -25,27 +24,23 @@ $step = isset($_POST['next_step']) ? $_POST['next_step'] : 0;
 //$logger->pushHandler($handler);
 
 // DB link.
-$dsnOptions = '';
-if (sizeof($settings['db']['options']) > 0) {
-  foreach ($settings['db']['options'] as $k => $v) {
-    $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
-    $dsnOptions .= "$k=$v";
-  }
+$dsnOptionsArr = [];
+foreach ($settings['db']['options'] as $k => $v) {
+  $dsnOptionsArr[] = "$k=$v";
 }
-$dsnOptions = sizeof($settings['db']['options']) > 0 ? '?'.implode('&', $settings['db']['options']) : '';
-$dsn = $settings['db']['driver'] . ':/'
+$dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
+$dsn = $settings['db']['driver'] . '://'
   . $settings['db']['username'] . ':'
   . $settings['db']['password'] . '@'
   . $settings['db']['host'] . '/'
   . $settings['db']['database'] . $dsnOptions;
-define('ADODB_ERROR_LOG_TYPE', 3);
-define('ADODB_ERROR_LOG_DEST', $settings['log']['path']);
-$db = ADONewConnection($dsn);
-if(!db) {
-  var_dump($db->);
-  adodb_backtrace($e->gettrace());
-  exit;
+try  {
+  $db = ADONewConnection($dsn);
+} catch (exception $e) {
+  var_dump($e);
+  Cascade::getLogger('gaterdata')->error(adodb_backtrace($e->gettrace()));
 }
+exit;
 
 // Twig definition.
 $loader = new Twig_Loader_Filesystem($settings['twig']['path']);

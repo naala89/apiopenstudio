@@ -12,12 +12,17 @@ $settings['datagator'] = $settings['root'] . '/includes';
 $settings['temp'] = $settings['root'] . '/tmp';
 $settings['public'] = $settings['root'] . '/html';
 
+ini_set("display_errors", "0"); # but do not echo the errors
+define('ADODB_ERROR_LOG_TYPE', 3);
+define('ADODB_ERROR_LOG_DEST', $settings['log']['path']);
+
 // Debug
 //$settings['log'] = [
-//  'path' => '/var/log/apache2/admin.gaterdata.error.log',
-//  'level' => \Monolog\Logger::DEBUG,
+//  'path' => '/var/www/sites/admin.gaterdata.error.log',
+//  'level' => Monolog\Logger::DEBUG,
 //];
-$settings['log'] = [
+$settings['log']['path'] = '/var/www/sites/admin.gaterdata.error.log';
+$settings['log']['settings'] = [
   'version' => 1,
   'formatters' => [
     'spaced' => [
@@ -29,16 +34,15 @@ $settings['log'] = [
     ],
   ],
   'handlers' => [
-    'console' => [
-      'class' => 'Monolog\Handler\StreamHandler',
+    'chrome_console' => [
+      'class' => 'Monolog\Handler\ChromePHPHandler',
       'level' => 'DEBUG',
       'formatter' => 'spaced',
-      'stream' => 'php://stdout'
     ],
     'info_file_handler' => [
       'class' => 'Monolog\Handler\StreamHandler',
       'level' => 'INFO',
-      'formatter' => 'dashed',
+      'formatter' => 'spaced',
       'stream' => './demo_info.log'
     ],
     'error_file_handler' => [
@@ -54,8 +58,8 @@ $settings['log'] = [
     ],
   ],
   'loggers' => [
-    'my_logger' => [
-      'handlers' => ['console', 'info_file_handler'],
+    'gaterdata' => [
+      'handlers' => ['chrome_console', 'info_file_handler'],
     ],
   ],
 ];
@@ -68,7 +72,9 @@ $settings['db'] = [
   'username' => 'root',
   'password' => '',
   'database' => 'test',
-  'options' => [],
+  'options' => [
+    'debug' => FALSE,
+  ],
   'charset' => 'utf8',
   'collation' => 'utf8_unicode_ci',
 ];
