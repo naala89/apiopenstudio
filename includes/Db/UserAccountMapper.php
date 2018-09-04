@@ -42,7 +42,6 @@ class UserAccountMapper {
         $userAccount->getUid(),
         $userAccount->getAccId(),
       ];
-      $result = $this->db->Execute($sql, $bindParams);
     }
     else {
       $sql = 'UPDATE user_account SET uid=?, accid=? WHERE uaid = ?';
@@ -51,12 +50,12 @@ class UserAccountMapper {
         $userAccount->getAccId(),
         $userAccount->getUaid(),
       ];
-      $result = $this->db->Execute($sql, $bindParams);
     }
-    if (!$result) {
-      throw new ApiException($this->db->ErrorMsg(), 2);
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
     }
-    return TRUE;
+    throw new ApiException($this->db->ErrorMsg());
   }
 
   /**
@@ -73,11 +72,11 @@ class UserAccountMapper {
   public function delete(UserAccount $userAccount) {
     $sql = 'DELETE FROM user_account WHERE uaid = ?';
     $bindParams = array($userAccount->getUaid());
-    $result = $this->db->Execute($sql, $bindParams);
-    if (!$result) {
-      throw new ApiException($this->db->ErrorMsg(), 2);
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
     }
-    return TRUE;
+    throw new ApiException($this->db->ErrorMsg());
   }
 
   /**

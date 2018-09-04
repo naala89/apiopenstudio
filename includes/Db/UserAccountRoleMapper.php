@@ -43,7 +43,6 @@ class UserAccountRoleMapper {
         $userAccountRole->getRid(),
         $userAccountRole->getAppId(),
       );
-      $result = $this->db->Execute($sql, $bindParams);
     }
     else {
       $sql = 'UPDATE user_account_role SET (uaid, rid, appid) WHERE uarid = ?';
@@ -53,12 +52,12 @@ class UserAccountRoleMapper {
         $userAccountRole->getAppId(),
         $userAccountRole->getUarid(),
       );
-      $result = $this->db->Execute($sql, $bindParams);
     }
-    if (!$result) {
-      throw new ApiException($this->db->ErrorMsg(), 2);
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
     }
-    return TRUE;
+    throw new ApiException($this->db->ErrorMsg());
   }
 
   /**
@@ -75,11 +74,11 @@ class UserAccountRoleMapper {
   public function delete(UserAccountRole $userAccountRole) {
     $sql = 'DELETE FROM user_account_role WHERE uarid = ?';
     $bindParams = array($userAccountRole->getUarid());
-    $result = $this->db->Execute($sql, $bindParams);
-    if (!$result) {
-      throw new ApiException($this->db->ErrorMsg(), 2);
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
     }
-    return TRUE;
+    throw new ApiException($this->db->ErrorMsg());
   }
 
   /**

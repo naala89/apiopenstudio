@@ -4,7 +4,6 @@ namespace Datagator\Admin;
 
 use Datagator\Core\ApiException;
 use Datagator\Db;
-use Monolog\Logger;
 use Datagator\Core\Utilities;
 use Datagator\Core\Hash;
 
@@ -24,10 +23,6 @@ class User {
    */
   private $db;
   /**
-   * @var \Monolog\Logger
-   */
-  private $logger;
-  /**
    * @var \Datagator\Db\User
    */
   private $user;
@@ -37,27 +32,26 @@ class User {
    *
    * @param array $dbSettings
    *   Database settings.
-   * @param \Monolog\Logger $logger
-   *   Logger.
+   *
+   * @throws ApiException
    */
-  public function __construct(array $dbSettings, Logger $logger) {
+  public function __construct(array $dbSettings) {
     $this->dbSettings = $dbSettings;
-    $this->logger = $logger;
 
-    $dsnOptions = '';
-    if (count($dbSettings['options']) > 0) {
-      foreach ($dbSettings['options'] as $k => $v) {
-        $dsnOptions .= count($dsnOptions) == 0 ? '?' : '&';
-        $dsnOptions .= "$k=$v";
-      }
+    $dsnOptionsArr = [];
+    foreach ($dbSettings['options'] as $k => $v) {
+      $dsnOptionsArr[] = "$k=$v";
     }
-    $dsnOptions = count($dbSettings['options']) > 0 ? '?' . implode('&', $dbSettings['options']) : '';
-    $dsn = $dbSettings['driver'] . '://' .
-      $dbSettings['username'] . ':' .
-      $dbSettings['password'] . '@' .
-      $dbSettings['host'] . '/' .
-      $dbSettings['database'] . $dsnOptions;
-    $this->db = \ADONewConnection($dsn);
+    $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
+    $dsn = $dbSettings['driver'] . '://'
+      . $dbSettings['username'] . ':'
+      . $dbSettings['password'] . '@'
+      . $dbSettings['host'] . '/'
+      . $dbSettings['database'] . $dsnOptions;
+    $this->db = ADONewConnection($dsn);
+    if (!$this->db) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
   }
 
   /**
@@ -81,6 +75,8 @@ class User {
    *
    * @return array|bool
    *   False or user/account details.
+   *
+   * @throws ApiException
    */
   public function adminLogin($accountName, $username, $password, $ttl) {
     // Validate account and get account ID.
@@ -203,14 +199,18 @@ class User {
     $user->setPassword($password);
 
     $userMapper = new Db\UserMapper($this->db);
-    $result = $userMapper->save($user);
-    if (!$result) {
+
+    try {
+      $userMapper->save($user);
+    } catch (ApiException $e) {
       return FALSE;
     }
+
     $this->user = $userMapper->findByUsername($username);
-    if (empty($user->getUid())) {
+    if (empty($this->user->getUid())) {
       return FALSE;
     }
+
     return $this->user->dump();
   }
 
@@ -290,11 +290,13 @@ class User {
     if (empty($this->user) || empty($this->user->getUid())) {
       return FALSE;
     }
+
     $accountMapper = new Db\AccountMapper($this->db);
     $account = $accountMapper->findByAccId($accid);
     if (empty($account->getAccId())) {
       return FALSE;
     }
+
     $userAccount = new Db\UserAccount(NULL, $this->user->getUid(), $accid);
     $userAccountMapper = new Db\UserAccountMapper($this->db);
     try {
@@ -307,6 +309,7 @@ class User {
     if (empty($userAccount->getUaid())) {
       return FALSE;
     }
+
     return $userAccount->dump();
   }
 
@@ -338,8 +341,8 @@ class User {
    * @param string $applicationName
    *   Application name.
    *
-   * @return array|bool
-   *   FALSE | user account role associative array.
+   * @return bool
+   *   User account role associative array.
    */
   public function assignRole($roleName, $accountName, $applicationName = NULL) {
     // Find the role.
@@ -373,10 +376,13 @@ class User {
 
     // Save the new user account role.
     $userAccountRole = new Db\UserAccountRole(NULL, $userAccount->getUaid(), $role->getRid(), $appid);
-    if (empty($userAccountRole->getUarid())) {
+    $userAccountRoleMapper = new Db\UserAccountRoleMapper($this->db);
+    try {
+      $userAccountRoleMapper->save($userAccountRole);
+    } catch (ApiException $e) {
       return FALSE;
     }
-    return $userAccountRole->dump();
+    return TRUE;
   }
 
 }

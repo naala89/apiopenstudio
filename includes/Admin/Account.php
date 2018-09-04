@@ -3,7 +3,7 @@
 namespace Datagator\Admin;
 
 use Datagator\Db;
-use Monolog\Logger;
+use Datagator\Core\ApiException;
 
 /**
  * Class Account.
@@ -21,40 +21,35 @@ class Account {
    */
   private $db;
   /**
-   * @var \Monolog\Logger
-   */
-  private $logger;
-  /**
    * @var \Datagator\Db\Account
    */
   private $account;
 
   /**
-   * Account constructor.
+   * User constructor.
    *
    * @param array $dbSettings
    *   Database settings.
-   * @param \Monolog\Logger $logger
-   *   Logger.
+   *
+   * @throws ApiException
    */
-  public function __construct(array $dbSettings, Logger $logger) {
+  public function __construct(array $dbSettings) {
     $this->dbSettings = $dbSettings;
-    $this->logger = $logger;
 
-    $dsnOptions = '';
-    if (count($dbSettings['options']) > 0) {
-      foreach ($dbSettings['options'] as $k => $v) {
-        $dsnOptions .= count($dsnOptions) == 0 ? '?' : '&';
-        $dsnOptions .= "$k=$v";
-      }
+    $dsnOptionsArr = [];
+    foreach ($dbSettings['options'] as $k => $v) {
+      $dsnOptionsArr[] = "$k=$v";
     }
-    $dsnOptions = count($dbSettings['options']) > 0 ? '?' . implode('&', $dbSettings['options']) : '';
-    $dsn = $dbSettings['driver'] . '://' .
-      $dbSettings['username'] . ':' .
-      $dbSettings['password'] . '@' .
-      $dbSettings['host'] . '/' .
-      $dbSettings['database'] . $dsnOptions;
-    $this->db = \ADONewConnection($dsn);
+    $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
+    $dsn = $dbSettings['driver'] . '://'
+      . $dbSettings['username'] . ':'
+      . $dbSettings['password'] . '@'
+      . $dbSettings['host'] . '/'
+      . $dbSettings['database'] . $dsnOptions;
+    $this->db = ADONewConnection($dsn);
+    if (!$this->db) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
   }
 
   /**
@@ -63,8 +58,8 @@ class Account {
    * @param string $name
    *   Account name.
    *
-   * @return bool|int
-   *   FALSE or the account ID.
+   * @return bool|array
+   *   FALSE or the account.
    */
   public function create($name = NULL) {
     $account = new Db\Account(
@@ -72,13 +67,15 @@ class Account {
       $name
     );
     $accountMapper = new Db\AccountMapper($this->db);
-    $result = $accountMapper->save($account);
-    if (!$result) {
+
+    try {
+      $accountMapper->save($account);
+    } catch (ApiException $e) {
       return FALSE;
     }
 
     $this->account = $accountMapper->findByName($name);
-    if (!($this->account->getAccId())) {
+    if (empty($this->account->getAccId())) {
       return FALSE;
     }
 

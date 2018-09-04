@@ -41,7 +41,6 @@ class AccountMapper {
       $bindParams = array(
         $account->getName(),
       );
-      $result = $this->db->Execute($sql, $bindParams);
     }
     else {
       $sql = 'UPDATE account SET name = ? WHERE aid = ?';
@@ -49,12 +48,12 @@ class AccountMapper {
         $account->getName(),
         $account->getAccId(),
       );
-      $result = $this->db->Execute($sql, $bindParams);
     }
-    if (!$result) {
-      throw new ApiException($this->db->ErrorMsg(), 2);
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
     }
-    return TRUE;
+    throw new ApiException($this->db->ErrorMsg());
   }
 
   /**
@@ -72,11 +71,11 @@ class AccountMapper {
 
     $sql = 'DELETE FROM account WHERE accid = ?';
     $bindParams = array($account->getAccId());
-    $result = $this->db->Execute($sql, $bindParams);
-    if (!$result) {
-      throw new ApiException($this->db->ErrorMsg(), 2);
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
     }
-    return TRUE;
+    throw new ApiException($this->db->ErrorMsg());
   }
 
   /**

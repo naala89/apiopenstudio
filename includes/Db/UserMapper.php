@@ -5,7 +5,6 @@ namespace Datagator\Db;
 use Datagator\Core\Utilities;
 use Datagator\Core\ApiException;
 use ADOConnection;
-use Monolog\Logger;
 
 /**
  * Class UserMapper.
@@ -28,12 +27,9 @@ class UserMapper {
    *
    * @param \ADOConnection $dbLayer
    *   DB connection object.
-   * @param \Monolog\Logger $logger
-   *   Logger object.
    */
-  public function __construct(ADOConnection $dbLayer, Logger $logger) {
+  public function __construct(ADOConnection $dbLayer) {
     $this->db = $dbLayer;
-    $this->logger = $logger;
   }
 
   /**
@@ -72,7 +68,6 @@ class UserMapper {
         $user->getPhoneMobile(),
         $user->getPhoneWork(),
       );
-      $result = $this->db->Execute($sql, $bindParams);
     }
     else {
       $sql = 'UPDATE user SET active=?, username=?, salt=?, hash=?, token=?, token_ttl=?, email=?, honorific=?, name_first=?, name_last=?, company=?, website=?, address_street=?, address_suburb=?, address_city=?, address_state=?, address_country=?, address_postcode=?, phone_mobile=?, phone_work=?  WHERE uid=?';
@@ -99,13 +94,12 @@ class UserMapper {
         $user->getPhoneWork(),
         $user->getUid(),
       );
-      $result = $this->db->Execute($sql, $bindParams);
     }
-    if (!$result) {
-      $this->logger->error('hi');
-      throw new ApiException($this->db->ErrorMsg(), 2);
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
     }
-    return TRUE;
+    throw new ApiException($this->db->ErrorMsg());
   }
 
   /**
@@ -122,11 +116,11 @@ class UserMapper {
   public function delete(User $user) {
     $sql = 'DELETE FROM user WHERE uid = ?';
     $bindParams = array($user->getUid());
-    $result = $this->db->Execute($sql, $bindParams);
-    if (!$result) {
-      throw new ApiException($this->db->ErrorMsg(), 2);
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
     }
-    return TRUE;
+    throw new ApiException($this->db->ErrorMsg());
   }
 
   /**
