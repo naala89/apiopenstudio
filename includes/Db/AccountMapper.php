@@ -86,11 +86,16 @@ class AccountMapper {
    *
    * @return \Datagator\Db\Account
    *   Account object.
+   *
+   * @throws ApiException
    */
   public function findByAccId($accid) {
     $sql = 'SELECT * FROM account WHERE accid = ?';
     $bindParams = array($accid);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
     return $this->mapArray($row);
   }
 
@@ -102,11 +107,16 @@ class AccountMapper {
    *
    * @return \Datagator\Db\Account
    *   Account object.
+   *
+   * @throws ApiException
    */
   public function findByName($name) {
     $sql = 'SELECT * FROM account WHERE name = ?';
     $bindParams = array($name);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
     return $this->mapArray($row);
   }
 
@@ -120,11 +130,16 @@ class AccountMapper {
    *
    * @return \Datagator\Db\Account
    *   Account object.
+   *
+   * @throws ApiException
    */
   public function findByAccIdUid($accid, $uid) {
     $sql = 'SELECT * FROM account WHERE accid = ? AND uid = ?';
     $bindParams = array($accid, $uid);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
     return $this->mapArray($row);
   }
 
