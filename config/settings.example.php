@@ -6,23 +6,17 @@ $settings = [];
  * General settings.
  */
 
+ini_set("display_errors", "0");
+
 // Paths.
 $settings['root'] = dirname(__DIR__);
 $settings['datagator'] = $settings['root'] . '/includes';
 $settings['temp'] = $settings['root'] . '/tmp';
 $settings['public'] = $settings['root'] . '/html';
 
-ini_set("display_errors", "0"); # but do not echo the errors
-define('ADODB_ERROR_LOG_TYPE', 3);
-define('ADODB_ERROR_LOG_DEST', $settings['log']['path']);
-
 // Debug
 // @see https://github.com/Seldaek/monolog Monolog documentation.
 // @see https://github.com/theorchard/monolog-cascade Monolog Cascade documentation.
-//$settings['log'] = [
-//  'path' => '/var/www/sites/admin.gaterdata.error.log',
-//  'level' => Monolog\Logger::DEBUG,
-//];
 $settings['log']['path'] = '/var/www/sites/admin.gaterdata.error.log';
 $settings['log']['settings'] = [
   'version' => 1,
@@ -36,23 +30,30 @@ $settings['log']['settings'] = [
     ],
   ],
   'handlers' => [
-    'chrome_console' => [
-      'class' => 'Monolog\Handler\ChromePHPHandler',
+    'console' => [
+      'class' => 'Monolog\Handler\StreamHandler',
       'level' => 'DEBUG',
       'formatter' => 'spaced',
+      'stream' => $settings['log']['path'],
     ],
-    'info_file_handler' => [
-      'class' => 'Monolog\Handler\StreamHandler',
-      'level' => 'INFO',
-      'formatter' => 'spaced',
-      'stream' => './demo_info.log'
-    ],
-    'error_file_handler' => [
+    'console' => [
       'class' => 'Monolog\Handler\StreamHandler',
       'level' => 'ERROR',
-      'stream' => './demo_error.log',
-      'formatter' => 'spaced'
+      'formatter' => 'spaced',
+      'stream' => $settings['log']['path'],
     ],
+//    'info_file_handler' => [
+//      'class' => 'Monolog\Handler\StreamHandler',
+//      'level' => 'INFO',
+//      'formatter' => 'dashed',
+//      'stream' => './demo_info.log'
+//    ],
+//    'error_file_handler' => [
+//      'class' => 'Monolog\Handler\StreamHandler',
+//      'level' => 'ERROR',
+//      'stream' => './demo_error.log',
+//      'formatter' => 'spaced'
+//    ],
   ],
   'processors' => [
     'tag_processor' => [
@@ -61,7 +62,7 @@ $settings['log']['settings'] = [
   ],
   'loggers' => [
     'gaterdata' => [
-      'handlers' => ['chrome_console', 'info_file_handler'],
+      'handlers' => ['console'],
     ],
   ],
 ];
@@ -81,6 +82,8 @@ $settings['db'] = [
   'charset' => 'utf8',
   'collation' => 'utf8_unicode_ci',
 ];
+define('ADODB_ERROR_LOG_TYPE', 3);
+define('ADODB_ERROR_LOG_DEST', $settings['log']['path']);
 
 // Email.
 $settings['mail'] = [
