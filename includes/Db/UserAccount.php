@@ -23,7 +23,7 @@ class UserAccount {
    * @param int $accid
    *   The account ID.
    */
-  public function __construct($uaid, $uid, $accid) {
+  public function __construct($uaid = NULL, $uid = NULL, $accid = NULL) {
     $this->uaid = $uaid;
     $this->uid = $uid;
     $this->accid = $accid;

@@ -2,6 +2,8 @@
 
 namespace Datagator\Core;
 
+use Cascade\Cascade;
+
 class ApiException extends \Exception
 {
   private $processor;
@@ -19,6 +21,7 @@ class ApiException extends \Exception
   {
     $this->processor = $processor;
     $this->htmlCode = $htmlCode;
+    Cascade::getLogger('gaterdata')->error($message);
     parent::__construct($message, $code, $previous);
   }
 

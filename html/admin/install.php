@@ -8,20 +8,9 @@ use Cascade\Cascade;
 
 $settings = require dirname(dirname(__DIR__)) . '/config/settings.php';
 
+// Create logger
 Cascade::fileConfig($settings['log']['settings']);
-Cascade::getLogger('gaterdata')->error('testing');
-
-// Get the user's origin and next step.
-$from = isset($_POST['from_step']) ? $_POST['from_step'] : 0;
-$step = isset($_POST['next_step']) ? $_POST['next_step'] : 0;
-
-// Create a logger.
-//$logger = new Logger('GaterData');
-//// Line formatter without empty brackets in the end
-//$formatter = new LineFormatter(null, null, false, true);
-//$handler = new StreamHandler($settings['log']['path'], $settings['log']['level']);
-//$handler->setFormatter($formatter);
-//$logger->pushHandler($handler);
+Cascade::getLogger('gaterdata')->debug('testing');
 
 // DB link.
 $dsnOptionsArr = [];
@@ -34,13 +23,16 @@ $dsn = $settings['db']['driver'] . '://'
   . $settings['db']['password'] . '@'
   . $settings['db']['host'] . '/'
   . $settings['db']['database'] . $dsnOptions;
-try  {
-  $db = ADONewConnection($dsn);
-} catch (exception $e) {
-  var_dump($e);
-  Cascade::getLogger('gaterdata')->error(adodb_backtrace($e->gettrace()));
+$db = ADONewConnection($dsn);
+if (!$db) {
+  $message = [
+    'type' => 'error',
+    'text' => 'DB connection failed, please check your config settings.'
+  ];
+  $template = $twig->load("install/install_$from.twig");
+  echo $template->render(['message' => $message, 'menu' => $menu]);
+  exit;
 }
-exit;
 
 // Twig definition.
 $loader = new Twig_Loader_Filesystem($settings['twig']['path']);
@@ -51,15 +43,9 @@ $twig = new Twig_Environment($loader/*, array(
 // User will start not logged in.
 $menu = ['Login' => '/'];
 
-if (!$db) {
-  $message = [
-    'type' => 'error',
-    'text' => 'DB connection failed, please check your config settings.'
-  ];
-  $template = $twig->load("install/install_$from.twig");
-  echo $template->render(['message' => $message, 'menu' => $menu]);
-  exit;
-}
+// Get the user's origin and next step.
+$from = isset($_POST['from_step']) ? $_POST['from_step'] : 0;
+$step = isset($_POST['next_step']) ? $_POST['next_step'] : 0;
 
 switch ($step) {
   case 0:
@@ -159,7 +145,7 @@ switch ($step) {
     // Create user.
 
     if ($from == 2) {
-      // This is a post from tue user create form.
+      // This is a post from the user create form.
       if (empty($_POST['username']) ||
         empty($_POST['password']) ||
         empty($_POST['honorific']) ||
@@ -173,7 +159,7 @@ switch ($step) {
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
-      $user = new User($settings['db'], $logger);
+      $user = new User($settings['db']);
       $newUser = $user->create(
         !empty($_POST['username']) ? $_POST['username'] : NULL,
         !empty($_POST['password']) ? $_POST['password'] : NULL,
@@ -224,7 +210,7 @@ switch ($step) {
       // missing required user id from previous page.
       $message = [
         'type' => 'error',
-        'text' => 'Required user id.'
+        'text' => 'Missing required user id. Please restart the install process.'
       ];
       $template = $twig->load('install/install_3.twig');
       echo $template->render(['message' => $message, 'menu' => $menu]);
@@ -241,12 +227,12 @@ switch ($step) {
           'text' => 'Required Account name not entered.'
         ];
         $template = $twig->load('install/install_3.twig');
-        echo $template->render(['message' => $message, 'menu' => $menu]);
+        echo $template->render(['message' => $message, 'menu' => $menu, 'uid' => $uid]);
         exit;
       }
 
       // Create the account.
-      $account = new Account($settings['db'], $logger);
+      $account = new Account($settings['db']);
       $newAccount = $account->create($accountName);
       if (!$newAccount) {
         $message = [
@@ -254,12 +240,12 @@ switch ($step) {
           'text' => 'Failed to save your account to the DB. Please check the logs.',
         ];
         $template = $twig->load('install/install_3.twig');
-        echo $template->render(['message' => $message, 'menu' => $menu]);
+        echo $template->render(['message' => $message, 'menu' => $menu, 'uid' => $uid]);
         exit;
       }
 
       // Assign the user to the account.
-      $user = new User($settings['db'], $logger);
+      $user = new User($settings['db']);
       $result = $user->findByUserId($uid);
       if (!$result) {
         $message = [
@@ -267,7 +253,7 @@ switch ($step) {
           'text' => 'Failed to find your user in the db. Please check the logs.',
         ];
         $template = $twig->load('install/install_3.twig');
-        echo $template->render(['message' => $message, 'menu' => $menu]);
+        echo $template->render(['message' => $message, 'menu' => $menu, 'uid' => $uid]);
         exit;
       }
       $result = $user->assignToAccountName($accountName);
@@ -277,7 +263,7 @@ switch ($step) {
           'text' => 'Failed to find assign your user the the account. Please check the logs.',
         ];
         $template = $twig->load('install/install_3.twig');
-        echo $template->render(['message' => $message, 'menu' => $menu]);
+        echo $template->render(['message' => $message, 'menu' => $menu, 'uid' => $uid]);
         exit;
       }
 
@@ -289,7 +275,7 @@ switch ($step) {
           'text' => 'Failed to Create the owner role for your user in your account. Please check the logs.'
         ];
         $template = $twig->load('install/install_3.twig');
-        echo $template->render(['message' => $message, 'menu' => $menu]);
+        echo $template->render(['message' => $message, 'menu' => $menu, 'uid' => $uid]);
         exit;
       }
 

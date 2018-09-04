@@ -17,6 +17,8 @@ define('ADODB_ERROR_LOG_TYPE', 3);
 define('ADODB_ERROR_LOG_DEST', $settings['log']['path']);
 
 // Debug
+// @see https://github.com/Seldaek/monolog Monolog documentation.
+// @see https://github.com/theorchard/monolog-cascade Monolog Cascade documentation.
 //$settings['log'] = [
 //  'path' => '/var/www/sites/admin.gaterdata.error.log',
 //  'level' => Monolog\Logger::DEBUG,
@@ -65,6 +67,7 @@ $settings['log']['settings'] = [
 ];
 
 // Database.
+// @see http://adodb.org/dokuwiki/doku.php Documentation of ADOdb.
 $settings['db'] = [
   'base' => $settings['datagator'] . '/db/dbBase.yaml',
   'driver' => 'mysqli',
