@@ -4,7 +4,6 @@ namespace Datagator\Admin\Controllers;
 
 use Datagator\Admin\Application;
 use Datagator\Admin\User;
-use Datagator\Admin\UserAccount;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -16,27 +15,20 @@ use Slim\Http\Response;
 class CtrlHome extends CtrlBase {
 
   /**
-   * Display the home page.
-   *
-   * @param \Slim\Http\Request $request
-   *   Request object.
-   * @param \Slim\Http\Response $response
-   *   Response object.
+   * @param Request $request
+   * @param Response $response
    * @param array $args
-   *   Request args.
-   *
    * @return \Psr\Http\Message\ResponseInterface
-   *   Response.
+   * @throws \Datagator\Core\ApiException
    */
   public function index(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
-    $roles = $this->getRoles($uaid);
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $accid = isset($_SESSION['accid']) ? $_SESSION['accid'] : '';
+    $roles = $this->getRoles($uid, $accid);
     $menu = $this->getMenus($roles);
 
-    $userAccountHlp = new UserAccount($this->dbSettings);
-    $userAccount = $userAccountHlp->findByUserAccountId($uaid);
     $applicationHlp = new Application($this->dbSettings);
-    $applications = $applicationHlp->findByAccount($userAccount['accId']);
+    $applications = $applicationHlp->findByAccountId($accid);
 
     return $this->view->render($response, 'home.twig', [
       'menu' => $menu,

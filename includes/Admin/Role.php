@@ -3,7 +3,7 @@
 namespace Datagator\Admin;
 
 use Datagator\Db\RoleMapper;
-use Monolog\Logger;
+use Datagator\Core\ApiException;
 
 /**
  * Class UserRole.
@@ -20,37 +20,32 @@ class Role {
    * @var \ADOConnection
    */
   private $db;
-  /**
-   * @var \Monolog\Logger
-   */
-  private $logger;
 
   /**
    * UserRole constructor.
    *
    * @param array $dbSettings
    *   Database settings.
-   * @param \Monolog\Logger $logger
-   *   Logger.
+   *
+   * @throws ApiException
    */
-  public function __construct(array $dbSettings, Logger $logger) {
+  public function __construct(array $dbSettings) {
     $this->dbSettings = $dbSettings;
-    $this->logger = $logger;
 
-    $dsnOptions = '';
-    if (count($this->dbSettings['options']) > 0) {
-      foreach ($this->dbSettings['options'] as $k => $v) {
-        $dsnOptions .= count($dsnOptions) == 0 ? '?' : '&';
-        $dsnOptions .= "$k=$v";
-      }
+    $dsnOptionsArr = [];
+    foreach ($dbSettings['options'] as $k => $v) {
+      $dsnOptionsArr[] = "$k=$v";
     }
-    $dsnOptions = count($this->dbSettings['options']) > 0 ? '?' . implode('&', $this->dbSettings['options']) : '';
-    $dsn = $this->dbSettings['driver'] . '://' .
-      $this->dbSettings['username'] . ':' .
-      $this->dbSettings['password'] . '@' .
-      $this->dbSettings['host'] . '/' .
-      $this->dbSettings['database'] . $dsnOptions;
-    $this->db = \ADONewConnection($dsn);
+    $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
+    $dsn = $dbSettings['driver'] . '://'
+      . $dbSettings['username'] . ':'
+      . $dbSettings['password'] . '@'
+      . $dbSettings['host'] . '/'
+      . $dbSettings['database'] . $dsnOptions;
+    $this->db = ADONewConnection($dsn);
+    if (!$this->db) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
   }
 
   /**
@@ -94,7 +89,7 @@ class Role {
    * @return array
    *   The role attributes.
    */
-  public function fincByName($name) {
+  public function findByName($name) {
     $roleMapper = new RoleMapper($this->db);
     $role = $roleMapper->findByName($name);
     return $role->dump();

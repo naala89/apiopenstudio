@@ -2,8 +2,8 @@
 
 namespace Datagator\Admin;
 
+use Datagator\Core\ApiException;
 use Datagator\Db;
-use Monolog\Logger;
 
 class Application {
 
@@ -15,58 +15,32 @@ class Application {
    * @var \ADOConnection
    */
   private $db;
-  /**
-   * @var \Monolog\Logger
-   */
-  private $logger;
 
   /**
    * Application constructor.
    *
    * @param array $dbSettings
    *   Database settings.
-   * @param \Monolog\Logger $logger
-   *   Logger.
+   *
+   * @throws ApiException
    */
-  public function __construct(array $dbSettings, Logger $logger) {
+  public function __construct(array $dbSettings) {
     $this->dbSettings = $dbSettings;
-    $this->logger = $logger;
 
-    $dsnOptions = '';
-    if (count($dbSettings['options']) > 0) {
-      foreach ($dbSettings['options'] as $k => $v) {
-        $dsnOptions .= count($dsnOptions) == 0 ? '?' : '&';
-        $dsnOptions .= "$k=$v";
-      }
+    $dsnOptionsArr = [];
+    foreach ($dbSettings['options'] as $k => $v) {
+      $dsnOptionsArr[] = "$k=$v";
     }
-    $dsnOptions = count($dbSettings['options']) > 0 ? '?' . implode('&', $dbSettings['options']) : '';
-    $dsn = $dbSettings['driver'] . '://' .
-      $dbSettings['username'] . ':' .
-      $dbSettings['password'] . '@' .
-      $dbSettings['host'] . '/' .
-      $dbSettings['database'] . $dsnOptions;
-    $this->db = \ADONewConnection($dsn);
-  }
-
-  /**
-   * Find all an applications for an account.
-   *
-   * @param int $accId
-   *   ID of the account.
-   *
-   * @return array
-   *   Array of associative arrays of applications, indexed by appId.
-   */
-  public function findByAccount($accId) {
-    $applicationMapper = new Db\ApplicationMapper($this->db);
-    $results = $applicationMapper->findByAccId($accId);
-    $applications = [];
-    foreach ($results as $result) {
-      $application = $result->dump();
-      $applications[$application['appId']] = $application;
+    $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
+    $dsn = $dbSettings['driver'] . '://'
+      . $dbSettings['username'] . ':'
+      . $dbSettings['password'] . '@'
+      . $dbSettings['host'] . '/'
+      . $dbSettings['database'] . $dsnOptions;
+    $this->db = ADONewConnection($dsn);
+    if (!$this->db) {
+      throw new ApiException($this->db->ErrorMsg());
     }
-
-    return $applications;
   }
 
   /**
@@ -88,18 +62,36 @@ class Application {
     );
 
     $applicationMapper = new Db\ApplicationMapper($this->db);
-    $result = $applicationMapper->save($application);
-    if (!$result) {
+    try {
+      $applicationMapper->save($application);
+    } catch (ApiException $e) {
       return FALSE;
     }
 
     $application = $applicationMapper->findByName($name);
     $appId = $application->getAppId();
+    return empty($appId) ? FALSE : $appId;
+  }
 
-    if (!$appId) {
-      return FALSE;
+  /**
+   * Find all an applications for an account.
+   *
+   * @param int $accId
+   *   ID of the account.
+   *
+   * @return array
+   *   Array of associative arrays of applications, indexed by appId.
+   */
+  public function findByAccountId($accId) {
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    $results = $applicationMapper->findByAccId($accId);
+    $applications = [];
+    foreach ($results as $result) {
+      $application = $result->dump();
+      $applications[$application['appId']] = $application;
     }
-    return $appId;
+
+    return $applications;
   }
 
   /**
@@ -117,10 +109,14 @@ class Application {
     $applicationMapper = new Db\ApplicationMapper($this->db);
     $application = $applicationMapper->findByAppId($appId);
     $application->setName($appName);
-    $result = $applicationMapper->save($application);
+
+    try {
+      $applicationMapper->save($application);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
 
     if (!$result) {
-      return FALSE;
     }
     return $appId;
   }
