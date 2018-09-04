@@ -131,11 +131,16 @@ class UserMapper {
    *
    * @return \Datagator\Db\User
    *   User object.
+   *
+   * @throws ApiException
    */
   public function findByUid($uid) {
-    $sql = 'SELECT * FROM user WHERE uid = ?';
+    $sql = 'SELET * FROM user WHERE uid = ?';
     $bindParams = array($uid);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
     return $this->mapArray($row);
   }
 
