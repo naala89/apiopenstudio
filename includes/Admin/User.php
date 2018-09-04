@@ -74,9 +74,6 @@ class User {
    *   Token life. Example: '+1 hour'.
    *
    * @return array|bool
-   *   False or user/account details.
-   *
-   * @throws ApiException
    */
   public function adminLogin($accountName, $username, $password, $ttl) {
     // Validate account and get account ID.
@@ -88,8 +85,8 @@ class User {
 
     // Validate username and get user ID.
     $userMapper = new Db\UserMapper($this->db);
-    $user = $userMapper->findByUsername($username);
-    if (empty($uid = $user->getUid())) {
+    $this->user = $userMapper->findByUsername($username);
+    if (empty($uid = $this->user->getUid())) {
       return FALSE;
     }
 
@@ -101,36 +98,42 @@ class User {
     }
 
     // Set up salt if not defined.
-    if ($user->getSalt() == NULL) {
-      $user->setSalt(Hash::generateSalt());
+    if ($this->user->getSalt() == NULL) {
+      $this->user->setSalt(Hash::generateSalt());
     }
 
     // Generate password hash and compare to stored hash.
-    $hash = Hash::generateHash($password, $user->getSalt());
-    if ($user->getHash() != NULL && $user->getHash() != $hash) {
+    $hash = Hash::generateHash($password, $this->user->getSalt());
+    if ($this->user->getHash() != NULL && $this->user->getHash() != $hash) {
       return FALSE;
     }
 
     // If token exists and is active, return it.
-    if (!empty($user->getToken())
-      && !empty($user->getTokenTtl())
-      && Utilities::date_mysql2php($user->getTokenTtl()) > time()) {
-      $user->setTokenTtl(Utilities::date_php2mysql(strtotime($ttl)));
+    if (!empty($this->user->getToken())
+      && !empty($this->user->getTokenTtl())
+      && Utilities::date_mysql2php($this->user->getTokenTtl()) > time()) {
+      $this->user->setTokenTtl(Utilities::date_php2mysql(strtotime($ttl)));
       return [
-        'token' => $user->getToken(),
-        'uaid' => $userAccount->getUaid(),
+        'user' => $this->user->dump(),
+        'account' => $account->dump(),
       ];
     }
 
     // Perform login.
-    $user->setHash($hash);
+    $this->user->setHash($hash);
     $token = Hash::generateToken($username);
-    $user->setToken($token);
-    $user->setTokenTtl(Utilities::date_php2mysql(strtotime($ttl)));
-    $userMapper->save($user);
+    $this->user->setToken($token);
+    $this->user->setTokenTtl(Utilities::date_php2mysql(strtotime($ttl)));
+    try {
+      $userMapper->save($this->user);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
 
-    $this->user = $user;
-    return $this->user->dump();
+    return [
+      'user' => $this->user->dump(),
+      'account' => $account->dump(),
+    ];
   }
 
   /**
@@ -383,6 +386,38 @@ class User {
       return FALSE;
     }
     return TRUE;
+  }
+
+  /**
+   * Find roles for the user in an account by its account ID.
+   *
+   * @param int $accid.
+   *   Account ID.
+   *
+   * @return array
+   *   Array of mapped UserAccountRole objects.
+   */
+  public function findRoles($accid) {
+    // Find the user account.
+    $userAccountMapper = new Db\UserAccountMapper($this->db);
+    $userAccount = $userAccountMapper->findByUidAccId($this->user->getUid(), $accid);
+    if (empty($uaid = $userAccount->getUaid())) {
+      return [];
+    }
+
+    // Find roles for the user account.
+    $userAccountRoleMapper = new Db\UserAccountRoleMapper($this->db);
+    $userAccountRoles = $userAccountRoleMapper->findByUaid($uaid);
+
+    // Find the role names for the user account roles.
+    $roles = [];
+    $roleMapper = new Db\RoleMapper($this->db);
+    foreach ($userAccountRoles as $userAccountRole) {
+      $role = $roleMapper->findByRid($userAccountRole->getRid());
+      $roles[] = $role->getName();
+    }
+
+    return $roles;
   }
 
 }

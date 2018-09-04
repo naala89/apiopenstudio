@@ -3,7 +3,7 @@
 namespace Datagator\Admin;
 
 use Datagator\Db;
-use Monolog\Logger;
+use Datagator\Core\ApiException;
 
 /**
  * Class User.
@@ -20,37 +20,32 @@ class Invite {
    * @var \ADOConnection
    */
   private $db;
-  /**
-   * @var \Monolog\Logger
-   */
-  private $logger;
 
   /**
-   * User constructor.
+   * Invite constructor.
    *
    * @param array $dbSettings
    *   Database settings.
-   * @param \Monolog\Logger $logger
-   *   Logger.
+   *
+   * @throws ApiException
    */
-  public function __construct(array $dbSettings, Logger $logger) {
+  public function __construct(array $dbSettings) {
     $this->dbSettings = $dbSettings;
-    $this->logger = $logger;
 
-    $dsnOptions = '';
-    if (count($dbSettings['options']) > 0) {
-      foreach ($dbSettings['options'] as $k => $v) {
-        $dsnOptions .= count($dsnOptions) == 0 ? '?' : '&';
-        $dsnOptions .= "$k=$v";
-      }
+    $dsnOptionsArr = [];
+    foreach ($dbSettings['options'] as $k => $v) {
+      $dsnOptionsArr[] = "$k=$v";
     }
-    $dsnOptions = count($dbSettings['options']) > 0 ? '?' . implode('&', $dbSettings['options']) : '';
-    $dsn = $dbSettings['driver'] . '://' .
-      $dbSettings['username'] . ':' .
-      $dbSettings['password'] . '@' .
-      $dbSettings['host'] . '/' .
-      $dbSettings['database'] . $dsnOptions;
-    $this->db = \ADONewConnection($dsn);
+    $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
+    $dsn = $dbSettings['driver'] . '://'
+      . $dbSettings['username'] . ':'
+      . $dbSettings['password'] . '@'
+      . $dbSettings['host'] . '/'
+      . $dbSettings['database'] . $dsnOptions;
+    $this->db = ADONewConnection($dsn);
+    if (!$this->db) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
   }
 
   /**

@@ -12,7 +12,7 @@ $app->post('/', 'CtrlHome:index')->add(new Authentication($settings, '/login'));
  * Login.
  */
 $app->get('/login', 'CtrlLogin:login');
-$app->post('/login', 'CtrlLogin:login');
+$app->post('/login', 'CtrlLogin:login')->add(new Authentication($settings, '/login'));
 $app->get('/logout', 'CtrlLogin:logout');
 $app->post('/logout', 'CtrlLogin:logout');
 

@@ -3,6 +3,7 @@
 namespace Datagator\Admin\Middleware;
 
 use Datagator\Admin\User;
+use Datagator\Core\ApiException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -51,20 +52,32 @@ class Authentication {
 
     // This is a login attempt.
     if (!empty($accountName) || !empty($username) || !empty($password)) {
-      $userHelper = new User($this->settings['db']);
-      $result = $userHelper->adminLogin($accountName, $username, $password, $this->settings['user']['token_life']);
-      if (!$result) {
+      try {
+        $userHelper = new User($this->settings['db']);
+      } catch (ApiException $e) {
+        unset($_SESSION['token']);
+        unset($_SESSION['uid']);
+        unset($_SESSION['accid']);
+        return $next($request, $response);
+      }
+
+      $results = $userHelper->adminLogin($accountName, $username, $password, $this->settings['user']['token_life']);
+      if (!$results) {
         // Login failed.
         unset($_SESSION['token']);
-        unset($_SESSION['uaid']);
+        unset($_SESSION['uid']);
+        unset($_SESSION['accid']);
       } else {
-        $_SESSION['token'] = $result['token'];
-        $_SESSION['uaid'] = $result['uaid'];
+        $user = $results['user'];
+        $account = $results['account'];
+        $_SESSION['token'] = $user['token'];
+        $_SESSION['uid'] = $user['uid'];
+        $_SESSION['accid'] = $account['accid'];
       }
     }
 
     // Validate token.
-    if (!isset($_SESSION['token']) || !isset($_SESSION['uaid'])) {
+    if (!isset($_SESSION['token']) || !isset($_SESSION['uid']) || !isset($_SESSION['accid'])) {
       return $response = $response->withRedirect($uri);
     }
     return $next($request, $response);

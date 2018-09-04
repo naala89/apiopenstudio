@@ -98,6 +98,30 @@ class UserAccountRoleMapper {
   }
 
   /**
+   * Find a user account roles by user account ID.
+   *
+   * @param int $uaid
+   *   User account ID.
+   *
+   * @return array
+   *   Array of mapped UserAccountRole objects.
+   */
+  public function findByUaid($uaid) {
+    $sql = 'SELECT * FROM user_account_role WHERE uaid = ?';
+    $bindParams = array($uaid);
+
+    $recordSet = $this->db->Execute($sql, $bindParams);
+
+    $entries = array();
+    while (!$recordSet->EOF) {
+      $entries[] = $this->mapArray($recordSet->fields);
+      $recordSet->moveNext();
+    }
+
+    return $entries;
+  }
+
+  /**
    * Map a DB row to a UserAccountRole object.
    *
    * @param array $row

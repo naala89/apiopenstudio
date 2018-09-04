@@ -4,7 +4,7 @@ namespace Datagator\Admin\Controllers;
 
 use Datagator\Admin\Role;
 use Datagator\Admin\User;
-use Datagator\Admin\UserRole;
+use Datagator\Core\ApiException;
 use Slim\Views\Twig;
 
 /**
@@ -34,37 +34,33 @@ class CtrlBase {
   /**
    * Fetch the roles for a user account ID.
    *
-   * @param int $uaid
-   *   User account id.
+   * @param int $uid
+   *   User ID.
+   * @param int $accid
+   *   Account ID.
    *
    * @return array
    *   Array of role names.
    */
-  protected function getRoles($uaid) {
+  protected function getRoles($uid, $accid) {
     $roleNames = [];
 
     // If no account, no roles.
-    if (empty($uaid)) {
+    if (empty($uid) || empty($accid)) {
       return $roleNames;
     }
 
     // Get user roles for a user account.
-    $userRoleHelper = new UserRole($this->dbSettings);
-    $userRoles = $userRoleHelper->findByUaid($uaid);
-    if (empty($userRoles)) {
+    try {
+      $userHelper = new User($this->dbSettings);
+    } catch (ApiException $e) {
       return $roleNames;
     }
-
-    // Get names for the roles.
-    $roleHelper = new Role($this->dbSettings);
-    foreach ($userRoles as $userRole) {
-      $result = $roleHelper->findByRid($userRole['rid']);
-      if (!in_array($result['name'], $roleNames)) {
-        $roleNames[] = $result['name'];
-      }
+    $result = $userHelper->findByUserId($uid);
+    if (!$result) {
+      return $roleNames;
     }
-
-    return $roleNames;
+    return $userHelper->findRoles($accid);
   }
 
   /**
