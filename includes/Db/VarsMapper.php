@@ -43,7 +43,6 @@ class VarsMapper {
         $vars->getName(),
         $vars->getval(),
       );
-      $result = $this->db->Execute($sql, $bindParams);
     }
     else {
       $sql = 'UPDATE vars SET appid=?, name=?, val=? WHERE id = ?';
@@ -53,12 +52,12 @@ class VarsMapper {
         $vars->getVal(),
         $vars->getId(),
       );
-      $result = $this->db->Execute($sql, $bindParams);
     }
-    if (!$result) {
-      throw new ApiException($this->db->ErrorMsg(), 2);
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
     }
-    return TRUE;
+    throw new ApiException($this->db->ErrorMsg());
   }
 
   /**
@@ -78,11 +77,11 @@ class VarsMapper {
     }
     $sql = 'DELETE FROM vars WHERE id = ?';
     $bindParams = array($vars->getId());
-    $result = $this->db->Execute($sql, $bindParams);
-    if (!$result) {
-      throw new ApiException($this->db->ErrorMsg(), 2);
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
     }
-    return TRUE;
+    throw new ApiException($this->db->ErrorMsg());
   }
 
   /**

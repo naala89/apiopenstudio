@@ -89,11 +89,16 @@ class UserAccountRoleMapper {
    *
    * @return \Datagator\Db\UserAccountRole
    *   Mapped UserAccountRole object.
+   *
+   * @throws ApiException
    */
   public function findByUarid($uarid) {
     $sql = 'SELECT * FROM user_account_role WHERE uarid = ?';
     $bindParams = array($uarid);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
     return $this->mapArray($row);
   }
 
@@ -105,12 +110,17 @@ class UserAccountRoleMapper {
    *
    * @return array
    *   Array of mapped UserAccountRole objects.
+   *
+   * @throws ApiException
    */
   public function findByUaid($uaid) {
     $sql = 'SELECT * FROM user_account_role WHERE uaid = ?';
     $bindParams = array($uaid);
 
     $recordSet = $this->db->Execute($sql, $bindParams);
+    if (!$recordSet) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
 
     $entries = array();
     while (!$recordSet->EOF) {

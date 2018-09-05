@@ -87,11 +87,16 @@ class UserAccountMapper {
    *
    * @return \Datagator\Db\UserAccount
    *   Mapped UserAccount object.
+   *
+   * @throws ApiException
    */
   public function findByUaid($uaid) {
     $sql = 'SELECT * FROM user_account WHERE uaid = ?';
     $bindParams = array($uaid);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
     return $this->mapArray($row);
   }
 
@@ -105,11 +110,16 @@ class UserAccountMapper {
    *
    * @return \Datagator\Db\UserAccount
    *   Mapped UserAccount object.
+   *
+   * @throws ApiException
    */
   public function findByUidAccId($uid, $accid) {
     $sql = 'SELECT * FROM user_account WHERE uid = ? AND accid = ?';
     $bindParams = array($uid, $accid);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
     return $this->mapArray($row);
   }
 

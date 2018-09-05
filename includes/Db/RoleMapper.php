@@ -41,7 +41,6 @@ class RoleMapper {
       $bindParams = array(
         $role->getName(),
       );
-      $result = $this->db->Execute($sql, $bindParams);
     }
     else {
       $sql = 'UPDATE external_user SET name = ? WHERE rid = ?';
@@ -49,12 +48,33 @@ class RoleMapper {
         $role->getName(),
         $role->getRid(),
       );
-      $result = $this->db->Execute($sql, $bindParams);
     }
-    if (!$result) {
-      throw new ApiException($this->db->ErrorMsg(), 2);
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
     }
-    return TRUE;
+    throw new ApiException($this->db->ErrorMsg());
+  }
+
+  /**
+   * Delete a Role.
+   *
+   * @param \Datagator\Db\Role $role
+   *   Role object.
+   *
+   * @return bool
+   *   Success.
+   *
+   * @throws \Datagator\Core\ApiException
+   */
+  public function delete(Role $role) {
+    $sql = 'DELETE FROM role WHERE rid = ?';
+    $bindParams = array($role->getRid());
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
+    }
+    throw new ApiException($this->db->ErrorMsg());
   }
 
   /**
@@ -62,11 +82,16 @@ class RoleMapper {
    *
    * @return \Datagator\Db\Role
    *   Array of role objects.
+   *
+   * @throws ApiException
    */
   public function findAll() {
     $sql = 'SELECT * FROM role';
 
     $recordSet = $this->db->Execute($sql);
+    if (!$recordSet) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
 
     $entries = array();
     while (!$recordSet->EOF) {
@@ -85,11 +110,16 @@ class RoleMapper {
    *
    * @return \Datagator\Db\Role
    *   Role object.
+   *
+   * @throws ApiException
    */
   public function findByRid($rid) {
     $sql = 'SELECT * FROM role WHERE rid = ?';
     $bindParams = array($rid);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
     return $this->mapArray($row);
   }
 
@@ -101,11 +131,16 @@ class RoleMapper {
    *
    * @return \Datagator\Db\Role
    *   Role object.
+   *
+   * @throws ApiException
    */
   public function findByName($name) {
     $sql = 'SELECT * FROM role WHERE name = ?';
     $bindParams = array($name);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
     return $this->mapArray($row);
   }
 
