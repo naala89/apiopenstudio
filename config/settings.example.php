@@ -2,11 +2,8 @@
 
 $settings = [];
 
-/**
- * General settings.
- */
-
-ini_set("display_errors", "0");
+// Do not echo the errors
+ini_set('display_errors', '0');
 
 // Paths.
 $settings['root'] = dirname(__DIR__);
@@ -14,10 +11,15 @@ $settings['datagator'] = $settings['root'] . '/includes';
 $settings['temp'] = $settings['root'] . '/tmp';
 $settings['public'] = $settings['root'] . '/html';
 
+/**
+ * General settings.
+ */
+
 // Debug
+// Set your debug level and additional handlers in ['loggers']['gaterdata']['handlers']
 // @see https://github.com/Seldaek/monolog Monolog documentation.
 // @see https://github.com/theorchard/monolog-cascade Monolog Cascade documentation.
-$settings['log']['path'] = '/var/www/sites/admin.gaterdata.error.log';
+$settings['log']['path'] = '/var/log/apache2/admin.gaterdata.error.log';
 $settings['log']['settings'] = [
   'version' => 1,
   'formatters' => [
@@ -30,39 +32,62 @@ $settings['log']['settings'] = [
     ],
   ],
   'handlers' => [
-    'console' => [
+    'debug' => [
       'class' => 'Monolog\Handler\StreamHandler',
       'level' => 'DEBUG',
       'formatter' => 'spaced',
       'stream' => $settings['log']['path'],
     ],
-    'console' => [
+    'info' => [
+      'class' => 'Monolog\Handler\StreamHandler',
+      'level' => 'INFO',
+      'formatter' => 'spaced',
+      'stream' => $settings['log']['path'],
+    ],
+    'notice' => [
+      'class' => 'Monolog\Handler\StreamHandler',
+      'level' => 'NOTICE',
+      'formatter' => 'spaced',
+      'stream' => $settings['log']['path'],
+    ],
+    'warning' => [
+      'class' => 'Monolog\Handler\StreamHandler',
+      'level' => 'WARNING',
+      'formatter' => 'spaced',
+      'stream' => $settings['log']['path'],
+    ],
+    'error' => [
       'class' => 'Monolog\Handler\StreamHandler',
       'level' => 'ERROR',
       'formatter' => 'spaced',
       'stream' => $settings['log']['path'],
     ],
-//    'info_file_handler' => [
-//      'class' => 'Monolog\Handler\StreamHandler',
-//      'level' => 'INFO',
-//      'formatter' => 'dashed',
-//      'stream' => './demo_info.log'
-//    ],
-//    'error_file_handler' => [
-//      'class' => 'Monolog\Handler\StreamHandler',
-//      'level' => 'ERROR',
-//      'stream' => './demo_error.log',
-//      'formatter' => 'spaced'
-//    ],
-  ],
-  'processors' => [
-    'tag_processor' => [
-      'class' => 'Monolog\Processor\TagProcessor'
+    'critical' => [
+      'class' => 'Monolog\Handler\StreamHandler',
+      'level' => 'CRITICAL',
+      'formatter' => 'spaced',
+      'stream' => $settings['log']['path'],
+    ],
+    'alert' => [
+      'class' => 'Monolog\Handler\StreamHandler',
+      'level' => 'ALERT',
+      'formatter' => 'spaced',
+      'stream' => $settings['log']['path'],
+    ],
+    'emergency' => [
+      'class' => 'Monolog\Handler\StreamHandler',
+      'level' => 'EMERGENCY',
+      'formatter' => 'spaced',
+      'stream' => $settings['log']['path'],
+    ],
+    'stderr' => [
+      'class' => 'Monolog\Handler\ErrorLogHandler',
+      'formatter' => 'spaced',
     ],
   ],
   'loggers' => [
     'gaterdata' => [
-      'handlers' => ['console'],
+      'handlers' => ['debug'],
     ],
   ],
 ];
@@ -74,8 +99,8 @@ $settings['db'] = [
   'driver' => 'mysqli',
   'host' => 'localhost',
   'username' => 'root',
-  'password' => '',
-  'database' => 'test',
+  'password' => 'secret',
+  'database' => 'gaterdata',
   'options' => [
     'debug' => FALSE,
   ],

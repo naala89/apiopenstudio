@@ -50,7 +50,7 @@ class User {
       . $dbSettings['database'] . $dsnOptions;
     $this->db = ADONewConnection($dsn);
     if (!$this->db) {
-      throw new ApiException($this->db->ErrorMsg());
+      Cascade::getLogger('gaterdata')->error($this->db->ErrorMsg());
     }
   }
 

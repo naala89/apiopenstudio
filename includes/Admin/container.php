@@ -4,8 +4,6 @@ use Slim\Container;
 use Slim\Views\TwigExtension;
 use Slim\Http\Uri;
 use Slim\Views\Twig;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
 use Datagator\Admin\Controllers\CtrlUser;
 use Datagator\Admin\Controllers\CtrlApplication;
 use Datagator\Admin\Controllers\CtrlLogin;
@@ -39,25 +37,6 @@ $container['view'] = function (Container $container) {
   $twig->addExtension(new TwigExtension($router, $uri));
 
   return $twig;
-};
-
-/**
- * Register Logger helper.
- *
- * @param \Slim\Container $container
- *   Slim container.
- *
- * @return \Monolog\Logger
- *   Logger object.
- */
-$container['Logger'] = function(Container $container) {
-  $settings = $container->get('settings');
-  $logger = new Logger('log');
-  $formatter = new LineFormatter(null, null, false, true);
-  $handler = new StreamHandler($settings['log']['path'], $settings['log']['level']);
-  $handler->setFormatter($formatter);
-  $logger->pushHandler($handler);
-  $logger->debug('Logger started.');
 };
 
 /**
