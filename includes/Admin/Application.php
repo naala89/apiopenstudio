@@ -68,8 +68,12 @@ class Application {
       return FALSE;
     }
 
-    $application = $applicationMapper->findByName($name);
-    $appId = $application->getAppId();
+    try {
+      $application = $applicationMapper->findByName($name);
+      $appId = $application->getAppId();
+    } catch (ApiException $e) {
+      return FALSE;
+    }
     return empty($appId) ? FALSE : $appId;
   }
 
@@ -84,7 +88,11 @@ class Application {
    */
   public function findByAccountId($accId) {
     $applicationMapper = new Db\ApplicationMapper($this->db);
-    $results = $applicationMapper->findByAccId($accId);
+    try {
+      $results = $applicationMapper->findByAccId($accId);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
     $applications = [];
     foreach ($results as $result) {
       $application = $result->dump();
@@ -107,8 +115,16 @@ class Application {
    */
   public function update($appId, $appName) {
     $applicationMapper = new Db\ApplicationMapper($this->db);
-    $application = $applicationMapper->findByAppId($appId);
-    $application->setName($appName);
+    try {
+      $application = $applicationMapper->findByAppId($appId);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
+    try {
+      $application->setName($appName);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
 
     try {
       $applicationMapper->save($application);
@@ -116,8 +132,6 @@ class Application {
       return FALSE;
     }
 
-    if (!$result) {
-    }
     return $appId;
   }
 
@@ -133,7 +147,11 @@ class Application {
   public function delete($appId) {
     $application = new Db\Application($appId, NULL, NULL);
     $applicationMapper = new Db\ApplicationMapper($this->db);
-    return $applicationMapper->delete($application);
+    try {
+      return $applicationMapper->delete($application);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
   }
 
 }
