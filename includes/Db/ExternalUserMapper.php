@@ -46,7 +46,6 @@ class ExternalUserMapper {
         $user->getDataField2(),
         $user->getDataField3(),
       );
-      $result = $this->db->Execute($sql, $bindParams);
     }
     else {
       $sql = 'UPDATE external_user SET appid = ?, external_id = ?, external_entity = ?, data_field_1 = ?, data_field_2 = ?, data_field_3 = ? WHERE id = ?';
@@ -59,12 +58,33 @@ class ExternalUserMapper {
         $user->getDataField3(),
         $user->getId(),
       );
-      $result = $this->db->Execute($sql, $bindParams);
     }
-    if (!$result) {
-      throw new ApiException($this->db->ErrorMsg(), 2);
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
     }
-    return TRUE;
+    throw new ApiException($this->db->ErrorMsg());
+  }
+
+  /**
+   * Delete an external user.
+   *
+   * @param \Datagator\Db\ExternalUser $externalUser
+   *   ExternalUser object.
+   *
+   * @return bool
+   *   Success.
+   *
+   * @throws \Datagator\Core\ApiException
+   */
+  public function delete(ExternalUser $externalUser) {
+    $sql = 'DELETE FROM external_user WHERE id = ?';
+    $bindParams = array($externalUser->getId());
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
+    }
+    throw new ApiException($this->db->ErrorMsg());
   }
 
   /**

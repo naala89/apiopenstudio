@@ -2,6 +2,7 @@
 
 namespace Datagator\Db;
 
+use Cascade\Cascade;
 use Datagator\Core\Utilities;
 use Datagator\Core\ApiException;
 use ADOConnection;
@@ -135,7 +136,7 @@ class UserMapper {
    * @throws ApiException
    */
   public function findByUid($uid) {
-    $sql = 'SELECT * FROM user WHERE uid = ?';
+    $sql = 'SELET * FROM user WHERE uid = ?';
     $bindParams = array($uid);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
@@ -152,11 +153,16 @@ class UserMapper {
    *
    * @return \Datagator\Db\User
    *   User object.
+   *
+   * @throws ApiException
    */
   public function findByEmail($email) {
     $sql = 'SELECT * FROM user WHERE email = ?';
     $bindParams = array($email);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
     return $this->mapArray($row);
   }
 
@@ -168,11 +174,16 @@ class UserMapper {
    *
    * @return \Datagator\Db\User
    *   User object.
+   *
+   * @throws ApiException
    */
   public function findByUsername($username) {
     $sql = 'SELECT * FROM user WHERE username = ?';
     $bindParams = array($username);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
     return $this->mapArray($row);
   }
 
@@ -184,11 +195,16 @@ class UserMapper {
    *
    * @return \Datagator\Db\User
    *   User object.
+   *
+   * @throws ApiException
    */
   public function findBytoken($token) {
     $sql = 'SELECT * FROM user WHERE token = ? AND token_ttl > ?';
     $bindParams = array($token, Utilities::mysqlNow());
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
     return $this->mapArray($row);
   }
 
@@ -204,11 +220,16 @@ class UserMapper {
    *
    * @return bool
    *   Result.
+   *
+   * @throws ApiException
    */
   public function hasRole($uid, $appId, $rid) {
     $sql = 'SELECT u.* FROM user AS u INNER JOIN user_role AS ur ON u.uid=ur.uid WHERE u.uid=? AND ur.appid=? AND ur.rid=?';
     $bindParams = array($uid, $appId, $rid);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
     return !empty($row['uid']);
   }
 

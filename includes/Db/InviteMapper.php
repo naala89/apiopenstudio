@@ -43,7 +43,6 @@ class InviteMapper {
         $invite->getEmail(),
         $invite->getToken(),
       );
-      $result = $this->db->Execute($sql, $bindParams);
     }
     else {
       $sql = 'UPDATE invite SET accid= ?, email = ?, token = ? WHERE iid = ?';
@@ -53,12 +52,12 @@ class InviteMapper {
         $invite->getToken(),
         $invite->getIid(),
       );
-      $result = $this->db->Execute($sql, $bindParams);
     }
-    if (!$result) {
-      throw new ApiException($this->db->ErrorMsg(), 2);
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
     }
-    return TRUE;
+    throw new ApiException($this->db->ErrorMsg());
   }
 
   /**
@@ -75,11 +74,11 @@ class InviteMapper {
   public function delete(Invite $invite) {
     $sql = 'DELETE FROM invite WHERE iid = ?';
     $bindParams = array($invite->getIid());
-    $result = $this->db->Execute($sql, $bindParams);
-    if (!$result) {
-      throw new ApiException($this->db->ErrorMsg(), 2);
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
     }
-    return TRUE;
+    throw new ApiException($this->db->ErrorMsg());
   }
 
   /**
@@ -90,11 +89,16 @@ class InviteMapper {
    *
    * @return \Datagator\Db\Invite
    *   Invite object.
+   *
+   * @throws ApiException
    */
   public function findById($invite) {
     $sql = 'SELECT * FROM invite WHERE id = ?';
     $bindParams = array($invite);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
     return $this->mapArray($row);
   }
 
@@ -102,15 +106,19 @@ class InviteMapper {
    * Find an invite by email.
    *
    * @param string $email
-   *   Invite email.
-   *
+   *   Invite emaill
    * @return array
    *   Array of \Datagator\Db\Invite.
+   *
+   * @throws ApiException
    */
   public function findByEmail($email) {
     $sql = 'SELECT * FROM invite WHERE email = ?';
     $bindParams = [$email];
     $recordSet = $this->db->Execute($sql, $bindParams);
+    if (!$recordSet) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
 
     $entries = [];
     while ($row = $recordSet->fetchRow()) {
@@ -128,11 +136,16 @@ class InviteMapper {
    *
    * @return \Datagator\Db\Invite
    *   Invite object.
+   *
+   * @throws ApiException
    */
   public function findByToken($token) {
     $sql = 'SELECT * FROM invite WHERE token = ?';
     $bindParams = [$token];
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
     return $this->mapArray($row);
   }
 
@@ -141,17 +154,21 @@ class InviteMapper {
    *
    * @param string $email
    *   Invite email.
-   *
    * @param string $token
    *   Invite token.
    *
    * @return \Datagator\Db\Invite
    *   Invite object.
+   *
+   * @throws ApiException
    */
   public function findByEmailToken($email, $token) {
     $sql = 'SELECT * FROM invite WHERE email = ? AND token = ?';
     $bindParams = [$email, $token];
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      throw new ApiException($this->db->ErrorMsg());
+    }
     return $this->mapArray($row);
   }
 

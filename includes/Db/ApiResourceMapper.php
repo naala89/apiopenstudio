@@ -47,7 +47,6 @@ class ApiResourceMapper {
         $resource->getMeta(),
         $resource->getTtl(),
       );
-      $result = $this->db->Execute($sql, $bindParams);
     }
     else {
       $sql = 'UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, identifier = ?, meta = ?, ttl = ? WHERE id = ?';
@@ -61,12 +60,12 @@ class ApiResourceMapper {
         $resource->getTtl(),
         $resource->getId(),
       );
-      $result = $this->db->Execute($sql, $bindParams);
     }
-    if (!$result) {
-      throw new ApiException($this->db->ErrorMsg(), 2);
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
     }
-    return TRUE;
+    throw new ApiException($this->db->ErrorMsg());
   }
 
   /**
@@ -86,11 +85,11 @@ class ApiResourceMapper {
     }
     $sql = 'DELETE FROM resource WHERE id = ?';
     $bindParams = array($resource->getId());
-    $result = $this->db->Execute($sql, $bindParams);
-    if (!$result) {
-      throw new ApiException($this->db->ErrorMsg(), 2);
+    $this->db->Execute($sql, $bindParams);
+    if ($this->db->affected_rows() !== 0) {
+      return TRUE;
     }
-    return TRUE;
+    throw new ApiException($this->db->ErrorMsg());
   }
 
   /**
