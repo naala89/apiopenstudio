@@ -10,7 +10,19 @@ $settings = require dirname(dirname(__DIR__)) . '/config/settings.php';
 
 // Create logger
 Cascade::fileConfig($settings['log']['settings']);
-Cascade::getLogger('gaterdata')->debug('testing');
+
+// Get the user's origin and next step.
+$from = isset($_POST['from_step']) ? $_POST['from_step'] : 0;
+$step = isset($_POST['next_step']) ? $_POST['next_step'] : 0;
+
+// User will start not logged in.
+$menu = ['Login' => '/'];
+
+// Twig definition.
+$loader = new Twig_Loader_Filesystem($settings['twig']['path']);
+$twig = new Twig_Environment($loader/*, array(
+  'cache' => $settings['twig']['cache_path'],
+)*/);
 
 // DB link.
 $dsnOptionsArr = [];
@@ -24,6 +36,7 @@ $dsn = $settings['db']['driver'] . '://'
   . $settings['db']['host'] . '/'
   . $settings['db']['database'] . $dsnOptions;
 $db = ADONewConnection($dsn);
+
 if (!$db) {
   $message = [
     'type' => 'error',
@@ -33,19 +46,6 @@ if (!$db) {
   echo $template->render(['message' => $message, 'menu' => $menu]);
   exit;
 }
-
-// Twig definition.
-$loader = new Twig_Loader_Filesystem($settings['twig']['path']);
-$twig = new Twig_Environment($loader/*, array(
-  'cache' => $settings['twig']['cache_path'],
-)*/);
-
-// User will start not logged in.
-$menu = ['Login' => '/'];
-
-// Get the user's origin and next step.
-$from = isset($_POST['from_step']) ? $_POST['from_step'] : 0;
-$step = isset($_POST['next_step']) ? $_POST['next_step'] : 0;
 
 switch ($step) {
   case 0:
