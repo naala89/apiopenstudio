@@ -50,7 +50,7 @@ class User {
       . $dbSettings['database'] . $dsnOptions;
     $this->db = ADONewConnection($dsn);
     if (!$this->db) {
-      Cascade::getLogger('gaterdata')->error($this->db->ErrorMsg());
+      throw new ApiException('DB connection failed.');
     }
   }
 
@@ -228,7 +228,11 @@ class User {
    */
   public function findByUserId($uid) {
     $userMapper = new Db\UserMapper($this->db);
-    $user = $userMapper->findByUid($uid);
+    try {
+      $user = $userMapper->findByUid($uid);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
 
     if (empty($user->getUid())) {
       return FALSE;
@@ -249,7 +253,11 @@ class User {
    */
   public function findByEmail($email) {
     $userMapper = new Db\UserMapper($this->db);
-    $user = $userMapper->findByEmail($email);
+    try {
+      $user = $userMapper->findByEmail($email);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
 
     if (empty($user->getUid())) {
       return FALSE;
@@ -270,7 +278,11 @@ class User {
    */
   public function findByUsername($username) {
     $userMapper = new Db\UserMapper($this->db);
-    $user = $userMapper->findByUsername($username);
+    try {
+      $user = $userMapper->findByUsername($username);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
 
     if (empty($user->getUid())) {
       return FALSE;
@@ -295,7 +307,11 @@ class User {
     }
 
     $accountMapper = new Db\AccountMapper($this->db);
-    $account = $accountMapper->findByAccId($accid);
+    try {
+      $account = $accountMapper->findByAccId($accid);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
     if (empty($account->getAccId())) {
       return FALSE;
     }
@@ -308,7 +324,11 @@ class User {
       return FALSE;
     }
 
-    $userAccount = $userAccountMapper->findByUidAccId($this->user->getUid(), $accid);
+    try {
+      $userAccount = $userAccountMapper->findByUidAccId($this->user->getUid(), $accid);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
     if (empty($userAccount->getUaid())) {
       return FALSE;
     }
@@ -327,7 +347,11 @@ class User {
    */
   public function assignToAccountName($accountName) {
     $accountMapper = new Db\AccountMapper($this->db);
-    $account = $accountMapper->findByName($accountName);
+    try {
+      $account = $accountMapper->findByName($accountName);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
     if (empty($account->getAccId())) {
       return FALSE;
     }
@@ -350,21 +374,33 @@ class User {
   public function assignRole($roleName, $accountName, $applicationName = NULL) {
     // Find the role.
     $roleMapper = new Db\RoleMapper($this->db);
-    $role = $roleMapper->findByName($roleName);
+    try {
+      $role = $roleMapper->findByName($roleName);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
     if (empty($role->getRid())) {
       return FALSE;
     }
 
     // Find the account.
     $accountMapper = new Db\AccountMapper($this->db);
-    $account = $accountMapper->findByName($accountName);
+    try {
+      $account = $accountMapper->findByName($accountName);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
     if (empty($account->getAccId())) {
       return FALSE;
     }
 
     // Find the user account.
     $userAccountMapper = new Db\UserAccountMapper($this->db);
-    $userAccount = $userAccountMapper->findByUidAccId($this->user->getUid(), $account->getAccId());
+    try {
+      $userAccount = $userAccountMapper->findByUidAccId($this->user->getUid(), $account->getAccId());
+    } catch (ApiException $e) {
+      return FALSE;
+    }
     if (empty($userAccount->getUaid())) {
       return FALSE;
     }
@@ -373,7 +409,11 @@ class User {
     $appid = NULL;
     if (!empty($applicationName)) {
       $applicationMapper = new Db\ApplicationMapper($this->db);
-      $application = $applicationMapper->findByAccIdName($account->getAccId(), $applicationName);
+      try {
+        $application = $applicationMapper->findByAccIdName($account->getAccId(), $applicationName);
+      } catch (ApiException $e) {
+        return FALSE;
+      }
       $appid = $application->getAppId();
     }
 
@@ -400,20 +440,32 @@ class User {
   public function findRoles($accid) {
     // Find the user account.
     $userAccountMapper = new Db\UserAccountMapper($this->db);
-    $userAccount = $userAccountMapper->findByUidAccId($this->user->getUid(), $accid);
+    try {
+      $userAccount = $userAccountMapper->findByUidAccId($this->user->getUid(), $accid);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
     if (empty($uaid = $userAccount->getUaid())) {
       return [];
     }
 
     // Find roles for the user account.
     $userAccountRoleMapper = new Db\UserAccountRoleMapper($this->db);
-    $userAccountRoles = $userAccountRoleMapper->findByUaid($uaid);
+    try {
+      $userAccountRoles = $userAccountRoleMapper->findByUaid($uaid);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
 
     // Find the role names for the user account roles.
     $roles = [];
     $roleMapper = new Db\RoleMapper($this->db);
     foreach ($userAccountRoles as $userAccountRole) {
-      $role = $roleMapper->findByRid($userAccountRole->getRid());
+      try {
+        $role = $roleMapper->findByRid($userAccountRole->getRid());
+      } catch (ApiException $e) {
+        return FALSE;
+      }
       $roles[] = $role->getName();
     }
 

@@ -74,7 +74,11 @@ class Account {
       return FALSE;
     }
 
-    $this->account = $accountMapper->findByName($name);
+    try {
+      $this->account = $accountMapper->findByName($name);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
     if (empty($this->account->getAccId())) {
       return FALSE;
     }
@@ -103,7 +107,11 @@ class Account {
    */
   public function findByAccountId($accId) {
     $accountMapper = new Db\AccountMapper($this->db);
-    $this->account = $accountMapper->findByAccId($accId);
+    try {
+      $this->account = $accountMapper->findByAccId($accId);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
     return $this->account->dump();
   }
 

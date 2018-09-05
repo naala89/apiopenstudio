@@ -57,7 +57,11 @@ class Role {
   public function findAll() {
     $roles = [];
     $roleMapper = new RoleMapper($this->db);
-    $results = $roleMapper->findAll();
+    try {
+      $results = $roleMapper->findAll();
+    } catch (ApiException $e) {
+      return FALSE;
+    }
     foreach ($results as $result) {
       $role = $result->dump();
       $roles[$role['rid']] = $role;
@@ -76,7 +80,11 @@ class Role {
    */
   public function findByRid($rid) {
     $roleMapper = new RoleMapper($this->db);
-    $role = $roleMapper->findByRid($rid);
+    try {
+      $role = $roleMapper->findByRid($rid);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
     return $role->dump();
   }
 
@@ -91,7 +99,11 @@ class Role {
    */
   public function findByName($name) {
     $roleMapper = new RoleMapper($this->db);
-    $role = $roleMapper->findByName($name);
+    try {
+      $role = $roleMapper->findByName($name);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
     return $role->dump();
   }
 
