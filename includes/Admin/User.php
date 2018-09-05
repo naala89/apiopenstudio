@@ -230,6 +230,7 @@ class User {
     $userMapper = new Db\UserMapper($this->db);
     try {
       $user = $userMapper->findByUid($uid);
+      var_dump($user);exit;
     } catch (ApiException $e) {
       return FALSE;
     }

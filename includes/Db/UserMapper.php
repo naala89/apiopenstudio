@@ -6,6 +6,7 @@ use Cascade\Cascade;
 use Datagator\Core\Utilities;
 use Datagator\Core\ApiException;
 use ADOConnection;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 
 /**
  * Class UserMapper.
