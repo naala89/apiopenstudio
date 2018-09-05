@@ -5,6 +5,7 @@ require_once dirname(__DIR__) . '/../vendor/autoload.php';
 use Datagator\Admin\User;
 use Datagator\Admin\Account;
 use Cascade\Cascade;
+use Datagator\Core\ApiException;
 
 $settings = require dirname(dirname(__DIR__)) . '/config/settings.php';
 
@@ -159,25 +160,29 @@ switch ($step) {
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
-      $user = new User($settings['db']);
-      $newUser = $user->create(
-        !empty($_POST['username']) ? $_POST['username'] : NULL,
-        !empty($_POST['password']) ? $_POST['password'] : NULL,
-        !empty($_POST['email']) ? $_POST['email'] : NULL,
-        !empty($_POST['honorific']) ? $_POST['honorific'] : NULL,
-        !empty($_POST['name_first']) ? $_POST['name_first'] : NULL,
-        !empty($_POST['name_last']) ? $_POST['name_last'] : NULL,
-        !empty($_POST['company']) ? $_POST['company'] : NULL,
-        !empty($_POST['website']) ? $_POST['website'] : NULL,
-        !empty($_POST['address_street']) ? $_POST['address_street'] : NULL,
-        !empty($_POST['address_suburb']) ? $_POST['address_suburb'] : NULL,
-        !empty($_POST['address_city']) ? $_POST['address_city'] : NULL,
-        !empty($_POST['address_state']) ? $_POST['address_state'] : NULL,
-        !empty($_POST['address_country']) ? $_POST['address_country'] : NULL,
-        !empty($_POST['address_postcode']) ? $_POST['address_postcode'] : NULL,
-        !empty($_POST['phone_mobile']) ? $_POST['phone_mobile'] : 0,
-        !empty($_POST['phone_work']) ? $_POST['phone_work'] : 0
-      );
+      try {
+        $user = new User($settings['db']);
+        $newUser = $user->create(
+          !empty($_POST['username']) ? $_POST['username'] : NULL,
+          !empty($_POST['password']) ? $_POST['password'] : NULL,
+          !empty($_POST['email']) ? $_POST['email'] : NULL,
+          !empty($_POST['honorific']) ? $_POST['honorific'] : NULL,
+          !empty($_POST['name_first']) ? $_POST['name_first'] : NULL,
+          !empty($_POST['name_last']) ? $_POST['name_last'] : NULL,
+          !empty($_POST['company']) ? $_POST['company'] : NULL,
+          !empty($_POST['website']) ? $_POST['website'] : NULL,
+          !empty($_POST['address_street']) ? $_POST['address_street'] : NULL,
+          !empty($_POST['address_suburb']) ? $_POST['address_suburb'] : NULL,
+          !empty($_POST['address_city']) ? $_POST['address_city'] : NULL,
+          !empty($_POST['address_state']) ? $_POST['address_state'] : NULL,
+          !empty($_POST['address_country']) ? $_POST['address_country'] : NULL,
+          !empty($_POST['address_postcode']) ? $_POST['address_postcode'] : NULL,
+          !empty($_POST['phone_mobile']) ? $_POST['phone_mobile'] : 0,
+          !empty($_POST['phone_work']) ? $_POST['phone_work'] : 0
+        );
+      } catch (ApiException $exception) {
+        $newUser = FALSE;
+      }
 
       if (!$newUser) {
         // Failed to create the user
@@ -232,8 +237,12 @@ switch ($step) {
       }
 
       // Create the account.
-      $account = new Account($settings['db']);
-      $newAccount = $account->create($accountName);
+      try {
+        $account = new Account($settings['db']);
+        $newAccount = $account->create($accountName);
+      } catch (ApiException $e) {
+        $newAccount = FALSE;
+      }
       if (!$newAccount) {
         $message = [
           'type' => 'error',
@@ -245,8 +254,13 @@ switch ($step) {
       }
 
       // Assign the user to the account.
-      $user = new User($settings['db']);
-      $result = $user->findByUserId($uid);
+      try {
+        $user = new User($settings['db']);
+        $result = $user->findByUserId($uid);
+        var_dump($result);exit;
+      } catch (ApiException $e) {
+        $result = FALSE;
+      }
       if (!$result) {
         $message = [
           'type' => 'error',
@@ -256,7 +270,11 @@ switch ($step) {
         echo $template->render(['message' => $message, 'menu' => $menu, 'uid' => $uid]);
         exit;
       }
-      $result = $user->assignToAccountName($accountName);
+      try {
+        $result = $user->assignToAccountName($accountName);
+      } catch (ApiException $e) {
+        $result = FALSE;
+      }
       if (!$result) {
         $message = [
           'type' => 'error',
@@ -268,7 +286,11 @@ switch ($step) {
       }
 
       // Create the user 'Owner' role for the user account.
-      $result = $user->assignRole('Owner', $accountName);
+      try {
+        $result = $user->assignRole('Owner', $accountName);
+      } catch (ApiException $e) {
+        $result = FALSE;
+      }
       if (!$result) {
         $message = [
           'type' => 'error',

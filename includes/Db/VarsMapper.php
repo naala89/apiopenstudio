@@ -2,6 +2,7 @@
 
 namespace Datagator\Db;
 
+use Cascade\Cascade;
 use Datagator\Core\ApiException;
 use ADOConnection;
 
@@ -57,7 +58,9 @@ class VarsMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    throw new ApiException($this->db->ErrorMsg());
+    $message = $this->db->ErrorMsg();
+    Cascade::getLogger('gaterdata') ->error($message);
+    throw new ApiException($message, );
   }
 
   /**
