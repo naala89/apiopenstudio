@@ -140,7 +140,7 @@ class UserMapper {
    * @throws ApiException
    */
   public function findByUid($uid) {
-    $sql = 'SELET * FROM user WHERE uid = ?';
+    $sql = 'SELECT * FROM user WHERE uid = ?';
     $bindParams = array($uid);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
