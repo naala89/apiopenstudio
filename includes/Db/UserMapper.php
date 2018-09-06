@@ -100,7 +100,7 @@ class UserMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    $message = $this->db->ErrorMsg();
+    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
     Cascade::getLogger('gaterdata')->error($message);
     throw new ApiException($message, 2);
   }
@@ -123,7 +123,7 @@ class UserMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    $message = $this->db->ErrorMsg();
+    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
     Cascade::getLogger('gaterdata')->error($message);
     throw new ApiException($message, 2);
   }
@@ -140,11 +140,11 @@ class UserMapper {
    * @throws ApiException
    */
   public function findByUid($uid) {
-    $sql = 'SELECT * FROM user WHERE uid = ?';
+    $sql = 'SELET * FROM user WHERE uid = ?';
     $bindParams = array($uid);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      $message = $this->db->ErrorMsg();
+      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
     }
@@ -167,7 +167,7 @@ class UserMapper {
     $bindParams = array($email);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      $message = $this->db->ErrorMsg();
+      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
     }
@@ -190,7 +190,7 @@ class UserMapper {
     $bindParams = array($username);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      $message = $this->db->ErrorMsg();
+      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
     }
@@ -213,7 +213,7 @@ class UserMapper {
     $bindParams = array($token, Utilities::mysqlNow());
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      $message = $this->db->ErrorMsg();
+      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
     }
@@ -240,7 +240,7 @@ class UserMapper {
     $bindParams = array($uid, $appId, $rid);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      $message = $this->db->ErrorMsg();
+      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
     }

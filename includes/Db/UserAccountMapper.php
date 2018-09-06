@@ -56,7 +56,7 @@ class UserAccountMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    $message = $this->db->ErrorMsg();
+    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
     Cascade::getLogger('gaterdata')->error($message);
     throw new ApiException($message, 2);
   }
@@ -79,7 +79,7 @@ class UserAccountMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    $message = $this->db->ErrorMsg();
+    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
     Cascade::getLogger('gaterdata')->error($message);
     throw new ApiException($message, 2);
   }
@@ -100,7 +100,7 @@ class UserAccountMapper {
     $bindParams = array($uaid);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      $message = $this->db->ErrorMsg();
+      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
     }
@@ -125,7 +125,7 @@ class UserAccountMapper {
     $bindParams = array($uid, $accid);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      $message = $this->db->ErrorMsg();
+      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
     }
