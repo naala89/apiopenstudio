@@ -59,8 +59,8 @@ class VarsMapper {
       return TRUE;
     }
     $message = $this->db->ErrorMsg();
-    Cascade::getLogger('gaterdata') ->error($message);
-    throw new ApiException($message, );
+    Cascade::getLogger('gaterdata')->error($message);
+    throw new ApiException($message, 2);
   }
 
   /**
@@ -84,7 +84,9 @@ class VarsMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    throw new ApiException($this->db->ErrorMsg());
+    $message = $this->db->ErrorMsg();
+    Cascade::getLogger('gaterdata')->error($message);
+    throw new ApiException($message, 2);
   }
 
   /**
@@ -95,11 +97,18 @@ class VarsMapper {
    *
    * @return \Datagator\Db\Vars
    *   Vars object.
+   *
+   * @throws ApiException
    */
   public function findById($id) {
     $sql = 'SELECT * FROM vars WHERE id = ?';
     $bindParams = array($id);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
+    }
     return $this->mapArray($row);
   }
 
@@ -113,11 +122,18 @@ class VarsMapper {
    *
    * @return \Datagator\Db\Vars
    *   Vars object.
+   *
+   * @throws ApiException
    */
   public function findByAppIdName($appId, $name) {
     $sql = 'SELECT * FROM vars WHERE appid = ? AND name = ?';
     $bindParams = array($appId, $name);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
+    }
     return $this->mapArray($row);
   }
 
@@ -129,12 +145,19 @@ class VarsMapper {
    *
    * @return array
    *   Array of Vars objects.
+   *
+   * @throws ApiException
    */
   public function findByAppId($appId) {
     $sql = 'SELECT * FROM vars WHERE appid = ?';
     $bindParams = array($appId);
 
     $recordSet = $this->db->Execute($sql, $bindParams);
+    if (!$recordSet) {
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
+    }
 
     $entries = array();
     while (!$recordSet->EOF) {

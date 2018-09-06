@@ -4,6 +4,7 @@ namespace Datagator\Db;
 
 use Datagator\Core\ApiException;
 use ADOConnection;
+use Cascade\Cascade;
 
 /**
  * Class ExternalUserMapper.
@@ -63,7 +64,9 @@ class ExternalUserMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    throw new ApiException($this->db->ErrorMsg());
+    $message = $this->db->ErrorMsg();
+    Cascade::getLogger('gaterdata')->error($message);
+    throw new ApiException($message, 2);
   }
 
   /**
@@ -84,7 +87,9 @@ class ExternalUserMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    throw new ApiException($this->db->ErrorMsg());
+    $message = $this->db->ErrorMsg();
+    Cascade::getLogger('gaterdata')->error($message);
+    throw new ApiException($message, 2);
   }
 
   /**
@@ -95,11 +100,18 @@ class ExternalUserMapper {
    *
    * @return \Datagator\Db\ExternalUser
    *   External user object.
+   *
+   * @throws ApiException
    */
   public function findById($id) {
     $sql = 'SELECT * FROM external_user WHERE id = ?';
     $bindParams = array($id);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
+    }
     return $this->mapArray($row);
   }
 
@@ -115,11 +127,18 @@ class ExternalUserMapper {
    *
    * @return \Datagator\Db\ExternalUser
    *   External user object.
+   *
+   * @throws ApiException
    */
   public function findByAppIdEntityExternalId($appId, $externalEntity, $externalId) {
     $sql = 'SELECT * FROM external_user WHERE appid = ? AND external_entity = ? AND external_id = ?';
     $bindParams = array($appId, $externalEntity, $externalId);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
+    }
     return $this->mapArray($row);
   }
 
@@ -131,12 +150,19 @@ class ExternalUserMapper {
    *
    * @return array
    *   External user object.
+   *
+   * @throws ApiException
    */
   public function findByAppid($appId) {
     $sql = 'SELECT * FROM external_user WHERE appid = ?';
     $bindParams = array($appId);
 
     $recordSet = $this->db->Execute($sql, $bindParams);
+    if (!$recordSet) {
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
+    }
 
     $entries = array();
     while (!$recordSet->EOF) {

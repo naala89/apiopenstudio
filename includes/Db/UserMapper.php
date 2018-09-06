@@ -6,7 +6,6 @@ use Cascade\Cascade;
 use Datagator\Core\Utilities;
 use Datagator\Core\ApiException;
 use ADOConnection;
-use Symfony\Component\Finder\Exception\AccessDeniedException;
 
 /**
  * Class UserMapper.
@@ -101,7 +100,9 @@ class UserMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    throw new ApiException($this->db->ErrorMsg());
+    $message = $this->db->ErrorMsg();
+    Cascade::getLogger('gaterdata')->error($message);
+    throw new ApiException($message, 2);
   }
 
   /**
@@ -122,7 +123,9 @@ class UserMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    throw new ApiException($this->db->ErrorMsg());
+    $message = $this->db->ErrorMsg();
+    Cascade::getLogger('gaterdata')->error($message);
+    throw new ApiException($message, 2);
   }
 
   /**
@@ -137,11 +140,13 @@ class UserMapper {
    * @throws ApiException
    */
   public function findByUid($uid) {
-    $sql = 'SELET * FROM user WHERE uid = ?';
+    $sql = 'SELECT * FROM user WHERE uid = ?';
     $bindParams = array($uid);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      throw new ApiException($this->db->ErrorMsg());
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
     }
     return $this->mapArray($row);
   }
@@ -162,7 +167,9 @@ class UserMapper {
     $bindParams = array($email);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      throw new ApiException($this->db->ErrorMsg());
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
     }
     return $this->mapArray($row);
   }
@@ -183,7 +190,9 @@ class UserMapper {
     $bindParams = array($username);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      throw new ApiException($this->db->ErrorMsg());
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
     }
     return $this->mapArray($row);
   }
@@ -204,7 +213,9 @@ class UserMapper {
     $bindParams = array($token, Utilities::mysqlNow());
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      throw new ApiException($this->db->ErrorMsg());
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
     }
     return $this->mapArray($row);
   }
@@ -229,7 +240,9 @@ class UserMapper {
     $bindParams = array($uid, $appId, $rid);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      throw new ApiException($this->db->ErrorMsg());
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
     }
     return !empty($row['uid']);
   }

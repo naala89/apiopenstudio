@@ -15,7 +15,7 @@ class ApiException extends Exception {
    *
    * @param string $message
    *   [optional] The Exception message to throw.
-   * @param int|string $code
+   * @param int $code
    *   [optional] The Exception code.
    * @param string|int $processor
    *   The processor where the error occurred.
@@ -24,16 +24,7 @@ class ApiException extends Exception {
    * @param \Exception $previous
    *   [optional] The previous exception used for the exception chaining. Since 5.3.0
    */
-  public function __construct($message = '', $code = 'ERROR', $processor = -1, $htmlCode = 400, Exception $previous = null) {
-    if (is_string($code)) {
-      $code = strtoupper($code);
-      if (defined("Logger::$code")) {
-        $code = Logger::$code;
-      } else {
-        $code = Logger::ERROR;
-      }
-    }
-
+  public function __construct($message = 'Unknown error', $code = 0, $processor = -1, $htmlCode = 400, Exception $previous = null) {
     $this->processor = $processor;
     $this->htmlCode = $htmlCode;
     parent::__construct($message, $code, $previous);

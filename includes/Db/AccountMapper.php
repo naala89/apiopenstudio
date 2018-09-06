@@ -4,6 +4,7 @@ namespace Datagator\Db;
 
 use Datagator\Core\ApiException;
 use ADOConnection;
+use Cascade\Cascade;
 
 /**
  * Class AccountMapper.
@@ -53,7 +54,9 @@ class AccountMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    throw new ApiException($this->db->ErrorMsg());
+    $message = $this->db->ErrorMsg();
+    Cascade::getLogger('gaterdata')->error($message);
+    throw new ApiException($message, 2);
   }
 
   /**
@@ -75,7 +78,9 @@ class AccountMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    throw new ApiException($this->db->ErrorMsg());
+    $message = $this->db->ErrorMsg();
+    Cascade::getLogger('gaterdata')->error($message);
+    throw new ApiException($message, 2);
   }
 
   /**
@@ -94,7 +99,9 @@ class AccountMapper {
     $bindParams = array($accid);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      throw new ApiException($this->db->ErrorMsg());
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
     }
     return $this->mapArray($row);
   }
@@ -115,7 +122,9 @@ class AccountMapper {
     $bindParams = array($name);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      throw new ApiException($this->db->ErrorMsg());
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
     }
     return $this->mapArray($row);
   }
@@ -138,7 +147,9 @@ class AccountMapper {
     $bindParams = array($accid, $uid);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      throw new ApiException($this->db->ErrorMsg());
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
     }
     return $this->mapArray($row);
   }
