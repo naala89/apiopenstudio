@@ -242,7 +242,6 @@ switch ($step) {
         $newAccount = $account->create($accountName);
       } catch (ApiException $e) {
         $newAccount = FALSE;
-        echo "hi";exit;
       }
       if (!$newAccount) {
         $message = [

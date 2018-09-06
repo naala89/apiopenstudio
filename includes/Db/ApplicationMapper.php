@@ -124,7 +124,6 @@ class ApplicationMapper {
     $sql = 'SELECT * FROM application WHERE accid = ? AND name = ?';
     $bindParams = array($accid, $name);
     $row = $this->db->GetRow($sql, $bindParams);
-    var_dump($row);exit;
     if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);

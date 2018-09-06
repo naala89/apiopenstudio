@@ -13,9 +13,22 @@ use Slim\Views\Twig;
  * @package Datagator\Admin\Controllers
  */
 class CtrlBase {
+
+  /**
+   * @var array
+   */
   protected $dbSettings;
+  /**
+   * @var Twig
+   */
   protected $view;
+  /**
+   * @var array.
+   */
   protected $menu;
+  /**
+   * @var array
+   */
   protected $permittedRoles = [];
 
   /**
@@ -34,33 +47,27 @@ class CtrlBase {
   /**
    * Fetch the roles for a user account ID.
    *
-   * @param int $uid
-   *   User ID.
-   * @param int $accid
-   *   Account ID.
+   * @param int $uaid
+   *   User account ID.
    *
    * @return array
    *   Array of role names.
    */
-  protected function getRoles($uid, $accid) {
+  protected function getRoles($uaid) {
     $roleNames = [];
 
     // If no account, no roles.
-    if (empty($uid) || empty($accid)) {
+    if (empty($uaid)) {
       return $roleNames;
     }
 
     // Get user roles for a user account.
     try {
       $userHelper = new User($this->dbSettings);
+      return $userHelper->findRoles($uaid);
     } catch (ApiException $e) {
       return $roleNames;
     }
-    $result = $userHelper->findByUserId($uid);
-    if (!$result) {
-      return $roleNames;
-    }
-    return $userHelper->findRoles($accid);
   }
 
   /**

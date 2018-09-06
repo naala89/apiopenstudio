@@ -55,26 +55,29 @@ class Application {
    *   Success or failure of the operation.
    */
   public function create($accId, $name) {
-    $application = new Db\Application(
-      NULL,
-      $accId,
-      $name
-    );
-
-    $applicationMapper = new Db\ApplicationMapper($this->db);
     try {
+      $applicationMapper = new Db\ApplicationMapper($this->db);
+      $application = $applicationMapper->findByAccIdName($accId, $name);
+      if (!empty($application->getAccId())) {
+        // Application already exists.
+        return 'Application already exists.';
+      }
+    } catch (ApiException $e) {
+      return 'An error occurred at the DB level, please check the logs.';
+    }
+
+    try {
+      $application = new Db\Application(
+        NULL,
+        $accId,
+        $name
+      );
       $applicationMapper->save($application);
     } catch (ApiException $e) {
-      return FALSE;
+      return 'An error occurred at the DB level, please check the logs.';
     }
 
-    try {
-      $application = $applicationMapper->findByName($name);
-      $appId = $application->getAppId();
-    } catch (ApiException $e) {
-      return FALSE;
-    }
-    return empty($appId) ? FALSE : $appId;
+    return TRUE;
   }
 
   /**
@@ -87,8 +90,8 @@ class Application {
    *   Array of associative arrays of applications, indexed by appId.
    */
   public function findByAccountId($accId) {
-    $applicationMapper = new Db\ApplicationMapper($this->db);
     try {
+      $applicationMapper = new Db\ApplicationMapper($this->db);
       $results = $applicationMapper->findByAccId($accId);
     } catch (ApiException $e) {
       return FALSE;
@@ -100,6 +103,28 @@ class Application {
     }
 
     return $applications;
+  }
+
+  /**
+   * Find all an applications for an account.
+   *
+   * @param int $accId
+   *   ID of the account.
+   * @param int $appName
+   *   The application name.
+   *
+   * @return array
+   *   Array of associative arrays of applications, indexed by appId.
+   */
+  public function findByAccIdAppName($accId, $appName) {
+    try {
+      $applicationMapper = new Db\ApplicationMapper($this->db);
+      $result = $applicationMapper->findByAccIdName($accId, $appName);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
+
+    return  $result->dump();
   }
 
   /**

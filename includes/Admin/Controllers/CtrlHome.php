@@ -4,6 +4,8 @@ namespace Datagator\Admin\Controllers;
 
 use Datagator\Admin\Application;
 use Datagator\Admin\User;
+use Datagator\Admin\UserAccount;
+use Datagator\Core\ApiException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -15,20 +17,35 @@ use Slim\Http\Response;
 class CtrlHome extends CtrlBase {
 
   /**
-   * @param Request $request
-   * @param Response $response
+   * Home page.
+   *
+   * @param \Slim\Http\Request $request
+   *   Request object.
+   * @param \Slim\Http\Response $response
+   *   Response object.
    * @param array $args
+   *   Request args.
+   *
    * @return \Psr\Http\Message\ResponseInterface
-   * @throws \Datagator\Core\ApiException
    */
   public function index(Request $request, Response $response, array $args) {
-    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-    $accid = isset($_SESSION['accid']) ? $_SESSION['accid'] : '';
-    $roles = $this->getRoles($uid, $accid);
+    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
+    $roles = $this->getRoles($uaid);
     $menu = $this->getMenus($roles);
 
-    $applicationHlp = new Application($this->dbSettings);
-    $applications = $applicationHlp->findByAccountId($accid);
+    try {
+      $userAccountHlp = new UserAccount($this->dbSettings);
+      $userAccount = $userAccountHlp->findByUaid($uaid);
+      if (!$userAccount) {
+        $applications = [];
+      } else {
+        $applicationHlp = new Application($this->dbSettings);
+        $applications = $applicationHlp->findByAccountId($userAccount['accid']);
+      }
+    } catch(ApiException $e) {
+      // This will trap any exceptions while instantiating the helper classes, which may fail on DB connection.
+      $applications = [];
+    }
 
     return $this->view->render($response, 'home.twig', [
       'menu' => $menu,
