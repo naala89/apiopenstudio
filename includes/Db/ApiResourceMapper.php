@@ -112,7 +112,7 @@ class ApiResourceMapper {
     $sql = 'SELECT * FROM resource WHERE id = ?';
     $bindParams = array($id);
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
@@ -139,7 +139,7 @@ class ApiResourceMapper {
     $sql = 'SELECT r.* FROM resource AS r WHERE r.appid = ? AND r.method = ? AND r.identifier = ?';
     $bindParams = array($appid, $method, $identifier);
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);

@@ -143,7 +143,7 @@ class UserMapper {
     $sql = 'SELECT * FROM user WHERE uid = ?';
     $bindParams = array($uid);
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
@@ -166,7 +166,7 @@ class UserMapper {
     $sql = 'SELECT * FROM user WHERE email = ?';
     $bindParams = array($email);
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
@@ -189,7 +189,7 @@ class UserMapper {
     $sql = 'SELECT * FROM user WHERE username = ?';
     $bindParams = array($username);
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
@@ -212,7 +212,7 @@ class UserMapper {
     $sql = 'SELECT * FROM user WHERE token = ? AND token_ttl > ?';
     $bindParams = array($token, Utilities::mysqlNow());
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
@@ -239,7 +239,7 @@ class UserMapper {
     $sql = 'SELECT u.* FROM user AS u INNER JOIN user_role AS ur ON u.uid=ur.uid WHERE u.uid=? AND ur.appid=? AND ur.rid=?';
     $bindParams = array($uid, $appId, $rid);
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);

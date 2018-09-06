@@ -99,7 +99,7 @@ class UserAccount {
     return array(
       'uaid' => $this->uaid,
       'uid' => $this->uid,
-      'accidd' => $this->accid,
+      'accid' => $this->accid,
     );
   }
 

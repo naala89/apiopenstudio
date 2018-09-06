@@ -99,7 +99,7 @@ class UserAccountMapper {
     $sql = 'SELECT * FROM user_account WHERE uaid = ?';
     $bindParams = array($uaid);
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
@@ -124,7 +124,7 @@ class UserAccountMapper {
     $sql = 'SELECT * FROM user_account WHERE uid = ? AND accid = ?';
     $bindParams = array($uid, $accid);
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);

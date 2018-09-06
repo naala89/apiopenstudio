@@ -104,7 +104,7 @@ class VarsMapper {
     $sql = 'SELECT * FROM vars WHERE id = ?';
     $bindParams = array($id);
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
@@ -129,7 +129,7 @@ class VarsMapper {
     $sql = 'SELECT * FROM vars WHERE appid = ? AND name = ?';
     $bindParams = array($appId, $name);
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);

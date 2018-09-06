@@ -99,7 +99,7 @@ class ApplicationMapper {
     $sql = 'SELECT * FROM application WHERE appid = ?';
     $bindParams = array($appId);
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
@@ -124,7 +124,8 @@ class ApplicationMapper {
     $sql = 'SELECT * FROM application WHERE accid = ? AND name = ?';
     $bindParams = array($accid, $name);
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    var_dump($row);exit;
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);

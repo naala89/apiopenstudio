@@ -124,7 +124,7 @@ class RoleMapper {
     $sql = 'SELECT * FROM role WHERE rid = ?';
     $bindParams = array($rid);
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
@@ -147,7 +147,7 @@ class RoleMapper {
     $sql = 'SELECT * FROM role WHERE name = ?';
     $bindParams = array($name);
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
