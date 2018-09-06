@@ -242,6 +242,7 @@ switch ($step) {
         $newAccount = $account->create($accountName);
       } catch (ApiException $e) {
         $newAccount = FALSE;
+        echo "hi";exit;
       }
       if (!$newAccount) {
         $message = [
@@ -257,7 +258,6 @@ switch ($step) {
       try {
         $user = new User($settings['db']);
         $result = $user->findByUserId($uid);
-        var_dump($result);exit;
       } catch (ApiException $e) {
         $result = FALSE;
       }

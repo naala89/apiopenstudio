@@ -208,7 +208,6 @@ class User {
     } catch (ApiException $e) {
       return FALSE;
     }
-
     $this->user = $userMapper->findByUsername($username);
     if (empty($this->user->getUid())) {
       return FALSE;
@@ -228,13 +227,12 @@ class User {
    */
   public function findByUserId($uid) {
     $userMapper = new Db\UserMapper($this->db);
+
     try {
       $user = $userMapper->findByUid($uid);
-      var_dump($user);exit;
     } catch (ApiException $e) {
       return FALSE;
     }
-
     if (empty($user->getUid())) {
       return FALSE;
     }
@@ -254,12 +252,12 @@ class User {
    */
   public function findByEmail($email) {
     $userMapper = new Db\UserMapper($this->db);
+
     try {
       $user = $userMapper->findByEmail($email);
     } catch (ApiException $e) {
       return FALSE;
     }
-
     if (empty($user->getUid())) {
       return FALSE;
     }
@@ -279,12 +277,12 @@ class User {
    */
   public function findByUsername($username) {
     $userMapper = new Db\UserMapper($this->db);
+
     try {
       $user = $userMapper->findByUsername($username);
     } catch (ApiException $e) {
       return FALSE;
     }
-
     if (empty($user->getUid())) {
       return FALSE;
     }
@@ -321,11 +319,6 @@ class User {
     $userAccountMapper = new Db\UserAccountMapper($this->db);
     try {
       $userAccountMapper->save($userAccount);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
-
-    try {
       $userAccount = $userAccountMapper->findByUidAccId($this->user->getUid(), $accid);
     } catch (ApiException $e) {
       return FALSE;

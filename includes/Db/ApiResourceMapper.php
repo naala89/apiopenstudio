@@ -4,6 +4,7 @@ namespace Datagator\Db;
 
 use Datagator\Core\ApiException;
 use ADOConnection;
+use Cascade\Cascade;
 
 /**
  * Class ApiResourceMapper.
@@ -65,7 +66,9 @@ class ApiResourceMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    throw new ApiException($this->db->ErrorMsg());
+    $message = $this->db->ErrorMsg();
+    Cascade::getLogger('gaterdata')->error($message);
+    throw new ApiException($message, 2);
   }
 
   /**
@@ -89,7 +92,9 @@ class ApiResourceMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    throw new ApiException($this->db->ErrorMsg());
+    $message = $this->db->ErrorMsg();
+    Cascade::getLogger('gaterdata')->error($message);
+    throw new ApiException($message, 2);
   }
 
   /**
@@ -100,11 +105,18 @@ class ApiResourceMapper {
    *
    * @return \Datagator\Db\ApiResource
    *   ApiResource object.
+   *
+   * @throws ApiException
    */
   public function findId($id) {
     $sql = 'SELECT * FROM resource WHERE id = ?';
     $bindParams = array($id);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
+    }
     return $this->mapArray($row);
   }
 
@@ -120,11 +132,18 @@ class ApiResourceMapper {
    *
    * @return \Datagator\Db\ApiResource
    *   ApiResource object.
+   *
+   * @throws ApiException
    */
   public function findByAppIdMethodIdentifier($appid, $method, $identifier) {
     $sql = 'SELECT r.* FROM resource AS r WHERE r.appid = ? AND r.method = ? AND r.identifier = ?';
     $bindParams = array($appid, $method, $identifier);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
+    }
     return $this->mapArray($row);
   }
 
@@ -140,6 +159,8 @@ class ApiResourceMapper {
    *
    * @return array
    *   Array of ApiResource objects.
+   *
+   * @throws ApiException
    */
   public function findByAppNamesMethodIdentifier($appNames, $method, $identifier) {
     $sql = 'SELECT r.* FROM resource AS r INNER JOIN application AS a ON r.appid=a.appid WHERE';
@@ -161,6 +182,11 @@ class ApiResourceMapper {
     $bindParams[] = $identifier;
 
     $recordSet = $this->db->Execute($sql, $bindParams);
+    if (!$recordSet) {
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
+    }
 
     $entries = array();
     while (!$recordSet->EOF) {
@@ -179,12 +205,19 @@ class ApiResourceMapper {
    *
    * @return array
    *   Array of ApiResource objects.
+   *
+   * @throws ApiException
    */
   public function findByAppId($appid) {
     $sql = 'SELECT * FROM resource WHERE appid = ?';
     $bindParams = array($appid);
 
     $recordSet = $this->db->Execute($sql, $bindParams);
+    if (!$recordSet) {
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
+    }
 
     $entries = array();
     while (!$recordSet->EOF) {

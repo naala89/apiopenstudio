@@ -4,6 +4,7 @@ namespace Datagator\Db;
 
 use Datagator\Core\ApiException;
 use ADOConnection;
+use Cascade\Cascade;
 
 /**
  * Class RoleMapper.
@@ -53,7 +54,9 @@ class RoleMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    throw new ApiException($this->db->ErrorMsg());
+    $message = $this->db->ErrorMsg();
+    Cascade::getLogger('gaterdata')->error($message);
+    throw new ApiException($message, 2);
   }
 
   /**
@@ -74,13 +77,15 @@ class RoleMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    throw new ApiException($this->db->ErrorMsg());
+    $message = $this->db->ErrorMsg();
+    Cascade::getLogger('gaterdata')->error($message);
+    throw new ApiException($message, 2);
   }
 
   /**
    * Find all roles.
    *
-   * @return \Datagator\Db\Role
+   * @return array
    *   Array of role objects.
    *
    * @throws ApiException
@@ -90,7 +95,9 @@ class RoleMapper {
 
     $recordSet = $this->db->Execute($sql);
     if (!$recordSet) {
-      throw new ApiException($this->db->ErrorMsg());
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
     }
 
     $entries = array();
@@ -118,7 +125,9 @@ class RoleMapper {
     $bindParams = array($rid);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      throw new ApiException($this->db->ErrorMsg());
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
     }
     return $this->mapArray($row);
   }
@@ -139,7 +148,9 @@ class RoleMapper {
     $bindParams = array($name);
     $row = $this->db->GetRow($sql, $bindParams);
     if (!$row) {
-      throw new ApiException($this->db->ErrorMsg());
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
     }
     return $this->mapArray($row);
   }

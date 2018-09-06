@@ -4,6 +4,7 @@ namespace Datagator\Db;
 
 use Datagator\Core\ApiException;
 use ADOConnection;
+use Cascade\Cascade;
 
 /**
  * Class ApplicationMapper.
@@ -55,7 +56,9 @@ class ApplicationMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    throw new ApiException($this->db->ErrorMsg());
+    $message = $this->db->ErrorMsg();
+    Cascade::getLogger('gaterdata')->error($message);
+    throw new ApiException($message, 2);
   }
 
   /**
@@ -76,7 +79,9 @@ class ApplicationMapper {
     if ($this->db->affected_rows() !== 0) {
       return TRUE;
     }
-    throw new ApiException($this->db->ErrorMsg());
+    $message = $this->db->ErrorMsg();
+    Cascade::getLogger('gaterdata')->error($message);
+    throw new ApiException($message, 2);
   }
 
   /**
@@ -87,11 +92,18 @@ class ApplicationMapper {
    *
    * @return \Datagator\Db\Application
    *   Application object.
+   *
+   * @throws ApiException
    */
   public function findByAppId($appId) {
     $sql = 'SELECT * FROM application WHERE appid = ?';
     $bindParams = array($appId);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
+    }
     return $this->mapArray($row);
   }
 
@@ -105,11 +117,18 @@ class ApplicationMapper {
    *
    * @return \Datagator\Db\Application
    *   Application object.
+   *
+   * @throws ApiException
    */
   public function findByAccIdName($accid, $name) {
     $sql = 'SELECT * FROM application WHERE accid = ? AND name = ?';
     $bindParams = array($accid, $name);
     $row = $this->db->GetRow($sql, $bindParams);
+    if (!$row) {
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
+    }
     return $this->mapArray($row);
   }
 
@@ -121,12 +140,19 @@ class ApplicationMapper {
    *
    * @return \Datagator\Db\Application
    *   Application object
+   *
+   * @throws ApiException
    */
   public function findByAccId($accId) {
     $sql = 'SELECT * FROM application WHERE accid = ?';
     $bindParams = array($accId);
 
     $recordSet = $this->db->Execute($sql, $bindParams);
+    if (!$recordSet) {
+      $message = $this->db->ErrorMsg();
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
+    }
 
     $entries = array();
     while (!$recordSet->EOF) {
