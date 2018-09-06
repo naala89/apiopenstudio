@@ -101,7 +101,7 @@ class UserAccountRoleMapper {
     $sql = 'SELECT * FROM user_account_role WHERE uarid = ?';
     $bindParams = array($uarid);
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);

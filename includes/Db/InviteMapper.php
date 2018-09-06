@@ -101,7 +101,7 @@ class InviteMapper {
     $sql = 'SELECT * FROM invite WHERE id = ?';
     $bindParams = array($invite);
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
@@ -152,7 +152,7 @@ class InviteMapper {
     $sql = 'SELECT * FROM invite WHERE token = ?';
     $bindParams = [$token];
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
@@ -177,7 +177,7 @@ class InviteMapper {
     $sql = 'SELECT * FROM invite WHERE email = ? AND token = ?';
     $bindParams = [$email, $token];
     $row = $this->db->GetRow($sql, $bindParams);
-    if (!$row) {
+    if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
