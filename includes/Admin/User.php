@@ -90,7 +90,7 @@ class User {
       return FALSE;
     }
 
-    // Validate user account and het user account ID.
+    // Validate user is assigned to the account.
     $userAccountMapper = new Db\UserAccountMapper($this->db);
     $userAccount = $userAccountMapper->findByUidAccId($uid, $accId);
     if (empty($uaid = $userAccount->getUaid())) {
@@ -114,8 +114,8 @@ class User {
       && Utilities::date_mysql2php($this->user->getTokenTtl()) > time()) {
       $this->user->setTokenTtl(Utilities::date_php2mysql(strtotime($ttl)));
       return [
-        'user' => $this->user->dump(),
-        'account' => $account->dump(),
+        'token' => $this->user->getToken(),
+        'uaid' => $userAccount->getUaid(),
       ];
     }
 
@@ -131,8 +131,8 @@ class User {
     }
 
     return [
-      'user' => $this->user->dump(),
-      'account' => $account->dump(),
+      'token' => $this->user->getToken(),
+      'uaid' => $userAccount->getUaid(),
     ];
   }
 

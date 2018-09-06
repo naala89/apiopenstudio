@@ -46,8 +46,7 @@ class CtrlLogin extends CtrlBase {
   public function logout(Request $request, Response $response, array $args) {
     $menu = $this->getMenus([]);
     unset($_SESSION['token']);
-    unset($_SESSION['uid']);
-    unset($_SESSION['accid']);
+    unset($_SESSION['uaid']);
     return $this->view->render($response, 'login.twig', ['menu' => $menu]);
   }
 

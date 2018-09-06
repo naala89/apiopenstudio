@@ -56,28 +56,23 @@ class Authentication {
         $userHelper = new User($this->settings['db']);
       } catch (ApiException $e) {
         unset($_SESSION['token']);
-        unset($_SESSION['uid']);
-        unset($_SESSION['accid']);
+        unset($_SESSION['uaid']);
         return $next($request, $response);
       }
 
-      $results = $userHelper->adminLogin($accountName, $username, $password, $this->settings['user']['token_life']);
-      if (!$results) {
+      $loginResult = $userHelper->adminLogin($accountName, $username, $password, $this->settings['user']['token_life']);
+      if (!$loginResult) {
         // Login failed.
         unset($_SESSION['token']);
-        unset($_SESSION['uid']);
-        unset($_SESSION['accid']);
+        unset($_SESSION['uaid']);
       } else {
-        $user = $results['user'];
-        $account = $results['account'];
-        $_SESSION['token'] = $user['token'];
-        $_SESSION['uid'] = $user['uid'];
-        $_SESSION['accid'] = $account['accid'];
+        $_SESSION['token'] = $loginResult['token'];
+        $_SESSION['uaid'] = $loginResult['uaid'];
       }
     }
 
     // Validate token.
-    if (!isset($_SESSION['token']) || !isset($_SESSION['uid']) || !isset($_SESSION['accid'])) {
+    if (!isset($_SESSION['token']) || !isset($_SESSION['uaid'])) {
       return $response = $response->withRedirect($uri);
     }
     return $next($request, $response);

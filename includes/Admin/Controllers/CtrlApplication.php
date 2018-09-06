@@ -30,7 +30,7 @@ class CtrlApplication extends CtrlBase {
    *   Response.
    */
   public function index(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
+    $uaid = isset($_SESSION['aid']) ? $_SESSION['uaid'] : '';
     $roles = $this->getRoles($uaid);
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
