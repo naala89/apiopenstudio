@@ -12,7 +12,7 @@ use Datagator\Core\Hash;
  *
  * @package Datagator\Admin
  */
-class User {
+class User{
 
   /**
    * @var array
@@ -423,29 +423,18 @@ class User {
   }
 
   /**
-   * Find roles for the user in an account by its account ID.
+   * Find roles for the user by their user account ID.
    *
-   * @param int $accid.
-   *   Account ID.
+   * @param int $uaid.
+   *   User account ID.
    *
    * @return array
    *   Array of mapped UserAccountRole objects.
    */
-  public function findRoles($accid) {
-    // Find the user account.
-    $userAccountMapper = new Db\UserAccountMapper($this->db);
-    try {
-      $userAccount = $userAccountMapper->findByUidAccId($this->user->getUid(), $accid);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
-    if (empty($uaid = $userAccount->getUaid())) {
-      return [];
-    }
-
+  public function findRoles($uaid) {
     // Find roles for the user account.
-    $userAccountRoleMapper = new Db\UserAccountRoleMapper($this->db);
     try {
+      $userAccountRoleMapper = new Db\UserAccountRoleMapper($this->db);
       $userAccountRoles = $userAccountRoleMapper->findByUaid($uaid);
     } catch (ApiException $e) {
       return FALSE;
@@ -453,14 +442,14 @@ class User {
 
     // Find the role names for the user account roles.
     $roles = [];
-    $roleMapper = new Db\RoleMapper($this->db);
-    foreach ($userAccountRoles as $userAccountRole) {
-      try {
+    try {
+      $roleMapper = new Db\RoleMapper($this->db);
+      foreach ($userAccountRoles as $userAccountRole) {
         $role = $roleMapper->findByRid($userAccountRole->getRid());
-      } catch (ApiException $e) {
-        return FALSE;
+        $roles[] = $role->getName();
       }
-      $roles[] = $role->getName();
+    } catch (ApiException $e) {
+      return FALSE;
     }
 
     return $roles;

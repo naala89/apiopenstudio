@@ -3,6 +3,7 @@
 namespace Datagator\Admin\Controllers;
 
 use Datagator\Admin\UserAccount;
+use Datagator\Core\ApiException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Datagator\Admin\Application;
@@ -17,7 +18,7 @@ class CtrlApplication extends CtrlBase {
   protected $permittedRoles = ['Owner'];
 
   /**
-   * Display the applications page.
+   * Applications page.
    *
    * @param \Slim\Http\Request $request
    *   Request object.
@@ -30,17 +31,22 @@ class CtrlApplication extends CtrlBase {
    *   Response.
    */
   public function index(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['aid']) ? $_SESSION['uaid'] : '';
+    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
     $roles = $this->getRoles($uaid);
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
     }
     $menu = $this->getMenus($roles);
 
-    $userAccountHlp = new UserAccount($this->dbSettings);
-    $userAccount = $userAccountHlp->findByUserAccountId($uaid);
-    $applicationHlp = new Application($this->dbSettings);
-    $applications = $applicationHlp->findByAccount($userAccount['accId']);
+    try {
+      $userAccountHlp = new UserAccount($this->dbSettings);
+      $userAccount = $userAccountHlp->findByUaid($uaid);
+      $applicationHlp = new Application($this->dbSettings);
+      $applications = $applicationHlp->findByAccountId($userAccount['accid']);
+    } catch (ApiException $e) {
+      // This will trap any exceptions while instantiating the helper classes, which may fail on DB connection.
+      $applications = [];
+    }
 
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
@@ -69,32 +75,47 @@ class CtrlApplication extends CtrlBase {
     }
     $menu = $this->getMenus($roles);
 
-    $allPostVars = $request->getParsedBody();
-    $application = new Application($this->dbSettings);
-
-    $userAccountHlp = new UserAccount($this->dbSettings);
-    $userAccount = $userAccountHlp->findByUserAccountId($uaid);
-    $message = [
-      'type' => 'info',
-      'text' => 'Application created',
-    ];
-    if (!empty($allPostVars['create-app-name'])) {
-      $result = $application->create($userAccount['accId'], $allPostVars['create-app-name']);
-      if (!$result) {
+    try {
+      $userAccountHlp = new UserAccount($this->dbSettings);
+      $applicationHlp = new Application($this->dbSettings);
+    } catch (ApiException $e) {
+      if (empty($allPostVars['create-app-name'])) {
         $message = [
           'type' => 'error',
-          'text' => 'Failed to create application',
+          'text' => 'There was an error at the DB layer, please check the logs.',
         ];
-      }
     }
-    else {
+
+    $allPostVars = $request->getParsedBody();
+    if (empty($allPostVars['create-app-name'])) {
       $message = [
         'type' => 'error',
         'text' => 'Could not create application - no name received',
       ];
+    } else {
+      try {
+        $userAccount = $userAccountHlp->findByUaid($uaid);
+        $result = $applicationHlp->create($userAccount['accid'], $allPostVars['create-app-name']);
+        if ($result == FALSE) {
+          $message = [
+            'type' => 'error',
+            'text' => 'An error occurred creating the application',
+          ];
+        } else {
+          $message = [
+            'type' => 'info',
+            'text' => 'Application created',
+          ];
+        }
+      } catch (ApiException $e) {
+        $message = [
+          'type' => 'error',
+          'text' => 'An error occurred creating the application',
+        ];
+      }
     }
 
-    $applications = $application->findByAccount($userAccount['accId']);
+    $applications = $applicationHlp->findByAccountId($userAccount['accid']);
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
       'applications' => $applications,
@@ -124,10 +145,26 @@ class CtrlApplication extends CtrlBase {
     $menu = $this->getMenus($roles);
 
     $allPostVars = $request->getParsedBody();
-    $application = new Application($this->dbSettings);
+    if (empty($allPostVars['edit-app-name'])) {
+      $message = [
+        'type' => 'error',
+        'text' => 'Could not edit application - no name received',
+      ];
+    } else {
+      try {
+        $userAccountHlp = new UserAccount($this->dbSettings);
+        $userAccount = $userAccountHlp->findByUaid($uaid);
+        $applicationHlp = new Application($this->dbSettings);
+        $application = $applicationHlp->findByAccIdAppName($userAccount['uaid'], $allPostVars['edit-app-name']);
 
-    $userAccountHlp = new UserAccount($this->dbSettings);
-    $userAccount = $userAccountHlp->findByUserAccountId($uaid);
+      } catch (ApiException $e) {
+        $message = [
+          'type' => 'error',
+          'text' => 'An error occurred creating the application',
+        ];
+      }
+    }
+
     $message = [
       'type' => 'info',
       'text' => 'Application edited',
