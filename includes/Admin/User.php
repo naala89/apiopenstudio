@@ -55,7 +55,10 @@ class User{
   }
 
   /**
-   * @return mixed
+   * Get the stored user.
+   *
+   * @return array
+   *   User array.
    */
   public function getUser() {
     return $this->user->dump();
