@@ -38,15 +38,8 @@ class CtrlApplication extends CtrlBase {
     }
     $menu = $this->getMenus($roles);
 
-    try {
-      $userAccountHlp = new UserAccount($this->dbSettings);
-      $userAccount = $userAccountHlp->findByUaid($uaid);
-      $applicationHlp = new Application($this->dbSettings);
-      $applications = $applicationHlp->findByAccountId($userAccount['accid']);
-    } catch (ApiException $e) {
-      // This will trap any exceptions while instantiating the helper classes, which may fail on DB connection.
-      $applications = [];
-    }
+    $applicationHlp = new Application($this->dbSettings);
+    $applications = $applicationHlp->findByUserAccountId($uaid);
 
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
@@ -75,47 +68,29 @@ class CtrlApplication extends CtrlBase {
     }
     $menu = $this->getMenus($roles);
 
-    try {
-      $userAccountHlp = new UserAccount($this->dbSettings);
-      $applicationHlp = new Application($this->dbSettings);
-    } catch (ApiException $e) {
-      if (empty($allPostVars['create-app-name'])) {
-        $message = [
-          'type' => 'error',
-          'text' => 'There was an error at the DB layer, please check the logs.',
-        ];
-    }
-
     $allPostVars = $request->getParsedBody();
-    if (empty($allPostVars['create-app-name'])) {
+    $applicationHlp = new Application($this->dbSettings);
+    if (empty($appName = $allPostVars['create-app-name'])) {
       $message = [
         'type' => 'error',
-        'text' => 'Could not create application - no name received',
+        'text' => 'Cannot create application, no name defined.',
       ];
     } else {
       try {
-        $userAccount = $userAccountHlp->findByUaid($uaid);
-        $result = $applicationHlp->create($userAccount['accid'], $allPostVars['create-app-name']);
-        if ($result == FALSE) {
-          $message = [
-            'type' => 'error',
-            'text' => 'An error occurred creating the application',
-          ];
-        } else {
-          $message = [
-            'type' => 'info',
-            'text' => 'Application created',
-          ];
-        }
+        $applicationHlp->createByUserAccIdName($uaid, $appName);
+        $message = [
+          'type' => 'info',
+          'text' => 'Application created',
+        ];
       } catch (ApiException $e) {
         $message = [
           'type' => 'error',
-          'text' => 'An error occurred creating the application',
+          'text' => $e->getMessage(),
         ];
       }
     }
 
-    $applications = $applicationHlp->findByAccountId($userAccount['accid']);
+    $applications = $applicationHlp->findByUserAccountId($uaid);
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
       'applications' => $applications,
@@ -145,22 +120,22 @@ class CtrlApplication extends CtrlBase {
     $menu = $this->getMenus($roles);
 
     $allPostVars = $request->getParsedBody();
-    if (empty($allPostVars['edit-app-name'])) {
+    $applicationHlp = new Application($this->dbSettings);
+    if (empty($appName = $allPostVars['edit-app-name']) || empty($appId = $allPostVars['edit-app-id'])) {
       $message = [
         'type' => 'error',
-        'text' => 'Could not edit application - no name received',
+        'text' => 'Cannot edit application, no name or ID defined.',
       ];
     } else {
       try {
-        $userAccountHlp = new UserAccount($this->dbSettings);
-        $userAccount = $userAccountHlp->findByUaid($uaid);
-        $applicationHlp = new Application($this->dbSettings);
-        $application = $applicationHlp->findByAccIdAppName($userAccount['uaid'], $allPostVars['edit-app-name']);
-
+        $message = [
+          'type' => 'info',
+          'text' => 'Application created',
+        ];
       } catch (ApiException $e) {
         $message = [
           'type' => 'error',
-          'text' => 'An error occurred creating the application',
+          'text' => $e->getMessage(),
         ];
       }
     }

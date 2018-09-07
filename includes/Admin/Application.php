@@ -15,6 +15,10 @@ class Application {
    * @var \ADOConnection
    */
   private $db;
+  /**
+   * @var Db\Application
+   */
+  private $application;
 
   /**
    * Application constructor.
@@ -43,8 +47,12 @@ class Application {
     }
   }
 
+  public function getApplication() {
+    return $this->application;
+  }
+
   /**
-   * Create an application.
+   * Create an application using an account ID and app name.
    *
    * @param string $accId
    *   ID of the account.
@@ -53,31 +61,51 @@ class Application {
    *
    * @return bool|int
    *   Success or failure of the operation.
+   *
+   * @throws ApiException
    */
-  public function create($accId, $name) {
-    try {
-      $applicationMapper = new Db\ApplicationMapper($this->db);
-      $application = $applicationMapper->findByAccIdName($accId, $name);
-      if (!empty($application->getAccId())) {
-        // Application already exists.
-        return 'Application already exists.';
-      }
-    } catch (ApiException $e) {
-      return 'An error occurred at the DB level, please check the logs.';
+  public function createByAccIdName($accId, $name) {
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    $application = $applicationMapper->findByAccIdName($accId, $name);
+    if (!empty($application->getAccId())) {
+      throw new ApiException('Application already exists.');
     }
 
-    try {
-      $application = new Db\Application(
-        NULL,
-        $accId,
-        $name
-      );
-      $applicationMapper->save($application);
-    } catch (ApiException $e) {
-      return 'An error occurred at the DB level, please check the logs.';
-    }
+    $application = new Db\Application(
+      NULL,
+      $accId,
+      $name
+    );
+    $applicationMapper->save($application);
+    $this->application = $applicationMapper->findByAccIdName($accId, $name);
 
-    return TRUE;
+    return $this->application->dump();
+  }
+
+  /**
+   * Create an application using a user account ID and app name.
+   *
+   * @param string $uaid
+   *   User acount ID.
+   * @param string $name
+   *   Name of the application.
+   *
+   * @return bool|int
+   *   Success or failure of the operation.
+   */
+  public function createByUserAccIdName($uaid, $name) {
+    $userAccountMapper = new Db\UserAccountMapper($this->db);
+    $userAccount = $userAccountMapper->findByUaid($uaid);
+    return $this->createByAccIdName($userAccount->getAccId(), $name);
+  }
+
+  /**
+   * @param $appId
+   * @return Db\Application
+   */
+  public function findByApplicationId($appId) {
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    return $applicationMapper->findByAppId($appId);
   }
 
   /**
@@ -99,10 +127,29 @@ class Application {
     $applications = [];
     foreach ($results as $result) {
       $application = $result->dump();
-      $applications[$application['appId']] = $application;
+      $applications[$application['appid']] = $application;
     }
 
     return $applications;
+  }
+
+  /**
+   * Find all an applications for an account by user account ID.
+   *
+   * @param int $uaid
+   *   User account ID.
+   *
+   * @return array
+   *   Array of associative arrays of applications, indexed by appId.
+   */
+  public function findByUserAccountId($uaid) {
+    try {
+      $userAccountMapper = new Db\UserAccountMapper($this->db);
+      $userAccount = $userAccountMapper->findByUaid($uaid);
+      return $this->findByAccountId($userAccount->getAccId());
+    } catch (ApiException $e) {
+      return FALSE;
+    }
   }
 
   /**
