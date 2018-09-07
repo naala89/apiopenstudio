@@ -38,8 +38,20 @@ class CtrlApplication extends CtrlBase {
     }
     $menu = $this->getMenus($roles);
 
-    $applicationHlp = new Application($this->dbSettings);
-    $applications = $applicationHlp->findByUserAccountId($uaid);
+    try {
+      $applicationHlp = new Application($this->dbSettings);
+      $applications = $applicationHlp->findByUserAccountId($uaid);
+    } catch (ApiException $e) {
+      $message = [
+        'type' => 'error',
+        'text' => $e->getMessage(),
+      ];
+      return $this->view->render($response, 'applications.twig', [
+        'menu' => $menu,
+        'applications' => [],
+        'message' => $message,
+      ]);
+    }
 
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
