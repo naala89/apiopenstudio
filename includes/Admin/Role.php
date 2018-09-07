@@ -44,7 +44,7 @@ class Role {
       . $dbSettings['database'] . $dsnOptions;
     $this->db = ADONewConnection($dsn);
     if (!$this->db) {
-      throw new ApiException($this->db->ErrorMsg());
+      throw new ApiException('Failed to connect to the database.');
     }
   }
 

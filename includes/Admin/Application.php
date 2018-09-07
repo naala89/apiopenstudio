@@ -43,12 +43,18 @@ class Application {
       . $dbSettings['database'] . $dsnOptions;
     $this->db = ADONewConnection($dsn);
     if (!$this->db) {
-      throw new ApiException($this->db->ErrorMsg());
+      throw new ApiException('Failed to connect to the database.');
     }
   }
 
+  /**
+   * Get the stored application.
+   *
+   * @return array
+   *   Application array.
+   */
   public function getApplication() {
-    return $this->application;
+    return $this->application->dump();
   }
 
   /**
@@ -59,8 +65,8 @@ class Application {
    * @param string $name
    *   Name of the application.
    *
-   * @return bool|int
-   *   Success or failure of the operation.
+   * @return array
+   *   Application.
    *
    * @throws ApiException
    */
@@ -79,7 +85,7 @@ class Application {
     $applicationMapper->save($application);
     $this->application = $applicationMapper->findByAccIdName($accId, $name);
 
-    return $this->application->dump();
+    return $this->getApplication();
   }
 
   /**
@@ -90,8 +96,8 @@ class Application {
    * @param string $name
    *   Name of the application.
    *
-   * @return bool|int
-   *   Success or failure of the operation.
+   * @return array
+   *   Application.
    */
   public function createByUserAccIdName($uaid, $name) {
     $userAccountMapper = new Db\UserAccountMapper($this->db);
@@ -100,12 +106,18 @@ class Application {
   }
 
   /**
-   * @param $appId
-   * @return Db\Application
+   * Find an application by its application ID.
+   *
+   * @param int $appId
+   *   Application ID.
+   *
+   * @return array
+   *   Application.
    */
   public function findByApplicationId($appId) {
     $applicationMapper = new Db\ApplicationMapper($this->db);
-    return $applicationMapper->findByAppId($appId);
+    $this->application = $applicationMapper->findByAppId($appId);
+    return $this->getApplication();
   }
 
   /**

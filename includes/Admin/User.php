@@ -50,7 +50,7 @@ class User{
       . $dbSettings['database'] . $dsnOptions;
     $this->db = ADONewConnection($dsn);
     if (!$this->db) {
-      throw new ApiException('DB connection failed.');
+      throw new ApiException('Failed to connect to the database.');
     }
   }
 
