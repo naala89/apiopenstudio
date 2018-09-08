@@ -141,6 +141,37 @@ class UserAccountRoleMapper {
   }
 
   /**
+   * Find all user account roles by application ID.
+   *
+   * @param int $appid
+   *   Application ID.
+   *
+   * @return array
+   *   Array of mapped UserApplicationRole objects.
+   *
+   * @throws ApiException
+   */
+  public function findByApplicationId($appid) {
+    $sql = 'SELECT * FROM user_account_role WHERE appid = ?';
+    $bindParams = array($appid);
+
+    $recordSet = $this->db->Execute($sql, $bindParams);
+    if (!$recordSet) {
+      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
+    }
+
+    $entries = array();
+    while (!$recordSet->EOF) {
+      $entries[] = $this->mapArray($recordSet->fields);
+      $recordSet->moveNext();
+    }
+
+    return $entries;
+  }
+
+  /**
    * Map a DB row to a UserAccountRole object.
    *
    * @param array $row

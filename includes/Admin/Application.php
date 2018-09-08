@@ -106,6 +106,44 @@ class Application {
   }
 
   /**
+   * Update an application name.
+   *
+   * @param string $appName
+   *   Name of the application.
+   *
+   * @return array
+   *   Application.
+   *
+   * @throws ApiException
+   */
+  public function update($appName) {
+    if (empty($this->application->getAppId())) {
+      throw new ApiException('Cannot update application, none fetched yet.');
+    }
+    $this->application->setName($appName);
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    $applicationMapper->save($this->application);
+
+    return $this->getApplication();
+  }
+
+  /**
+   * Delete an application.
+   *
+   * @return bool
+   *   Success.
+   *
+   * @throws ApiException
+   */
+  public function delete() {
+    if (empty($this->application->getAppId())) {
+      throw new ApiException('Cannot delete application, none fetched yet.');
+    }
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    return $applicationMapper->delete($this->application);
+  }
+
+  /**
    * Find an application by its application ID.
    *
    * @param int $appId
@@ -144,7 +182,7 @@ class Application {
    *   ID of the account.
    *
    * @return array
-   *   Array of associative arrays of applications, indexed by appId.
+   *   Array of associative arrays of applications, indexed by appid.
    */
   public function findByAccountId($accId) {
     $applicationMapper = new Db\ApplicationMapper($this->db);
@@ -166,50 +204,39 @@ class Application {
    *   User account ID.
    *
    * @return array
-   *   Array of associative arrays of applications, indexed by appId.
+   *   Array of associative arrays of applications, indexed by appid.
    */
   public function findByUserAccountId($uaid) {
     $userAccountMapper = new Db\UserAccountMapper($this->db);
     $userAccount = $userAccountMapper->findByUaid($uaid);
-    return $this->findByAccountId($userAccount->getAccId());
+    $results = $this->findByAccountId($userAccount->getAccId());
+
+    $applications = [];
+    foreach ($results as $result) {
+      $applications[$result['appid']] = $result;
+    }
+
+    return $applications;
   }
 
   /**
-   * Update an application name.
-   *
-   * @param string $appName
-   *   Name of the application.
+   * Find all an applications for an account by application ID.
    *
    * @return array
-   *   Application.
-   *
-   * @throws ApiException
+   *   Array of associative arrays of applications, indexed by uarid.
    */
-  public function update($appName) {
-    if (empty($this->application->getAppId())) {
-      throw new ApiException('Cannot update application, none fetched yet.');
-    }
-    $this->application->setName($appName);
-    $applicationMapper = new Db\ApplicationMapper($this->db);
-    $applicationMapper->save($this->application);
+  public function findUserRoles() {
+    $appId = $this->application->getAppId();
+    $userAccountRolesMapper = new Db\UserAccountRoleMapper($this->db);
+    $results = $userAccountRolesMapper->findByApplicationId($appId);
 
-    return $this->getApplication();
-  }
-
-  /**
-   * Delete an application.
-   *
-   * @return bool
-   *   Success.
-   *
-   * @throws ApiException
-   */
-  public function delete() {
-    if (empty($this->application->getAppId())) {
-      throw new ApiException('Cannot delete application, none fetched yet.');
+    $applications = [];
+    foreach ($results as $result) {
+      $application = $result->dump();
+      $applications[$application['uarid']] = $application;
     }
-    $applicationMapper = new Db\ApplicationMapper($this->db);
-    return $applicationMapper->delete($this->application);
+
+    return $applications;
   }
 
 }

@@ -62,43 +62,42 @@ class CtrlUser extends CtrlBase {
     }
     $menu = $this->getMenus($roles);
 
-    // fetch all roles.
-    $roleHlp = new Role($this->dbSettings);
-    $roles = $roleHlp->findAll();
-
-    // Fetch the account ID.
-    $userAccountHlp = new UserAccount($this->dbSettings);
-    $userAccount = $userAccountHlp->findByUserAccountId($uaid);
-    $accountHlp = new Account($this->dbSettings);
-    $account = $accountHlp->findByAccountId($userAccount['accId']);
-    $accId = $account['accId'];
-
-    // Fetch all user roles for the account
-    $userRoleHlp = new UserRole($this->dbSettings);
-    $userRoles = $userRoleHlp->findByUaid($uaid);
+    try {
+      $userAccountHlp = new UserAccount($this->dbSettings);
+      $applicationHlp = new Application($this->dbSettings);
+      $roleHlp = new Role($this->dbSettings);
+      $userHlp = new User($this->dbSettings);
+    } catch (ApiException $e) {
+      return $this->view->render($response, 'applications.twig', [
+        'menu' => $menu,
+        'applications' => [],
+        'message' => [
+          'type' => 'error',
+          'text' => $e->getMessage(),
+        ],
+      ]);
+    }
 
     // Fetch all applications for the account.
-    $applicationHlp = new Application($this->dbSettings);
-    $applications = $applicationHlp->findByAccount($userAccount['accId']);
+    $applications = $applicationHlp->findByUserAccountId($uaid);
 
     // Fetch all user roles for each application.
     foreach ($applications as $appId => $application) {
-      $results = $userRoleHlp->findByAppId($appId);
-      foreach ($results as $urid => $userRole) {
-        $userRoles[$urid] = $userRole;
-      }
+      $userRoles = $applicationHlp->findByApplicationId($appId);
     }
 
     // Fetch distinct users for each user role.
-    $userHlp = new User($this->dbSettings);
     $users = [];
-    foreach ($userRoles as $urid => $userRole) {
-      $userAccount = $userAccountHlp->findByUserAccountId($userRole['uaid']);
+    foreach ($userRoles as $uarid => $userRole) {
+      $userAccount = $userAccountHlp->findByUaid($userRole['uaid']);
       $uid = $userAccount['uid'];
       if (!isset($user[$uid])) {
-        $users[$uid] = $userHlp->findByUid($uid);
+        $users[$uid] = $userHlp->findByUserId($uid);
       }
     }
+
+    // Fetch all roles.
+    $roles = $roleHlp->findAll();
 
     // Add applications => roles to users array.
     foreach ($users as $uid => $user) {
@@ -107,8 +106,8 @@ class CtrlUser extends CtrlBase {
       foreach ($userRoles as $userRole) {
         if ($userRole['uid'] == $uid) {
           // Add application if not exists.
-          $application = $applications[$userRole['appId']];
-          $appId = $application['appId'];
+          $application = $applications[$userRole['appid']];
+          $appId = $application['appid'];
           if (!isset($user['applications'][$appId])) {
             $user['applications'][$appId] = $application;
           }
@@ -122,8 +121,8 @@ class CtrlUser extends CtrlBase {
     return $this->view->render($response, 'users.twig', [
       'menu' => $menu,
       'applications' => $applications,
-      'users' => $users,
       'roles' => $roles,
+      'users' => $users,
     ]);
   }
 
