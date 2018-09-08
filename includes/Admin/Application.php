@@ -187,7 +187,7 @@ class Application {
    */
   public function update($appName) {
     if (empty($this->application->getAppId())) {
-      throw new ApiException('Cannot update application, none fetchjed yet.');
+      throw new ApiException('Cannot update application, none fetched yet.');
     }
     $this->application->setName($appName);
     $applicationMapper = new Db\ApplicationMapper($this->db);
@@ -199,20 +199,17 @@ class Application {
   /**
    * Delete an application.
    *
-   * @param string $appId
-   *   ID of the application.
+   * @return bool
+   *   Success.
    *
-   * @return bool|int
-   *   Success or failure of the operation.
+   * @throws ApiException
    */
-  public function delete($appId) {
-    $application = new Db\Application($appId, NULL, NULL);
-    $applicationMapper = new Db\ApplicationMapper($this->db);
-    try {
-      return $applicationMapper->delete($application);
-    } catch (ApiException $e) {
-      return FALSE;
+  public function delete() {
+    if (empty($this->application->getAppId())) {
+      throw new ApiException('Cannot delete application, none fetched yet.');
     }
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    return $applicationMapper->delete($this->application);
   }
 
 }

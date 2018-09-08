@@ -191,38 +191,45 @@ class CtrlApplication extends CtrlBase {
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
     }
-
     $menu = $this->getMenus($roles);
-    $allPostVars = $request->getParsedBody();
-    $application = new Application($this->dbSettings);
 
-    $userAccountHlp = new UserAccount($this->dbSettings);
-    $userAccount = $userAccountHlp->findByUserAccountId($uaid);
-    $message = [
-      'type' => 'info',
-      'text' => 'Application deleted',
-    ];
-    if (!empty($allPostVars['delete-app-id'])) {
-      $result = $application->delete($allPostVars['delete-app-id']);
-      if (!$result) {
-        $message = [
+    try {
+      $applicationHlp = new Application($this->dbSettings);
+    } catch (ApiException $e) {
+      return $this->view->render($response, 'applications.twig', [
+        'menu' => $menu,
+        'applications' => [],
+        'message' => [
           'type' => 'error',
-          'text' => 'Failed to edit application',
-        ];
-      }
-    }
-    else {
-      $message = [
-        'type' => 'error',
-        'text' => 'Could not delete application - no ID received',
-      ];
+          'text' => $e->getMessage(),
+        ],
+      ]);
     }
 
-    $applications = $application->findByAccount($userAccount['accId']);
+    $allPostVars = $request->getParsedBody();
+    if (empty($appId = $allPostVars['delete-app-id'])) {
+      $applications = $applicationHlp->findByUserAccountId($uaid);
+      return $this->view->render($response, 'applications.twig', [
+        'menu' => $menu,
+        'applications' => $applications,
+        'message' => [
+          'type' => 'error',
+          'text' => 'Cannot delete application, no application ID defined.',
+        ],
+      ]);
+    } else {
+      $applicationHlp->findByApplicationId($appId);
+      $applicationHlp->delete();
+    }
+
+    $applications = $applicationHlp->findByUserAccountId($uaid);
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
       'applications' => $applications,
-      'message' => $message,
+      'message' => [
+        'type' => 'info',
+        'text' => 'Application deleted.',
+      ],
     ]);
   }
 
