@@ -107,12 +107,12 @@ class Account {
    */
   public function findByAccountId($accId) {
     $accountMapper = new Db\AccountMapper($this->db);
-    try {
-      $this->account = $accountMapper->findByAccId($accId);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
+    $this->account = $accountMapper->findByAccId($accId);
     return $this->account->dump();
+  }
+
+  public function findAllUserRoles() {
+
   }
 
 }

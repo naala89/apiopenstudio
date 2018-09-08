@@ -61,6 +61,21 @@ class UserAccount {
   }
 
   /**
+   * Find a user account by user account ID.
+   *
+   * @param int $uaid
+   *   user account ID.
+   *
+   * @return array|bool
+   *   User account or FALSE on exception.
+   */
+  public function findByUaid($uaid) {
+    $userAccountMapper = new Db\UserAccountMapper($this->db);
+    $this->userAccount = $userAccountMapper->findByUaid($uaid);
+    return $this->getUserAccount();
+  }
+
+  /**
    * Find a user account by user ID and account ID.
    *
    * @param int $uid
@@ -72,32 +87,9 @@ class UserAccount {
    *   User account or FALSE on exception.
    */
   public function findByUidAccId($uid, $accId) {
-    try {
-      $userAccountMapper = new Db\UserAccountMapper($this->db);
-      $this->userAccount = $userAccountMapper->findByUidAccId($uid, $accId);
-      return $this->userAccount->dump();
-    } catch (ApiException $e) {
-      return FALSE;
-    }
-  }
-
-  /**
-   * Find a user account by user account ID.
-   *
-   * @param int $uaid
-   *   user account ID.
-   *
-   * @return array|bool
-   *   User account or FALSE on exception.
-   */
-  public function findByUaid($uaid) {
-    try {
-      $userAccountMapper = new Db\UserAccountMapper($this->db);
-      $this->userAccount = $userAccountMapper->findByUaid($uaid);
-      return $this->userAccount->dump();
-    } catch (ApiException $e) {
-      return FALSE;
-    }
+    $userAccountMapper = new Db\UserAccountMapper($this->db);
+    $this->userAccount = $userAccountMapper->findByUidAccId($uid, $accId);
+    return $this->userAccount->dump();
   }
 
 }
