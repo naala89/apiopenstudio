@@ -42,14 +42,13 @@ class CtrlApplication extends CtrlBase {
       $applicationHlp = new Application($this->dbSettings);
       $applications = $applicationHlp->findByUserAccountId($uaid);
     } catch (ApiException $e) {
-      $message = [
-        'type' => 'error',
-        'text' => $e->getMessage(),
-      ];
       return $this->view->render($response, 'applications.twig', [
         'menu' => $menu,
         'applications' => [],
-        'message' => $message,
+        'message' => [
+          'type' => 'error',
+          'text' => $e->getMessage(),
+        ],
       ]);
     }
 
@@ -81,7 +80,6 @@ class CtrlApplication extends CtrlBase {
     $menu = $this->getMenus($roles);
 
     $allPostVars = $request->getParsedBody();
-    $applicationHlp = new Application($this->dbSettings);
     if (empty($appName = $allPostVars['create-app-name'])) {
       $message = [
         'type' => 'error',
@@ -89,12 +87,15 @@ class CtrlApplication extends CtrlBase {
       ];
     } else {
       try {
+        $applicationHlp = new Application($this->dbSettings);
         $applicationHlp->createByUserAccIdName($uaid, $appName);
+        $applications = $applicationHlp->findByUserAccountId($uaid);
         $message = [
           'type' => 'info',
           'text' => 'Application created',
         ];
       } catch (ApiException $e) {
+        $applications = [];
         $message = [
           'type' => 'error',
           'text' => $e->getMessage(),
@@ -102,7 +103,6 @@ class CtrlApplication extends CtrlBase {
       }
     }
 
-    $applications = $applicationHlp->findByUserAccountId($uaid);
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
       'applications' => $applications,
@@ -131,53 +131,43 @@ class CtrlApplication extends CtrlBase {
     }
     $menu = $this->getMenus($roles);
 
-    $allPostVars = $request->getParsedBody();
-    $applicationHlp = new Application($this->dbSettings);
-    if (empty($appName = $allPostVars['edit-app-name']) || empty($appId = $allPostVars['edit-app-id'])) {
-      $message = [
-        'type' => 'error',
-        'text' => 'Cannot edit application, no name or ID defined.',
-      ];
-    } else {
-      try {
-        $message = [
-          'type' => 'info',
-          'text' => 'Application created',
-        ];
-      } catch (ApiException $e) {
-        $message = [
+    try {
+      $applicationHlp = new Application($this->dbSettings);
+    } catch (ApiException $e) {
+      return $this->view->render($response, 'applications.twig', [
+        'menu' => $menu,
+        'applications' => [],
+        'message' => [
           'type' => 'error',
           'text' => $e->getMessage(),
-        ];
-      }
+        ],
+      ]);
     }
 
-    $message = [
-      'type' => 'info',
-      'text' => 'Application edited',
-    ];
-    if (!empty($allPostVars['edit-app-id']) && !empty($allPostVars['edit-app-name'])) {
-      $result = $application->update($allPostVars['edit-app-id'], $allPostVars['edit-app-name']);
-      if (!$result) {
-        $message = [
+    $allPostVars = $request->getParsedBody();
+    if (empty($appName = $allPostVars['edit-app-name']) || empty($appId = $allPostVars['edit-app-id'])) {
+      $applications = $applicationHlp->findByUserAccountId($uaid);
+      return $this->view->render($response, 'applications.twig', [
+        'menu' => $menu,
+        'applications' => $applications,
+        'message' => [
           'type' => 'error',
-          'text' => 'Failed to edit application',
-        ];
-      }
+          'text' => 'Cannot edit application, no name or ID defined.',
+        ],
+      ]);
+    } else {
+      $applicationHlp->findByApplicationId($appId);
+      $applicationHlp->update($appName);
+      $applications = $applicationHlp->findByUserAccountId($uaid);
+      return $this->view->render($response, 'applications.twig', [
+        'menu' => $menu,
+        'applications' => $applications,
+        'message' => [
+          'type' => 'info',
+          'text' => 'Application name updated.',
+        ],
+      ]);
     }
-    else {
-      $message = [
-        'type' => 'error',
-        'text' => 'Could not edit application - no name or ID received',
-      ];
-    }
-
-    $applications = $application->findByAccount($userAccount['accId']);
-    return $this->view->render($response, 'applications.twig', [
-      'menu' => $menu,
-      'applications' => $applications,
-      'message' => $message,
-    ]);
   }
 
   /**

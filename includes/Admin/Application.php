@@ -121,6 +121,23 @@ class Application {
   }
 
   /**
+   * Find all an application by account ID and application name.
+   *
+   * @param int $accId
+   *   ID of the account.
+   * @param int $appName
+   *   The application name.
+   *
+   * @return array
+   *   Application.
+   */
+  public function findByAccIdAppName($accId, $appName) {
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    $this->application = $applicationMapper->findByAccIdName($accId, $appName);
+    return $this->getApplication();
+  }
+
+  /**
    * Find all an applications for an account.
    *
    * @param int $accId
@@ -130,12 +147,9 @@ class Application {
    *   Array of associative arrays of applications, indexed by appId.
    */
   public function findByAccountId($accId) {
-    try {
-      $applicationMapper = new Db\ApplicationMapper($this->db);
-      $results = $applicationMapper->findByAccId($accId);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    $results = $applicationMapper->findByAccId($accId);
+
     $applications = [];
     foreach ($results as $result) {
       $application = $result->dump();
@@ -155,68 +169,31 @@ class Application {
    *   Array of associative arrays of applications, indexed by appId.
    */
   public function findByUserAccountId($uaid) {
-    try {
-      $userAccountMapper = new Db\UserAccountMapper($this->db);
-      $userAccount = $userAccountMapper->findByUaid($uaid);
-      return $this->findByAccountId($userAccount->getAccId());
-    } catch (ApiException $e) {
-      return FALSE;
-    }
-  }
-
-  /**
-   * Find all an applications for an account.
-   *
-   * @param int $accId
-   *   ID of the account.
-   * @param int $appName
-   *   The application name.
-   *
-   * @return array
-   *   Array of associative arrays of applications, indexed by appId.
-   */
-  public function findByAccIdAppName($accId, $appName) {
-    try {
-      $applicationMapper = new Db\ApplicationMapper($this->db);
-      $result = $applicationMapper->findByAccIdName($accId, $appName);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
-
-    return  $result->dump();
+    $userAccountMapper = new Db\UserAccountMapper($this->db);
+    $userAccount = $userAccountMapper->findByUaid($uaid);
+    return $this->findByAccountId($userAccount->getAccId());
   }
 
   /**
    * Update an application name.
    *
-   * @param string $appId
-   *   ID of the application.
    * @param string $appName
    *   Name of the application.
    *
-   * @return bool|int
-   *   Success or failure of the operation.
+   * @return array
+   *   Application.
+   *
+   * @throws ApiException
    */
-  public function update($appId, $appName) {
+  public function update($appName) {
+    if (empty($this->application->getAppId())) {
+      throw new ApiException('Cannot update application, none fetchjed yet.');
+    }
+    $this->application->setName($appName);
     $applicationMapper = new Db\ApplicationMapper($this->db);
-    try {
-      $application = $applicationMapper->findByAppId($appId);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
-    try {
-      $application->setName($appName);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
+    $applicationMapper->save($this->application);
 
-    try {
-      $applicationMapper->save($application);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
-
-    return $appId;
+    return $this->getApplication();
   }
 
   /**
