@@ -133,6 +133,29 @@ class UserAccountMapper {
   }
 
   /**
+   * Find all user accounts for an Account ID.
+   *
+   * @param int $accid
+   *   Account ID.
+   *
+   * @return \Datagator\Db\UserAccount
+   *   Mapped UserAccount object.
+   *
+   * @throws ApiException
+   */
+  public function findByAccId($accid) {
+    $sql = 'SELECT * FROM user_account WHERE AND accid = ?';
+    $bindParams = array($accid);
+    $row = $this->db->GetRow($sql, $bindParams);
+    if ($row === FALSE) {
+      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
+      Cascade::getLogger('gaterdata')->error($message);
+      throw new ApiException($message, 2);
+    }
+    return $this->mapArray($row);
+  }
+
+  /**
    * Map a DB row to the internal attributes.
    *
    * @param array $row

@@ -20,6 +20,10 @@ class Invite {
    * @var \ADOConnection
    */
   private $db;
+  /**
+   * @var  Db\Invite
+   */
+  private $invite;
 
   /**
    * Invite constructor.
@@ -49,6 +53,16 @@ class Invite {
   }
 
   /**
+   * Get the Invite.
+   *
+   * @return array
+   *   Invite.
+   */
+  public function getInvite() {
+    return $this->invite->dump();
+  }
+
+  /**
    * Create an invite.
    *
    * @param string $email
@@ -57,23 +71,23 @@ class Invite {
    *   Invite token.
    *
    * @return bool|int
-   *   False | invite ID.
+   *   Mapped invite object.
    *
    * @throws \Datagator\Core\ApiException
    */
   public function create($email, $token) {
     $invite = new Db\Invite(
+      NULL,
+      NULL,
       $email,
       $token
     );
 
     $inviteMapper = new Db\InviteMapper($this->db);
-    $result = $inviteMapper->save($invite);
-    if (!$result) {
-      return FALSE;
-    }
-    $invite = $inviteMapper->findByToken($token);
-    return $invite->getId();
+    var_dump($invite);exit;
+    $inviteMapper->save($invite);
+    $this->invite = $inviteMapper->findByToken($token);
+    return $this->getInvite();
   }
 
   /**
@@ -89,9 +103,9 @@ class Invite {
    */
   public function deleteByEmail($email) {
     $inviteMapper = new Db\InviteMapper($this->db);
-    $results = $inviteMapper->findByEmail($email);
-    foreach ($results as $result) {
-      $inviteMapper->delete($result);
+    $invites = $inviteMapper->findByEmail($email);
+    foreach ($invites as $invite) {
+      $inviteMapper->delete($invite);
     }
     return TRUE;
   }
@@ -109,24 +123,24 @@ class Invite {
    */
   public function deleteByToken($token) {
     $inviteMapper = new Db\InviteMapper($this->db);
-    $result = $inviteMapper->findByToken($token);
-    $inviteMapper->delete($result);
+    $invite = $inviteMapper->findByToken($token);
+    $inviteMapper->delete($invite);
     return TRUE;
   }
 
   /**
-   * Find by id.
+   * Find by iid.
    *
-   * @param int $id
+   * @param int $iid
    *   Invite ID.
    *
    * @return array
    *   Invite.
    */
-  public function findById($id) {
+  public function findById($iid) {
     $inviteMapper = new Db\InviteMapper($this->db);
-    $invite = $inviteMapper->findById($id);
-    return $invite->dump();
+    $this->invite = $inviteMapper->findById($iid);
+    return $this->getInvite();
   }
 
   /**
@@ -140,8 +154,8 @@ class Invite {
    */
   public function findByEmail($email) {
     $inviteMapper = new Db\InviteMapper($this->db);
-    $invite = $inviteMapper->findByEmail($email);
-    return $invite->dump();
+    $this->invite = $inviteMapper->findByEmail($email);
+    return $this->getInvite();
   }
 
   /**
@@ -155,8 +169,8 @@ class Invite {
    */
   public function findByToken($token) {
     $inviteMapper = new Db\InviteMapper($this->db);
-    $invite = $inviteMapper->findByToken($token);
-    return $invite->dump();
+    $this->invite = $inviteMapper->findByToken($token);
+    return $this->getInvite();
   }
 
   /**
@@ -173,8 +187,8 @@ class Invite {
    */
   public function findByEmailToken($email, $token) {
     $inviteMapper = new Db\InviteMapper($this->db);
-    $invite = $inviteMapper->findByEmailToken($email, $token);
-    return $invite->dump();
+    $this->invite = $inviteMapper->findByEmailToken($email, $token);
+    return $this->getInvite();
   }
 
 }

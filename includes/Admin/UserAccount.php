@@ -92,4 +92,9 @@ class UserAccount {
     return $this->userAccount->dump();
   }
 
+//  public function findByAccountId($accid) {
+//    $userAccountMapper = new Db\UserAccountMapper($this->db);
+//    $userAccounts = $userAccountMapper->
+//  }
+
 }

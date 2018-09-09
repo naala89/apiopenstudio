@@ -54,8 +54,9 @@ switch ($step) {
     $template = $twig->load('install/install_0.twig');
     $message = [
       'type' => 'warning',
-      'text' => "Continuing will erase any existing data in the database."
+      'text' => "Continuing will erase any existing data in the database.<br />",
     ];
+    $message['text'] .= "Click <a href='/login'>here to abort and login</a>.";
     echo $template->render(['message' => $message, 'menu' => $menu]);
     exit;
   case 1:

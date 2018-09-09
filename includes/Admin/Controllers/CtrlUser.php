@@ -4,6 +4,7 @@ namespace Datagator\Admin\Controllers;
 
 use Datagator\Admin\Account;
 use Datagator\Admin\UserAccount;
+use Datagator\Core\ApiException;
 use Slim\Views\Twig;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -56,6 +57,11 @@ class CtrlUser extends CtrlBase {
    */
   public function index(Request $request, Response $response, array $args) {
     $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
+    if ($request->isPost()) {
+      $allVars = $request->getParsedBody();
+    } else {
+      $allVars = $request->getQueryParams();
+    }
     $roles = $this->getRoles($uaid);
     if (!$this->checkAccess($roles)) {
       $response->withRedirect('/');
@@ -63,8 +69,9 @@ class CtrlUser extends CtrlBase {
     $menu = $this->getMenus($roles);
 
     try {
-      $userAccountHlp = new UserAccount($this->dbSettings);
+      $accountHlp = new Account($this->dbSettings);
       $applicationHlp = new Application($this->dbSettings);
+      $userAccountHlp = new UserAccount($this->dbSettings);
       $roleHlp = new Role($this->dbSettings);
       $userHlp = new User($this->dbSettings);
     } catch (ApiException $e) {
@@ -78,16 +85,36 @@ class CtrlUser extends CtrlBase {
       ]);
     }
 
+    // Fetch the current user's account.
+    $account = $accountHlp->findByUaid($uaid);
+
     // Fetch all applications for the account.
     $applications = $applicationHlp->findByUserAccountId($uaid);
 
-    // Fetch all user roles for each application.
-    foreach ($applications as $appId => $application) {
-      $userRoles = $applicationHlp->findByApplicationId($appId);
+    // Fetch all user roles for each application (or filtered by application ID).
+    $filterApp = isset($allVars['filter-application']) ? $allVars['filter-application'] : 'all';
+    $userRoles = [];
+    if ($filterApp == 'all') {
+      foreach ($applications as $appId => $application) {
+        $userRoles = array_merge($userRoles, $applicationHlp->findUserRoles($appId));
+      }
+    } else {
+      if (!in_array($filterApp, array_keys($applications))) {
+        return $this->view->render($response, 'applications.twig', [
+          'menu' => $menu,
+          'applications' => [],
+          'message' => [
+            'type' => 'error',
+            'text' => 'No such application for this account. Cannot filter.',
+          ],
+        ]);
+      }
+      $userRoles[] = $applicationHlp->findUserRoles($allVars['filter-application']);
     }
 
     // Fetch distinct users for each user role.
     $users = [];
+    echo "<pre>";var_dump($userRoles);exit;
     foreach ($userRoles as $uarid => $userRole) {
       $userAccount = $userAccountHlp->findByUaid($userRole['uaid']);
       $uid = $userAccount['uid'];
@@ -150,37 +177,57 @@ class CtrlUser extends CtrlBase {
     $menu = $this->getMenus($roles);
 
     $allPostVars = $request->getParsedBody();
-    if (!isset($allPostVars['invite-email']) || empty($allPostVars['invite-email'])) {
+    if (empty($email = $allPostVars['invite-email'])) {
       return $this->view->render($response, 'users.twig', [
         'menu' => $menu,
       ]);
     }
 
+    // Check if user already exists.
+    try {
+      $userHlp = new User($this->dbSettings);
+      $user = $userHlp->findByEmail($email);
+      if (!empty($user['uid'])) {
+        return $this->view->render($response, 'users.twig', [
+          'menu' => $menu,
+          'message' => [
+            'type' => 'error',
+            'text' => 'A user already exists with this email: ' . $email,
+          ]
+        ]);
+      }
+    } catch (ApiException $e) {
+      return $this->view->render($response, 'users.twig', [
+        'menu' => $menu,
+        'message' => [
+          $message['type'] = 'error',
+          $message['text'] = $e->getMessage(),
+        ]
+      ]);
+    }
+
     // Generate vars for the email.
-    $email = $allPostVars['invite-email'];
     $token = Hash::generateToken($email);
     $host = $this->getHost();
     $scheme = $request->getUri()->getScheme();
     $link = "$scheme://$host/user/register/$token";
 
-    // Check if user already exists.
-    $userHlp = new User($this->dbSettings);
-    $user = $userHlp->findByEmail($email);
-    if (!empty($user['uid'])) {
-      $message['text'] = 'A user already exists with this email: ' . $email;
-      $message['type'] = 'error';
+    // Add invite to DB.
+    try {
+      $inviteHlp = new Invite($this->dbSettings);
+      // Remove any old invites for this email.
+      $inviteHlp->deleteByEmail($email);
+      // Add new invite.
+      $inviteHlp->create($email, $token);
+    } catch (ApiException $e) {
       return $this->view->render($response, 'users.twig', [
         'menu' => $menu,
-        'message' => $message,
+        'message' => [
+          'type' => 'error',
+          'text' => $e->getMessage(),
+        ]
       ]);
     }
-
-    // Add invite to DB.
-    $inviteHlp = new Invite($this->dbSettings);
-    // Remove any old invites for this email.
-    $inviteHlp->deleteByEmail($email);
-    // Add new invite.
-    $inviteHlp->create($email, $token);
 
     // Send the email.
     $mail = new PHPMailer(TRUE); // Passing `true` enables exceptions
@@ -218,11 +265,12 @@ class CtrlUser extends CtrlBase {
         'message' => $message,
       ]);
     } catch (phpmailerException $e) {
-      $message['text'] = 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo;
-      $message['type'] = 'info';
       return $this->view->render($response, 'users.twig', [
         'menu' => $menu,
-        'message' => $message,
+        'message' => [
+          'type' => 'error',
+          'text' => 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo,
+        ]
       ]);
     }
   }

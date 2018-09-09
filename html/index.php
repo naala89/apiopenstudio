@@ -1,7 +1,12 @@
 <?php
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
-use Datagator\Core;
+
+use Datagator\Core\ApiException;
+use Datagator\Core\Api;
+use Datagator\Config;
+use Datagator\Core\Error;
+use Datagator\Output\Json;
 
 \Datagator\Config::load();
 
@@ -13,23 +18,25 @@ if (!array_key_exists('HTTP_ORIGIN', $_SERVER)) {
 }
 
 try {
-  $api = new Core\Api(\Datagator\Config::$cache);
+  $api = new Api(Config::$cache);
   $result = $api->process();
-} catch (Core\ApiException $e) {
-  $outputClass = 'Datagator\\Output\\' . ucfirst($api->getAccept(Datagator\Config::$defaultFormat));
+}
+catch (ApiException $e) {
+  $outputClass = 'Datagator\\Output\\' . ucfirst($api->getAccept(Config::$defaultFormat));
   if (!class_exists($outputClass)) {
-    $error = new Core\Error(3, -1, 'invalid Accept header');
-    $output = new Datagator\Output\Json($error->process(), $e->getHtmlCode());
+    $error = new Error(3, -1, 'invalid Accept header');
+    $output = new Json($error->process(), $e->getHtmlCode());
     ob_end_flush();
     echo $output->process();
     exit();
   }
-  $error = new Core\Error($e->getCode(), $e->getProcessor(), $e->getMessage());
+  $error = new Error($e->getCode(), $e->getProcessor(), $e->getMessage());
   $output = new $outputClass($error->process(), $e->getHtmlCode());
   ob_end_flush();
   echo $output->process();
   exit();
-} catch (Exception $e) {
+}
+catch (Exception $e) {
   ob_end_flush();
   echo 'Error: ' . $e->getCode() . '. ' . $e->getMessage();
   exit();
