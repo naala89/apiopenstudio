@@ -3,7 +3,7 @@ account:
     accid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: account id }
     name: { type: varchar(255), notnull: true, comment: account name }
   data:
-    - { name: Datagator }
+    - { name: GaterData }
 
 application:
   columns:
@@ -11,8 +11,8 @@ application:
     accid: { type: int(10) unsigned, notnull: true, comment: account id }
     name: { type: varchar(255), notnull: true, comment: application name }
   data:
-    - { appid: 1, accid: 1, name: Datagator }
-    - { appid: 2, accid: 1, name: Common }
+    - { appid: 1, accid: 1, name: Administration }
+    - { appid: 2, accid: 1, name: Development }
     - { appid: 3, accid: 1, name: Testing }
 
 user:

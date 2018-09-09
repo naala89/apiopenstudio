@@ -11,7 +11,7 @@
       <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-create"><i class="material-icons">add</i></a>
     </div>
     <div class="input-field col s4">
-      <select>
+      <select name="filter-application">
         <option value="all" selected>All</option>
         {% for key,value in applications %}
           <option value="{{ value.appid }}">{{ value.name }}</option>

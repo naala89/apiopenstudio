@@ -37,7 +37,7 @@ class InviteMapper {
    * @throws \Datagator\Core\ApiException
    */
   public function save(Invite $invite) {
-    if ($invite->getId() == NULL) {
+    if ($invite->getIid() == NULL) {
       $sql = 'INSERT INTO invite (accid, email, token) VALUES (?, ?, ?)';
       $bindParams = array(
         $invite->getAccId(),
@@ -89,7 +89,7 @@ class InviteMapper {
   /**
    * Find an invite by ID.
    *
-   * @param int $invite
+   * @param int $iid
    *   Invite ID.
    *
    * @return \Datagator\Db\Invite
@@ -97,9 +97,9 @@ class InviteMapper {
    *
    * @throws ApiException
    */
-  public function findById($invite) {
+  public function findByIid($iid) {
     $sql = 'SELECT * FROM invite WHERE id = ?';
-    $bindParams = array($invite);
+    $bindParams = array($iid);
     $row = $this->db->GetRow($sql, $bindParams);
     if ($row === FALSE) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
@@ -197,7 +197,7 @@ class InviteMapper {
   protected function mapArray(array $row) {
     $invite = new Invite();
 
-    $invite->setId(!empty($row['id']) ? $row['id'] : NULL);
+    $invite->setIid(!empty($row['iid']) ? $row['iid'] : NULL);
     $invite->setEmail(!empty($row['email']) ? $row['email'] : NULL);
     $invite->setToken(!empty($row['token']) ? $row['token'] : NULL);
 

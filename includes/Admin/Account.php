@@ -90,7 +90,7 @@ class Account {
    * Get the account.
    *
    * @return array
-   *   associative array.
+   *   Account.
    */
   public function getAccount() {
     return $this->account->dump();
@@ -103,7 +103,7 @@ class Account {
    *   Account ID.
    *
    * @return array
-   *   Account attributes array.
+   *   Account.
    */
   public function findByAccountId($accId) {
     $accountMapper = new Db\AccountMapper($this->db);
@@ -111,8 +111,19 @@ class Account {
     return $this->account->dump();
   }
 
-  public function findAllUserRoles() {
-
+  /**
+   * Find an account by it a user's uaid.
+   *
+   * @param int $uaid
+   *   User account ID.
+   *
+   * @return array
+   *   Account.
+   */
+  public function findByUaid($uaid) {
+    $userAccountMapper = new Db\UserAccountMapper($this->db);
+    $userAccount = $userAccountMapper->findByUaid();
+    return $this->findByAccountId($userAccount->getAccId());
   }
 
 }

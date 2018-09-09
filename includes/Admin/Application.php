@@ -226,8 +226,8 @@ class Application {
    *   Array of associative arrays of applications, indexed by uarid.
    */
   public function findUserRoles() {
-    $appId = $this->application->getAppId();
     $userAccountRolesMapper = new Db\UserAccountRoleMapper($this->db);
+    $appId = $this->application->getAppId();
     $results = $userAccountRolesMapper->findByApplicationId($appId);
 
     $applications = [];
