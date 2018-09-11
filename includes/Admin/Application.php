@@ -220,23 +220,26 @@ class Application {
   }
 
   /**
-   * Find all an applications for an account by application ID.
+   * Find all an user roles for an application by application ID.
+   *
+   * @param int $appId
+   *   Application ID.
    *
    * @return array
-   *   Array of associative arrays of applications, indexed by uarid.
+   *   Array of associative arrays of user application roles, indexed by uarid.
    */
-  public function findUserRoles() {
+  public function findUserRoles($appId=null) {
     $userAccountRolesMapper = new Db\UserAccountRoleMapper($this->db);
-    $appId = $this->application->getAppId();
+    $appId = !empty($sppId) ? $appId : $this->application->getAppId();
     $results = $userAccountRolesMapper->findByApplicationId($appId);
 
-    $applications = [];
+    $roles = [];
     foreach ($results as $result) {
       $application = $result->dump();
-      $applications[$application['uarid']] = $application;
+      $roles[$application['uarid']] = $application;
     }
 
-    return $applications;
+    return $roles;
   }
 
 }

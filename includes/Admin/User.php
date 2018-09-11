@@ -436,26 +436,19 @@ class User{
    */
   public function findRoles($uaid) {
     // Find roles for the user account.
-    try {
-      $userAccountRoleMapper = new Db\UserAccountRoleMapper($this->db);
-      $userAccountRoles = $userAccountRoleMapper->findByUaid($uaid);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
+    $userAccountRoleMapper = new Db\UserAccountRoleMapper($this->db);
+    $userAccountRoles = $userAccountRoleMapper->findByUaid($uaid);
 
     // Find the role names for the user account roles.
     $roles = [];
-    try {
-      $roleMapper = new Db\RoleMapper($this->db);
-      foreach ($userAccountRoles as $userAccountRole) {
-        $role = $roleMapper->findByRid($userAccountRole->getRid());
-        $roles[] = $role->getName();
-      }
-    } catch (ApiException $e) {
-      return FALSE;
+    $roleMapper = new Db\RoleMapper($this->db);
+    foreach ($userAccountRoles as $userAccountRole) {
+      $role = $roleMapper->findByRid($userAccountRole->getRid());
+      $roles[] = $role->getName();
     }
 
     return $roles;
   }
+
 
 }

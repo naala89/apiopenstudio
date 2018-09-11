@@ -92,9 +92,42 @@ class UserAccount {
     return $this->userAccount->dump();
   }
 
-//  public function findByAccountId($accid) {
-//    $userAccountMapper = new Db\UserAccountMapper($this->db);
-//    $userAccounts = $userAccountMapper->
-//  }
+  /**
+   * Find all user accounts by account ID.
+   *
+   * @param int $accid
+   *   Account ID.
+   *
+   * @return array
+   *   Array of mapped UserAccount objects indexed by user account ID.
+   */
+  public function findByAccountId($accid) {
+    $userAccountMapper = new Db\UserAccountMapper($this->db);
+    $userAccounts = $userAccountMapper->findByAccId($accid);
+    $result = [];
+    foreach ($userAccounts as $userAccount) {
+      $result[$userAccount->getUaid()] = $userAccount->dump();
+    }
+    return $result;
+  }
+
+  /**
+   * Find all roles for a user account.
+   *
+   * @param int $uaid
+   *   User account ID.
+   *
+   * @return array
+   *   Array of mapped UserAccountRole objects indexed by user account role ID.
+   */
+  public function findAllRolesByUaid($uaid) {
+    $userAccountRoleMapper = new Db\UserAccountRoleMapper($this->db);
+    $userAccountRoles = $userAccountRoleMapper->findByUaid($uaid);
+    $result = [];
+    foreach ($userAccountRoles as $userAccountRole) {
+      $result[$userAccountRole->getUarid()] = $userAccountRole->dump();
+    }
+    return $result;
+  }
 
 }

@@ -70,9 +70,9 @@ class CtrlUser extends CtrlBase {
 
     try {
       $accountHlp = new Account($this->dbSettings);
+      $roleHlp = new Role($this->dbSettings);
       $applicationHlp = new Application($this->dbSettings);
       $userAccountHlp = new UserAccount($this->dbSettings);
-      $roleHlp = new Role($this->dbSettings);
       $userHlp = new User($this->dbSettings);
     } catch (ApiException $e) {
       return $this->view->render($response, 'applications.twig', [
@@ -85,65 +85,43 @@ class CtrlUser extends CtrlBase {
       ]);
     }
 
+    // Find all roles.
+    $allRoles = $roleHlp->findAll();
+
+    // Find rid for 'Owner'.
+    $ownerRole = $roleHlp->findByName('Owner');
+    $ownerRid = $ownerRole['rid'];
+
+    // Find all applications for the acocunt the current user is assigned to.
+    $applications = $applicationHlp->findByUserAccountId($uaid);
+
     // Fetch the current user's account.
     $account = $accountHlp->findByUaid($uaid);
 
-    // Fetch all applications for the account.
-    $applications = $applicationHlp->findByUserAccountId($uaid);
-
-    // Fetch all user roles for each application (or filtered by application ID).
-    $filterApp = isset($allVars['filter-application']) ? $allVars['filter-application'] : 'all';
-    $userRoles = [];
-    if ($filterApp == 'all') {
-      foreach ($applications as $appId => $application) {
-        $userRoles = array_merge($userRoles, $applicationHlp->findUserRoles($appId));
-      }
-    } else {
-      if (!in_array($filterApp, array_keys($applications))) {
-        return $this->view->render($response, 'applications.twig', [
-          'menu' => $menu,
-          'applications' => [],
-          'message' => [
-            'type' => 'error',
-            'text' => 'No such application for this account. Cannot filter.',
-          ],
-        ]);
-      }
-      $userRoles[] = $applicationHlp->findUserRoles($allVars['filter-application']);
-    }
-
-    // Fetch distinct users for each user role.
+    // Create an array of distinct users from $roles with applications and roles.
+    $userAccounts = $userAccountHlp->findByAccountId($account['accid']);
     $users = [];
-    echo "<pre>";var_dump($userRoles);exit;
-    foreach ($userRoles as $uarid => $userRole) {
-      $userAccount = $userAccountHlp->findByUaid($userRole['uaid']);
-      $uid = $userAccount['uid'];
-      if (!isset($user[$uid])) {
-        $users[$uid] = $userHlp->findByUserId($uid);
-      }
-    }
-
-    // Fetch all roles.
-    $roles = $roleHlp->findAll();
-
-    // Add applications => roles to users array.
-    foreach ($users as $uid => $user) {
-      $user['applications'] = [];
-      // Find all user roles for this user.
-      foreach ($userRoles as $userRole) {
-        if ($userRole['uid'] == $uid) {
-          // Add application if not exists.
-          $application = $applications[$userRole['appid']];
-          $appId = $application['appid'];
-          if (!isset($user['applications'][$appId])) {
-            $user['applications'][$appId] = $application;
+    foreach ($userAccounts as $userAccount) {
+      $user = $userHlp->findByUserId($userAccount['uid']);
+      $users[$user['uid']] = $user;
+      $userAccountRoles = $userAccountHlp->findAllRolesByUaid($userAccount['uaid']);
+      foreach ($userAccountRoles as $userAccountRole) {
+        if ($userAccountRole['rid'] == $ownerRid) {
+          $users[$user['uid']]['applications'][] = 'Owner';
+        } else {
+          if (!isset($users[$user['uid']]['applications'][$userAccountRole['appid']])) {
+            $users[$user['uid']]['applications'][$userAccountRole['appid']] = $applications[$userAccountRole['appid']];
           }
-          // Add role.
-          $roleId = $userRole['rid'];
-          $user['applications'][$appId]['roles'][$roleId] = $roles[$roleId];
+          $users[$user['uid']]['applications'][$userAccountRole['appid']]['roles'][] = $allRoles[$userAccountRole['rid']]['name'];
         }
       }
     }
+//    echo "<pre>";var_dump([
+//      'menu' => $menu,
+//      'applications' => $applications,
+//      'roles' => $roles,
+//      'users' => $users,
+//    ]);exit;
 
     return $this->view->render($response, 'users.twig', [
       'menu' => $menu,
