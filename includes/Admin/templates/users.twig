@@ -16,9 +16,40 @@
         {% for key,value in applications %}
           <option value="{{ value.appid }}">{{ value.name }}</option>
         {% endfor %}
+        <option value="unassigned" selected>Unassigned</option>
       </select>
       <label>Filter by Application</label>
     </div>
+  </div>
+
+  <div class="row">
+    <h2>Owners</h2>
+    <table class="responsive-table highlight">
+      <thead>
+      <tr>
+        <th>Username</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Email</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+        {% for userId,owner in owners %}
+          <tr>
+            <td>{{ owner.username }}</td>
+            <td>{{ owner.nameFirst }}</td>
+            <td>{{ owner.nameLast }}</td>
+            <td>{{ owner.email }}</td>
+            <td>
+              <a class="btn-floating btn-small white hoverable">
+                <i class="material-icons modal-owner-delete-trigger black-text" owner-id="{{ userId }}">delete</i>
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 
   <div class="row">
@@ -33,7 +64,6 @@
           <th>Actions</th>
         </tr>
       </thead>
-
       <tbody>
       {% for userId,user in users %}
         <tr>
@@ -45,21 +75,16 @@
             <table class="responsive-table highlight">
               <tbody>
                 {% for appId,application in user.applications %}
-                  {% if application == 'Owner' %}
-                    <td>&nbsp;</td>
-                    <td>Owner</td>
-                  {% else %}
-                    <td>{{ application.name }}</td>
-                    <td>
-                      {% for roleId,role in application.roles %}
-                        <table>
-                          <tbody>
+                  <td>{{ application.name }}</td>
+                  <td>
+                    <table>
+                      <tbody>
+                        {% for roleId,role in application.roles %}
                           <td>{{ role.name }}</td>
-                          </tbody>
-                        </table>
-                      {% endfor %}
-                    </td>
-                  {% endif %}
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </td>
                 {% endfor %}
               </tbody>
             </table>

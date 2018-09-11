@@ -92,41 +92,49 @@ class CtrlUser extends CtrlBase {
     $ownerRole = $roleHlp->findByName('Owner');
     $ownerRid = $ownerRole['rid'];
 
-    // Find all applications for the acocunt the current user is assigned to.
+    // Find all applications for the account the current user is assigned to.
     $applications = $applicationHlp->findByUserAccountId($uaid);
+    $filterApplication = isset($allVars['filter-application']) ? $allVars['filter-application'] : 'all ';
 
     // Fetch the current user's account.
     $account = $accountHlp->findByUaid($uaid);
 
     // Create an array of distinct users from $roles with applications and roles.
     $userAccounts = $userAccountHlp->findByAccountId($account['accid']);
-    $users = [];
+    $users = $administrators = $owners = [];
     foreach ($userAccounts as $userAccount) {
       $user = $userHlp->findByUserId($userAccount['uid']);
-      $users[$user['uid']] = $user;
       $userAccountRoles = $userAccountHlp->findAllRolesByUaid($userAccount['uaid']);
       foreach ($userAccountRoles as $userAccountRole) {
         if ($userAccountRole['rid'] == $ownerRid) {
-          $users[$user['uid']]['applications'][] = 'Owner';
+          $owners[$user['uid']][] = $user;
         } else {
-          if (!isset($users[$user['uid']]['applications'][$userAccountRole['appid']])) {
-            $users[$user['uid']]['applications'][$userAccountRole['appid']] = $applications[$userAccountRole['appid']];
+          if (empty($userAccountRole['appid'])) {
+            $userAccountRole['appid'] = 'unassigned';
           }
-          $users[$user['uid']]['applications'][$userAccountRole['appid']]['roles'][] = $allRoles[$userAccountRole['rid']]['name'];
+          if ($userAccountRole['appid'] == 'all' || $userAccountRole['appid'] == $filterApplication) {
+            if (!isset($users[$user['uid']])) {
+              $users[$user['uid']] = $user;
+            }
+            if (!isset($users[$user['uid']]['applications'][$userAccountRole['appid']])) {
+              $users[$user['uid']]['applications'][$userAccountRole['appid']] = $applications[$userAccountRole['appid']];
+            }
+            $users[$user['uid']]['applications'][$userAccountRole['appid']]['roles'][] = $allRoles[$userAccountRole['rid']]['name'];
+          }
         }
       }
     }
 //    echo "<pre>";var_dump([
 //      'menu' => $menu,
 //      'applications' => $applications,
-//      'roles' => $roles,
+//      'owners' => $owners,
 //      'users' => $users,
 //    ]);exit;
 
     return $this->view->render($response, 'users.twig', [
       'menu' => $menu,
       'applications' => $applications,
-      'roles' => $roles,
+      'owners' => $owners,
       'users' => $users,
     ]);
   }
