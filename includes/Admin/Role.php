@@ -4,6 +4,7 @@ namespace Datagator\Admin;
 
 use Datagator\Db\RoleMapper;
 use Datagator\Core\ApiException;
+use Datagator\Db\UserAccountRoleMapper;
 
 /**
  * Class UserRole.

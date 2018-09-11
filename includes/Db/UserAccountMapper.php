@@ -138,21 +138,29 @@ class UserAccountMapper {
    * @param int $accid
    *   Account ID.
    *
-   * @return \Datagator\Db\UserAccount
-   *   Mapped UserAccount object.
+   * @return array
+   *   Array of mapped UserAccount objects.
    *
    * @throws ApiException
    */
   public function findByAccId($accid) {
-    $sql = 'SELECT * FROM user_account WHERE AND accid = ?';
+    $sql = 'SELECT * FROM user_account WHERE accid = ?';
     $bindParams = array($accid);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
+
+    $recordSet = $this->db->Execute($sql, $bindParams);
+    if (!$recordSet) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);
       throw new ApiException($message, 2);
     }
-    return $this->mapArray($row);
+
+    $entries = [];
+    while (!$recordSet->EOF) {
+      $entries[] = $this->mapArray($recordSet->fields);
+      $recordSet->moveNext();
+    }
+
+    return $entries;
   }
 
   /**

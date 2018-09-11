@@ -122,7 +122,7 @@ class Account {
    */
   public function findByUaid($uaid) {
     $userAccountMapper = new Db\UserAccountMapper($this->db);
-    $userAccount = $userAccountMapper->findByUaid();
+    $userAccount = $userAccountMapper->findByUaid($uaid);
     return $this->findByAccountId($userAccount->getAccId());
   }
 

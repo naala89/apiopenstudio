@@ -29,7 +29,7 @@
           <th>First name</th>
           <th>Last name</th>
           <th>Email</th>
-          <th>&nbsp;</th>
+          <th>Application/Role</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -41,30 +41,30 @@
           <td>{{ user.nameFirst }}</td>
           <td>{{ user.nameLast }}</td>
           <td>{{ user.email }}</td>
-          {% for appId,application in users.applications %}
+          <td>
             <table class="responsive-table highlight">
-              <thead>
-                <tr>
-                  <th>Application</th>
-                  <th>Role</th>
-                </tr>
-                <tbody>
-                  <td>{{ application.name }}</td>
-                  <td>
-                    {% for roleId,role in application.roles %}
-                      <table>
-                        <tbody>
+              <tbody>
+                {% for appId,application in user.applications %}
+                  {% if application == 'Owner' %}
+                    <td>&nbsp;</td>
+                    <td>Owner</td>
+                  {% else %}
+                    <td>{{ application.name }}</td>
+                    <td>
+                      {% for roleId,role in application.roles %}
+                        <table>
+                          <tbody>
                           <td>{{ role.name }}</td>
-                        </tbody>
-                      </table>
-                    {% endfor %}
-                  </td>
-                </tbody>
+                          </tbody>
+                        </table>
+                      {% endfor %}
+                    </td>
+                  {% endif %}
+                {% endfor %}
+              </tbody>
             </table>
-          {% endfor %}
+          </td>
 
-          <!--td>{{ value.application }}</td>
-          <td>{{ value.roles }}</td-->
           <td>
             <a class="btn-floating btn-small white hoverable">
               <i class="material-icons modal-app-edit-trigger black-text" app-id="{{ value.appId }}" app-name="{{ value.name }}">edit</i>
