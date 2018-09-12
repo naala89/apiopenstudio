@@ -48,7 +48,7 @@ gulp.task('images', function() {
 
 // Clean all builds.
 gulp.task('clean', function() {
-  return gulp.src(['html/admin/'], {read: false})
+  return gulp.src(['html/admin/js', 'html/admin/css', 'html/admin/images', ], {read: false})
     .pipe(errorHandler())
     .pipe(clean());
 });
