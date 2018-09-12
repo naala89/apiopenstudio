@@ -11,7 +11,7 @@
       <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-create"><i class="material-icons">add</i></a>
     </div>
     <div class="input-field col s4">
-      <select name="filter-application">
+      <select name="filter-application" id="filter-application">
         <option value="all" selected>All</option>
         {% for key,value in applications %}
           <option value="{{ value.appid }}">{{ value.name }}</option>
@@ -23,7 +23,7 @@
   </div>
 
   <div class="row">
-    <h2>Owners</h2>
+    <h5>Owners</h5>
     <table class="responsive-table highlight">
       <thead>
       <tr>
@@ -43,6 +43,9 @@
             <td>{{ owner.email }}</td>
             <td>
               <a class="btn-floating btn-small white hoverable">
+                <i class="material-icons modal-app-edit-trigger black-text" owner-id="{{ value.appId }}">edit</i>
+              </a>
+              <a class="btn-floating btn-small white hoverable">
                 <i class="material-icons modal-owner-delete-trigger black-text" owner-id="{{ userId }}">delete</i>
               </a>
             </td>
@@ -53,6 +56,7 @@
   </div>
 
   <div class="row">
+    <h5>Administrators and Developers</h5>
     <table class="responsive-table highlight">
       <thead>
         <tr>
