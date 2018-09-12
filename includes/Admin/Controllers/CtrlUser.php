@@ -107,7 +107,7 @@ class CtrlUser extends CtrlBase {
       $userAccountRoles = $userAccountHlp->findAllRolesByUaid($userAccount['uaid']);
       foreach ($userAccountRoles as $userAccountRole) {
         if ($userAccountRole['rid'] == $ownerRid) {
-          $owners[$user['uid']][] = $user;
+          $owners[$user['uid']] = $user;
         } else {
           if (empty($userAccountRole['appid'])) {
             $userAccountRole['appid'] = 'unassigned';

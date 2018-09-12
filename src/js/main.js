@@ -20,4 +20,8 @@ $(document).ready(function(){
     modal.modal('open');
   });
 
+  $('#filter-application').on('change', function () {
+    console.log('yay!');
+  });
+
 });
