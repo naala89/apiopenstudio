@@ -20,8 +20,10 @@ $(document).ready(function(){
     modal.modal('open');
   });
 
-  $('#filter-application').on('change', function () {
+  $('#filter-application select').change(function () {
     console.log('yay!');
+    console.log('yep');
+    console.log('yep');
   });
 
 });

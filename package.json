@@ -16,9 +16,10 @@
     "gulp-strip-debug": "^3.0.0",
     "gulp-uglify": "^3.0.1",
     "gulp-error-handle": "^1.0.1",
-    "gulp-imagemin": "^4.1.0"
+    "gulp-imagemin": "^4.1.0",
   },
   "dependencies": {
-    "gulp": "^3.9.1"
+    "gulp": "^3.9.1",
+    "gulp-changed": "^3.2.0"
   }
 }
