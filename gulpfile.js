@@ -38,6 +38,13 @@ gulp.task('copy.js', function () {
     .pipe(gulp.dest(js_dest));
 });
 
+// Vendor CSS.
+gulp.task('copy.css', function () {
+  return gulp.src([vendor_src + '**/*.min.css'])
+    .pipe(rename({dirname: ''}))
+    .pipe(gulp.dest(css_dest));
+});
+
 // Custom JS files.
 gulp.task('scripts', function() {
   return gulp.src([js_src])
@@ -46,13 +53,6 @@ gulp.task('scripts', function() {
     .pipe(striplog())
     .pipe(uglify())
     .pipe(gulp.dest(js_dest))
-});
-
-// Vendor CSS.
-gulp.task('copy.css', function () {
-  return gulp.src([vendor_src + '**/*.min.css'])
-    .pipe(rename({dirname: ''}))
-    .pipe(gulp.dest(css_dest));
 });
 
 // Custom SCSS files.
@@ -72,14 +72,7 @@ gulp.task('images', function() {
       .pipe(gulp.dest(img_dest))
 });
 
-// Web server.
-gulp.task('webserver', function() {
-  connect.server();
-});
-
-// Default task - clean the build dir
-// Then rebuild the js and css files
-
+// Default task.
 gulp.task('watch', function(){
   gulp.watch(vendor_src, ['copy.css', 'copy.js']);
   gulp.watch(scss_src, ['styles']);
@@ -88,4 +81,4 @@ gulp.task('watch', function(){
   gulp.src('src/*').pipe(notify('An asset has changed'));
 });
 
-gulp.task('default', ['webserver', 'clean', 'copy.css', 'styles', 'copy.js', 'scripts', 'images', 'watch']);
+gulp.task('default', ['clean', 'copy.css', 'styles', 'copy.js', 'scripts', 'images', 'watch']);
