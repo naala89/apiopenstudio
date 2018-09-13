@@ -1,15 +1,4 @@
-// Supported browsers.
-const AUTOPREFIXER_BROWSERS = [
-  'ie >= 10',
-  'ie_mob >= 10',
-  'ff >= 30',
-  'chrome >= 34',
-  'safari >= 7',
-  'opera >= 23',
-  'ios >= 7',
-  'android >= 4.4',
-  'bb >= 10'
-];
+//TODO: First run of gulp always fails, due to clean.
 
 // Dependencies.
 const gulp = require('gulp');
@@ -24,16 +13,16 @@ const connect = require('gulp-connect');
 const imagemin = require('gulp-imagemin');
 const errorHandler = require('gulp-error-handle');
 const copy = require('gulp-copy');
+const rename = require('gulp-rename');
 
 // Directories
-const vendor_js = 'src/vendor/js/';
-const vendor_css = 'src/vendor/css/';
-const js_src = 'src/js/';
+const vendor_src = 'src/vendor/';
+const js_src = 'src/js/**/*.js';
 const scss_src = 'src/scss/**/*.scss';
 const img_src = 'src/images/*';
-const js_dest = 'html/admin/js';
-const css_dest = 'html/admin/css';
-const img_dest = 'html/admin/images';
+const js_dest = 'html/admin/js/';
+const css_dest = 'html/admin/css/';
+const img_dest = 'html/admin/images/';
 
 // Clean all builds.
 gulp.task('clean', function() {
@@ -44,13 +33,14 @@ gulp.task('clean', function() {
 
 // Vendor JS.
 gulp.task('copy.js', function () {
-  return gulp.src([vendor_js + '**/*.js'])
+  return gulp.src([vendor_src + '**/*.min.js'])
+    .pipe(rename({dirname: ''}))
     .pipe(gulp.dest(js_dest));
 });
 
-// Custom Js files.
+// Custom JS files.
 gulp.task('scripts', function() {
-  return gulp.src([js_src + '**/*.js'])
+  return gulp.src([js_src])
     .pipe(errorHandler())
     .pipe(concat('gaterdata.min.js'))
     .pipe(striplog())
@@ -60,7 +50,8 @@ gulp.task('scripts', function() {
 
 // Vendor CSS.
 gulp.task('copy.css', function () {
-  return gulp.src([vendor_css + '**/*.css'])
+  return gulp.src([vendor_src + '**/*.min.css'])
+    .pipe(rename({dirname: ''}))
     .pipe(gulp.dest(css_dest));
 });
 
@@ -90,9 +81,8 @@ gulp.task('webserver', function() {
 // Then rebuild the js and css files
 
 gulp.task('watch', function(){
-  gulp.watch(vendor_css, ['copy.css']);
-  gulp.watch([scss_src], ['styles']);
-  gulp.watch(vendor_js, ['copy.js']);
+  gulp.watch(vendor_src, ['copy.css', 'copy.js']);
+  gulp.watch(scss_src, ['styles']);
   gulp.watch(js_src, ['scripts']);
   gulp.watch(img_src, ['images']);
   gulp.src('src/*').pipe(notify('An asset has changed'));
