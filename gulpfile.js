@@ -1,4 +1,10 @@
-//TODO: First run of gulp always fails, due to clean.
+/*
+To set up dev:
+1. install npm and gulp globally.
+2. $ npm install
+3. $ gulp
+4. make changes.
+ */
 
 // Dependencies.
 const gulp = require('gulp');
@@ -22,30 +28,35 @@ const js_dest = 'html/admin/js/';
 const css_dest = 'html/admin/css/';
 const img_dest = 'html/admin/images/';
 
-// Clean all builds.
-gulp.task('clean', function() {
-  return gulp.src([js_dest, css_dest, img_dest], {read: false})
+// Clean js destination dir.
+gulp.task('clean.js', function() {
+  return gulp.src([js_dest + '*.js'], {read: false})
     .pipe(errorHandler())
     .pipe(clean());
 });
 
-// Vendor JS.
-gulp.task('copy.js', function () {
-  return gulp.src([vendor_src + '**/*.min.js'])
+// Clean css destination dir.
+gulp.task('clean.css', function() {
+  return gulp.src([css_dest + '*.css'], {read: false})
+    .pipe(errorHandler())
+    .pipe(clean());
+});
+
+// Clean img destination dir.
+gulp.task('clean.img', function() {
+  return gulp.src([img_dest + '*'], {read: false})
+    .pipe(errorHandler())
+    .pipe(clean());
+});
+
+// Scripts.
+gulp.task('scripts', ['clean.js'], function() {
+  // Copy minified vendor js.
+  gulp.src([vendor_src + '**/*.min.js'])
     .pipe(rename({dirname: ''}))
     .pipe(gulp.dest(js_dest));
-});
-
-// Vendor CSS.
-gulp.task('copy.css', function () {
-  return gulp.src([vendor_src + '**/*.min.css'])
-    .pipe(rename({dirname: ''}))
-    .pipe(gulp.dest(css_dest));
-});
-
-// Custom JS files.
-gulp.task('scripts', function() {
-  return gulp.src([js_src])
+  // Minify Gaterdata js and copy.
+  gulp.src([js_src])
     .pipe(errorHandler())
     .pipe(concat('gaterdata.min.js'))
     .pipe(striplog())
@@ -53,9 +64,14 @@ gulp.task('scripts', function() {
     .pipe(gulp.dest(js_dest))
 });
 
-// Custom SCSS files.
-gulp.task('styles', function() {
-  return gulp.src([scss_src])
+// Styles.
+gulp.task('styles', ['clean.css'], function() {
+  // Copy minified vendor css.
+  gulp.src([vendor_src + '**/*.min.css'])
+    .pipe(rename({dirname: ''}))
+    .pipe(gulp.dest(css_dest));
+  // Minify Gaterdata sass, minify and copy.
+  gulp.src([scss_src])
     .pipe(errorHandler())
     .pipe(sass({style: 'compressed', errLogToConsole: true}))
     .pipe(concat('gaterdata.min.css'))
@@ -64,20 +80,21 @@ gulp.task('styles', function() {
 });
 
 // Images.
-gulp.task('images', function() {
-    return gulp.src(img_src)
+gulp.task('images', ['clean.img'], function() {
+  // Minify images and copy.
+  gulp.src(img_src)
       .pipe(errorHandler())
       .pipe(imagemin())
       .pipe(gulp.dest(img_dest))
 });
 
-// Default task.
+// Default task, setup watch.
 gulp.task('watch', function(){
-  gulp.watch(vendor_src, ['copy.css', 'copy.js']);
+  gulp.watch(vendor_src, ['styles', 'scripts']);
   gulp.watch(scss_src, ['styles']);
   gulp.watch(js_src, ['scripts']);
   gulp.watch(img_src, ['images']);
   gulp.src('src/*').pipe(notify('An asset has changed'));
 });
 
-gulp.task('default', ['clean', 'copy.css', 'styles', 'copy.js', 'scripts', 'images', 'watch']);
+gulp.task('default', ['styles', 'scripts', 'images', 'watch']);
