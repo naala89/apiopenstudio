@@ -2,7 +2,7 @@
 .idea
 .DS_Store
 
-vendor
+/vendor
 composer.lock
 tests/_output/*
 tmp/*
