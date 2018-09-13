@@ -9,10 +9,8 @@ const striplog = require('gulp-strip-debug');
 const cleancss = require('gulp-clean-css');
 const sass = require('gulp-sass');
 const notify = require("gulp-notify");
-const connect = require('gulp-connect');
 const imagemin = require('gulp-imagemin');
 const errorHandler = require('gulp-error-handle');
-const copy = require('gulp-copy');
 const rename = require('gulp-rename');
 
 // Directories
@@ -68,6 +66,7 @@ gulp.task('styles', function() {
 // Images.
 gulp.task('images', function() {
     return gulp.src(img_src)
+      .pipe(errorHandler())
       .pipe(imagemin())
       .pipe(gulp.dest(img_dest))
 });

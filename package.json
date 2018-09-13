@@ -10,8 +10,6 @@
     "gulp-clean": "^0.4.0",
     "gulp-clean-css": "^3.10.0",
     "gulp-concat": "^2.6.1",
-    "gulp-connect": "^5.6.1",
-    "gulp-copy": "^1.1.0",
     "gulp-error-handle": "^1.0.1",
     "gulp-imagemin": "^4.1.0",
     "gulp-notify": "^3.2.0",
