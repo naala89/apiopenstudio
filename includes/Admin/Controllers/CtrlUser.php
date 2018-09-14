@@ -124,18 +124,14 @@ class CtrlUser extends CtrlBase {
         }
       }
     }
-//    echo "<pre>";var_dump([
-//      'menu' => $menu,
-//      'applications' => $applications,
-//      'owners' => $owners,
-//      'users' => $users,
-//    ]);exit;
+    var_dump($filterApplication);
 
     return $this->view->render($response, 'users.twig', [
       'menu' => $menu,
       'applications' => $applications,
       'owners' => $owners,
       'users' => $users,
+      'activeFilter' => $filterApplication,
     ]);
   }
 

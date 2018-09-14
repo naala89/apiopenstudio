@@ -7,19 +7,38 @@
     <p>Manage your users here. View, invite, remove users and assign them roles in applications.</p>
   </div>
   <div class="row">
-    <div class="col s1">
-      <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-create"><i class="material-icons">add</i></a>
-    </div>
-    <div class="input-field col s4" id="filter-application">
-      <select name="filter-application">
-        <option value="all" selected>All</option>
-        {% for key,value in applications %}
-          <option value="{{ value.appid }}">{{ value.name }}</option>
-        {% endfor %}
-        <option value="unassigned" selected>Unassigned</option>
-      </select>
-      <label>Filter by Application</label>
-    </div>
+    <form method="get" action="/users">
+      <div class="col s1">
+        <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-create"><i class="material-icons">add</i></a>
+      </div>
+      <div class="input-field col s4 offset-s5">
+        <select name="filter-application">
+          {% set selected = '' %}
+          {% if activeFilter == 'all' %}
+            {% set selected = 'selected' %}
+          {% endif %}
+          <option value="all" {{ selected }}>All</option>
+          {% for key,value in applications %}
+            {% set selected = '' %}
+            {% if activeFilter == value.appid %}
+              {% set selected = 'selected' %}
+            {% endif %}
+            <option value="{{ value.appid }}" {{ selected }}>{{ value.name }}</option>
+          {% endfor %}
+          {% set selected = '' %}
+          {% if activeFilter == 'all' %}
+            {% set selected = 'selected' %}
+          {% endif %}
+          <option value="" {{ selected }}>Unassigned</option>
+        </select>
+        <label>Filter by Application</label>
+      </div>
+      <div class="input-field col s2">
+        <button class="btn waves-effect waves-light" type="submit" name="action">Go
+          <i class="material-icons right">send</i>
+        </button>
+      </div>
+    </form>
   </div>
 
   <div class="row">
