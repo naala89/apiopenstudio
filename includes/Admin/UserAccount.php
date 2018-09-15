@@ -93,7 +93,6 @@ class UserAccount {
     if (empty($this->userAccount->getUaid())) {
       throw new ApiException('Invalid user account specified.');
     }
-    $uid = $this->userAccount->getUid();
 
     // Delete roles.
     $userAccountRoleMapper = new Db\UserAccountRoleMapper($this->db);
@@ -105,11 +104,6 @@ class UserAccount {
     // Delete user account.
     $userAccountMapper = new Db\UserAccountMapper($this->db);
     $userAccountMapper->delete($this->userAccount);
-
-    // Delete user.
-    $userMapper = new Db\UserMapper($this->db);
-    $user = $userMapper->findByUid($uid);
-    $userMapper->delete($user);
 
     return TRUE;
   }

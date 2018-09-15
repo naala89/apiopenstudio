@@ -446,6 +446,19 @@ class CtrlUser extends CtrlBase {
     ]);
   }
 
+  /**
+   * Delete a user account and its associated roles.
+   *
+   * @param \Slim\Http\Request $request
+   *   Request object.
+   * @param \Slim\Http\Response $response
+   *   Response object.
+   * @param array $args
+   *   Request args.
+   *
+   * @return \Psr\Http\Message\ResponseInterface
+   *   Response.
+   */
   public function delete(Request $request, Response $response, array $args) {
     $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
     $roles = $this->getRoles($uaid);
