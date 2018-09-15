@@ -94,8 +94,7 @@ class CtrlUser extends CtrlBase {
 
     // Find all applications for the account the current user is assigned to.
     $applications = $applicationHlp->findByUserAccountId($uaid);
-    $filterApplication = isset($allVars['filter-application']) ? $allVars['filter-application'] : 'all ';
-
+    $filterApplication = isset($allVars['filter-application']) ? $allVars['filter-application'] : 'all';
     // Fetch the current user's account.
     $account = $accountHlp->findByUaid($uaid);
 
@@ -105,14 +104,16 @@ class CtrlUser extends CtrlBase {
     foreach ($userAccounts as $userAccount) {
       $user = $userHlp->findByUserId($userAccount['uid']);
       $userAccountRoles = $userAccountHlp->findAllRolesByUaid($userAccount['uaid']);
+      if (empty($userAccountRoles) && ($filterApplication == 'all' || $filterApplication == '')) {
+        $users[$user['uid']] = $user;
+        $users[$user['uid']]['applications'] = 'unnassigned';
+        continue;
+      }
       foreach ($userAccountRoles as $userAccountRole) {
         if ($userAccountRole['rid'] == $ownerRid) {
           $owners[$user['uid']] = $user;
         } else {
-          if (empty($userAccountRole['appid'])) {
-            $userAccountRole['appid'] = 'unassigned';
-          }
-          if ($userAccountRole['appid'] == 'all' || $userAccountRole['appid'] == $filterApplication) {
+          if ($filterApplication == 'all' || $userAccountRole['appid'] == $filterApplication) {
             if (!isset($users[$user['uid']])) {
               $users[$user['uid']] = $user;
             }
