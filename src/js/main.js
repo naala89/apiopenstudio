@@ -1,6 +1,7 @@
-$(document).ready(function(){
+$(document).ready(function() {
 
   M.AutoInit();
+
 
   // Edit application modal.
   $('.modal-app-edit-trigger').click(function() {
@@ -17,6 +18,16 @@ $(document).ready(function(){
     var modal = $('#modal-app-delete');
     modal.find('#delete-app-id').val(self.attr('app-id'));
     modal.find('#delete-app-name').text(self.attr('app-name'));
+    modal.modal('open');
+  });
+
+  // Delete user modal.
+  $('.modal-user-delete-trigger').click(function() {
+    console.log('jhi');
+    var self = $(this);
+    var modal = $('#modal-user-delete');
+    modal.find('#user-name').html(self.attr('user-name'));
+    modal.find('a#delete-user').attr('href', '/user/delete/' + self.attr('user-account-id'));
     modal.modal('open');
   });
 

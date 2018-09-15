@@ -82,6 +82,39 @@ class UserAccount {
   }
 
   /**
+   * Delete a user account.
+   *
+   * @return bool
+   *   Success.
+   *
+   * @throws ApiException
+   */
+  public function delete() {
+    if (empty($this->userAccount->getUaid())) {
+      throw new ApiException('Invalid user account specified.');
+    }
+    $uid = $this->userAccount->getUid();
+
+    // Delete roles.
+    $userAccountRoleMapper = new Db\UserAccountRoleMapper($this->db);
+    $roles = $userAccountRoleMapper->findByUaid($this->userAccount->getUaid());
+    foreach ($roles as $role) {
+      $userAccountRoleMapper->delete($role);
+    }
+
+    // Delete user account.
+    $userAccountMapper = new Db\UserAccountMapper($this->db);
+    $userAccountMapper->delete($this->userAccount);
+
+    // Delete user.
+    $userMapper = new Db\UserMapper($this->db);
+    $user = $userMapper->findByUid($uid);
+    $userMapper->delete($user);
+
+    return TRUE;
+  }
+
+  /**
    * Find a user account by user account ID.
    *
    * @param int $uaid
