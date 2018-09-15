@@ -273,36 +273,41 @@ class CtrlUser extends CtrlBase {
    */
   public function register(Request $request, Response $response, array $args) {
     $menu = $this->getMenus([]);
+    if ($request->isPost()) {
+      $allVars = $request->getParsedBody();
+    } else {
+      $allVars = $args;
+    }
+
+    // Token not received.
+    if (empty($allVars['token'])) {
+      return $response->withRedirect('/login');
+    }
+
+    $token = $allVars['token'];
+
+    // Invalid token.
+    $inviteHlp = new Invite($this->dbSettings);
+    $invite = $inviteHlp->findByToken($token);
+    if (empty($invite['iid'])) {
+      return $response->withRedirect('/login');
+    }
+
+    // Validate User is not already in the system.
+    $userHlp = new User($this->dbSettings);
+    $user = $userHlp->findByEmail($invite['email']);
+    if (!empty($user['uid'])) {
+      $inviteHlp->deleteByEmail($invite['email']);
+      $message['text'] = 'Your user already exists: ' . $invite['email'];
+      $message['type'] = 'error';
+      return $this->view->render($response, 'home.twig', [
+        'menu' => $menu,
+        'message' => $message,
+      ]);
+    }
 
     if ($request->isGet()) {
-      // Initial form display.
-
-      // Validate token is good.
-      if (empty($args['token'])) {
-        return $response->withRedirect('/login');
-      }
-      $token = $args['token'];
-      $inviteHlp = new Invite($this->dbSettings);
-      $invite = $inviteHlp->findByToken($token);
-      if (empty($invite['id'])) {
-        return $response->withRedirect('/login');
-      }
-
-      $userHlp = new User($this->dbSettings);
-      $user = $userHlp->findByEmail($invite['email']);
-
-      if (!empty($user['uid'])) {
-        // User is already in the system.
-        $inviteHlp->deleteByEmail($invite['email']);
-        $message['text'] = 'Your user already exists: ' . $invite['email'];
-        $message['type'] = 'error';
-        return $this->view->render($response, 'home.twig', [
-          'menu' => $menu,
-          'message' => $message,
-        ]);
-      }
-
-      // This is a new user, display the register form.
+      // Display the register form.
       return $this->view->render($response, 'register.twig', [
         'menu' => $menu,
         'token' => $token,
@@ -310,19 +315,14 @@ class CtrlUser extends CtrlBase {
     }
 
     // Fall through to new user register post form submission.
-    $allPostVars = $request->getParsedBody();
-    return $this->createUser($_SESSION['accountId'], $allPostVars, 'No role', $menu, $response);
+    return $this->createUser($allVars, $menu, $response);
   }
 
   /**
    * Create a new user form form submission.
    *
-   * @param array $accountId
-   *   Account ID.
-   * @param array $user
-   *   User vars.
-   * @param array $role
-   *   User role.
+   * @param array $allVars
+   *   User vars and token.
    * @param array $menu
    *   Menu items.
    * @param \Slim\Http\Response $response
@@ -331,33 +331,33 @@ class CtrlUser extends CtrlBase {
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
    */
-  private function createUser($accountId, $user, $role, $menu, $response) {
-    if (empty($user['token']) ||
-      empty($user['username']) ||
-      empty($user['password']) ||
-      empty($user['honorific']) ||
-      empty($user['email']) ||
-      empty($user['name_first']) ||
-      empty($user['name_last'])) {
+  private function createUser($allVars, $menu, $response) {
+    if (empty($allVars['token']) ||
+      empty($allVars['username']) ||
+      empty($allVars['password']) ||
+      empty($allVars['honorific']) ||
+      empty($allVars['email']) ||
+      empty($allVars['name_first']) ||
+      empty($allVars['name_last'])) {
       // Missing mandatory fields.
       $message['text'] = "Required fields not entered.";
       $message['type'] = 'error';
       return $this->view->render($response, 'register.twig', [
         'menu' => $menu,
         'message' => $message,
-        'token' => $user['token'],
+        'token' => $allVars['token'],
       ]);
     }
 
     // Ensure email matches the invite token.
     $inviteHlp = new Invite($this->dbSettings);
-    $invite = $inviteHlp->findByEmailToken($user['email'], $user['token']);
-    if (empty($invite['id'])) {
+    $invite = $inviteHlp->findByToken($allVars['token']);
+    if ($invite['email'] != $allVars['email']) {
       // Delete the invite.
-      $inviteHlp->deleteByToken($user['token']);
+      $inviteHlp->deleteByToken($allVars['token']);
       // Redirect to login.
-      $message['text'] = "Your email does not match the invite email. Please resend the invite.";
       $message['type'] = 'error';
+      $message['text'] = "Your email does not match the invite email. Please resend the invite.";
       return $this->view->render($response, 'login.twig', [
         'menu' => $menu,
         'message' => $message,
@@ -366,48 +366,47 @@ class CtrlUser extends CtrlBase {
 
     // Validate username and email does not exist.
     $userHlp = new User($this->dbSettings);
-    $result = $userHlp->findByEmail($user['email']);
+    $result = $userHlp->findByEmail($allVars['email']);
     if (!empty($result['uid'])) {
-      $message['text'] = 'A user already exists with this email: ' . $user['email'] . '.';
-      $message['text'] .= 'Please use a different address.';
       $message['type'] = 'error';
-      return $this->view->render($response, 'register.twig', [
+      $message['text'] = 'A user already exists with this email: ' . $allVars['email'] . '.';
+      $message['text'] .= 'Please login.';
+      return $this->view->render($response, 'login.twig', [
         'menu' => $menu,
         'message' => $message,
-        'token' => $user['token'],
       ]);
     }
     $result = $userHlp->findByUsername($user['username']);
     if (!empty($result['uid'])) {
-      $message['text'] = 'A user already exists with this username: ' . $user['username'] . '.';
-      $message['text'] .= 'Please use a different username.';
       $message['type'] = 'error';
+      $message['text'] = 'A user already exists with this username: ' . $allVars['username'] . '.';
+      $message['text'] .= 'Please use a different username.';
       return $this->view->render($response, 'register.twig', [
         'menu' => $menu,
         'message' => $message,
-        'token' => $user['token'],
+        'token' => $allVars['token'],
       ]);
     }
 
-    $uid = $userHlp->create(
-      !empty($user['username']) ? $user['username'] : '',
-      !empty($user['password']) ? $user['password'] : '',
-      !empty($user['email']) ? $user['email'] : '',
-      !empty($user['honorific']) ? $user['honorific'] : '',
-      !empty($user['name_first']) ? $user['name_first'] : '',
-      !empty($user['name_last']) ? $user['name_last'] : '',
-      !empty($user['company']) ? $user['company'] : '',
-      !empty($user['website']) ? $user['website'] : '',
-      !empty($user['address_street']) ? $user['address_street'] : '',
-      !empty($user['address_suburb']) ? $user['address_suburb'] : '',
-      !empty($user['address_city']) ? $user['address_city'] : '',
-      !empty($user['address_state']) ? $user['address_state'] : '',
-      !empty($user['address_country']) ? $user['address_country'] : '',
-      !empty($user['address_postcode']) ? $user['address_postcode'] : '',
-      !empty($user['phone_mobile']) ? $user['phone_mobile'] : '',
-      !empty($user['phone_work']) ? $user['phone_work'] : ''
+    $newUser = $userHlp->create(
+      !empty($allVars['username']) ? $allVars['username'] : '',
+      !empty($allVars['password']) ? $allVars['password'] : '',
+      !empty($allVars['email']) ? $allVars['email'] : '',
+      !empty($allVars['honorific']) ? $allVars['honorific'] : '',
+      !empty($allVars['name_first']) ? $allVars['name_first'] : '',
+      !empty($allVars['name_last']) ? $allVars['name_last'] : '',
+      !empty($allVars['company']) ? $allVars['company'] : '',
+      !empty($allVars['website']) ? $allVars['website'] : '',
+      !empty($allVars['address_street']) ? $allVars['address_street'] : '',
+      !empty($allVars['address_suburb']) ? $allVars['address_suburb'] : '',
+      !empty($allVars['address_city']) ? $allVars['address_city'] : '',
+      !empty($allVars['address_state']) ? $allVars['address_state'] : '',
+      !empty($allVars['address_country']) ? $allVars['address_country'] : '',
+      !empty($allVars['address_postcode']) ? $allVars['address_postcode'] : '',
+      !empty($allVars['phone_mobile']) ? $allVars['phone_mobile'] : '',
+      !empty($allVars['phone_work']) ? $allVars['phone_work'] : ''
     );
-    if (!$uid) {
+    if (!$newUser['uid']) {
       $message['text'] = "Sorry, there was an error creating your user. Please speak to your administrator.";
       $message['type'] = 'error';
       return $this->view->render($response, 'login.twig', [
@@ -416,11 +415,12 @@ class CtrlUser extends CtrlBase {
       ]);
     }
 
-    // Add the role.
-    $userRoleHlp = new UserRole($this->dbSettings);
-    $urid = $userRoleHlp->create($uid, $role, NULL, $accountId);
-    if (!$urid) {
-      $message['text'] = "Sorry, there was an error creating your users role. Please speak to your administrator.";
+    // Assign the user to the account.
+    try {
+      $userAccountHlp = new UserAccount($this->dbSettings);
+      $userAccountHlp->create($invite['accid'], $newUser['uid']);
+    } catch (ApiException $e) {
+      $message['text'] = "Sorry, there was an error assigning your user to the account. Please speak to your administrator.";
       $message['type'] = 'error';
       return $this->view->render($response, 'login.twig', [
         'menu' => $menu,
@@ -429,7 +429,7 @@ class CtrlUser extends CtrlBase {
     }
 
     // Delete the invite.
-    $inviteHlp->deleteByToken($user['token']);
+    $inviteHlp->deleteByToken($allVars['token']);
 
     // Redirect to login.
     $message['text'] = "Congratulations, you are registered. Please login.";
