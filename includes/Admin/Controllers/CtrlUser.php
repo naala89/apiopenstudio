@@ -8,7 +8,7 @@ use Datagator\Core\ApiException;
 use Slim\Views\Twig;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use PHPMailer;
+use PHPMailer\PHPMailer\PHPMailer;
 use phpmailerException;
 use Datagator\Core\Hash;
 use Datagator\Admin\User;
@@ -124,7 +124,6 @@ class CtrlUser extends CtrlBase {
         }
       }
     }
-    var_dump($filterApplication);
 
     return $this->view->render($response, 'users.twig', [
       'menu' => $menu,
@@ -196,11 +195,13 @@ class CtrlUser extends CtrlBase {
 
     // Add invite to DB.
     try {
+      $accountHlp = new Account($this->dbSettings);
+      $account = $accountHlp->findByUaid($uaid);
       $inviteHlp = new Invite($this->dbSettings);
       // Remove any old invites for this email.
       $inviteHlp->deleteByEmail($email);
       // Add new invite.
-      $inviteHlp->create($email, $token);
+      $inviteHlp->create($account['accid'], $email, $token);
     } catch (ApiException $e) {
       return $this->view->render($response, 'users.twig', [
         'menu' => $menu,
