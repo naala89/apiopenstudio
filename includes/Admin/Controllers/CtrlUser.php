@@ -100,22 +100,27 @@ class CtrlUser extends CtrlBase {
 
     // Create an array of distinct users from $roles with applications and roles.
     $userAccounts = $userAccountHlp->findByAccountId($account['accid']);
+    echo "<pre>";var_dump($userAccounts);
     $users = $administrators = $owners = [];
     foreach ($userAccounts as $userAccount) {
       $user = $userHlp->findByUserId($userAccount['uid']);
+      echo "<pre>";var_dump($user);
       $userAccountRoles = $userAccountHlp->findAllRolesByUaid($userAccount['uaid']);
       if (empty($userAccountRoles) && ($filterApplication == 'all' || $filterApplication == '')) {
         $users[$user['uid']] = $user;
         $users[$user['uid']]['applications'] = 'unnassigned';
+        $users[$user['uid']]['uaid'] = $userAccount['uaid'];
         continue;
       }
       foreach ($userAccountRoles as $userAccountRole) {
         if ($userAccountRole['rid'] == $ownerRid) {
           $owners[$user['uid']] = $user;
+          $owners[$user['uid']]['uaid'] = $userAccount['uaid'];
         } else {
           if ($filterApplication == 'all' || $userAccountRole['appid'] == $filterApplication) {
             if (!isset($users[$user['uid']])) {
               $users[$user['uid']] = $user;
+              $users[$user['uid']]['uaid'] = $userAccount['uaid'];
             }
             if (!isset($users[$user['uid']]['applications'][$userAccountRole['appid']])) {
               $users[$user['uid']]['applications'][$userAccountRole['appid']] = $applications[$userAccountRole['appid']];
@@ -228,8 +233,8 @@ class CtrlUser extends CtrlBase {
 
       //Recipients
       $mail->addAddress($email);
-      $mail->setFrom($this->mailSettings['from']['email'], $this->mailSettings['email']['name']);
-      $mail->addReplyTo($this->mailSettings['from']['email'], $this->mailSettings['email']['name']);
+      $mail->setFrom($this->mailSettings['from']['email'], $this->mailSettings['from']['name']);
+      $mail->addReplyTo($this->mailSettings['from']['email'], $this->mailSettings['from']['name']);
 
       //Content
       $mail->Subject = $this->view->fetchBlock('invite-user.email.twig', 'subject');
@@ -377,7 +382,7 @@ class CtrlUser extends CtrlBase {
         'message' => $message,
       ]);
     }
-    $result = $userHlp->findByUsername($user['username']);
+    $result = $userHlp->findByUsername($allVars['username']);
     if (!empty($result['uid'])) {
       $message['type'] = 'error';
       $message['text'] = 'A user already exists with this username: ' . $allVars['username'] . '.';
@@ -438,6 +443,56 @@ class CtrlUser extends CtrlBase {
     return $this->view->render($response, 'login.twig', [
       'menu' => $menu,
       'message' => $message,
+    ]);
+  }
+
+  public function delete(Request $request, Response $response, array $args) {
+    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
+    $roles = $this->getRoles($uaid);
+    if (!$this->checkAccess($roles)) {
+      $response->withRedirect('/');
+    }
+    $menu = $this->getMenus($roles);
+    if (empty($uaid = $args['uaid'])) {
+      return $this->view->render($response, 'users.twig', [
+        'menu' => $menu,
+        'message' => [
+          'type' => 'error',
+          'text' => 'Invalid user account ID specified.',
+        ]
+      ]);
+    }
+
+    $userAccountHlp = new UserAccount($this->dbSettings);
+    $userAccount = $userAccountHlp->findByUaid($args['uaid']);
+    if (empty($userAccount['uaid'])) {
+      return $this->view->render($response, 'users.twig', [
+        'menu' => $menu,
+        'message' => [
+          'type' => 'error',
+          'text' => 'Invalid user account ID specified.',
+        ]
+      ]);
+    }
+
+    try {
+      $userAccountHlp->delete();
+    } catch (ApiException $e) {
+      return $this->view->render($response, 'users.twig', [
+        'menu' => $menu,
+        'message' => [
+          'type' => 'error',
+          'text' => 'User account deletion failed: ' . $e->getMessage(),
+        ]
+      ]);
+    }
+
+    return $this->view->render($response, 'users.twig', [
+      'menu' => $menu,
+      'message' => [
+        'type' => 'info',
+        'text' => 'User account and their associated roles successfully deleted.',
+      ]
     ]);
   }
 

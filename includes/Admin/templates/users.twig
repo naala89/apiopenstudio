@@ -9,7 +9,7 @@
   <div class="row">
     <form method="get" action="/users">
       <div class="col s1">
-        <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-create"><i class="material-icons">add</i></a>
+        <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-user-invite"><i class="material-icons">add</i></a>
       </div>
       <div class="input-field col s4 offset-s5">
         <select name="filter-application">
@@ -34,7 +34,7 @@
         <label>Filter by Application</label>
       </div>
       <div class="input-field col s2">
-        <button class="btn waves-effect waves-light" type="submit" name="action">Go
+        <button class="btn waves-effect waves-light" type="submit" name="action">Filter
           <i class="material-icons right">send</i>
         </button>
       </div>
@@ -42,94 +42,98 @@
   </div>
 
   <div class="row">
-    <h5>Owners</h5>
-    <table class="responsive-table highlight">
-      <thead>
-      <tr>
-        <th>Username</th>
-        <th>First name</th>
-        <th>Last name</th>
-        <th>Email</th>
-        <th>Actions</th>
-      </tr>
-      </thead>
-      <tbody>
-        {% for userId,owner in owners %}
-          <tr>
-            <td>{{ owner.username }}</td>
-            <td>{{ owner.nameFirst }}</td>
-            <td>{{ owner.nameLast }}</td>
-            <td>{{ owner.email }}</td>
-            <td>
-              <a class="btn-floating btn-small white hoverable">
-                <i class="material-icons modal-app-edit-trigger black-text" owner-id="{{ value.appId }}">edit</i>
-              </a>
-              <a class="btn-floating btn-small white hoverable">
-                <i class="material-icons modal-owner-delete-trigger black-text" owner-id="{{ userId }}">delete</i>
-              </a>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-  <div class="row">
-    <h5>Administrators and Developers</h5>
-    <table class="responsive-table highlight">
-      <thead>
+    <div class="card-panel">
+      <h5>Owners</h5>
+      <table class="responsive-table highlight">
+        <thead>
         <tr>
           <th>Username</th>
           <th>First name</th>
           <th>Last name</th>
           <th>Email</th>
-          <th>Application/Role</th>
           <th>Actions</th>
         </tr>
-      </thead>
-      <tbody>
-      {% for userId,user in users %}
-        <tr>
-          <td>{{ user.username }}</td>
-          <td>{{ user.nameFirst }}</td>
-          <td>{{ user.nameLast }}</td>
-          <td>{{ user.email }}</td>
-          <td>
-            <table class="responsive-table highlight">
-              <tbody>
-                {% for appId,application in user.applications %}
-                  <td>{{ application.name }}</td>
-                  <td>
-                    <table>
-                      <tbody>
-                        {% for roleId,role in application.roles %}
-                          <td>{{ role.name }}</td>
-                        {% endfor %}
-                      </tbody>
-                    </table>
-                  </td>
-                {% endfor %}
-              </tbody>
-            </table>
-          </td>
+        </thead>
+        <tbody>
+          {% for userId,owner in owners %}
+            <tr>
+              <td>{{ owner.username }}</td>
+              <td>{{ owner.nameFirst }}</td>
+              <td>{{ owner.nameLast }}</td>
+              <td>{{ owner.email }}</td>
+              <td>
+                <a class="btn-floating btn-small white hoverable">
+                  <i class="material-icons modal-owner-edit-trigger black-text" user-account-id="{{ owner.uaid }}">edit</i>
+                </a>
+                <a class="btn-floating btn-small white hoverable">
+                  <i class="material-icons modal-owner-delete-trigger black-text" user-account-id="{{ owner.uaid }}">delete</i>
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-          <td>
-            <a class="btn-floating btn-small white hoverable">
-              <i class="material-icons modal-app-edit-trigger black-text" app-id="{{ value.appId }}" app-name="{{ value.name }}">edit</i>
-            </a>
-            <a class="btn-floating btn-small white hoverable">
-              <i class="material-icons modal-app-delete-trigger black-text" app-id="{{ value.appId }}" app-name="{{ value.name }}">delete</i>
-            </a>
-          </td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+  <div class="row">
+    <div class="card-panel">
+      <h5>Administrators and Developers</h5>
+      <table class="responsive-table highlight">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Email</th>
+            <th>Application/Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for userId,user in users %}
+          <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.nameFirst }}</td>
+            <td>{{ user.nameLast }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              <table class="responsive-table highlight">
+                <tbody>
+                  {% for appId,application in user.applications %}
+                    <td>{{ application.name }}</td>
+                    <td>
+                      <table>
+                        <tbody>
+                          {% for roleId,role in application.roles %}
+                            <td>{{ role.name }}</td>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </td>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </td>
+
+            <td>
+              <a class="btn-floating btn-small white hoverable">
+                <i class="material-icons modal-user-edit-trigger black-text" user-account-id="{{ user.uaid }}">edit</i>
+              </a>
+              <a class="btn-floating btn-small white hoverable">
+                <i class="material-icons modal-user-delete-trigger black-text" user-account-id="{{ user.uaid }}" user-name="{{ user.username }}">delete</i>
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- Add user modal -->
-  <div id="modal-create" class="modal">
-    <form method="post" action="/user/invite" id="application-create">
+  <div id="modal-user-invite" class="modal">
+    <form method="post" action="/user/invite" id="user-invite">
       <div class="modal-content">
         <div class="row">
           <h4>Add user</h4>
@@ -152,5 +156,22 @@
         </div>
       </div>
     </form>
+  </div>
+
+  <!-- Delete user modal -->
+  <div id="modal-user-delete" class="modal">
+      <div class="modal-content">
+        <div class="row">
+          <h4>Delete user</h4>
+          <p>Do you really want to delete user <span id="user-name" class="red-text"></span>, and all of their roles</p>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s4 offset-s8">
+            <a class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+            <a class="waves-effect waves-light red btn" href="/user/delete" id="delete-user">Delete</a>
+          </div>
+        </div>
+      </div>
   </div>
 {% endblock %}
