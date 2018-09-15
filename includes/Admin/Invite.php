@@ -174,22 +174,4 @@ class Invite {
     return $this->getInvite();
   }
 
-  /**
-   * Find by email and token.
-   *
-   * @param string $email
-   *   Invite email.
-   *
-   * @param string $token
-   *   Invite token.
-   *
-   * @return array
-   *   Invite.
-   */
-  public function findByEmailToken($email, $token) {
-    $inviteMapper = new Db\InviteMapper($this->db);
-    $this->invite = $inviteMapper->findByEmailToken($email, $token);
-    return $this->getInvite();
-  }
-
 }

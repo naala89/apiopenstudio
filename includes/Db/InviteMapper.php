@@ -198,6 +198,7 @@ class InviteMapper {
     $invite = new Invite();
 
     $invite->setIid(!empty($row['iid']) ? $row['iid'] : NULL);
+    $invite->setAccId(!empty($row['accid']) ? $row['accid'] : NULL);
     $invite->setEmail(!empty($row['email']) ? $row['email'] : NULL);
     $invite->setToken(!empty($row['token']) ? $row['token'] : NULL);
 

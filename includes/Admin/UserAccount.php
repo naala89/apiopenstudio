@@ -61,6 +61,27 @@ class UserAccount {
   }
 
   /**
+   * Create a new user account.
+   *
+   * @param int $accid
+   *   Account ID.
+   * @param int $uid
+   *   User ID.
+   *
+   * @return bool
+   *   Success.
+   */
+  public function create($accid, $uid) {
+    $userAccount = new Db\UserAccount(
+      NULL,
+      $uid,
+      $accid
+    );
+    $userAccountMapper = new Db\UserAccountMapper($this->db);
+    return $userAccountMapper->save($userAccount);
+  }
+
+  /**
    * Find a user account by user account ID.
    *
    * @param int $uaid
