@@ -65,6 +65,8 @@ class Invite {
   /**
    * Create an invite.
    *
+   * @param int $accid
+   *   Account ID.
    * @param string $email
    *   Invite email.
    * @param string $token
@@ -75,16 +77,15 @@ class Invite {
    *
    * @throws \Datagator\Core\ApiException
    */
-  public function create($email, $token) {
+  public function create($accid, $email, $token) {
     $invite = new Db\Invite(
       NULL,
-      NULL,
+      $accid,
       $email,
       $token
     );
 
     $inviteMapper = new Db\InviteMapper($this->db);
-    var_dump($invite);exit;
     $inviteMapper->save($invite);
     $this->invite = $inviteMapper->findByToken($token);
     return $this->getInvite();
