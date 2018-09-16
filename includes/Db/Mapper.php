@@ -60,7 +60,7 @@ abstract class Mapper {
    * @param array $bindParams
    *   Array of bind params.
    *
-   * @return mixed
+   * @return FALSE | Object
    *   Mapped row.
    *
    * @throws ApiException

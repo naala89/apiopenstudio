@@ -122,6 +122,28 @@ class AccountOwnerMapper extends Mapper {
   }
 
   /**
+   * Find by user ID.
+   *
+   * @param int $accid
+   *   Account Id.
+   * @param int $uid
+   *   User ID.
+   *
+   * @return array
+   *   AccountOwner object.
+   *
+   * @throws ApiException
+   */
+  public function findByAccidUid($accid, $uid) {
+    $sql = 'SELECT * FROM account_owner WHERE accid = ? AND uid = ?';
+    $bindParams = [
+      $accid,
+      $uid,
+    ];
+    return $this->fetchRow($sql, $bindParams);
+  }
+
+  /**
    * Map a DB row into an AccountOwner object.
    *
    * @param array $row
