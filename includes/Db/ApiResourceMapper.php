@@ -36,7 +36,7 @@ class ApiResourceMapper {
   public function save(ApiResource $resource) {
     if ($resource->getId() == NULL) {
       $sql = 'INSERT INTO resource (appid, name, description, method, identifier, meta, ttl) VALUES (?, ?, ?, ?, ?, ?, ?)';
-      $bindParams = array(
+      $bindParams = [
         $resource->getAppId(),
         $resource->getName(),
         $resource->getDescription(),
@@ -44,11 +44,11 @@ class ApiResourceMapper {
         $resource->getIdentifier(),
         $resource->getMeta(),
         $resource->getTtl(),
-      );
+      ];
     }
     else {
       $sql = 'UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, identifier = ?, meta = ?, ttl = ? WHERE resid = ?';
-      $bindParams = array(
+      $bindParams = [
         $resource->getAppId(),
         $resource->getName(),
         $resource->getDescription(),
@@ -57,7 +57,7 @@ class ApiResourceMapper {
         $resource->getMeta(),
         $resource->getTtl(),
         $resource->getResid(),
-      );
+      ];
     }
     return $this->saveDelete($sql, $bindParams);
   }
@@ -75,7 +75,7 @@ class ApiResourceMapper {
    */
   public function delete(ApiResource $resource) {
     $sql = 'DELETE FROM resource WHERE resid = ?';
-    $bindParams = array($resource->getResid());
+    $bindParams = [$resource->getResid()];
     return $this->fetchRow($sql, $bindParams);
   }
 
@@ -92,7 +92,7 @@ class ApiResourceMapper {
    */
   public function findId($resid) {
     $sql = 'SELECT * FROM resource WHERE resid = ?';
-    $bindParams = array($resid);
+    $bindParams = [$resid];
     return $this->fetchRow($sql, $bindParams);
   }
 
@@ -113,7 +113,7 @@ class ApiResourceMapper {
    */
   public function findByAppIdMethodIdentifier($appid, $method, $identifier) {
     $sql = 'SELECT r.* FROM resource AS r WHERE r.appid = ? AND r.method = ? AND r.identifier = ?';
-    $bindParams = array($appid, $method, $identifier);
+    $bindParams = [$appid, $method, $identifier];
     return $this->fetchRow($sql, $bindParams);
   }
 
@@ -134,9 +134,9 @@ class ApiResourceMapper {
    */
   public function findByAppNamesMethodIdentifier($appNames, $method, $identifier) {
     $sql = 'SELECT r.* FROM resource AS r INNER JOIN application AS a ON r.appid=a.appid WHERE';
-    $bindParams = array();
+    $bindParams = [];
     if (is_array($appNames)) {
-      $q = array();
+      $q = [];
       for ($i = 0; $i < count($appNames); $i++) {
         $q[] = '?';
         $bindParams[] = $appNames[$i];
@@ -158,7 +158,7 @@ class ApiResourceMapper {
       throw new ApiException($message, 2);
     }
 
-    $entries = array();
+    $entries = [];
     while (!$recordSet->EOF) {
       $entries[] = $this->mapArray($recordSet->fields);
       $recordSet->moveNext();
@@ -180,7 +180,7 @@ class ApiResourceMapper {
    */
   public function findByAppId($appid) {
     $sql = 'SELECT * FROM resource WHERE appid = ?';
-    $bindParams = array($appid);
+    $bindParams = [$appid];
     return $this->fetchRows($sql, $bindParams);
   }
 

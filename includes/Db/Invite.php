@@ -120,12 +120,12 @@ class Invite {
    *   Invite.
    */
   public function dump() {
-    return array(
+    return [
       'iid' => $this->iid,
       'accid' => $this->accid,
       'email' => $this->email,
       'token' => $this->token,
-    );
+    ];
   }
 
 }

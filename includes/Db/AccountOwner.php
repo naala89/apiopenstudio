@@ -96,11 +96,11 @@ class AccountOwner {
    *   Account.
    */
   public function dump() {
-    return array(
+    return [
       'aoid' => $this->aoid,
       'accid' => $this->accid,
       'uid' => $this->uid,
-    );
+    ];
   }
 
 }

@@ -36,18 +36,18 @@ class ApplicationUserRoleMapper extends Mapper {
   public function save(ApplicationUserRole $applicationUserRole) {
     if ($applicationUserRole->getAurid() == NULL) {
       $sql = 'INSERT INTO application_user_role (auid, rid) VALUES (?, ?)';
-      $bindParams = array(
+      $bindParams = [
         $applicationUserRole->getAuid(),
         $applicationUserRole->getRid(),
-      );
+      ];
     }
     else {
       $sql = 'UPDATE application_user_role SET (auid, rid) WHERE aurid = ?';
-      $bindParams = array(
+      $bindParams = [
         $applicationUserRole->getAuid(),
         $applicationUserRole->getRid(),
         $applicationUserRole->getAurid(),
-      );
+      ];
     }
     return $this->saveDelete($sql, $bindParams);
   }
@@ -65,7 +65,7 @@ class ApplicationUserRoleMapper extends Mapper {
    */
   public function delete(ApplicationUserRole $applicationUserRole) {
     $sql = 'DELETE FROM application_user_role WHERE aurid = ?';
-    $bindParams = array($applicationUserRole->getAurid());
+    $bindParams = [$applicationUserRole->getAurid()];
     return $this->saveDelete($sql, $bindParams);
   }
 
@@ -82,7 +82,7 @@ class ApplicationUserRoleMapper extends Mapper {
    */
   public function findByAurid($aurid) {
     $sql = 'SELECT * FROM application_user_role WHERE aurid = ?';
-    $bindParams = array($aurid);
+    $bindParams = [$aurid];
     return $this->fetchRow($sql, $bindParams);
   }
 
@@ -99,7 +99,7 @@ class ApplicationUserRoleMapper extends Mapper {
    */
   public function findByAuid($auid) {
     $sql = 'SELECT * FROM application_user_role WHERE auid = ?';
-    $bindParams = array($auid);
+    $bindParams = [$auid];
     return $this->fetchRows($sql, $bindParams);
   }
 
@@ -116,7 +116,7 @@ class ApplicationUserRoleMapper extends Mapper {
    */
   public function findByRid($rid) {
     $sql = 'SELECT * FROM application_user_role WHERE rid = ?';
-    $bindParams = array($rid);
+    $bindParams = [$rid];
     return $this->fetchRows($sql, $bindParams);
   }
 

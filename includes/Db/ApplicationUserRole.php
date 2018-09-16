@@ -96,11 +96,11 @@ class ApplicationUserRole {
    *   Associative array.
    */
   public function dump() {
-    return array(
+    return [
       'aurid' => $this->aurid,
       'auid' => $this->auid,
       'rid' => $this->rid,
-    );
+    ];
   }
 
 }

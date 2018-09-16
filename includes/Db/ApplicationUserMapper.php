@@ -36,18 +36,18 @@ class ApplicationUserMapper extends Mapper {
   public function save(ApplicationUser $applicationUser) {
     if ($applicationUser->getAuid() == NULL) {
       $sql = 'INSERT INTO application_user (appid, uid) VALUES (?, ?)';
-      $bindParams = array(
+      $bindParams = [
         $applicationUser->getAppid(),
         $applicationUser->getUid(),
-      );
+      ];
     }
     else {
       $sql = 'UPDATE application_user SET appid = ?, uid = ? WHERE auid = ?';
-      $bindParams = array(
+      $bindParams = [
         $applicationUser->getAppid(),
         $applicationUser->getUid(),
         $applicationUser->getAuid(),
-      );
+      ];
     }
     return $this->saveDelete($sql, $bindParams);
   }
@@ -66,7 +66,7 @@ class ApplicationUserMapper extends Mapper {
   public function delete(ApplicationUser $applicationUser) {
 
     $sql = 'DELETE FROM application_user WHERE auid = ?';
-    $bindParams = array($applicationUser->getAuid());
+    $bindParams = [$applicationUser->getAuid()];
     return $this->saveDelete($sql, $bindParams);
   }
 
@@ -83,7 +83,7 @@ class ApplicationUserMapper extends Mapper {
    */
   public function findByAuid($auid) {
     $sql = 'SELECT * FROM application_user WHERE auid = ?';
-    $bindParams = array($auid);
+    $bindParams = [$auid];
     return $this->fetchRow($sql, $bindParams);
   }
 
@@ -100,7 +100,7 @@ class ApplicationUserMapper extends Mapper {
    */
   public function findByAppid($appid) {
     $sql = 'SELECT * FROM application_user WHERE appid = ?';
-    $bindParams = array($appid);
+    $bindParams = [$appid];
     return $this->fetchRows($sql, $bindParams);
   }
 
@@ -117,7 +117,7 @@ class ApplicationUserMapper extends Mapper {
    */
   public function findByUid($uid) {
     $sql = 'SELECT * FROM application_user WHERE uid = ?';
-    $bindParams = array($uid);
+    $bindParams = [$uid];
     return $this->fetchRows($sql, $bindParams);
   }
 

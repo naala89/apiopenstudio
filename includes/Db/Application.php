@@ -96,11 +96,11 @@ class Application {
    *   Application.
    */
   public function dump() {
-    return array(
+    return [
       'appid' => $this->appid,
       'accid' => $this->accid,
       'name' => $this->name,
-    );
+    ];
   }
 
 }

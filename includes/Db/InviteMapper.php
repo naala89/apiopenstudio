@@ -36,20 +36,20 @@ class InviteMapper extends Mapper {
   public function save(Invite $invite) {
     if ($invite->getIid() == NULL) {
       $sql = 'INSERT INTO invite (accid, email, token) VALUES (?, ?, ?)';
-      $bindParams = array(
+      $bindParams = [
         $invite->getAccId(),
         $invite->getEmail(),
         $invite->getToken(),
-      );
+      ];
     }
     else {
       $sql = 'UPDATE invite SET accid= ?, email = ?, token = ? WHERE iid = ?';
-      $bindParams = array(
+      $bindParams = [
         $invite->getAccId(),
         $invite->getEmail(),
         $invite->getToken(),
         $invite->getIid(),
-      );
+      ];
     }
     return $this->saveDelete($sql, $bindParams);
   }
@@ -67,7 +67,7 @@ class InviteMapper extends Mapper {
    */
   public function delete(Invite $invite) {
     $sql = 'DELETE FROM invite WHERE iid = ?';
-    $bindParams = array($invite->getIid());
+    $bindParams = [$invite->getIid()];
     return $this->saveDelete($sql, $bindParams);
   }
 
@@ -84,7 +84,7 @@ class InviteMapper extends Mapper {
    */
   public function findByIid($iid) {
     $sql = 'SELECT * FROM invite WHERE id = ?';
-    $bindParams = array($iid);
+    $bindParams = [$iid];
     return $this->fetchRow($sql, $bindParams);
   }
 

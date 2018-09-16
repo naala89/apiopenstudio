@@ -545,7 +545,7 @@ class User {
    *   User.
    */
   public function dump() {
-    return array(
+    return [
       'uid' => $this->uid,
       'active' => $this->active,
       'username' => $this->username,
@@ -567,7 +567,7 @@ class User {
       'addressPostcode' => $this->addressPostcode,
       'phoneMobile' => $this->phoneMobile,
       'phoneWork' => $this->phoneWork,
-    );
+    ];
   }
 
 }

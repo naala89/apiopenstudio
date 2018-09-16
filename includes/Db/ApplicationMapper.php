@@ -36,18 +36,18 @@ class ApplicationMapper extends Mapper {
   public function save(Application $application) {
     if ($application->getAppid() == NULL) {
       $sql = 'INSERT INTO application (accid, name) VALUES (?, ?)';
-      $bindParams = array(
+      $bindParams = [
         $application->getAccid(),
         $application->getName(),
-      );
+      ];
     }
     else {
       $sql = 'UPDATE application SET accid = ?, name = ? WHERE appid = ?';
-      $bindParams = array(
+      $bindParams = [
         $application->getAccid(),
         $application->getName(),
         $application->getAppid(),
-      );
+      ];
     }
     return $this->saveDelete($sql, $bindParams);
   }
@@ -65,7 +65,7 @@ class ApplicationMapper extends Mapper {
    */
   public function delete(Application $application) {
     $sql = 'DELETE FROM application WHERE appid = ?';
-    $bindParams = array($application->getAppid());
+    $bindParams = [$application->getAppid()];
     return $this->saveDelete($sql, $bindParams);
   }
 
@@ -82,7 +82,7 @@ class ApplicationMapper extends Mapper {
    */
   public function findByAppid($appid) {
     $sql = 'SELECT * FROM application WHERE appid = ?';
-    $bindParams = array($appid);
+    $bindParams = [$appid];
     return $this->fetchRow($sql, $bindParams);
   }
 
@@ -101,7 +101,10 @@ class ApplicationMapper extends Mapper {
    */
   public function findByAccidName($accid, $name) {
     $sql = 'SELECT * FROM application WHERE accid = ? AND name = ?';
-    $bindParams = array($accid, $name);
+    $bindParams = [
+      $accid,
+      $name,
+    ];
     return $this->fetchRow($sql, $bindParams);
   }
 
@@ -111,14 +114,14 @@ class ApplicationMapper extends Mapper {
    * @param int $accid
    *   Account ID.
    *
-   * @return \Datagator\Db\Application
-   *   Application object
+   * @return array
+   *   array of mapped Application objects.
    *
    * @throws ApiException
    */
   public function findByAccId($accid) {
     $sql = 'SELECT * FROM application WHERE accid = ?';
-    $bindParams = array($accid);
+    $bindParams = [$accid];
     return $this->fetchRows($sql, $bindParams);
   }
 

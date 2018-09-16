@@ -119,12 +119,12 @@ class Vars {
    *   Associative array of var attributes.
    */
   public function dump() {
-    return array(
+    return [
       'id' => $this->id,
       'appId' => $this->appId,
       'name' => $this->name,
       'val' => $this->val,
-    );
+    ];
   }
 
 }

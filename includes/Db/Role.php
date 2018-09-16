@@ -72,10 +72,10 @@ class Role {
    *   Role object.
    */
   public function dump() {
-    return array(
+    return [
       'rid' => $this->rid,
       'name' => $this->name,
-    );
+    ];
   }
 
 }
