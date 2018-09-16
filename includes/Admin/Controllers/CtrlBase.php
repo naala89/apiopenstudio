@@ -2,13 +2,12 @@
 
 namespace Datagator\Admin\Controllers;
 
-use Datagator\Admin\Role;
 use Datagator\Admin\User;
 use Datagator\Core\ApiException;
 use Slim\Views\Twig;
 
 /**
- * Class Base.
+ * Class CtrlBase.
  *
  * @package Datagator\Admin\Controllers
  */

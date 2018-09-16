@@ -18,7 +18,7 @@ use Datagator\Admin\Application;
 use Datagator\Admin\Invite;
 
 /**
- * Class User.
+ * Class CtrlUser.
  *
  * @package Datagator\Admin\Controllers
  */
@@ -466,7 +466,7 @@ class CtrlUser extends CtrlBase {
       $response->withRedirect('/');
     }
     $menu = $this->getMenus($roles);
-    if (empty($uaid = $args['uaid'])) {
+    if (empty($args['uaid'])) {
       return $this->view->render($response, 'users.twig', [
         'menu' => $menu,
         'message' => [

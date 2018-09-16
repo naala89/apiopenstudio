@@ -3,7 +3,6 @@
 namespace Datagator\Core;
 
 use Exception;
-use Monolog\Logger;
 
 class ApiException extends Exception {
 

@@ -25,10 +25,11 @@ $app->post('/applications/edit', 'CtrlApplication:edit')->add(new Authentication
 $app->post('/applications/delete', 'CtrlApplication:delete')->add(new Authentication($settings, '/login'));
 
 /**
- * Users.
+ * User.
  */
 $app->get('/users', 'CtrlUser:index')->add(new Authentication($settings, '/login'));
 $app->post('/user/invite', 'CtrlUser:invite')->add(new Authentication($settings, '/login'));
 $app->get('/user/register/{token}', 'CtrlUser:register');
 $app->post('/user/register', 'CtrlUser:register');
 $app->get('/user/delete/{uaid}', 'CtrlUser:delete');
+$app->get('/user/edit/{uaid}', 'CtrlUserRole:edit');
