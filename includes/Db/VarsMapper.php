@@ -128,9 +128,6 @@ class VarsMapper extends Mapper {
     $sql = 'SELECT * FROM vars WHERE appid = ?';
     $bindParams = [$appId];
     return $this->fetchRows($sql, $bindParams);
-    }
-
-    return $entries;
   }
 
   /**
