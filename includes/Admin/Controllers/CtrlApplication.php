@@ -2,14 +2,13 @@
 
 namespace Datagator\Admin\Controllers;
 
-use Datagator\Admin\UserAccount;
 use Datagator\Core\ApiException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Datagator\Admin\Application;
 
 /**
- * Class Application.
+ * Class CtrlApplication.
  *
  * @package Datagator\Admin\Controllers
  */

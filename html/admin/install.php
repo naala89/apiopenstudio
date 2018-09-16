@@ -25,26 +25,19 @@ $twig = new Twig_Environment($loader/*, array(
   'cache' => $settings['twig']['cache_path'],
 )*/);
 
-// DB link.
-$dsnOptionsArr = [];
-foreach ($settings['db']['options'] as $k => $v) {
-  $dsnOptionsArr[] = "$k=$v";
-}
-$dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
-$dsn = $settings['db']['driver'] . '://'
-  . $settings['db']['username'] . ':'
-  . $settings['db']['password'] . '@'
-  . $settings['db']['host'] . '/'
-  . $settings['db']['database'] . $dsnOptions;
-$db = ADONewConnection($dsn);
-
-if (!$db) {
-  $message = [
-    'type' => 'error',
-    'text' => 'DB connection failed, please check your config settings.'
-  ];
+// Create the helper classes.
+try {
+  $account = new Account($settings['db']);
+  $user = new User($settings['db']);
+} catch (ApiException $e) {
   $template = $twig->load("install/install_$from.twig");
-  echo $template->render(['message' => $message, 'menu' => $menu]);
+  echo $template->render([
+    'message' => [
+      'type' => 'error',
+      'text' => 'An error occurred: ' . $e->getMessage(),
+    ],
+    'menu' => $menu,
+  ]);
   exit;
 }
 
@@ -60,6 +53,27 @@ switch ($step) {
     echo $template->render(['message' => $message, 'menu' => $menu]);
     exit;
   case 1:
+    // DB link.
+    $dsnOptionsArr = [];
+    foreach ($settings['db']['options'] as $k => $v) {
+      $dsnOptionsArr[] = "$k=$v";
+    }
+    $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
+    $dsn = $settings['db']['driver'] . '://'
+      . $settings['db']['username'] . ':'
+      . $settings['db']['password'] . '@'
+      . $settings['db']['host'] . '/'
+      . $settings['db']['database'] . $dsnOptions;
+    $db = ADONewConnection($dsn);
+    if (!$db) {
+      $message = [
+        'type' => 'error',
+        'text' => 'DB connection failed, please check your config settings.'
+      ];
+      $template = $twig->load("install/install_$from.twig");
+      echo $template->render(['message' => $message, 'menu' => $menu]);
+      exit;
+    }
     // Create and pre-populate the database.
     // If re-installation, remove any current logins.
     if (isset($_SESSION['accountName'])) {
@@ -143,9 +157,9 @@ switch ($step) {
     echo $template->render(['message' => $message, 'menu' => $menu]);
     exit;
     break;
+
   case 2:
     // Create user.
-
     if ($from == 2) {
       // This is a post from the user create form.
       if (empty($_POST['username']) ||
@@ -161,38 +175,33 @@ switch ($step) {
         echo $template->render(['message' => $message, 'menu' => $menu]);
         exit;
       }
-      try {
-        $user = new User($settings['db']);
-        $newUser = $user->create(
-          !empty($_POST['username']) ? $_POST['username'] : NULL,
-          !empty($_POST['password']) ? $_POST['password'] : NULL,
-          !empty($_POST['email']) ? $_POST['email'] : NULL,
-          !empty($_POST['honorific']) ? $_POST['honorific'] : NULL,
-          !empty($_POST['name_first']) ? $_POST['name_first'] : NULL,
-          !empty($_POST['name_last']) ? $_POST['name_last'] : NULL,
-          !empty($_POST['company']) ? $_POST['company'] : NULL,
-          !empty($_POST['website']) ? $_POST['website'] : NULL,
-          !empty($_POST['address_street']) ? $_POST['address_street'] : NULL,
-          !empty($_POST['address_suburb']) ? $_POST['address_suburb'] : NULL,
-          !empty($_POST['address_city']) ? $_POST['address_city'] : NULL,
-          !empty($_POST['address_state']) ? $_POST['address_state'] : NULL,
-          !empty($_POST['address_country']) ? $_POST['address_country'] : NULL,
-          !empty($_POST['address_postcode']) ? $_POST['address_postcode'] : NULL,
-          !empty($_POST['phone_mobile']) ? $_POST['phone_mobile'] : 0,
-          !empty($_POST['phone_work']) ? $_POST['phone_work'] : 0
-        );
-      } catch (ApiException $exception) {
-        $newUser = FALSE;
-      }
-
+      $newUser = $user->create(
+        !empty($_POST['username']) ? $_POST['username'] : NULL,
+        !empty($_POST['password']) ? $_POST['password'] : NULL,
+        !empty($_POST['email']) ? $_POST['email'] : NULL,
+        !empty($_POST['honorific']) ? $_POST['honorific'] : NULL,
+        !empty($_POST['name_first']) ? $_POST['name_first'] : NULL,
+        !empty($_POST['name_last']) ? $_POST['name_last'] : NULL,
+        !empty($_POST['company']) ? $_POST['company'] : NULL,
+        !empty($_POST['website']) ? $_POST['website'] : NULL,
+        !empty($_POST['address_street']) ? $_POST['address_street'] : NULL,
+        !empty($_POST['address_suburb']) ? $_POST['address_suburb'] : NULL,
+        !empty($_POST['address_city']) ? $_POST['address_city'] : NULL,
+        !empty($_POST['address_state']) ? $_POST['address_state'] : NULL,
+        !empty($_POST['address_country']) ? $_POST['address_country'] : NULL,
+        !empty($_POST['address_postcode']) ? $_POST['address_postcode'] : NULL,
+        !empty($_POST['phone_mobile']) ? $_POST['phone_mobile'] : 0,
+        !empty($_POST['phone_work']) ? $_POST['phone_work'] : 0
+      );
       if (!$newUser) {
-        // Failed to create the user
         $template = $twig->load('install/install_2.twig');
-        $message = [
-          'type' => 'error',
-          'text' => 'Failed to save your user to the DB. Please check the logs.'
-        ];
-        echo $template->render(['message' => $message, 'menu' => $menu]);
+        echo $template->render([
+          'menu' => $menu,
+          'message' => [
+            'type' => 'error',
+            'text' => 'Failed to save your user to the DB. Please check the logs.'
+          ],
+        ]);
         exit;
       }
 
@@ -207,6 +216,7 @@ switch ($step) {
     echo $template->render(['menu' => $menu]);
     exit;
     break;
+
   case 3:
     // Create the account.
 
@@ -214,12 +224,14 @@ switch ($step) {
     $uid = isset($_POST['uid']) ? $_POST['uid'] : '';
     if (empty($uid)) {
       // missing required user id from previous page.
-      $message = [
-        'type' => 'error',
-        'text' => 'Missing required user id. Please restart the install process.'
-      ];
       $template = $twig->load('install/install_3.twig');
-      echo $template->render(['message' => $message, 'menu' => $menu]);
+      echo $template->render([
+        'menu' => $menu,
+        'message' => [
+          'type' => 'error',
+          'text' => 'Missing required user ID. Please restart the install process.'
+        ],
+      ]);
       exit;
     }
 
@@ -228,73 +240,37 @@ switch ($step) {
       $accountName = isset($_POST['account_name']) ? $_POST['account_name'] : '';
       if (empty($accountName)) {
         // Missing required data.
-        $message = [
-          'type' => 'error',
-          'text' => 'Required Account name not entered.'
-        ];
         $template = $twig->load('install/install_3.twig');
-        echo $template->render(['message' => $message, 'menu' => $menu, 'uid' => $uid]);
+        echo $template->render([
+          'menu' => $menu,
+          'uid' => $uid,
+          'message' => [
+            'type' => 'error',
+            'text' => 'Required Account name not entered.',
+          ],
+        ]);
         exit;
       }
 
       // Create the account.
-      try {
-        $account = new Account($settings['db']);
-        $newAccount = $account->create($accountName);
-      } catch (ApiException $e) {
-        $newAccount = FALSE;
-      }
-      if (!$newAccount) {
-        $message = [
-          'type' => 'error',
-          'text' => 'Failed to save your account to the DB. Please check the logs.',
-        ];
+      if (!$account->create($accountName)) {
         $template = $twig->load('install/install_3.twig');
-        echo $template->render(['message' => $message, 'menu' => $menu, 'uid' => $uid]);
+        echo $template->render([
+          'menu' => $menu,
+          'uid' => $uid,
+          'message' => [
+            'type' => 'error',
+            'text' => 'Failed to save your account to the DB. Please check the logs.',
+          ],
+        ]);
         exit;
       }
 
-      // Assign the user to the account.
-      try {
-        $user = new User($settings['db']);
-        $result = $user->findByUserId($uid);
-      } catch (ApiException $e) {
-        $result = FALSE;
-      }
-      if (!$result) {
-        $message = [
-          'type' => 'error',
-          'text' => 'Failed to find your user in the db. Please check the logs.',
-        ];
-        $template = $twig->load('install/install_3.twig');
-        echo $template->render(['message' => $message, 'menu' => $menu, 'uid' => $uid]);
-        exit;
-      }
-      try {
-        $result = $user->assignToAccountName($accountName);
-      } catch (ApiException $e) {
-        $result = FALSE;
-      }
-      if (!$result) {
+      // Make the user the owner.
+      if (!$account->addOwner($uid)) {
         $message = [
           'type' => 'error',
           'text' => 'Failed to find assign your user the the account. Please check the logs.',
-        ];
-        $template = $twig->load('install/install_3.twig');
-        echo $template->render(['message' => $message, 'menu' => $menu, 'uid' => $uid]);
-        exit;
-      }
-
-      // Create the user 'Owner' role for the user account.
-      try {
-        $result = $user->assignRole('Owner', $accountName);
-      } catch (ApiException $e) {
-        $result = FALSE;
-      }
-      if (!$result) {
-        $message = [
-          'type' => 'error',
-          'text' => 'Failed to Create the owner role for your user in your account. Please check the logs.'
         ];
         $template = $twig->load('install/install_3.twig');
         echo $template->render(['message' => $message, 'menu' => $menu, 'uid' => $uid]);

@@ -160,6 +160,25 @@ class UserAccount {
   }
 
   /**
+   * Find all user accounts by user ID.
+   *
+   * @param int $uid
+   *   User ID.
+   *
+   * @return array
+   *   Array of mapped UserAccount objects indexed by user account ID.
+   */
+  public function findByUserId($uid) {
+    $userAccountMapper = new Db\UserAccountMapper($this->db);
+    $userAccounts = $userAccountMapper->findByUid($uid);
+    $result = [];
+    foreach ($userAccounts as $userAccount) {
+      $result[$userAccount->getUaid()] = $userAccount->dump();
+    }
+    return $result;
+  }
+
+  /**
    * Find all roles for a user account.
    *
    * @param int $uaid

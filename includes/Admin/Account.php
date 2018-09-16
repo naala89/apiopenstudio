@@ -70,20 +70,12 @@ class Account {
 
     try {
       $accountMapper->save($account);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
-
-    try {
       $this->account = $accountMapper->findByName($name);
     } catch (ApiException $e) {
       return FALSE;
     }
-    if (empty($this->account->getAccId())) {
-      return FALSE;
-    }
 
-    return $this->account->dump();
+    return empty($this->account->getAccid()) ? FALSE : $this->account->dump();
   }
 
   /**
@@ -124,6 +116,29 @@ class Account {
     $userAccountMapper = new Db\UserAccountMapper($this->db);
     $userAccount = $userAccountMapper->findByUaid($uaid);
     return $this->findByAccountId($userAccount->getAccId());
+  }
+
+  /**
+   * Add a user as owner.
+   *
+   * @param int $uid
+   *   User ID.
+   *
+   * @return bool
+   *   Success.
+   */
+  public function addOwner($uid) {
+    $accountOwner = new Db\AccountOwner(
+      NULL,
+      $this->account->getAccid(),
+      $uid
+    );
+    try {
+      $accountOwnerMapper = new Db\AccountOwnerMapper($this->db);
+      return $accountOwnerMapper->save($accountOwner);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
   }
 
 }

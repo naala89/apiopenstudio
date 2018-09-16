@@ -35,14 +35,14 @@ class AccountOwnerMapper extends Mapper {
    */
   public function save(AccountOwner $accountOwner) {
     if ($accountOwner->getAoid() == NULL) {
-      $sql = 'INSERT INTO account (accid, uid) VALUES (?, ?)';
+      $sql = 'INSERT INTO account_owner (accid, uid) VALUES (?, ?)';
       $bindParams = [
         $accountOwner->getAccid(),
         $accountOwner->getUid(),
       ];
     }
     else {
-      $sql = 'UPDATE account SET accid = ?, uid = ? WHERE aoid = ?';
+      $sql = 'UPDATE account_owner SET accid = ?, uid = ? WHERE aoid = ?';
       $bindParams = [
         $accountOwner->getAccid(),
         $accountOwner->getUid(),
@@ -82,7 +82,7 @@ class AccountOwnerMapper extends Mapper {
    * @throws ApiException
    */
   public function findByAoid($aoid) {
-    $sql = 'SELECT * FROM account WHERE aoid = ?';
+    $sql = 'SELECT * FROM account_owner WHERE aoid = ?';
     $bindParams = [$aoid];
     return $this->fetchRow($sql, $bindParams);
   }
@@ -115,8 +115,8 @@ class AccountOwnerMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findByName($uid) {
-    $sql = 'SELECT * FROM account WHERE uid = ?';
+  public function findByUid($uid) {
+    $sql = 'SELECT * FROM account_owner WHERE uid = ?';
     $bindParams = [$uid];
     return $this->fetchRows($sql, $bindParams);
   }

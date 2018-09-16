@@ -6,7 +6,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 
 /**
- * Class Login.
+ * Class CtrlLogin.
  *
  * @package Datagator\Admin\Controllers
  */
