@@ -56,7 +56,7 @@ class Authentication {
         $userHelper = new User($this->settings['db']);
       } catch (ApiException $e) {
         unset($_SESSION['token']);
-        unset($_SESSION['uaid']);
+        unset($_SESSION['uid']);
         return $next($request, $response);
       }
 
@@ -64,15 +64,15 @@ class Authentication {
       if (!$loginResult) {
         // Login failed.
         unset($_SESSION['token']);
-        unset($_SESSION['uaid']);
+        unset($_SESSION['uid']);
       } else {
         $_SESSION['token'] = $loginResult['token'];
-        $_SESSION['uaid'] = $loginResult['uaid'];
+        $_SESSION['uid'] = $loginResult['uid'];
       }
     }
 
     // Validate token.
-    if (!isset($_SESSION['token']) || !isset($_SESSION['uaid'])) {
+    if (!isset($_SESSION['token']) || !isset($_SESSION['uid'])) {
       return $response = $response->withRedirect($uri);
     }
     return $next($request, $response);

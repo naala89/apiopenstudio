@@ -93,10 +93,18 @@ class User{
       return FALSE;
     }
 
-    // Validate user is assigned to the account.
-    $userAccountMapper = new Db\UserAccountMapper($this->db);
-    $userAccount = $userAccountMapper->findByUidAccId($uid, $accId);
-    if (empty($uaid = $userAccount->getUaid())) {
+    // Validate user is assigned to the account as owner or user of any account applications.
+    $accountOwnerMapper = new Db\AccountOwnerMapper($this->db);
+    $accountOwner = $accountOwnerMapper->findByAccidUid($accId, $uid);
+    $validUser = !empty($accountOwner->getAoid());
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    $applicationUserMapper = new Db\ApplicationUserMapper($this->db);
+    $applications = $applicationMapper->findByAccId($accId);
+    foreach ($applications as $application) {
+      $applicationUser = $applicationUserMapper->findByUid($uid);
+      $validUser = !empty($applicationUser['auid']) ? TRUE : $validUser;
+    }
+    if (!$validUser) {
       return FALSE;
     }
 
@@ -118,7 +126,7 @@ class User{
       $this->user->setTokenTtl(Utilities::date_php2mysql(strtotime($ttl)));
       return [
         'token' => $this->user->getToken(),
-        'uaid' => $userAccount->getUaid(),
+        'uid' => $uid,
       ];
     }
 
@@ -135,7 +143,7 @@ class User{
 
     return [
       'token' => $this->user->getToken(),
-      'uaid' => $userAccount->getUaid(),
+      'uid' => $uid,
     ];
   }
 
