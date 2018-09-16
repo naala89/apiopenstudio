@@ -4,16 +4,13 @@ namespace Datagator\Db;
 
 use Datagator\Core\ApiException;
 use ADOConnection;
-use Cascade\Cascade;
 
 /**
  * Class ExternalUserMapper.
  *
  * @package Datagator\Db
  */
-class ExternalUserMapper {
-
-  protected $db;
+class ExternalUserMapper extends Mapper {
 
   /**
    * ExternalUserMapper constructor.
@@ -22,7 +19,7 @@ class ExternalUserMapper {
    *   DB connection object.
    */
   public function __construct(ADOConnection $dbLayer) {
-    $this->db = $dbLayer;
+    parent::__construct($dbLayer);
   }
 
   /**
@@ -60,13 +57,7 @@ class ExternalUserMapper {
         $user->getId(),
       );
     }
-    $this->db->Execute($sql, $bindParams);
-    if ($this->db->affected_rows() !== 0) {
-      return TRUE;
-    }
-    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
-    throw new ApiException($message, 2);
+    return $this->saveDelete($sql, $bindParams);
   }
 
   /**
@@ -83,13 +74,7 @@ class ExternalUserMapper {
   public function delete(ExternalUser $externalUser) {
     $sql = 'DELETE FROM external_user WHERE id = ?';
     $bindParams = array($externalUser->getId());
-    $this->db->Execute($sql, $bindParams);
-    if ($this->db->affected_rows() !== 0) {
-      return TRUE;
-    }
-    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
-    throw new ApiException($message, 2);
+    return $this->saveDelete($sql, $bindParams);
   }
 
   /**
@@ -106,13 +91,7 @@ class ExternalUserMapper {
   public function findById($id) {
     $sql = 'SELECT * FROM external_user WHERE id = ?';
     $bindParams = array($id);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
@@ -132,14 +111,7 @@ class ExternalUserMapper {
    */
   public function findByAppIdEntityExternalId($appId, $externalEntity, $externalId) {
     $sql = 'SELECT * FROM external_user WHERE appid = ? AND external_entity = ? AND external_id = ?';
-    $bindParams = array($appId, $externalEntity, $externalId);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
@@ -156,21 +128,7 @@ class ExternalUserMapper {
   public function findByAppid($appId) {
     $sql = 'SELECT * FROM external_user WHERE appid = ?';
     $bindParams = array($appId);
-
-    $recordSet = $this->db->Execute($sql, $bindParams);
-    if (!$recordSet) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-
-    $entries = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-      $recordSet->moveNext();
-    }
-
-    return $entries;
+    return $this->fetchRows($sql, $bindParams);
   }
 
   /**

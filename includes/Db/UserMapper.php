@@ -221,34 +221,7 @@ class UserMapper {
   }
 
   /**
-   * Validate that a user has a role.
-   *
-   * @param int $uid
-   *   User ID.
-   * @param int $appId
-   *   Application ID.
-   * @param int $rid
-   *   Role ID.
-   *
-   * @return bool
-   *   Result.
-   *
-   * @throws ApiException
-   */
-  public function hasRole($uid, $appId, $rid) {
-    $sql = 'SELECT u.* FROM user AS u INNER JOIN user_role AS ur ON u.uid=ur.uid WHERE u.uid=? AND ur.appid=? AND ur.rid=?';
-    $bindParams = array($uid, $appId, $rid);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return !empty($row['uid']);
-  }
-
-  /**
-   * Map a DB row to this object.
+   * Map a DB row into a User object.
    *
    * @param array $row
    *   DB row object.

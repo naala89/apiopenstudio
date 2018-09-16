@@ -4,16 +4,13 @@ namespace Datagator\Db;
 
 use Datagator\Core\ApiException;
 use ADOConnection;
-use Cascade\Cascade;
 
 /**
  * Class InviteMapper.
  *
  * @package Datagator\Db
  */
-class InviteMapper {
-
-  protected $db;
+class InviteMapper extends Mapper {
 
   /**
    * InviteMapper constructor.
@@ -22,7 +19,7 @@ class InviteMapper {
    *   DB connection object.
    */
   public function __construct(ADOConnection $dbLayer) {
-    $this->db = $dbLayer;
+    parent::__construct($dbLayer);
   }
 
   /**
@@ -54,13 +51,7 @@ class InviteMapper {
         $invite->getIid(),
       );
     }
-    $this->db->Execute($sql, $bindParams);
-    if ($this->db->affected_rows() !== 0) {
-      return TRUE;
-    }
-    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
-    throw new ApiException($message, 2);
+    return $this->saveDelete($sql, $bindParams);
   }
 
   /**
@@ -77,13 +68,7 @@ class InviteMapper {
   public function delete(Invite $invite) {
     $sql = 'DELETE FROM invite WHERE iid = ?';
     $bindParams = array($invite->getIid());
-    $this->db->Execute($sql, $bindParams);
-    if ($this->db->affected_rows() !== 0) {
-      return TRUE;
-    }
-    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
-    throw new ApiException($message, 2);
+    return $this->saveDelete($sql, $bindParams);
   }
 
   /**
@@ -100,13 +85,7 @@ class InviteMapper {
   public function findByIid($iid) {
     $sql = 'SELECT * FROM invite WHERE id = ?';
     $bindParams = array($iid);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
@@ -122,19 +101,7 @@ class InviteMapper {
   public function findByEmail($email) {
     $sql = 'SELECT * FROM invite WHERE email = ?';
     $bindParams = [$email];
-    $recordSet = $this->db->Execute($sql, $bindParams);
-    if (!$recordSet) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-
-    $entries = [];
-    while ($row = $recordSet->fetchRow()) {
-      $entries[] = $this->mapArray($row);
-    }
-
-    return $entries;
+    return $this->fetchRows($sql, $bindParams);
   }
 
   /**
@@ -151,13 +118,7 @@ class InviteMapper {
   public function findByToken($token) {
     $sql = 'SELECT * FROM invite WHERE token = ?';
     $bindParams = [$token];
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
@@ -176,13 +137,7 @@ class InviteMapper {
   public function findByEmailToken($email, $token) {
     $sql = 'SELECT * FROM invite WHERE email = ? AND token = ?';
     $bindParams = [$email, $token];
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**

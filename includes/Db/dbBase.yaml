@@ -50,18 +50,23 @@ role:
     - { rid: 4, name: Developer }
     - { rid: 5, name: Consumer }
 
-user_account:
+account_owner:
   columns:
-    uaid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: user account id }
+    aoid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: account owner id }
     uid: { type: int(10) unsigned, notnull: true, comment: user id }
     accid: { type: int(10) unsigned, notnull: true, comment: account id }
 
-user_account_role:
+application_user:
   columns:
-    uarid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: user account role id }
-    uaid: { type: int(10) unsigned, notnull: true, comment: user account id }
+    auid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: application user id }
+    uid: { type: int(10) unsigned, notnull: true, comment: user id }
+    appid: { type: int(10) unsigned, notnull: true, comment: application id }
+
+application_user_role:
+  columns:
+    aurid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: application user role id }
+    auid: { type: int(10) unsigned, notnull: true, comment: application user id }
     rid: { type: int(10) unsigned, notnull: true, comment: role id }
-    appid: { type: int(10) unsigned, default: NULL, comment: application id }
 
 invite:
   columns:
@@ -72,7 +77,7 @@ invite:
 
 resource:
   columns:
-    id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: resource id }
+    resid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: resource id }
     appid: { type: int(10) unsigned, notnull: true, comment: application id }
     name: { type: varchar(255), notnull: true, comment: name of the resource }
     description : { type: varchar(2048), notnull: true, comment: description of the resource }
@@ -81,30 +86,30 @@ resource:
     meta: { type: varchar(16384), notnull: true, comment: all of the actions taken by the call }
     ttl: { type: int(10) unsigned, notnull: true, default: 300, comment: time to cache the results (seconds) }
   data:
-    - { id: 1, appid: 1, name: Account create, description: Create an account, method: post, identifier: account, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varPost','id':2,'name':'token'}},'process':{'function':'datagatorAccount','id':4,'username':{'function':'varPost','id':5,'name':'username'},'accountName':{'function':'varPost','id':7,'name':'accountName'}}}" }
-    - { id: 2, appid: 1, name: Account delete, description: Delete an account, method: delete, identifier: account, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'datagatorAccount','id':4,'accountName':{'function':'varGet','id':5,'name':'accountName'}}}' }
-    - { id: 3, appid: 1, name: Account read, description: Read an account, method: get, identifier: account, ttl: 0, meta: '{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'datagatorAccount','id':4,'accountName':{'function':'varGet','id':5,'name':'accountName'}}}' }
-    - { id: 4, appid: 1, name: Application create, description: Create an application, method: post, identifier: application, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varPost','id':2,'name':'token'}},'process':{'function':'datagatorApplication','id':4,'accountName':{'function':'varPost','id':5,'name':'accountName'},'applicationName':{'function':'varPost','id':7,'name':'applicationName'}}}' }
-    - { id: 5, appid: 1, name: Application delete, description: Delete an application, method: delete, identifier: applicaton, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'datagatorApplication','id':4,'applicationName':{'function':'varGet','id':5,'name':'applicationName'}}}' }
-    - { id: 6, appid: 1, name: Application fetch, description: Fetch an application, method: get, identifier: application, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'datagatorApplication','id':4,'applicationName':{'function':'varGet','id':5,'name':'applicationName'}}}' }
-    - { id: 7, appid: 1, name: User create, description: Create a user, method: post, identifier: user, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varPost','id':2,'name':'token'}},'process':{'function':'datagatorUser','id':3,'username':{'function':'varPost','id':4,'name':'username'},'active':{'function':'varPost','id':5,'name':'active'},'email':{'function':'varPost','id':6,'name':'email'},'honorific':{'function':'varPost','id':7,'name':'honorific'},'nameFirst':{'function':'varPost','id':8,'name':'nameFirst'},'nameLast':{'function':'varPost','id':9,'name':'nameLast'},'company':{'function':'varPost','id':10,'name':'company'}}}' }
-    - { id: 8, appid: 1, name: User delete, description: Delete a user, method: delete, identifier: user, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'datagatorUser','id':3,'username':{'function':'varGet','id':4,'name':'username'}}}' }
-    - { id: 9, appid: 1, name: User fetch, description: Fetch a user, method: get, identifier: user, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'datagatorUser','id':3,'username':{'function':'varGet','id':4,'name':'username'}}}' }
-    - { id: 10, appid: 1, name: User Role create, description: Add a role for a user for an application, method: post, identifier: userrole, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varPost','id':2,'name':'token'}},'process':{'function':'datagatorUserRole','id':3,'username':{'function':'varPost','id':4,'name':'username'},'applicationName':{'function':'varPost','id':5,'name':'applicationName'},'roleName':{'function':'varPost','id':6,'name':'roleName'}}}' }
-    - { id: 11, appid: 1, name: User Role delete, description: Delete a role for a user and/or application, method: delete, identifier: userrole, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'datagatorUserRole','id':3,'username':{'function':'varGet','id':4,'name':'username'},'applicationName':{'function':'varGet','id':5,'name':'applicationName'},'roleName':{'function':'varPost','id':6,'name':'roleName'}}}' }
-    - { id: 12, appid: 1, name: User Role fetch, description: Fetch a role for a user on an application, method: get, identifier: userrole, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'datagatorUserRole','id':3,'username':{'function':'varGet','id':4,'name':'username'},'applicationName':{'function':'varGet','id':5,'name':'applicationName'},'roleName':{'function':'varPost','id':6,'name':'roleName'}}}' }
-    - { id: 13, appid: 2, name: Processors all, description: Fetch details of all procssors, method: get, identifier: processors/all, ttl: 3600, meta: "{'security':{'function':'tokenDeveloper','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'ProcessorsAll','id':3}}' }
-    - { id: 14, appid: 2, name: Resource delete, description: Delete a resource, method: delete, identifier: resource, ttl: 0, meta: "{'security':{'function':'tokenDeveloper','id':1,'token':{'function':'varRequest','id':2,'name':'token'}},'process':{'function':'resourceYaml','id':3,'method':{'function':'varRequest','id':4,'name':'method'},'uri':{'function':'varRequest','id':5,'name':'uri'}}}' }
-    - { id: 15, appid: 2, name: Resource export JSON, description: Export a resource in string or JSON format, method: get, identifier: resource/json, ttl: 0, meta: "{'security':{'function':'tokenDeveloper','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'resourceJson','id':3,'method':{'function':'varGet','id':4,'name':'method'},'noun':{'function':'varGet','id':5,'name':'noun'},'verb':{'function':'varGet','id':6,'name':'verb'}}}' }
-    - { id: 16, appid: 2, name: Resource export YAML, description: Fetch a resource in string or YAML format, method: get, identifier: resource/yaml, ttl: 0, meta: "{'security':{'function':'tokenDeveloper','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'resourceYaml','id':3,'method':{'function':'varGet','id':4,'name':'method'},'noun':{'function':'varGet','id':5,'name':'noun'},'verb':{'function':'varGet','id':6,'name':'verb'}}}' }
-    - { id: 17, appid: 2, name: Resource import JSON, description: Create a resource from a document or string in JSON format, method: post, identifier: resource/json, ttl: 0, meta: "{'security':{'function':'tokenDeveloper','id':1,'token':{'function':'varPost','id':2,'name':'token'}},'process':{'function':'resourceJson','id':3,'yaml':{'function':'varPost','id':4,'name':'yaml'}}}' }
-    - { id: 18, appid: 2, name: Resource import Swagger, description: Create resource/s from a Swagger document, method: post, identifier: resource/swagger, ttl: 0, meta: "{'security':{'function':'tokenDeveloper','id':1,'token':{'function':'varPost','id':2,'name':'token'}},'process':{'function':'resourceSwagger','id':3,'resource':'resource'}}' }
-    - { id: 19, appid: 2, name: Resource import YAML, description: Create a resource from a document or string in YAML format, method: post, identifier: resource/yaml, ttl: 0, meta: "{'security':{'function':'tokenDeveloper','id':1,'token':{'function':'varPost','id':2,'name':{'function':'literal','id':3,'value':'token'}}},'process':{'function':'resourceYaml','id':4,'resource':{'function':'literal','id':3,'value':'resource'}}}' }
-    - { id: 20, appid: 2, name: User login, description: Login a user to Datagator using username/password, method: post, identifier: user/login, ttl: 0, meta: "{'process':{'function':'UserLogin','id':1,'username':{'function':'VarPost','id':2,'name':'username'},'password':{'function':'VarPost','id':3,'name':'password'}}}' }
+    - { resid: 1, appid: 1, name: Account create, description: Create an account, method: post, identifier: account, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varPost','id':2,'name':'token'}},'process':{'function':'datagatorAccount','id':4,'username':{'function':'varPost','id':5,'name':'username'},'accountName':{'function':'varPost','id':7,'name':'accountName'}}}" }
+    - { resid: 2, appid: 1, name: Account delete, description: Delete an account, method: delete, identifier: account, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'datagatorAccount','id':4,'accountName':{'function':'varGet','id':5,'name':'accountName'}}}' }
+    - { resid: 3, appid: 1, name: Account read, description: Read an account, method: get, identifier: account, ttl: 0, meta: '{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'datagatorAccount','id':4,'accountName':{'function':'varGet','id':5,'name':'accountName'}}}' }
+    - { resid: 4, appid: 1, name: Application create, description: Create an application, method: post, identifier: application, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varPost','id':2,'name':'token'}},'process':{'function':'datagatorApplication','id':4,'accountName':{'function':'varPost','id':5,'name':'accountName'},'applicationName':{'function':'varPost','id':7,'name':'applicationName'}}}' }
+    - { resid: 5, appid: 1, name: Application delete, description: Delete an application, method: delete, identifier: applicaton, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'datagatorApplication','id':4,'applicationName':{'function':'varGet','id':5,'name':'applicationName'}}}' }
+    - { resid: 6, appid: 1, name: Application fetch, description: Fetch an application, method: get, identifier: application, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'datagatorApplication','id':4,'applicationName':{'function':'varGet','id':5,'name':'applicationName'}}}' }
+    - { resid: 7, appid: 1, name: User create, description: Create a user, method: post, identifier: user, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varPost','id':2,'name':'token'}},'process':{'function':'datagatorUser','id':3,'username':{'function':'varPost','id':4,'name':'username'},'active':{'function':'varPost','id':5,'name':'active'},'email':{'function':'varPost','id':6,'name':'email'},'honorific':{'function':'varPost','id':7,'name':'honorific'},'nameFirst':{'function':'varPost','id':8,'name':'nameFirst'},'nameLast':{'function':'varPost','id':9,'name':'nameLast'},'company':{'function':'varPost','id':10,'name':'company'}}}' }
+    - { resid: 8, appid: 1, name: User delete, description: Delete a user, method: delete, identifier: user, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'datagatorUser','id':3,'username':{'function':'varGet','id':4,'name':'username'}}}' }
+    - { resid: 9, appid: 1, name: User fetch, description: Fetch a user, method: get, identifier: user, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'datagatorUser','id':3,'username':{'function':'varGet','id':4,'name':'username'}}}' }
+    - { resid: 10, appid: 1, name: User Role create, description: Add a role for a user for an application, method: post, identifier: userrole, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varPost','id':2,'name':'token'}},'process':{'function':'datagatorUserRole','id':3,'username':{'function':'varPost','id':4,'name':'username'},'applicationName':{'function':'varPost','id':5,'name':'applicationName'},'roleName':{'function':'varPost','id':6,'name':'roleName'}}}' }
+    - { resid: 11, appid: 1, name: User Role delete, description: Delete a role for a user and/or application, method: delete, identifier: userrole, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'datagatorUserRole','id':3,'username':{'function':'varGet','id':4,'name':'username'},'applicationName':{'function':'varGet','id':5,'name':'applicationName'},'roleName':{'function':'varPost','id':6,'name':'roleName'}}}' }
+    - { resid: 12, appid: 1, name: User Role fetch, description: Fetch a role for a user on an application, method: get, identifier: userrole, ttl: 0, meta: "{'security':{'function':'TokenSysAdmin','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'datagatorUserRole','id':3,'username':{'function':'varGet','id':4,'name':'username'},'applicationName':{'function':'varGet','id':5,'name':'applicationName'},'roleName':{'function':'varPost','id':6,'name':'roleName'}}}' }
+    - { resid: 13, appid: 2, name: Processors all, description: Fetch details of all procssors, method: get, identifier: processors/all, ttl: 3600, meta: "{'security':{'function':'tokenDeveloper','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'ProcessorsAll','id':3}}' }
+    - { resid: 14, appid: 2, name: Resource delete, description: Delete a resource, method: delete, identifier: resource, ttl: 0, meta: "{'security':{'function':'tokenDeveloper','id':1,'token':{'function':'varRequest','id':2,'name':'token'}},'process':{'function':'resourceYaml','id':3,'method':{'function':'varRequest','id':4,'name':'method'},'uri':{'function':'varRequest','id':5,'name':'uri'}}}' }
+    - { resid: 15, appid: 2, name: Resource export JSON, description: Export a resource in string or JSON format, method: get, identifier: resource/json, ttl: 0, meta: "{'security':{'function':'tokenDeveloper','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'resourceJson','id':3,'method':{'function':'varGet','id':4,'name':'method'},'noun':{'function':'varGet','id':5,'name':'noun'},'verb':{'function':'varGet','id':6,'name':'verb'}}}' }
+    - { resid: 16, appid: 2, name: Resource export YAML, description: Fetch a resource in string or YAML format, method: get, identifier: resource/yaml, ttl: 0, meta: "{'security':{'function':'tokenDeveloper','id':1,'token':{'function':'varGet','id':2,'name':'token'}},'process':{'function':'resourceYaml','id':3,'method':{'function':'varGet','id':4,'name':'method'},'noun':{'function':'varGet','id':5,'name':'noun'},'verb':{'function':'varGet','id':6,'name':'verb'}}}' }
+    - { resid: 17, appid: 2, name: Resource import JSON, description: Create a resource from a document or string in JSON format, method: post, identifier: resource/json, ttl: 0, meta: "{'security':{'function':'tokenDeveloper','id':1,'token':{'function':'varPost','id':2,'name':'token'}},'process':{'function':'resourceJson','id':3,'yaml':{'function':'varPost','id':4,'name':'yaml'}}}' }
+    - { resid: 18, appid: 2, name: Resource import Swagger, description: Create resource/s from a Swagger document, method: post, identifier: resource/swagger, ttl: 0, meta: "{'security':{'function':'tokenDeveloper','id':1,'token':{'function':'varPost','id':2,'name':'token'}},'process':{'function':'resourceSwagger','id':3,'resource':'resource'}}' }
+    - { resid: 19, appid: 2, name: Resource import YAML, description: Create a resource from a document or string in YAML format, method: post, identifier: resource/yaml, ttl: 0, meta: "{'security':{'function':'tokenDeveloper','id':1,'token':{'function':'varPost','id':2,'name':{'function':'literal','id':3,'value':'token'}}},'process':{'function':'resourceYaml','id':4,'resource':{'function':'literal','id':3,'value':'resource'}}}' }
+    - { resid: 20, appid: 2, name: User login, description: Login a user to Datagator using username/password, method: post, identifier: user/login, ttl: 0, meta: "{'process':{'function':'UserLogin','id':1,'username':{'function':'VarPost','id':2,'name':'username'},'password':{'function':'VarPost','id':3,'name':'password'}}}' }
 
 external_user:
   columns:
-    id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: external user id }
+    euid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: external user id }
     appid: { type: int(10) unsigned, notnull: true, comment: application id }
     external_id: { type: varchar(255), notnull: true, comment: user id in external entity }
     external_entity: { type: varchar(255), notnull: true, comment: name of the external entity }
@@ -114,14 +119,21 @@ external_user:
 
 blacklist:
   columns:
-    id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: blacklist id }
+    blid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: blacklist id }
+    appid: { type: int(10) unsigned, notnull: true, comment: application id }
+    min_ip: { type: varchar(32), notnull: true, comment: ip range minimum }
+    max_ip: { type: varchar(32), notnull: true, comment: ip range maximum }
+
+whitelist:
+  columns:
+    wlid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: whitelist id }
     appid: { type: int(10) unsigned, notnull: true, comment: application id }
     min_ip: { type: varchar(32), notnull: true, comment: ip range minimum }
     max_ip: { type: varchar(32), notnull: true, comment: ip range maximum }
 
 log:
   columns:
-    id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: log identifier id }
+    lid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: log id }
     datetime: { type: timestamp, notnull: true, default: CURRENT_TIMESTAMP, comment: log time and date }
     user: { type: varchar(255), notnull: true, comment: user name }
     ip: { type: varchar(11), notnull: true, comment: user id }
@@ -130,7 +142,7 @@ log:
 
 var:
   columns:
-    id: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: var id }
+    vid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: var id }
     appid: { type: int(10) unsigned, notnull: true, comment: application id }
     name: { type: varchar(255), notnull: true, comment: name of the var }
     val: { type: varchar(255), notnull: true, comment: value of the var }

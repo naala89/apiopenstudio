@@ -11,9 +11,7 @@ use Cascade\Cascade;
  *
  * @package Datagator\Db
  */
-class UserAccountMapper {
-
-  protected $db;
+class UserAccountMapper extends Mapper {
 
   /**
    * UserAccountMapper constructor.
@@ -22,7 +20,7 @@ class UserAccountMapper {
    *   DB connection object.
    */
   public function __construct(ADOConnection $dbLayer) {
-    $this->db = $dbLayer;
+    parent::__construct($dbLayer);
   }
 
   /**
@@ -52,13 +50,7 @@ class UserAccountMapper {
         $userAccount->getUaid(),
       ];
     }
-    $this->db->Execute($sql, $bindParams);
-    if ($this->db->affected_rows() !== 0) {
-      return TRUE;
-    }
-    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
-    throw new ApiException($message, 2);
+    return $this->saveDelete($sql, $bindParams);
   }
 
   /**
@@ -75,13 +67,7 @@ class UserAccountMapper {
   public function delete(UserAccount $userAccount) {
     $sql = 'DELETE FROM user_account WHERE uaid = ?';
     $bindParams = array($userAccount->getUaid());
-    $this->db->Execute($sql, $bindParams);
-    if ($this->db->affected_rows() !== 0) {
-      return TRUE;
-    }
-    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
-    throw new ApiException($message, 2);
+    return $this->saveDelete($sql, $bindParams);
   }
 
   /**
@@ -98,13 +84,7 @@ class UserAccountMapper {
   public function findByUaid($uaid) {
     $sql = 'SELECT * FROM user_account WHERE uaid = ?';
     $bindParams = array($uaid);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
@@ -123,13 +103,7 @@ class UserAccountMapper {
   public function findByUidAccId($uid, $accid) {
     $sql = 'SELECT * FROM user_account WHERE uid = ? AND accid = ?';
     $bindParams = array($uid, $accid);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
@@ -146,25 +120,28 @@ class UserAccountMapper {
   public function findByAccId($accid) {
     $sql = 'SELECT * FROM user_account WHERE accid = ?';
     $bindParams = array($accid);
-
-    $recordSet = $this->db->Execute($sql, $bindParams);
-    if (!$recordSet) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-
-    $entries = [];
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-      $recordSet->moveNext();
-    }
-
-    return $entries;
+    return $this->fetchRows($sql, $bindParams);
   }
 
   /**
-   * Map a DB row to the internal attributes.
+   * Find all user accounts for a user ID.
+   *
+   * @param int $uid
+   *   User ID.
+   *
+   * @return array
+   *   Array of mapped UserAccount objects.
+   *
+   * @throws ApiException
+   */
+  public function findByUid($uid) {
+    $sql = 'SELECT * FROM user_account WHERE uid = ?';
+    $bindParams = array($uid);
+    return $this->fetchRows($sql, $bindParams);
+  }
+
+  /**
+   * Map a DB row into a UserAccount object.
    *
    * @param array $row
    *   DB Row.

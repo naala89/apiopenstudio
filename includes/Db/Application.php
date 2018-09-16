@@ -35,7 +35,7 @@ class Application {
    * @return int
    *   Application ID.
    */
-  public function getAppId() {
+  public function getAppid() {
     return $this->appid;
   }
 
@@ -45,7 +45,7 @@ class Application {
    * @param int $appid
    *   Application ID.
    */
-  public function setAppId($appid) {
+  public function setAppid($appid) {
     $this->appid = $appid;
   }
 
@@ -55,7 +55,7 @@ class Application {
    * @return int
    *   Account ID.
    */
-  public function getAccId() {
+  public function getAccid() {
     return $this->accid;
   }
 
@@ -65,7 +65,7 @@ class Application {
    * @param int $accid
    *   Account ID.
    */
-  public function setAccId($accid) {
+  public function setAccid($accid) {
     $this->accid = $accid;
   }
 
