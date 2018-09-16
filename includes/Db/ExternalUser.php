@@ -192,7 +192,7 @@ class ExternalUser {
    *   External user.
    */
   public function dump() {
-    return array(
+    return [
       'uid' => $this->uid,
       'appId' => $this->appId,
       'externalId' => $this->externalId,
@@ -200,7 +200,7 @@ class ExternalUser {
       'dataField1' => $this->dataField1,
       'dataField2' => $this->dataField2,
       'dataField3' => $this->dataField3,
-    );
+    ];
   }
 
 }

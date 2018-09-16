@@ -216,13 +216,13 @@ class ApiResource {
    *   Api resource.
    */
   public function dump() {
-    return array(
+    return [
       'resid' => $this->resid,
       'appid' => $this->appid,
       'method' => $this->method,
       'identifier' => $this->identifier,
       'ttl' => $this->ttl,
-    );
+    ];
   }
 
 }

@@ -36,16 +36,14 @@ class AccountMapper extends Mapper {
   public function save(Account $account) {
     if ($account->getAccid() == NULL) {
       $sql = 'INSERT INTO account (name) VALUES (?)';
-      $bindParams = array(
-        $account->getName(),
-      );
+      $bindParams = [$account->getName()];
     }
     else {
       $sql = 'UPDATE account SET name = ? WHERE aid = ?';
-      $bindParams = array(
+      $bindParams = [
         $account->getName(),
         $account->getAccid(),
-      );
+      ];
     }
     return $this->saveDelete($sql, $bindParams);
   }
@@ -64,7 +62,7 @@ class AccountMapper extends Mapper {
   public function delete(Account $account) {
 
     $sql = 'DELETE FROM account WHERE accid = ?';
-    $bindParams = array($account->getAccid());
+    $bindParams = [$account->getAccid()];
     return $this->saveDelete($sql, $bindParams);
   }
 
@@ -81,7 +79,7 @@ class AccountMapper extends Mapper {
    */
   public function findByAccid($accid) {
     $sql = 'SELECT * FROM account WHERE accid = ?';
-    $bindParams = array($accid);
+    $bindParams = [$accid];
     return $this->fetchRow($sql, $bindParams);
   }
 
@@ -98,8 +96,8 @@ class AccountMapper extends Mapper {
    */
   public function findByName($name) {
     $sql = 'SELECT * FROM account WHERE name = ?';
-    $bindParams = array($name);
-    return $this->fetchRows($sql, $bindParams);
+    $bindParams = [$name];
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**

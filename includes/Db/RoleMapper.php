@@ -36,16 +36,16 @@ class RoleMapper extends Mapper {
   public function save(Role $role) {
     if ($role->getRid() == NULL) {
       $sql = 'INSERT INTO role (name) VALUES (?, ?)';
-      $bindParams = array(
+      $bindParams = [
         $role->getName(),
-      );
+      ];
     }
     else {
       $sql = 'UPDATE external_user SET name = ? WHERE rid = ?';
-      $bindParams = array(
+      $bindParams = [
         $role->getName(),
         $role->getRid(),
-      );
+      ];
     }
     return $this->saveDelete($sql, $bindParams);
   }
@@ -63,7 +63,7 @@ class RoleMapper extends Mapper {
    */
   public function delete(Role $role) {
     $sql = 'DELETE FROM role WHERE rid = ?';
-    $bindParams = array($role->getRid());
+    $bindParams = [$role->getRid()];
     return $this->saveDelete($sql, $bindParams);
   }
 
@@ -77,7 +77,7 @@ class RoleMapper extends Mapper {
    */
   public function findAll() {
     $sql = 'SELECT * FROM role';
-    return $this->fetchRows($sql, $bindParams);
+    return $this->fetchRows($sql, []);
   }
 
   /**
@@ -93,7 +93,7 @@ class RoleMapper extends Mapper {
    */
   public function findByRid($rid) {
     $sql = 'SELECT * FROM role WHERE rid = ?';
-    $bindParams = array($rid);
+    $bindParams = [$rid];
     return $this->fetchRow($sql, $bindParams);
   }
 
@@ -110,7 +110,7 @@ class RoleMapper extends Mapper {
    */
   public function findByName($name) {
     $sql = 'SELECT * FROM role WHERE name = ?';
-    $bindParams = array($name);
+    $bindParams = [$name];
     return $this->fetchRow($sql, $bindParams);
   }
 

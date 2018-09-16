@@ -12,7 +12,7 @@ use ADOConnection;
  *
  * @package Datagator\Db
  */
-class UserMapper {
+class UserMapper extends Mapper {
 
   /**
    * @var \ADOConnection
@@ -47,7 +47,7 @@ class UserMapper {
   public function save(User $user) {
     if (empty($user->getUid())) {
       $sql = 'INSERT INTO user (active, username, salt, hash, token, token_ttl, email, honorific, name_first, name_last, company, website, address_street, address_suburb, address_city, address_state, address_country, address_postcode, phone_mobile, phone_work) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-      $bindParams = array(
+      $bindParams = [
         $user->getActive(),
         $user->getUsername(),
         $user->getSalt(),
@@ -68,11 +68,11 @@ class UserMapper {
         $user->getAddressPostcode(),
         $user->getPhoneMobile(),
         $user->getPhoneWork(),
-      );
+      ];
     }
     else {
       $sql = 'UPDATE user SET active=?, username=?, salt=?, hash=?, token=?, token_ttl=?, email=?, honorific=?, name_first=?, name_last=?, company=?, website=?, address_street=?, address_suburb=?, address_city=?, address_state=?, address_country=?, address_postcode=?, phone_mobile=?, phone_work=?  WHERE uid=?';
-      $bindParams = array(
+      $bindParams = [
         $user->getActive(),
         $user->getUsername(),
         $user->getSalt(),
@@ -94,15 +94,9 @@ class UserMapper {
         $user->getPhoneMobile(),
         $user->getPhoneWork(),
         $user->getUid(),
-      );
+      ];
     }
-    $this->db->Execute($sql, $bindParams);
-    if ($this->db->affected_rows() !== 0) {
-      return TRUE;
-    }
-    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
-    throw new ApiException($message, 2);
+    return $this->saveDelete($sql, $bindParams);
   }
 
   /**
@@ -118,14 +112,8 @@ class UserMapper {
    */
   public function delete(User $user) {
     $sql = 'DELETE FROM user WHERE uid = ?';
-    $bindParams = array($user->getUid());
-    $this->db->Execute($sql, $bindParams);
-    if ($this->db->affected_rows() !== 0) {
-      return TRUE;
-    }
-    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
-    throw new ApiException($message, 2);
+    $bindParams = [$user->getUid()];
+    return $this->saveDelete($sql, $bindParams);
   }
 
   /**
@@ -141,14 +129,8 @@ class UserMapper {
    */
   public function findByUid($uid) {
     $sql = 'SELECT * FROM user WHERE uid = ?';
-    $bindParams = array($uid);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    $bindParams = [$uid];
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
@@ -164,14 +146,8 @@ class UserMapper {
    */
   public function findByEmail($email) {
     $sql = 'SELECT * FROM user WHERE email = ?';
-    $bindParams = array($email);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    $bindParams = [$email];
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
@@ -187,14 +163,8 @@ class UserMapper {
    */
   public function findByUsername($username) {
     $sql = 'SELECT * FROM user WHERE username = ?';
-    $bindParams = array($username);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    $bindParams = [$username];
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
@@ -210,14 +180,8 @@ class UserMapper {
    */
   public function findBytoken($token) {
     $sql = 'SELECT * FROM user WHERE token = ? AND token_ttl > ?';
-    $bindParams = array($token, Utilities::mysqlNow());
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    $bindParams = [$token, Utilities::mysqlNow()];
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**

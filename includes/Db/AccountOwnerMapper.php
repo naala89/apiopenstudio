@@ -36,18 +36,18 @@ class AccountOwnerMapper extends Mapper {
   public function save(AccountOwner $accountOwner) {
     if ($accountOwner->getAoid() == NULL) {
       $sql = 'INSERT INTO account (accid, uid) VALUES (?, ?)';
-      $bindParams = array(
+      $bindParams = [
         $accountOwner->getAccid(),
         $accountOwner->getUid(),
-      );
+      ];
     }
     else {
       $sql = 'UPDATE account SET accid = ?, uid = ? WHERE aoid = ?';
-      $bindParams = array(
+      $bindParams = [
         $accountOwner->getAccid(),
         $accountOwner->getUid(),
         $accountOwner->getAoid(),
-      );
+      ];
     }
     return $this->saveDelete($sql, $bindParams);
   }
@@ -66,7 +66,7 @@ class AccountOwnerMapper extends Mapper {
   public function delete(AccountOwner $accountOwner) {
 
     $sql = 'DELETE FROM account_owner WHERE aoid = ?';
-    $bindParams = array($accountOwner->getAoid());
+    $bindParams = [$accountOwner->getAoid()];
     return $this->saveDelete($sql, $bindParams);
   }
 
@@ -83,7 +83,7 @@ class AccountOwnerMapper extends Mapper {
    */
   public function findByAoid($aoid) {
     $sql = 'SELECT * FROM account WHERE aoid = ?';
-    $bindParams = array($aoid);
+    $bindParams = [$aoid];
     return $this->fetchRow($sql, $bindParams);
   }
 
@@ -100,7 +100,7 @@ class AccountOwnerMapper extends Mapper {
    */
   public function findByAccid($accid) {
     $sql = 'SELECT * FROM account_owner WHERE accid = ?';
-    $bindParams = array($accid);
+    $bindParams = [$accid];
     return $this->fetchRows($sql, $bindParams);
   }
 
@@ -117,7 +117,7 @@ class AccountOwnerMapper extends Mapper {
    */
   public function findByName($uid) {
     $sql = 'SELECT * FROM account WHERE uid = ?';
-    $bindParams = array($uid);
+    $bindParams = [$uid];
     return $this->fetchRows($sql, $bindParams);
   }
 

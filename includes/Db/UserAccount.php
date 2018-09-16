@@ -96,11 +96,11 @@ class UserAccount {
    *   Associative array.
    */
   public function dump() {
-    return array(
+    return [
       'uaid' => $this->uaid,
       'uid' => $this->uid,
       'accid' => $this->accid,
-    );
+    ];
   }
 
 }

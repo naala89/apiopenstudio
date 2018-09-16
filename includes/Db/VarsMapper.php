@@ -11,7 +11,7 @@ use ADOConnection;
  *
  * @package Datagator\Db
  */
-class VarsMapper {
+class VarsMapper extends Mapper {
 
   protected $db;
 
@@ -39,28 +39,22 @@ class VarsMapper {
   public function save(Vars $vars) {
     if ($vars->getId() == NULL) {
       $sql = 'INSERT INTO vars (appid, name, val) VALUES (?, ?, ?)';
-      $bindParams = array(
+      $bindParams = [
         $vars->getAppId(),
         $vars->getName(),
         $vars->getval(),
-      );
+      ];
     }
     else {
       $sql = 'UPDATE vars SET appid=?, name=?, val=? WHERE id = ?';
-      $bindParams = array(
+      $bindParams = [
         $vars->getAppId(),
         $vars->getName(),
         $vars->getVal(),
         $vars->getId(),
-      );
+      ];
     }
-    $this->db->Execute($sql, $bindParams);
-    if ($this->db->affected_rows() !== 0) {
-      return TRUE;
-    }
-    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
-    throw new ApiException($message, 2);
+    return $this->saveDelete($sql, $bindParams);
   }
 
   /**
@@ -79,14 +73,8 @@ class VarsMapper {
       throw new ApiException('cannot delete var - empty ID', 2);
     }
     $sql = 'DELETE FROM vars WHERE id = ?';
-    $bindParams = array($vars->getId());
-    $this->db->Execute($sql, $bindParams);
-    if ($this->db->affected_rows() !== 0) {
-      return TRUE;
-    }
-    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
-    throw new ApiException($message, 2);
+    $bindParams = [$vars->getId()];
+    return $this->saveDelete($sql, $bindParams);
   }
 
   /**
@@ -102,14 +90,8 @@ class VarsMapper {
    */
   public function findById($id) {
     $sql = 'SELECT * FROM vars WHERE id = ?';
-    $bindParams = array($id);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    $bindParams = [$id];
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
@@ -127,14 +109,8 @@ class VarsMapper {
    */
   public function findByAppIdName($appId, $name) {
     $sql = 'SELECT * FROM vars WHERE appid = ? AND name = ?';
-    $bindParams = array($appId, $name);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    $bindParams = [$appId, $name];
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
@@ -150,19 +126,8 @@ class VarsMapper {
    */
   public function findByAppId($appId) {
     $sql = 'SELECT * FROM vars WHERE appid = ?';
-    $bindParams = array($appId);
-
-    $recordSet = $this->db->Execute($sql, $bindParams);
-    if (!$recordSet) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-
-    $entries = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-      $recordSet->moveNext();
+    $bindParams = [$appId];
+    return $this->fetchRows($sql, $bindParams);
     }
 
     return $entries;

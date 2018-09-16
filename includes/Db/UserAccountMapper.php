@@ -66,7 +66,7 @@ class UserAccountMapper extends Mapper {
    */
   public function delete(UserAccount $userAccount) {
     $sql = 'DELETE FROM user_account WHERE uaid = ?';
-    $bindParams = array($userAccount->getUaid());
+    $bindParams = [$userAccount->getUaid()];
     return $this->saveDelete($sql, $bindParams);
   }
 
@@ -83,7 +83,7 @@ class UserAccountMapper extends Mapper {
    */
   public function findByUaid($uaid) {
     $sql = 'SELECT * FROM user_account WHERE uaid = ?';
-    $bindParams = array($uaid);
+    $bindParams = [$uaid];
     return $this->fetchRow($sql, $bindParams);
   }
 
@@ -102,7 +102,7 @@ class UserAccountMapper extends Mapper {
    */
   public function findByUidAccId($uid, $accid) {
     $sql = 'SELECT * FROM user_account WHERE uid = ? AND accid = ?';
-    $bindParams = array($uid, $accid);
+    $bindParams = [$uid, $accid];
     return $this->fetchRow($sql, $bindParams);
   }
 
@@ -119,7 +119,7 @@ class UserAccountMapper extends Mapper {
    */
   public function findByAccId($accid) {
     $sql = 'SELECT * FROM user_account WHERE accid = ?';
-    $bindParams = array($accid);
+    $bindParams = [$accid];
     return $this->fetchRows($sql, $bindParams);
   }
 
@@ -136,7 +136,7 @@ class UserAccountMapper extends Mapper {
    */
   public function findByUid($uid) {
     $sql = 'SELECT * FROM user_account WHERE uid = ?';
-    $bindParams = array($uid);
+    $bindParams = [$uid];
     return $this->fetchRows($sql, $bindParams);
   }
 

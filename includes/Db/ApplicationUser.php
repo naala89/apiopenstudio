@@ -96,11 +96,11 @@ class ApplicationUser {
    *   Account.
    */
   public function dump() {
-    return array(
+    return [
       'auid' => $this->auid,
       'appid' => $this->appid,
       'uid' => $this->uid,
-    );
+    ];
   }
 
 }

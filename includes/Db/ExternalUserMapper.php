@@ -36,18 +36,18 @@ class ExternalUserMapper extends Mapper {
   public function save(ExternalUser $user) {
     if ($user->getId() == NULL) {
       $sql = 'INSERT INTO external_user (appid, external_id, external_entity, data_field_1, data_field_2, data_field_3) VALUES (?, ?, ?, ?, ?, ?)';
-      $bindParams = array(
+      $bindParams = [
         $user->getAppId(),
         $user->getExternalId(),
         $user->getExternalEntity(),
         $user->getDataField1(),
         $user->getDataField2(),
         $user->getDataField3(),
-      );
+      ];
     }
     else {
       $sql = 'UPDATE external_user SET appid = ?, external_id = ?, external_entity = ?, data_field_1 = ?, data_field_2 = ?, data_field_3 = ? WHERE id = ?';
-      $bindParams = array(
+      $bindParams = [
         $user->getAppId(),
         $user->getExternalId(),
         $user->getExternalEntity(),
@@ -55,7 +55,7 @@ class ExternalUserMapper extends Mapper {
         $user->getDataField2(),
         $user->getDataField3(),
         $user->getId(),
-      );
+      ];
     }
     return $this->saveDelete($sql, $bindParams);
   }
@@ -73,7 +73,7 @@ class ExternalUserMapper extends Mapper {
    */
   public function delete(ExternalUser $externalUser) {
     $sql = 'DELETE FROM external_user WHERE id = ?';
-    $bindParams = array($externalUser->getId());
+    $bindParams = [$externalUser->getId()];
     return $this->saveDelete($sql, $bindParams);
   }
 
@@ -90,7 +90,7 @@ class ExternalUserMapper extends Mapper {
    */
   public function findById($id) {
     $sql = 'SELECT * FROM external_user WHERE id = ?';
-    $bindParams = array($id);
+    $bindParams = [$id];
     return $this->fetchRow($sql, $bindParams);
   }
 
@@ -111,6 +111,11 @@ class ExternalUserMapper extends Mapper {
    */
   public function findByAppIdEntityExternalId($appId, $externalEntity, $externalId) {
     $sql = 'SELECT * FROM external_user WHERE appid = ? AND external_entity = ? AND external_id = ?';
+    $bindParams = [
+      $appId,
+      $externalEntity,
+      $externalId,
+    ];
     return $this->fetchRow($sql, $bindParams);
   }
 
@@ -127,7 +132,7 @@ class ExternalUserMapper extends Mapper {
    */
   public function findByAppid($appId) {
     $sql = 'SELECT * FROM external_user WHERE appid = ?';
-    $bindParams = array($appId);
+    $bindParams = [$appId];
     return $this->fetchRows($sql, $bindParams);
   }
 
