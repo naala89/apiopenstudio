@@ -4,7 +4,6 @@ namespace Datagator\Db;
 
 use Datagator\Core\ApiException;
 use ADOConnection;
-use Cascade\Cascade;
 
 /**
  * Class ApiResourceMapper.
@@ -13,16 +12,14 @@ use Cascade\Cascade;
  */
 class ApiResourceMapper {
 
-  protected $db;
-
   /**
-   * ResourceMapper constructor.
+   * ApiResourceMapper constructor.
    *
    * @param \ADOConnection $dbLayer
    *   DB connection object.
    */
   public function __construct(ADOConnection $dbLayer) {
-    $this->db = $dbLayer;
+    parent::__construct($dbLayer);
   }
 
   /**
@@ -50,7 +47,7 @@ class ApiResourceMapper {
       );
     }
     else {
-      $sql = 'UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, identifier = ?, meta = ?, ttl = ? WHERE id = ?';
+      $sql = 'UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, identifier = ?, meta = ?, ttl = ? WHERE resid = ?';
       $bindParams = array(
         $resource->getAppId(),
         $resource->getName(),
@@ -59,16 +56,10 @@ class ApiResourceMapper {
         $resource->getIdentifier(),
         $resource->getMeta(),
         $resource->getTtl(),
-        $resource->getId(),
+        $resource->getResid(),
       );
     }
-    $this->db->Execute($sql, $bindParams);
-    if ($this->db->affected_rows() !== 0) {
-      return TRUE;
-    }
-    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
-    throw new ApiException($message, 2);
+    return $this->saveDelete($sql, $bindParams);
   }
 
   /**
@@ -83,41 +74,26 @@ class ApiResourceMapper {
    * @throws ApiException
    */
   public function delete(ApiResource $resource) {
-    if ($resource->getId() == NULL) {
-      throw new ApiException('could not delete resource, not found', 2);
-    }
-    $sql = 'DELETE FROM resource WHERE id = ?';
-    $bindParams = array($resource->getId());
-    $this->db->Execute($sql, $bindParams);
-    if ($this->db->affected_rows() !== 0) {
-      return TRUE;
-    }
-    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
-    throw new ApiException($message, 2);
+    $sql = 'DELETE FROM resource WHERE resid = ?';
+    $bindParams = array($resource->getResid());
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
    * Find an API resource by its ID.
    *
-   * @param int $id
-   *   API  resource ID.
+   * @param int $resid
+   *   API resource ID.
    *
    * @return \Datagator\Db\ApiResource
    *   ApiResource object.
    *
    * @throws ApiException
    */
-  public function findId($id) {
-    $sql = 'SELECT * FROM resource WHERE id = ?';
-    $bindParams = array($id);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+  public function findId($resid) {
+    $sql = 'SELECT * FROM resource WHERE resid = ?';
+    $bindParams = array($resid);
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
@@ -138,13 +114,7 @@ class ApiResourceMapper {
   public function findByAppIdMethodIdentifier($appid, $method, $identifier) {
     $sql = 'SELECT r.* FROM resource AS r WHERE r.appid = ? AND r.method = ? AND r.identifier = ?';
     $bindParams = array($appid, $method, $identifier);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
@@ -211,21 +181,7 @@ class ApiResourceMapper {
   public function findByAppId($appid) {
     $sql = 'SELECT * FROM resource WHERE appid = ?';
     $bindParams = array($appid);
-
-    $recordSet = $this->db->Execute($sql, $bindParams);
-    if (!$recordSet) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-
-    $entries = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-      $recordSet->moveNext();
-    }
-
-    return $entries;
+    return $this->fetchRows($sql, $bindParams);
   }
 
   /**
@@ -240,7 +196,7 @@ class ApiResourceMapper {
   protected function mapArray(array $row) {
     $resource = new ApiResource();
 
-    $resource->setId(!empty($row['id']) ? $row['id'] : NULL);
+    $resource->setResid(!empty($row['resid']) ? $row['resid'] : NULL);
     $resource->setAppId(!empty($row['appid']) ? $row['appid'] : NULL);
     $resource->setName(!empty($row['name']) ? $row['name'] : NULL);
     $resource->setDescription(!empty($row['description']) ? $row['description'] : NULL);

@@ -4,16 +4,13 @@ namespace Datagator\Db;
 
 use Datagator\Core\ApiException;
 use ADOConnection;
-use Cascade\Cascade;
 
 /**
  * Class RoleMapper.
  *
  * @package Datagator\Db
  */
-class RoleMapper {
-
-  protected $db;
+class RoleMapper extends Mapper {
 
   /**
    * RoleMapper constructor.
@@ -22,7 +19,7 @@ class RoleMapper {
    *   DB connector.
    */
   public function __construct(ADOConnection $dbLayer) {
-    $this->db = $dbLayer;
+    parent::__construct($dbLayer);
   }
 
   /**
@@ -50,13 +47,7 @@ class RoleMapper {
         $role->getRid(),
       );
     }
-    $this->db->Execute($sql, $bindParams);
-    if ($this->db->affected_rows() !== 0) {
-      return TRUE;
-    }
-    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
-    throw new ApiException($message, 2);
+    return $this->saveDelete($sql, $bindParams);
   }
 
   /**
@@ -73,13 +64,7 @@ class RoleMapper {
   public function delete(Role $role) {
     $sql = 'DELETE FROM role WHERE rid = ?';
     $bindParams = array($role->getRid());
-    $this->db->Execute($sql, $bindParams);
-    if ($this->db->affected_rows() !== 0) {
-      return TRUE;
-    }
-    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
-    throw new ApiException($message, 2);
+    return $this->saveDelete($sql, $bindParams);
   }
 
   /**
@@ -92,21 +77,7 @@ class RoleMapper {
    */
   public function findAll() {
     $sql = 'SELECT * FROM role';
-
-    $recordSet = $this->db->Execute($sql);
-    if (!$recordSet) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-
-    $entries = array();
-    while (!$recordSet->EOF) {
-      $entries[] = $this->mapArray($recordSet->fields);
-      $recordSet->moveNext();
-    }
-
-    return $entries;
+    return $this->fetchRows($sql, $bindParams);
   }
 
   /**
@@ -123,13 +94,7 @@ class RoleMapper {
   public function findByRid($rid) {
     $sql = 'SELECT * FROM role WHERE rid = ?';
     $bindParams = array($rid);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
@@ -146,13 +111,7 @@ class RoleMapper {
   public function findByName($name) {
     $sql = 'SELECT * FROM role WHERE name = ?';
     $bindParams = array($name);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**

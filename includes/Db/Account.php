@@ -31,7 +31,7 @@ class Account {
    * @return int
    *   Account ID.
    */
-  public function getAccId() {
+  public function getAccid() {
     return $this->accid;
   }
 
@@ -41,7 +41,7 @@ class Account {
    * @param int $accid
    *   Account ID.
    */
-  public function setAccId($accid) {
+  public function setAccid($accid) {
     $this->accid = $accid;
   }
 
@@ -72,10 +72,10 @@ class Account {
    *   Account.
    */
   public function dump() {
-    return array(
+    return [
       'accid' => $this->accid,
       'name' => $this->name,
-    );
+    ];
   }
 
 }

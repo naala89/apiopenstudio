@@ -4,16 +4,13 @@ namespace Datagator\Db;
 
 use Datagator\Core\ApiException;
 use ADOConnection;
-use Cascade\Cascade;
 
 /**
  * Class AccountMapper.
  *
  * @package Datagator\Db
  */
-class AccountMapper {
-
-  protected $db;
+class AccountMapper extends Mapper {
 
   /**
    * AccountMapper constructor.
@@ -22,7 +19,7 @@ class AccountMapper {
    *   DB connection object.
    */
   public function __construct(ADOConnection $dbLayer) {
-    $this->db = $dbLayer;
+    parent::__construct($dbLayer);
   }
 
   /**
@@ -37,7 +34,7 @@ class AccountMapper {
    * @throws \Datagator\Core\ApiException
    */
   public function save(Account $account) {
-    if ($account->getAccId() == NULL) {
+    if ($account->getAccid() == NULL) {
       $sql = 'INSERT INTO account (name) VALUES (?)';
       $bindParams = array(
         $account->getName(),
@@ -47,16 +44,10 @@ class AccountMapper {
       $sql = 'UPDATE account SET name = ? WHERE aid = ?';
       $bindParams = array(
         $account->getName(),
-        $account->getAccId(),
+        $account->getAccid(),
       );
     }
-    $this->db->Execute($sql, $bindParams);
-    if ($this->db->affected_rows() !== 0) {
-      return TRUE;
-    }
-    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
-    throw new ApiException($message, 2);
+    return $this->saveDelete($sql, $bindParams);
   }
 
   /**
@@ -73,14 +64,8 @@ class AccountMapper {
   public function delete(Account $account) {
 
     $sql = 'DELETE FROM account WHERE accid = ?';
-    $bindParams = array($account->getAccId());
-    $this->db->Execute($sql, $bindParams);
-    if ($this->db->affected_rows() !== 0) {
-      return TRUE;
-    }
-    $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
-    throw new ApiException($message, 2);
+    $bindParams = array($account->getAccid());
+    return $this->saveDelete($sql, $bindParams);
   }
 
   /**
@@ -94,16 +79,10 @@ class AccountMapper {
    *
    * @throws ApiException
    */
-  public function findByAccId($accid) {
+  public function findByAccid($accid) {
     $sql = 'SELECT * FROM account WHERE accid = ?';
     $bindParams = array($accid);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
@@ -120,42 +99,11 @@ class AccountMapper {
   public function findByName($name) {
     $sql = 'SELECT * FROM account WHERE name = ?';
     $bindParams = array($name);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
+    return $this->fetchRows($sql, $bindParams);
   }
 
   /**
-   * Find an account by user ID and Account ID.
-   *
-   * @param int $accid
-   *   Account ID.
-   * @param int $uid
-   *   User ID.
-   *
-   * @return \Datagator\Db\Account
-   *   Account object.
-   *
-   * @throws ApiException
-   */
-  public function findByAccIdUid($accid, $uid) {
-    $sql = 'SELECT * FROM account WHERE accid = ? AND uid = ?';
-    $bindParams = array($accid, $uid);
-    $row = $this->db->GetRow($sql, $bindParams);
-    if ($row === FALSE) {
-      $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-      Cascade::getLogger('gaterdata')->error($message);
-      throw new ApiException($message, 2);
-    }
-    return $this->mapArray($row);
-  }
-
-  /**
-   * Map a DB row into attributes.
+   * Map a DB row into an Account object.
    *
    * @param array $row
    *   DB row object.
@@ -166,7 +114,7 @@ class AccountMapper {
   protected function mapArray(array $row) {
     $account = new Account();
 
-    $account->setAccId(!empty($row['accid']) ? $row['accid'] : NULL);
+    $account->setAccid(!empty($row['accid']) ? $row['accid'] : NULL);
     $account->setName(!empty($row['name']) ? $row['name'] : NULL);
 
     return $account;

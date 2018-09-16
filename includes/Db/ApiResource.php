@@ -3,13 +3,13 @@
 namespace Datagator\Db;
 
 /**
- * Class Resource.
+ * Class ApiResource.
  *
  * @package Datagator\Db
  */
 class ApiResource {
 
-  protected $id;
+  protected $resid;
   protected $appid;
   protected $name;
   protected $description;
@@ -21,7 +21,7 @@ class ApiResource {
   /**
    * Resource constructor.
    *
-   * @param int $id
+   * @param int $resid
    *   The resource ID.
    * @param int $appid
    *   The application ID.
@@ -38,8 +38,8 @@ class ApiResource {
    * @param string $ttl
    *   The resource TTL.
    */
-  public function __construct($id = NULL, $appid = NULL, $name = NULL, $description = NULL, $method = NULL, $identifier = NULL, $meta = NULL, $ttl = NULL) {
-    $this->id = $id;
+  public function __construct($resid = NULL, $appid = NULL, $name = NULL, $description = NULL, $method = NULL, $identifier = NULL, $meta = NULL, $ttl = NULL) {
+    $this->resid = $resid;
     $this->appid = $appid;
     $this->name = $name;
     $this->description = $description;
@@ -55,18 +55,18 @@ class ApiResource {
    * @return int
    *   The resource ID
    */
-  public function getId() {
-    return $this->id;
+  public function getResid() {
+    return $this->resid;
   }
 
   /**
    * Set the resource ID.
    *
-   * @param int $id
+   * @param int $resid
    *   The resource ID.
    */
-  public function setId($id) {
-    $this->id = $id;
+  public function setResid($resid) {
+    $this->resid = $resid;
   }
 
   /**
@@ -213,11 +213,11 @@ class ApiResource {
    * Return the values as an associative array.
    *
    * @return array
-   *   Associative array of this object attributes.
+   *   Api resource.
    */
   public function dump() {
     return array(
-      'id' => $this->id,
+      'resid' => $this->resid,
       'appid' => $this->appid,
       'method' => $this->method,
       'identifier' => $this->identifier,
