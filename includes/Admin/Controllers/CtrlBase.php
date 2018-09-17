@@ -44,28 +44,29 @@ class CtrlBase {
   }
 
   /**
-   * Fetch the roles for a user account ID.
+   * Fetch the roles for a user ID in an account.
    *
-   * @param int $uaid
-   *   User account ID.
+   * @param int $accid
+   *   Account ID.
+   * @param int $uid
+   *   User ID.
    *
    * @return array
    *   Array of role names.
    */
-  protected function getRoles($uaid) {
-    $roleNames = [];
-
+  protected function getRolesByAccid($accid, $uid) {
     // If no account, no roles.
-    if (empty($uaid)) {
-      return $roleNames;
+    if (empty($uid) || empty($accid)) {
+      return [];
     }
 
     // Get user roles for a user account.
     try {
-      $userHelper = new User($this->dbSettings);
-      return $userHelper->findRoles($uaid);
+      $userHlp = new User($this->dbSettings);
+      $userHlp->findByUserId($uid);
+      return $userHlp->findRolesByAccid($accid);
     } catch (ApiException $e) {
-      return $roleNames;
+      return [];
     }
   }
 

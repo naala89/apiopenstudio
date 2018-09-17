@@ -10,7 +10,8 @@ namespace Datagator\Db;
 class ApplicationUserRole {
 
   protected $aurid;
-  protected $auid;
+  protected $appid;
+  protected $uid;
   protected $rid;
 
   /**
@@ -18,14 +19,17 @@ class ApplicationUserRole {
    *
    * @param int $aurid
    *   Application user role ID.
-   * @param int $auid
-   *   Application user ID
+   * @param int $appid
+   *   Application ID
+   * @param int $uid
+   *   User ID
    * @param int $rid
    *   The role ID.
    */
-  public function __construct($aurid = NULL, $auid = NULL, $rid = NULL) {
+  public function __construct($aurid = NULL, $appid = NULL, $uid = NULL, $rid = NULL) {
     $this->aurid = $aurid;
-    $this->auid = $auid;
+    $this->appid = $appid;
+    $this->uid = $uid;
     $this->rid = $rid;
   }
 
@@ -50,23 +54,43 @@ class ApplicationUserRole {
   }
 
   /**
-   * Get the application user ID.
+   * Get the application ID.
    *
    * @return int
-   *   Application user ID.
+   *   Application ID.
    */
-  public function getAuid() {
-    return $this->auid;
+  public function getAppid() {
+    return $this->appid;
+  }
+
+  /**
+   * Get the application ID.
+   *
+   * @param int $appid
+   *   Application ID.
+   */
+  public function setAppid($appid) {
+    $this->appid = $appid;
+  }
+
+  /**
+   * Get the user ID.
+   *
+   * @return int
+   *   User ID.
+   */
+  public function getUid() {
+    return $this->uid;
   }
 
   /**
    * Get the application user ID.
    *
-   * @param int $auid
+   * @param int $uid
    *   Application user ID.
    */
-  public function setAuid($auid) {
-    $this->auid = $auid;
+  public function setUid($uid) {
+    $this->uid = $uid;
   }
 
   /**
@@ -98,7 +122,8 @@ class ApplicationUserRole {
   public function dump() {
     return [
       'aurid' => $this->aurid,
-      'auid' => $this->auid,
+      'appid' => $this->appid,
+      'uid' => $this->uid,
       'rid' => $this->rid,
     ];
   }

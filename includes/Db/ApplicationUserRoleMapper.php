@@ -35,16 +35,18 @@ class ApplicationUserRoleMapper extends Mapper {
    */
   public function save(ApplicationUserRole $applicationUserRole) {
     if ($applicationUserRole->getAurid() == NULL) {
-      $sql = 'INSERT INTO application_user_role (auid, rid) VALUES (?, ?)';
+      $sql = 'INSERT INTO application_user_role (appid, uid, rid) VALUES (?, ?, ?)';
       $bindParams = [
-        $applicationUserRole->getAuid(),
+        $applicationUserRole->getAppid(),
+        $applicationUserRole->getUid(),
         $applicationUserRole->getRid(),
       ];
     }
     else {
-      $sql = 'UPDATE application_user_role SET (auid, rid) WHERE aurid = ?';
+      $sql = 'UPDATE application_user_role SET (appid, uid, rid) WHERE aurid = ?';
       $bindParams = [
-        $applicationUserRole->getAuid(),
+        $applicationUserRole->getAppid(),
+        $applicationUserRole->getUid(),
         $applicationUserRole->getRid(),
         $applicationUserRole->getAurid(),
       ];
@@ -70,7 +72,7 @@ class ApplicationUserRoleMapper extends Mapper {
   }
 
   /**
-   * Find by aurid.
+   * Find by application user role ID.
    *
    * @param int $aurid
    *   Application user role ID.
@@ -87,24 +89,41 @@ class ApplicationUserRoleMapper extends Mapper {
   }
 
   /**
-   * Find by auid.
+   * Find by application ID..
    *
-   * @param int $auid
-   *  Application user ID.
+   * @param int $appid
+   *  Application ID.
    *
    * @return array
    *   Array of mapped ApplicationUserRole objects.
    *
    * @throws ApiException
    */
-  public function findByAuid($auid) {
-    $sql = 'SELECT * FROM application_user_role WHERE auid = ?';
-    $bindParams = [$auid];
+  public function findByAppid($appid) {
+    $sql = 'SELECT * FROM application_user_role WHERE appid = ?';
+    $bindParams = [$appid];
     return $this->fetchRows($sql, $bindParams);
   }
 
   /**
-   * Find by rid.
+   * Find by user ID.
+   *
+   * @param int $uid
+   *  User ID.
+   *
+   * @return array
+   *   Array of mapped ApplicationUserRole objects.
+   *
+   * @throws ApiException
+   */
+  public function findByUid($uid) {
+    $sql = 'SELECT * FROM application_user_role WHERE uid = ?';
+    $bindParams = [$uid];
+    return $this->fetchRows($sql, $bindParams);
+  }
+
+  /**
+   * Find by role ID.
    *
    * @param int $rid
    *   Role ID.
@@ -121,6 +140,25 @@ class ApplicationUserRoleMapper extends Mapper {
   }
 
   /**
+   * Find by application ID and user ID.
+   *
+   * @param int $appid
+   *   Application ID.
+   * @param int $uid
+   *   User ID.
+   *
+   * @return array
+   *   Array of mapped ApplicationUserRole objects.
+   *
+   * @throws ApiException
+   */
+  public function findByAppidUid($appid, $uid) {
+    $sql = 'SELECT * FROM application_user_role WHERE appid = ? AND uid = ?';
+    $bindParams = [$appid, $uid];
+    return $this->fetchRows($sql, $bindParams);
+  }
+
+  /**
    * Map a DB row to a ApplicationUserRole object.
    *
    * @param array $row
@@ -133,7 +171,8 @@ class ApplicationUserRoleMapper extends Mapper {
     $applicationUserRole = new ApplicationUserRole();
 
     $applicationUserRole->setAurid(!empty($row['aurid']) ? $row['aurid'] : NULL);
-    $applicationUserRole->setAuid(!empty($row['auid']) ? $row['auid'] : NULL);
+    $applicationUserRole->setAppid(!empty($row['appid']) ? $row['appid'] : NULL);
+    $applicationUserRole->setUid(!empty($row['uid']) ? $row['uid'] : NULL);
     $applicationUserRole->setRid(!empty($row['rid']) ? $row['rid'] : NULL);
 
     return $applicationUserRole;

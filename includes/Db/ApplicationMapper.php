@@ -119,7 +119,7 @@ class ApplicationMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findByAccId($accid) {
+  public function findByAccid($accid) {
     $sql = 'SELECT * FROM application WHERE accid = ?';
     $bindParams = [$accid];
     return $this->fetchRows($sql, $bindParams);
