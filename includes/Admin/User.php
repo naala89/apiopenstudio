@@ -98,7 +98,7 @@ class User{
     $accountOwner = $accountOwnerMapper->findByAccidUid($accId, $uid);
     $validUser = !empty($accountOwner->getAoid());
     $applicationMapper = new Db\ApplicationMapper($this->db);
-    $applicationUserMapper = new Db\ApplicationUserMapper($this->db);
+    $applicationUserMapper = new Db\ApplicationUserRoleMapper($this->db);
     $applications = $applicationMapper->findByAccId($accId);
     foreach ($applications as $application) {
       $applicationUser = $applicationUserMapper->findByUid($uid);
@@ -126,6 +126,7 @@ class User{
       $this->user->setTokenTtl(Utilities::date_php2mysql(strtotime($ttl)));
       return [
         'token' => $this->user->getToken(),
+        'accid' => $accId,
         'uid' => $uid,
       ];
     }
@@ -143,6 +144,7 @@ class User{
 
     return [
       'token' => $this->user->getToken(),
+      'accid' => $accId,
       'uid' => $uid,
     ];
   }
@@ -415,25 +417,49 @@ class User{
   }
 
   /**
-   * Find roles for the user by their user account ID.
+   * Find roles for a user ID in an account.
    *
-   * @param int $uaid.
-   *   User account ID.
+   * @param int $accid.
+   *   Account ID.
    *
    * @return array
    *   Array of mapped UserAccountRole objects.
    */
-  public function findRoles($uaid) {
-    // Find roles for the user account.
-    $userAccountRoleMapper = new Db\UserAccountRoleMapper($this->db);
-    $userAccountRoles = $userAccountRoleMapper->findByUaid($uaid);
-
-    // Find the role names for the user account roles.
-    $roles = [];
+  public function findRolesByAccid($accid) {
+    // Find roles for the user.
+    $accountOwnerMapper = new Db\AccountOwnerMapper($this->db);
+    $applicationMapper = new Db\ApplicationMapper($this->db);
     $roleMapper = new Db\RoleMapper($this->db);
-    foreach ($userAccountRoles as $userAccountRole) {
-      $role = $roleMapper->findByRid($userAccountRole->getRid());
-      $roles[] = $role->getName();
+    $applicationUserRoleMapper = new Db\ApplicationUserRoleMapper($this->db);
+    $roles = $allRoles = [];
+    try {
+      $uid = $this->user->getUid(); // Current uid.
+      // All roles indexed by rid.
+      $results = $roleMapper->findAll();
+      foreach ($results as $result) {
+        $allRoles[$result->getRid()] = $result->dump();
+      }
+      // Check account_owner table;
+      $accountOwner = $accountOwnerMapper->findByAccidUid($accid, $uid);
+      if (!empty($accountOwner->getAoid())) {
+        $roles[] = 'Owner';
+      }
+      // Fined user roles for each application.
+      $applications = $applicationMapper->findByAccid($accid);
+      foreach ($applications as $application) {
+        $applicationUserRoles = $applicationUserRoleMapper->findByAppidUid($application->getAppid(), $uid);
+        if (empty($applicationUserRoles)) {
+          continue;
+        }
+        foreach ($applicationUserRoles as $applicationUserRole) {
+          $roleName = $allRoles[$applicationUserRole->getRid()]['name'];
+          if (!in_array($roleName)) {
+            $roles[] = $roleName;
+          }
+        }
+      }
+    } catch (ApiException $e) {
+      return [];
     }
 
     return $roles;

@@ -28,21 +28,16 @@ class CtrlHome extends CtrlBase {
    * @return \Psr\Http\Message\ResponseInterface
    */
   public function index(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
-    $roles = $this->getRoles($uaid);
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $accid = isset($_SESSION['accid']) ? $_SESSION['accid'] : '';
+    $roles = $this->getRolesByAccid($accid, $uid);
+    var_dump($roles);exit;
     $menu = $this->getMenus($roles);
 
     try {
-      $userAccountHlp = new UserAccount($this->dbSettings);
-      $userAccount = $userAccountHlp->findByUaid($uaid);
-      if (!$userAccount) {
-        $applications = [];
-      } else {
-        $applicationHlp = new Application($this->dbSettings);
-        $applications = $applicationHlp->findByAccountId($userAccount['accid']);
-      }
+      $applicationHlp = new Application($this->dbSettings);
+      $applications = $applicationHlp->findByAccid($accid);
     } catch(ApiException $e) {
-      // This will trap any exceptions while instantiating the helper classes, which may fail on DB connection.
       $applications = [];
     }
 

@@ -11,9 +11,7 @@ application:
     accid: { type: int(10) unsigned, notnull: true, comment: account id }
     name: { type: varchar(255), notnull: true, comment: application name }
   data:
-    - { appid: 1, accid: 1, name: Administration }
-    - { appid: 2, accid: 1, name: Development }
-    - { appid: 3, accid: 1, name: Testing }
+    - { appid: 1, accid: 1, name: Testing }
 
 user:
   columns:
@@ -44,11 +42,15 @@ role:
     rid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: role id }
     name: { type: varchar(255), notnull: true, comment: title of role }
   data:
-    - { rid: 1, name: SysAdmin }
-    - { rid: 3, name: Owner }
+    - { rid: 1, name: System Administrator }
     - { rid: 2, name: Administrator }
     - { rid: 4, name: Developer }
     - { rid: 5, name: Consumer }
+
+sysadmin:
+  columns:
+    sid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: sysadmin id }
+    uid: { type: int(10) unsigned, notnull: true, comment: user id }
 
 account_owner:
   columns:
@@ -56,16 +58,11 @@ account_owner:
     uid: { type: int(10) unsigned, notnull: true, comment: user id }
     accid: { type: int(10) unsigned, notnull: true, comment: account id }
 
-application_user:
-  columns:
-    auid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: application user id }
-    uid: { type: int(10) unsigned, notnull: true, comment: user id }
-    appid: { type: int(10) unsigned, notnull: true, comment: application id }
-
 application_user_role:
   columns:
     aurid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: application user role id }
-    auid: { type: int(10) unsigned, notnull: true, comment: application user id }
+    appid: { type: int(10) unsigned, notnull: true, comment: application id }
+    uid: { type: int(10) unsigned, notnull: true, comment: user id }
     rid: { type: int(10) unsigned, notnull: true, comment: role id }
 
 invite:
