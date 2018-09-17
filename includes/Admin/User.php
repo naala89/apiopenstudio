@@ -286,6 +286,25 @@ class User{
   }
 
   /**
+   * Assign sysadmin role to current user.
+   *
+   * @return bool
+   *   Success.
+   */
+  public function assignSysadmin() {
+    $sysadminMapper = new Db\SysadminMapper($this->db);
+    $sysadmin = new Db\Sysadmin(
+      NULL,
+      $this->user->getUid()
+    );
+    try {
+      return $sysadminMapper->save($sysadmin);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
+  }
+
+  /**
    * Assign the user to an account by the account ID.
    *
    * @param int $accid

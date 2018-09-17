@@ -1,22 +1,17 @@
 {% extends "page.twig" %}
 
-{% set title = "Step 3: Create your account" %}
+{% set title = "Step 4: Install complete" %}
 
 {% block content %}
 <div class="row">
-  <form method="post" action="/install.php">
-    <input type="hidden" name="from_step" value="3">
-    <input type="hidden" name="next_step" value="3">
-    <input type="hidden" name="uid" value="{{ uid }}">
-    <input type="hidden" name="username" value="{{ username }}">
+  <form method="post" action="/login">
 
     <div class="col s12 m6 offset-m3">
-      <p>We will be the name of of your account.</p>
-      <p>An account can have multiple applications (applications can be used for business units or projects).</p>
+      <p>Your user has been created and granted the `Systen administrator` role.</p>
+      <p>Click continue to login and go to the admin area to set up your accounts, users and administrators.</p>
 
       <div class="input-field col s12">
-        <label for="account_name">Account name <span class="uk-text-danger">*</span></label>
-        <input id="account_name" name="account_name" type="text" placeholder="" required>
+        <legend class="uk-legend">Congratulations install complete!</legend>
       </div>
 
       <div class="col s12 m6 offset-m3">
