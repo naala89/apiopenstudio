@@ -100,13 +100,13 @@ class SysadminMapper extends Mapper {
   }
 
   /**
-   * Map a DB row into an Account object.
+   * Map a DB row into an Sysadmin object.
    *
    * @param array $row
    *   DB row object.
    *
-   * @return \Datagator\Db\Account
-   *   Account object.
+   * @return \Datagator\Db\Sysadmin
+   *   Sysadmin object.
    */
   protected function mapArray(array $row) {
     $sysadmin = new Sysadmin();
@@ -114,7 +114,7 @@ class SysadminMapper extends Mapper {
     $sysadmin->setSid(!empty($row['sid']) ? $row['sid'] : NULL);
     $sysadmin->setUid(!empty($row['uid']) ? $row['uid'] : NULL);
 
-    return $account;
+    return $sysadmin;
   }
 
 }
