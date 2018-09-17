@@ -205,6 +205,18 @@ switch ($step) {
         exit;
       }
 
+      if (!$user->assignSysadmin()) {
+        $template = $twig->load('install/install_2.twig');
+        echo $template->render([
+          'menu' => $menu,
+          'message' => [
+            'type' => 'error',
+            'text' => 'Failed to assign your user sysadmin status. Please check the logs.'
+          ],
+        ]);
+        exit;
+      }
+
       // User created, continue to next page.
       $template = $twig->load('install/install_3.twig');
       echo $template->render(['menu' => $menu, 'uid' => $newUser['uid']]);
@@ -216,75 +228,4 @@ switch ($step) {
     echo $template->render(['menu' => $menu]);
     exit;
     break;
-
-  case 3:
-    // Create the account.
-
-    // Data preserved from previous page that we need for user account.
-    $uid = isset($_POST['uid']) ? $_POST['uid'] : '';
-    if (empty($uid)) {
-      // missing required user id from previous page.
-      $template = $twig->load('install/install_3.twig');
-      echo $template->render([
-        'menu' => $menu,
-        'message' => [
-          'type' => 'error',
-          'text' => 'Missing required user ID. Please restart the install process.'
-        ],
-      ]);
-      exit;
-    }
-
-    if ($from == 3) {
-      // This is a current page submission, so create the account.
-      $accountName = isset($_POST['account_name']) ? $_POST['account_name'] : '';
-      if (empty($accountName)) {
-        // Missing required data.
-        $template = $twig->load('install/install_3.twig');
-        echo $template->render([
-          'menu' => $menu,
-          'uid' => $uid,
-          'message' => [
-            'type' => 'error',
-            'text' => 'Required Account name not entered.',
-          ],
-        ]);
-        exit;
-      }
-
-      // Create the account.
-      if (!$account->create($accountName)) {
-        $template = $twig->load('install/install_3.twig');
-        echo $template->render([
-          'menu' => $menu,
-          'uid' => $uid,
-          'message' => [
-            'type' => 'error',
-            'text' => 'Failed to save your account to the DB. Please check the logs.',
-          ],
-        ]);
-        exit;
-      }
-
-      // Make the user the owner.
-      if (!$account->addOwner($uid)) {
-        $message = [
-          'type' => 'error',
-          'text' => 'Failed to find assign your user the the account. Please check the logs.',
-        ];
-        $template = $twig->load('install/install_3.twig');
-        echo $template->render(['message' => $message, 'menu' => $menu, 'uid' => $uid]);
-        exit;
-      }
-
-      // Success, render the success page.
-      $template = $twig->load('install/install_4.twig');
-      echo $template->render(['menu' => $menu, 'account_name' => $accountName]);
-      exit;
-    }
-
-    // Fallback to render initial create account page (user arrives from previous page).
-    $template = $twig->load('install/install_3.twig');
-    echo $template->render(['menu' => $menu]);
-    exit;
 }
