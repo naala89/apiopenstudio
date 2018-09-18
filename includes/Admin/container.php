@@ -6,6 +6,7 @@ use Slim\Http\Uri;
 use Slim\Views\Twig;
 use Datagator\Admin\Controllers\CtrlUser;
 use Datagator\Admin\Controllers\CtrlApplication;
+use Datagator\Admin\Controllers\CtrlAccount;
 use Datagator\Admin\Controllers\CtrlLogin;
 use Datagator\Admin\Controllers\CtrlHome;
 
@@ -67,6 +68,21 @@ $container['CtrlLogin'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $view = $container->get('view');
   return new CtrlLogin($dbSettings, $view);
+};
+
+/**
+ * Register Account controller.
+ *
+ * @param \Slim\Container $container
+ *   Slim container.
+ *
+ * @return Datagator\Admin\Controllers\CtrlAccount
+ *   CtrlApplication object.
+ */
+$container['CtrlAccount'] = function (Container $container) {
+  $dbSettings = $container->get('settings')['db'];
+  $view = $container->get('view');
+  return new CtrlAccount($dbSettings, $view);
 };
 
 /**

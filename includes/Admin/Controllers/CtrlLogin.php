@@ -13,7 +13,7 @@ use Slim\Http\Response;
 class CtrlLogin extends CtrlBase {
 
   /**
-   * Login page controller.
+   * Login page.
    *
    * @param \Slim\Http\Request $request
    *   Request object.
@@ -31,7 +31,7 @@ class CtrlLogin extends CtrlBase {
   }
 
   /**
-   * Logout page controller.
+   * Logout page.
    *
    * @param \Slim\Http\Request $request
    *   Request object.
@@ -46,7 +46,7 @@ class CtrlLogin extends CtrlBase {
   public function logout(Request $request, Response $response, array $args) {
     $menu = $this->getMenus([]);
     unset($_SESSION['token']);
-    unset($_SESSION['uaid']);
+    unset($_SESSION['uid']);
     return $this->view->render($response, 'login.twig', ['menu' => $menu]);
   }
 
