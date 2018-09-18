@@ -17,6 +17,12 @@ $app->get('/logout', 'CtrlLogin:logout');
 $app->post('/logout', 'CtrlLogin:logout');
 
 /**
+ * Account.
+ */
+$app->get('/accounts', 'CtrlAccount:index')->add(new Authentication($settings, '/login'));
+
+
+/**
  * Application.
  */
 $app->get('/applications', 'CtrlApplication:index')->add(new Authentication($settings, '/login'));
