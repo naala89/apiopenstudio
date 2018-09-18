@@ -89,6 +89,21 @@ class Account {
   }
 
   /**
+   * Find all accounts.
+   *
+   * @return array
+   *   array of accounts.
+   */
+  public function findAll() {
+    try {
+      $accountMapper = new Db\AccountMapper($this->db);
+      return $accountMapper->findAll();
+    } catch (ApiException $e) {
+      return [];
+    }
+  }
+
+  /**
    * Find an account by its account ID.
    *
    * @param int $accId

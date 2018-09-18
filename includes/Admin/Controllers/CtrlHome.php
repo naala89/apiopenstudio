@@ -2,6 +2,7 @@
 
 namespace Datagator\Admin\Controllers;
 
+use Datagator\Admin\Account;
 use Datagator\Admin\Application;
 use Datagator\Admin\UserAccount;
 use Datagator\Core\ApiException;
@@ -29,20 +30,22 @@ class CtrlHome extends CtrlBase {
    */
   public function index(Request $request, Response $response, array $args) {
     $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-    $accid = isset($_SESSION['accid']) ? $_SESSION['accid'] : '';
-    $roles = $this->getRolesByAccid($accid, $uid);
-    var_dump($roles);exit;
+    $roles = $this->getRoles($uid);
     $menu = $this->getMenus($roles);
 
     try {
+      $accountHlp = new Account($this->dbSettings);
+      $accounts = $accountHlp->findAll();
       $applicationHlp = new Application($this->dbSettings);
-      $applications = $applicationHlp->findByAccid($accid);
+      $applications = $applicationHlp->findAll();
     } catch(ApiException $e) {
       $applications = [];
+      $accounts = [];
     }
 
     return $this->view->render($response, 'home.twig', [
       'menu' => $menu,
+      'accounts' => $accounts,
       'applications' => $applications,
     ]);
   }

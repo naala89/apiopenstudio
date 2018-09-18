@@ -70,6 +70,20 @@ class ApplicationMapper extends Mapper {
   }
 
   /**
+   * Find applications.
+   *
+   * @return array
+   *   Array of Application objects.
+   *
+   * @throws ApiException
+   */
+  public function findAll() {
+    $sql = 'SELECT * FROM application';
+    $bindParams = [];
+    return $this->fetchRows($sql, $bindParams);
+  }
+
+  /**
    * Find application by application ID.
    *
    * @param int $appid

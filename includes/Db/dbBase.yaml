@@ -42,19 +42,18 @@ role:
     rid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: role id }
     name: { type: varchar(255), notnull: true, comment: title of role }
   data:
-    - { rid: 1, name: System Administrator }
-    - { rid: 2, name: Administrator }
-    - { rid: 4, name: Developer }
-    - { rid: 5, name: Consumer }
+    - { rid: 1, name: Manager }
+    - { rid: 2, name: Developer }
+    - { rid: 3, name: Consumer }
 
-sysadmin:
+administrator:
   columns:
-    sid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: sysadmin id }
+    aid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: administrator id }
     uid: { type: int(10) unsigned, notnull: true, comment: user id }
 
-account_owner:
+manager:
   columns:
-    aoid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: account owner id }
+    mid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: account owner id }
     uid: { type: int(10) unsigned, notnull: true, comment: user id }
     accid: { type: int(10) unsigned, notnull: true, comment: account id }
 

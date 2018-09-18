@@ -176,6 +176,25 @@ class Application {
   }
 
   /**
+   * Find all applications.
+   *
+   * @return array
+   *   Array of associative arrays of applications, indexed by appid.
+   */
+  public function findAll() {
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    $results = $applicationMapper->findAll();
+
+    $applications = [];
+    foreach ($results as $result) {
+      $application = $result->dump();
+      $applications[$application['appid']] = $application;
+    }
+
+    return $applications;
+  }
+
+  /**
    * Find all an applications for an account.
    *
    * @param int $accid

@@ -3,46 +3,46 @@
 namespace Datagator\Db;
 
 /**
- * Class Sysadmin.
+ * Class Administrator.
  *
  * @package Datagator\Db
  */
-class Sysadmin {
+class Administrator {
 
-  protected $sid;
+  protected $aid;
   protected $uid;
 
   /**
-   * SysadminMapper constructor.
+   * Administrator constructor.
    *
-   * @param int $sid
-   *   System admin ID.
+   * @param int $aid
+   *   Administrator ID.
    * @param int $uid
    *   User ID.
    */
-  public function __construct($sid = NULL, $uid = NULL) {
-    $this->sid = $sid;
+  public function __construct($aid = NULL, $uid = NULL) {
+    $this->aid = $aid;
     $this->uid = $uid;
   }
 
   /**
-   * Get the system admin ID.
+   * Get the administrator ID.
    *
    * @return int
-   *   System admin ID.
+   *   Administrator ID.
    */
-  public function getSid() {
-    return $this->sid;
+  public function getAid() {
+    return $this->aid;
   }
 
   /**
-   * Get the system admin ID.
+   * Set the administrator ID.
    *
-   * @param int $sid
-   *   System admin ID.
+   * @param int $aid
+   *   Administrator ID.
    */
-  public function setSid($sid) {
-    $this->sid = $sid;
+  public function setAid($aid) {
+    $this->aid = $aid;
   }
 
   /**
@@ -69,11 +69,11 @@ class Sysadmin {
    * Return the values as an associative array.
    *
    * @return array
-   *   Sysadmin.
+   *   Administrator.
    */
   public function dump() {
     return [
-      'sid' => $this->sid,
+      'aid' => $this->aid,
       'uid' => $this->uid,
     ];
   }

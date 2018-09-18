@@ -44,27 +44,29 @@ class CtrlBase {
   }
 
   /**
-   * Fetch the roles for a user ID in an account.
+   * Fetch the roles for a user ID.
    *
-   * @param int $accid
-   *   Account ID.
    * @param int $uid
    *   User ID.
    *
    * @return array
    *   Array of role names.
    */
-  protected function getRolesByAccid($accid, $uid) {
+  protected function getRoles($uid) {
     // If no account, no roles.
-    if (empty($uid) || empty($accid)) {
+    if (empty($uid)) {
       return [];
     }
 
     // Get user roles for a user account.
+    $roles = [];
     try {
       $userHlp = new User($this->dbSettings);
       $userHlp->findByUserId($uid);
-      return $userHlp->findRolesByAccid($accid);
+      if ($userHlp->isAdministrator()) {
+        $roles[] = 'Administrator';
+      }
+      return array_merge($roles, $userHlp->findRoles());
     } catch (ApiException $e) {
       return [];
     }
@@ -91,14 +93,15 @@ class CtrlBase {
       $menus += [
         'Home' => '/',
       ];
-      if (in_array('Owner', $roles)) {
+      if (in_array('Administrator', $roles)) {
         $menus += [
-          'Applications' => '/applications',
+          'Accounts' => '/accounts',
           'Users' => '/users',
         ];
       }
-      if (in_array('Administrator', $roles)) {
+      if (in_array('Manager', $roles)) {
         $menus += [
+          'Applications' => '/applications',
           'Users' => '/users',
         ];
       }

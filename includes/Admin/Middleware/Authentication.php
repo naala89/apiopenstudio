@@ -45,37 +45,33 @@ class Authentication {
   public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next) {
     // If login post, get login the values.
     $data = $request->getParsedBody();
-    $accountName = isset($data['account']) ? $data['account'] : '';
     $username = isset($data['username']) ? $data['username'] : '';
     $password = isset($data['password']) ? $data['password'] : '';
     $uri = $request->getUri()->withPath($this->loginPath);
 
     // This is a login attempt.
-    if (!empty($accountName) || !empty($username) || !empty($password)) {
+    if (!empty($username) || !empty($password)) {
       try {
         $userHelper = new User($this->settings['db']);
       } catch (ApiException $e) {
         unset($_SESSION['token']);
-        unset($_SESSION['accid']);
         unset($_SESSION['uid']);
         return $next($request, $response);
       }
 
-      $loginResult = $userHelper->adminLogin($accountName, $username, $password, $this->settings['user']['token_life']);
+      $loginResult = $userHelper->adminLogin($username, $password, $this->settings['user']['token_life']);
       if (!$loginResult) {
         // Login failed.
         unset($_SESSION['token']);
-        unset($_SESSION['accid']);
         unset($_SESSION['uid']);
       } else {
         $_SESSION['token'] = $loginResult['token'];
-        $_SESSION['accid'] = $loginResult['uid'];
         $_SESSION['uid'] = $loginResult['uid'];
       }
     }
 
     // Validate token.
-    if (!isset($_SESSION['token']) || !isset($_SESSION['accid']) || !isset($_SESSION['uid'])) {
+    if (!isset($_SESSION['token']) || !isset($_SESSION['uid'])) {
       return $response = $response->withRedirect($uri);
     }
     return $next($request, $response);

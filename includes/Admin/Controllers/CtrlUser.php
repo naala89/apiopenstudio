@@ -100,11 +100,9 @@ class CtrlUser extends CtrlBase {
 
     // Create an array of distinct users from $roles with applications and roles.
     $userAccounts = $userAccountHlp->findByAccountId($account['accid']);
-    echo "<pre>";var_dump($userAccounts);
     $users = $administrators = $owners = [];
     foreach ($userAccounts as $userAccount) {
       $user = $userHlp->findByUserId($userAccount['uid']);
-      echo "<pre>";var_dump($user);
       $userAccountRoles = $userAccountHlp->findAllRolesByUaid($userAccount['uaid']);
       if (empty($userAccountRoles) && ($filterApplication == 'all' || $filterApplication == '')) {
         $users[$user['uid']] = $user;
