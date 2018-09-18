@@ -8,20 +8,35 @@
       <h6>Welcome to GaterData!</h6>
     </div>
   </div>
-  {% if applications is empty %}
+  {% if accounts|length == 1 %}
     <div class="divider"></div>
     <div class="section">
-      <p><i>You do not have any applications yet.</i></p>
+      <p><i>You do not have any accounts yet.</i></p>
       <p>
-        Your next step should be to define at least one application.
-        An application is a project or a client, with it's own administrators, developers and API resources assigned to it.
-        Using multiple applications helps you separate dev and admin responsibilities, monitoring and billing for each business entity or client.
+        First you should define at least one account.
+        An account is a distinct business unit, like a company, client or division.
+        You must have at least one account - this can be your organization, or organizations that you allow to use your GaterData app.
+        Once you have created an account, you can create applications beneath each account.
+        Each application is the
       </p>
-      <p>Click <a href="/applications">here</a> to create your application/s.</p>
+      <p>Click <a href="/accounts">here</a> to create your account/s.</p>
     </div>
+  {% else %}
+    {% if applications|length == 1 %}
+      <div class="divider"></div>
+      <div class="section">
+        <p><i>You do not have any applications for your accounts yet.</i></p>
+        <p>
+          Your next step should be to define at least one application in an account.
+          An application is a project logical grouping of API resources, with it's own managers, developers and API resources assigned to it.
+          Using multiple applications helps you separate dev and admin responsibilities, monitoring and billing for each business entity or client.
+        </p>
+        <p>Click <a href="/applications">here</a> to create your application/s.</p>
+      </div>
+    {% endif %}
   {% endif %}
   <div class="divider"></div>
   <div class="section">
-    <p>To invite and manage users for your account, click <a href="/users">here</a>.</p>
+    <p>To invite and manage users for your accounts, click <a href="/users">here</a>.</p>
   </div>
 {% endblock %}

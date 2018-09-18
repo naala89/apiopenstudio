@@ -67,6 +67,20 @@ class AccountMapper extends Mapper {
   }
 
   /**
+   * Find an accounts.
+   *
+   * @return array
+   *   array Account objects.
+   *
+   * @throws ApiException
+   */
+  public function findAll() {
+    $sql = 'SELECT * FROM account';
+    $bindParams = [];
+    return $this->fetchRows($sql, $bindParams);
+  }
+
+  /**
    * Find an account by ID.
    *
    * @param int $accid

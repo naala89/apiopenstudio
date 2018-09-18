@@ -67,8 +67,6 @@ class User{
   /**
    * Log a user in.
    *
-   * @param string $accountName
-   *   Account bane.
    * @param string $username
    *   User name.
    * @param string $password
@@ -78,33 +76,11 @@ class User{
    *
    * @return array|bool
    */
-  public function adminLogin($accountName, $username, $password, $ttl) {
-    // Validate account and get account ID.
-    $accountMapper = new Db\AccountMapper($this->db);
-    $account = $accountMapper->findByName($accountName);
-    if (empty($accId = $account->getAccId())) {
-      return FALSE;
-    }
-
+  public function adminLogin($username, $password, $ttl) {
     // Validate username and get user ID.
     $userMapper = new Db\UserMapper($this->db);
     $this->user = $userMapper->findByUsername($username);
-    if (empty($uid = $this->user->getUid())) {
-      return FALSE;
-    }
-
-    // Validate user is assigned to the account as owner or user of any account applications.
-    $accountOwnerMapper = new Db\AccountOwnerMapper($this->db);
-    $accountOwner = $accountOwnerMapper->findByAccidUid($accId, $uid);
-    $validUser = !empty($accountOwner->getAoid());
-    $applicationMapper = new Db\ApplicationMapper($this->db);
-    $applicationUserMapper = new Db\ApplicationUserRoleMapper($this->db);
-    $applications = $applicationMapper->findByAccId($accId);
-    foreach ($applications as $application) {
-      $applicationUser = $applicationUserMapper->findByUid($uid);
-      $validUser = !empty($applicationUser['auid']) ? TRUE : $validUser;
-    }
-    if (!$validUser) {
+    if (empty($uid = $this->user->getUid()) || $this->user->getActive() != 1) {
       return FALSE;
     }
 
@@ -126,7 +102,6 @@ class User{
       $this->user->setTokenTtl(Utilities::date_php2mysql(strtotime($ttl)));
       return [
         'token' => $this->user->getToken(),
-        'accid' => $accId,
         'uid' => $uid,
       ];
     }
@@ -144,7 +119,6 @@ class User{
 
     return [
       'token' => $this->user->getToken(),
-      'accid' => $accId,
       'uid' => $uid,
     ];
   }
@@ -286,19 +260,35 @@ class User{
   }
 
   /**
-   * Assign sysadmin role to current user.
+   * Assign Administrator role to current user.
    *
    * @return bool
    *   Success.
    */
-  public function assignSysadmin() {
-    $sysadminMapper = new Db\SysadminMapper($this->db);
-    $sysadmin = new Db\Sysadmin(
+  public function assignAdministrator() {
+    $administratorMapper = new Db\AdministratorMapper($this->db);
+    $administrator = new Db\Administrator(
       NULL,
       $this->user->getUid()
     );
     try {
-      return $sysadminMapper->save($sysadmin);
+      return $administratorMapper->save($administrator);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
+  }
+
+  /**
+   * Validate if a user had administrator status.
+   *
+   * @return bool
+   *   Is an admin.
+   */
+  public function isAdministrator() {
+    try {
+      $administratorMapper = new Db\AdministratorMapper($this->db);
+      $administrator = $administratorMapper->findByUid($this->user->getUid());
+      return $administrator !== NULL;
     } catch (ApiException $e) {
       return FALSE;
     }
@@ -436,51 +426,34 @@ class User{
   }
 
   /**
-   * Find roles for a user ID in an account.
-   *
-   * @param int $accid.
-   *   Account ID.
+   * Find roles for a user.
    *
    * @return array
    *   Array of mapped UserAccountRole objects.
    */
-  public function findRolesByAccid($accid) {
-    // Find roles for the user.
-    $accountOwnerMapper = new Db\AccountOwnerMapper($this->db);
-    $applicationMapper = new Db\ApplicationMapper($this->db);
-    $roleMapper = new Db\RoleMapper($this->db);
-    $applicationUserRoleMapper = new Db\ApplicationUserRoleMapper($this->db);
-    $roles = $allRoles = [];
+  public function findRoles() {
     try {
+      // Find roles for the user.
+      $roleMapper = new Db\RoleMapper($this->db);
+      $applicationUserRoleMapper = new Db\ApplicationUserRoleMapper($this->db);
+      $roles = $allRoles = [];
       $uid = $this->user->getUid(); // Current uid.
       // All roles indexed by rid.
       $results = $roleMapper->findAll();
       foreach ($results as $result) {
         $allRoles[$result->getRid()] = $result->dump();
       }
-      // Check account_owner table;
-      $accountOwner = $accountOwnerMapper->findByAccidUid($accid, $uid);
-      if (!empty($accountOwner->getAoid())) {
-        $roles[] = 'Owner';
-      }
-      // Fined user roles for each application.
-      $applications = $applicationMapper->findByAccid($accid);
-      foreach ($applications as $application) {
-        $applicationUserRoles = $applicationUserRoleMapper->findByAppidUid($application->getAppid(), $uid);
-        if (empty($applicationUserRoles)) {
-          continue;
-        }
-        foreach ($applicationUserRoles as $applicationUserRole) {
-          $roleName = $allRoles[$applicationUserRole->getRid()]['name'];
-          if (!in_array($roleName)) {
-            $roles[] = $roleName;
-          }
+      // Find user roles.
+      $applicationUserRoles = $applicationUserRoleMapper->findByUid($uid);
+      foreach ($applicationUserRoles as $applicationUserRole) {
+        $roleName = $allRoles[$applicationUserRole->getRid()]['name'];
+        if (!in_array($roleName)) {
+          $roles[] = $roleName;
         }
       }
     } catch (ApiException $e) {
       return [];
     }
-
     return $roles;
   }
 

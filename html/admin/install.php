@@ -205,13 +205,13 @@ switch ($step) {
         exit;
       }
 
-      if (!$user->assignSysadmin()) {
+      if (!$user->assignAdministrator()) {
         $template = $twig->load('install/install_2.twig');
         echo $template->render([
           'menu' => $menu,
           'message' => [
             'type' => 'error',
-            'text' => 'Failed to assign your user sysadmin status. Please check the logs.'
+            'text' => 'Failed to assign your user administrator status. Please check the logs.'
           ],
         ]);
         exit;
