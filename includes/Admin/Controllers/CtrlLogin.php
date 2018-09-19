@@ -27,7 +27,10 @@ class CtrlLogin extends CtrlBase {
    */
   public function login(Request $request, Response $response, array $args) {
     $menu = $this->getMenus([]);
-    return $this->view->render($response, 'login.twig', ['menu' => $menu]);
+    return $this->view->render($response, 'login.twig', [
+      'menu' => $menu,
+      'messages' => $this->flash->getMessages(),
+    ]);
   }
 
   /**

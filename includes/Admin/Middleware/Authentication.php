@@ -6,6 +6,7 @@ use Datagator\Admin\User;
 use Datagator\Core\ApiException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Slim\Container;
 
 /**
  * Class Authentication.
@@ -13,18 +14,32 @@ use Psr\Http\Message\ResponseInterface;
  * @package Datagator\Admin\Middleware
  */
 class Authentication {
+
+  /**
+   * @var array
+   */
   private $settings;
+  /**
+   * @var string
+   */
   private $loginPath;
+  /**
+   * @var Container
+   */
+  private $container;
 
   /**
    * Authentication constructor.
    *
+   * @param \Slim\Container $container
+   *   Container.
    * @param array $settings
    *   Application settings.
    * @param string $loginPath
    *   Login URI.
    */
-  public function __construct(array $settings, $loginPath) {
+  public function __construct(Container $container, array $settings, $loginPath) {
+    $this->container = $container;
     $this->settings = $settings;
     $this->loginPath = $loginPath;
   }
@@ -53,20 +68,20 @@ class Authentication {
     if (!empty($username) || !empty($password)) {
       try {
         $userHelper = new User($this->settings['db']);
+        $loginResult = $userHelper->adminLogin($username, $password, $this->settings['user']['token_life']);
+        if (!$loginResult) {
+          // Login failed.
+          unset($_SESSION['token']);
+          unset($_SESSION['uid']);
+        } else {
+          $_SESSION['token'] = $loginResult['token'];
+          $_SESSION['uid'] = $loginResult['uid'];
+          $this->container['flash']->addMessage('error', 'Invalid username or password.');
+        }
       } catch (ApiException $e) {
         unset($_SESSION['token']);
         unset($_SESSION['uid']);
-        return $next($request, $response);
-      }
-
-      $loginResult = $userHelper->adminLogin($username, $password, $this->settings['user']['token_life']);
-      if (!$loginResult) {
-        // Login failed.
-        unset($_SESSION['token']);
-        unset($_SESSION['uid']);
-      } else {
-        $_SESSION['token'] = $loginResult['token'];
-        $_SESSION['uid'] = $loginResult['uid'];
+        $this->container['flash']->addMessage('error', $e->getMessage());
       }
     }
 

@@ -31,4 +31,8 @@ $(document).ready(function() {
     modal.modal('open');
   });
 
+  $('.close-gaterdata-alert').click(function(){
+    $(this).closest('.gaterdata-alert').fadeOut("slow", function() {
+    });
+  });
 });

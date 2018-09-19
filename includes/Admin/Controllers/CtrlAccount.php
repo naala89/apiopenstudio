@@ -74,10 +74,7 @@ class CtrlAccount extends CtrlBase {
 
     $allPostVars = $request->getParsedBody();
     if (empty($name = $allPostVars['create-acc-name'])) {
-      $this->flash('message', [
-        'type' => 'error',
-        'text' => 'Cannot create account, no name defined.',
-      ]);
+      $this->flash->addMessage('error', 'Cannot create account, no name defined.');
       return $response->withRedirect('/accounts');
     }
     try {
@@ -90,7 +87,6 @@ class CtrlAccount extends CtrlBase {
         }
       }
       if (!empty($account['accid'])) {
-        $this->flash->addMessage('error', 'Something went wrong while creating your account. Please check the logs.');
         $this->flash->addMessage('error', 'An account with this name already exists.');
         return $response->withRedirect('/accounts');
       }
