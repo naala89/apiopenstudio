@@ -1,0 +1,22 @@
+<header>
+  <nav>
+    <div class="nav-wrapper teal lighten-1 black-text">
+      <a href="/" class="brand-logo">GaterData</a>
+      <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+      <ul class="right hide-on-med-and-down">
+        {% for key,value in menu %}
+          <li>
+            <a href="{{ value }}">{{ key }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </nav>
+  <ul class="sidenav grey darken-3" id="mobile-demo">
+    {% for key,value in menu %}
+      <li >
+        <a href="{{ value }}" class=" white-text">{{ key }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+</header>

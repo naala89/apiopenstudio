@@ -20,6 +20,7 @@ $app->post('/logout', 'CtrlLogin:logout');
  * Account.
  */
 $app->get('/accounts', 'CtrlAccount:index')->add(new Authentication($settings, '/login'));
+$app->post('/account/create', 'CtrlAccount:create')->add(new Authentication($settings, '/login'));
 
 
 /**

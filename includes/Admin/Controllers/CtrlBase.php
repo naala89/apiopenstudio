@@ -4,6 +4,7 @@ namespace Datagator\Admin\Controllers;
 
 use Datagator\Admin\User;
 use Datagator\Core\ApiException;
+use Slim\Flash\Messages;
 use Slim\Views\Twig;
 
 /**
@@ -22,6 +23,10 @@ class CtrlBase {
    */
   protected $view;
   /**
+   * @var Messages.
+   */
+  protected $flash;
+  /**
    * @var array.
    */
   protected $menu;
@@ -37,10 +42,13 @@ class CtrlBase {
    *   DB settings array.
    * @param \Slim\Views\Twig $view
    *   View container.
+   * @param \Slim\Flash\Messages $flash
+   *   Flash messages container.
    */
-  public function __construct(array $dbSettings, Twig $view) {
+  public function __construct(array $dbSettings, Twig $view, Messages $flash) {
     $this->dbSettings = $dbSettings;
     $this->view = $view;
+    $this->flash = $flash;
   }
 
   /**

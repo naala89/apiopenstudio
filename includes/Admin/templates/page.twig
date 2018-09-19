@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-gb" dir="ltr">
 
-<head>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -14,97 +13,17 @@
     <script src="/js/gaterdata.min.js"></script>
   </head>
 
-<body>
-
-<div class="container">
-
-  <header>
-    <nav>
-      <div class="nav-wrapper teal lighten-1 black-text">
-        <a href="/" class="brand-logo">GaterData</a>
-        <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-        <ul class="right hide-on-med-and-down">
-          {% for key,value in menu %}
-            <li>
-              <a href="{{ value }}">{{ key }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-    </nav>
-    <ul class="sidenav grey darken-3" id="mobile-demo">
-      {% for key,value in menu %}
-        <li >
-          <a href="{{ value }}" class=" white-text">{{ key }}</a>
-        </li>
-      {% endfor %}
-    </ul>
-  </header>
-
-  <main>
-
-    <div class="row">
-      <div class="col s12">
-        <h5>{{ title | raw }}</h5>
-      </div>
-    </div>
-
-    {% if message is defined %}
-      {% if message.type == 'info' %}
-        {% set message_colour = 'green accent-2' %}
-      {% endif %}
-      {% if message.type == 'warning' %}
-        {% set message_colour = 'yellow lighten-3' %}
-      {% endif %}
-      {% if message.type == 'error' %}
-        {% set message_colour = 'red lighten-4' %}
-      {% endif %}
-
-      <div class="section"></div>
-      <div class="row">
-        <div class="col s12 m6 offset-m3">
-          <div class="{{  message_colour }}">
-            <div class="card-content black-text">
-              <h5 class="card-title">{{ message.type }}</h5>
-              <p>{{ message.text | raw }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="section"></div>
-    {% endif %}
-
-    {% block content %}{% endblock %}
-
-  </main>
-
-  <footer class="page-footer  teal lighten-1 black-text">
+  <body>
     <div class="container">
-      <div class="row">
-        <div class="col l6 s12">
-          <h5 class="white-text">Footer Content</h5>
-          <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
-        </div>
-        <div class="col l4 offset-l2 s12">
-          <h5 class="white-text">Links</h5>
-          <ul>
-            <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
-            <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
-            <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
-            <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
-          </ul>
-        </div>
-      </div>
+      {% include 'partials/header.twig' %}
+      <main>
+        {% include 'partials/title.twig' %}
+        {% include 'partials/flash.twig' %}
+        {% block content %}{% endblock %}
+      </main>
+      {% include 'partials/footer.twig' %}
     </div>
-    <div class="footer-copyright">
-      <div class="container">
-        &copy; Copyright 2018 by <a href="http://gaterdata.com/">Gaterdata</a>
-        <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
-      </div>
-    </div>
-  </footer>
+    <script src="/js/materialize.min.js"></script>
+  </body>
 
-</div>
-
-<script src="/js/materialize.min.js"></script>
-</body>
+</html>
