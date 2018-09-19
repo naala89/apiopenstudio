@@ -67,16 +67,16 @@ class Authentication {
     // This is a login attempt.
     if (!empty($username) || !empty($password)) {
       try {
-        $userHelper = new User($this->settings['db']);
-        $loginResult = $userHelper->adminLogin($username, $password, $this->settings['user']['token_life']);
+        $userHlp = new User($this->settings['db']);
+        $loginResult = $userHlp->adminLogin($username, $password, $this->settings['user']['token_life']);
         if (!$loginResult) {
           // Login failed.
           unset($_SESSION['token']);
           unset($_SESSION['uid']);
+          $this->container['flash']->addMessage('error', 'Invalid username or password.');
         } else {
           $_SESSION['token'] = $loginResult['token'];
           $_SESSION['uid'] = $loginResult['uid'];
-          $this->container['flash']->addMessage('error', 'Invalid username or password.');
         }
       } catch (ApiException $e) {
         unset($_SESSION['token']);
