@@ -91,16 +91,12 @@ class Account {
   /**
    * Find all accounts.
    *
-   * @return array | FALSE
+   * @return array
    *   array of accounts or false on error.
    */
   public function findAll() {
-    try {
-      $accountMapper = new Db\AccountMapper($this->db);
-      return $accountMapper->findAll();
-    } catch (ApiException $e) {
-      return FALSE;
-    }
+    $accountMapper = new Db\AccountMapper($this->db);
+    return $accountMapper->findAll();
   }
 
   /**

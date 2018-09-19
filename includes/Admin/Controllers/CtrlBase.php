@@ -76,6 +76,7 @@ class CtrlBase {
       }
       return array_merge($roles, $userHlp->findRoles());
     } catch (ApiException $e) {
+      $this->flash->addMessage('error', $e->getMessage());
       return [];
     }
   }

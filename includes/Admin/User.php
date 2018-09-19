@@ -81,7 +81,7 @@ class User{
     $userMapper = new Db\UserMapper($this->db);
     $this->user = $userMapper->findByUsername($username);
     if (empty($uid = $this->user->getUid()) || $this->user->getActive() != 1) {
-      return FALSE;
+      throw new ApiException('Invalid user or password');
     }
 
     // Set up salt if not defined.
@@ -92,7 +92,7 @@ class User{
     // Generate password hash and compare to stored hash.
     $hash = Hash::generateHash($password, $this->user->getSalt());
     if ($this->user->getHash() != NULL && $this->user->getHash() != $hash) {
-      return FALSE;
+      throw new ApiException('Invalid user or password');
     }
 
     // If token exists and is active, return it.
@@ -114,7 +114,7 @@ class User{
     try {
       $userMapper->save($this->user);
     } catch (ApiException $e) {
-      return FALSE;
+      throw new ApiException($e->getMessage());
     }
 
     return [
@@ -207,16 +207,16 @@ class User{
    *
    * @return array|bool
    *   FALSE | associative array of the user.
+   *
+   * @throws ApiException
    */
   public function findByUserId($uid) {
     $userMapper = new Db\UserMapper($this->db);
-
-    try {
-      $this->user = $userMapper->findByUid($uid);
-    } catch (ApiException $e) {
-      return FALSE;
+    $this->user = $userMapper->findByUid($uid);
+    if (empty($this->user->getUid())) {
+      throw new ApiException('unable to find user.');
     }
-    return empty($this->user->getUid()) ? FALSE : $this->user->dump();
+    return $this->user->dump();
   }
 
   /**
@@ -285,13 +285,9 @@ class User{
    *   Is an admin.
    */
   public function isAdministrator() {
-    try {
-      $administratorMapper = new Db\AdministratorMapper($this->db);
-      $administrator = $administratorMapper->findByUid($this->user->getUid());
-      return $administrator !== NULL;
-    } catch (ApiException $e) {
-      return FALSE;
-    }
+    $administratorMapper = new Db\AdministratorMapper($this->db);
+    $administrator = $administratorMapper->findByUid($this->user->getUid());
+    return $administrator !== NULL;
   }
 
   /**
