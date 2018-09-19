@@ -4,6 +4,7 @@ use Slim\Container;
 use Slim\Views\TwigExtension;
 use Slim\Http\Uri;
 use Slim\Views\Twig;
+USE Slim\Flash\Messages;
 use Datagator\Admin\Controllers\CtrlUser;
 use Datagator\Admin\Controllers\CtrlApplication;
 use Datagator\Admin\Controllers\CtrlAccount;
@@ -13,7 +14,17 @@ use Datagator\Admin\Controllers\CtrlHome;
 $container = $app->getContainer();
 
 /**
- * Register Twig View helper.
+ * Flash container.
+ *
+ * @return \Slim\Flash\Messages
+ */
+$container['flash'] = function () {
+  return new Messages();
+};
+
+
+/**
+ * Register Twig View container.
  *
  * @param \Slim\Container $container
  *   Slim container.
@@ -52,7 +63,8 @@ $container['view'] = function (Container $container) {
 $container['CtrlHome'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $view = $container->get('view');
-  return new CtrlHome($dbSettings, $view);
+  $flash = $container->get('flash');
+  return new CtrlHome($dbSettings, $view, $flash);
 };
 
 /**
@@ -67,7 +79,8 @@ $container['CtrlHome'] = function (Container $container) {
 $container['CtrlLogin'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $view = $container->get('view');
-  return new CtrlLogin($dbSettings, $view);
+  $flash = $container->get('flash');
+  return new CtrlLogin($dbSettings, $view, $flash);
 };
 
 /**
@@ -82,7 +95,8 @@ $container['CtrlLogin'] = function (Container $container) {
 $container['CtrlAccount'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $view = $container->get('view');
-  return new CtrlAccount($dbSettings, $view);
+  $flash = $container->get('flash');
+  return new CtrlAccount($dbSettings, $view, $flash);
 };
 
 /**
@@ -97,7 +111,8 @@ $container['CtrlAccount'] = function (Container $container) {
 $container['CtrlApplication'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $view = $container->get('view');
-  return new CtrlApplication($dbSettings, $view);
+  $flash = $container->get('flash');
+  return new CtrlApplication($dbSettings, $view, $flash);
 };
 
 /**
@@ -113,5 +128,6 @@ $container['CtrlUser'] = function (Container $container) {
   $dbSettings = $container->get('settings')['db'];
   $mailSettings = $container->get('settings')['mail'];
   $view = $container->get('view');
-  return new CtrlUser($dbSettings, $mailSettings, $view);
+  $flash = $container->get('flash');
+  return new CtrlUser($dbSettings, $mailSettings, $view, $flash);
 };

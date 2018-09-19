@@ -91,15 +91,15 @@ class Account {
   /**
    * Find all accounts.
    *
-   * @return array
-   *   array of accounts.
+   * @return array | FALSE
+   *   array of accounts or false on error.
    */
   public function findAll() {
     try {
       $accountMapper = new Db\AccountMapper($this->db);
       return $accountMapper->findAll();
     } catch (ApiException $e) {
-      return [];
+      return FALSE;
     }
   }
 
@@ -109,28 +109,36 @@ class Account {
    * @param int $accId
    *   Account ID.
    *
-   * @return array
-   *   Account.
+   * @return array | FALSE
+   *   Account or false on error.
    */
   public function findByAccountId($accId) {
     $accountMapper = new Db\AccountMapper($this->db);
-    $this->account = $accountMapper->findByAccId($accId);
+    try {
+      $this->account = $accountMapper->findByAccId($accId);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
     return $this->account->dump();
   }
 
   /**
-   * Find an account by it a user's uaid.
+   * Find an account by its name.
    *
-   * @param int $uaid
-   *   User account ID.
+   * @param string $name
+   *   Account name.
    *
-   * @return array
-   *   Account.
+   * @return array | FALSE
+   *   Account or false on error.
    */
-  public function findByUaid($uaid) {
-    $userAccountMapper = new Db\UserAccountMapper($this->db);
-    $userAccount = $userAccountMapper->findByUaid($uaid);
-    return $this->findByAccountId($userAccount->getAccId());
+  public function findByName($name) {
+    $accountMapper = new Db\AccountMapper($this->db);
+    try {
+      $this->account = $accountMapper->findByName($name);
+    } catch (ApiException $e) {
+      return FALSE;
+    }
+    return $this->account->dump();
   }
 
   /**

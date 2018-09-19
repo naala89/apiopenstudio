@@ -31,6 +31,11 @@ class CtrlHome extends CtrlBase {
   public function index(Request $request, Response $response, array $args) {
     $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
     $roles = $this->getRoles($uid);
+    if (empty($roles)) {
+      unset ($_SESSION['uid']);
+      unset ($_SESSION['token']);
+      return $response->withRedirect('/login');
+    }
     $menu = $this->getMenus($roles);
 
     try {
@@ -42,11 +47,13 @@ class CtrlHome extends CtrlBase {
       $applications = [];
       $accounts = [];
     }
+    $this->flash->addMessage('error', 'sdfuygdsrkjhg');
 
     return $this->view->render($response, 'home.twig', [
       'menu' => $menu,
       'accounts' => $accounts,
       'applications' => $applications,
+      'flash' => $this->flash,
     ]);
   }
 

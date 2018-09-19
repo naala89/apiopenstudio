@@ -1,0 +1,23 @@
+{% for type,message in messages %}
+  {% if type == 'info' %}
+    {% set message_colour = 'green accent-2' %}
+  {% endif %}
+  {% if type == 'warning' %}
+    {% set message_colour = 'yellow lighten-3' %}
+  {% endif %}
+  {% if type == 'error' %}
+    {% set message_colour = 'red lighten-4' %}
+  {% endif %}
+  {% for text in message %}
+    <div class="row">
+      <div class="col s12 m6 offset-m3">
+        <div class="{{  message_colour }}">
+          <div class="card-content black-text">
+            <h5 class="card-title">{{ type }}</h5>
+            <p>{{ text | raw }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+{% endfor %}

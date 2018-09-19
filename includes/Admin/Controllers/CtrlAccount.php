@@ -33,33 +33,27 @@ class CtrlAccount extends CtrlBase {
     $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
     $roles = $this->getRoles($uid);
     if (!$this->checkAccess($roles)) {
-      $response->withRedirect('/');
+      return $response->withRedirect('/');
     }
     $menu = $this->getMenus($roles);
 
     try {
       $accountHlp = new Account($this->dbSettings);
     } catch (ApiException $e) {
-      return $this->view->render($response, 'accounts.twig', [
-        'menu' => $menu,
-        'accounts' => [],
-        'message' => [
-          'type' => 'error',
-          'text' => $e->getMessage(),
-        ],
-      ]);
+      $this->flash->addMessage('error', $e->getMessage());
     }
 
+//    var_dump($this->flash->getMessages());exit;
     $accounts = $accountHlp->findAll();
-
     return $this->view->render($response, 'accounts.twig', [
       'menu' => $menu,
       'accounts' => $accounts,
+      'messages' => $this->flash->getMessages(),
     ]);
   }
 
   /**
-   * Create an application.
+   * Create an account.
    *
    * @param \Slim\Http\Request $request
    *   Request object.
@@ -72,42 +66,45 @@ class CtrlAccount extends CtrlBase {
    *   Response.
    */
   public function create(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
-    $roles = $this->getRoles($uaid);
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $roles = $this->getRoles($uid);
     if (!$this->checkAccess($roles)) {
-      $response->withRedirect('/');
+      return $response->withRedirect('/');
     }
-    $menu = $this->getMenus($roles);
 
     $allPostVars = $request->getParsedBody();
-    if (empty($appName = $allPostVars['create-app-name'])) {
-      $message = [
+    if (empty($name = $allPostVars['create-acc-name'])) {
+      $this->flash('message', [
         'type' => 'error',
-        'text' => 'Cannot create application, no name defined.',
-      ];
-    } else {
-      try {
-        $applicationHlp = new Application($this->dbSettings);
-        $applicationHlp->createByUserAccIdName($uaid, $appName);
-        $applications = $applicationHlp->findByUserAccountId($uaid);
-        $message = [
-          'type' => 'info',
-          'text' => 'Application created',
-        ];
-      } catch (ApiException $e) {
-        $applications = [];
-        $message = [
-          'type' => 'error',
-          'text' => $e->getMessage(),
-        ];
-      }
+        'text' => 'Cannot create account, no name defined.',
+      ]);
+      return $response->withRedirect('/accounts');
     }
-
-    return $this->view->render($response, 'applications.twig', [
-      'menu' => $menu,
-      'applications' => $applications,
-      'message' => $message,
-    ]);
+    try {
+      $accountHlp = new Account($this->dbSettings);
+      $account = $accountHlp->findByName($name);
+      if (!$account) {
+        if (empty($name = $allPostVars['create-acc-name'])) {
+          $this->flash->addMessage('error', 'Something went wrong while creating your account. Please check the logs.');
+          return $response->withRedirect('/accounts');
+        }
+      }
+      if (!empty($account['accid'])) {
+        $this->flash->addMessage('error', 'Something went wrong while creating your account. Please check the logs.');
+        $this->flash->addMessage('error', 'An account with this name already exists.');
+        return $response->withRedirect('/accounts');
+      }
+      if (!$accountHlp->create($name)) {
+        $this->flash->addMessage('error', 'Something went wrong while creating your account. Please check the logs.');
+        return $response->withRedirect('/accounts');
+      } else {
+        $this->flash->addMessage('info', 'Application created');
+        return $response->withRedirect('/accounts');
+      }
+    } catch (ApiException $e) {
+      $this->flash->addMessage('error', $e->getMessage());
+      return $response->withRedirect('/accounts');
+    }
   }
 
   /**
