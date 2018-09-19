@@ -64,20 +64,13 @@ class Authentication {
     $password = isset($data['password']) ? $data['password'] : '';
     $uri = $request->getUri()->withPath($this->loginPath);
 
-    // This is a login attempt.
     if (!empty($username) || !empty($password)) {
+      // This is a login attempt.
       try {
         $userHlp = new User($this->settings['db']);
         $loginResult = $userHlp->adminLogin($username, $password, $this->settings['user']['token_life']);
-        if (!$loginResult) {
-          // Login failed.
-          unset($_SESSION['token']);
-          unset($_SESSION['uid']);
-          $this->container['flash']->addMessage('error', 'Invalid username or password.');
-        } else {
-          $_SESSION['token'] = $loginResult['token'];
-          $_SESSION['uid'] = $loginResult['uid'];
-        }
+        $_SESSION['token'] = $loginResult['token'];
+        $_SESSION['uid'] = $loginResult['uid'];
       } catch (ApiException $e) {
         unset($_SESSION['token']);
         unset($_SESSION['uid']);
@@ -85,7 +78,7 @@ class Authentication {
       }
     }
 
-    // Validate token.
+    // Validate token and uid are set (valid login).
     if (!isset($_SESSION['token']) || !isset($_SESSION['uid'])) {
       return $response = $response->withRedirect($uri);
     }
