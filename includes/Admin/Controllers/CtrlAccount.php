@@ -39,12 +39,11 @@ class CtrlAccount extends CtrlBase {
 
     try {
       $accountHlp = new Account($this->dbSettings);
+      $accounts = $accountHlp->findAll();
     } catch (ApiException $e) {
       $this->flash->addMessage('error', $e->getMessage());
     }
 
-//    var_dump($this->flash->getMessages());exit;
-    $accounts = $accountHlp->findAll();
     return $this->view->render($response, 'accounts.twig', [
       'menu' => $menu,
       'accounts' => $accounts,
