@@ -92,7 +92,7 @@ class Account {
    * Find all accounts.
    *
    * @return array
-   *   array of accounts or false on error.
+   *   array of accounts.
    */
   public function findAll() {
     $accountMapper = new Db\AccountMapper($this->db);
