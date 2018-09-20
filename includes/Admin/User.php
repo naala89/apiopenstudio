@@ -74,7 +74,10 @@ class User{
    * @param string $ttl
    *   Token life. Example: '+1 hour'.
    *
-   * @return array|bool
+   * @return array
+   *   login token and uid.
+   *
+   * @throws ApiException
    */
   public function adminLogin($username, $password, $ttl) {
     // Validate username and get user ID.
@@ -159,8 +162,8 @@ class User{
    * @param string $phoneWork
    *   User work phone number.
    *
-   * @return bool|array
-   *   False or associative user array.
+   * @return array
+   *   associative user array.
    */
   public function create($username, $password, $email = NULL, $honorific = NULL, $nameFirst = NULL, $nameLast = NULL, $company = NULL, $website = NULL, $addressStreet = NULL, $addressSuburb = NULL, $addressCity = NULL, $addressState = NULL, $addressCountry = NULL, $addressPostcode = NULL, $phoneMobile = NULL, $phoneWork = NULL) {
     $user = new Db\User(
@@ -189,14 +192,9 @@ class User{
     $user->setPassword($password);
 
     $userMapper = new Db\UserMapper($this->db);
-
-    try {
-      $userMapper->save($user);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
+    $userMapper->save($user);
     $this->user = $userMapper->findByUsername($username);
-    return empty($this->user->getUid()) ? FALSE: $this->user->dump();
+    return $this->user->dump();
   }
 
   /**
@@ -205,17 +203,14 @@ class User{
    * @param string $uid
    *   User ID.
    *
-   * @return array|bool
-   *   FALSE | associative array of the user.
+   * @return array
+   *   associative array of the user.
    *
    * @throws ApiException
    */
   public function findByUserId($uid) {
     $userMapper = new Db\UserMapper($this->db);
     $this->user = $userMapper->findByUid($uid);
-    if (empty($this->user->getUid())) {
-      throw new ApiException('unable to find user.');
-    }
     return $this->user->dump();
   }
 
@@ -225,17 +220,12 @@ class User{
    * @param string $email
    *   User email.
    *
-   * @return array|bool
-   *   FALSE | associative array of the user.
+   * @return array
+   *   associative array of the user.
    */
   public function findByEmail($email) {
     $userMapper = new Db\UserMapper($this->db);
-
-    try {
-      $this->user = $userMapper->findByEmail($email);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
+    $this->user = $userMapper->findByEmail($email);
     return $this->user->dump();
   }
 
@@ -245,17 +235,12 @@ class User{
    * @param string $username
    *   User username.
    *
-   * @return array|bool
-   *   FALSE | associative array of the user.
+   * @return array
+   *   associative array of the user.
    */
   public function findByUsername($username) {
     $userMapper = new Db\UserMapper($this->db);
-
-    try {
-      $this->user = $userMapper->findByUsername($username);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
+    $this->user = $userMapper->findByUsername($username);
     return $this->user->dump();
   }
 
@@ -271,11 +256,7 @@ class User{
       NULL,
       $this->user->getUid()
     );
-    try {
-      return $administratorMapper->save($administrator);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
+    return $administratorMapper->save($administrator);
   }
 
   /**
@@ -288,67 +269,6 @@ class User{
     $administratorMapper = new Db\AdministratorMapper($this->db);
     $administrator = $administratorMapper->findByUid($this->user->getUid());
     return $administrator !== NULL;
-  }
-
-  /**
-   * Assign the user to an account by the account ID.
-   *
-   * @param int $accid
-   *   Account ID.
-   *
-   * @return array|bool
-   *   FALSE | user account associative array.
-   */
-  public function assignToAccountId($accid) {
-    if (empty($this->user) || empty($this->user->getUid())) {
-      return FALSE;
-    }
-
-    $accountMapper = new Db\AccountMapper($this->db);
-    try {
-      $account = $accountMapper->findByAccId($accid);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
-    if (empty($account->getAccId())) {
-      return FALSE;
-    }
-
-    $userAccount = new Db\UserAccount(NULL, $this->user->getUid(), $accid);
-    $userAccountMapper = new Db\UserAccountMapper($this->db);
-    try {
-      $userAccountMapper->save($userAccount);
-      $userAccount = $userAccountMapper->findByUidAccId($this->user->getUid(), $accid);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
-    if (empty($userAccount->getUaid())) {
-      return FALSE;
-    }
-
-    return $userAccount->dump();
-  }
-
-  /**
-   * Assign the user to an account by the account name.
-   *
-   * @param string $accountName
-   *   Account name.
-   *
-   * @return array|bool
-   *   FALSE | user account associative array.
-   */
-  public function assignToAccountName($accountName) {
-    $accountMapper = new Db\AccountMapper($this->db);
-    try {
-      $account = $accountMapper->findByName($accountName);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
-    if (empty($account->getAccId())) {
-      return FALSE;
-    }
-    return $this->assignToAccountId($account->getAccId());
   }
 
   /**

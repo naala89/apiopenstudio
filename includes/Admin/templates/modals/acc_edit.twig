@@ -1,0 +1,20 @@
+<!-- Edit modal -->
+<div id="modal-acc-edit" class="modal">
+  <form method="post" action="/accounts/edit" id="account-edit">
+    <input type="hidden" name="edit-acc-id" id="edit-acc-id" value="">
+    <div class="modal-content">
+      <h4>Edit Account</h4>
+      <p>Edit the name of your account</p>
+      <div class="input-field">
+        <input type="text" class="validate" name="edit-acc-name" id="edit-acc-name" value="placeholder">
+        <label for="name">Account Name</label>
+      </div>
+      <div class="row">
+        <div class="input-field col s3 offset-l9">
+          <a class=" modal-action modal-close">Cancel</a>
+          <button class="btn waves-effect waves-light" type="submit">Edit</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

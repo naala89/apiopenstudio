@@ -2,6 +2,8 @@
 
 namespace Datagator\Admin\Controllers;
 
+use Datagator\Admin\Manager;
+use Datagator\Admin\User;
 use Datagator\Core\ApiException;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -39,9 +41,19 @@ class CtrlAccount extends CtrlBase {
 
     try {
       $accountHlp = new Account($this->dbSettings);
-      $accounts = $accountHlp->findAll();
+      if (in_array('Administrator', $roles)) {
+        $accounts = $accountHlp->findAll();
+      } else {
+        $managerHlp = new Manager($this->dbSettings);
+        $managers = $managerHlp->findByUserId($uid);
+        $accounts = [];
+        foreach ($managers as $manager) {
+          $accounts[] = $accountHlp->findByAccountId($manager['accid']);
+        }
+      }
     } catch (ApiException $e) {
       $this->flash->addMessage('error', $e->getMessage());
+      $accounts = [];
     }
 
     return $this->view->render($response, 'accounts.twig', [
