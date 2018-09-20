@@ -39,7 +39,7 @@ class AccountMapper extends Mapper {
       $bindParams = [$account->getName()];
     }
     else {
-      $sql = 'UPDATE account SET name = ? WHERE aid = ?';
+      $sql = 'UPDATE account SET name = ? WHERE accid = ?';
       $bindParams = [
         $account->getName(),
         $account->getAccid(),
