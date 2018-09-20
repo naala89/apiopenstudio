@@ -2,6 +2,23 @@ $(document).ready(function() {
 
   M.AutoInit();
 
+  // Edit account modal.
+  $('.modal-acc-edit-trigger').click(function() {
+    var self = $(this);
+    var modal = $('#modal-acc-edit');
+    modal.find('#edit-acc-id').val(self.attr('acc-id'));
+    modal.find('#edit-acc-name').val(self.attr('acc-name'));
+    modal.modal('open');
+  });
+
+  // Delete account modal.
+  $('.modal-acc-delete-trigger').click(function() {
+    var self = $(this);
+    var modal = $('#modal-acc-delete');
+    modal.find('#edit-acc-id').val(self.attr('acc-id'));
+    modal.find('#edit-acc-name').val(self.attr('acc-name'));
+    modal.modal('open');
+  });
 
   // Edit application modal.
   $('.modal-app-edit-trigger').click(function() {
@@ -21,9 +38,17 @@ $(document).ready(function() {
     modal.modal('open');
   });
 
+  // Edit user modal.
+  $('.modal-user-edit-trigger').click(function() {
+    var self = $(this);
+    var modal = $('#modal-user-edit');
+    modal.find('#user-name').html(self.attr('user-name'));
+    modal.find('a#delete-user').attr('href', '/user/delete/' + self.attr('user-account-id'));
+    modal.modal('open');
+  });
+
   // Delete user modal.
   $('.modal-user-delete-trigger').click(function() {
-    console.log('jhi');
     var self = $(this);
     var modal = $('#modal-user-delete');
     modal.find('#user-name').html(self.attr('user-name'));

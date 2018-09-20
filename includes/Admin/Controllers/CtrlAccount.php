@@ -88,6 +88,7 @@ class CtrlAccount extends CtrlBase {
       $this->flash->addMessage('error', 'Cannot create account, no name defined.');
       return $response->withRedirect('/accounts');
     }
+
     try {
       $accountHlp = new Account($this->dbSettings);
       $account = $accountHlp->findByName($name);
@@ -115,7 +116,7 @@ class CtrlAccount extends CtrlBase {
   }
 
   /**
-   * Edit an application.
+   * Edit an account.
    *
    * @param \Slim\Http\Request $request
    *   Request object.
@@ -128,54 +129,33 @@ class CtrlAccount extends CtrlBase {
    *   Response.
    */
   public function edit(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
-    $roles = $this->getRoles($uaid);
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $roles = $this->getRoles($uid);
     if (!$this->checkAccess($roles)) {
-      $response->withRedirect('/');
-    }
-    $menu = $this->getMenus($roles);
-
-    try {
-      $applicationHlp = new Application($this->dbSettings);
-    } catch (ApiException $e) {
-      return $this->view->render($response, 'applications.twig', [
-        'menu' => $menu,
-        'applications' => [],
-        'message' => [
-          'type' => 'error',
-          'text' => $e->getMessage(),
-        ],
-      ]);
+      return $response->withRedirect('/');
     }
 
     $allPostVars = $request->getParsedBody();
-    if (empty($appName = $allPostVars['edit-app-name']) || empty($appId = $allPostVars['edit-app-id'])) {
-      $applications = $applicationHlp->findByUserAccountId($uaid);
-      return $this->view->render($response, 'applications.twig', [
-        'menu' => $menu,
-        'applications' => $applications,
-        'message' => [
-          'type' => 'error',
-          'text' => 'Cannot edit application, no name or ID defined.',
-        ],
-      ]);
-    } else {
-      $applicationHlp->findByApplicationId($appId);
-      $applicationHlp->update($appName);
-      $applications = $applicationHlp->findByUserAccountId($uaid);
-      return $this->view->render($response, 'applications.twig', [
-        'menu' => $menu,
-        'applications' => $applications,
-        'message' => [
-          'type' => 'info',
-          'text' => 'Application name updated.',
-        ],
-      ]);
+    if (empty($name = $allPostVars['edit-acc-name']) || empty($accid = $allPostVars['edit-acc-id'])) {
+      $this->flash->addMessage('error', 'Cannot edit account, no name or ID defined.');
+      return $response->withRedirect('/accounts');
     }
+
+    try {
+      $accountHlp = new Account($this->dbSettings);
+      $accountHlp->findByAccountId($accid);
+      $accountHlp->updateName($name);
+    } catch (ApiException $e) {
+      $this->flash->addMessage('error', $e->getMessage());
+      return $response->withRedirect('/accounts');
+    }
+
+    $this->flash->addMessage('info', 'Account updated');
+    return $response->withRedirect('/accounts');
   }
 
   /**
-   * Delete an application.
+   * Delete an account.
    *
    * @param \Slim\Http\Request $request
    *   Request object.

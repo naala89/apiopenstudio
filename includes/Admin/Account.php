@@ -121,11 +121,27 @@ class Account {
    *   Account name.
    *
    * @return array | FALSE
-   *   Account or false on error.
+   *   Account.
    */
   public function findByName($name) {
     $accountMapper = new Db\AccountMapper($this->db);
     $this->account = $accountMapper->findByName($name);
+    return $this->account->dump();
+  }
+
+  /**
+   * Update account name.
+   *
+   * @param string $name
+   *   New account name.
+   *
+   * @return array
+   *   Account.
+   */
+  public function updateName($name) {
+    $accountMapper = new Db\AccountMapper($this->db);
+    $this->account->setName($name);
+    $accountMapper->save($this->account);
     return $this->account->dump();
   }
 

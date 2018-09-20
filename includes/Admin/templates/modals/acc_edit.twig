@@ -1,12 +1,12 @@
 <!-- Edit modal -->
 <div id="modal-acc-edit" class="modal">
-  <form method="post" action="/accounts/edit" id="account-edit">
+  <form method="post" action="/account/edit" id="account-edit">
     <input type="hidden" name="edit-acc-id" id="edit-acc-id" value="">
     <div class="modal-content">
       <h4>Edit Account</h4>
       <p>Edit the name of your account</p>
       <div class="input-field">
-        <input type="text" class="validate" name="edit-acc-name" id="edit-acc-name" value="placeholder">
+        <input type="text" class="validate" name="edit-acc-name" id="edit-acc-name" value="{{ value.name }}">
         <label for="name">Account Name</label>
       </div>
       <div class="row">

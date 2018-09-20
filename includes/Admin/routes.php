@@ -23,7 +23,7 @@ $app->post('/logout', 'CtrlLogin:logout');
  */
 $app->get('/accounts', 'CtrlAccount:index')->add(new Authentication($container, $settings, '/login'));
 $app->post('/account/create', 'CtrlAccount:create')->add(new Authentication($container, $settings, '/login'));
-
+$app->post('/account/edit', 'CtrlAccount:edit')->add(new Authentication($container, $settings, '/login'));
 
 /**
  * Application.
