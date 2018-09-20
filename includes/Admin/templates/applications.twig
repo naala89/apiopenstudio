@@ -38,62 +38,10 @@
     {% endif %}
   </ul>
 
-  <!-- Create modal -->
-  <div id="modal-create" class="modal">
-    <form method="post" action="/applications/create" id="applicatio n-create">
-      <div class="modal-content">
-        <h4>Create Application</h4>
-        <p>Enter the name of your application</p>
-        <div class="input-field">
-          <input id="name" type="text" class="validate" name="create-app-name" id="create-app-name">
-          <label for="name">Application Name</label>
-          <div class="row">
-            <div class="input-field col s4 offset-s8">
-              <a class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
-              <button class="btn waves-effect waves-light" type="submit">Create</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
+  {% include 'modals/app_create.twig' %}
 
-  <!-- Edit modal -->
-  <div id="modal-app-edit" class="modal">
-    <form method="post" action="/applications/edit" id="application-edit">
-      <input type="hidden" name="edit-app-id" id="edit-app-id" value="">
-      <div class="modal-content">
-        <h4>Edit Application</h4>
-        <p>Edit the name of your application</p>
-        <div class="input-field">
-          <input type="text" class="validate" name="edit-app-name" id="edit-app-name" value="placeholder">
-          <label for="name">Application Name</label>
-        </div>
-        <div class="row">
-          <div class="input-field col s3 offset-l9">
-            <a class=" modal-action modal-close">Cancel</a>
-            <button class="btn waves-effect waves-light" type="submit">Edit</button>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
+  {% include 'modals/app_delete.twig' %}
 
-  <!-- Delete modal -->
-  <div id="modal-app-delete" class="modal">
-    <form method="post" action="/applications/delete" id="application-delete">
-      <input type="hidden" name="delete-app-id" id="delete-app-id" value="">
-      <div class="modal-content">
-        <h4>Delete Application</h4>
-        <p>Delete application "<span id="delete-app-name"></span>"?</p>
-        <p>WARNING: this will also delete any resources belonging to the application!</p>
-      </div>
-      <div class="row">
-        <div class="input-field col s3 offset-l9">
-          <a class=" modal-action modal-close">Cancel</a>
-          <button class="btn waves-effect waves-light red" type="submit">Delete</button>
-        </div>
-      </div>
-    </form>
-  </div>
+  {% include 'modals/app_edit.twig' %}
+
 {% endblock %}

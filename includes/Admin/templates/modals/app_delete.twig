@@ -1,0 +1,17 @@
+<!-- Delete modal -->
+<div id="modal-app-delete" class="modal">
+  <form method="post" action="/applications/delete" id="application-delete">
+    <input type="hidden" name="delete-app-id" id="delete-app-id" value="">
+    <div class="modal-content">
+      <h4>Delete Application</h4>
+      <p>Delete application "<span id="delete-app-name"></span>"?</p>
+      <p>WARNING: this will also delete any resources belonging to the application!</p>
+    </div>
+    <div class="row">
+      <div class="input-field col s3 offset-l9">
+        <a class=" modal-action modal-close">Cancel</a>
+        <button class="btn waves-effect waves-light red" type="submit">Delete</button>
+      </div>
+    </div>
+  </form>
+</div>

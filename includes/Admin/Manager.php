@@ -6,11 +6,11 @@ use Datagator\Db;
 use Datagator\Core\ApiException;
 
 /**
- * Class Account.
+ * Class Manager.
  *
- * @package Datagator\Admin
+ * @package Datagator\Manager
  */
-class Account {
+class Manager {
 
   /**
    * @var array
@@ -21,9 +21,9 @@ class Account {
    */
   private $db;
   /**
-   * @var \Datagator\Db\Account
+   * @var \Datagator\Db\Manager
    */
-  private $account;
+  private $manager;
 
   /**
    * User constructor.
@@ -53,80 +53,79 @@ class Account {
   }
 
   /**
-   * Create an account.
+   * Create a manager.
    *
-   * @param string $name
-   *   Account name.
+   * @param int $accid
+   *   Account ID.
+   * @param int $uid
+   *   User ID.
    *
-   * @return bool|array
-   *   FALSE or the account.
+   * @return array
+   *   Manager.
    */
-  public function create($name = NULL) {
-    $account = new Db\Account(
+  public function create($accid = NULL, $uid = NULL) {
+    $manager = new Db\Manager(
       NULL,
-      $name
+      $accid,
+      $uid
     );
-    $accountMapper = new Db\AccountMapper($this->db);
-
-    try {
-      $accountMapper->save($account);
-      $this->account = $accountMapper->findByName($name);
-    } catch (ApiException $e) {
-      return FALSE;
-    }
-
-    return empty($this->account->getAccid()) ? FALSE : $this->account->dump();
+    $managerMapper = new Db\ManagerMapper($this->db);
+    $managerMapper->save($manager);
+    $this->manager = $managerMapper->findByAccidUid($accid, $uid);
+    return $this->manager->dump();
   }
 
   /**
-   * Get the account.
+   * Get the manager.
    *
    * @return array
-   *   Account.
+   *   Manager.
    */
-  public function getAccount() {
-    return $this->account->dump();
+  public function getManager() {
+    return $this->manager->dump();
   }
 
   /**
-   * Find all accounts.
+   * Find by manager ID.
+   *
+   * @param int $mid
+   *   Manager ID.
    *
    * @return array
-   *   array of accounts.
+   *   Manager.
    */
-  public function findAll() {
-    $accountMapper = new Db\AccountMapper($this->db);
-    return $accountMapper->findAll();
+  public function findByManagerId($mid) {
+    $managerMapper = new Db\ManagerMapper($this->db);
+    $this->manager = $managerMapper->findByMid($mid);
+    return $this->manager->dump();
   }
 
   /**
-   * Find an account by its account ID.
+   * Find by account ID.
    *
-   * @param int $accId
+   * @param int $accid
    *   Account ID.
    *
    * @return array
-   *   Account.
+   *   Array of mapped Managers.
    */
-  public function findByAccountId($accId) {
-    $accountMapper = new Db\AccountMapper($this->db);
-    $this->account = $accountMapper->findByAccId($accId);
-    return $this->account->dump();
+  public function findByAccountId($accid) {
+    $managerMapper = new Db\ManagerMapper($this->db);
+    return $managerMapper->findByAccid($accid);
   }
 
   /**
-   * Find an account by its name.
+   * Find by user ID.
    *
-   * @param string $name
-   *   Account name.
+   * @param int $uid
+   *   User ID.
    *
-   * @return array | FALSE
-   *   Account or false on error.
+   * @return array
+   *   Array of mapped Managers.
    */
-  public function findByName($name) {
-    $accountMapper = new Db\AccountMapper($this->db);
-    $this->account = $accountMapper->findByName($name);
-    return $this->account->dump();
+  public function findByUserId($uid) {
+    $managerMapper = new Db\ManagerMapper($this->db);
+    return $managerMapper->findByUid($uid);
   }
 
   /**
