@@ -146,6 +146,17 @@ class Account {
   }
 
   /**
+   * Delete an account.
+   *
+   * @return bool
+   *   Success.
+   */
+  public function delete() {
+    $accountMapper = new Db\AccountMapper($this->db);
+    return $accountMapper->delete($this->account);
+  }
+
+  /**
    * Add a user as owner.
    *
    * @param int $uid

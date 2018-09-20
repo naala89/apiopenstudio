@@ -53,6 +53,16 @@ class Manager {
   }
 
   /**
+   * Get the manager.
+   *
+   * @return array
+   *   Manager.
+   */
+  public function getManager() {
+    return $this->manager->dump();
+  }
+
+  /**
    * Create a manager.
    *
    * @param int $accid
@@ -76,13 +86,14 @@ class Manager {
   }
 
   /**
-   * Get the manager.
+   * Delete a manager.
    *
-   * @return array
-   *   Manager.
+   * @return bool
+   *   Success.
    */
-  public function getManager() {
-    return $this->manager->dump();
+  public function delete() {
+    $managerMapper = new Db\ManagerMapper($this->db);
+    return $managerMapper->delete($this->manager);
   }
 
   /**

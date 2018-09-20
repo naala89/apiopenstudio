@@ -1,0 +1,132 @@
+<?php
+
+namespace Datagator\Admin;
+
+use Datagator\Db\ApplicationUserRoleMapper;
+use Datagator\Db\RoleMapper;
+use Datagator\Core\ApiException;
+use Datagator\Db\UserAccountRoleMapper;
+
+/**
+ * Class ApplicationUserRole.
+ *
+ * @package Datagator\Admin
+ */
+class ApplicationUserRole {
+
+  /**
+   * @var array
+   */
+  private $dbSettings;
+  /**
+   * @var \ADOConnection
+   */
+  private $db;
+  /**
+   * @var \Datagator\Db\ApplicationUserRole
+   */
+  private $applicationUserRole;
+
+  /**
+   * ApplicationUserRole constructor.
+   *
+   * @param array $dbSettings
+   *   Database settings.
+   *
+   * @throws ApiException
+   */
+  public function __construct(array $dbSettings) {
+    $this->dbSettings = $dbSettings;
+
+    $dsnOptionsArr = [];
+    foreach ($dbSettings['options'] as $k => $v) {
+      $dsnOptionsArr[] = "$k=$v";
+    }
+    $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
+    $dsn = $dbSettings['driver'] . '://'
+      . $dbSettings['username'] . ':'
+      . $dbSettings['password'] . '@'
+      . $dbSettings['host'] . '/'
+      . $dbSettings['database'] . $dsnOptions;
+    $this->db = ADONewConnection($dsn);
+    if (!$this->db) {
+      throw new ApiException('Failed to connect to the database.');
+    }
+  }
+
+  /**
+   * Get the stored application user role.
+   *
+   * @return array
+   *   Application User Role.
+   */
+  public function getApplicationUserRole() {
+    return $this->applicationUserRole->dump();
+  }
+
+  /**
+   * Delete a n application user role.
+   *
+   * @return bool
+   *    Success.
+   */
+  public function delete() {
+    $applicationUserRoleMapper = new ApplicationUserRoleMapper($this->db);
+    return $applicationUserRoleMapper->delete($this->applicationUserRole);
+  }
+
+  /**
+   * Find all application user roles.
+   *
+   * @return array
+   *   Array of roles.
+   */
+  public function findAll() {
+    $applicationUserRoleMapper = new ApplicationUserRoleMapper($this->db);
+    $results = $applicationUserRoleMapper->findAll();
+
+    $applicationUserRoles = [];
+    foreach ($results as $result) {
+      $applicationUserRole = $result->dump();
+      $applicationUserRoles[$applicationUserRole['rid']] = $applicationUserRole;
+    }
+
+    return $applicationUserRoles;
+  }
+
+  /**
+   * Find an application user role by its ID.
+   *
+   * @param int $aurid
+   *   Application user role ID.
+   *
+   * @return array
+   *   ApplicationUserRole.
+   */
+  public function findByAurid($aurid) {
+    $applicationUserRoleMapper = new ApplicationUserRoleMapper($this->db);
+    $this->applicationUserRole = $applicationUserRoleMapper->findByAurid($aurid);
+    return $this->getRole();
+  }
+
+  /**
+   * Find by application ID.
+   *
+   * @param int $appid
+   *   Account ID.
+   *
+   * @return array
+   *   Array of ApplicationUserRoles indexed by aurid.
+   */
+  public function findByAppid($appid) {
+    $applicationUserRoleMapper = new ApplicationUserRoleMapper($this->db);
+    $applicationUserRoles = [];
+    $results = $applicationUserRoleMapper->findByAppid($appid);
+    foreach ($results as $result) {
+      $applicationUserRole = $result->dump();
+      $applicationUserRoles[$applicationUserRole['aurid']] = $applicationUserRole;
+    }
+    return $applicationUserRoles;
+  }
+
+}

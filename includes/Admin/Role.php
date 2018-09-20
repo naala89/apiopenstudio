@@ -22,6 +22,8 @@ class Role {
    */
   private $db;
 
+  private $role;
+
   /**
    * UserRole constructor.
    *
@@ -49,6 +51,10 @@ class Role {
     }
   }
 
+  public function getRole() {
+    return $this->role;
+  }
+
   /**
    * Find all Roles.
    *
@@ -56,10 +62,10 @@ class Role {
    *   Array of roles.
    */
   public function findAll() {
-    $roles = [];
     $roleMapper = new RoleMapper($this->db);
     $results = $roleMapper->findAll();
 
+    $roles = [];
     foreach ($results as $result) {
       $role = $result->dump();
       $roles[$role['rid']] = $role;
@@ -79,8 +85,8 @@ class Role {
    */
   public function findByRid($rid) {
     $roleMapper = new RoleMapper($this->db);
-    $role = $roleMapper->findByRid($rid);
-    return $role->dump();
+    $this->role = $roleMapper->findByRid($rid);
+    return $this->getRole();
   }
 
   /**
@@ -94,8 +100,10 @@ class Role {
    */
   public function findByName($name) {
     $roleMapper = new RoleMapper($this->db);
-    $role = $roleMapper->findByName($name);
-    return $role->dump();
+    $this->role = $roleMapper->findByName($name);
+    return $this->getRole();
   }
+
+  public function
 
 }
