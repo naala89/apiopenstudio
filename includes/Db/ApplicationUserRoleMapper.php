@@ -70,6 +70,19 @@ class ApplicationUserRoleMapper extends Mapper {
     $bindParams = [$applicationUserRole->getAurid()];
     return $this->saveDelete($sql, $bindParams);
   }
+  /**
+   * Find by application user roles.
+   *
+   * @return array
+   *   Arrap of mapped ApplicationUserRole objects.
+   *
+   * @throws ApiException
+   */
+  public function findAll() {
+    $sql = 'SELECT * FROM application_user_role';
+    $bindParams = [];
+    return $this->fetchRows($sql, $bindParams);
+  }
 
   /**
    * Find by application user role ID.

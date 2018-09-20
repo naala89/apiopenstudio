@@ -2,8 +2,9 @@
 
 namespace Datagator\Admin\Controllers;
 
+use Datagator\Admin\Application;
 use Datagator\Admin\Manager;
-use Datagator\Admin\User;
+use Datagator\Admin\ApplicationUserRole;
 use Datagator\Core\ApiException;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -166,55 +167,49 @@ class CtrlAccount extends CtrlBase {
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
-   *
-   * TODO: Delete all associated resources and remove user roles.
    */
   public function delete(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
-    $roles = $this->getRoles($uaid);
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $roles = $this->getRoles($uid);
     if (!$this->checkAccess($roles)) {
-      $response->withRedirect('/');
-    }
-    $menu = $this->getMenus($roles);
-
-    try {
-      $applicationHlp = new Application($this->dbSettings);
-    } catch (ApiException $e) {
-      return $this->view->render($response, 'applications.twig', [
-        'menu' => $menu,
-        'applications' => [],
-        'message' => [
-          'type' => 'error',
-          'text' => $e->getMessage(),
-        ],
-      ]);
+      return $response->withRedirect('/');
     }
 
     $allPostVars = $request->getParsedBody();
-    if (empty($appId = $allPostVars['delete-app-id'])) {
-      $applications = $applicationHlp->findByUserAccountId($uaid);
-      return $this->view->render($response, 'applications.twig', [
-        'menu' => $menu,
-        'applications' => $applications,
-        'message' => [
-          'type' => 'error',
-          'text' => 'Cannot delete application, no application ID defined.',
-        ],
-      ]);
-    } else {
-      $applicationHlp->findByApplicationId($appId);
-      $applicationHlp->delete();
+    if (empty($name = $allPostVars['edit-acc-name']) || empty($accid = $allPostVars['edit-acc-id'])) {
+      $this->flash->addMessage('error', 'Cannot delete account, no name or ID defined.');
+      return $response->withRedirect('/accounts');
     }
 
-    $applications = $applicationHlp->findByUserAccountId($uaid);
-    return $this->view->render($response, 'applications.twig', [
-      'menu' => $menu,
-      'applications' => $applications,
-      'message' => [
-        'type' => 'info',
-        'text' => 'Application deleted.',
-      ],
-    ]);
+    try {
+      $applicationUserRoleHlp = new ApplicationUserRole($this->dbSettings);
+      $applicationHlp = new Application($this->dbSettings);
+      $accountHlp = new Account($this->dbSettings);
+      $managerHlp = new Manager($this->dbSettings);
+      $managers = $managerHlp->findByAccountId($accid);
+
+      $applications = $applicationHlp->findByAccid($accid);
+      foreach ($applications as $application) {
+        $applicationUserRoles = $applicationUserRoleHlp->findByAppid( $application['appid']);
+        foreach ($applicationUserRoles as $applicationUserRole) {
+          $applicationUserRoleHlp->findByAurid($applicationUserRole['aurid']);
+          $applicationUserRoleHlp->delete();
+        }
+      }
+
+      foreach ($managers as $manager) {
+        $managerHlp->findByManagerId($manager['mid']);
+        $managerHlp->delete();
+      }
+      $accountHlp->findByAccountId($accid);
+      $accountHlp->delete();
+    } catch (ApiException $e) {
+      $this->flash->addMessage('error', $e->getMessage());
+      return $response->withRedirect('/accounts');
+    }
+
+    $this->flash->addMessage('info', 'Account deleted');
+    return $response->withRedirect('/accounts');
   }
 
 }
