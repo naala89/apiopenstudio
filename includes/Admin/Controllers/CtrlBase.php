@@ -74,6 +74,9 @@ class CtrlBase {
       if ($userHlp->isAdministrator()) {
         $roles[] = 'Administrator';
       }
+      if ($userHlp->isManager()) {
+        $roles[] = 'Manager';
+      }
       return array_merge($roles, $userHlp->findRoles());
     } catch (ApiException $e) {
       $this->flash->addMessage('error', $e->getMessage());
@@ -105,6 +108,7 @@ class CtrlBase {
       if (in_array('Administrator', $roles)) {
         $menus += [
           'Accounts' => '/accounts',
+          'Applications' => '/applications',
           'Users' => '/users',
         ];
       }
