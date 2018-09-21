@@ -176,7 +176,7 @@ class CtrlAccount extends CtrlBase {
     }
 
     $allPostVars = $request->getParsedBody();
-    if (empty($name = $allPostVars['edit-acc-name']) || empty($accid = $allPostVars['edit-acc-id'])) {
+    if (empty($name = $allPostVars['delete-acc-name']) || empty($accid = $allPostVars['delete-acc-id'])) {
       $this->flash->addMessage('error', 'Cannot delete account, no name or ID defined.');
       return $response->withRedirect('/accounts');
     }
@@ -186,21 +186,30 @@ class CtrlAccount extends CtrlBase {
       $applicationHlp = new Application($this->dbSettings);
       $accountHlp = new Account($this->dbSettings);
       $managerHlp = new Manager($this->dbSettings);
-      $managers = $managerHlp->findByAccountId($accid);
 
+      // Find all applications for the account.
       $applications = $applicationHlp->findByAccid($accid);
       foreach ($applications as $application) {
+        // Find all application user roles for each application.
         $applicationUserRoles = $applicationUserRoleHlp->findByAppid( $application['appid']);
         foreach ($applicationUserRoles as $applicationUserRole) {
+          // Delete each application user role.
           $applicationUserRoleHlp->findByAurid($applicationUserRole['aurid']);
           $applicationUserRoleHlp->delete();
         }
+        // Delete each application
+        $applicationHlp->findByApplicationId($application['appid']);
+        $applicationHlp->delete();
       }
 
+      // Delete all managers for the account.
+      $managers = $managerHlp->findByAccountId($accid);
       foreach ($managers as $manager) {
         $managerHlp->findByManagerId($manager['mid']);
         $managerHlp->delete();
       }
+
+      // Delete the account.
       $accountHlp->findByAccountId($accid);
       $accountHlp->delete();
     } catch (ApiException $e) {

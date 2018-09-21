@@ -16,7 +16,8 @@ $(document).ready(function() {
     var self = $(this);
     var modal = $('#modal-acc-delete');
     modal.find('#delete-acc-id').val(self.attr('acc-id'));
-    modal.find('#delete-acc-name').html(self.attr('acc-name'));
+    modal.find('#delete-acc-name').val(self.attr('acc-name'));
+    modal.find('#delete-name').html(self.attr('acc-name'));
     modal.modal('open');
   });
 

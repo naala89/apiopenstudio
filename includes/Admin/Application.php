@@ -136,9 +136,6 @@ class Application {
    * @throws ApiException
    */
   public function delete() {
-    if (empty($this->application->getAppId())) {
-      throw new ApiException('Cannot delete application, none fetched yet.');
-    }
     $applicationMapper = new Db\ApplicationMapper($this->db);
     return $applicationMapper->delete($this->application);
   }
@@ -146,15 +143,17 @@ class Application {
   /**
    * Find an application by its application ID.
    *
-   * @param int $appId
+   * @param int $appid
    *   Application ID.
    *
    * @return array
    *   Application.
+   *
+   * @throws ApiException
    */
-  public function findByApplicationId($appId) {
+  public function findByApplicationId($appid) {
     $applicationMapper = new Db\ApplicationMapper($this->db);
-    $this->application = $applicationMapper->findByAppId($appId);
+    $this->application = $applicationMapper->findByAppId($appid);
     return $this->getApplication();
   }
 
