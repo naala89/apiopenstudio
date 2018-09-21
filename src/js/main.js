@@ -15,9 +15,9 @@ $(document).ready(function() {
   $('.modal-acc-delete-trigger').click(function() {
     var self = $(this);
     var modal = $('#modal-acc-delete');
+    modal.find('#delete-name').html(self.attr('acc-name'));
     modal.find('#delete-acc-id').val(self.attr('acc-id'));
     modal.find('#delete-acc-name').val(self.attr('acc-name'));
-    modal.find('#delete-name').html(self.attr('acc-name'));
     modal.modal('open');
   });
 
@@ -35,7 +35,7 @@ $(document).ready(function() {
     var self = $(this);
     var modal = $('#modal-app-delete');
     modal.find('#delete-app-id').val(self.attr('app-id'));
-    modal.find('#delete-app-name').text(self.attr('app-name'));
+    modal.find('#delete-app-name').html(self.attr('app-name'));
     modal.modal('open');
   });
 
