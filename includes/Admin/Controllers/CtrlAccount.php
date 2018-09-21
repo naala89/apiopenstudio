@@ -17,7 +17,7 @@ use Datagator\Admin\Account;
  */
 class CtrlAccount extends CtrlBase {
 
-  protected $permittedRoles = ['Administrator'];
+  protected $permittedRoles = ['Administrator', 'Manager'];
 
   /**
    * Accounts page.
@@ -33,9 +33,11 @@ class CtrlAccount extends CtrlBase {
    *   Response.
    */
   public function index(Request $request, Response $response, array $args) {
+    $this->permittedRoles = ['Administrator', 'Manager'];
     $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
     $roles = $this->getRoles($uid);
     if (!$this->checkAccess($roles)) {
+      $this->flash->addMessage('error', 'View accounts: access denied');
       return $response->withRedirect('/');
     }
     $menu = $this->getMenus($roles);
@@ -78,9 +80,11 @@ class CtrlAccount extends CtrlBase {
    *   Response.
    */
   public function create(Request $request, Response $response, array $args) {
+    $this->permittedRoles = ['Administrator'];
     $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
     $roles = $this->getRoles($uid);
     if (!$this->checkAccess($roles)) {
+      $this->flash->addMessage('error', 'Create account: access denied');
       return $response->withRedirect('/');
     }
 
@@ -130,9 +134,11 @@ class CtrlAccount extends CtrlBase {
    *   Response.
    */
   public function edit(Request $request, Response $response, array $args) {
+    $this->permittedRoles = ['Administrator'];
     $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
     $roles = $this->getRoles($uid);
     if (!$this->checkAccess($roles)) {
+      $this->flash->addMessage('error', 'Edit account: access denied');
       return $response->withRedirect('/');
     }
 
@@ -169,9 +175,11 @@ class CtrlAccount extends CtrlBase {
    *   Response.
    */
   public function delete(Request $request, Response $response, array $args) {
+    $this->permittedRoles = ['Administrator'];
     $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
     $roles = $this->getRoles($uid);
     if (!$this->checkAccess($roles)) {
+      $this->flash->addMessage('error', 'Delete account: access denied');
       return $response->withRedirect('/');
     }
 
