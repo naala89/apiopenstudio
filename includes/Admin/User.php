@@ -268,7 +268,19 @@ class User{
   public function isAdministrator() {
     $administratorMapper = new Db\AdministratorMapper($this->db);
     $administrator = $administratorMapper->findByUid($this->user->getUid());
-    return $administrator !== NULL;
+    return !empty($administrator);
+  }
+
+  /**
+   * Validate if a user had manager status.
+   *
+   * @return bool
+   *   Is an admin.
+   */
+  public function isManager() {
+    $managerMapper = new Db\ManagerMapper($this->db);
+    $manager = $managerMapper->findByUid($this->user->getUid());
+    return !empty($manager);
   }
 
   /**
