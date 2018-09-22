@@ -21,7 +21,9 @@ class Role {
    * @var \ADOConnection
    */
   private $db;
-
+  /**
+   * @var \Datagator\Db\Role
+   */
   private $role;
 
   /**
@@ -51,8 +53,32 @@ class Role {
     }
   }
 
+  /**
+   * Get the stored role.
+   *
+   * @return array
+   *   Role.
+   */
   public function getRole() {
-    return $this->role;
+    return $this->role->dump();
+  }
+
+  /**
+   * Set the stored role.
+   *
+   * @param array $role
+   *   Role.
+   *
+   * @return array
+   *   Role.
+   */
+  public function setRole(array $role) {
+    $object = new \Datagator\Db\Role(
+      $role['rid'],
+      $role['name']
+    );
+    $this->$role = $object;
+    return $this->role->dump();
   }
 
   /**
@@ -103,7 +129,5 @@ class Role {
     $this->role = $roleMapper->findByName($name);
     return $this->getRole();
   }
-
-  public function
 
 }
