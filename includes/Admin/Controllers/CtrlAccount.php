@@ -51,7 +51,7 @@ class CtrlAccount extends CtrlBase {
         $managers = $managerHlp->findByUserId($uid);
         $accounts = [];
         foreach ($managers as $manager) {
-          $accounts[] = $accountHlp->findByAccountId($manager['accid']);
+          $accounts[$manager['accid']] = $accountHlp->findByAccountId($manager['accid']);
         }
       }
     } catch (ApiException $e) {

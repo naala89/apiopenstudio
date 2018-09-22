@@ -92,11 +92,16 @@ class Account {
    * Find all accounts.
    *
    * @return array
-   *   array of accounts.
+   *   array of accounts, indexed by account ID.
    */
   public function findAll() {
     $accountMapper = new Db\AccountMapper($this->db);
-    return $accountMapper->findAll();
+    $accounts = $accountMapper->findAll();
+    $result = [];
+    foreach ($accounts as $account) {
+      $result[$account->getAccid()] = $account->dump();
+    }
+    return $result;
   }
 
   /**

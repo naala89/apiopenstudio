@@ -118,11 +118,16 @@ class Manager {
    *   Account ID.
    *
    * @return array
-   *   Array of mapped Managers.
+   *   Array of managers, indexed by manager ID.
    */
   public function findByAccountId($accid) {
     $managerMapper = new Db\ManagerMapper($this->db);
-    return $managerMapper->findByAccid($accid);
+    $managers = $managerMapper->findByAccid($accid);
+    $result = [];
+    foreach ($managers as $manager) {
+      $result[$manager->getMid()] = $manager->dump();
+    }
+    return $result;
   }
 
   /**
@@ -132,11 +137,16 @@ class Manager {
    *   User ID.
    *
    * @return array
-   *   Array of mapped Managers.
+   *   Array of managers, indexed by manager ID.
    */
   public function findByUserId($uid) {
     $managerMapper = new Db\ManagerMapper($this->db);
-    return $managerMapper->findByUid($uid);
+    $managers = $managerMapper->findByUid($uid);
+    $result = [];
+    foreach ($managers as $manager) {
+      $result[$manager->getMid()] = $manager->dump();
+    }
+    return $result;
   }
 
   /**
