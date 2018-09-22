@@ -7,7 +7,31 @@
     <p>Manage your applications here. These are sub-units of an account, e.g. projects or clients of an account, that will contain API resources and have administrators/developers assigned to them.</p>
   </div>
   <div class="row">
-    <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-app-create"><i class="material-icons">add</i></a>
+    <div class="col s6">
+      <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-app-create"><i class="material-icons">add</i></a>
+    </div>
+    <form method="get" action="/applications">
+      <div class="col s4">
+        <div class="input-field">
+          <select name="filter">
+            <option value="">All</option>
+            {% for accid,account in allAccounts %}
+              {% set selected = '' %}
+              {% if accid == filter %}
+                {% set selected = 'selected' %}
+              {% endif %}
+              <option value="{{ accid }}" {{ selected }}>{{ account.name }}</option>
+            {% endfor %}
+          </select>
+          <label for="filter">Filter the applications by their account.</label>
+        </div>
+      </div>
+      <div class="col s2">
+        <button class="btn waves-effect waves-light" type="submit">Filter
+          <i class="material-icons right">send</i>
+        </button>
+      </div>
+    </form>
   </div>
 
   {% if applications is empty %}

@@ -11,7 +11,7 @@
           <div class="input-field">
             <select name="edit-app-accid" id="edit-app-accid" autofocus>
               <option value="" disabled selected>Choose the account</option>
-              {% for accid,account in accounts %}
+              {% for accid,account in allAccounts %}
                 <option value="{{ accid }}">{{ account.name }}</option>
               {% endfor %}
             </select>

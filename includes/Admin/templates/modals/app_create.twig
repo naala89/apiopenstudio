@@ -10,7 +10,7 @@
           <div class="input-field">
             <select name="create-app-accid" id="create-app-accid" required>
               <option value="" disabled selected>Choose the account</option>
-              {% for accid,account in accounts %}
+              {% for accid,account in allAccounts %}
                 <option value="{{ accid }}">{{ account.name }}</option>
               {% endfor %}
             </select>

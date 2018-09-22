@@ -47,15 +47,30 @@ class CtrlApplication extends CtrlBase {
       $applicationHlp = new Application($this->dbSettings);
       // Find all accounts for the user.
       if (in_array('Administrator', $roles)) {
-        $accounts = $accountHlp->findAll();
+        $allAccounts = $accountHlp->findAll();
       } else {
-        $accounts = [];
+        $allAccounts = [];
         $managerHlp = new Manager($this->dbSettings);
         $managers = $managerHlp->findByUserId($uid);
         foreach ($managers as $manager) {
-          $accounts[$manager['accid']] = $accountHlp->findByAccountId($manager['accid']);
+          $allAccounts[$manager['accid']] = $accountHlp->findByAccountId($manager['accid']);
         }
       }
+      // Filter the viewed applications by account.
+      $allGetVars = $request->getQueryParams();
+      $filter = isset($allGetVars['filter']) ? $allGetVars['filter'] : '';
+      if ($filter == '') {
+        $accounts = $allAccounts;
+      } elseif (isset($allAccounts[$filter])) {
+        $accounts = [
+          $filter => $allAccounts[$filter]
+        ];
+      } else {
+        $accounts = [];
+      }
+      echo "<pre>";
+      var_dump($filter);
+      var_dump($accounts);
       // Find all applications for each account.
       $applications = [];
       $accids = array_keys($accounts);
@@ -70,6 +85,8 @@ class CtrlApplication extends CtrlBase {
 
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
+      'filter' => $filter,
+      'allAccounts' => $allAccounts,
       'accounts' => $accounts,
       'applications' => $applications,
       'messages' => $this->flash->getMessages(),
