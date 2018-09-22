@@ -30,7 +30,9 @@ $(document).ready(function() {
   $('.modal-app-edit-trigger').click(function() {
     var self = $(this);
     var modal = $('#modal-app-edit');
-    modal.find('#edit-app-id').val(self.attr('app-id'));
+    modal.find('#edit-app-accid').val(self.attr('acc-id'));
+    modal.find('#edit-app-accid').formSelect();
+    modal.find('#edit-app-appid').val(self.attr('app-id'));
     modal.find('#edit-app-name').val(self.attr('app-name'));
     modal.modal('open');
   });

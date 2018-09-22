@@ -71,6 +71,7 @@ class CtrlApplication extends CtrlBase {
       'menu' => $menu,
       'accounts' => $accounts,
       'applications' => $applications,
+      'messages' => $this->flash->getMessages(),
     ]);
   }
 
@@ -125,50 +126,30 @@ class CtrlApplication extends CtrlBase {
    *   Response.
    */
   public function edit(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
-    $roles = $this->getRoles($uaid);
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $roles = $this->getRoles($uid);
     if (!$this->checkAccess($roles)) {
+      $this->flash->addMessage('error', 'Edit Applications: access denied.');
       $response->withRedirect('/');
-    }
-    $menu = $this->getMenus($roles);
-
-    try {
-      $applicationHlp = new Application($this->dbSettings);
-    } catch (ApiException $e) {
-      return $this->view->render($response, 'applications.twig', [
-        'menu' => $menu,
-        'applications' => [],
-        'message' => [
-          'type' => 'error',
-          'text' => $e->getMessage(),
-        ],
-      ]);
     }
 
     $allPostVars = $request->getParsedBody();
-    if (empty($appName = $allPostVars['edit-app-name']) || empty($appId = $allPostVars['edit-app-id'])) {
-      $applications = $applicationHlp->findByUserAccountId($uaid);
-      return $this->view->render($response, 'applications.twig', [
-        'menu' => $menu,
-        'applications' => $applications,
-        'message' => [
-          'type' => 'error',
-          'text' => 'Cannot edit application, no name or ID defined.',
-        ],
-      ]);
+    if (empty($accid = $allPostVars['edit-app-accid']) || empty($appid = $allPostVars['edit-app-appid']) || empty($appName = $allPostVars['edit-app-name'])) {
+      $this->flash->addMessage('error', 'Cannot create application, no application ID, name or account ID defined.');
     } else {
-      $applicationHlp->findByApplicationId($appId);
-      $applicationHlp->update($appName);
-      $applications = $applicationHlp->findByUserAccountId($uaid);
-      return $this->view->render($response, 'applications.twig', [
-        'menu' => $menu,
-        'applications' => $applications,
-        'message' => [
-          'type' => 'info',
-          'text' => 'Application name updated.',
-        ],
-      ]);
+      try {
+        $applicationHlp = new Application($this->dbSettings);
+        $application = $applicationHlp->findByApplicationId($appid);
+        $application['accid'] = $accid;
+        $application['name'] = $appName;
+        $applicationHlp->update($application);
+        $this->flash->addMessage('info', 'Application updated.');
+      } catch (ApiException $e) {
+        $this->flash->addMessage('error', $e->getMessage());
+      }
     }
+
+    return $response->withRedirect('/applications');
   }
 
   /**

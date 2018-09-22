@@ -7,13 +7,13 @@
     <p>Manage your accounts here. These are distinct business entities, like your organization or clients, that will contain applications and have administrators/developers assigned to them.</p>
   </div>
   <div class="row">
-    <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-create"><i class="material-icons">add</i></a>
+    <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-acc-create"><i class="material-icons">add</i></a>
   </div>
 
   {% if accounts|length == 1 %}
     <div class="row">
       <div class="col s12">
-        <p>You do not have any accounts yet. Click <a class="modal-trigger" href="#modal-create">here</a> to create an account </p>
+        <p>You do not have any accounts yet. Click <a class="modal-trigger" href="#modal-acc-create">here</a> to create an account </p>
       </div>
     </div>
   {% else %}
@@ -44,8 +44,8 @@
 
   {% include 'modals/acc_create.twig' %}
 
-  {% include 'modals/acc_delete.twig' %}
-
   {% include 'modals/acc_edit.twig' %}
+
+  {% include 'modals/acc_delete.twig' %}
 
 {% endblock %}

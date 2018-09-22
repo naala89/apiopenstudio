@@ -7,13 +7,13 @@
     <p>Manage your applications here. These are sub-units of an account, e.g. projects or clients of an account, that will contain API resources and have administrators/developers assigned to them.</p>
   </div>
   <div class="row">
-    <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-create"><i class="material-icons">add</i></a>
+    <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-app-create"><i class="material-icons">add</i></a>
   </div>
 
   {% if applications is empty %}
     <div class="row">
       <div class="col s12">
-        <p>You do not have any applications yet. Click <a class="modal-trigger" href="#modal-create">here</a> to create an application </p>
+        <p>You do not have any applications yet. Click <a class="modal-trigger" href="#modal-app-create">here</a> to create an application </p>
       </div>
     </div>
   {% else %}
@@ -33,10 +33,10 @@
               <td>{{ application.name }}</td>
               <td>
                 <a class="btn-floating btn-small white hoverable">
-                  <i class="material-icons modal-acc-edit-trigger black-text" acc-id="{{ accid }}" acc-name="{{ application.name }}">edit</i>
+                  <i class="material-icons modal-app-edit-trigger black-text" acc-id="{{ accid }}" app-id="{{ appid }}" app-name="{{ application.name }}">edit</i>
                 </a>
                 <a class="btn-floating btn-small white hoverable">
-                  <i class="material-icons modal-acc-delete-trigger black-text" acc-id="{{ application.accid }}" acc-name="{{ application.name }}">delete</i>
+                  <i class="material-icons modal-app-delete-trigger black-text" acc-id="{{ application.accid }}" acc-name="{{ application.name }}">delete</i>
                 </a>
               </td>
             </tr>
@@ -48,8 +48,8 @@
 
   {% include 'modals/app_create.twig' %}
 
-  {% include 'modals/app_delete.twig' %}
-
   {% include 'modals/app_edit.twig' %}
+
+  {% include 'modals/app_delete.twig' %}
 
 {% endblock %}

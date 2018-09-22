@@ -58,6 +58,21 @@ class Application {
   }
 
   /**
+   * Set the stored application.
+   *
+   * @param array $application
+   *   Application.
+   *
+   * @return array
+   *   Application
+   */
+  public function setApplication(array $application) {
+    $application = new Db\Application($application['appid'], $application['accid'], $application['name']);
+    $this->application = $application;
+    return $this->getApplication();
+  }
+
+  /**
    * Create an application.
    *
    * @param string $accid
@@ -89,24 +104,22 @@ class Application {
   }
 
   /**
-   * Update an application name.
+   * Update an application.
    *
-   * @param string $appName
-   *   Name of the application.
+   * @param array|NULL $application
+   *   Application.
    *
    * @return array
    *   Application.
    *
    * @throws ApiException
    */
-  public function update($appName) {
-    if (empty($this->application->getAppId())) {
-      throw new ApiException('Cannot update application, none fetched yet.');
+  public function update(array $application = NULL) {
+    if ($application !== NULL) {
+      $this->setApplication($application);
     }
-    $this->application->setName($appName);
     $applicationMapper = new Db\ApplicationMapper($this->db);
     $applicationMapper->save($this->application);
-
     return $this->getApplication();
   }
 
