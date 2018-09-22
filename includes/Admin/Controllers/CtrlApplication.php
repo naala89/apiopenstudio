@@ -68,9 +68,6 @@ class CtrlApplication extends CtrlBase {
       } else {
         $accounts = [];
       }
-      echo "<pre>";
-      var_dump($filter);
-      var_dump($accounts);
       // Find all applications for each account.
       $applications = [];
       $accids = array_keys($accounts);

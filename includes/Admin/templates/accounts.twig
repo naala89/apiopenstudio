@@ -25,15 +25,15 @@
         </tr>
       </thead>
       <tbody>
-      {% for key,value in accounts %}
+      {% for accid,account in accounts %}
         <tr>
-          <td>{{ value.name }}</td>
+          <td><a href="/applications?filter={{ accid }}">{{ account.name }}</a></td>
           <td>
             <a class="btn-floating btn-small white hoverable">
-              <i class="material-icons modal-acc-edit-trigger black-text" acc-id="{{ value.accid }}" acc-name="{{ value.name }}">edit</i>
+              <i class="material-icons modal-acc-edit-trigger black-text" acc-id="{{ accid }}" acc-name="{{ account.name }}">edit</i>
             </a>
             <a class="btn-floating btn-small white hoverable">
-              <i class="material-icons modal-acc-delete-trigger black-text" acc-id="{{ value.accid }}" acc-name="{{ value.name }}">delete</i>
+              <i class="material-icons modal-acc-delete-trigger black-text" acc-id="{{ accid }}" acc-name="{{ account.name }}">delete</i>
             </a>
           </td>
         </tr>
