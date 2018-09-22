@@ -198,6 +198,23 @@ class User{
   }
 
   /**
+   * Find all users.
+   *
+   * @return array
+   *   Array of users, indexed bu uid.
+   */
+  public function findAll() {
+    $userMapper = new Db\UserMapper($this->db);
+    $results = $userMapper->findAll();
+    $users = [];
+    foreach ($results as $result) {
+      $user = $result->dump();
+      $users[$user['uid']] = $user;
+    }
+    return $users;
+  }
+
+  /**
    * Find a user by their user ID.
    *
    * @param string $uid

@@ -117,6 +117,20 @@ class UserMapper extends Mapper {
   }
 
   /**
+   * Find all user.
+   *
+   * @return array
+   *   $array of Users.
+   *
+   * @throws ApiException
+   */
+  public function findAll() {
+    $sql = 'SELECT * FROM user';
+    $bindParams = [];
+    return $this->fetchRows($sql, $bindParams);
+  }
+
+  /**
    * Find a user by user ID.
    *
    * @param int $uid

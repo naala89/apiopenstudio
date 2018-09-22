@@ -2,9 +2,9 @@ $(document).ready(function() {
 
   M.AutoInit();
 
+  // Close alert panel.
   $('.close-gaterdata-alert').click(function(){
-    $(this).closest('.gaterdata-alert').fadeOut("slow", function() {
-    });
+    $(this).closest('.gaterdata-alert').fadeOut("slow", function() {});
   });
 
   // Edit account modal.

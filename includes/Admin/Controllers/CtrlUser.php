@@ -3,6 +3,7 @@
 namespace Datagator\Admin\Controllers;
 
 use Datagator\Admin\Account;
+use Datagator\Admin\Manager;
 use Datagator\Admin\UserAccount;
 use Datagator\Core\ApiException;
 use Slim\Views\Twig;
@@ -56,43 +57,44 @@ class CtrlUser extends CtrlBase {
    *   Response.
    */
   public function index(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
+    $this->permittedRoles = ['Administrator', 'Manager'];
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $roles = $this->getRoles($uid);
+    if (!$this->checkAccess($roles)) {
+      $this->flash->addMessage('error', 'View Applications: access denied');
+      $response->withRedirect('/');
+    }
+    $menu = $this->getMenus($roles);
+
     if ($request->isPost()) {
       $allVars = $request->getParsedBody();
     } else {
       $allVars = $request->getQueryParams();
     }
-    $roles = $this->getRoles($uaid);
-    if (!$this->checkAccess($roles)) {
-      $response->withRedirect('/');
-    }
-    $menu = $this->getMenus($roles);
-
     try {
-      $accountHlp = new Account($this->dbSettings);
-      $roleHlp = new Role($this->dbSettings);
       $applicationHlp = new Application($this->dbSettings);
-      $userAccountHlp = new UserAccount($this->dbSettings);
+      $managerHlp = new Manager($this->dbSettings);
+      $accountHlp = new Account($this->dbSettings);
       $userHlp = new User($this->dbSettings);
+
+      // Find all applications for the account the current user is assigned to.
+      if (in_array('Administrator', $roles)) {
+        $applications = $applicationHlp->findAll();
+        $users = $userHlp->findAll();
+      } else {
+        $applications = [];
+        if (in_array('Manager', $roles)) {
+          $managers = $managerHlp->findByUserId($uid);
+          foreach ($managers as $manager) {
+            $application = $applicationHlp->findByApplicationId($manager['appid']);
+            $applications[$application['appid']] = $application;
+          }
+        }
+      }
     } catch (ApiException $e) {
-      return $this->view->render($response, 'applications.twig', [
-        'menu' => $menu,
-        'applications' => [],
-        'message' => [
-          'type' => 'error',
-          'text' => $e->getMessage(),
-        ],
-      ]);
+      $this->flash->addMessage('error', $e->getMessage());
     }
 
-    // Find all roles.
-    $allRoles = $roleHlp->findAll();
-
-    // Find rid for 'Owner'.
-    $ownerRole = $roleHlp->findByName('Owner');
-    $ownerRid = $ownerRole['rid'];
-
-    // Find all applications for the account the current user is assigned to.
     $applications = $applicationHlp->findByUserAccountId($uaid);
     $filterApplication = isset($allVars['filter-application']) ? $allVars['filter-application'] : 'all';
     // Fetch the current user's account.
