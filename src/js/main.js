@@ -41,7 +41,7 @@ $(document).ready(function() {
   $('.modal-app-delete-trigger').click(function() {
     var self = $(this);
     var modal = $('#modal-app-delete');
-    modal.find('#delete-app-id').val(self.attr('app-id'));
+    modal.find('#delete-app-appid').val(self.attr('app-id'));
     modal.find('#delete-app-name').html(self.attr('app-name'));
     modal.modal('open');
   });
