@@ -2,6 +2,7 @@
 
 namespace Datagator\Admin;
 
+use Datagator\Db\Application;
 use Datagator\Db\ApplicationUserRoleMapper;
 use Datagator\Db\RoleMapper;
 use Datagator\Core\ApiException;
@@ -65,12 +66,37 @@ class ApplicationUserRole {
   }
 
   /**
-   * Delete a n application user role.
+   * Set the stored application user role.
+   *
+   * @param array $applicationUserRole
+   *   Application user role.
+   *
+   * @return array
+   *   Application User Role.
+   */
+  public function setApplicationUserRole(array $applicationUserRole) {
+    $this->applicationUserRole = new \Datagator\Db\ApplicationUserRole(
+      $applicationUserRole['aurid'],
+      $applicationUserRole['appid'],
+      $applicationUserRole['uid'],
+      $applicationUserRole['rid']
+    );
+    return $this->applicationUserRole->dump();
+  }
+
+  /**
+   * Delete an application user role.
+   *
+   * @param array|NULL $applicationUserRole
+   *   Application user role.
    *
    * @return bool
    *    Success.
    */
-  public function delete() {
+  public function delete(array $applicationUserRole = NULL) {
+    if ($applicationUserRole !== NULL ) {
+      $this->setApplicationUserRole($applicationUserRole);
+    }
     $applicationUserRoleMapper = new ApplicationUserRoleMapper($this->db);
     return $applicationUserRoleMapper->delete($this->applicationUserRole);
   }
