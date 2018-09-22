@@ -58,51 +58,34 @@ class Application {
   }
 
   /**
-   * Create an application using an account ID and app name.
+   * Create an application.
    *
-   * @param string $accId
-   *   ID of the account.
+   * @param string $accid
+   *   Account ID.
    * @param string $name
-   *   Name of the application.
+   *   Application name.
    *
    * @return array
    *   Application.
    *
    * @throws ApiException
    */
-  public function createByAccIdName($accId, $name) {
+  public function create($accid, $name) {
     $applicationMapper = new Db\ApplicationMapper($this->db);
-    $application = $applicationMapper->findByAccIdName($accId, $name);
+    $application = $applicationMapper->findByAccIdName($accid, $name);
     if (!empty($application->getAccId())) {
       throw new ApiException('Application already exists.');
     }
 
     $application = new Db\Application(
       NULL,
-      $accId,
+      $accid,
       $name
     );
     $applicationMapper->save($application);
-    $this->application = $applicationMapper->findByAccIdName($accId, $name);
+    $this->application = $applicationMapper->findByAccIdName($accid, $name);
 
     return $this->getApplication();
-  }
-
-  /**
-   * Create an application using a user account ID and app name.
-   *
-   * @param string $uaid
-   *   User acount ID.
-   * @param string $name
-   *   Name of the application.
-   *
-   * @return array
-   *   Application.
-   */
-  public function createByUserAccIdName($uaid, $name) {
-    $userAccountMapper = new Db\UserAccountMapper($this->db);
-    $userAccount = $userAccountMapper->findByUaid($uaid);
-    return $this->createByAccIdName($userAccount->getAccId(), $name);
   }
 
   /**

@@ -2,6 +2,11 @@ $(document).ready(function() {
 
   M.AutoInit();
 
+  $('.close-gaterdata-alert').click(function(){
+    $(this).closest('.gaterdata-alert').fadeOut("slow", function() {
+    });
+  });
+
   // Edit account modal.
   $('.modal-acc-edit-trigger').click(function() {
     var self = $(this);
@@ -57,8 +62,4 @@ $(document).ready(function() {
     modal.modal('open');
   });
 
-  $('.close-gaterdata-alert').click(function(){
-    $(this).closest('.gaterdata-alert').fadeOut("slow", function() {
-    });
-  });
 });
