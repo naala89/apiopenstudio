@@ -69,11 +69,7 @@ class CtrlAccount extends CtrlBase {
       $accounts = [];
     }
     $pages = ceil(count($accounts) / $this->paginationStep);
-    $accounts = array_slice($accounts, ($page - 1) * $this->paginationStep, $this->paginationStep,TRUE);
-    echo "<pre>";
-    var_dump($page);
-    var_dump($pages);
-    var_dump($accounts);
+    $accounts = array_slice($accounts, ($page - 1) * $this->paginationStep, $this->paginationStep, TRUE);
 
     return $this->view->render($response, 'accounts.twig', [
       'search' => isset($params['search']) ? $params['search'] : '',

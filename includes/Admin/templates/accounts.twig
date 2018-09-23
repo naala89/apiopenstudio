@@ -8,41 +8,37 @@
   </div>
   <div class="row">
     <form method="get" action="/accounts">
-      <div class="col s8">
+      <div class="col s1">
         <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-acc-create"><i class="material-icons">add</i></a>
       </div>
       <div class="col s4">
-        <div class="row">
-          <div class="col s12">
-            <div class="input-field">
-              <input class="input-field" name="search" value="{{ search }}">
-              <label for="search">Search text</label>
-            </div>
-          </div>
-          <div class="col s12">
-            <div class="input-field">
-              <select class="input-field" name="order_by">
-                <option value="accid" {% if order_by == "accid" %}selected{% endif %}>Account ID</option>
-                <option value="name" {% if order_by == "name" %}selected{% endif %}>Account name</option>
-              </select>
-              <label for="search">Sort by</label>
-            </div>
-          </div>
-          <div class="col s12">
-            <div class="input-field">
-              <select class="input-field" name="dir">
-                <option value="ASC" {% if dir == "ASC" %}selected{% endif %}>Ascending</option>
-                <option value="DESC" {% if dir == "DESC" %}selected{% endif %}>Descending</option>
-              </select>
-              <label for="search">Sort by</label>
-            </div>
-          </div>
-          <div class="col s12">
-            <button class="btn waves-effect waves-light" type="submit">Filter
-              <i class="material-icons right">send</i>
-            </button>
-          </div>
+        <div class="input-field">
+          <input class="input-field" name="search" value="{{ search }}">
+          <label for="search">Search text</label>
         </div>
+      </div>
+      <div class="col s3">
+        <div class="input-field">
+          <select class="input-field" name="order_by">
+            <option value="accid" {% if order_by == "accid" %}selected{% endif %}>Account ID</option>
+            <option value="name" {% if order_by == "name" %}selected{% endif %}>Account name</option>
+          </select>
+          <label for="search">Sort by</label>
+        </div>
+      </div>
+      <div class="col 4">
+        <div class="input-field">
+          <select class="input-field" name="dir">
+            <option value="ASC" {% if dir == "ASC" %}selected{% endif %}>Ascending</option>
+            <option value="DESC" {% if dir == "DESC" %}selected{% endif %}>Descending</option>
+          </select>
+          <label for="search">Sort by</label>
+        </div>
+      </div>
+      <div class="col s1">
+        <button class="btn waves-effect waves-light" type="submit">Filter
+          <i class="material-icons right">send</i>
+        </button>
       </div>
     </form>
   </div>
