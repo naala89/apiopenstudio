@@ -19,6 +19,10 @@ class CtrlBase {
    */
   protected $dbSettings;
   /**
+   * @var int
+   */
+  protected $paginationStep;
+  /**
    * @var Twig
    */
   protected $view;
@@ -40,13 +44,16 @@ class CtrlBase {
    *
    * @param array $dbSettings
    *   DB settings array.
+   * @param int $paginationStep
+   *   Pagination step.
    * @param \Slim\Views\Twig $view
    *   View container.
    * @param \Slim\Flash\Messages $flash
    *   Flash messages container.
    */
-  public function __construct(array $dbSettings, Twig $view, Messages $flash) {
+  public function __construct(array $dbSettings, $paginationStep, Twig $view, Messages $flash) {
     $this->dbSettings = $dbSettings;
+    $this->paginationStep = $paginationStep;
     $this->view = $view;
     $this->flash = $flash;
   }

@@ -4,6 +4,7 @@ namespace Datagator\Db;
 
 use Datagator\Core\ApiException;
 use ADOConnection;
+use phpDocumentor\Reflection\Types\Integer;
 
 /**
  * Class AccountMapper.
@@ -69,15 +70,31 @@ class AccountMapper extends Mapper {
   /**
    * Find an accounts.
    *
+   * @param array|NULL $params
+   *   parameters (optional)
+   *     [
+   *       'search' => string,
+   *       'sort_by' => string,
+   *       'direction' => string "asc"|"desc",
+   *       'start' => int,
+   *       'limit' => int,
+   *     ]
+   *
    * @return array
    *   array Account objects.
    *
    * @throws ApiException
    */
-  public function findAll() {
+  public function findAll(array $params = NULL) {
     $sql = 'SELECT * FROM account';
     $bindParams = [];
-    return $this->fetchRows($sql, $bindParams);
+    if (!empty($params)) {
+      if (!empty($params['search'])) {
+        $sql .= ' WHERE name like "%' . $params['search'] . '%"';
+        unset($params['search']);
+      }
+    }
+    return $this->fetchRows($sql, $bindParams, $params);
   }
 
   /**
@@ -94,6 +111,28 @@ class AccountMapper extends Mapper {
   public function findByAccid($accid) {
     $sql = 'SELECT * FROM account WHERE accid = ?';
     $bindParams = [$accid];
+    if (!empty($params)) {
+      if (!empty($params['search'])) {
+        $sql .= ' AND name like "%?%"';
+        $bindParams[] = $params['search'];
+      }
+      if (!empty($params['sort_by'])) {
+        $sql .= ' ORDER BY ?';
+        $bindParams[] = $params['sort_by'];
+      }
+      if (!empty($params['direction'])) {
+        $sql .= ' ?';
+        $bindParams[] = $params['direction'];
+      }
+      if (!empty($params['start'])) {
+        $sql .= ' LIMIT ?';
+        $bindParams[] = $params['start'];
+      }
+      if (!empty($params['limit'])) {
+        $sql .= ',?';
+        $bindParams[] = $params['limit'];
+      }
+    }
     return $this->fetchRow($sql, $bindParams);
   }
 

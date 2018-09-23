@@ -91,15 +91,25 @@ class Account {
   /**
    * Find all accounts.
    *
+   * @param array|NULL $params
+   *   parameters (optional)
+   *     [
+   *       'search' => string,
+   *       'sort_by' => string,
+   *       'direction' => string "asc"|"desc",
+   *       'start' => int,
+   *       'limit' => int,
+   *     ]
+   *
    * @return array
-   *   array of accounts, indexed by account ID.
+   *   array of accounts
    */
-  public function findAll() {
+  public function findAll(array $params = NULL) {
     $accountMapper = new Db\AccountMapper($this->db);
-    $accounts = $accountMapper->findAll();
+    $accounts = $accountMapper->findAll($params);
     $result = [];
     foreach ($accounts as $account) {
-      $result[$account->getAccid()] = $account->dump();
+      $result[] = $account->dump();
     }
     return $result;
   }
@@ -109,13 +119,22 @@ class Account {
    *
    * @param int $accId
    *   Account ID.
+   * @param array|NULL $params
+   *   parameters (optional)
+   *     [
+   *       'search' => string,
+   *       'sort_by' => string,
+   *       'direction' => string "asc"|"desc",
+   *       'start' => int,
+   *       'limit' => int,
+   *     ]
    *
    * @return array
    *   Account.
    */
-  public function findByAccountId($accId) {
+  public function findByAccountId($accId, array $params = NULL) {
     $accountMapper = new Db\AccountMapper($this->db);
-    $this->account = $accountMapper->findByAccId($accId);
+    $this->account = $accountMapper->findByAccId($accId, $params);
     return $this->account->dump();
   }
 

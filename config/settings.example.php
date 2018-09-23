@@ -14,6 +14,7 @@ $settings['public'] = $settings['root'] . '/html';
 /**
  * General settings.
  */
+$settings['paginationStep'] = 20;
 
 // Debug
 // Set your debug level and additional handlers in ['loggers']['gaterdata']['handlers']

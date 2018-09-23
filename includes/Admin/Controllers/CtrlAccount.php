@@ -42,24 +42,45 @@ class CtrlAccount extends CtrlBase {
     }
     $menu = $this->getMenus($roles);
 
+    // Filter params.
+    $allParams = $request->getParams();
+    $params = [];
+    if (!empty($allParams['search'])) {
+      $params['search'] = $allParams['search'];
+    }
+    $params['order_by'] = !empty($allParams['order_by']) ? $allParams['order_by'] : 'name';
+    $params['dir'] = isset($allParams['dir']) ? $allParams['dir'] : 'ASC';
+    $page = isset($allParams['page']) ? $allParams['page'] : 1;
+
     try {
       $accountHlp = new Account($this->dbSettings);
       if (in_array('Administrator', $roles)) {
-        $accounts = $accountHlp->findAll();
+        $accounts = $accountHlp->findAll($params);
       } else {
         $managerHlp = new Manager($this->dbSettings);
         $managers = $managerHlp->findByUserId($uid);
         $accounts = [];
         foreach ($managers as $manager) {
-          $accounts[$manager['accid']] = $accountHlp->findByAccountId($manager['accid']);
+          $accounts[] = $accountHlp->findByAccountId($manager['accid'], $params);
         }
       }
     } catch (ApiException $e) {
       $this->flash->addMessage('error', $e->getMessage());
       $accounts = [];
     }
+    $pages = ceil(count($accounts) / $this->paginationStep);
+    $accounts = array_slice($accounts, ($page - 1) * $this->paginationStep, $this->paginationStep,TRUE);
+    echo "<pre>";
+    var_dump($page);
+    var_dump($pages);
+    var_dump($accounts);
 
     return $this->view->render($response, 'accounts.twig', [
+      'search' => isset($params['search']) ? $params['search'] : '',
+      'order_by' => $params['order_by'],
+      'dir' => strtoupper($params['dir']),
+      'page' => $page,
+      'pages' => $pages,
       'menu' => $menu,
       'accounts' => $accounts,
       'messages' => $this->flash->getMessages(),
