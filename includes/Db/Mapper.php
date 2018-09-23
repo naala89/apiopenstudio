@@ -82,13 +82,29 @@ abstract class Mapper {
    *   Query string.
    * @param array $bindParams
    *   Array of bind params.
+   * @param array $params
+   *   parameters (optional)
+   *     [
+   *       'sort_by' => string,
+   *       'direction' => string "ASC"|"DESC",
+   *       'start' => int,
+   *       'limit' => int,
+   *     ]
    *
    * @return array
    *   Array of mapped rows.
    *
    * @throws ApiException
    */
-  protected function fetchRows($sql, $bindParams) {
+  protected function fetchRows($sql, $bindParams, array $params = NULL) {
+    if (!empty($params['order_by'])) {
+      $sql .= ' ORDER BY ' . $params['order_by'] . ' ';
+      $params['dir'] = strtoupper($params['dir']);
+      $sql .= ($params['dir'] === 'ASC' || $params['dir'] === 'DESC' ? $params['dir'] : 'ASC');
+    }
+    if (!empty($params['offset']) || !empty($params['limit'])) {
+      $recordSet = $this->db->selectLimit($sql, $params['limit'], $params['offset'], $bindParams);
+    }
     $recordSet = $this->db->Execute($sql, $bindParams);
     if (!$recordSet) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';

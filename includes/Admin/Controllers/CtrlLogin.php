@@ -2,8 +2,10 @@
 
 namespace Datagator\Admin\Controllers;
 
+use Slim\Flash\Messages;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Slim\Views\Twig;
 
 /**
  * Class CtrlLogin.
@@ -11,6 +13,20 @@ use Slim\Http\Response;
  * @package Datagator\Admin\Controllers
  */
 class CtrlLogin extends CtrlBase {
+
+  /**
+   * CtrlLogin constructor.
+   *
+   * @param array $dbSettings
+   *   DB settings array.
+   * @param \Slim\Views\Twig $view
+   *   View container.
+   * @param \Slim\Flash\Messages $flash
+   *   Flash messages container.
+   */
+  public function __construct(array $dbSettings, Twig $view, Messages $flash) {
+    parent::__construct($dbSettings, 0, $view, $flash);
+  }
 
   /**
    * Login page.
