@@ -73,7 +73,7 @@ class AccountMapper extends Mapper {
    * @param array|NULL $params
    *   parameters (optional)
    *     [
-   *       'search' => string,
+   *       'keyword' => string,
    *       'sort_by' => string,
    *       'direction' => string "asc"|"desc",
    *       'start' => int,
@@ -89,9 +89,9 @@ class AccountMapper extends Mapper {
     $sql = 'SELECT * FROM account';
     $bindParams = [];
     if (!empty($params)) {
-      if (!empty($params['search'])) {
-        $sql .= ' WHERE name like "%' . $params['search'] . '%"';
-        unset($params['search']);
+      if (!empty($params['keyword'])) {
+        $sql .= ' WHERE name like "%' . $params['keyword'] . '%"';
+        unset($params['keyword']);
       }
     }
     return $this->fetchRows($sql, $bindParams, $params);
@@ -111,28 +111,6 @@ class AccountMapper extends Mapper {
   public function findByAccid($accid) {
     $sql = 'SELECT * FROM account WHERE accid = ?';
     $bindParams = [$accid];
-    if (!empty($params)) {
-      if (!empty($params['search'])) {
-        $sql .= ' AND name like "%?%"';
-        $bindParams[] = $params['search'];
-      }
-      if (!empty($params['sort_by'])) {
-        $sql .= ' ORDER BY ?';
-        $bindParams[] = $params['sort_by'];
-      }
-      if (!empty($params['direction'])) {
-        $sql .= ' ?';
-        $bindParams[] = $params['direction'];
-      }
-      if (!empty($params['start'])) {
-        $sql .= ' LIMIT ?';
-        $bindParams[] = $params['start'];
-      }
-      if (!empty($params['limit'])) {
-        $sql .= ',?';
-        $bindParams[] = $params['limit'];
-      }
-    }
     return $this->fetchRow($sql, $bindParams);
   }
 

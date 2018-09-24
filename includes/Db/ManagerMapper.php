@@ -109,16 +109,24 @@ class ManagerMapper extends Mapper {
    *
    * @param int $uid
    *   User ID.
+   * @param array|NULL $params
+   *   parameters (optional)
+   *     [
+   *       'sort_by' => string,
+   *       'direction' => string "asc"|"desc",
+   *       'start' => int,
+   *       'limit' => int,
+   *     ]
    *
    * @return array
    *   array of Manager objects.
    *
    * @throws ApiException
    */
-  public function findByUid($uid) {
+  public function findByUid($uid, array $params = NULL) {
     $sql = 'SELECT * FROM manager WHERE uid = ?';
     $bindParams = [$uid];
-    return $this->fetchRows($sql, $bindParams);
+    return $this->fetchRows($sql, $bindParams, $params);
   }
 
   /**

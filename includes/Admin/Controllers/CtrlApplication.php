@@ -102,8 +102,6 @@ class CtrlApplication extends CtrlBase {
     // Get total number of pages and current page's applications to display.
     $pages = ceil(count($applications) / $this->paginationStep);
     $applications = array_slice($applications, ($page - 1) * $this->paginationStep, $this->paginationStep, TRUE);
-    echo "<pre>";var_dump($applications);
-    echo "<pre>";var_dump($accounts);
 
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,

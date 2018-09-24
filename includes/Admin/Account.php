@@ -94,7 +94,7 @@ class Account {
    * @param array|NULL $params
    *   parameters (optional)
    *     [
-   *       'search' => string,
+   *       'keyword' => string,
    *       'sort_by' => string,
    *       'direction' => string "asc"|"desc",
    *       'start' => int,
@@ -119,22 +119,13 @@ class Account {
    *
    * @param int $accId
    *   Account ID.
-   * @param array|NULL $params
-   *   parameters (optional)
-   *     [
-   *       'search' => string,
-   *       'sort_by' => string,
-   *       'direction' => string "asc"|"desc",
-   *       'start' => int,
-   *       'limit' => int,
-   *     ]
    *
    * @return array
    *   Account.
    */
-  public function findByAccountId($accId, array $params = NULL) {
+  public function findByAccountId($accId) {
     $accountMapper = new Db\AccountMapper($this->db);
-    $this->account = $accountMapper->findByAccId($accId, $params);
+    $this->account = $accountMapper->findByAccId($accId);
     return $this->account->dump();
   }
 

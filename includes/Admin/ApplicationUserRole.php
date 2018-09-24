@@ -163,7 +163,7 @@ class ApplicationUserRole {
    *   User ID.
    *
    * @return array
-   *   Array of Accounts indexed by accid.
+   *   Array of Accounts indexed
    */
   public function findAccountsByUid($uid) {
     $applicationUserRoleMapper = new ApplicationUserRoleMapper($this->db);
