@@ -68,6 +68,8 @@ class CtrlAccount extends CtrlBase {
       $this->flash->addMessage('error', $e->getMessage());
       $accounts = [];
     }
+
+    // Get total number of pages and current page's accounts to display.
     $pages = ceil(count($accounts) / $this->paginationStep);
     $accounts = array_slice($accounts, ($page - 1) * $this->paginationStep, $this->paginationStep, TRUE);
 
