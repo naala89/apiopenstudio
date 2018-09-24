@@ -2,6 +2,7 @@
 
 namespace Datagator\Admin;
 
+use Datagator\Db\AccountMapper;
 use Datagator\Db\Application;
 use Datagator\Db\ApplicationUserRoleMapper;
 use Datagator\Db\RoleMapper;
@@ -153,6 +154,30 @@ class ApplicationUserRole {
       $applicationUserRoles[$applicationUserRole['aurid']] = $applicationUserRole;
     }
     return $applicationUserRoles;
+  }
+
+  /**
+   * Find all accounts that a user has a role with.
+   *
+   * @param int $uid
+   *   User ID.
+   *
+   * @return array
+   *   Array of Accounts indexed by accid.
+   */
+  public function findAccountsByUid($uid) {
+    $applicationUserRoleMapper = new ApplicationUserRoleMapper($this->db);
+    $accountMapper = new AccountMapper($this->db);
+    $applicationUserRoles = $applicationUserRoleMapper->findByUid($uid);
+    $accounts = [];
+    foreach ($applicationUserRoles as $applicationUserRole) {
+      $accid = $applicationUserRole->getAccid();
+      if (!isset($accounts[$accid])) {
+        $account = $accountMapper->findByAccid($accid);
+        $accounts[$accid] = $account->dump();
+      }
+    }
+    return $accounts;
   }
 
 }

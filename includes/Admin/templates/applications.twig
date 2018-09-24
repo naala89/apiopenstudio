@@ -7,26 +7,51 @@
     <p>Manage your applications here. These are sub-units of an account, e.g. projects or clients of an account, that will contain API resources and have administrators/developers assigned to them.</p>
   </div>
   <div class="row">
-    <div class="col s6">
-      <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-app-create"><i class="material-icons">add</i></a>
-    </div>
+
     <form method="get" action="/applications">
+      <div class="col s1">
+        <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-app-create"><i class="material-icons">add</i></a>
+      </div>
       <div class="col s4">
         <div class="input-field">
           <select name="filter">
             <option value="">All</option>
-            {% for accid,account in allAccounts %}
+            {% for account in allAccounts %}
               {% set selected = '' %}
-              {% if accid == filter %}
+              {% if account.accid == filter %}
                 {% set selected = 'selected' %}
               {% endif %}
-              <option value="{{ accid }}" {{ selected }}>{{ account.name }}</option>
+              <option value="{{ account.accid }}" {{ selected }}>{{ account.name }}</option>
             {% endfor %}
           </select>
           <label for="filter">Filter the applications by their account.</label>
         </div>
       </div>
-      <div class="col s2">
+      <div class="col s4">
+        <div class="input-field">
+          <input type="text" class="validate" name="search" value="{{ search }}">
+          <label for="search">Search text</label>
+        </div>
+      </div>
+      <div class="col s3">
+        <div class="input-field">
+          <select class="input-field" name="order_by">
+            <option value="accid" {% if order_by == "accid" %}selected{% endif %}>Account ID</option>
+            <option value="name" {% if order_by == "name" %}selected{% endif %}>Account name</option>
+          </select>
+          <label for="search">Sort by</label>
+        </div>
+      </div>
+      <div class="col 4">
+        <div class="input-field">
+          <select class="input-field" name="dir">
+            <option value="ASC" {% if dir == "ASC" %}selected{% endif %}>Ascending</option>
+            <option value="DESC" {% if dir == "DESC" %}selected{% endif %}>Descending</option>
+          </select>
+          <label for="search">Sort by</label>
+        </div>
+      </div>
+      <div class="col s1">
         <button class="btn waves-effect waves-light" type="submit">Filter
           <i class="material-icons right">send</i>
         </button>

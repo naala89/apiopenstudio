@@ -42,37 +42,59 @@ class CtrlApplication extends CtrlBase {
     }
     $menu = $this->getMenus($roles);
 
+    // Filter params.
+    $allParams = $request->getParams();
+    $params = [];
+    if (!empty($allParams['account'])) {
+      $params['account'] = $allParams['account'];
+    }
+    if (!empty($allParams['search'])) {
+      $params['search'] = $allParams['search'];
+    }
+    $params['order_by'] = !empty($allParams['order_by']) ? $allParams['order_by'] : 'name';
+    $params['dir'] = isset($allParams['dir']) ? $allParams['dir'] : 'ASC';
+    $page = isset($allParams['page']) ? $allParams['page'] : 1;
+
     try {
       $accountHlp = new Account($this->dbSettings);
       $applicationHlp = new Application($this->dbSettings);
+      $applicationUserRoleHlp = new ApplicationUserRole($this->dbSettings);
+
       // Find all accounts for the user.
       if (in_array('Administrator', $roles)) {
-        $allAccounts = $accountHlp->findAll();
+        $accounts = $accountHlp->findAll();
+        $allAccounts = [];
+        foreach ($accounts as $account) {
+          $allAccounts[$account['accid']] = $
+        }
       } else {
         $allAccounts = [];
-        $managerHlp = new Manager($this->dbSettings);
-        $managers = $managerHlp->findByUserId($uid);
-        foreach ($managers as $manager) {
-          $allAccounts[$manager['accid']] = $accountHlp->findByAccountId($manager['accid']);
+        if (in_array('Manager', $roles)) {
+          $managerHlp = new Manager($this->dbSettings);
+          $managers = $managerHlp->findByUserId($uid);
+          foreach ($managers as $manager) {
+            $allAccounts[$manager['accid']] = $accountHlp->findByAccountId($manager['accid']);
+          }
         }
+        $allAccounts = array_merge($allAccounts, $applicationUserRoleHlp->findAccountsByUid($uid));
       }
-      // Filter the viewed applications by account.
-      $allGetVars = $request->getQueryParams();
-      $filter = isset($allGetVars['filter']) ? $allGetVars['filter'] : '';
-      if ($filter == '') {
+
+      // Filter the viewed accounts.
+      if (!isset($params['account'])) {
         $accounts = $allAccounts;
-      } elseif (isset($allAccounts[$filter])) {
+      } elseif (isset($allAccounts[$params['account']])) {
         $accounts = [
-          $filter => $allAccounts[$filter]
+          $params['account'] => $allAccounts[$params['account']]
         ];
       } else {
         $accounts = [];
       }
+
       // Find all applications for each account.
       $applications = [];
       $accids = array_keys($accounts);
       foreach ($accids as $accid) {
-        $applications[$accid] = $applicationHlp->findByAccid($accid);
+        $applications[] = $applicationHlp->findByAccid($accid);
       }
     } catch (ApiException $e) {
       $this->flash->addMessage('error', $e->getMessage());
@@ -80,9 +102,16 @@ class CtrlApplication extends CtrlBase {
       $applications = [];
     }
 
+    // Get total number of pages and current page's applications to display.
+    $pages = ceil(count($applications) / $this->paginationStep);
+    $applications = array_slice($applications, ($page - 1) * $this->paginationStep, $this->paginationStep, TRUE);
+
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
-      'filter' => $filter,
+      'filter' => [
+        'account' => $params['account'],
+
+      ],
       'allAccounts' => $allAccounts,
       'accounts' => $accounts,
       'applications' => $applications,
