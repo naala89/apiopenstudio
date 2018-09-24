@@ -12,43 +12,44 @@
       <div class="col s1">
         <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-app-create"><i class="material-icons">add</i></a>
       </div>
-      <div class="col s4">
+      <div class="col s3">
         <div class="input-field">
-          <select name="filter">
-            <option value="">All</option>
-            {% for account in allAccounts %}
-              {% set selected = '' %}
-              {% if account.accid == filter %}
-                {% set selected = 'selected' %}
-              {% endif %}
-              <option value="{{ account.accid }}" {{ selected }}>{{ account.name }}</option>
-            {% endfor %}
-          </select>
-          <label for="filter">Filter the applications by their account.</label>
-        </div>
-      </div>
-      <div class="col s4">
-        <div class="input-field">
-          <input type="text" class="validate" name="search" value="{{ search }}">
-          <label for="search">Search text</label>
+          <input type="text" class="validate" name="keyword" value="{{ params['keyword'] }}">
+          <label for="search">Search by application name</label>
         </div>
       </div>
       <div class="col s3">
         <div class="input-field">
+          <select name="account">
+            <option value="">All</option>
+            {% for acc in allAccounts %}
+              {% set selected = '' %}
+              {% if acc.accid == params['account'] %}
+                {% set selected = 'selected' %}
+              {% endif %}
+              <option value="{{ acc.accid }}" {{ selected }}>{{ acc.name }}</option>
+            {% endfor %}
+          </select>
+          <label for="filter">Filter by account.</label>
+        </div>
+      </div>
+      <div class="col s2">
+        <div class="input-field">
           <select class="input-field" name="order_by">
-            <option value="accid" {% if order_by == "accid" %}selected{% endif %}>Account ID</option>
-            <option value="name" {% if order_by == "name" %}selected{% endif %}>Account name</option>
+            <option value="accid" {% if params['order_by'] == "accid" %}selected{% endif %}>Account</option>
+            <option value="appid" {% if params['order_by'] == "appid" %}selected{% endif %}>Application ID</option>
+            <option value="name" {% if params['order_by'] == "name" %}selected{% endif %}>Application name</option>
           </select>
           <label for="search">Sort by</label>
         </div>
       </div>
-      <div class="col 4">
+      <div class="col s2">
         <div class="input-field">
           <select class="input-field" name="dir">
-            <option value="ASC" {% if dir == "ASC" %}selected{% endif %}>Ascending</option>
-            <option value="DESC" {% if dir == "DESC" %}selected{% endif %}>Descending</option>
+            <option value="ASC" {% if params['dir'] == "ASC" %}selected{% endif %}>Ascending</option>
+            <option value="DESC" {% if params['dir'] == "DESC" %}selected{% endif %}>Descending</option>
           </select>
-          <label for="search">Sort by</label>
+          <label for="search">Sort direction</label>
         </div>
       </div>
       <div class="col s1">
@@ -75,25 +76,26 @@
       </tr>
       </thead>
       <tbody>
-        {% for accid,account in accounts %}
-          {% for appid,application in applications[accid] %}
-            <tr>
-              <td>{{ account.name }}</td>
-              <td>{{ application.name }}</td>
-              <td>
-                <a class="btn-floating btn-small white hoverable">
-                  <i class="material-icons modal-app-edit-trigger black-text" acc-id="{{ accid }}" app-id="{{ appid }}" app-name="{{ application.name }}">edit</i>
-                </a>
-                <a class="btn-floating btn-small white hoverable">
-                  <i class="material-icons modal-app-delete-trigger black-text" app-id="{{ appid }}" app-name="{{ application.name }}">delete</i>
-                </a>
-              </td>
-            </tr>
-          {% endfor %}
+        {% for application in applications %}
+          <tr>
+            <td>{{ accounts[application['accid']].name }}</td>
+            <td>{{ application.name }}</td>
+            <td>
+              <a class="btn-floating btn-small white hoverable">
+                <i class="material-icons modal-app-edit-trigger black-text" acc-id="{{ accid }}" app-id="{{ appid }}" app-name="{{ application.name }}">edit</i>
+              </a>
+              <a class="btn-floating btn-small white hoverable">
+                <i class="material-icons modal-app-delete-trigger black-text" app-id="{{ appid }}" app-name="{{ application.name }}">delete</i>
+              </a>
+            </td>
+          </tr>
         {% endfor %}
       </tbody>
     </table>
   {% endif %}
+
+  {% set url = "/applications?keyword=" ~ keyword ~ "&account=" ~ account ~ "&order_by=" ~ order_by ~ "&dir=" ~ dir %}
+  {% include 'partials/pagination.twig' %}
 
   {% include 'modals/app_create.twig' %}
 

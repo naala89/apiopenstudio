@@ -140,6 +140,41 @@ class ApplicationMapper extends Mapper {
   }
 
   /**
+   * Find applications by multiple account IDs.
+   *
+   * @param array $accids
+   *   Array of account IDs.
+   * @param array $params
+   *   parameters (optional)
+   *     [
+   *       'keyword' => string,
+   *       'sort_by' => string,
+   *       'direction' => string "ASC"|"DESC",
+   *       'start' => int,
+   *       'limit' => int,
+   *     ]
+   *
+   * @return array
+   *   array of mapped Application objects.
+   *
+   * @throws ApiException
+   */
+  public function findByAccidMult(array $accids, array $params = NULL) {
+    $qm = $bindParams = [];
+    foreach ($accids as $accid) {
+      $qm[] = '?';
+      $bindParams[] = $accid;
+    }
+    $sql = 'SELECT * FROM application WHERE accid IN ('. implode(', ', $qm) . ')';
+    if (!empty($params)) {
+      if (!empty($params['keyword'])) {
+        $sql .= ' AND name LIKE "%' . $params['keyword'] . '%"';
+      }
+    }
+    return $this->fetchRows($sql, $bindParams, $params);
+  }
+
+  /**
    * Map a DB row into an Application object.
    *
    * @param array $row
