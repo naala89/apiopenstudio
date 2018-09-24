@@ -48,10 +48,10 @@ class CtrlApplication extends CtrlBase {
     if (!empty($allParams['account'])) {
       $params['account'] = $allParams['account'];
     }
-    if (!empty($allParams['search'])) {
-      $params['search'] = $allParams['search'];
+    if (!empty($allParams['keyword'])) {
+      $params['keyword'] = $allParams['keyword'];
     }
-    $params['order_by'] = !empty($allParams['order_by']) ? $allParams['order_by'] : 'name';
+    $params['order_by'] = !empty($allParams['order_by']) ? $allParams['order_by'] : 'accid';
     $params['dir'] = isset($allParams['dir']) ? $allParams['dir'] : 'ASC';
     $page = isset($allParams['page']) ? $allParams['page'] : 1;
 
@@ -65,7 +65,7 @@ class CtrlApplication extends CtrlBase {
         $accounts = $accountHlp->findAll();
         $allAccounts = [];
         foreach ($accounts as $account) {
-          $allAccounts[$account['accid']] = $
+          $allAccounts[$account['accid']] = $account;
         }
       } else {
         $allAccounts = [];
@@ -91,11 +91,8 @@ class CtrlApplication extends CtrlBase {
       }
 
       // Find all applications for each account.
-      $applications = [];
       $accids = array_keys($accounts);
-      foreach ($accids as $accid) {
-        $applications[] = $applicationHlp->findByAccid($accid);
-      }
+      $applications = $applicationHlp->findByAccidMult($accids, $params);
     } catch (ApiException $e) {
       $this->flash->addMessage('error', $e->getMessage());
       $accounts = [];
@@ -105,13 +102,14 @@ class CtrlApplication extends CtrlBase {
     // Get total number of pages and current page's applications to display.
     $pages = ceil(count($applications) / $this->paginationStep);
     $applications = array_slice($applications, ($page - 1) * $this->paginationStep, $this->paginationStep, TRUE);
+    echo "<pre>";var_dump($applications);
+    echo "<pre>";var_dump($accounts);
 
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
-      'filter' => [
-        'account' => $params['account'],
-
-      ],
+      'params' => $params,
+      'page' => $page,
+      'pages' => $pages,
       'allAccounts' => $allAccounts,
       'accounts' => $accounts,
       'applications' => $applications,

@@ -159,6 +159,7 @@ questions
 roadmap
 =======
 
+- cli commands
 - angular app
 - enterprise
     - dashboard

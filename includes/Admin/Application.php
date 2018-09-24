@@ -188,7 +188,7 @@ class Application {
   }
 
   /**
-   * Find all an applications for an account.
+   * Find all applications for an account.
    *
    * @param int $accid
    *   ID of the account.
@@ -204,6 +204,35 @@ class Application {
     foreach ($results as $result) {
       $application = $result->dump();
       $applications[$application['appid']] = $application;
+    }
+
+    return $applications;
+  }
+
+  /**
+   * Find applications by accounts.
+   *
+   * @param array $accids
+   *   Account IDs.
+   * @param array $params
+   *   parameters (optional)
+   *     [
+   *       'sort_by' => string,
+   *       'direction' => string "ASC"|"DESC",
+   *       'start' => int,
+   *       'limit' => int,
+   *     ]
+   *
+   * @return array
+   *   Array of applications.
+   */
+  public function findByAccidMult($accids, array $params = NULL) {
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    $results = $applicationMapper->findByAccidMult($accids, $params);
+
+    $applications = [];
+    foreach ($results as $result) {
+      $applications[] = $result->dump();
     }
 
     return $applications;
