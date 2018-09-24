@@ -13,7 +13,7 @@
       </div>
       <div class="col s4">
         <div class="input-field">
-          <input type="text" class="validate" name="search" value="{{ search }}">
+          <input type="text" class="validate" name="keyword" value="{{ keyword }}">
           <label for="search">Search text</label>
         </div>
       </div>
@@ -67,7 +67,7 @@
     </tbody>
   </table>
 
-  {% set url = "/accounts?search=" ~ search ~ "&order_by=" ~ order_by ~ "&dir=" ~ dir %}
+  {% set url = "/accounts?keyword=" ~ keyword ~ "&order_by=" ~ order_by ~ "&dir=" ~ dir %}
   {% include 'partials/pagination.twig' %}
 
   {% include 'modals/acc_create.twig' %}

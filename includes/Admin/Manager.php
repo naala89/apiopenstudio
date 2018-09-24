@@ -135,13 +135,21 @@ class Manager {
    *
    * @param int $uid
    *   User ID.
+   * @param array|NULL $params
+   *   parameters (optional)
+   *     [
+   *       'sort_by' => string,
+   *       'direction' => string "asc"|"desc",
+   *       'start' => int,
+   *       'limit' => int,
+   *     ]
    *
    * @return array
    *   Array of managers, indexed by manager ID.
    */
-  public function findByUserId($uid) {
+  public function findByUserId($uid, array $params = NULL) {
     $managerMapper = new Db\ManagerMapper($this->db);
-    $managers = $managerMapper->findByUid($uid);
+    $managers = $managerMapper->findByUid($uid, $params);
     $result = [];
     foreach ($managers as $manager) {
       $result[$manager->getMid()] = $manager->dump();

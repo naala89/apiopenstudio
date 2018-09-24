@@ -46,7 +46,7 @@ class CtrlAccount extends CtrlBase {
     $allParams = $request->getParams();
     $params = [];
     if (!empty($allParams['search'])) {
-      $params['search'] = $allParams['search'];
+      $params['keyword'] = $allParams['keyword'];
     }
     $params['order_by'] = !empty($allParams['order_by']) ? $allParams['order_by'] : 'name';
     $params['dir'] = isset($allParams['dir']) ? $allParams['dir'] : 'ASC';
@@ -74,7 +74,7 @@ class CtrlAccount extends CtrlBase {
     $accounts = array_slice($accounts, ($page - 1) * $this->paginationStep, $this->paginationStep, TRUE);
 
     return $this->view->render($response, 'accounts.twig', [
-      'search' => isset($params['search']) ? $params['search'] : '',
+      'keyword' => isset($params['keyword']) ? $params['keyword'] : '',
       'order_by' => $params['order_by'],
       'dir' => strtoupper($params['dir']),
       'page' => $page,
