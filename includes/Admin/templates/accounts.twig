@@ -53,7 +53,7 @@
     <tbody>
     {% for key,account in accounts %}
       <tr>
-        <td><a href="/applications?filter={{ account.accid }}">{{ account.name }}</a></td>
+        <td><a href="/applications?account={{ account.accid }}">{{ account.name }}</a></td>
         <td>
           <a class="btn-floating btn-small white hoverable">
             <i class="material-icons modal-acc-edit-trigger black-text" acc-id="{{ account.accid }}" acc-name="{{ account.name }}">edit</i>

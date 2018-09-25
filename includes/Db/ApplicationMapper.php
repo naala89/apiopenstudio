@@ -166,11 +166,9 @@ class ApplicationMapper extends Mapper {
       $bindParams[] = $accid;
     }
     $sql = 'SELECT * FROM application WHERE accid IN ('. implode(', ', $qm) . ')';
-    if (!empty($params)) {
-      if (!empty($params['keyword'])) {
-        $sql .= ' AND name LIKE "%' . $params['keyword'] . '%"';
-      }
-    }
+    if (!empty($params['keyword'])) {
+      $sql .= ' AND name LIKE "%' . $params['keyword'] . '%"';
+    };
     return $this->fetchRows($sql, $bindParams, $params);
   }
 

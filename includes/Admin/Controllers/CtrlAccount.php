@@ -45,7 +45,7 @@ class CtrlAccount extends CtrlBase {
     // Filter params.
     $allParams = $request->getParams();
     $params = [];
-    if (!empty($allParams['search'])) {
+    if (!empty($allParams['keyword'])) {
       $params['keyword'] = $allParams['keyword'];
     }
     $params['order_by'] = !empty($allParams['order_by']) ? $allParams['order_by'] : 'name';
