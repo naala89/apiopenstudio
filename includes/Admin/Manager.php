@@ -97,6 +97,32 @@ class Manager {
   }
 
   /**
+   * Find all managers.
+   *
+   * @param array|NULL $params
+   *   parameters (optional)
+   *     [
+   *       'keyword' => string,
+   *       'sort_by' => string,
+   *       'direction' => string "asc"|"desc",
+   *       'start' => int,
+   *       'limit' => int,
+   *     ]
+   *
+   * @return array
+   *   array of managers.
+   */
+  public function findAll(array $params = NULL) {
+    $managerMapper = new Db\ManagerMapper($this->db);
+    $managers = $managerMapper->findAll($params);
+    $result = [];
+    foreach ($administrators as $administrator) {
+      $result[] = $administrator->dump();
+    }
+    return $result;
+  }
+
+  /**
    * Find by manager ID.
    *
    * @param int $mid

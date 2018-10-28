@@ -93,8 +93,7 @@ class Role {
 
     $roles = [];
     foreach ($results as $result) {
-      $role = $result->dump();
-      $roles[$role['rid']] = $role;
+      $roles[] = $result->dump();
     }
 
     return $roles;
