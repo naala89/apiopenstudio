@@ -42,9 +42,8 @@ role:
     rid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: role id }
     name: { type: varchar(255), notnull: true, comment: title of role }
   data:
-    - { rid: 1, name: Manager }
-    - { rid: 2, name: Developer }
-    - { rid: 3, name: Consumer }
+    - { rid: 1, name: Developer }
+    - { rid: 2, name: Consumer }
 
 administrator:
   columns:

@@ -71,6 +71,30 @@ class ManagerMapper extends Mapper {
   }
 
   /**
+   * Find all managers.
+   *
+   * @param array|NULL $params
+   *   parameters (optional)
+   *     [
+   *       'keyword' => string,
+   *       'sort_by' => string,
+   *       'direction' => string "asc"|"desc",
+   *       'start' => int,
+   *       'limit' => int,
+   *     ]
+   *
+   * @return array
+   *   Array of Manager.
+   *
+   * @throws ApiException
+   */
+  public function findAll(array $params = NULL) {
+    $sql = 'SELECT * FROM manager';
+    $bindParams = [];
+    return $this->fetchRows($sql, $bindParams, $params);
+  }
+
+  /**
    * Find by manager ID.
    *
    * @param int $mid

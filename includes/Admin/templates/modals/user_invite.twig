@@ -1,0 +1,26 @@
+<!-- Add user modal -->
+<div id="modal-user-invite" class="modal">
+  <form method="post" action="/user/invite" id="user-invite">
+    <div class="modal-content">
+      <div class="row">
+        <h4>Add user</h4>
+        <p>Please enter the email address of the user.</p>
+        <p>Once a user has accepted your invite, you can assign them a role.</p>
+      </div>
+
+      <div class="row">
+        <div class="input-field col s6">
+          <input type="email" class="validate" name="invite-email" id="invite-email">
+          <label for="invite-email">Email</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-field col s4 offset-s8">
+          <a class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+          <button class="btn waves-effect waves-light" type="submit" name="create">Invite</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

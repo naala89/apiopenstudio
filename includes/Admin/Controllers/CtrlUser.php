@@ -3,9 +3,12 @@
 namespace Datagator\Admin\Controllers;
 
 use Datagator\Admin\Account;
+use Datagator\Admin\Administrator;
+use Datagator\Admin\ApplicationUserRole;
 use Datagator\Admin\Manager;
 use Datagator\Admin\UserAccount;
 use Datagator\Core\ApiException;
+use Slim\Flash\Messages;
 use Slim\Views\Twig;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -25,7 +28,7 @@ use Datagator\Admin\Invite;
  */
 class CtrlUser extends CtrlBase {
 
-  protected $permittedRoles = ['Owner'];
+  protected $permittedRoles = ['Administrator', 'Manager'];
   protected $mailSettings;
 
   /**
@@ -35,12 +38,16 @@ class CtrlUser extends CtrlBase {
    *   DB settings array.
    * @param array $mailSettings
    *   Mail settings array.
+   * @param int $paginationStep
+   *   Pagination step.
    * @param \Slim\Views\Twig $view
    *   View container.
+   * @param \Slim\Flash\Messages $flash
+   *   Flash messages container.
    */
-  public function __construct(array $dbSettings, array $mailSettings, Twig $view) {
+  public function __construct(array $dbSettings, array $mailSettings, $paginationStep, Twig $view, Messages $flash) {
     $this->mailSettings = $mailSettings;
-    parent::__construct($dbSettings, $view);
+    parent::__construct($dbSettings, $paginationStep, $view, $flash);
   }
 
   /**
@@ -61,82 +68,92 @@ class CtrlUser extends CtrlBase {
     $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
     $roles = $this->getRoles($uid);
     if (!$this->checkAccess($roles)) {
-      $this->flash->addMessage('error', 'View Applications: access denied');
-      $response->withRedirect('/');
+      $this->flash->addMessage('error', 'View users: access denied');
+      return $response->withRedirect('/');
     }
     $menu = $this->getMenus($roles);
 
-    if ($request->isPost()) {
-      $allVars = $request->getParsedBody();
-    } else {
-      $allVars = $request->getQueryParams();
+
+    // Filter params.
+    $allParams = $request->getParams();
+    $params = [];
+    if (!empty($allParams['keyword'])) {
+      $params['keyword'] = $allParams['keyword'];
     }
+    $params['order_by'] = !empty($allParams['order_by']) ? $allParams['order_by'] : 'name';
+    $params['dir'] = isset($allParams['dir']) ? $allParams['dir'] : 'ASC';
+    $page = isset($allParams['page']) ? $allParams['page'] : 1;
+
     try {
+      $administratorHlp = new Administrator($this->dbSettings);
       $applicationHlp = new Application($this->dbSettings);
       $managerHlp = new Manager($this->dbSettings);
       $accountHlp = new Account($this->dbSettings);
+      $applicationUserRoleHlp = new ApplicationUserRole($this->dbSettings);
       $userHlp = new User($this->dbSettings);
+      $roleHlp = new Role($this->dbSettings);
 
-      // Find all applications for the account the current user is assigned to.
+      // Find all roles.
+      $roles = $roleHlp->findAll();
+
+      // Find all accounts associated with the current user.
       if (in_array('Administrator', $roles)) {
-        $applications = $applicationHlp->findAll();
-        $users = $userHlp->findAll();
+        $accounts = $accountHlp->findAll($params);
       } else {
-        $applications = [];
-        if (in_array('Manager', $roles)) {
-          $managers = $managerHlp->findByUserId($uid);
-          foreach ($managers as $manager) {
-            $application = $applicationHlp->findByApplicationId($manager['appid']);
-            $applications[$application['appid']] = $application;
+        $results = $managerHlp->findByUserId($uid);
+        $accounts = [];
+        foreach ($results as $result) {
+          $accounts[] = $accountHlp->findByAccountId($result['accid']);
+        }
+      }
+
+      var_dump($accounts);
+
+      // Find all administrators.
+      $administrators = [];
+      $results = $administratorHlp->findAll();
+      foreach ($results as $result) {
+        $administrators[] = $userHlp->findByUserId($result['uid']);
+      }
+
+      // Find applications and managers and manager accounts.
+      $applications = $managers = $managerAccounts = [];
+      foreach ($accounts as $account) {
+        $applications = array_merge($applications, $applicationHlp->findByAccid($account['accid']));
+        $results = $managerHlp->findByAccountId($account['accid']);
+        foreach ($results as $result) {
+          if (!isset($managers[$result['uid']])) {
+            $managers[$result['uid']] = $userHlp->findByUserId($result['uid']);
+          }
+          $managerAccounts[$result['uid']][] = $account;
+        }
+      }
+
+      // Find users for the applications.
+      $users = [];
+      foreach ($applications as $application) {
+        $results = $applicationUserRoleHlp->findByAppid($application['appid']);
+        foreach ($results as $result) {
+          if (!isset($users[$result['uid']])) {
+            $users[$result['uid']] = $userHlp->findByUserId($result['uid']);
           }
         }
       }
     } catch (ApiException $e) {
+      $users = [];
       $this->flash->addMessage('error', $e->getMessage());
-    }
-
-    $applications = $applicationHlp->findByUserAccountId($uaid);
-    $filterApplication = isset($allVars['filter-application']) ? $allVars['filter-application'] : 'all';
-    // Fetch the current user's account.
-    $account = $accountHlp->findByUaid($uaid);
-
-    // Create an array of distinct users from $roles with applications and roles.
-    $userAccounts = $userAccountHlp->findByAccountId($account['accid']);
-    $users = $administrators = $owners = [];
-    foreach ($userAccounts as $userAccount) {
-      $user = $userHlp->findByUserId($userAccount['uid']);
-      $userAccountRoles = $userAccountHlp->findAllRolesByUaid($userAccount['uaid']);
-      if (empty($userAccountRoles) && ($filterApplication == 'all' || $filterApplication == '')) {
-        $users[$user['uid']] = $user;
-        $users[$user['uid']]['applications'] = 'unnassigned';
-        $users[$user['uid']]['uaid'] = $userAccount['uaid'];
-        continue;
-      }
-      foreach ($userAccountRoles as $userAccountRole) {
-        if ($userAccountRole['rid'] == $ownerRid) {
-          $owners[$user['uid']] = $user;
-          $owners[$user['uid']]['uaid'] = $userAccount['uaid'];
-        } else {
-          if ($filterApplication == 'all' || $userAccountRole['appid'] == $filterApplication) {
-            if (!isset($users[$user['uid']])) {
-              $users[$user['uid']] = $user;
-              $users[$user['uid']]['uaid'] = $userAccount['uaid'];
-            }
-            if (!isset($users[$user['uid']]['applications'][$userAccountRole['appid']])) {
-              $users[$user['uid']]['applications'][$userAccountRole['appid']] = $applications[$userAccountRole['appid']];
-            }
-            $users[$user['uid']]['applications'][$userAccountRole['appid']]['roles'][] = $allRoles[$userAccountRole['rid']]['name'];
-          }
-        }
-      }
     }
 
     return $this->view->render($response, 'users.twig', [
       'menu' => $menu,
+      'roles' => $roles,
+      'accounts' => $accounts,
       'applications' => $applications,
-      'owners' => $owners,
+      'administrators' => $administrators,
+      'managers' => $managers,
+      'manager_accounts' => $managerAccounts,
       'users' => $users,
-      'activeFilter' => $filterApplication,
+      'params' => $params,
     ]);
   }
 
@@ -156,18 +173,19 @@ class CtrlUser extends CtrlBase {
    *   Response.
    */
   public function invite(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
-    $roles = $this->getRoles($uaid);
+    $this->permittedRoles = ['Administrator', 'Manager'];
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $roles = $this->getRoles($uid);
     if (!$this->checkAccess($roles)) {
+      $this->flash->addMessage('error', 'Invite user: access denied');
       return $response->withRedirect('/');
     }
     $menu = $this->getMenus($roles);
 
     $allPostVars = $request->getParsedBody();
     if (empty($email = $allPostVars['invite-email'])) {
-      return $this->view->render($response, 'users.twig', [
-        'menu' => $menu,
-      ]);
+      $this->flash->addMessage('error', 'Invite user: email not specified');
+      return $response->withRedirect('/users');
     }
 
     // Check if user already exists.

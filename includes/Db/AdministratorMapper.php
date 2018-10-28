@@ -66,6 +66,28 @@ class AdministratorMapper extends Mapper {
   }
 
   /**
+   * Fetch all administrators.
+   *
+   * @param array|NULL $params
+   *   parameters (optional)
+   *     [
+   *       'keyword' => string,
+   *       'sort_by' => string,
+   *       'direction' => string "asc"|"desc",
+   *       'start' => int,
+   *       'limit' => int,
+   *     ]
+   *
+   * @return array
+   *   Array of Administrators.
+   */
+  public function findAll(array $params = NULL) {
+    $sql = 'SELECT * FROM administrator';
+    $bindParams = [];
+    return $this->fetchRows($sql, $bindParams, $params);
+  }
+
+  /**
    * Find by administrator ID.
    *
    * @param int $aid
