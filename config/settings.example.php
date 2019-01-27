@@ -18,7 +18,7 @@ $settings['public'] = $settings['root'] . '/html';
 // Database.
 // @see http://adodb.org/dokuwiki/doku.php Documentation of ADOdb.
 $settings['db'] = [
-  'base' => $settings['datagator'] . '/db/dbBase.yaml',
+  'base' => $settings['datagator'] . '/Db/dbBase.yaml',
   'driver' => 'mysqli',
   'host' => 'localhost',
   'username' => 'gaterdata',
