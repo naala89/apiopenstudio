@@ -87,14 +87,8 @@ class User{
       throw new ApiException('Invalid user or password');
     }
 
-    // Set up salt if not defined.
-    if ($this->user->getSalt() == NULL) {
-      $this->user->setSalt(Hash::generateSalt());
-    }
-
     // Generate password hash and compare to stored hash.
-    $hash = Hash::generateHash($password, $this->user->getSalt());
-    if ($this->user->getHash() != NULL && $this->user->getHash() != $hash) {
+    if ($this->user->getHash() != NULL && password_verify($password, $this->user->getHash()) {
       throw new ApiException('Invalid user or password');
     }
 
