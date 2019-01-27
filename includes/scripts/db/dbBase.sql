@@ -216,7 +216,6 @@ CREATE TABLE IF NOT EXISTS `user` (
   `uid` int(10) unsigned NOT NULL COMMENT 'user id',
   `active` tinyint(4) NOT NULL DEFAULT '1',
   `username` varchar(256) NOT NULL,
-  `salt` varchar(16) DEFAULT NULL COMMENT 'Salt for the password hash',
   `hash` varchar(32) DEFAULT NULL COMMENT 'pasword hash',
   `token` varchar(32) DEFAULT NULL COMMENT 'temporary access token',
   `token_ttl` timestamp NULL DEFAULT NULL COMMENT 'end of life for token',
@@ -244,8 +243,8 @@ TRUNCATE TABLE `user`;
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`uid`, `active`, `username`, `salt`, `hash`, `token`, `token_ttl`, `email`, `honorific`, `name_first`, `name_last`, `company`, `website`, `address_street`, `address_suburb`, `address_city`, `address_state`, `address_postcode`, `phone_mobile`, `phone_work`) VALUES
-  (1, 1, 'john', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+INSERT INTO `user` (`uid`, `active`, `username``, `hash`, `token`, `token_ttl`, `email`, `honorific`, `name_first`, `name_last`, `company`, `website`, `address_street`, `address_suburb`, `address_city`, `address_state`, `address_postcode`, `phone_mobile`, `phone_work`) VALUES
+  (1, 1, 'john', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
   (2, 1, 'tester', 'ÐKdó“##V™''„\Z‰“;†', 'a1d45363e9041a93fef109feb57c76f3', '2359132eec3a6545c49f011dd5dd3a41', '2016-10-14 21:05:49', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
