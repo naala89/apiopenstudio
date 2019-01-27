@@ -20,7 +20,7 @@ $settings['paginationStep'] = 20;
 // Set your debug level and additional handlers in ['loggers']['gaterdata']['handlers']
 // @see https://github.com/Seldaek/monolog Monolog documentation.
 // @see https://github.com/theorchard/monolog-cascade Monolog Cascade documentation.
-$settings['log']['path'] = '/var/log/apache2/admin.gaterdata.error.log';
+$settings['log']['path'] = '/var/log/nginx/admin.gaterdata.error.log';
 $settings['log']['settings'] = [
   'version' => 1,
   'formatters' => [
@@ -136,7 +136,7 @@ $settings['user']['token_life'] = '+1 hour';
 
 // Twig.
 $settings['twig'] = [
-  'path' => $settings['datagator'] . '/admin/templates',
+  'path' => $settings['datagator'] . '/Admin/templates',
   'cache_enabled' => TRUE,
   'cache_path' =>  $settings['temp'] . '/twig_cache',
 ];
