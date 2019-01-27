@@ -46,11 +46,10 @@ class UserMapper extends Mapper {
    */
   public function save(User $user) {
     if (empty($user->getUid())) {
-      $sql = 'INSERT INTO user (active, username, salt, hash, token, token_ttl, email, honorific, name_first, name_last, company, website, address_street, address_suburb, address_city, address_state, address_country, address_postcode, phone_mobile, phone_work) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      $sql = 'INSERT INTO user (active, username, hash, token, token_ttl, email, honorific, name_first, name_last, company, website, address_street, address_suburb, address_city, address_state, address_country, address_postcode, phone_mobile, phone_work) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
       $bindParams = [
         $user->getActive(),
         $user->getUsername(),
-        $user->getSalt(),
         $user->getHash(),
         $user->getToken(),
         $user->getTokenTtl(),
@@ -71,11 +70,10 @@ class UserMapper extends Mapper {
       ];
     }
     else {
-      $sql = 'UPDATE user SET active=?, username=?, salt=?, hash=?, token=?, token_ttl=?, email=?, honorific=?, name_first=?, name_last=?, company=?, website=?, address_street=?, address_suburb=?, address_city=?, address_state=?, address_country=?, address_postcode=?, phone_mobile=?, phone_work=?  WHERE uid=?';
+      $sql = 'UPDATE user SET active=?, username=?, hash=?, token=?, token_ttl=?, email=?, honorific=?, name_first=?, name_last=?, company=?, website=?, address_street=?, address_suburb=?, address_city=?, address_state=?, address_country=?, address_postcode=?, phone_mobile=?, phone_work=?  WHERE uid=?';
       $bindParams = [
         $user->getActive(),
         $user->getUsername(),
-        $user->getSalt(),
         $user->getHash(),
         $user->getToken(),
         $user->getTokenTtl(),
@@ -212,7 +210,6 @@ class UserMapper extends Mapper {
     $user->setUid(!empty($row['uid']) ? $row['uid'] : NULL);
     $user->setActive(!empty($row['active']) ? $row['active'] : NULL);
     $user->setUsername(!empty($row['username']) ? $row['username'] : NULL);
-    $user->setSalt(!empty($row['salt']) ? $row['salt'] : NULL);
     $user->setHash(!empty($row['hash']) ? $row['hash'] : NULL);
     $user->setToken(!empty($row['token']) ? $row['token'] : NULL);
     $user->setTokenTtl(!empty($row['token_ttl']) ? $row['token_ttl'] : NULL);
