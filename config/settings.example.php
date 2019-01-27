@@ -10,6 +10,7 @@ $settings['root'] = dirname(__DIR__);
 $settings['datagator'] = $settings['root'] . '/includes';
 $settings['temp'] = $settings['root'] . '/tmp';
 $settings['public'] = $settings['root'] . '/html';
+$settings['log']['path'] = '/var/log/nginx/admin.gaterdata.error.log';
 
 /**
  * General settings.
@@ -61,7 +62,6 @@ $settings['user']['token_life'] = '+1 hour';
  * @see https://github.com/Seldaek/monolog Monolog documentation.
  * @see https://github.com/theorchard/monolog-cascade Monolog Cascade documentation.
  */
-$settings['log']['path'] = '/var/log/nginx/admin.gaterdata.error.log';
 $settings['log']['settings'] = [
   'version' => 1,
   'formatters' => [

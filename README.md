@@ -18,21 +18,22 @@ Installation
 1. ```$ git clone gitolite@naala.com.au:datagator```
 3. ```$ chmod 775 uploads```
 4. Install [Composer](https://getcomposer.org/).
-    1. The following modules are requires:
-       1. php-curl
-       2. php-mbstring
-       3. php-dom
-5. Run composer install in the docroot:
+5. The following modules are required:
+   1. php-curl
+   2. php-mbstring
+   3. php-dom
+   4. php-mcrypt
+6.  Run composer install in the docroot:
     1. ```$ cd /path/to/datagator```
     2. ```$ composer install```
-6. Create an empty database and user. Give the user full permission for the DB.
+7.  Create an empty database and user. Give the user full permission for the DB.
     1. ``$ mysql -u root -p``
     2. ``$ CREATE DATABASE <db_name>;``
-    3. ``$ GRANT ALL PRIVILEGES ON <db_name>.* TO <username>@localhost IDENTIFIED BY "<password>";``
-7. Copy ```config/settings.example.php``` to ```config/settings.php```, and update the values.
-10. Update ```php.ini``` (if using non-apache server, see [Hardening your HTTP response headers](https://scotthelme.co.uk/hardening-your-http-response-headers/#removingheaders)):
+    3.  ``$ GRANT ALL PRIVILEGES ON <db_name>.* TO <username>@localhost IDENTIFIED BY "<password>";``
+8.  Copy ```config/settings.example.php``` to ```config/settings.php```, and update the values.
+9.  Update ```php.ini``` (if using non-apache server, see [Hardening your HTTP response headers](https://scotthelme.co.uk/hardening-your-http-response-headers/#removingheaders)):
     1. ```expose_php = Off```
-11. Update ```httpd.conf```
+10. Update ```httpd.conf```
     1. ```ServerSignature Off```
     2. ```ServerTokens Prod```
 
