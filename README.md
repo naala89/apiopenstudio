@@ -26,11 +26,13 @@ Installation
     1. ```$ cd /path/to/datagator```
     2. ```$ composer install```
 6. Create an empty database and user. Give the user full permission for the DB.
-7. Copy ```config/settings.example.php``` to ``config/settings.php```, and update the values.
-8. open a 
-9.  Update ```php.ini``` (if using non-apache server, see [Hardening your HTTP response headers](https://scotthelme.co.uk/hardening-your-http-response-headers/#removingheaders)):
+    1. ``$ mysql -u root -p``
+    2. ``$ CREATE DATABASE <db_name>;``
+    3. ``$ GRANT ALL PRIVILEGES ON <db_name>.* TO <username>@localhost IDENTIFIED BY "<password>";``
+7. Copy ```config/settings.example.php``` to ```config/settings.php```, and update the values.
+10. Update ```php.ini``` (if using non-apache server, see [Hardening your HTTP response headers](https://scotthelme.co.uk/hardening-your-http-response-headers/#removingheaders)):
     1. ```expose_php = Off```
-10. Update ```httpd.conf```
+11. Update ```httpd.conf```
     1. ```ServerSignature Off```
     2. ```ServerTokens Prod```
 
