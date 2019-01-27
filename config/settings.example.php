@@ -14,12 +14,53 @@ $settings['public'] = $settings['root'] . '/html';
 /**
  * General settings.
  */
+
+// Database.
+// @see http://adodb.org/dokuwiki/doku.php Documentation of ADOdb.
+$settings['db'] = [
+  'base' => $settings['datagator'] . '/db/dbBase.yaml',
+  'driver' => 'mysqli',
+  'host' => 'localhost',
+  'username' => 'root',
+  'password' => 'secret',
+  'database' => 'gaterdata',
+  'options' => [
+    'debug' => FALSE,
+  ],
+  'charset' => 'utf8',
+  'collation' => 'utf8_unicode_ci',
+];
+define('ADODB_ERROR_LOG_TYPE', 3);
+define('ADODB_ERROR_LOG_DEST', $settings['log']['path']);
+
+// Email.
+$settings['mail'] = [
+  'from' => [
+    'email' => 'example@gaterdata.com',
+    'name' => 'GaterData',
+  ],
+  'smtp' => TRUE,
+  'host' => 'smtp1.example.com;smtp2.example.com',
+  'auth' => TRUE,
+  'username' => 'example@gaterdata.com',
+  'password' => 'secret',
+  'smtpSecure' => 'tls',
+  'port' => 587,
+  'debug' => 0,
+];
+
+// Number of items on a pagew foir pogination
 $settings['paginationStep'] = 20;
 
-// Debug
-// Set your debug level and additional handlers in ['loggers']['gaterdata']['handlers']
-// @see https://github.com/Seldaek/monolog Monolog documentation.
-// @see https://github.com/theorchard/monolog-cascade Monolog Cascade documentation.
+// User.
+$settings['user']['token_life'] = '+1 hour';
+
+/**
+ * Logging and Debug.
+ * Set your debug level and additional handlers in ['loggers']['gaterdata']['handlers']
+ * @see https://github.com/Seldaek/monolog Monolog documentation.
+ * @see https://github.com/theorchard/monolog-cascade Monolog Cascade documentation.
+ */
 $settings['log']['path'] = '/var/log/nginx/admin.gaterdata.error.log';
 $settings['log']['settings'] = [
   'version' => 1,
@@ -92,43 +133,6 @@ $settings['log']['settings'] = [
     ],
   ],
 ];
-
-// Database.
-// @see http://adodb.org/dokuwiki/doku.php Documentation of ADOdb.
-$settings['db'] = [
-  'base' => $settings['datagator'] . '/db/dbBase.yaml',
-  'driver' => 'mysqli',
-  'host' => 'localhost',
-  'username' => 'root',
-  'password' => 'secret',
-  'database' => 'gaterdata',
-  'options' => [
-    'debug' => FALSE,
-  ],
-  'charset' => 'utf8',
-  'collation' => 'utf8_unicode_ci',
-];
-define('ADODB_ERROR_LOG_TYPE', 3);
-define('ADODB_ERROR_LOG_DEST', $settings['log']['path']);
-
-// Email.
-$settings['mail'] = [
-  'from' => [
-    'email' => 'example@gaterdata.com',
-    'name' => 'GaterData',
-  ],
-  'smtp' => TRUE,
-  'host' => 'smtp1.example.com;smtp2.example.com',
-  'auth' => TRUE,
-  'username' => 'example@gaterdata.com',
-  'password' => 'secret',
-  'smtpSecure' => 'tls',
-  'port' => 587,
-  'debug' => 0,
-];
-
-// User.
-$settings['user']['token_life'] = '+1 hour';
 
 /**
  * Admin settings.
