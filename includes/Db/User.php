@@ -14,7 +14,6 @@ class User {
   protected $uid;
   protected $active;
   protected $username;
-  protected $salt;
   protected $hash;
   protected $token;
   protected $tokenTtl;
@@ -42,8 +41,6 @@ class User {
    *   Active status.
    * @param string $username
    *   Username.
-   * @param string $salt
-   *   Salt.
    * @param string $hash
    *   Password hash.
    * @param string $token
@@ -79,11 +76,10 @@ class User {
    * @param string $phoneWork
    *   Business number.
    */
-  public function __construct($uid = NULL, $active = NULL, $username = NULL, $salt = NULL, $hash = NULL, $token = NULL, $tokenTtl = NULL, $email = NULL, $honorific = NULL, $nameFirst = NULL, $nameLast = NULL, $company = NULL, $website = NULL, $addressStreet = NULL, $addressSuburb = NULL, $addressCity = NULL, $addressState = NULL, $addressCountry = NULL, $addressPostcode = NULL, $phoneMobile = NULL, $phoneWork = NULL) {
+  public function __construct($uid = NULL, $active = NULL, $username = NULL, $hash = NULL, $token = NULL, $tokenTtl = NULL, $email = NULL, $honorific = NULL, $nameFirst = NULL, $nameLast = NULL, $company = NULL, $website = NULL, $addressStreet = NULL, $addressSuburb = NULL, $addressCity = NULL, $addressState = NULL, $addressCountry = NULL, $addressPostcode = NULL, $phoneMobile = NULL, $phoneWork = NULL) {
     $this->uid = $uid;
     $this->active = $active;
     $this->username = $username;
-    $this->salt = $salt;
     $this->hash = $hash;
     $this->token = $token;
     $this->tokenTtl = $tokenTtl;
@@ -164,38 +160,14 @@ class User {
   }
 
   /**
-   * Set the password. This will also create the salt and hash.
+   * Set the password. This will also create the hash.
    *
    * @param string $password
    *   Password.
    */
   public function setPassword($password) {
-    // Set up salt if not defined.
-    if ($this->getSalt() == NULL) {
-      $this->setSalt(Hash::generateSalt());
-    }
     // Generate hash.
-    $this->hash = Hash::generateHash($password, $this->getSalt());
-  }
-
-  /**
-   * Get the salt.
-   *
-   * @return string
-   *   Salt.
-   */
-  public function getSalt() {
-    return $this->salt;
-  }
-
-  /**
-   * Set the salt.
-   *
-   * @param string $salt
-   *   Salt.
-   */
-  public function setSalt($salt) {
-    $this->salt = $salt;
+    $this->hash = Hash::generateHash($password);
   }
 
   /**
@@ -549,7 +521,6 @@ class User {
       'uid' => $this->uid,
       'active' => $this->active,
       'username' => $this->username,
-      'salt' => $this->salt,
       'hash' => $this->hash,
       'token' => $this->token,
       'tokenTtl' => $this->tokenTtl,
