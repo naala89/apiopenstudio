@@ -7,7 +7,7 @@ ini_set('display_errors', '0');
 
 // Paths.
 $settings['root'] = dirname(__DIR__);
-$settings['datagator'] = $settings['root'] . '/includes';
+$settings['gaterdata'] = $settings['root'] . '/includes';
 $settings['temp'] = $settings['root'] . '/tmp';
 $settings['public'] = $settings['root'] . '/html';
 $settings['log']['path'] = '/var/log/nginx/admin.gaterdata.error.log';
@@ -19,7 +19,7 @@ $settings['log']['path'] = '/var/log/nginx/admin.gaterdata.error.log';
 // Database.
 // @see http://adodb.org/dokuwiki/doku.php Documentation of ADOdb.
 $settings['db'] = [
-  'base' => $settings['datagator'] . '/Db/dbBase.yaml',
+  'base' => $settings['gaterdata'] . '/Db/dbBase.yaml',
   'driver' => 'mysqli',
   'host' => 'localhost',
   'username' => 'gaterdata',
@@ -140,7 +140,7 @@ $settings['log']['settings'] = [
 
 // Twig.
 $settings['twig'] = [
-  'path' => $settings['datagator'] . '/Admin/templates',
+  'path' => $settings['gaterdata'] . '/Admin/templates',
   'cache_enabled' => TRUE,
   'cache_path' =>  $settings['temp'] . '/twig_cache',
 ];
