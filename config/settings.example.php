@@ -3,7 +3,7 @@
 $settings = [];
 
 // Do not echo the errors
-ini_set('display_errors', '0');
+ini_set('display_errors', FALSE);
 
 // Paths.
 $settings['root'] = dirname(__DIR__);

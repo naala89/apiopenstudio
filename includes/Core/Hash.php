@@ -4,7 +4,7 @@
  *
  */
 
-namespace Datagator\Core;
+namespace Gaterdata\Core;
 
 class Hash
 {

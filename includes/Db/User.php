@@ -1,13 +1,13 @@
 <?php
 
-namespace Datagator\Db;
+namespace Gaterdata\Db;
 
-use Datagator\Core\Hash;
+use Gaterdata\Core\Hash;
 
 /**
  * Class User.
  *
- * @package Datagator\Db
+ * @package Gaterdata\Db
  */
 class User {
 

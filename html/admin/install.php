@@ -2,7 +2,7 @@
 
 require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
-use Gaterdata\Admin\User;
+use Gaterdata\Admin;
 use Cascade\Cascade;
 use Datagator\Core\ApiException;
 
@@ -24,7 +24,7 @@ $twig = new Twig_Environment($loader, $settings['twig']['options']);
 
 // Create the helper classes.
 try {
-  $user = new User($settings['db']);
+  $user = new Admin\User($settings['db']);
 } catch (ApiException $e) {
   $template = $twig->load("install/install_$from.twig");
   echo $template->render([
@@ -40,7 +40,7 @@ try {
 switch ($step) {
   case 0:
     // Check user wants to continue.
-    $template = $twig->load('install/install_0.twig');
+    $template = $twig->load("install/install_$from.twig");
     $message = [
       'type' => 'warning',
       'text' => "Continuing will erase any existing data in the database.<br />",
