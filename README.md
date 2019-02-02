@@ -24,14 +24,15 @@ Clone the repository
 3. ```$ git clone git@gitlab.com:john89/gaterdata.git```
 4. ```$ cd gaterdata```
 5. ```$ chown -R www-data:<my_group> ./*```
-6. ```$ chmod -R 764 .```
+6. ```$ chmod -R 760 .```
 7. ~~```$ chmod 775 uploads```~~
 8. Install [Composer](https://getcomposer.org/).
 9. The following server modules are required:
    1. php-curl
    2. php-mbstring
    3. php-dom
-   4. ~~php-mcrypt~~
+   4. php-zip
+   5. ~~php-mcrypt~~
 10. Run composer install in the docroot:
     1. ```$ cd /path/to/gaterdata```
     2. ```$ composer install```
