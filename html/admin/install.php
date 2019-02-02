@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__DIR__) . '/../vendor/autoload.php';
+require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
 use Datagator\Admin\User;
 use Datagator\Admin\Account;
@@ -27,7 +27,6 @@ $twig = new Twig_Environment($loader/*, array(
 
 // Create the helper classes.
 try {
-  $account = new Account($settings['db']);
   $user = new User($settings['db']);
 } catch (ApiException $e) {
   $template = $twig->load("install/install_$from.twig");
