@@ -1,16 +1,16 @@
 <?php
 
-namespace Datagator\Db;
+namespace Gaterdata\Db;
 
 use Cascade\Cascade;
-use Datagator\Core\Utilities;
-use Datagator\Core\ApiException;
+use Gaterdata\Core\Utilities;
+use Gaterdata\Core\ApiException;
 use ADOConnection;
 
 /**
  * Class UserMapper.
  *
- * @package Datagator\Db
+ * @package Gaterdata\Db
  */
 class UserMapper extends Mapper {
 

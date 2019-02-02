@@ -1,7 +1,7 @@
 <?php
 
-namespace Datagator\Db;
-use Datagator\Core\ApiException;
+namespace Gaterdata\Db;
+use Gaterdata\Core\ApiException;
 use Cascade\Cascade;
 use ADOConnection;
 
