@@ -2,10 +2,10 @@
 
 namespace Gaterdata\Admin;
 
-use Datagator\Core\ApiException;
-use Datagator\Db;
-use Datagator\Core\Utilities;
-use Datagator\Core\Hash;
+use Gaterdata\Core\ApiException;
+use Gaterdata\Db;
+use Gaterdata\Core\Utilities;
+use Gaterdata\Core\Hash;
 
 /**
  * Class User.
@@ -23,7 +23,7 @@ class User {
    */
   private $db;
   /**
-   * @var \Datagator\Db\User
+   * @var \Gaterdata\Db\User
    */
   private $user;
 
