@@ -139,8 +139,8 @@ $settings['log']['settings'] = [
  */
 
 // Twig.
-$settings['twig'] = [
-  'path' => $settings['gaterdata'] . '/Admin/templates',
+$settings['twig']['path'] = $settings['gaterdata'] . '/Admin/templates';
+$settings['twig']['options'] = [
   'cache_enabled' => TRUE,
   'cache_path' =>  $settings['temp'] . '/twig_cache',
 ];

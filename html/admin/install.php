@@ -2,8 +2,7 @@
 
 require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
-use Datagator\Admin\User;
-use Datagator\Admin\Account;
+use Gaterdata\Admin\User;
 use Cascade\Cascade;
 use Datagator\Core\ApiException;
 
@@ -21,9 +20,7 @@ $menu = ['Login' => '/'];
 
 // Twig definition.
 $loader = new Twig_Loader_Filesystem($settings['twig']['path']);
-$twig = new Twig_Environment($loader/*, array(
-  'cache' => $settings['twig']['cache_path'],
-)*/);
+$twig = new Twig_Environment($loader, $settings['twig']['options']);
 
 // Create the helper classes.
 try {
