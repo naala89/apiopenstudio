@@ -88,7 +88,7 @@ class User {
     }
 
     // Generate password hash and compare to stored hash.
-    if ($this->user->getHash() != NULL && password_verify($password, $this->user->getHash()) {
+    if ($this->user->getHash() != NULL && password_verify($password, $this->user->getHash())) {
       throw new ApiException('Invalid user or password');
     }
 
