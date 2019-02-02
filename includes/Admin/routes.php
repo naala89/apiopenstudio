@@ -1,6 +1,6 @@
 <?php
 
-use Datagator\Admin\Middleware\Authentication;
+use Gaterdata\Admin\Middleware\Authentication;
 
 $container = $app->getContainer();
 

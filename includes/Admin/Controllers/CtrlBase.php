@@ -1,16 +1,16 @@
 <?php
 
-namespace Datagator\Admin\Controllers;
+namespace Gaterdata\Admin\Controllers;
 
-use Datagator\Admin\User;
-use Datagator\Core\ApiException;
+use Gaterdata\Admin\User;
+use Gaterdata\Core\ApiException;
 use Slim\Flash\Messages;
 use Slim\Views\Twig;
 
 /**
  * Class CtrlBase.
  *
- * @package Datagator\Admin\Controllers
+ * @package Gaterdata\Admin\Controllers
  */
 class CtrlBase {
 
