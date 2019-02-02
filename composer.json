@@ -1,5 +1,5 @@
 {
-  "name": "naala/gatordata",
+  "name": "naala/gaterdata",
   "description": "An Api for APIs",
   "require-dev": {
     "codeception/codeception": "^2.4",
@@ -10,7 +10,7 @@
     "mustangostang/spyc": "^0.6.2",
     "slim/twig-view": "^2.4",
     "facebook/graph-sdk": "^5.6",
-    "slim/slim": "^3.10",
+    "slim/slim": "~3.0",
     "mtdowling/jmespath.php": "^2.4",
     "jlawrence/eos": "^3.2",
     "eloquent/pbkdf2-compat": "^1.0",
@@ -21,7 +21,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Datagator\\": "includes"
+      "Gaterdata\\": "includes/"
     }
   }
 }

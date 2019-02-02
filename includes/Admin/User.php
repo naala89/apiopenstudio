@@ -1,6 +1,6 @@
 <?php
 
-namespace Datagator\Admin;
+namespace Gaterdata\Admin;
 
 use Datagator\Core\ApiException;
 use Datagator\Db;
@@ -10,9 +10,9 @@ use Datagator\Core\Hash;
 /**
  * Class User.
  *
- * @package Datagator\Admin
+ * @package Gaterdata\Admin
  */
-class User{
+class User {
 
   /**
    * @var array
