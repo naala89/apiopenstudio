@@ -25,22 +25,6 @@ $twig = new Twig_Environment($loader/*, array(
   'cache' => $settings['twig']['cache_path'],
 )*/);
 
-// Create the helper classes.
-try {
-  $account = new Account($settings['db']);
-  $user = new User($settings['db']);
-} catch (ApiException $e) {
-  $template = $twig->load("install/install_$from.twig");
-  echo $template->render([
-    'message' => [
-      'type' => 'error',
-      'text' => 'An error occurred: ' . $e->getMessage(),
-    ],
-    'menu' => $menu,
-  ]);
-  exit;
-}
-
 switch ($step) {
   case 0:
     // Check user wants to continue.
@@ -160,6 +144,22 @@ switch ($step) {
 
   case 2:
     // Create user.
+
+    // Create the user helper class.
+    try {
+      $user = new User($settings['db']);
+    } catch (ApiException $e) {
+      $template = $twig->load("install/install_$from.twig");
+      echo $template->render([
+        'message' => [
+          'type' => 'error',
+          'text' => 'An error occurred: ' . $e->getMessage(),
+        ],
+        'menu' => $menu,
+      ]);
+      exit;
+    }
+    
     if ($from == 2) {
       // This is a post from the user create form.
       if (empty($_POST['username']) ||
