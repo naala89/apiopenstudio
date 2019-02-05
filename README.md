@@ -348,3 +348,12 @@ If only testing API locally:
 ```$ vendor/bin/codecept run api```
 
 ```$ vendor/bin/codecept run api testName```
+
+https://github.com/stucki/docker-lemp
+https://stackoverflow.com/questions/34875581/get-composer-php-dependency-manager-to-run-on-a-docker-image-build/42147748#42147748
+https://stackoverflow.com/questions/52400227/how-to-connect-php-and-composer-image-using-docker-composer
+https://medium.com/the-code-review/top-10-docker-commands-you-cant-live-without-54fb6377f481
+    kill all running containers with docker kill $(docker ps -q)
+    delete all stopped containers with docker rm $(docker ps -a -q)
+    delete all images with docker rmi $(docker images -q)
+    List Containers docker ps
