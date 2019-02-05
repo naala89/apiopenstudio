@@ -5,11 +5,11 @@ use Slim\Views\TwigExtension;
 use Slim\Http\Uri;
 use Slim\Views\Twig;
 USE Slim\Flash\Messages;
-use Datagator\Admin\Controllers\CtrlUser;
-use Datagator\Admin\Controllers\CtrlApplication;
-use Datagator\Admin\Controllers\CtrlAccount;
-use Datagator\Admin\Controllers\CtrlLogin;
-use Datagator\Admin\Controllers\CtrlHome;
+use Gaterdata\Admin\Controllers\CtrlUser;
+use Gaterdata\Admin\Controllers\CtrlApplication;
+use Gaterdata\Admin\Controllers\CtrlAccount;
+use Gaterdata\Admin\Controllers\CtrlLogin;
+use Gaterdata\Admin\Controllers\CtrlHome;
 
 $container = $app->getContainer();
 
@@ -36,9 +36,7 @@ $container['view'] = function (Container $container) {
   $settings = $container->get('settings');
   $viewPath = $settings['twig']['path'];
 
-  $twig = new Twig($viewPath, [
-    'cache' => $settings['twig']['cache_enabled'] ? $settings['twig']['cache_path'] : FALSE,
-  ]);
+  $twig = new Twig($viewPath, $settings['twig']['options']);
 
   $loader = $twig->getLoader();
   $loader->addPath($settings['public'], 'public');
