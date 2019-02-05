@@ -1,6 +1,6 @@
 <?php
 
-namespace Datagator\Admin\Controllers;
+namespace Gaterdata\Admin\Controllers;
 
 use Slim\Flash\Messages;
 use Slim\Http\Request;
@@ -10,7 +10,7 @@ use Slim\Views\Twig;
 /**
  * Class CtrlLogin.
  *
- * @package Datagator\Admin\Controllers
+ * @package Gaterdata\Admin\Controllers
  */
 class CtrlLogin extends CtrlBase {
 

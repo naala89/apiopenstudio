@@ -1,9 +1,9 @@
 <?php
 
-namespace Datagator\Admin\Middleware;
+namespace Gaterdata\Admin\Middleware;
 
-use Datagator\Admin\User;
-use Datagator\Core\ApiException;
+use Gaterdata\Admin\User;
+use Gaterdata\Core\ApiException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Container;
@@ -11,7 +11,7 @@ use Slim\Container;
 /**
  * Class Authentication.
  *
- * @package Datagator\Admin\Middleware
+ * @package Gaterdata\Admin\Middleware
  */
 class Authentication {
 
