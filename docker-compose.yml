@@ -2,41 +2,22 @@ version: '2'
 
 services:
 
-  web:
+  gaterdata-admin:
     image: nginx:latest
-    links:
-      - php
-    ports:
-      - "8080:80"
-    volumes:
-      - ./.docker/nginx/admin.conf:/etc/nginx/conf.d/000_default.conf
-    volumes_from:
-      - php
-
-  php:
-    build: .docker/nginx
+    container_name: gaterdata-admin
     environment:
-      - TYPO3_CONTEXT=Development/Docker
-    # links:
-    #   - db
-      # - redis
+      VIRTUAL_HOST: ${DOMAIN_ADMIN}
+      VIRTUAL_PORT: 80
     volumes:
       - .:/app
+      - .docker/vhost.d/admin.gaterdata.conf:/etc/nginx/vhost.d/${DOMAIN_ADMIN}:ro
+    links:
+      - php
+      
+  php:
+    image: php:7-fpm
 
-  # composer:
-  #   image: composer:latest
-  #   volumes:
-  #     - .:/app
-  #   working_dir: /app
-  #   command: install
-  #   depends_on: [php]
-
-  # db:
-  #   image: mariadb:latest
-  #   environment:
-  #     - MYSQL_ROOT_PASSWORD=secret
-  #   volumes:
-  #     - ./mysql:/var/lib/mysql
-
-  # redis:
-  #   image: redis:latest
+networks:
+  default:
+    external:
+      name: nginx-proxy
