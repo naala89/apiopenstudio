@@ -15,17 +15,17 @@ fi
 if [ ! "$(docker ps | grep nginx-proxy)" ]; then
     if [ "$(docker ps -aq -f name=nginx-proxy)" ]; then
         # cleanup
-        echo "Cleaning Nginx Proxy ..."
+        echo "Cleaning Nginx Proxy container ..."
         docker rm nginx-proxy
     fi
     # run your container in our global network shared by different projects
-    echo "Running Nginx Proxy in global nginx-proxy network ..."
+    echo "Running Nginx Proxy container in global nginx-proxy network ..."
     docker run -d \
       --name nginx-proxy \
       -p 80:80 \
       --network=nginx-proxy \
-      -v /var/run/docker.sock:/tmp/docker.sock:ro \
+      # -v /var/run/docker.sock:/tmp/docker.sock:ro \
       jwilder/nginx-proxy
 else
-  echo "Nginx Proxy already running."
+  echo "Nginx Proxy container already running."
 fi

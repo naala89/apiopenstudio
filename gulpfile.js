@@ -24,9 +24,9 @@ const vendor_src = 'src/vendor/';
 const js_src = 'src/js/**/*.js';
 const scss_src = 'src/scss/**/*.scss';
 const img_src = 'src/images/*';
-const js_dest = 'html/admin/js/';
-const css_dest = 'html/admin/css/';
-const img_dest = 'html/admin/images/';
+const js_dest = 'public/admin/js/';
+const css_dest = 'public/admin/css/';
+const img_dest = 'public/admin/images/';
 
 // Clean js destination dir.
 gulp.task('clean.js', function() {

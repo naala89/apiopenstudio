@@ -2,11 +2,19 @@
 .idea
 .DS_Store
 
+#docker
+.env
+
+#composer
 /vendor
 composer.lock
-tests/_output/*
-tmp/*
-config/settings.php
+
+#node
 node_modules
 package-lock.json
 npm-debug.log
+
+#gaterdata
+tests/_output/*
+tmp/*
+config/settings.php
