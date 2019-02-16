@@ -100,11 +100,6 @@ github
 
 create an open repo with ticketing
 
-gulp
-----
-
-create a gulp script to compile sass out of the html dir
-
 questions
 ---------
 
