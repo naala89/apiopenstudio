@@ -21,6 +21,13 @@ prune:
 
 logs:
 	@docker-compose logs -f $(filter-out $@,$(MAKECMDGOALS))
+
+admin-shell:
+	docker exec -ti -e COLUMNS=$(shell tput cols) -e LINES=$(shell tput lines) $(shell docker ps --filter name='gaterdata-admin' --format "{{ .ID }}") sh
+
+api-shell:
+	docker exec -ti -e COLUMNS=$(shell tput cols) -e LINES=$(shell tput lines) $(shell docker ps --filter name='gaterdata-api' --format "{{ .ID }}") sh
+
 #############################
 # Argument fix workaround
 #############################

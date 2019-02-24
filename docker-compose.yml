@@ -2,17 +2,48 @@ version: '2'
 
 services:
 
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
   gaterdata-admin:
     image: nginx:latest
     container_name: gaterdata-admin
-    environment:
-      - VIRTUAL_HOST=admin.gaterdata.local
-      - VIRTUAL_PORT=80
     volumes:
-      - .:/var/www/html
-      - .docker/vhost.d/admin.gaterdata.conf:/etc/nginx/vhost.d/admin.gaterdata.local:ro
-    links:
-      - php
+      - .:/usr/share/nginx/html:ro
+    environment:
+  #     - VIRTUAL_HOST=admin.gaterdata.local
+  #   links:
+  #     - php
+      
+  # php:
+  #   image: php:7-fpm
+  #   container_name: gaterdata-php
+  #   volumes:
+  #     - .:/usr/share/nginx/html
+
+  # gaterdata-admin:
+  #   image: nginx:latest
+  #   container_name: gaterdata-admin
+  #   environment:
+  #     - VIRTUAL_HOST=${GATERDATA_ADMIN}
+  #     - VIRTUAL_PORT=80
+  #   restart: always
+  #   working_dir: /var/www/html
+  #   networks:
+  #     - nginx-proxy
+  #   expose:
+  #     - "80"
+  #   volumes:
+  #     - .:/var/www/html
+  #     - .docker/vhost.d/admin.gaterdata.conf:/etc/nginx/vhost.d/${GATERDATA_ADMIN}:ro
+    # links:
+    #   - php
 
   # gaterdata-api:
   #   image: nginx:latest
@@ -25,14 +56,8 @@ services:
   #     - .docker/vhost.d/api.gaterdata.conf:/etc/nginx/vhost.d/${GATERDATA_API}:ro
   #   links:
   #     - php
-      
-  php:
-    image: php:7-fpm
-    container_name: gaterdata-php
-    volumes:
-      - .:/var/www/html
 
-# networks:
-#   default:
-#     external:
-#       name: nginx-proxy
+networks:
+  default:
+    external:
+      name: nginx-proxy

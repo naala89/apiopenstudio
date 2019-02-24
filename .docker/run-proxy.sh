@@ -19,13 +19,13 @@ if [ ! "$(docker ps | grep nginx-proxy)" ]; then
         docker rm nginx-proxy
     fi
     # run your container in our global network shared by different projects
-    echo "Running Nginx Proxy container in global nginx-proxy network ..."
+    echo "Running nginx-proxy container in global nginx-proxy network ..."
     docker run -d \
       --name nginx-proxy \
       -p 80:80 \
       --network=nginx-proxy \
-      # -v /var/run/docker.sock:/tmp/docker.sock:ro \
+      -v /var/run/docker.sock:/tmp/docker.sock:ro \
       jwilder/nginx-proxy
 else
-  echo "Nginx Proxy container already running."
+  echo "nginx-proxy container exists."
 fi
