@@ -2,24 +2,32 @@ version: '2'
 
 services:
 
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    container_name: nginx-proxy
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
+  # nginx-proxy:
+  #   image: jwilder/nginx-proxy
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   volumes:
+  #     - /var/run/docker.sock:/tmp/docker.sock:ro
 
-  gaterdata-admin:
-    image: nginx:latest
-    container_name: gaterdata-admin
+  admin:
+    image: richarvey/nginx-php-fpm
     volumes:
-      - .:/usr/share/nginx/html:ro
+      - ./:/usr/share/nginx/html
+      - ./.docker/vhost.d/admin.gaterdata.conf:/etc/nginx/vhost.d/admin.gaterdata.local
     environment:
-  #     - VIRTUAL_HOST=admin.gaterdata.local
-  #   links:
-  #     - php
+      - VIRTUAL_ROOT=/usr/share/nginx/html
+      - VIRTUAL_HOST=admin.gaterdata.local
+      - WEBROOT=/usr/share/nginx/html
+    # links:
+    #   - php
+
+  # php:
+  #   image: php:7-fpm
+  #   environment:
+  #     - VIRTUAL_ROOT=/usr/share/nginx/html
+  #   volumes:
+  #     - ./:/usr/share/nginx/html
       
   # php:
   #   image: php:7-fpm
