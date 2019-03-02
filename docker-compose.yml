@@ -3,21 +3,48 @@ version: '3.4'
 services:
   
   proxy:
-    container_name: nginx-proxy
+    container_name: gaterdata-proxy
     image: jwilder/nginx-proxy
     ports:
       - '80:80'
     volumes: 
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
-  gaterdata:
-    container_name: gaterdata
+  admin:
+    container_name: gaterdata-admin
     image: richarvey/nginx-php-fpm
     environment:
-      - VIRTUAL_ROOT=/usr/share/nginx/html
-      - VIRTUAL_HOST=${GATERDATA_ADMIN},${GATERDATA_API}
-      - WEBROOT=/usr/share/nginx/html
+      - VIRTUAL_ROOT=/usr/share/nginx/html/public/admin
+      - VIRTUAL_HOST=${GATERDATA_ADMIN}
+      - WEBROOT=/usr/share/nginx/html/public/admin
     volumes: 
       - .:/usr/share/nginx/html
       - ./.docker/admin.gaterdata.conf:/etc/nginx/vhost.d/${GATERDATA_ADMIN}
+    links:
+      - db
+
+  api:
+    container_name: gaterdata-api
+    image: richarvey/nginx-php-fpm
+    environment:
+      - VIRTUAL_ROOT=/usr/share/nginx/html/public
+      - VIRTUAL_HOST=${GATERDATA_API}
+      - WEBROOT=/usr/share/nginx/html/public
+    volumes: 
+      - .:/usr/share/nginx/html
       - ./.docker/api.gaterdata.conf:/etc/nginx/vhost.d/${GATERDATA_API}
+    links:
+      - db
+
+  db:
+    container_name: gaterdata-db
+    image: mysql
+    ports:
+      - 3306:3306
+    volumes:
+     - /var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
