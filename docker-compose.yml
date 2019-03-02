@@ -1,71 +1,31 @@
-version: '2'
+version: '3.4'
 
 services:
-
-  # nginx-proxy:
-  #   image: jwilder/nginx-proxy
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #   volumes:
-  #     - /var/run/docker.sock:/tmp/docker.sock:ro
+  
+  proxy:
+    container_name: gaterdata-proxy
+    image: jwilder/nginx-proxy
+    ports:
+      - '80:80'
+    volumes: 
+      - /var/run/docker.sock:/tmp/docker.sock:ro
 
   admin:
-    image: richarvey/nginx-php-fpm
-    volumes:
-      - ./:/usr/share/nginx/html
-      - ./.docker/vhost.d/admin.gaterdata.conf:/etc/nginx/vhost.d/admin.gaterdata.local
+    container_name: gaterdata-admin
+    build:
+      context: .
+      target: gaterdata-admin
     environment:
       - VIRTUAL_ROOT=/usr/share/nginx/html
       - VIRTUAL_HOST=admin.gaterdata.local
       - WEBROOT=/usr/share/nginx/html
-    # links:
-    #   - php
 
-  # php:
-  #   image: php:7-fpm
-  #   environment:
-  #     - VIRTUAL_ROOT=/usr/share/nginx/html
-  #   volumes:
-  #     - ./:/usr/share/nginx/html
-      
-  # php:
-  #   image: php:7-fpm
-  #   container_name: gaterdata-php
-  #   volumes:
-  #     - .:/usr/share/nginx/html
-
-  # gaterdata-admin:
-  #   image: nginx:latest
-  #   container_name: gaterdata-admin
-  #   environment:
-  #     - VIRTUAL_HOST=${GATERDATA_ADMIN}
-  #     - VIRTUAL_PORT=80
-  #   restart: always
-  #   working_dir: /var/www/html
-  #   networks:
-  #     - nginx-proxy
-  #   expose:
-  #     - "80"
-  #   volumes:
-  #     - .:/var/www/html
-  #     - .docker/vhost.d/admin.gaterdata.conf:/etc/nginx/vhost.d/${GATERDATA_ADMIN}:ro
-    # links:
-    #   - php
-
-  # gaterdata-api:
-  #   image: nginx:latest
-  #   container_name: gaterdata-api
-  #   environment:
-  #     VIRTUAL_HOST: ${GATERDATA_API}
-  #     VIRTUAL_PORT: 80
-  #   volumes:
-  #     - .:/var/www/html
-  #     - .docker/vhost.d/api.gaterdata.conf:/etc/nginx/vhost.d/${GATERDATA_API}:ro
-  #   links:
-  #     - php
-
-networks:
-  default:
-    external:
-      name: nginx-proxy
+  api:
+    container_name: gaterdata-api
+    build:
+      context: .
+      target: gaterdata-api
+    environment:
+      - VIRTUAL_ROOT=/usr/share/nginx/html
+      - VIRTUAL_HOST=api.gaterdata.local
+      - WEBROOT=/usr/share/nginx/html
