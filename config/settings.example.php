@@ -9,7 +9,7 @@ ini_set('display_errors', FALSE);
 $settings['root'] = dirname(__DIR__);
 $settings['gaterdata'] = $settings['root'] . '/includes';
 $settings['temp'] = $settings['root'] . '/tmp';
-$settings['public'] = $settings['root'] . '/html';
+$settings['public'] = $settings['root'] . '/public';
 $settings['log']['path'] = '/var/log/nginx/admin.gaterdata.error.log';
 
 /**
