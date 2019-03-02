@@ -3,29 +3,21 @@ version: '3.4'
 services:
   
   proxy:
-    container_name: gaterdata-proxy
+    container_name: nginx-proxy
     image: jwilder/nginx-proxy
     ports:
       - '80:80'
     volumes: 
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
-  admin:
-    container_name: gaterdata-admin
-    build:
-      context: .
-      target: gaterdata-admin
+  gaterdata:
+    container_name: gaterdata
+    image: richarvey/nginx-php-fpm
     environment:
       - VIRTUAL_ROOT=/usr/share/nginx/html
-      - VIRTUAL_HOST=admin.gaterdata.local
+      - VIRTUAL_HOST=${GATERDATA_ADMIN},${GATERDATA_API}
       - WEBROOT=/usr/share/nginx/html
-
-  api:
-    container_name: gaterdata-api
-    build:
-      context: .
-      target: gaterdata-api
-    environment:
-      - VIRTUAL_ROOT=/usr/share/nginx/html
-      - VIRTUAL_HOST=api.gaterdata.local
-      - WEBROOT=/usr/share/nginx/html
+    volumes: 
+      - .:/usr/share/nginx/html
+      - ./.docker/admin.gaterdata.conf:/etc/nginx/vhost.d/${GATERDATA_ADMIN}
+      - ./.docker/api.gaterdata.conf:/etc/nginx/vhost.d/${GATERDATA_API}
