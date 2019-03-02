@@ -1,4 +1,1 @@
 .git/
-vendor/
-node_modules/
-Dockerfile
