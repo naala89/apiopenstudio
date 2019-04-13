@@ -4,6 +4,8 @@
 
 #docker
 .env
+\#innodb_temp/
+mysql/
 
 #composer
 /vendor
