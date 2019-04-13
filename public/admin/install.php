@@ -56,8 +56,8 @@ switch ($step) {
     }
     $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
     $dsn = $settings['db']['driver'] . '://'
-      . $settings['db']['username'] . ':'
-      . $settings['db']['password'] . '@'
+      . 'root:'
+      . $settings['db']['root_password'] . '@'
       . $settings['db']['host'] . '/'
       . $settings['db']['database'] . $dsnOptions;
     $db = ADONewConnection($dsn);
