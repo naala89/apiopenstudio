@@ -1,11 +1,12 @@
+#general
 .sass-cache
 .idea
 .DS_Store
 
-#docker
-.env
-\#innodb_temp/
-mysql/
+#gaterdata
+tests/_output/*
+tmp/*
+config/settings.php
 
 #composer
 /vendor
@@ -16,7 +17,7 @@ node_modules
 package-lock.json
 npm-debug.log
 
-#gaterdata
-tests/_output/*
-tmp/*
-config/settings.php
+#docker
+.env
+\#innodb_temp/
+dbdata/
