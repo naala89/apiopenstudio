@@ -22,6 +22,7 @@ services:
       - "9000:9000"
     environment:
       - MYSQL_HOST=db
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
@@ -34,13 +35,17 @@ services:
     image: mariadb
     ports:
       - "3306:3306"
+    restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_RANDOM_ROOT_PASSWORD=true
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     networks:
       - api_network
     container_name: "${APP_NAME}-db"
+    volumes:
+      - ./dbdata:/var/lib/mysql
 
 networks:
   api_network:

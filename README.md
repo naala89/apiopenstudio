@@ -358,3 +358,6 @@ https://medium.com/the-code-review/top-10-docker-commands-you-cant-live-without-
     delete all stopped containers with docker rm $(docker ps -a -q)
     delete all images with docker rmi $(docker images -q)
     List Containers docker ps
+
+https://codar.club/blogs/docker-compose-builds-nginx-php-mysql.
+https://www.linuxnix.com/what-is-data-persistence-and-how-can-we-use-it-via-docker/
