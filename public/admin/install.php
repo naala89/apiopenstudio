@@ -12,8 +12,8 @@ $settings = require dirname(dirname(__DIR__)) . '/config/settings.php';
 Cascade::fileConfig($settings['log']['settings']);
 
 // Get the user's origin and next step.
-$from = isset($_POST['from_step']) ? $_POST['from_step'] : 0;
-$step = isset($_POST['next_step']) ? $_POST['next_step'] : 0;
+$from = isset($_POST['from_step']) ? intval($_POST['from_step']) : 0;
+$step = isset($_POST['next_step']) ? intval($_POST['next_step']) : 0;
 
 // User will start not logged in.
 $menu = ['Login' => '/'];
@@ -67,6 +67,7 @@ switch ($step) {
         'text' => 'DB connection failed, please check your config settings.'
       ];
       $template = $twig->load("install/install_$from.twig");
+      // die("install/install_$from.twig");
       echo $template->render(['message' => $message, 'menu' => $menu]);
       exit;
     }
