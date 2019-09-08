@@ -9,24 +9,28 @@ services:
     depends_on:
       - php
     volumes:
-      - "./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf"
+      - "./docker/nginx/admin.conf:/etc/nginx/conf.d/default.conf"
       - ".:/usr/share/nginx/html"
     networks:
       - api_network
-    container_name: "${APP_NAME}-nginx"
+    container_name: "${APP_NAME}-admin"
     
   php:
     build: ./docker/php
     image: php:fpm
     ports:
       - "9000:9000"
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
       - ".:/var/www/html"
     networks:
       - api_network
     container_name: "${APP_NAME}-php"
 
-  mysql:
+  db:
     image: mariadb
     ports:
       - "3306:3306"
@@ -36,7 +40,7 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     networks:
       - api_network
-    container_name: "${APP_NAME}-mysql"
+    container_name: "${APP_NAME}-db"
 
 networks:
   api_network:

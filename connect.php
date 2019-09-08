@@ -2,9 +2,10 @@
 
 $host = getenv('MYSQL_HOST');
 $user = getenv('MYSQL_USER');
-$pass = getenv('MYSQL_ROOT_PASSWORD');
+$pass = getenv('MYSQL_PASSWORD');
+// die($host);
  
-$conn = mysqli_connect('compose-mysql', 'root', 'gaterdata');
+$conn = mysqli_connect($host, $user, $pass);
 if (!$conn) {
     exit('Connection failed: '.mysqli_connect_error().PHP_EOL);
 }
