@@ -296,7 +296,7 @@ Install the node dependencies.
     
 Edit and Compile.
 
-    gulp watch
+    gulp {watch,js,css,img}
 
 The gulpfile.js includes compilation of sass and minification of js and css
 files.
