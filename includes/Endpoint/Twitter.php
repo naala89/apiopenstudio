@@ -4,10 +4,10 @@
  * Get data form the Facebook API.
  */
 
-namespace Datagator\Endpoint;
-use Datagator\Db\ExternalUserMapper;
-use Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Endpoint;
+use Gaterdata\Db\ExternalUserMapper;
+use Gaterdata\Processor;
+use Gaterdata\Core;
 
 class Twitter extends Core\ProcessorEntity
 {
@@ -82,8 +82,8 @@ class Twitter extends Core\ProcessorEntity
    * Retrieve data from an endpoint URL.
    *
    * @return mixed
-   * @throws \Datagator\Core\ApiException
-   * @throws \Datagator\Processor\ApiException
+   * @throws \Gaterdata\Core\ApiException
+   * @throws \Gaterdata\Processor\ApiException
    */
   public function process()
   {
@@ -133,7 +133,7 @@ class Twitter extends Core\ProcessorEntity
    * @param $appId
    * @param $twitterId
    * @return mixed
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   private function _getToken($key, $secret, $appId, $twitterId)
   {

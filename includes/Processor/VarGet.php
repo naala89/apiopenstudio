@@ -4,8 +4,8 @@
  * Get variable.
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
 
 class VarGet extends Core\ProcessorEntity
 {

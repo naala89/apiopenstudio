@@ -4,8 +4,8 @@
  * Provide Digest username/ Password authentication
  */
 
-namespace Datagator\Endpoint;
-use Datagator\Core;
+namespace Gaterdata\Endpoint;
+use Gaterdata\Core;
 
 class AuthDigest extends Core\ProcessorEntity
 {

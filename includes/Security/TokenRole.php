@@ -4,9 +4,9 @@
  * Provide token authentication based on token in DB and the user's role
  */
 
-namespace Datagator\Security;
-use Datagator\Core;
-use Datagator\Db;
+namespace Gaterdata\Security;
+use Gaterdata\Core;
+use Gaterdata\Db;
 
 class TokenRole extends Token
 {
@@ -40,8 +40,8 @@ class TokenRole extends Token
 
   /**
    * @return bool
-   * @throws \Datagator\Core\ApiException
-   * @throws \Datagator\Security\ApiException
+   * @throws \Gaterdata\Core\ApiException
+   * @throws \Gaterdata\Security\ApiException
    */
   public function process() {
     Core\Debug::variable($this->meta, 'Validator TokenRole', 4);

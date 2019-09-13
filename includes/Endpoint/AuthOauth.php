@@ -4,8 +4,8 @@
  * Provide OAuth header authentication
  */
 
-namespace Datagator\Endpoint;
-use Datagator\Core;
+namespace Gaterdata\Endpoint;
+use Gaterdata\Core;
 
 class AuthOAuth extends Core\ProcessorEntity
 {

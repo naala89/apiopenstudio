@@ -1,9 +1,9 @@
 <?php
 
-namespace Datagator\Output;
-use Datagator\Core;
-use Datagator\Processor;
-use Datagator\Config;
+namespace Gaterdata\Output;
+use Gaterdata\Core;
+use Gaterdata\Processor;
+use Gaterdata\Config;
 
 abstract class Output extends Core\ProcessorEntity
 {
@@ -26,7 +26,7 @@ abstract class Output extends Core\ProcessorEntity
 
   /**
    * @return mixed
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function process()
   {
@@ -96,7 +96,7 @@ abstract class Output extends Core\ProcessorEntity
 
   /**
    * @return \SimpleXMLElement|string
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   protected function getData() {
 

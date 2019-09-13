@@ -4,9 +4,9 @@
  * Base class for processors to import, export and delete resources.
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
-use Datagator\Db;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
+use Gaterdata\Db;
 
 abstract class ResourceBase extends Core\ProcessorEntity
 {
@@ -65,8 +65,8 @@ abstract class ResourceBase extends Core\ProcessorEntity
 
   /**
    * @return bool|string
-   * @throws \Datagator\Core\ApiException
-   * @throws \Datagator\Processor\ApiException
+   * @throws \Gaterdata\Core\ApiException
+   * @throws \Gaterdata\Processor\ApiException
    */
   public function process()
   {
@@ -144,7 +144,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
    * @param $method
    * @param $uri
    * @return mixed
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   protected function read($appId, $method, $uri)
   {
@@ -182,7 +182,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
    * @param $method
    * @param $uri
    * @return bool
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   protected function delete($appId, $method, $uri)
   {
@@ -208,7 +208,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
    *
    * @param $data
    * @return bool
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   protected function create($data)
   {
@@ -258,7 +258,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
    * Validate input data is well formed.
    *
    * @param $data
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   protected function _validateData($data)
   {
@@ -325,7 +325,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
   /**
    * Search for identical IDs.
    * @param $meta
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   private function _identicalIds($meta)
   {
@@ -353,7 +353,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
    * Validate a resource section
    *
    * @param $meta
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   private function _validateDetails($meta)
   {
@@ -442,7 +442,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
    * @param $element
    * @param $accepts
    * @return bool
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   private function _validateTypeValue($element, $accepts)
   {

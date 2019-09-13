@@ -4,8 +4,8 @@
  * Fetch  bearer token from the Header
  */
 
-namespace Datagator\Security;
-use Datagator\Core;
+namespace Gaterdata\Security;
+use Gaterdata\Core;
 
 class BearerToken extends Core\ProcessorEntity
 {

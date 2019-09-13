@@ -1,6 +1,6 @@
 <?php
 
-namespace Datagator;
+namespace Gaterdata;
 
 /**
  * Config for the entire API app.
@@ -54,10 +54,10 @@ class Config
   static private $_server = array(
     'production' => 'production',
     'api.naala.com.au' => 'staging',
-    'datagator.naala.com.au' => 'staging',
+    'gaterdata.naala.com.au' => 'staging',
     'localhost' => 'development',
     '127.0.0.1' => 'development',
-    'datagator.local' => 'development',
+    'gaterdaata.local' => 'development',
     'johns-MBP' => 'development',
     'johns-MBP-2' => 'staging'
   );
@@ -184,11 +184,11 @@ class Config
 
     self::$dbdriver = 'mysqli';
     self::$dbhost = '192.168.254.101';
-    self::$dbname = 'datagator';
-    self::$dbuser = 'datagator';
-    self::$dbpass = 'datagator';
+    self::$dbname = 'gaterdata';
+    self::$dbuser = 'gaterdata';
+    self::$dbpass = 'gaterdata';
     self::$dboptions = array();
-    self::$domainName = 'http://datagator.local';
+    self::$domainName = 'http://gaterdata.local';
 
     self::$emailService = 'mail'; //'qmail', 'sendmail', 'smtp', 'mail'
     self::$emailHost = '';
@@ -198,7 +198,7 @@ class Config
     self::$emailSecure = 'tls'; // tls or ssh
     self::$emailPort = 587;
 
-    self::$errorLog = '/var/log/apache2/datagator-error.log';
+    self::$errorLog = '/var/log/apache2/gaterdata-error.log';
     self::$convert = '/usr/local/bin/convert';
     self::$ffmpeg = '/usr/local/bin/ffmpeg';
 
@@ -238,7 +238,7 @@ class Config
     self::$emailSecure = 'tls'; // tls or ssh
     self::$emailPort = 587;
 
-    self::$errorLog = '/home/datagator/datagator.error.log';
+    self::$errorLog = '/home/gaterdata/gaterdata.error.log';
     date_default_timezone_set('Australia/Sydney');
     ini_set('display_errors', '1');
     ini_set('log_errors','1');
@@ -260,7 +260,7 @@ class Config
 
     self::$dbdriver = 'mysqli';
     self::$dbhost = 'localhost';
-    self::$dbname = 'datagator';
+    self::$dbname = 'gaterdata';
     self::$dbuser = '';
     self::$dbpass = '';
     self::$dboptions = array('persist' => 0);
@@ -274,7 +274,7 @@ class Config
     self::$emailSecure = 'tls'; // tls or ssh
     self::$emailPort = 587;
 
-    self::$errorLog = '/var/log/apache2/datagator.error.log';
+    self::$errorLog = '/var/log/apache2/gaterdata.error.log';
     ini_set('display_errors', '0');
     ini_set('log_errors','1');
   }
@@ -289,7 +289,7 @@ class Config
     }
     $request = $_REQUEST;
     foreach ($request as $k => $v) {
-      if (property_exists("\\Datagator\\Config", $k)) {
+      if (property_exists("\\gaterdata\\Config", $k)) {
         self::$$k = urldecode($v);
       }
     }

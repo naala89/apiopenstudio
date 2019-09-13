@@ -4,8 +4,8 @@
  * Import, export and delete resources in YAML format.
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
 
 class ResourceYaml extends ResourceBase
 {
@@ -29,7 +29,7 @@ class ResourceYaml extends ResourceBase
    *
    * @param $file
    * @return array
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   protected function _importData($file)
   {

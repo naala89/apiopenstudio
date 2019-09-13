@@ -4,9 +4,9 @@
  * Import resources in Swagger YAML format.
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
-use Datagator\Db\ResourceMapper;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
+use Gaterdata\Db\ResourceMapper;
 
 class ResourceSwagger extends ResourceBase
 {
@@ -102,7 +102,7 @@ class ResourceSwagger extends ResourceBase
    *
    * @param null $data
    * @return bool
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   protected function save($data)
   {
@@ -133,7 +133,7 @@ class ResourceSwagger extends ResourceBase
 
   /**
    * @return array|string
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   protected function _importData($data)
   {
@@ -148,7 +148,7 @@ class ResourceSwagger extends ResourceBase
   /**
    * @param $uriParams
    * @return array
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   protected function _extractUriParams($uriParams)
   {
@@ -171,7 +171,7 @@ class ResourceSwagger extends ResourceBase
    * @param $parameters
    * @param $method
    * @return array
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   protected function _extractParameters($parameters, $method)
   {

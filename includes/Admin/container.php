@@ -55,7 +55,7 @@ $container['view'] = function (Container $container) {
  * @param \Slim\Container $container
  *   Slim container.
  *
- * @return Datagator\Admin\Controllers\CtrlHome
+ * @return Gaterdata\Admin\Controllers\CtrlHome
  *   CtrlHome object.
  */
 $container['CtrlHome'] = function (Container $container) {
@@ -71,7 +71,7 @@ $container['CtrlHome'] = function (Container $container) {
  * @param \Slim\Container $container
  *   Slim container.
  *
- * @return Datagator\Admin\Controllers\CtrlLogin
+ * @return Gaterdata\Admin\Controllers\CtrlLogin
  *   CtrlLogin object.
  */
 $container['CtrlLogin'] = function (Container $container) {
@@ -87,7 +87,7 @@ $container['CtrlLogin'] = function (Container $container) {
  * @param \Slim\Container $container
  *   Slim container.
  *
- * @return Datagator\Admin\Controllers\CtrlAccount
+ * @return Gaterdata\Admin\Controllers\CtrlAccount
  *   CtrlApplication object.
  */
 $container['CtrlAccount'] = function (Container $container) {
@@ -104,7 +104,7 @@ $container['CtrlAccount'] = function (Container $container) {
  * @param \Slim\Container $container
  *   Slim container.
  *
- * @return Datagator\Admin\Controllers\CtrlApplication
+ * @return Gaterdata\Admin\Controllers\CtrlApplication
  *   CtrlApplication object.
  */
 $container['CtrlApplication'] = function (Container $container) {
@@ -121,7 +121,7 @@ $container['CtrlApplication'] = function (Container $container) {
  * @param \Slim\Container $container
  *   Slim container.
  *
- * @return Datagator\Admin\Controllers\CtrlUser
+ * @return Gaterdata\Admin\Controllers\CtrlUser
  *   CtrlUser object.
  */
 $container['CtrlUser'] = function (Container $container) {

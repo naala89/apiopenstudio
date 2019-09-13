@@ -1,11 +1,11 @@
 <?php
 
-namespace Datagator\Db;
+namespace Gaterdata\Db;
 
 /**
  * Class Application.
  *
- * @package Datagator\Db
+ * @package Gaterdata\Db
  */
 class Application {
 

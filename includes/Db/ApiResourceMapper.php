@@ -1,14 +1,14 @@
 <?php
 
-namespace Datagator\Db;
+namespace Gaterdata\Db;
 
-use Datagator\Core\ApiException;
+use Gaterdata\Core\ApiException;
 use ADOConnection;
 
 /**
  * Class ApiResourceMapper.
  *
- * @package Datagator\Db
+ * @package Gaterdata\Db
  */
 class ApiResourceMapper {
 
@@ -25,13 +25,13 @@ class ApiResourceMapper {
   /**
    * Save an API Resource.
    *
-   * @param \Datagator\Db\ApiResource $resource
+   * @param \Gaterdata\Db\ApiResource $resource
    *   The API Resource.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function save(ApiResource $resource) {
     if ($resource->getId() == NULL) {
@@ -65,7 +65,7 @@ class ApiResourceMapper {
   /**
    * Delete an API resource.
    *
-   * @param \Datagator\Db\ApiResource $resource
+   * @param \Gaterdata\Db\ApiResource $resource
    *   API resoure object.
    *
    * @return bool
@@ -85,7 +85,7 @@ class ApiResourceMapper {
    * @param int $resid
    *   API resource ID.
    *
-   * @return \Datagator\Db\ApiResource
+   * @return \Gaterdata\Db\ApiResource
    *   ApiResource object.
    *
    * @throws ApiException
@@ -106,7 +106,7 @@ class ApiResourceMapper {
    * @param string $identifier
    *   API resource identifier.
    *
-   * @return \Datagator\Db\ApiResource
+   * @return \Gaterdata\Db\ApiResource
    *   ApiResource object.
    *
    * @throws ApiException
@@ -190,7 +190,7 @@ class ApiResourceMapper {
    * @param array $row
    *   DB row object.
    *
-   * @return \Datagator\Db\ApiResource
+   * @return \Gaterdata\Db\ApiResource
    *   ApiResource object.
    */
   protected function mapArray(array $row) {

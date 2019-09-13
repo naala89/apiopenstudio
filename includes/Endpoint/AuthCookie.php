@@ -4,8 +4,8 @@
  * Provide cookie authentication
  */
 
-namespace Datagator\Endpoint;
-use Datagator\Core;
+namespace Gaterdata\Endpoint;
+use Gaterdata\Core;
 
 class AuthCookie extends Core\ProcessorEntity
 {

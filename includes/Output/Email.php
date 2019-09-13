@@ -1,9 +1,9 @@
 <?php
 
-namespace Datagator\Output;
+namespace Gaterdata\Output;
 
-use Datagator\Config;
-use Datagator\Core;
+use Gaterdata\Config;
+use Gaterdata\Core;
 
 class Email extends Output
 {
@@ -63,7 +63,7 @@ class Email extends Output
    * and then send it in emails.
    *
    * @return bool
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    * @throws \Exception
    * @throws \phpmailerException
    */
@@ -75,7 +75,7 @@ class Email extends Output
     $from = !empty($this->meta->from) ? $this->val('from', true) : $this->defaults['from'];
     $subject = !empty($this->meta->subject) ? $this->val('subject', true) : $this->defaults['subject'];
     $format = $this->val('format', true);
-    $class = '\\Datagator\\Output\\' . $format;
+    $class = '\\Gaterdata\\Output\\' . $format;
     $obj = new $class($this->data, 200, '');
     $data = $obj->getData();
     $altData = $data;

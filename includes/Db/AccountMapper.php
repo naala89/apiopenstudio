@@ -1,15 +1,15 @@
 <?php
 
-namespace Datagator\Db;
+namespace Gaterdata\Db;
 
-use Datagator\Core\ApiException;
+use Gaterdata\Core\ApiException;
 use ADOConnection;
 use phpDocumentor\Reflection\Types\Integer;
 
 /**
  * Class AccountMapper.
  *
- * @package Datagator\Db
+ * @package Gaterdata\Db
  */
 class AccountMapper extends Mapper {
 
@@ -26,13 +26,13 @@ class AccountMapper extends Mapper {
   /**
    * Save an Account.
    *
-   * @param \Datagator\Db\Account $account
+   * @param \Gaterdata\Db\Account $account
    *   Account object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function save(Account $account) {
     if ($account->getAccid() == NULL) {
@@ -52,13 +52,13 @@ class AccountMapper extends Mapper {
   /**
    * Delete an account.
    *
-   * @param \Datagator\Db\Account $account
+   * @param \Gaterdata\Db\Account $account
    *   Account object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function delete(Account $account) {
 
@@ -103,7 +103,7 @@ class AccountMapper extends Mapper {
    * @param int $accid
    *   Account Id.
    *
-   * @return \Datagator\Db\Account
+   * @return \Gaterdata\Db\Account
    *   Account object.
    *
    * @throws ApiException
@@ -120,7 +120,7 @@ class AccountMapper extends Mapper {
    * @param string $name
    *   Account name.
    *
-   * @return \Datagator\Db\Account
+   * @return \Gaterdata\Db\Account
    *   Account object.
    *
    * @throws ApiException
@@ -137,7 +137,7 @@ class AccountMapper extends Mapper {
    * @param array $row
    *   DB row object.
    *
-   * @return \Datagator\Db\Account
+   * @return \Gaterdata\Db\Account
    *   Account object.
    */
   protected function mapArray(array $row) {

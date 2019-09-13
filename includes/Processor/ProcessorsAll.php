@@ -4,9 +4,9 @@
  * Fetch a list of all processors
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
-use Datagator\Db\ApplicationMapper;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
+use Gaterdata\Db\ApplicationMapper;
 
 class ProcessorsAll extends Core\ProcessorEntity
 {
@@ -52,7 +52,7 @@ class ProcessorsAll extends Core\ProcessorEntity
     $result = array();
     foreach($objects as $name => $object) {
       preg_match('/([a-zA-Z0-9]+)\.php$/i', $name, $className);
-      $result[] = 'Datagator\\' . ucfirst($namespace) . '\\' . $className[1];
+      $result[] = 'Gaterdata\\' . ucfirst($namespace) . '\\' . $className[1];
     }
     return $result;
   }

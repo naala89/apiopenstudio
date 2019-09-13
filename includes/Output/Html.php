@@ -1,6 +1,6 @@
 <?php
 
-namespace Datagator\Output;
+namespace Gaterdata\Output;
 
 class Html extends Xml
 {

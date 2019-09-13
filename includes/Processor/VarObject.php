@@ -4,8 +4,8 @@
  * Simple object type.
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
 
 class VarObject extends Core\ProcessorEntity
 {

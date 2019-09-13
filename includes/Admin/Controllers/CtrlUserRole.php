@@ -1,19 +1,19 @@
 <?php
 
-namespace Datagator\Admin\Controllers;
+namespace Gaterdata\Admin\Controllers;
 
-use Datagator\Admin\Account;
-use Datagator\Admin\Application;
-use Datagator\Admin\UserAccount;
 use Slim\Views\Twig;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Datagator\Admin\UserRole;
+use Gaterdata\Admin\Account;
+use Gaterdata\Admin\Application;
+use Gaterdata\Admin\UserAccount;
+use Gaterdata\Admin\UserRole;
 
 /**
  * Class CtrlUserRole.
  *
- * @package Datagator\Admin\Controllers
+ * @package Gaterdata\Admin\Controllers
  */
 class CtrlUserRole extends CtrlBase {
 

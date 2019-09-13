@@ -8,7 +8,7 @@ use ADOConnection;
 /**
  * Class AdministratorMapper.
  *
- * @package Datagator\Db
+ * @package Gaterdata\Db
  */
 class AdministratorMapper extends Mapper {
 
@@ -25,13 +25,13 @@ class AdministratorMapper extends Mapper {
   /**
    * Save an administrator.
    *
-   * @param \Datagator\Db\Administrator $administrator
+   * @param \Gaterdata\Db\Administrator $administrator
    *   Administrator object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function save(Administrator $administrator) {
     if ($administrator->getAid() == NULL) {
@@ -51,13 +51,13 @@ class AdministratorMapper extends Mapper {
   /**
    * Delete an administrator.
    *
-   * @param \Datagator\Db\Administrator $administrator
+   * @param \Gaterdata\Db\Administrator $administrator
    *   Administrator object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function delete(Administrator $administrator) {
     $sql = 'DELETE FROM administrator WHERE aid = ?';
@@ -93,7 +93,7 @@ class AdministratorMapper extends Mapper {
    * @param int $aid
    *   Administrator ID.
    *
-   * @return \Datagator\Db\Administrator
+   * @return \Gaterdata\Db\Administrator
    *   Sysadmin object.
    *
    * @throws ApiException
@@ -110,7 +110,7 @@ class AdministratorMapper extends Mapper {
    * @param int $uid
    *   User ID.
    *
-   * @return \Datagator\Db\Administrator
+   * @return \Gaterdata\Db\Administrator
    *   Sysadmin object.
    *
    * @throws ApiException
@@ -127,7 +127,7 @@ class AdministratorMapper extends Mapper {
    * @param array $row
    *   DB row object.
    *
-   * @return \Datagator\Db\Administrator
+   * @return \Gaterdata\Db\Administrator
    *   Administrator object.
    */
   protected function mapArray(array $row) {

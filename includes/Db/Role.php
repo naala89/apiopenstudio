@@ -1,11 +1,11 @@
 <?php
 
-namespace Datagator\Db;
+namespace Gaterdata\Db;
 
 /**
  * Class Role.
  *
- * @package Datagator\Db
+ * @package Gaterdata\Db
  */
 class Role {
 

@@ -4,8 +4,8 @@
  * Provide Basic username/Password authentication
  */
 
-namespace Datagator\Endpoint;
-use Datagator\Core;
+namespace Gaterdata\Endpoint;
+use Gaterdata\Core;
 
 class AuthBasic extends Core\ProcessorEntity
 {

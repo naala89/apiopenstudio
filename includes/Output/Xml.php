@@ -5,8 +5,8 @@
  * @see http://pastebin.com/pYuXQWee
  */
 
-namespace Datagator\Output;
-use Datagator\Core;
+namespace Gaterdata\Output;
+use Gaterdata\Core;
 
 class Xml extends Output {
   protected $header = 'Content-Type:application/xml';

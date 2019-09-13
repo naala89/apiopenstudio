@@ -4,8 +4,8 @@
  * Import, export and delete resources in JSON format.
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
 
 class ResourceJson extends ResourceBase
 {
@@ -27,7 +27,7 @@ class ResourceJson extends ResourceBase
   /**
    * @param $data
    * @return mixed
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   protected function _importData($data)
   {

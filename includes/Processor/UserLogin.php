@@ -4,10 +4,10 @@
  * Provide token authentication based on token in DB
  */
 
-namespace Datagator\Processor;
-use Datagator\Config;
-use Datagator\Core;
-use Datagator\Db;
+namespace Gaterdata\Processor;
+use Gaterdata\Config;
+use Gaterdata\Core;
+use Gaterdata\Db;
 
 class UserLogin extends Core\ProcessorEntity
 {
@@ -41,8 +41,8 @@ class UserLogin extends Core\ProcessorEntity
 
   /**
    * @return mixed|string
-   * @throws \Datagator\Core\ApiException
-   * @throws \Datagator\Processor\ApiException
+   * @throws \Gaterdata\Core\ApiException
+   * @throws \Gaterdata\Processor\ApiException
    */
   public function process() {
     Core\Debug::variable($this->meta, 'Processor UserLogin', 4);

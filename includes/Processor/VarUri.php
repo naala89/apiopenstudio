@@ -4,8 +4,8 @@
  * URI variable
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
 
 class VarUri extends Core\ProcessorEntity
 {

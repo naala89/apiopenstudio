@@ -4,8 +4,8 @@
  * Perform input from external source
  */
 
-namespace Datagator\Endpoint;
-use Datagator\Core;
+namespace Gaterdata\Endpoint;
+use Gaterdata\Core;
 
 class Url extends Core\ProcessorEntity
 {
@@ -96,8 +96,8 @@ class Url extends Core\ProcessorEntity
    * Retrieve data from an endpoint URL.
    *
    * @return mixed
-   * @throws \Datagator\Core\ApiException
-   * @throws \Datagator\Processor\ApiException
+   * @throws \Gaterdata\Core\ApiException
+   * @throws \Gaterdata\Processor\ApiException
    */
   public function process()
   {

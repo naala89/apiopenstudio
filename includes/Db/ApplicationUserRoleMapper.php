@@ -1,14 +1,14 @@
 <?php
 
-namespace Datagator\Db;
+namespace Gaterdata\Db;
 
-use Datagator\Core\ApiException;
+use Gaterdata\Core\ApiException;
 use ADOConnection;
 
 /**
  * Class ApplicationUserRoleMapper.
  *
- * @package Datagator\Db
+ * @package Gaterdata\Db
  */
 class ApplicationUserRoleMapper extends Mapper {
 
@@ -25,13 +25,13 @@ class ApplicationUserRoleMapper extends Mapper {
   /**
    * Save the application user role.
    *
-   * @param \Datagator\Db\ApplicationUserRole $applicationUserRole
+   * @param \Gaterdata\Db\ApplicationUserRole $applicationUserRole
    *   ApplicationUserRole object.
    *
    * @return bool
    *   Result of the save.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function save(ApplicationUserRole $applicationUserRole) {
     if ($applicationUserRole->getAurid() == NULL) {
@@ -57,13 +57,13 @@ class ApplicationUserRoleMapper extends Mapper {
   /**
    * Delete the application user role.
    *
-   * @param \Datagator\Db\ApplicationUserRole $applicationUserRole
+   * @param \Gaterdata\Db\ApplicationUserRole $applicationUserRole
    *   ApplicationUserRole object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function delete(ApplicationUserRole $applicationUserRole) {
     $sql = 'DELETE FROM application_user_role WHERE aurid = ?';
@@ -90,7 +90,7 @@ class ApplicationUserRoleMapper extends Mapper {
    * @param int $aurid
    *   Application user role ID.
    *
-   * @return \Datagator\Db\ApplicationUserRole
+   * @return \Gaterdata\Db\ApplicationUserRole
    *   Mapped ApplicationUserRole object.
    *
    * @throws ApiException
@@ -177,7 +177,7 @@ class ApplicationUserRoleMapper extends Mapper {
    * @param array $row
    *   DB Row.
    *
-   * @return \Datagator\Db\ApplicationUserRole
+   * @return \Gaterdata\Db\ApplicationUserRole
    *   ApplicationUserRole object.
    */
   protected function mapArray(array $row) {

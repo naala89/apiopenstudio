@@ -4,8 +4,8 @@
  * Request variable
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
 
 class VarRequest extends Core\ProcessorEntity
 {

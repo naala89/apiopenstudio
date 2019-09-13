@@ -1,7 +1,7 @@
 <?php
 
-namespace Datagator\Core;
-use Datagator\Config;
+namespace Gaterdata\Core;
+use Gaterdata\Config;
 
 abstract class ProcessorEntity extends Entity
 {
@@ -120,7 +120,7 @@ abstract class ProcessorEntity extends Entity
    *
    * @param $file
    * @return bool|string
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   protected function getFile($file)
   {
@@ -167,7 +167,7 @@ abstract class ProcessorEntity extends Entity
    * @param $key
    * @param bool|FALSE $realValue
    * @return array
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   protected function val($key, $realValue=false)
   {
@@ -218,7 +218,7 @@ abstract class ProcessorEntity extends Entity
    */
   protected function isDataContainer($data)
   {
-    return is_object($data) && get_class($data) == 'Datagator\Core\DataContainer';
+    return is_object($data) && get_class($data) == 'Gaterdata\Core\DataContainer';
   }
 
   /**
@@ -226,7 +226,7 @@ abstract class ProcessorEntity extends Entity
    *
    * @param $val
    * @param array $limitValues
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   private function _validateAllowedValues($val, array $limitValues)
   {
@@ -243,7 +243,7 @@ abstract class ProcessorEntity extends Entity
    *
    * @param $val
    * @param array $limitTypes
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   private function _validateAllowedTypes($val, array $limitTypes)
   {
@@ -290,7 +290,7 @@ abstract class ProcessorEntity extends Entity
    * Get a DB object.
    *
    * @return \the
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   protected function getDb()
   {

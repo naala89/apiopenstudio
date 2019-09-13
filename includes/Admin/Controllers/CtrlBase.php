@@ -2,10 +2,10 @@
 
 namespace Gaterdata\Admin\Controllers;
 
-use Gaterdata\Admin\User;
-use Gaterdata\Core\ApiException;
 use Slim\Flash\Messages;
 use Slim\Views\Twig;
+use Gaterdata\Admin\User;
+use Gaterdata\Core\ApiException;
 
 /**
  * Class CtrlBase.

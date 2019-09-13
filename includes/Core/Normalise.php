@@ -4,7 +4,7 @@
  *
  */
 
-namespace Datagator\Core;
+namespace Gaterdata\Core;
 
 class Normalise
 {
@@ -27,7 +27,7 @@ class Normalise
    * Call the default normalise function
    * @param null $into
    * @return mixed
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function normalise($into=NULL)
   {

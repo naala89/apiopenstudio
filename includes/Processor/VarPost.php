@@ -4,8 +4,8 @@
  * Post variable
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
 
 class VarPost extends Core\ProcessorEntity
 {

@@ -16,9 +16,9 @@
  * }
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
-use Datagator\Db;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
+use Gaterdata\Db;
 
 class LoginStoreDrupal extends Core\ProcessorEntity
 {
@@ -65,8 +65,8 @@ class LoginStoreDrupal extends Core\ProcessorEntity
 
   /**
    * @return array|mixed
-   * @throws \Datagator\Core\ApiException
-   * @throws \Datagator\Processor\ApiException
+   * @throws \Gaterdata\Core\ApiException
+   * @throws \Gaterdata\Processor\ApiException
    */
   public function process()
   {

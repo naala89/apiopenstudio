@@ -5,9 +5,9 @@
  * This is the only case where the App ID in the URL is now replaced by Acc ID
  */
 
-namespace Datagator\Security;
-use Datagator\Core;
-use Datagator\Db;
+namespace Gaterdata\Security;
+use Gaterdata\Core;
+use Gaterdata\Db;
 
 class TokenOwner extends Core\ProcessorEntity
 {

@@ -4,9 +4,9 @@
  * Provide token authentication based on token.
  */
 
-namespace Datagator\Security;
-use Datagator\Core;
-use Datagator\Db;
+namespace Gaterdata\Security;
+use Gaterdata\Core;
+use Gaterdata\Db;
 
 class Token extends Core\ProcessorEntity
 {
@@ -32,7 +32,7 @@ class Token extends Core\ProcessorEntity
 
   /**
    * @return array
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function process() {
     Core\Debug::variable($this->meta, 'Security Token', 4);

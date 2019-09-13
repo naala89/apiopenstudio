@@ -1,18 +1,18 @@
 <?php
 
-namespace Datagator\Admin;
+namespace Gaterdata\Admin;
 
-use Datagator\Db\AccountMapper;
-use Datagator\Db\Application;
-use Datagator\Db\ApplicationUserRoleMapper;
-use Datagator\Db\RoleMapper;
-use Datagator\Core\ApiException;
-use Datagator\Db\UserAccountRoleMapper;
+use Gaterdata\Db\AccountMapper;
+use Gaterdata\Db\Application;
+use Gaterdata\Db\ApplicationUserRoleMapper;
+use Gaterdata\Db\RoleMapper;
+use Gaterdata\Core\ApiException;
+use Gaterdata\Db\UserAccountRoleMapper;
 
 /**
  * Class ApplicationUserRole.
  *
- * @package Datagator\Admin
+ * @package Gaterdata\Admin
  */
 class ApplicationUserRole {
 
@@ -25,7 +25,7 @@ class ApplicationUserRole {
    */
   private $db;
   /**
-   * @var \Datagator\Db\ApplicationUserRole
+   * @var \Gaterdata\Db\ApplicationUserRole
    */
   private $applicationUserRole;
 
@@ -76,7 +76,7 @@ class ApplicationUserRole {
    *   Application User Role.
    */
   public function setApplicationUserRole(array $applicationUserRole) {
-    $this->applicationUserRole = new \Datagator\Db\ApplicationUserRole(
+    $this->applicationUserRole = new \Gaterdata\Db\ApplicationUserRole(
       $applicationUserRole['aurid'],
       $applicationUserRole['appid'],
       $applicationUserRole['uid'],

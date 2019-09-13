@@ -6,13 +6,13 @@
  * then calls the process() function on that class
  */
 
-namespace Datagator\Core;
-use Datagator\Config;
-use Datagator\Processor;
-use Datagator\Db;
-use Datagator\Security;
-use Datagator\Output;
-use Datagator\Resource;
+namespace Gaterdata\Core;
+use Gaterdata\Config;
+use Gaterdata\Processor;
+use Gaterdata\Db;
+use Gaterdata\Security;
+use Gaterdata\Output;
+use Gaterdata\Resource;
 use Spyc;
 
 Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Config::$debug, Config::$errorLog);
@@ -46,7 +46,7 @@ class Api
    * Process the rest request.
    *
    * @return mixed
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function process()
   {
@@ -111,7 +111,7 @@ class Api
   /**
    * Process the request and request header into a meaningful array object.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   private function _getData()
   {
@@ -159,8 +159,8 @@ class Api
    * @param $appName
    * @param $method
    * @param $uriParts
-   * @return \Datagator\Db\Resource
-   * @throws \Datagator\Core\ApiException
+   * @return \Gaterdata\Db\Resource
+   * @throws \Gaterdata\Core\ApiException
    */
   private function _getResource($appName, $method, & $uriParts)
   {
@@ -327,7 +327,7 @@ class Api
    *
    * @param $data
    * @return bool
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   private function _getOutput($data)
   {
@@ -372,7 +372,7 @@ class Api
    * Utility function to get the REST method from the $_SERVER var.
    *
    * @return string
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   private function _getMethod()
   {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Datagator\Admin;
+namespace Gaterdata\Admin;
 
-use Datagator\Core\ApiException;
-use Datagator\Db;
+use Gaterdata\Core\ApiException;
+use Gaterdata\Db;
 
 class Application {
 

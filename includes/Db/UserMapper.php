@@ -36,13 +36,13 @@ class UserMapper extends Mapper {
   /**
    * Save the user.
    *
-   * @param \Datagator\Db\User $user
+   * @param \Gaterdata\Db\User $user
    *   User object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function save(User $user) {
     if (empty($user->getUid())) {
@@ -100,13 +100,13 @@ class UserMapper extends Mapper {
   /**
    * Delete a user.
    *
-   * @param \Datagator\Db\User $user
+   * @param \Gaterdata\Db\User $user
    *   The user object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function delete(User $user) {
     $sql = 'DELETE FROM user WHERE uid = ?';
@@ -134,7 +134,7 @@ class UserMapper extends Mapper {
    * @param int $uid
    *   User ID.
    *
-   * @return \Datagator\Db\User
+   * @return \Gaterdata\Db\User
    *   User object.
    *
    * @throws ApiException
@@ -151,7 +151,7 @@ class UserMapper extends Mapper {
    * @param string $email
    *   Users email.
    *
-   * @return \Datagator\Db\User
+   * @return \Gaterdata\Db\User
    *   User object.
    *
    * @throws ApiException
@@ -168,7 +168,7 @@ class UserMapper extends Mapper {
    * @param string $username
    *   Users usdername.
    *
-   * @return \Datagator\Db\User
+   * @return \Gaterdata\Db\User
    *   User object.
    *
    * @throws ApiException
@@ -185,7 +185,7 @@ class UserMapper extends Mapper {
    * @param string $token
    *   User auth token.
    *
-   * @return \Datagator\Db\User
+   * @return \Gaterdata\Db\User
    *   User object.
    *
    * @throws ApiException
@@ -202,7 +202,7 @@ class UserMapper extends Mapper {
    * @param array $row
    *   DB row object.
    *
-   * @return \Datagator\Db\User
+   * @return \Gaterdata\Db\User
    *   Mapped User object.
    */
   protected function mapArray(array $row) {
