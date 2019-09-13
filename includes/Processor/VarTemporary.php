@@ -4,9 +4,9 @@
  * variables that are stored in the vars table in the session
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
-use Datagator\Db;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
+use Gaterdata\Db;
 
 class VarTemporary extends Core\ProcessorEntity
 {
@@ -58,7 +58,7 @@ class VarTemporary extends Core\ProcessorEntity
 
   /**
    * @return bool|string
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function process()
   {

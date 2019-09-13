@@ -1,11 +1,11 @@
 <?php
 
-namespace Datagator\Db;
+namespace Gaterdata\Db;
 
 /**
  * Class Vars.
  *
- * @package Datagator\Db
+ * @package Gaterdata\Db
  */
 class Vars {
   protected $id;

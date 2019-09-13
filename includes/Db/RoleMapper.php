@@ -1,14 +1,14 @@
 <?php
 
-namespace Datagator\Db;
+namespace Gaterdata\Db;
 
-use Datagator\Core\ApiException;
+use Gaterdata\Core\ApiException;
 use ADOConnection;
 
 /**
  * Class RoleMapper.
  *
- * @package Datagator\Db
+ * @package Gaterdata\Db
  */
 class RoleMapper extends Mapper {
 
@@ -25,13 +25,13 @@ class RoleMapper extends Mapper {
   /**
    * Save a Role object into the DB.
    *
-   * @param \Datagator\Db\Role $role
+   * @param \Gaterdata\Db\Role $role
    *   Role object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function save(Role $role) {
     if ($role->getRid() == NULL) {
@@ -53,13 +53,13 @@ class RoleMapper extends Mapper {
   /**
    * Delete a Role.
    *
-   * @param \Datagator\Db\Role $role
+   * @param \Gaterdata\Db\Role $role
    *   Role object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function delete(Role $role) {
     $sql = 'DELETE FROM role WHERE rid = ?';
@@ -86,7 +86,7 @@ class RoleMapper extends Mapper {
    * @param int $rid
    *   role ID.
    *
-   * @return \Datagator\Db\Role
+   * @return \Gaterdata\Db\Role
    *   Role object.
    *
    * @throws ApiException
@@ -103,7 +103,7 @@ class RoleMapper extends Mapper {
    * @param string $name
    *   Role name.
    *
-   * @return \Datagator\Db\Role
+   * @return \Gaterdata\Db\Role
    *   Role object.
    *
    * @throws ApiException
@@ -120,7 +120,7 @@ class RoleMapper extends Mapper {
    * @param array $row
    *   DB row.
    *
-   * @return \Datagator\Db\Role
+   * @return \Gaterdata\Db\Role
    *   Role object.
    */
   protected function mapArray(array $row) {

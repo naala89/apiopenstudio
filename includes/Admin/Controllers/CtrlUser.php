@@ -1,30 +1,30 @@
 <?php
 
-namespace Datagator\Admin\Controllers;
+namespace Gaterdata\Admin\Controllers;
 
-use Datagator\Admin\Account;
-use Datagator\Admin\Administrator;
-use Datagator\Admin\ApplicationUserRole;
-use Datagator\Admin\Manager;
-use Datagator\Admin\UserAccount;
-use Datagator\Core\ApiException;
 use Slim\Flash\Messages;
 use Slim\Views\Twig;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use PHPMailer\PHPMailer\PHPMailer;
 use phpmailerException;
-use Datagator\Core\Hash;
-use Datagator\Admin\User;
-use Datagator\Admin\UserRole;
-use Datagator\Admin\Role;
-use Datagator\Admin\Application;
-use Datagator\Admin\Invite;
+use Gaterdata\Admin\Account;
+use Gaterdata\Admin\Administrator;
+use Gaterdata\Admin\ApplicationUserRole;
+use Gaterdata\Admin\Manager;
+use Gaterdata\Admin\UserAccount;
+use Gaterdata\Core\ApiException;
+use Gaterdata\Core\Hash;
+use Gaterdata\Admin\User;
+use Gaterdata\Admin\UserRole;
+use Gaterdata\Admin\Role;
+use Gaterdata\Admin\Application;
+use Gaterdata\Admin\Invite;
 
 /**
  * Class CtrlUser.
  *
- * @package Datagator\Admin\Controllers
+ * @package Gaterdata\Admin\Controllers
  */
 class CtrlUser extends CtrlBase {
 

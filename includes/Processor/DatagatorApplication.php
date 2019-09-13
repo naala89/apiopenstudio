@@ -6,9 +6,9 @@
  * @TODO: This currently assumes that account name is unique
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
-use Datagator\Db;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
+use Gaterdata\Db;
 
 class DatagatorApplication extends Core\ProcessorEntity
 {

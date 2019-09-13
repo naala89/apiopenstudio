@@ -4,8 +4,8 @@
  * Provide Bearer Token header authentication
  */
 
-namespace Datagator\Endpoint;
-use Datagator\Core;
+namespace Gaterdata\Endpoint;
+use Gaterdata\Core;
 
 class AuthBearerToken extends Core\ProcessorEntity
 {

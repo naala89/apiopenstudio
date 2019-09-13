@@ -7,8 +7,8 @@
  * This will return the actual image, not the URL.
  */
 
-namespace Datagator\Output;
-use Datagator\Core;
+namespace Gaterdata\Output;
+use Gaterdata\Core;
 
 class Image extends Output
 {

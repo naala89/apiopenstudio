@@ -4,9 +4,9 @@
  * Provide token authentication based on token
  */
 
-namespace Datagator\Security;
-use Datagator\Core;
-use Datagator\Db;
+namespace Gaterdata\Security;
+use Gaterdata\Core;
+use Gaterdata\Db;
 
 class TokenUser extends Core\ProcessorEntity
 {
@@ -41,7 +41,7 @@ class TokenUser extends Core\ProcessorEntity
 
   /**
    * @return bool
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function process() {
     Core\Debug::variable($this->meta, 'Validator TokenUser', 4);

@@ -1,14 +1,14 @@
 <?php
 
-namespace Datagator\Db;
+namespace Gaterdata\Db;
 
-use Datagator\Core\ApiException;
+use Gaterdata\Core\ApiException;
 use ADOConnection;
 
 /**
  * Class ApplicationMapper.
  *
- * @package Datagator\Db
+ * @package Gaterdata\Db
  */
 class ApplicationMapper extends Mapper {
 
@@ -25,13 +25,13 @@ class ApplicationMapper extends Mapper {
   /**
    * Save an Application object.
    *
-   * @param \Datagator\Db\Application $application
+   * @param \Gaterdata\Db\Application $application
    *   The Applicationm object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function save(Application $application) {
     if ($application->getAppid() == NULL) {
@@ -55,13 +55,13 @@ class ApplicationMapper extends Mapper {
   /**
    * Delete an application.
    *
-   * @param \Datagator\Db\Application $application
+   * @param \Gaterdata\Db\Application $application
    *   Application object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function delete(Application $application) {
     $sql = 'DELETE FROM application WHERE appid = ?';
@@ -89,7 +89,7 @@ class ApplicationMapper extends Mapper {
    * @param int $appid
    *   Application ID.
    *
-   * @return \Datagator\Db\Application
+   * @return \Gaterdata\Db\Application
    *   Application object.
    *
    * @throws ApiException
@@ -108,7 +108,7 @@ class ApplicationMapper extends Mapper {
    * @param string $name
    *   Application name.
    *
-   * @return \Datagator\Db\Application
+   * @return \Gaterdata\Db\Application
    *   Application object.
    *
    * @throws ApiException
@@ -178,7 +178,7 @@ class ApplicationMapper extends Mapper {
    * @param array $row
    *   DB row object.
    *
-   * @return \Datagator\Db\Application
+   * @return \Gaterdata\Db\Application
    *   Application object
    */
   protected function mapArray(array $row) {

@@ -4,8 +4,8 @@
  * Perform filter
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
 use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Console\Helper\DebugFormatterHelper;
 

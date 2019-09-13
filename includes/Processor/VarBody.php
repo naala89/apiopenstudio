@@ -12,8 +12,8 @@
  *  }
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
 
 class VarBody extends VarMixed
 {
@@ -28,8 +28,8 @@ class VarBody extends VarMixed
 
   /**
    * @return mixed
-   * @throws \Datagator\Core\ApiException
-   * @throws \Datagator\Processor\ApiException
+   * @throws \Gaterdata\Core\ApiException
+   * @throws \Gaterdata\Processor\ApiException
    */
   public function process()
   {

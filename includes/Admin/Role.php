@@ -1,15 +1,15 @@
 <?php
 
-namespace Datagator\Admin;
+namespace Gaterdata\Admin;
 
-use Datagator\Db\RoleMapper;
-use Datagator\Core\ApiException;
-use Datagator\Db\UserAccountRoleMapper;
+use Gaterdata\Db\RoleMapper;
+use Gaterdata\Core\ApiException;
+use Gaterdata\Db\UserAccountRoleMapper;
 
 /**
  * Class UserRole.
  *
- * @package Datagator\Admin
+ * @package Gaterdata\Admin
  */
 class Role {
 
@@ -22,7 +22,7 @@ class Role {
    */
   private $db;
   /**
-   * @var \Datagator\Db\Role
+   * @var \Gaterdata\Db\Role
    */
   private $role;
 
@@ -73,7 +73,7 @@ class Role {
    *   Role.
    */
   public function setRole(array $role) {
-    $object = new \Datagator\Db\Role(
+    $object = new \Gaterdata\Db\Role(
       $role['rid'],
       $role['name']
     );

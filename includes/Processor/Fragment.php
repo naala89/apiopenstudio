@@ -4,8 +4,8 @@
  * Fragment.
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
 
 class Fragment extends Core\ProcessorEntity
 {

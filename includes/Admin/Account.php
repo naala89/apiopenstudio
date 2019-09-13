@@ -1,14 +1,14 @@
 <?php
 
-namespace Datagator\Admin;
+namespace Gaterdata\Admin;
 
-use Datagator\Db;
-use Datagator\Core\ApiException;
+use Gaterdata\Db;
+use Gaterdata\Core\ApiException;
 
 /**
  * Class Account.
  *
- * @package Datagator\Admin
+ * @package Gaterdata\Admin
  */
 class Account {
 
@@ -21,7 +21,7 @@ class Account {
    */
   private $db;
   /**
-   * @var \Datagator\Db\Account
+   * @var \Gaterdata\Db\Account
    */
   private $account;
 

@@ -4,8 +4,8 @@
  * Literal value.
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
 
 class Literal extends Core\ProcessorEntity
 {

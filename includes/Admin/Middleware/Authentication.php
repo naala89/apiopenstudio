@@ -2,11 +2,11 @@
 
 namespace Gaterdata\Admin\Middleware;
 
-use Gaterdata\Admin\User;
-use Gaterdata\Core\ApiException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Container;
+use Gaterdata\Admin\User;
+use Gaterdata\Core\ApiException;
 
 /**
  * Class Authentication.

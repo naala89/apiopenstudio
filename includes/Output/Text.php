@@ -1,7 +1,7 @@
 <?php
 
-namespace Datagator\Output;
-use Datagator\Core;
+namespace Gaterdata\Output;
+use Gaterdata\Core;
 
 class Text extends Output
 {

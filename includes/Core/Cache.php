@@ -1,6 +1,6 @@
 <?php
 
-namespace Datagator\Core;
+namespace Gaterdata\Core;
 
 /**
  * Class Cache

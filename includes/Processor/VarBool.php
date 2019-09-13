@@ -7,8 +7,8 @@
  * thus get vars, etc will always fail.
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
 
 class VarBool extends Core\ProcessorEntity
 {

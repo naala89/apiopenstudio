@@ -4,7 +4,7 @@
  * Wrapper of the Curl function.
  */
 
-namespace Datagator\Core;
+namespace Gaterdata\Core;
 
 class Curl
 {

@@ -4,8 +4,8 @@
  * Parent class for mixed variable types
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
 
 class VarMixed extends Core\ProcessorEntity
 {

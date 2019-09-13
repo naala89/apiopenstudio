@@ -4,9 +4,9 @@
  * Geo Point
  */
 
-namespace Datagator\Processor;
+namespace Gaterdata\Processor;
 use Codeception\Util\Debug;
-use Datagator\Core;
+use Gaterdata\Core;
 
 class GeoPoint extends Core\ProcessorEntity
 {

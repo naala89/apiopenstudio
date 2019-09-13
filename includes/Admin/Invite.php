@@ -1,14 +1,14 @@
 <?php
 
-namespace Datagator\Admin;
+namespace Gaterdata\Admin;
 
-use Datagator\Db;
-use Datagator\Core\ApiException;
+use Gaterdata\Db;
+use Gaterdata\Core\ApiException;
 
 /**
  * Class User.
  *
- * @package Datagator\Admin
+ * @package Gaterdata\Admin
  */
 class Invite {
 
@@ -75,7 +75,7 @@ class Invite {
    * @return bool|int
    *   Mapped invite object.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function create($accid, $email, $token) {
     $invite = new Db\Invite(
@@ -100,7 +100,7 @@ class Invite {
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function deleteByEmail($email) {
     $inviteMapper = new Db\InviteMapper($this->db);
@@ -120,7 +120,7 @@ class Invite {
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function deleteByToken($token) {
     $inviteMapper = new Db\InviteMapper($this->db);

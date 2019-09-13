@@ -1,15 +1,15 @@
 <?php
 
-namespace Datagator\Db;
+namespace Gaterdata\Db;
 
 use Cascade\Cascade;
-use Datagator\Core\ApiException;
+use Gaterdata\Core\ApiException;
 use ADOConnection;
 
 /**
  * Class VarsMapper.
  *
- * @package Datagator\Db
+ * @package Gaterdata\Db
  */
 class VarsMapper extends Mapper {
 
@@ -28,13 +28,13 @@ class VarsMapper extends Mapper {
   /**
    * Save the var.
    *
-   * @param \Datagator\Db\Vars $vars
+   * @param \Gaterdata\Db\Vars $vars
    *   Vars object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function save(Vars $vars) {
     if ($vars->getId() == NULL) {
@@ -60,13 +60,13 @@ class VarsMapper extends Mapper {
   /**
    * Delete the vars.
    *
-   * @param \Datagator\Db\Vars $vars
+   * @param \Gaterdata\Db\Vars $vars
    *   Vars object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function delete(Vars $vars) {
     if ($vars->getId() === NULL) {
@@ -83,7 +83,7 @@ class VarsMapper extends Mapper {
    * @param int $id
    *   Var ID.
    *
-   * @return \Datagator\Db\Vars
+   * @return \Gaterdata\Db\Vars
    *   Vars object.
    *
    * @throws ApiException
@@ -102,7 +102,7 @@ class VarsMapper extends Mapper {
    * @param string $name
    *   Var name.
    *
-   * @return \Datagator\Db\Vars
+   * @return \Gaterdata\Db\Vars
    *   Vars object.
    *
    * @throws ApiException
@@ -136,7 +136,7 @@ class VarsMapper extends Mapper {
    * @param array $row
    *   DB results row.
    *
-   * @return \Datagator\Db\Vars
+   * @return \Gaterdata\Db\Vars
    *   Vars object.
    */
   protected function mapArray(array $row) {

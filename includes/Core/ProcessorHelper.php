@@ -1,10 +1,10 @@
 <?php
 
-namespace Datagator\Core;
-use Datagator\Security;
-use Datagator\Endpoint;
-use Datagator\Output;
-use Datagator\Processor;
+namespace Gaterdata\Core;
+use Gaterdata\Security;
+use Gaterdata\Endpoint;
+use Gaterdata\Output;
+use Gaterdata\Processor;
 
 class ProcessorHelper
 {
@@ -14,7 +14,7 @@ class ProcessorHelper
    * @param $className
    * @param array $namespaces
    * @return string
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function getProcessorString($className, $namespaces=null)
   {
@@ -25,7 +25,7 @@ class ProcessorHelper
     $className = ucfirst(trim($className));
 
     foreach ($namespaces as $namespace) {
-      $classStr = "\\Datagator\\$namespace\\$className";
+      $classStr = "\\Gaterdata\\$namespace\\$className";
       if (class_exists($classStr)) {
         return $classStr;
         break;

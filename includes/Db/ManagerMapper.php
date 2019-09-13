@@ -1,14 +1,14 @@
 <?php
 
-namespace Datagator\Db;
+namespace Gaterdata\Db;
 
-use Datagator\Core\ApiException;
+use Gaterdata\Core\ApiException;
 use ADOConnection;
 
 /**
  * Class ManagerMapper.
  *
- * @package Datagator\Db
+ * @package Gaterdata\Db
  */
 class ManagerMapper extends Mapper {
 
@@ -25,13 +25,13 @@ class ManagerMapper extends Mapper {
   /**
    * Save aa manager.
    *
-   * @param \Datagator\Db\Manager $manager
+   * @param \Gaterdata\Db\Manager $manager
    *   Manager object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function save(Manager $manager) {
     if ($manager->getMid() == NULL) {
@@ -55,13 +55,13 @@ class ManagerMapper extends Mapper {
   /**
    * Delete a manager.
    *
-   * @param \Datagator\Db\Manager $manager
+   * @param \Gaterdata\Db\Manager $manager
    *   Manager object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function delete(Manager $manager) {
 
@@ -100,7 +100,7 @@ class ManagerMapper extends Mapper {
    * @param int $mid
    *   Manager ID.
    *
-   * @return \Datagator\Db\Manager
+   * @return \Gaterdata\Db\Manager
    *   Manager object.
    *
    * @throws ApiException
@@ -181,7 +181,7 @@ class ManagerMapper extends Mapper {
    * @param array $row
    *   DB row object.
    *
-   * @return \Datagator\Db\Manager
+   * @return \Gaterdata\Db\Manager
    *   Manager object.
    */
   protected function mapArray(array $row) {

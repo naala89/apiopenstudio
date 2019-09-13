@@ -1,19 +1,19 @@
 <?php
 
-namespace Datagator\Admin\Controllers;
+namespace Gaterdata\Admin\Controllers;
 
-use Datagator\Admin\Application;
-use Datagator\Admin\Manager;
-use Datagator\Admin\ApplicationUserRole;
-use Datagator\Core\ApiException;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Datagator\Admin\Account;
+use Gaterdata\Admin\Application;
+use Gaterdata\Admin\Manager;
+use Gaterdata\Admin\ApplicationUserRole;
+use Gaterdata\Core\ApiException;
+use Gaterdata\Admin\Account;
 
 /**
  * Class CtrlAccount.
  *
- * @package Datagator\Admin\Controllers
+ * @package Gaterdata\Admin\Controllers
  */
 class CtrlAccount extends CtrlBase {
 

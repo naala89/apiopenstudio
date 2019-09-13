@@ -4,9 +4,9 @@
  * Provide token authentication based on token in DB
  */
 
-namespace Datagator\Security;
-use Datagator\Core;
-use Datagator\Db;
+namespace Gaterdata\Security;
+use Gaterdata\Core;
+use Gaterdata\Db;
 
 class TokenSysAdmin extends Core\ProcessorEntity
 {

@@ -4,9 +4,9 @@
  * Get data form the Facebook API.
  */
 
-namespace Datagator\Endpoint;
-use Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Endpoint;
+use Gaterdata\Processor;
+use Gaterdata\Core;
 use Facebook\Authentication;
 use Facebook\Exceptions;
 
@@ -89,7 +89,7 @@ class Facebook extends Core\ProcessorEntity
    * Retrieve data from an endpoint URL.
    *
    * @return mixed
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function process()
   {
@@ -121,7 +121,7 @@ class Facebook extends Core\ProcessorEntity
    * @param $fb
    * @param bool|TRUE $longLived
    * @return mixed
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   private function _getToken($fb, $longLived=TRUE)
   {
@@ -168,7 +168,7 @@ class Facebook extends Core\ProcessorEntity
    * @param $node
    * @param $accessToken
    * @return mixed
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   private function _get($fb, $node, $accessToken)
   {
@@ -191,7 +191,7 @@ class Facebook extends Core\ProcessorEntity
    * @param $node
    * @param $accessToken
    * @return mixed
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   private function _post($fb, $node, $accessToken)
   {

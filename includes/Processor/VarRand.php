@@ -4,8 +4,8 @@
  * Variable type random.
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
 
 class VarRand extends Core\ProcessorEntity
 {

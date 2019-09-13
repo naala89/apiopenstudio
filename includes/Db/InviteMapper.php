@@ -1,14 +1,14 @@
 <?php
 
-namespace Datagator\Db;
+namespace Gaterdata\Db;
 
-use Datagator\Core\ApiException;
+use Gaterdata\Core\ApiException;
 use ADOConnection;
 
 /**
  * Class InviteMapper.
  *
- * @package Datagator\Db
+ * @package Gaterdata\Db
  */
 class InviteMapper extends Mapper {
 
@@ -25,13 +25,13 @@ class InviteMapper extends Mapper {
   /**
    * Save an Invite.
    *
-   * @param \Datagator\Db\Invite $invite
+   * @param \Gaterdata\Db\Invite $invite
    *   Invite object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function save(Invite $invite) {
     if ($invite->getIid() == NULL) {
@@ -57,13 +57,13 @@ class InviteMapper extends Mapper {
   /**
    * Delete an invite.
    *
-   * @param \Datagator\Db\Invite $invite
+   * @param \Gaterdata\Db\Invite $invite
    *   Invite object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function delete(Invite $invite) {
     $sql = 'DELETE FROM invite WHERE iid = ?';
@@ -77,7 +77,7 @@ class InviteMapper extends Mapper {
    * @param int $iid
    *   Invite ID.
    *
-   * @return \Datagator\Db\Invite
+   * @return \Gaterdata\Db\Invite
    *   Invite object.
    *
    * @throws ApiException
@@ -94,7 +94,7 @@ class InviteMapper extends Mapper {
    * @param string $email
    *   Invite emaill
    * @return array
-   *   Array of \Datagator\Db\Invite.
+   *   Array of \Gaterdata\Db\Invite.
    *
    * @throws ApiException
    */
@@ -110,7 +110,7 @@ class InviteMapper extends Mapper {
    * @param string $token
    *   Invite token.
    *
-   * @return \Datagator\Db\Invite
+   * @return \Gaterdata\Db\Invite
    *   Invite object.
    *
    * @throws ApiException
@@ -129,7 +129,7 @@ class InviteMapper extends Mapper {
    * @param string $token
    *   Invite token.
    *
-   * @return \Datagator\Db\Invite
+   * @return \Gaterdata\Db\Invite
    *   Invite object.
    *
    * @throws ApiException
@@ -146,7 +146,7 @@ class InviteMapper extends Mapper {
    * @param array $row
    *   DB row object.
    *
-   * @return \Datagator\Db\Invite
+   * @return \Gaterdata\Db\Invite
    *   Invite object.
    */
   protected function mapArray(array $row) {

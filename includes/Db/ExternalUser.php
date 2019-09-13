@@ -1,11 +1,11 @@
 <?php
 
-namespace Datagator\Db;
+namespace Gaterdata\Db;
 
 /**
  * Class ExternalUser.
  *
- * @package Datagator\Db
+ * @package Gaterdata\Db
  */
 class ExternalUser {
 

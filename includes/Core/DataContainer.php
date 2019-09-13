@@ -1,6 +1,6 @@
 <?php
 
-namespace Datagator\Core;
+namespace Gaterdata\Core;
 
 class DataContainer extends Entity
 {
@@ -73,7 +73,7 @@ class DataContainer extends Entity
 
   /**
    * @param $val
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function setType($val)
   {

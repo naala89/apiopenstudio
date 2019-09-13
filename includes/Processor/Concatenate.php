@@ -4,8 +4,8 @@
  * Perform string concatenation of two or more inputs
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
 
 class Concatenate extends Core\ProcessorEntity
 {

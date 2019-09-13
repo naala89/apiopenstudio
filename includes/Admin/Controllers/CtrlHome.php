@@ -1,20 +1,20 @@
 <?php
 
-namespace Datagator\Admin\Controllers;
+namespace Gaterdata\Admin\Controllers;
 
-use Datagator\Admin\Account;
-use Datagator\Admin\Application;
-use Datagator\Admin\UserAccount;
-use Datagator\Core\ApiException;
 use Slim\Flash\Messages;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
+use Gaterdata\Admin\Account;
+use Gaterdata\Admin\Application;
+use Gaterdata\Admin\UserAccount;
+use Gaterdata\Core\ApiException;
 
 /**
  * Class CtrlHome.
  *
- * @package Datagator\Admin\Controllers
+ * @package Gaterdata\Admin\Controllers
  */
 class CtrlHome extends CtrlBase {
 

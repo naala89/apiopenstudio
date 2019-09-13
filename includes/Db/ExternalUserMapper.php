@@ -1,14 +1,14 @@
 <?php
 
-namespace Datagator\Db;
+namespace Gaterdata\Db;
 
-use Datagator\Core\ApiException;
+use Gaterdata\Core\ApiException;
 use ADOConnection;
 
 /**
  * Class ExternalUserMapper.
  *
- * @package Datagator\Db
+ * @package Gaterdata\Db
  */
 class ExternalUserMapper extends Mapper {
 
@@ -25,13 +25,13 @@ class ExternalUserMapper extends Mapper {
   /**
    * Save an external user object.
    *
-   * @param \Datagator\Db\ExternalUser $user
+   * @param \Gaterdata\Db\ExternalUser $user
    *   ExternalUser object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function save(ExternalUser $user) {
     if ($user->getId() == NULL) {
@@ -63,13 +63,13 @@ class ExternalUserMapper extends Mapper {
   /**
    * Delete an external user.
    *
-   * @param \Datagator\Db\ExternalUser $externalUser
+   * @param \Gaterdata\Db\ExternalUser $externalUser
    *   ExternalUser object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function delete(ExternalUser $externalUser) {
     $sql = 'DELETE FROM external_user WHERE id = ?';
@@ -83,7 +83,7 @@ class ExternalUserMapper extends Mapper {
    * @param int $id
    *   External user ID.
    *
-   * @return \Datagator\Db\ExternalUser
+   * @return \Gaterdata\Db\ExternalUser
    *   External user object.
    *
    * @throws ApiException
@@ -104,7 +104,7 @@ class ExternalUserMapper extends Mapper {
    * @param int $externalId
    *   External ID.
    *
-   * @return \Datagator\Db\ExternalUser
+   * @return \Gaterdata\Db\ExternalUser
    *   External user object.
    *
    * @throws ApiException
@@ -142,7 +142,7 @@ class ExternalUserMapper extends Mapper {
    * @param array $row
    *   DB row results object.
    *
-   * @return \Datagator\Db\ExternalUser
+   * @return \Gaterdata\Db\ExternalUser
    *   ExternalUser object.
    */
   protected function mapArray(array $row) {

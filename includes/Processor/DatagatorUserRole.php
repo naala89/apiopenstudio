@@ -4,9 +4,9 @@
  * User_role table CRUD.
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
-use Datagator\Db;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
+use Gaterdata\Db;
 
 class DatagatorUserRole extends Core\ProcessorEntity
 {

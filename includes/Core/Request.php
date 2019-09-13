@@ -4,7 +4,7 @@
  * Request and Processor utility class.
  */
 
-namespace Datagator\Core;
+namespace Gaterdata\Core;
 
 class Request
 {

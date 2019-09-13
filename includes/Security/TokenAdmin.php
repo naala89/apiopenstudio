@@ -4,8 +4,8 @@
  * Provide token authentication based on token in DB with role admin
  */
 
-namespace Datagator\Security;
-use Datagator\Core;
+namespace Gaterdata\Security;
+use Gaterdata\Core;
 
 class TokenAdmin extends Token
 {

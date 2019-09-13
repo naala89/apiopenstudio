@@ -4,8 +4,8 @@
  *
  */
 
-namespace Datagator\Processor;
-use Datagator\Core;
+namespace Gaterdata\Processor;
+use Gaterdata\Core;
 //use Peekmo\JsonPath\JsonStore;
 use JmesPath;
 
@@ -109,8 +109,8 @@ class Mapper extends Core\ProcessorEntity
    * @param $source
    * @param $mappings
    * @param $format
-   * @return \Datagator\Core\DataContainer
-   * @throws \Datagator\Core\ApiException
+   * @return \Gaterdata\Core\DataContainer
+   * @throws \Gaterdata\Core\ApiException
    * @see https://github.com/jmespath/jmespath.php
    */
   private function _mapJson(\stdClass & $source, $mappings, $format) {
@@ -191,8 +191,8 @@ class Mapper extends Core\ProcessorEntity
    * @param $source
    * @param $mappings
    * @param $format
-   * @return \Datagator\Core\DataContainer
-   * @throws \Datagator\Core\ApiException
+   * @return \Gaterdata\Core\DataContainer
+   * @throws \Gaterdata\Core\ApiException
    */
   private function _mapXml(\DOMDocument $source, $mappings, $format)
   {
@@ -218,7 +218,7 @@ class Mapper extends Core\ProcessorEntity
    *  foo[@bar] = add to node as an attribute <foo bar="value"></foo>
    * @param $regex
    * @param \DOMNodeList $values
-   * @throws \Datagator\Core\ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   private function _addResultXml($regex, \DOMNodeList $values)
   {
