@@ -56,7 +56,7 @@ switch ($step) {
     }
     $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
     $dsn = $settings['db']['driver'] . '://'
-      . 'root:'
+      . 'root' . ':'
       . $settings['db']['root_password'] . '@'
       . $settings['db']['host'] . '/'
       . $settings['db']['database'] . $dsnOptions;
@@ -66,6 +66,7 @@ switch ($step) {
         'type' => 'error',
         'text' => 'DB connection failed, please check your config settings.'
       ];
+      die(print_r($dsn));
       $template = $twig->load("install/install_$from.twig");
       // die("install/install_$from.twig");
       echo $template->render(['message' => $message, 'menu' => $menu]);

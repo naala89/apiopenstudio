@@ -10,7 +10,7 @@ services:
       - php
     volumes:
       - "./docker/nginx/admin.conf:/etc/nginx/conf.d/default.conf"
-      - ".:/usr/share/nginx/html"
+      - ".:/var/www/html"
     networks:
       - api_network
     container_name: "${APP_NAME}-admin"

@@ -50,7 +50,7 @@ gulp.task('clean.img', function() {
 });
 
 // Scripts.
-gulp.task('scripts', ['clean.js'], function() {
+gulp.task('js', ['clean.js'], function() {
   // Copy minified vendor js.
   gulp.src([vendor_src + '**/*.min.js'])
     .pipe(rename({dirname: ''}))
@@ -65,7 +65,7 @@ gulp.task('scripts', ['clean.js'], function() {
 });
 
 // Styles.
-gulp.task('styles', ['clean.css'], function() {
+gulp.task('css', ['clean.css'], function() {
   // Copy minified vendor css.
   gulp.src([vendor_src + '**/*.min.css'])
     .pipe(rename({dirname: ''}))
@@ -80,7 +80,7 @@ gulp.task('styles', ['clean.css'], function() {
 });
 
 // Images.
-gulp.task('images', ['clean.img'], function() {
+gulp.task('img', ['clean.img'], function() {
   // Minify images and copy.
   gulp.src(img_src)
       .pipe(errorHandler())
@@ -90,11 +90,11 @@ gulp.task('images', ['clean.img'], function() {
 
 // Default task, setup watch.
 gulp.task('watch', function(){
-  gulp.watch(vendor_src, ['styles', 'scripts']);
-  gulp.watch(scss_src, ['styles']);
-  gulp.watch(js_src, ['scripts']);
-  gulp.watch(img_src, ['images']);
+  gulp.watch(vendor_src, ['css', 'js']);
+  gulp.watch(scss_src, ['css']);
+  gulp.watch(js_src, ['js']);
+  gulp.watch(img_src, ['img']);
   gulp.src('src/*').pipe(notify('An asset has changed'));
 });
 
-gulp.task('default', ['styles', 'scripts', 'images', 'watch']);
+gulp.task('default', ['css', 'js', 'img', 'watch']);
