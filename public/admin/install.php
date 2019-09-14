@@ -1,10 +1,10 @@
 <?php
 
-require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
-
 use Gaterdata\Admin;
 use Cascade\Cascade;
-use Datagator\Core\ApiException;
+use Gaterdata\Core\ApiException;
+
+require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
 $settings = require dirname(dirname(__DIR__)) . '/config/settings.php';
 
@@ -21,6 +21,9 @@ $menu = ['Login' => '/'];
 // Twig definition.
 $loader = new Twig_Loader_Filesystem($settings['twig']['path']);
 $twig = new Twig_Environment($loader, $settings['twig']['options']);
+if ($settings['twig']['options']['debug']) {
+  $twig->addExtension(new \Twig\Extension\DebugExtension());
+}
 
 // Create the helper classes.
 try {
@@ -28,9 +31,11 @@ try {
 } catch (ApiException $e) {
   $template = $twig->load("install/install_$from.twig");
   echo $template->render([
-    'message' => [
-      'type' => 'error',
-      'text' => 'An error occurred: ' . $e->getMessage(),
+    'messages' => [
+      [
+        'type' => 'error',
+        'text' => 'An error occurred: ' . $e->getMessage(),
+      ]
     ],
     'menu' => $menu,
   ]);
@@ -41,13 +46,14 @@ switch ($step) {
   case 0:
     // Check user wants to continue.
     $template = $twig->load("install/install_$from.twig");
-    $message = [
-      'type' => 'warning',
-      'text' => "Continuing will erase any existing data in the database.<br />",
+    $messages[] = [
+      'type' => 'error',
+      'text' => 'Continuing will erase any existing data in the database.<br />',
     ];
-    $message['text'] .= "Click <a href='/login'>here to abort and login</a>.";
-    echo $template->render(['message' => $message, 'menu' => $menu]);
+    $message['text'] .= '<a href="login">Click here to abort and login</a>.';
+    echo $template->render(['messages' => $messages, 'menu' => $menu]);
     exit;
+
   case 1:
     // DB link.
     $dsnOptionsArr = [];
@@ -55,21 +61,17 @@ switch ($step) {
       $dsnOptionsArr[] = "$k=$v";
     }
     $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
-    $dsn = $settings['db']['driver'] . '://'
-      . 'root' . ':'
+    $dsn = $settings['db']['driver'] . '://root:'
       . $settings['db']['root_password'] . '@'
       . $settings['db']['host'] . '/'
       . $settings['db']['database'] . $dsnOptions;
-    $db = ADONewConnection($dsn);
-    if (!$db) {
-      $message = [
+    if (!$db = ADONewConnection($dsn)) {
+      $messages[] = [
         'type' => 'error',
-        'text' => 'DB connection failed, please check your config settings.'
+        'text' => 'DB connection failed, please check your config settings.',
       ];
-      die(print_r($dsn));
       $template = $twig->load("install/install_$from.twig");
-      // die("install/install_$from.twig");
-      echo $template->render(['message' => $message, 'menu' => $menu]);
+      echo $template->render(['messages' => $messages, 'menu' => $menu]);
       exit;
     }
     // Create and pre-populate the database.
@@ -83,16 +85,34 @@ switch ($step) {
     if (isset($_SESSION['token'])) {
       unset ($_SESSION['token']);
     }
-    // Fetch the DB definition.
     $yaml = file_get_contents($settings['db']['base']);
     $definition = \Spyc::YAMLLoadString($yaml);
     $template = $twig->load('install/install_1.twig');
     $message = [
       'type' => 'info',
-      'text' => 'Creating database tables...<br />'
+      'text' => 'Creating database tables...<br />',
     ];
+    
+    // Drop the database and user if exists.
+    $sql = 'DROP DATABASE ' . $settings['db']['database'] . ' IF EXISTS';
+    $db->execute($sql);
+    $message['text'] .= 'DROP DATABASE success!<br />';
+    $sql = 'DROP USER "' . $settings['db']['username'] . '"@"'  . $settings['db']['host'] . '" IF EXISTS';
+    $db->execute($sql);
+    $message['text'] .= 'DROP USER success!<br />';
 
-    // Parse the DB definition array.
+    // Create the database, user and permissions.
+    $sql = 'CREATE DATABASE ' . $settings['db']['database'];
+    $db->execute($sql);
+    $message['text'] .= 'CREATE DATABASE success!<br />';
+    $sql = 'CREATE USER "' . $settings['db']['username'] . '"@"'  . $settings['db']['host'] . '" IDENTIFIED BY "' . $settings['db']['password'] . '"';
+    $db->execute($sql);
+    $message['text'] .= 'CREATE USER success!<br />';
+    $sql = 'GRANT ALL PRIVILEGES ON * . * TO "' . $settings['db']['username'] . '"@"'  . $settings['db']['host'] . '"';
+    $db->execute($sql);
+    $message['text'] .= 'GRANT PRIVILEGES success!<br />';
+
+    // Parse the DB  table definition array.
     foreach ($definition as $table => $tableData) {
       $sqlPrimary = '';
       $sqlColumns = [];
@@ -100,10 +120,10 @@ switch ($step) {
         // Column definitions.
         $sqlColumn = "`$column` ";
         if (!isset($columnData['type'])) {
-          $message['text'] = "CREATE TABLE `$table` fail!<br />";
+          $message['text'] .= "CREATE TABLE `$table` fail!<br />";
           $message['text'] .= "Type missing in the metadata.";
           $message['type'] = 'error';
-          echo $template->render(['message' => $message, 'menu' => $menu]);
+          echo $template->render(['messages' => [$message], 'menu' => $menu]);
           exit;
         }
         $sqlColumn .= ' ' . $columnData['type'];
@@ -119,19 +139,18 @@ switch ($step) {
         // Stop if table create fails.
 
         $logger->error($e->gettrace());
-        $message['text'] = "CREATE TABLE `$table` fail!<br />";
+        $message['text'] .= "CREATE TABLE `$table` fail!<br />";
         $message['text'] .= "Processing halted. Please check the logs and retry.";
         $message['type'] = 'error';
-        echo $template->render(['message' => $message, 'menu' => $menu]);
+        echo $template->render(['messages' => [$message], 'menu' => $menu]);
         exit;
       } else {
-        $message['text'] .= "CREATE TABLE `$table` success!<br />";
+        $message['text'] .= "CREATE TABLE `$table` success!<br/>";
       }
       // Empty the table in case it already existed.
-      $sqlTruncate = "TRUNCATE `$table`;";
-      $db->execute($sqlTruncate);
+      // $sqlTruncate = "TRUNCATE `$table`;";
+      // $db->execute($sqlTruncate);
       if (isset($tableData['data'])) {
-        // Populate the table.
         foreach ($tableData['data'] as $row) {
           $keys = [];
           $values = [];
@@ -141,18 +160,19 @@ switch ($step) {
           }
           $sqlRow = "INSERT INTO `$table` (" . implode(', ', $keys) . ') VALUES (' . implode(', ', $values) . ');';
           if (empty($db->execute($sqlRow))) {
-            $message['text'] = "INSERT into `$table` fail!<br />";
+            var_dump($sqlRow);
+            $message['text'] .= "INSERT into `$table` fail!<br />";
             $message['text'] .= "Processing halted. Please check the logs and retry.";
             $message['type'] = 'error';
-            echo $template->render(['message' => $message, 'menu' => $menu]);
+            echo $template->render(['messages' => [$message], 'menu' => $menu]);
             exit;
           }
         }
-        $message['text'] .= "INSERT into `$table` success!<br />";
+        $message['text'] .= "INSERT into `$table` success!<br/>";
       }
     }
-    $message['text'] .= "Database Successfully created!";
-    echo $template->render(['message' => $message, 'menu' => $menu]);
+    $message['text'] .= 'Database Successfully created!<br />';
+    echo $template->render(['messages' => [$message], 'menu' => $menu]);
     exit;
     break;
 
@@ -170,7 +190,7 @@ switch ($step) {
         $message['text'] = "Required fields not entered.";
         $message['type'] = 'error';
         $template = $twig->load('install/install_2.twig');
-        echo $template->render(['message' => $message, 'menu' => $menu]);
+        echo $template->render(['messages' => [$message], 'menu' => $menu]);
         exit;
       }
       $newUser = $user->create(
@@ -195,9 +215,11 @@ switch ($step) {
         $template = $twig->load('install/install_2.twig');
         echo $template->render([
           'menu' => $menu,
-          'message' => [
-            'type' => 'error',
-            'text' => 'Failed to save your user to the DB. Please check the logs.'
+          'messages' => [
+            [
+              'type' => 'error',
+              'text' => 'Failed to save your user to the DB. Please check the logs.'
+            ]
           ],
         ]);
         exit;
@@ -207,9 +229,11 @@ switch ($step) {
         $template = $twig->load('install/install_2.twig');
         echo $template->render([
           'menu' => $menu,
-          'message' => [
-            'type' => 'error',
-            'text' => 'Failed to assign your user administrator status. Please check the logs.'
+          'messages' => [
+            [
+              'type' => 'error',
+              'text' => 'Failed to assign your user administrator status. Please check the logs.'
+            ]
           ],
         ]);
         exit;
