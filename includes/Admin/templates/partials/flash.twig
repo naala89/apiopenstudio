@@ -1,11 +1,11 @@
-{% for type,message in messages %}
-  {% if type == 'info' %}
+{% for message in messages %}
+  {% if message.type == 'info' %}
     {% set message_colour = 'green accent-2' %}
   {% endif %}
-  {% if type == 'warning' %}
+  {% if message.type == 'warning' %}
     {% set message_colour = 'yellow lighten-3' %}
   {% endif %}
-  {% if type == 'error' %}
+  {% if message.type == 'error' %}
     {% set message_colour = 'red' %}
   {% endif %}
   <div class="row gaterdata-alert">
@@ -14,9 +14,7 @@
         <div class="row">
           <div class="col s12 m10">
             <div class="card-content">
-                {% for text in message %}
-                  <p>{{ text | raw }}</p>
-                {% endfor %}
+              <p>{{ message.text | raw }}</p>
             </div>
           </div>
           <div class="col s2 m2">
