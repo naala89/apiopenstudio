@@ -16,6 +16,12 @@ $settings['log']['path'] = '/var/log/nginx/admin.gaterdata.error.log';
  * General settings.
  */
 
+ // URLs
+ $settings['url'] = [
+  'admin' => 'admin.gaterdata.local',
+  'api' => 'api.gaterdata.local'
+ ];
+
 // Database.
 // @see http://adodb.org/dokuwiki/doku.php Documentation of ADOdb.
 $settings['db'] = [
