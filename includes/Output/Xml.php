@@ -53,7 +53,7 @@ class Xml extends Output {
    */
   protected function fromBoolean(& $data)
   {
-    return '<?xml version="1.0"?><gaterdataWrapper>' . $data ? 'true' : 'false' . '</gaterdataWrapper>';
+    return '<?xml version="1.0"?><datagatorWrapper>' . $data ? 'true' : 'false' . '</datagatorWrapper>';
   }
 
   /**
@@ -62,7 +62,7 @@ class Xml extends Output {
    */
   protected function fromInteger(& $data)
   {
-    return '<?xml version="1.0"?><gaterdataWrapper>' . $data . '</gaterdataWrapper>';
+    return '<?xml version="1.0"?><datagatorWrapper>' . $data . '</datagatorWrapper>';
   }
 
   /**
@@ -71,7 +71,7 @@ class Xml extends Output {
    */
   protected function fromFloat(& $data)
   {
-    return '<?xml version="1.0"?><gaterdataWrapper>' . $data . '</gaterdataWrapper>';
+    return '<?xml version="1.0"?><datagatorWrapper>' . $data . '</datagatorWrapper>';
   }
 
   /**
@@ -83,7 +83,7 @@ class Xml extends Output {
     $doc = simplexml_load_string($data);
     if (!$doc) {
       libxml_clear_errors();
-      return '<?xml version="1.0"?><gaterdataWrapper>' . $data . '</gaterdataWrapper>';
+      return '<?xml version="1.0"?><datagatorWrapper>' . $data . '</datagatorWrapper>';
     }
     else {
       return $data;
@@ -103,7 +103,7 @@ class Xml extends Output {
    * @return mixed
    */
   protected function fromText(& $data) {
-    return '<?xml version="1.0"?><gaterdataWrapper>' . $data . '</gaterdataWrapper>';
+    return '<?xml version="1.0"?><datagatorWrapper>' . $data . '</datagatorWrapper>';
   }
 
   /**
@@ -111,7 +111,7 @@ class Xml extends Output {
    * @return mixed
    */
   protected function fromArray(& $data) {
-    $xml_data = new \SimpleXMLElement('<?xml version="1.0"?><gaterdataWrapper></gaterdataWrapper>');
+    $xml_data = new \SimpleXMLElement('<?xml version="1.0"?><datagatorWrapper></datagatorWrapper>');
     $this->_array2xml($data, $xml_data);
     return $xml_data->asXML();
   }

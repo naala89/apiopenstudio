@@ -1,13 +1,13 @@
 <?php
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-use Gaterdata\Core\ApiException;
-use Gaterdata\Core\Api;
-use Gaterdata\Config;
-use Gaterdata\Core\Error;
-use Gaterdata\Output\Json;
+use Datagator\Core\ApiException;
+use Datagator\Core\Api;
+use Datagator\Config;
+use Datagator\Core\Error;
+use Datagator\Output\Json;
 
-\Gaterdata\Config::load();
+\Datagator\Config::load();
 
 ob_start();
 
@@ -21,7 +21,7 @@ try {
   $result = $api->process();
 }
 catch (ApiException $e) {
-  $outputClass = 'Gaterdata\\Output\\' . ucfirst($api->getAccept(Config::$defaultFormat));
+  $outputClass = 'Datagator\\Output\\' . ucfirst($api->getAccept(Config::$defaultFormat));
   if (!class_exists($outputClass)) {
     $error = new Error(3, -1, 'invalid Accept header');
     $output = new Json($error->process(), $e->getHtmlCode());

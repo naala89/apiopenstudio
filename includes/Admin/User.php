@@ -2,7 +2,6 @@
 
 namespace Gaterdata\Admin;
 
-use GuzzleHttp\Client;
 use Gaterdata\Core\ApiException;
 use Gaterdata\Db;
 use Gaterdata\Core\Utilities;
@@ -15,53 +14,44 @@ use Gaterdata\Core\Hash;
  */
 class User {
 
-  // /**
-  //  * @var array
-  //  */
-  // private $dbSettings;
-  // /**
-  //  * @var \ADOConnection
-  //  */
-  // private $db;
-  // /**
-  //  * @var \Gaterdata\Db\User
-  //  */
-  // private $user;
-  
   /**
-   * @var GuzzleHttp\Client;
+   * @var array
    */
-  private $client;
+  private $dbSettings;
+  /**
+   * @var \ADOConnection
+   */
+  private $db;
+  /**
+   * @var \Gaterdata\Db\User
+   */
+  private $user;
 
   /**
    * User constructor.
    *
-   * @param array apiDomain
-   *   API Domain URL.
+   * @param array $dbSettings
+   *   Database settings.
    *
    * @throws ApiException
    */
-  public function __construct($apiDomain) {
-    // $this->dbSettings = $dbSettings;
-    // $dsnOptionsArr = [];
-    // foreach ($dbSettings['options'] as $k => $v) {
-    //   $dsnOptionsArr[] = "$k=$v";
-    // }
-    // $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
-    // $dsn = $dbSettings['driver'] . '://'
-    //   . $dbSettings['username'] . ':'
-    //   . $dbSettings['password'] . '@'
-    //   . $dbSettings['host'] . '/'
-    //   . $dbSettings['database'] . $dsnOptions;
-    // $this->db = ADONewConnection($dsn);
-    // if (!$this->db) {
-    //   throw new ApiException('Failed to connect to the database.');
-    // }
-    $this->client = new Client([
-      'base_uri' => $apiDomain,
-      'timeout'         => 0,
-      'allow_redirects' => TRUE,
-    ]);
+  public function __construct(array $dbSettings) {
+    $this->dbSettings = $dbSettings;
+
+    $dsnOptionsArr = [];
+    foreach ($dbSettings['options'] as $k => $v) {
+      $dsnOptionsArr[] = "$k=$v";
+    }
+    $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
+    $dsn = $dbSettings['driver'] . '://'
+      . $dbSettings['username'] . ':'
+      . $dbSettings['password'] . '@'
+      . $dbSettings['host'] . '/'
+      . $dbSettings['database'] . $dsnOptions;
+    $this->db = ADONewConnection($dsn);
+    if (!$this->db) {
+      throw new ApiException('Failed to connect to the database.');
+    }
   }
 
   /**
@@ -90,10 +80,9 @@ class User {
    * @throws ApiException
    */
   public function adminLogin($username, $password, $ttl) {
-    
     // Validate username and get user ID.
-    // $userMapper = new Db\UserMapper($this->db);
-    // $this->user = $userMapper->findByUsername($username);
+    $userMapper = new Db\UserMapper($this->db);
+    $this->user = $userMapper->findByUsername($username);
     if (empty($uid = $this->user->getUid()) || $this->user->getActive() != 1) {
       throw new ApiException('Invalid user or password');
     }
@@ -175,6 +164,7 @@ class User {
       NULL,
       1,
       $username,
+      NULL,
       NULL,
       NULL,
       NULL,
@@ -265,34 +255,11 @@ class User {
     return $this->user->dump();
   }
 
-  public function assignOwner() {
-    // Find the Owner role.
-    $roleMapper = new Db\RoleMapper($this->db);
-    try {
-      $role = $roleMapper->findByName('Owner');
-    } catch (ApiException $e) {
-      return FALSE;
-    }
-    if (empty($role->getRid())) {
-      return FALSE;
-    }
-
-    $applicationUserRoleMapper = new Db\ApplicationUserRoleMapper($this->db);
-    $applicationUserRole = new Db\ApplicationUserRole(
-      NULL,
-      NULL,
-      $this->user->getUid(),
-      $role->getRid()
-    );
-    return $applicationUserRoleMapper->save($applicationUserRole);
-  }
-
   /**
    * Assign Administrator role to current user.
    *
    * @return bool
    *   Success.
-   * @TODO: needs refactoring to use normal roles, not old table.
    */
   public function assignAdministrator() {
     $administratorMapper = new Db\AdministratorMapper($this->db);
@@ -308,7 +275,6 @@ class User {
    *
    * @return bool
    *   Is an admin.
-   * @TODO: needs refactoring to use normal roles, not old table.
    */
   public function isAdministrator() {
     $administratorMapper = new Db\AdministratorMapper($this->db);
@@ -321,7 +287,6 @@ class User {
    *
    * @return bool
    *   Is an admin.
-   * @TODO: needs refactoring to use normal roles, not old table.
    */
   public function isManager() {
     $managerMapper = new Db\ManagerMapper($this->db);
