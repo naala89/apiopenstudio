@@ -1,6 +1,6 @@
 name: User login
 
-description: Login a user to Datagator using username/password.
+description: Login a user to Gaterdata using username/password.
 
 uri: user/login
 

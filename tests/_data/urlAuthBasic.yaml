@@ -20,7 +20,7 @@ process:
   function: url
   id: 3
   method: get
-  url: "http://datagator.local/html/sample/testAuthBasic.php"
+  url: "http://gaterdata.local/html/sample/testAuthBasic.php"
   auth:
     function: AuthBasic
     id: 4

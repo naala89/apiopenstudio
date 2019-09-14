@@ -3,7 +3,7 @@ modules:
     enabled:
         - \Helper\Api
         - REST:
-            url: http://datagator.local/api/
+            url: http://gaterdata.local/api/
             depends: PhpBrowser
         - Filesystem
 env:
@@ -11,20 +11,20 @@ env:
         modules:
             config:
                 PhpBrowser:
-                    url: http://datagator.local/
+                    url: http://gaterdata.local/
                 REST:
-                    url: http://datagator.local/api/
+                    url: http://gaterdata.local/api/
     staging:
         modules:
             config:
                 PhpBrowser:
-                    url: http://datagator.yourtemp.website/
+                    url: http://gaterdata.yourtemp.website/
                 REST:
-                    url: http://datagator.yourtemp.website/api/
+                    url: http://gaterdata.yourtemp.website/api/
     production:
         modules:
             config:
                 PhpBrowser:
-                    url: http://datagator.com.au/
+                    url: http://gaterdata.com.au/
                 REST:
-                    url: http://datagator.com.au/api/
+                    url: http://gaterdata.com.au/api/

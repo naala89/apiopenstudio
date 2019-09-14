@@ -2,6 +2,21 @@ version: '3.7'
 
 services:
 
+  api:
+    image: nginx
+    container_name: "${APP_NAME}-api"
+    ports:
+      - "81:80"
+    volumes:
+      - ./docker/nginx/api.conf:/etc/nginx/conf.d/default.conf
+      - .:/var/www/html
+      - ./composer:/composer
+    depends_on:
+      - php
+      - composer
+    networks:
+      - api_network
+
   admin:
     image: nginx
     container_name: "${APP_NAME}-admin"
@@ -13,6 +28,7 @@ services:
       - ./composer:/composer
     depends_on:
       - php
+      - composer
     networks:
       - api_network
     

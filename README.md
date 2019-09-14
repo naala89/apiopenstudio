@@ -20,7 +20,7 @@ There are several methods to install GaterData:
 Clone the repository
 ====================
 
-1. ~~```$ git clone gitolite@naala.com.au:datagator```~~
+1. ~~```$ git clone gitolite@naala.com.au:gaterdata```~~
 3. ```$ git clone git@gitlab.com:john89/gaterdata.git```
 4. ```$ cd gaterdata```
 5. ```$ chown -R www-data:<my_group> ./*```
@@ -227,7 +227,7 @@ Where the debug data will be output. There are only two possible values:
 
 Set to true to enable caching on the server (opcode service automatically discovered), set to false to disable.
 
-If you have multiple services available on the server, you instruct Datagator to use a specific opcode by setting this value to ```apc``` for APC or ```memcache``` for MemCache.
+If you have multiple services available on the server, you instruct Gaterdata to use a specific opcode by setting this value to ```apc``` for APC or ```memcache``` for MemCache.
 
 #### $dbdriver
 
@@ -319,7 +319,7 @@ If you are running testcase first time in api suite, then in your api directory 
 
 The following testing credentials  are stored in /tests/_support/Helper/api.php
 
-* Account: Datagator
+* Account: Gaterdata
 * Application: Testing
 * Username: tester
 * Password: tester_pass

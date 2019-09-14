@@ -1,9 +1,9 @@
-Datagator 0.1.0, 1 Dec 2015
+Gaterdata\ 0.1.0, 1 Dec 2015
 ---------------------------
 
 - Installed on Swellnet API
 
-Datagator 0.2.0, 25 April 2016
+Gaterdata\ 0.2.0, 25 April 2016
 ------------------------------
 
 - Improved global handling of error object
@@ -28,7 +28,7 @@ Datagator 0.2.0, 25 April 2016
 - changed Object processor, so that if input is not an array, then all the fields and values sit at root
 - import resources now has full error feedback to devs
 
-Datagator 0.2.1, 3 May 2016
+Gaterdata\ 0.2.1, 3 May 2016
 ---------------------------
 
 - added way of defining specific processors in processor->details->accepts, e'g' 'processor varGet'
@@ -48,7 +48,7 @@ Datagator 0.2.1, 3 May 2016
 - created Fragments section - this is a partial meta, allowing reuse of processor results - especially useful in IfThenElse to cut down on processing time
 - change all resource meta 'validation' to 'security'
 
-Datagator 0.3, 23 may 2016
+Gaterdata\ 0.3, 23 may 2016
 ---------------------------
 
 Run "composer dump-autoload" on in the docroot after transferring files.

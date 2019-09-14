@@ -23,7 +23,7 @@ process:
     function: url
     id: 4
     method: get
-    url: "http://datagator.local/html/sample/sample5.json"
+    url: "http://gaterdata.local/html/sample/sample5.json"
   mappings:
     - get: "store.book[?title=='Moby Dick'].category"
       set: "/category/array[]"
