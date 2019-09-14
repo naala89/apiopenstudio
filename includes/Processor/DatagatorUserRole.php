@@ -8,12 +8,12 @@ namespace Gaterdata\Processor;
 use Gaterdata\Core;
 use Gaterdata\Db;
 
-class GaterdataUserRole extends Core\ProcessorEntity
+class DatagatorUserRole extends Core\ProcessorEntity
 {
   protected $details = array(
-    'name' => 'Gaterdata User Role',
+    'name' => 'Datagator User Role',
     'machineName' => 'datagatorUserRole',
-    'description' => 'CRUD operations for Gaterdata user roles.',
+    'description' => 'CRUD operations for Datagator user roles.',
     'menu' => 'Admin',
     'application' => 'Admin',
     'input' => array(
@@ -49,7 +49,7 @@ class GaterdataUserRole extends Core\ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor GaterdataUser', 4);
+    Core\Debug::variable($this->meta, 'Processor DatagatorUser', 4);
 
     $db = $this->getDb();
 

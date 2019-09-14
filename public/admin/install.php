@@ -25,6 +25,23 @@ if ($settings['twig']['options']['debug']) {
   $twig->addExtension(new \Twig\Extension\DebugExtension());
 }
 
+// Create the helper classes.
+try {
+  $user = new Admin\User($settings['db']);
+} catch (ApiException $e) {
+  $template = $twig->load("install/install_$from.twig");
+  echo $template->render([
+    'messages' => [
+      [
+        'type' => 'error',
+        'text' => 'An error occurred: ' . $e->getMessage(),
+      ]
+    ],
+    'menu' => $menu,
+  ]);
+  exit;
+}
+
 switch ($step) {
   case 0:
     // Check user wants to continue.
@@ -75,14 +92,25 @@ switch ($step) {
       'type' => 'info',
       'text' => 'Creating database tables...<br />',
     ];
+    
+    // Drop the database and user if exists.
+    $sql = 'DROP DATABASE ' . $settings['db']['database'] . ' IF EXISTS';
+    $db->execute($sql);
+    $message['text'] .= 'DROP DATABASE success!<br />';
+    $sql = 'DROP USER "' . $settings['db']['username'] . '"@"'  . $settings['db']['host'] . '" IF EXISTS';
+    $db->execute($sql);
+    $message['text'] .= 'DROP USER success!<br />';
 
-    // Drop all tables.
-    $sql = 'SELECT table_name FROM information_schema.tables WHERE table_schema = "' . $settings['db']['database'] . '"';
-    $tables = $db->getAll($sql);
-    foreach ($tables as $table) {
-      $sql = 'DROP TABLE IF EXISTS ' . $table['table_name'];
-      $db->execute($sql);
-    }
+    // Create the database, user and permissions.
+    $sql = 'CREATE DATABASE ' . $settings['db']['database'];
+    $db->execute($sql);
+    $message['text'] .= 'CREATE DATABASE success!<br />';
+    $sql = 'CREATE USER "' . $settings['db']['username'] . '"@"'  . $settings['db']['host'] . '" IDENTIFIED BY "' . $settings['db']['password'] . '"';
+    $db->execute($sql);
+    $message['text'] .= 'CREATE USER success!<br />';
+    $sql = 'GRANT ALL PRIVILEGES ON * . * TO "' . $settings['db']['username'] . '"@"'  . $settings['db']['host'] . '"';
+    $db->execute($sql);
+    $message['text'] .= 'GRANT PRIVILEGES success!<br />';
 
     // Parse the DB  table definition array.
     foreach ($definition as $table => $tableData) {
@@ -119,7 +147,9 @@ switch ($step) {
       } else {
         $message['text'] .= "CREATE TABLE `$table` success!<br/>";
       }
-      
+      // Empty the table in case it already existed.
+      // $sqlTruncate = "TRUNCATE `$table`;";
+      // $db->execute($sqlTruncate);
       if (isset($tableData['data'])) {
         foreach ($tableData['data'] as $row) {
           $keys = [];
@@ -150,24 +180,6 @@ switch ($step) {
     // Create user.
     if ($from == 2) {
       // This is a post from the user create form.
-
-      // Create the helper classes.
-      try {
-        $user = new Admin\User($settings['db']);
-      } catch (ApiException $e) {
-        $template = $twig->load("install/install_$from.twig");
-        echo $template->render([
-          'messages' => [
-            [
-              'type' => 'error',
-              'text' => 'An error occurred: ' . $e->getMessage(),
-            ]
-          ],
-          'menu' => $menu,
-        ]);
-        exit;
-      }
-
       if (empty($_POST['username']) ||
         empty($_POST['password']) ||
         empty($_POST['honorific']) ||
@@ -213,19 +225,19 @@ switch ($step) {
         exit;
       }
 
-      // if (!$user->assignOwner()) {
-      //   $template = $twig->load('install/install_2.twig');
-      //   echo $template->render([
-      //     'menu' => $menu,
-      //     'messages' => [
-      //       [
-      //         'type' => 'error',
-      //         'text' => 'Failed to assign your user administrator status. Please check the logs.'
-      //       ]
-      //     ],
-      //   ]);
-      //   exit;
-      // }
+      if (!$user->assignAdministrator()) {
+        $template = $twig->load('install/install_2.twig');
+        echo $template->render([
+          'menu' => $menu,
+          'messages' => [
+            [
+              'type' => 'error',
+              'text' => 'Failed to assign your user administrator status. Please check the logs.'
+            ]
+          ],
+        ]);
+        exit;
+      }
 
       // User created, continue to next page.
       $template = $twig->load('install/install_3.twig');

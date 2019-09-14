@@ -23,7 +23,7 @@ process:
     function: url
     id: 4
     method: get
-    url: "http://gaterdata.local/html/sample/sample5.xml"
+    url: "http://datagator.local/html/sample/sample5.xml"
   mappings:
     - get: "book/price[.>'40']/parent::*"
       set: "/store/books/expensive"

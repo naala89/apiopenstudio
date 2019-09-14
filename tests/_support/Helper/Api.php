@@ -7,7 +7,7 @@ namespace Helper;
 class Api extends \Codeception\Module
 {
   private $token = '';
-  private $accountName = 'Gaterdata';
+  private $accountName = 'Datagator';
   private $applicationName = 'Testing';
   private $username = 'tester';
   private $password = 'tester_pass';

@@ -67,8 +67,8 @@ class Authentication {
     if (!empty($username) || !empty($password)) {
       // This is a login attempt.
       try {
-        $user = new User($this->settings['db']);
-        $loginResult = $user->adminLogin($username, $password, $this->settings['user']['token_life']);
+        $userHlp = new User($this->settings['db']);
+        $loginResult = $userHlp->adminLogin($username, $password, $this->settings['user']['token_life']);
         $_SESSION['token'] = $loginResult['token'];
         $_SESSION['uid'] = $loginResult['uid'];
       } catch (ApiException $e) {
