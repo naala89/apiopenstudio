@@ -11,7 +11,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
 --
--- Database: `datagator`
+-- Database: `gaterdata`
 --
 
 -- --------------------------------------------------------
@@ -37,7 +37,7 @@ TRUNCATE TABLE `account`;
 --
 
 INSERT INTO `account` (`accid`, `uid`, `name`) VALUES
-  (1, 1, 'Datagator');
+  (1, 1, 'Gaterdata');
 
 -- --------------------------------------------------------
 
@@ -62,7 +62,7 @@ TRUNCATE TABLE `application`;
 --
 
 INSERT INTO `application` (`appid`, `accid`, `name`) VALUES
-  (1, 1, 'Datagator'),
+  (1, 1, 'Gaterdata'),
   (2, 1, 'Common'),
   (3, 1, 'Testing');
 
@@ -175,7 +175,7 @@ INSERT INTO `resource` (`id`, `appid`, `name`, `description`, `method`, `identif
   (17, 2, 'Resource import JSON', 'Create a resource from a document or string in JSON format.', 'post', 'resource/json', '{"security":{"function":"tokenDeveloper","id":1,"token":{"function":"varPost","id":2,"name":"token"}},"process":{"function":"resourceJson","id":3,"yaml":{"function":"varPost","id":4,"name":"yaml"}}}', 0),
   (18, 2, 'Resource import Swagger', 'Create resource/s from a Swagger document.', 'post', 'resource/swagger', '{"security":{"function":"tokenDeveloper","id":1,"token":{"function":"varPost","id":2,"name":"token"}},"process":{"function":"resourceSwagger","id":3,"resource":"resource"}}', 0),
   (19, 2, 'Resource import YAML', 'Create a resource from a document or string in YAML format.', 'post', 'resource/yaml', '{"security":{"function":"tokenDeveloper","id":1,"token":{"function":"varPost","id":2,"name":{"function":"literal","id":3,"value":"token"}}},"process":{"function":"resourceYaml","id":4,"resource":{"function":"literal","id":3,"value":"resource"}}}', 0),
-  (20, 2, 'User login', 'Login a user to Datagator using username/password.', 'post', 'user/login', '{"process":{"function":"UserLogin","id":1,"username":{"function":"VarPost","id":2,"name":"username"},"password":{"function":"VarPost","id":3,"name":"password"}}}', 0);
+  (20, 2, 'User login', 'Login a user to Gaterdata using username/password.', 'post', 'user/login', '{"process":{"function":"UserLogin","id":1,"username":{"function":"VarPost","id":2,"name":"username"},"password":{"function":"VarPost","id":3,"name":"password"}}}', 0);
 
 -- --------------------------------------------------------
 

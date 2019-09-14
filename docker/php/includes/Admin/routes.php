@@ -11,7 +11,7 @@ $app->get('/', 'CtrlHome:index');
 $app->post('/', 'CtrlHome:index')->add(new Authentication($container, $settings, '/login'));
 
 /**
- * Login.
+ * Authentication.
  */
 $app->get('/login', 'CtrlLogin:login');
 $app->post('/login', 'CtrlLogin:login')->add(new Authentication($container, $settings, '/login'));

@@ -8,8 +8,8 @@ use Gaterdata\Core;
 class Email extends Output
 {
   private $defaults = array(
-    'subject' => 'Datagator resourve result',
-    'from' => 'resource@datagator.com.au',
+    'subject' => 'Gaterdata resourve result',
+    'from' => 'resource@gaterdata.com.au',
     'format' => 'json',
   );
   protected $details = array(

@@ -7,7 +7,7 @@ config
 ------
 
 - change Config.php to be a single file, with Config.example.php 
-- Datagator to use /config/settings.php
+- Gaterdata to use /config/settings.php
 
 newsletter/mailing list
 -----------------------
@@ -125,7 +125,7 @@ ddos protection
 
 desktop/tablet app for creating/editing/deleting resources
 
-datagator will only contain the tried amd tested features from the open source version
+gaterdata will only contain the tried amd tested features from the open source version
 
 web
 --- 

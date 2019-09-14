@@ -45,7 +45,7 @@ class CtrlLogin extends CtrlBase {
     $menu = $this->getMenus([]);
     return $this->view->render($response, 'login.twig', [
       'menu' => $menu,
-      'messages' => $this->flash->getMessages(),
+      'messages' => [$this->flash->getMessages()],
     ]);
   }
 
@@ -68,7 +68,7 @@ class CtrlLogin extends CtrlBase {
     unset($_SESSION['uid']);
     return $this->view->render($response, 'login.twig', [
       'menu' => $menu,
-      'messages' => $this->flash->getMessages(),
+      'messages' => [$this->flash->getMessages()],
     ]);
   }
 

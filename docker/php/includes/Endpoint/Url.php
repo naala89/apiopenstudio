@@ -35,7 +35,7 @@ class Url extends Core\ProcessorEntity
         'default' => ''
       ),
       'sourceType' => array(
-        'description' => 'Manually declare the source type (the fastest), or allow Datagator to detect the type ("auto"). \
+        'description' => 'Manually declare the source type (the fastest), or allow Gaterdata to detect the type ("auto"). \
          If auto is selected, CSV and invalid JSON/XML will be treated as text.',
         'cardinality' => array(0, 1),
         'literalAllowed' => true,
