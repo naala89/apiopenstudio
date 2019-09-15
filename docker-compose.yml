@@ -2,15 +2,41 @@ version: '3.7'
 
 services:
 
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: "${APP_NAME}-proxy"
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - api_network
+
+  api:
+    image: nginx
+    container_name: "${APP_NAME}-api"
+    ports:
+      - 80
+    volumes:
+      - ./docker/nginx/api.conf:/etc/nginx/conf.d/default.conf
+      - ${PWD}:/var/www/html
+    environment:
+      - VIRTUAL_HOST=${API_DOMAIN}
+    depends_on:
+      - php
+    networks:
+      - api_network
+
   admin:
     image: nginx
     container_name: "${APP_NAME}-admin"
     ports:
-      - "80:80"
+      - 80
     volumes:
       - ./docker/nginx/admin.conf:/etc/nginx/conf.d/default.conf
-      - .:/var/www/html
-      - ./composer:/composer
+      - ${PWD}:/var/www/html
+    environment:
+      - VIRTUAL_HOST=${ADMIN_DOMAIN}
     depends_on:
       - php
     networks:

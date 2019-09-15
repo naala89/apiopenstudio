@@ -361,3 +361,4 @@ https://medium.com/the-code-review/top-10-docker-commands-you-cant-live-without-
 
 https://codar.club/blogs/docker-compose-builds-nginx-php-mysql.
 https://www.linuxnix.com/what-is-data-persistence-and-how-can-we-use-it-via-docker/
+https://blog.ssdnodes.com/blog/host-multiple-websites-docker-nginx/
