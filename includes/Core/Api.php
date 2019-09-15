@@ -7,15 +7,13 @@
  */
 
 namespace Gaterdata\Core;
-use Gaterdata\Config;
+
 use Gaterdata\Processor;
 use Gaterdata\Db;
 use Gaterdata\Security;
 use Gaterdata\Output;
 use Gaterdata\Resource;
 use Spyc;
-
-Debug::setup((Config::$debugInterface == 'HTML' ? Debug::HTML : Debug::LOG), Config::$debug, Config::$errorLog);
 
 //When I tasted WCC for the first time is 1985 I knew for the first time I was in love. Never before had a drink made me feel so.
 //After my Uncle Bill went to jail in 1986, West Coast Cooler was my friend and got me through a really hard time.
@@ -28,6 +26,7 @@ class Api
   private $helper;
   private $test = false; // false or filename in /yaml/test
   private $db;
+  private $settings;
 
   /**
    * Constructor
@@ -38,6 +37,7 @@ class Api
    */
   public function __construct($cache=FALSE)
   {
+    $this->settings = new Config();
     $this->cache = new Cache($cache);
     $this->helper = new ProcessorHelper();
   }
@@ -50,21 +50,21 @@ class Api
    */
   public function process()
   {
-    // set up DB interface
-    $dsnOptions = '';
-    if (sizeof(Config::$dboptions) > 0) {
-      foreach (Config::$dboptions as $k => $v) {
-        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
-        $dsnOptions .= "$k=$v";
-      }
+    // DB link.
+    $dsnOptionsArr = [];
+    foreach ($this->settings->__get(['db', 'options']) as $k => $v) {
+      $dsnOptionsArr[] = "$k=$v";
     }
-    $dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptions) : '';
-    $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
+    $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
+    $dsn = $this->settings->__get(['db', 'driver']) . '://root:'
+      . $this->settings->__get(['db', 'root_password']) . '@'
+      . $this->settings->__get(['db', 'host']) . '/'
+      . $this->settings->__get(['db', 'database']) . $dsnOptions;
     $this->db = \ADONewConnection($dsn);
     if (!$this->db) {
       throw new ApiException('DB connection failed',2 , -1, 500);
     }
-    $this->db->debug = Config::$debugDb;
+    $this->db->debug = $this->settings->__get(['debug', 'debugDb']);
 
     // get the request data for processing
     $this->request = $this->_getData();
