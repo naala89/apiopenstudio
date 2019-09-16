@@ -10,7 +10,7 @@ use ADOConnection;
  *
  * @package Gaterdata\Db
  */
-class ApiResourceMapper {
+class ApiResourceMapper extends Mapper {
 
   /**
    * ApiResourceMapper constructor.
@@ -35,19 +35,19 @@ class ApiResourceMapper {
    */
   public function save(ApiResource $resource) {
     if ($resource->getId() == NULL) {
-      $sql = 'INSERT INTO resource (appid, name, description, method, identifier, meta, ttl) VALUES (?, ?, ?, ?, ?, ?, ?)';
+      $sql = 'INSERT INTO resource (appid, name, description, method, uri, meta, ttl) VALUES (?, ?, ?, ?, ?, ?, ?)';
       $bindParams = [
         $resource->getAppId(),
         $resource->getName(),
         $resource->getDescription(),
         $resource->getMethod(),
-        $resource->getIdentifier(),
+        $resource->getUri(),
         $resource->getMeta(),
         $resource->getTtl(),
       ];
     }
     else {
-      $sql = 'UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, identifier = ?, meta = ?, ttl = ? WHERE resid = ?';
+      $sql = 'UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, uri = ?, meta = ?, ttl = ? WHERE resid = ?';
       $bindParams = [
         $resource->getAppId(),
         $resource->getName(),
@@ -97,42 +97,44 @@ class ApiResourceMapper {
   }
 
   /**
-   * Find an API resopurce by application ID, method and identifier.
+   * Find an API resopurce by account ID, application ID, method and uri.
    *
    * @param int $appid
    *   Application ID.
+   * @param int $accid
+   *   Account ID.
    * @param string $method
    *   API resource method.
-   * @param string $identifier
-   *   API resource identifier.
+   * @param string $uri
+   *   API resource URI.
    *
    * @return \Gaterdata\Db\ApiResource
    *   ApiResource object.
    *
    * @throws ApiException
    */
-  public function findByAppIdMethodIdentifier($appid, $method, $identifier) {
-    $sql = 'SELECT r.* FROM resource AS r WHERE r.appid = ? AND r.method = ? AND r.identifier = ?';
-    $bindParams = [$appid, $method, $identifier];
+  public function findByAccIdAppIdMethodUri($accid, $appid, $method, $uri) {
+    $sql = 'SELECT r.* FROM resource AS r WHERE r.accid = ? AND r.appid = ? AND r.method = ? AND r.uri = ?';
+    $bindParams = [$accid, $appid, $method, $uri];
     return $this->fetchRow($sql, $bindParams);
   }
 
   /**
-   * Find a resource by application name/s, method and identifier.
+   * Find a resource by application name/s, method and uri.
    *
    * @param array|string $appNames
    *   Application name or array of application names.
    * @param string $method
    *   Resource method.
-   * @param string $identifier
-   *   Resource identifier.
+   * @param string $uri
+   *   Resource uri.
    *
    * @return array
    *   Array of ApiResource objects.
    *
    * @throws ApiException
    */
-  public function findByAppNamesMethodIdentifier($appNames, $method, $identifier) {
+  public function findByAppNamesMethodUri($appNames, $method, $uri) {
     $sql = 'SELECT r.* FROM resource AS r INNER JOIN application AS a ON r.appid=a.appid WHERE';
     $bindParams = [];
     if (is_array($appNames)) {
@@ -147,9 +149,9 @@ class ApiResourceMapper {
       $sql .= ' a.name=?';
       $bindParams[] = $appNames;
     }
-    $sql .= ' AND r.method = ? AND r.identifier = ?';
+    $sql .= ' AND r.method = ? AND r.uri = ?';
     $bindParams[] = $method;
-    $bindParams[] = $identifier;
+    $bindParams[] = $uri;
 
     $recordSet = $this->db->Execute($sql, $bindParams);
     if (!$recordSet) {
@@ -197,13 +199,14 @@ class ApiResourceMapper {
     $resource = new ApiResource();
 
     $resource->setResid(!empty($row['resid']) ? $row['resid'] : NULL);
+    $resource->setAccId(!empty($row['accid']) ? $row['accid'] : NULL);
     $resource->setAppId(!empty($row['appid']) ? $row['appid'] : NULL);
     $resource->setName(!empty($row['name']) ? $row['name'] : NULL);
     $resource->setDescription(!empty($row['description']) ? $row['description'] : NULL);
     $resource->setMethod(!empty($row['method']) ? $row['method'] : NULL);
-    $resource->setIdentifier(!empty($row['identifier']) ? $row['identifier'] : NULL);
+    $resource->setUri(!empty($row['uri']) ? $row['uri'] : NULL);
     $resource->setMeta(!empty($row['meta']) ? $row['meta'] : NULL);
-    $resource->setTtl(!empty($row['ttl']) ? $row['ttl'] : NULL);
+    $resource->setTtl(!empty($row['ttl']) ? $row['ttl'] : 0);
 
     return $resource;
   }

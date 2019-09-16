@@ -10,11 +10,12 @@ namespace Gaterdata\Db;
 class ApiResource {
 
   protected $resid;
+  protected $accid;
   protected $appid;
   protected $name;
   protected $description;
   protected $method;
-  protected $identifier;
+  protected $uri;
   protected $meta;
   protected $ttl;
 
@@ -23,6 +24,8 @@ class ApiResource {
    *
    * @param int $resid
    *   The resource ID.
+   * @param int $accid
+   *   The account ID.
    * @param int $appid
    *   The application ID.
    * @param string $name
@@ -31,20 +34,21 @@ class ApiResource {
    *   The resource description.
    * @param string $method
    *   The resource method.
-   * @param string $identifier
-   *   The resource identifier.
+   * @param string $uri
+   *   The resource URI.
    * @param string $meta
    *   The resource metadata.
    * @param string $ttl
    *   The resource TTL.
    */
-  public function __construct($resid = NULL, $appid = NULL, $name = NULL, $description = NULL, $method = NULL, $identifier = NULL, $meta = NULL, $ttl = NULL) {
+  public function __construct($resid = NULL, $accid = NULL, $appid = NULL, $name = NULL, $description = NULL, $method = NULL, $uri = NULL, $meta = NULL, $ttl = NULL) {
     $this->resid = $resid;
+    $this->accid = $accid;
     $this->appid = $appid;
     $this->name = $name;
     $this->description = $description;
     $this->method = $method;
-    $this->identifier = $identifier;
+    $this->uri = $uri;
     $this->meta = $meta;
     $this->ttl = $ttl;
   }
@@ -67,6 +71,26 @@ class ApiResource {
    */
   public function setResid($resid) {
     $this->resid = $resid;
+  }
+
+  /**
+   * Get the account ID.
+   *
+   * @return int
+   *   The account ID.
+   */
+  public function getAccId() {
+    return $this->accid;
+  }
+
+  /**
+   * Set the resource account ID.
+   *
+   * @param int $accid
+   *   The account ID.
+   */
+  public function setAccId($accid) {
+    $this->accid = $accid;
   }
 
   /**
@@ -150,23 +174,23 @@ class ApiResource {
   }
 
   /**
-   * Get the resource identifier.
+   * Get the resource URI.
    *
    * @return string
-   *   The  resource identifier.
+   *   The  resource URI.
    */
-  public function getIdentifier() {
-    return $this->identifier;
+  public function getUri() {
+    return $this->uri;
   }
 
   /**
-   * Set the resource identifier.
+   * Set the resource URI.
    *
-   * @param string $identifier
-   *   Resource identifier.
+   * @param string $uri
+   *   Resource URI.
    */
-  public function setIdentifier($identifier) {
-    $this->identifier = $identifier;
+  public function setUri($uri) {
+    $this->uri = $uri;
   }
 
   /**
@@ -218,9 +242,10 @@ class ApiResource {
   public function dump() {
     return [
       'resid' => $this->resid,
+      'accid' => $this->accid,
       'appid' => $this->appid,
       'method' => $this->method,
-      'identifier' => $this->identifier,
+      'uri' => $this->uri,
       'ttl' => $this->ttl,
     ];
   }
