@@ -126,84 +126,98 @@ class Api
 
     $request = new Request();
 
-    $uriParts = explode('/', trim($get['request'], '/'));
-    $appName = array_shift($uriParts);
-    $mapper = new Db\ApplicationMapper($this->db);
-    $application = $mapper->findByName($appName);
-    $appId = $application->getAppId();
-    if (empty($appId)) {
-      throw new ApiException("invalid application: $appName", 3, -1, 404);
+    try {
+      $uriParts = explode('/', trim($get['request'], '/'));
+
+      $accName = array_shift($uriParts);
+      $accMapper = new Db\AccountMapper($this->db);
+      $account = $accMapper->findByName($accName);
+      if (empty($accId = $account->getAccid())) {
+        throw new ApiException("invalid request", 3, -1, 404);
+      }
+
+      $appName = array_shift($uriParts);
+      $appMapper = new Db\ApplicationMapper($this->db);
+      $application = $appMapper->findByAccidName($accId, $appName);
+      if (empty($appId = $application->getAppid())) {
+        throw new ApiException("invalid request", 3, -1, 404);
+      }
+
+      $resource = $this->_getResource($accId, $appId, $method, $uriParts);
     }
+    catch (ApiEception $e) {
+      throw new ApiException($e->getMessage(), 3 -1, 404);
+    }
+
+    $request->setAccName($accName);
+    $request->setAccId($accId);
     $request->setAppName($appName);
     $request->setAppId($appId);
-    $request->setUri($uriParts);
     $request->setMethod($method);
-    $resource = $this->_getResource($appName, $method, $uriParts);
-    $resource = json_decode($resource->getMeta());
-    $request->setResource($resource);
-    $request->setFragments(!empty($resource->fragments) ? $resource->fragments : array());
-    $request->setTtl(!empty($resource->ttl) ? $resource->ttl : 0);
-    $request->setArgs($uriParts);
-    $request->setGetVars(array_diff_assoc($get, array('request' => $get['request'])));
+    $request->setArgs($resource['args']);
+    $request->setUri($resource['resource']->getUri());
+    $request->setResource($resource['resource']);
+    $request->setGetVars(array_diff_assoc($get, ['request' => $get['request']]));
     $request->setPostVars($_POST);
+    $resource = json_decode($resource['resource']->getMeta());
+    $request->setFragments(!empty($resource->fragments) ? $resource->fragments : []);
+    $request->setTtl(!empty($resource->ttl) ? $resource->ttl : 0);
     $request->setIp($_SERVER['REMOTE_ADDR']);
-    $request->setOutFormat($this->getAccept(Config::$defaultFormat));
+    $request->setOutFormat($this->getAccept($this->settings->__get(['api', 'defaultFormat'])));
 
     return $request;
   }
 
   /**
    * Get the requested resource from the DB.
-   * $uriParts will be altered to contain only the values left after the resource is found (i.e. args)
    *
-   * @param $appName
+   * @param int $accId
+   * @param int $appId
    * @param $method
    * @param $uriParts
    * @return \Gaterdata\Db\Resource
    * @throws \Gaterdata\Core\ApiException
    */
-  private function _getResource($appName, $method, & $uriParts)
+  private function _getResource($accId, $appId, $method, $uriParts)
   {
     if (!$this->test) {
-      $mapper = new Db\ResourceMapper($this->db);
-      $args = array();
-      $resources = array();
+      $resourceMapper = new Db\ApiResourceMapper($this->db);
 
-      while (sizeof($resources) < 1 && sizeof($uriParts) > 0) {
-        $str = strtolower(implode('/', $uriParts));
-        $resources = $mapper->findByAppNamesMethodIdentifier(array('Common', $appName), $method, $str);
-        if (sizeof($resources) < 1) {
-          array_unshift($args, array_pop($uriParts));
+      while (sizeof($uriParts) > 0) {
+        $uri = empty($uri) ? array_shift($uriParts) : ("$uri/" . array_shift($uriParts));
+        $result = $resourceMapper->findByAccIdAppIdMethodUri($accId, $appId, $method, $uri);
+        if (!empty($result->getResid())) {
+          return [
+            'uri' => $uri,
+            'args' => $uriParts,
+            'resource' => $result,
+          ];
         }
       }
-      if (sizeof($resources) < 1) {
-        throw new ApiException('resource or client not defined', 3, -1, 404);
-      }
-      $uriParts = $args;
-      return $resources[0];
+      throw new ApiException('invalid request', 3, -1, 404);
     }
 
-    $filepath = $_SERVER['DOCUMENT_ROOT'] . Config::$dirYaml . 'test/' . $this->test;
+    $filepath = $_SERVER['DOCUMENT_ROOT'] . $this->config->__get('dirYaml') . 'test/' . $this->test;
     if (!file_exists($filepath)) {
       throw new ApiException("invalid test yaml: $filepath", 1 , -1, 400);
     }
-    $array = Spyc::YAMLLoad($filepath);
+    $yaml = Spyc::YAMLLoad($filepath);
     $meta = array();
-    $meta['process'] = $array['process'];
-    if (!empty($array['security'])) {
-      $meta['security'] = $array['security'];
+    $meta['process'] = $yaml['process'];
+    if (!empty($yaml['security'])) {
+      $meta['security'] = $yaml['security'];
     }
-    if (!empty($array['output'])) {
-      $meta['output'] = $array['output'];
+    if (!empty($yaml['output'])) {
+      $meta['output'] = $yaml['output'];
     }
-    if (!empty($array['fragments'])) {
-      $meta['fragments'] = $array['fragments'];
+    if (!empty($yaml['fragments'])) {
+      $meta['fragments'] = $yaml['fragments'];
     }
-    $resource = new Db\Resource();
+    $resource = new Db\ApiResource();
     $resource->setMeta(json_encode($meta));
-    $resource->setTtl($array['ttl']);
-    $resource->setMethod($array['method']);
-    $resource->setIdentifier(strtolower($array['uri']));
+    $resource->setTtl($yaml['ttl']);
+    $resource->setMethod($yaml['method']);
+    $resource->setIdentifier(strtolower($yaml['uri']));
     return $resource;
   }
 
