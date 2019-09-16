@@ -12,7 +12,7 @@ class Config {
   private $conf;
   
   public function __construct() {
-    $this->conf = parse_ini_file(dirname(dirname(__DIR__)) . '/config/gaterdata.ini', TRUE, INI_SCANNER_TYPED);
+    $this->conf = parse_ini_file(dirname(dirname(__DIR__)) . '/config/settings.ini', TRUE, INI_SCANNER_TYPED);
     Debug::setup(
       $this->__get(['debug', 'debugInterface']) == 'HTML' ? Debug::HTML : Debug::LOG,
       $this->__get(['debug', 'debug'])
