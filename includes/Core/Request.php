@@ -9,6 +9,8 @@ namespace Gaterdata\Core;
 class Request
 {
   private $uri;
+  private $accName;
+  private $accId;
   private $appName;
   private $appId;
   private $method;
@@ -19,7 +21,7 @@ class Request
   private $outFormat;
   private $resource;
   private $ttl = 0;
-  private $fragments = array();
+  private $fragments = [];
 
   /**
    * @param $var
@@ -35,6 +37,38 @@ class Request
   public function getUri()
   {
     return $this->uri;
+  }
+
+  /**
+   * @param $var
+   */
+  public function setAccName($var)
+  {
+    $this->accName = $var;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getAccName()
+  {
+    return $this->accName;
+  }
+
+  /**
+   * @param $var
+   */
+  public function setAccId($var)
+  {
+    $this->accId = $var;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getAccId()
+  {
+    return $this->accId;
   }
 
   /**
