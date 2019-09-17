@@ -92,23 +92,17 @@ switch ($step) {
       'type' => 'info',
       'text' => 'Creating database tables...<br />',
     ];
-    
-    // Drop the database and user if exists.
-    $sql = 'DROP DATABASE ' . $settings['db']['database'] . ' IF EXISTS';
-    $db->execute($sql);
-    $message['text'] .= 'DROP DATABASE success!<br />';
-    $sql = 'DROP USER "' . $settings['db']['username'] . '"@"'  . $settings['db']['host'] . '" IF EXISTS';
-    $db->execute($sql);
-    $message['text'] .= 'DROP USER success!<br />';
 
     // Create the database, user and permissions.
-    $sql = 'CREATE DATABASE ' . $settings['db']['database'];
+    $sql = 'CREATE DATABASE ' . $settings['db']['database'] . 'IF NOT EXISTS';
     $db->execute($sql);
     $message['text'] .= 'CREATE DATABASE success!<br />';
-    $sql = 'CREATE USER "' . $settings['db']['username'] . '"@"'  . $settings['db']['host'] . '" IDENTIFIED BY "' . $settings['db']['password'] . '"';
+    $sql = 'CREATE USER IF NOT EXISTS "' . $settings['db']['username'] . '"@"'  . $settings['db']['host'] . '" IDENTIFIED BY "' . $settings['db']['password'] . '"';
     $db->execute($sql);
     $message['text'] .= 'CREATE USER success!<br />';
     $sql = 'GRANT ALL PRIVILEGES ON * . * TO "' . $settings['db']['username'] . '"@"'  . $settings['db']['host'] . '"';
+    $db->execute($sql);
+    $sql = 'FLUSH PRIVILEGES';
     $db->execute($sql);
     $message['text'] .= 'GRANT PRIVILEGES success!<br />';
 
@@ -134,6 +128,8 @@ switch ($step) {
         $sqlColumn .= isset($columnData['comment']) ? (" COMMENT '" . $columnData['comment'] . "'") : '';
         $sqlColumns[] = $sqlColumn;
       }
+      $sqlDrop = "DROP TABLE IF EXISTS `$table`";
+      $db->execute($sqlDrop);
       $sqlCreate = "CREATE TABLE IF NOT EXISTS `$table` (" . implode(', ', $sqlColumns) . ');';
       if (empty($db->execute($sqlCreate))) {
         // Stop if table create fails.
@@ -147,9 +143,6 @@ switch ($step) {
       } else {
         $message['text'] .= "CREATE TABLE `$table` success!<br/>";
       }
-      // Empty the table in case it already existed.
-      // $sqlTruncate = "TRUNCATE `$table`;";
-      // $db->execute($sqlTruncate);
       if (isset($tableData['data'])) {
         foreach ($tableData['data'] as $row) {
           $keys = [];
@@ -160,7 +153,6 @@ switch ($step) {
           }
           $sqlRow = "INSERT INTO `$table` (" . implode(', ', $keys) . ') VALUES (' . implode(', ', $values) . ');';
           if (empty($db->execute($sqlRow))) {
-            var_dump($sqlRow);
             $message['text'] .= "INSERT into `$table` fail!<br />";
             $message['text'] .= "Processing halted. Please check the logs and retry.";
             $message['type'] = 'error';
