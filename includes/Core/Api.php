@@ -66,18 +66,17 @@ class Api
     }
     $this->db->debug = $this->settings->__get(['debug', 'debugDb']);
 
-    // get the request data for processing
+    // get the request data for processing.
     $this->request = $this->_getData();
     $resource = $this->request->getResource();
 
-    // validate user for the call, if required
+    // validate user access rights for the call.
     if (!empty($resource->security)) {
       $this->_crawlMeta($resource->security);
     }
 
     // fetch the cache of the call, and process into output if it is not stale
-    $cacheKey = $this->_getCacheKey($this->request->getUri());
-    $result = $this->_getCache($cacheKey);
+    $result = $this->_getCache($this->request->getCacheKey());
     if ($result !== false) {
       return $this->_getOutput($result);
     }
@@ -143,7 +142,7 @@ class Api
         throw new ApiException("invalid request", 3, -1, 404);
       }
 
-      $resource = $this->_getResource($accId, $appId, $method, $uriParts);
+      $result = $this->_getResource($accId, $appId, $method, $uriParts);
     }
     catch (ApiEception $e) {
       throw new ApiException($e->getMessage(), 3 -1, 404);
@@ -154,16 +153,20 @@ class Api
     $request->setAppName($appName);
     $request->setAppId($appId);
     $request->setMethod($method);
-    $request->setArgs($resource['args']);
-    $request->setUri($resource['resource']->getUri());
-    $request->setResource($resource['resource']);
     $request->setGetVars(array_diff_assoc($get, ['request' => $get['request']]));
     $request->setPostVars($_POST);
-    $resource = json_decode($resource['resource']->getMeta());
-    $request->setFragments(!empty($resource->fragments) ? $resource->fragments : []);
-    $request->setTtl(!empty($resource->ttl) ? $resource->ttl : 0);
     $request->setIp($_SERVER['REMOTE_ADDR']);
     $request->setOutFormat($this->getAccept($this->settings->__get(['api', 'defaultFormat'])));
+    $request->setArgs($result['args']);
+    $request->setResource($result['resource']);
+    $request->setUri($result['resource']->getUri());
+    $meta = json_decode($result['resource']->getMeta());
+    $cacheStr = strtolower($request->getUri());
+    $cacheStr = preg_replace('~/~', '_', $cacheStr);
+    $cacheStr = implode('_', [$accId, $appId, $cacheStr]);
+    $request->setCacheKey($cacheStr);
+    $request->setFragments(!empty($meta->fragments) ? $meta->fragments : []);
+    $request->setTtl(!empty($meta->ttl) ? $meta->ttl : 0);
 
     return $request;
   }
@@ -188,7 +191,6 @@ class Api
         $result = $resourceMapper->findByAccIdAppIdMethodUri($accId, $appId, $method, $uri);
         if (!empty($result->getResid())) {
           return [
-            'uri' => $uri,
             'args' => $uriParts,
             'resource' => $result,
           ];
@@ -260,6 +262,7 @@ class Api
 
   /**
    * Process the meta data, using depth first iteration.
+   * 
    * @param $meta
    * @return mixed
    */
