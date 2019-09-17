@@ -22,6 +22,7 @@ class Request
   private $resource;
   private $ttl = 0;
   private $fragments = [];
+  private $cacheKey;
 
   /**
    * @param $var
@@ -242,5 +243,21 @@ class Request
   public function getFragments()
   {
     return $this->fragments;
+  }
+
+  /**
+   * @param $var
+   */
+  public function setCacheKey($var)
+  {
+    $this->cacheKey = $var;
+  }
+
+  /**
+   * @return array
+   */
+  public function getCacheKey()
+  {
+    return $this->cacheKey;
   }
 }
