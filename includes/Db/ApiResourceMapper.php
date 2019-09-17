@@ -53,7 +53,7 @@ class ApiResourceMapper extends Mapper {
         $resource->getName(),
         $resource->getDescription(),
         $resource->getMethod(),
-        $resource->getIdentifier(),
+        $resource->getUri(),
         $resource->getMeta(),
         $resource->getTtl(),
         $resource->getResid(),
