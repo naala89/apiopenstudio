@@ -47,10 +47,11 @@ role:
     - { name: Developer }
     - { name: Consumer }
 
-application_user_role:
+user_role:
   columns:
-    aurid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: application user role id }
-    appid: { type: int(10) unsigned, notnull: false, comment: 'application id, we allow null for owner role' }
+    urid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: application user role id }
+    accid: { type: int(10) unsigned, notnull: false, comment: "account id, we allow null for non-owner role" }
+    appid: { type: int(10) unsigned, notnull: false, comment: "application id, we allow null for owner role" }
     uid: { type: int(10) unsigned, notnull: true, comment: user id }
     rid: { type: int(10) unsigned, notnull: true, comment: role id }
 

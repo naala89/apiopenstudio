@@ -2,25 +2,12 @@
 
 namespace Gaterdata\Db;
 
-use Gaterdata\Core\ApiException;
-use ADOConnection;
-
 /**
  * Class InviteMapper.
  *
  * @package Gaterdata\Db
  */
 class InviteMapper extends Mapper {
-
-  /**
-   * InviteMapper constructor.
-   *
-   * @param \ADOConnection $dbLayer
-   *   DB connection object.
-   */
-  public function __construct(ADOConnection $dbLayer) {
-    parent::__construct($dbLayer);
-  }
 
   /**
    * Save an Invite.

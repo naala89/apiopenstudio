@@ -2,25 +2,12 @@
 
 namespace Gaterdata\Db;
 
-use Gaterdata\Core\ApiException;
-use ADOConnection;
-
 /**
  * Class AdministratorMapper.
  *
  * @package Gaterdata\Db
  */
 class AdministratorMapper extends Mapper {
-
-  /**
-   * AdministratorMapper constructor.
-   *
-   * @param \ADOConnection $dbLayer
-   *   DB connection object.
-   */
-  public function __construct(ADOConnection $dbLayer) {
-    parent::__construct($dbLayer);
-  }
 
   /**
    * Save an administrator.

@@ -2,25 +2,12 @@
 
 namespace Gaterdata\Db;
 
-use Gaterdata\Core\ApiException;
-use ADOConnection;
-
 /**
  * Class ExternalUserMapper.
  *
  * @package Gaterdata\Db
  */
 class ExternalUserMapper extends Mapper {
-
-  /**
-   * ExternalUserMapper constructor.
-   *
-   * @param \ADOConnection $dbLayer
-   *   DB connection object.
-   */
-  public function __construct(ADOConnection $dbLayer) {
-    parent::__construct($dbLayer);
-  }
 
   /**
    * Save an external user object.

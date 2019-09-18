@@ -2,26 +2,12 @@
 
 namespace Gaterdata\Db;
 
-use Gaterdata\Core\ApiException;
-use ADOConnection;
-use phpDocumentor\Reflection\Types\Integer;
-
 /**
  * Class AccountMapper.
  *
  * @package Gaterdata\Db
  */
 class AccountMapper extends Mapper {
-
-  /**
-   * AccountMapper constructor.
-   *
-   * @param \ADOConnection $dbLayer
-   *   DB connection object.
-   */
-  public function __construct(ADOConnection $dbLayer) {
-    parent::__construct($dbLayer);
-  }
 
   /**
    * Save an Account.

@@ -3,22 +3,25 @@
 namespace Gaterdata\Db;
 
 /**
- * Class ApplicationUserRole.
+ * Class UserRole.
  *
  * @package Gaterdata\Db
  */
-class ApplicationUserRole {
+class UserRole {
 
-  protected $aurid;
+  protected $urid;
+  protected $accid;
   protected $appid;
   protected $uid;
   protected $rid;
 
   /**
-   * UserAccountRole constructor.
+   * UserRole constructor.
    *
-   * @param int $aurid
-   *   Application user role ID.
+   * @param int $urid
+   *   User role ID.
+   * @param int $accid
+   *   Account ID
    * @param int $appid
    *   Application ID
    * @param int $uid
@@ -26,31 +29,52 @@ class ApplicationUserRole {
    * @param int $rid
    *   The role ID.
    */
-  public function __construct($aurid = NULL, $appid = NULL, $uid = NULL, $rid = NULL) {
-    $this->aurid = $aurid;
+  public function __construct($urid = NULL, $accid = NULL, $appid = NULL, $uid = NULL, $rid = NULL) {
+    $this->urid = $urid;
+    $this->accid = $accid;
     $this->appid = $appid;
     $this->uid = $uid;
     $this->rid = $rid;
   }
 
   /**
-   * Get the application user role ID.
+   * Get the user role ID.
    *
    * @return int
-   *   Application user role ID.
+   *   user role ID.
    */
-  public function getAurid() {
-    return $this->aurid;
+  public function getUrid() {
+    return $this->urid;
   }
 
   /**
-   * Set the application user role ID.
+   * Set the user role ID.
    *
-   * @param int $aurid
-   *   Application user role ID.
+   * @param int $urid
+   *   User role ID.
    */
-  public function setAurid($aurid) {
-    $this->aurid = $aurid;
+  public function setUrid($urid) {
+    $this->urid = $urid;
+  }
+
+  /**
+   * Get the account ID.
+   *
+   * @return int
+   *   Account ID.
+   */
+  public function getAccid() {
+    return $this->accid;
+  }
+
+  /**
+   * Get the account ID.
+   *
+   * @param int $accid
+   *   Account ID.
+   */
+  public function setAccid($accid) {
+    $this->accid = $acc;
   }
 
   /**
@@ -122,6 +146,7 @@ class ApplicationUserRole {
   public function dump() {
     return [
       'aurid' => $this->aurid,
+      'accid' => $this->accid,
       'appid' => $this->appid,
       'uid' => $this->uid,
       'rid' => $this->rid,
