@@ -51,36 +51,38 @@ class UserLogin extends Core\ProcessorEntity
     $username = $this->isDataContainer($username) ? $username->getData() : $username;
     $password = $this->val('password');
     $password = $this->isDataContainer($password) ? $password->getData() : $password;
-    $db = $this->getDb();
-    $userMapper = new Db\UserMapper($db);
+    $userMapper = new Db\UserMapper($this->db);
 
     // validate username and active status
     $user = $userMapper->findByUsername($username);
+    Core\Debug::variable($user, 'user');
     if (empty($user->getUid()) || $user->getActive() == 0) {
-      throw new Core\ApiException('invalid username or password', 4, -1, 401);
+      throw new Core\ApiException('invalid username or password', 4, $this->id, 401);
     }
 
     // generate hash and compare to stored hash this prevents refreshing token with a fake password.
     $hash = Core\Hash::generateHash($password);
     if ($user->getHash() != null && $user->getHash() != $hash) {
-      throw new Core\ApiException('invalid username or password', 4, -1, 401);
+      throw new Core\ApiException('invalid username or password', 4, $this->id, 401);
     }
 
     // if token exists and is active, return it
+    $config = new Config();
+    $tokenLife = $config->__get('tokenLife');
     if (!empty($user->getToken())
       && !empty($user->getTokenTtl())
       && Core\Utilities::date_mysql2php($user->getTokenTtl()) > time()) {
-      $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime(Config::$tokenLife)));
-      return new Core\DataContainer(array('token' => $user->getToken()), 'array');
+      $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime($tokenLife)));
+      return new Core\DataContainer(['token' => $user->getToken()], 'array');
     }
 
     //perform login
     $user->setHash($hash);
     $token = Core\Hash::generateToken($username);
     $user->setToken($token);
-    $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime(Config::$tokenLife)));
+    $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime($tokenLife)));
     $userMapper->save($user);
 
-    return new Core\DataContainer(array('token' => $token), 'array');
+    return new Core\DataContainer(['token' => $user->getToken()], 'array');
   }
 }
