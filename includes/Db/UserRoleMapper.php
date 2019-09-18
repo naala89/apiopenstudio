@@ -21,7 +21,7 @@ class UserRoleMapper extends Mapper {
    * @throws \Gaterdata\Core\ApiException
    */
   public function save(UserRole $userRole) {
-    if ($userRole->getAurid() == NULL) {
+    if ($userRole->getUrid() == NULL) {
       $sql = 'INSERT INTO user_role (accid, appid, uid, rid) VALUES (?, ?, ?, ?)';
       $bindParams = [
         $userRole->getAccid(),
