@@ -2,25 +2,12 @@
 
 namespace Gaterdata\Db;
 
-use Gaterdata\Core\ApiException;
-use ADOConnection;
-
 /**
  * Class RoleMapper.
  *
  * @package Gaterdata\Db
  */
 class RoleMapper extends Mapper {
-
-  /**
-   * RoleMapper constructor.
-   *
-   * @param \ADOConnection $dbLayer
-   *   DB connector.
-   */
-  public function __construct(ADOConnection $dbLayer) {
-    parent::__construct($dbLayer);
-  }
 
   /**
    * Save a Role object into the DB.

@@ -2,10 +2,6 @@
 
 namespace Gaterdata\Db;
 
-use Cascade\Cascade;
-use Gaterdata\Core\ApiException;
-use ADOConnection;
-
 /**
  * Class VarsMapper.
  *

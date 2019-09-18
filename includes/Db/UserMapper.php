@@ -2,10 +2,7 @@
 
 namespace Gaterdata\Db;
 
-use Cascade\Cascade;
 use Gaterdata\Core\Utilities;
-use Gaterdata\Core\ApiException;
-use ADOConnection;
 
 /**
  * Class UserMapper.
@@ -13,25 +10,6 @@ use ADOConnection;
  * @package Gaterdata\Db
  */
 class UserMapper extends Mapper {
-
-  /**
-   * @var \ADOConnection
-   */
-  protected $db;
-  /**
-   * @var \Monolog\Logger
-   */
-  protected $logger;
-
-  /**
-   * UserMapper constructor.
-   *
-   * @param \ADOConnection $dbLayer
-   *   DB connection object.
-   */
-  public function __construct(ADOConnection $dbLayer) {
-    $this->db = $dbLayer;
-  }
 
   /**
    * Save the user.
