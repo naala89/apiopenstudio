@@ -68,11 +68,16 @@ class Api
 
     // get the request data for processing.
     $this->request = $this->_getData();
+    Debug::variable($this->request, 'request', 3);
     $resource = $this->request->getResource();
+    Debug::variable($resource, 'resource', 3);
+    $meta = json_decode($resource->getMeta());
+    Debug::variable($meta, 'meta', 3);
 
     // validate user access rights for the call.
-    if (!empty($resource->security)) {
-      $this->_crawlMeta($resource->security);
+    if (!empty($meta->security)) {
+      Debug::variable($meta->security, 'Process security', 3);
+      $this->_crawlMeta($meta->security);
     }
 
     // fetch the cache of the call, and process into output if it is not stale
@@ -80,20 +85,19 @@ class Api
     if ($result !== false) {
       return $this->_getOutput($result);
     }
-
     // set fragments in Meta class
-    if (isset($resource->fragments)) {
-      $fragments = $resource->fragments;
+    if (isset($meta->fragments)) {
+      $fragments = $meta->fragments;
       foreach ($fragments as $fragKey => $fragVal) {
+        Debug::variable($fragVal, 'Process fragment', 3);
         $fragments->$fragKey = $this->_crawlMeta($fragVal);
       }
       $this->request->setFragments($fragments);
     }
 
-    Debug::variable($this->request, 'request', 3);
-
     // process the call
-    $result = $this->_crawlMeta($resource->process);
+    Debug::variable($meta->process, 'Process resource', 3);
+    $result = $this->_crawlMeta($meta->process);
 
     // store the results in cache for next time
     if (is_object($result) && get_class($result) == 'Error') {
@@ -159,8 +163,9 @@ class Api
     $request->setOutFormat($this->getAccept($this->settings->__get(['api', 'defaultFormat'])));
     $request->setArgs($result['args']);
     $request->setResource($result['resource']);
-    $request->setUri($result['resource']->getUri());
     $meta = json_decode($result['resource']->getMeta());
+    $request->setMeta($meta);
+    $request->setUri($result['resource']->getUri());
     $cacheStr = strtolower($request->getUri());
     $cacheStr = preg_replace('~/~', '_', $cacheStr);
     $cacheStr = implode('_', [$accId, $appId, $cacheStr]);
@@ -331,7 +336,7 @@ class Api
         }
 
         $classStr = $this->helper->getProcessorString($node->function);
-        $class = new $classStr($node, $this->request);
+        $class = new $classStr($node, $this->request, $this->db);
         $results[$node->id] = $class->process();
       }
     }
