@@ -19,7 +19,7 @@ user:
     uid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: user id }
     active: { type: tinyint(4), notnull: true, default: 1, comment: user status }
     username: { type: varchar(255), notnull: true, comment: user name }
-    hash: { type: varchar(32), default: NULL, comment: pasword hash }
+    hash: { type: varchar(64), default: NULL, comment: pasword hash }
     token: { type: varchar(32), default: NULL, comment: temporary access token }
     token_ttl: { type: timestamp, default: NULL, comment: end of life for token }
     email: { type: varchar(255), notnull: true, comment: user email address }
@@ -42,6 +42,7 @@ role:
     rid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: role id }
     name: { type: varchar(255), notnull: true, comment: title of role }
   data:
+    - { name: Owner }
     - { name: Manager }
     - { name: Administrator }
     - { name: Developer }
@@ -49,8 +50,8 @@ role:
 
 user_role:
   columns:
-    urid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: application user role id }
-    accid: { type: int(10) unsigned, notnull: false, comment: "account id, we allow null for non-owner role" }
+    urid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: user role id }
+    accid: { type: int(10) unsigned, notnull: false, comment: "account id, we allow null for owner role" }
     appid: { type: int(10) unsigned, notnull: false, comment: "application id, we allow null for owner role" }
     uid: { type: int(10) unsigned, notnull: true, comment: user id }
     rid: { type: int(10) unsigned, notnull: true, comment: role id }

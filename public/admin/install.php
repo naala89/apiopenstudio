@@ -50,7 +50,7 @@ switch ($step) {
     $template = $twig->load("install/install_$from.twig");
     $messages[] = [
       'type' => 'error',
-      'text' => 'Continuing will erase any existing data in the database.<br />',
+      'text' => 'Continuing will create a new database and erase the current database, if it exists.<br />',
     ];
     $message['text'] .= '<a href="login">Click here to abort and login</a>.';
     echo $template->render(['messages' => $messages, 'menu' => $menu]);
@@ -150,54 +150,75 @@ switch ($step) {
     echo $template->render(['messages' => [$message], 'menu' => $menu]);
     exit;
     break;
-  
-  case 2:
-    // Set up the account.
-    break;
 
-  case 3:
-    // This is a post from the user create form.
-    if (empty($_POST['username']) ||
-      empty($_POST['password']) ||
-      empty($_POST['honorific']) ||
-      empty($_POST['email']) ||
-      empty($_POST['name_first']) ||
-      empty($_POST['name_last'])) {
-      // Missing mandatory fields.
-      $message['text'] = "Required fields not entered.";
-      $message['type'] = 'error';
-      $template = $twig->load('install/install_2.twig');
-      echo $template->render(['messages' => [$message], 'menu' => $menu]);
-      exit;
-    }
+  case 2:
     // Create user.
-    if ($from == 3) {
+    if ($from == 2) {
+      // This is a post from the user create form.
+      $username = !empty($_POST['username']) ? $_POST['username'] : NULL;
+      $password = !empty($_POST['password']) ? $_POST['password'] : NULL;
+      $email = !empty($_POST['email']) ? $_POST['email'] : NULL;
+      $honorific = !empty($_POST['honorific']) ? $_POST['honorific'] : NULL;
+      $nameFirst = !empty($_POST['name_first']) ? $_POST['name_first'] : NULL;
+      $nameLast = !empty($_POST['name_last']) ? $_POST['name_last'] : NULL;
+      $company = !empty($_POST['company']) ? $_POST['company'] : NULL;
+      $website = !empty($_POST['website']) ? $_POST['website'] : NULL;
+      $addressStreet = !empty($_POST['address_street']) ? $_POST['address_street'] : NULL;
+      $addressSuburb = !empty($_POST['address_suburb']) ? $_POST['address_suburb'] : NULL;
+      $addressCity = !empty($_POST['address_city']) ? $_POST['address_city'] : NULL;
+      $addressState = !empty($_POST['address_state']) ? $_POST['address_state'] : NULL;
+      $addressCountry = !empty($_POST['address_country']) ? $_POST['address_country'] : NULL;
+      $addressPostcode = !empty($_POST['address_postcode']) ? $_POST['address_postcode'] : NULL;
+      $phoneMobile = !empty($_POST['phone_mobile']) ? $_POST['phone_mobile'] : 0;
+      $phoneWork = !empty($_POST['phone_work']) ? $_POST['phone_work'] : 0;
+      if (empty($username) ||
+        empty($password) ||
+        empty($honorific) ||
+        empty($email) ||
+        empty($nameFirst) ||
+        empty($nameLast)) {
+        // Missing mandatory fields.
+        $message['text'] = "Required fields not entered.";
+        $message['type'] = 'error';
+        $template = $twig->load('install/install_2.twig');
+        echo $template->render(['messages' => [$message], 'menu' => $menu]);
+        exit;
+      }
       // Create the helper classes.
+      $userMapper = new Db\UserMapper($db);
+      $user = $userMapper->findByUsername($username);
+      if (!empty($user->getUid())) {
+        // User already created, user must have revisited the page.
+        $message['text'] = "User already exists, please restart the installation process.";
+        $message['type'] = 'error';
+        $template = $twig->load('install/install_2.twig');
+        echo $template->render(['messages' => [$message], 'menu' => $menu]);
+        exit;
+      }
       try {
         $user = new Db\User(
           NULL,
-          TRUE,
-          !empty($_POST['username']) ? $_POST['username'] : NULL,
+          1,
+          $username,
           NULL,
           NULL,
-          $settings->__get('token_life'),
-          !empty($_POST['email']) ? $_POST['email'] : NULL,
-          !empty($_POST['honorific']) ? $_POST['honorific'] : NULL,
-          !empty($_POST['name_first']) ? $_POST['name_first'] : NULL,
-          !empty($_POST['name_last']) ? $_POST['name_last'] : NULL,
-          !empty($_POST['company']) ? $_POST['company'] : NULL,
-          !empty($_POST['website']) ? $_POST['website'] : NULL,
-          !empty($_POST['address_street']) ? $_POST['address_street'] : NULL,
-          !empty($_POST['address_suburb']) ? $_POST['address_suburb'] : NULL,
-          !empty($_POST['address_city']) ? $_POST['address_city'] : NULL,
-          !empty($_POST['address_state']) ? $_POST['address_state'] : NULL,
-          !empty($_POST['address_country']) ? $_POST['address_country'] : NULL,
-          !empty($_POST['address_postcode']) ? $_POST['address_postcode'] : NULL,
-          !empty($_POST['phone_mobile']) ? $_POST['phone_mobile'] : 0,
-          !empty($_POST['phone_work']) ? $_POST['phone_work'] : 0
+          NULL,
+          $email,
+          $honorific,
+          $nameFirst,
+          $nameLast,
+          $company,
+          $website,
+          $addressStreet,
+          $addressSuburb,
+          $addressCity,
+          $addressState,
+          $addressCountry,
+          $addressPostcode,
+          $phoneMobile,
+          $phoneWork
         );
-        $user->setPassword(!empty($_POST['password']) ? $_POST['password'] : NULL);
-        $userMapper = new Db\UserMapper($db);
+        $user->setPassword($password);
         $userMapper->save($user);
 
       } catch (ApiException $e) {
@@ -216,14 +237,19 @@ switch ($step) {
 
       // Assign owner role.
       try {
+        $user = $userMapper->findByUsername($username);
+        $uid = $user->getUid();
+        if (empty($uid)) {
+          throw new ApiException('Could not find the newly ccreated user.');
+        }
         $roleMapper = new Db\RoleMapper($db);
         $role = $roleMapper->findByName('Owner');
-        $roleId = $role->getRid();
+        $rid = $role->getRid();
         $userRole = new Db\UserRole(
           NULL,
           NULL,
-          1,
-          $user->getUid(),
+          NULL,
+          $uid,
           $rid
         );
         $userRoleMapper = new Db\UserRoleMapper($db);
@@ -234,7 +260,7 @@ switch ($step) {
           'messages' => [
             [
               'type' => 'error',
-              'text' => 'An error occurred creating your user role: ' . $e->getMessage(),
+              'text' => 'An error occurred creating your Owner role: ' . $e->getMessage(),
             ]
           ],
           'menu' => $menu,
@@ -243,13 +269,13 @@ switch ($step) {
       }
 
       // User created, continue to next page.
-      $template = $twig->load('install/install_4.twig');
+      $template = $twig->load('install/install_3.twig');
       echo $template->render(['menu' => $menu, 'uid' => $newUser['uid']]);
       exit;
     }
 
     // Fallback to rendering the create user form (user is from previous page).
-    $template = $twig->load('install/install_3.twig');
+    $template = $twig->load('install/install_2.twig');
     echo $template->render(['menu' => $menu]);
     exit;
     break;
