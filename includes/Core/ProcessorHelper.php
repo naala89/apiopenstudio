@@ -27,6 +27,7 @@ class ProcessorHelper
     foreach ($namespaces as $namespace) {
       $classStr = "\\Gaterdata\\$namespace\\$className";
       if (class_exists($classStr)) {
+        Debug::variable($classStr, 'Using processor class', 3);
         return $classStr;
         break;
       }
