@@ -79,18 +79,25 @@ abstract class ProcessorEntity extends Entity
   protected $details = array();
 
   /**
+   * @param \ADOConnection $dbLayer
+  */
+  protected $db;
+
+  /**
    * Constructor. Store processor metadata and request data in object.
    *
    * If this method is overridden by any derived classes, don't forget to call parent::__construct()
    *
-   * @param $meta
-   * @param $request
+   * @param array $meta
+   * @param object $request
+   * @param \ADOConnection $db
    */
-  public function __construct($meta, & $request)
+  public function __construct($meta, & $request, $db)
   {
     $this->meta = $meta;
     $this->request = $request;
     $this->id = isset($meta->id) ? $meta->id : -1;
+    $this->db = $db;
   }
 
   /**
@@ -284,30 +291,5 @@ abstract class ProcessorEntity extends Entity
 
   public function _checkInt($var) {
     return null !== filter_var($var, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-  }
-
-  /**
-   * Get a DB object.
-   *
-   * @return \the
-   * @throws \Gaterdata\Core\ApiException
-   */
-  protected function getDb()
-  {
-    $dsnOptions = '';
-    if (sizeof(Config::$dboptions) > 0) {
-      foreach (Config::$dboptions as $k => $v) {
-        $dsnOptions .= sizeof($dsnOptions) == 0 ? '?' : '&';
-        $dsnOptions .= "$k=$v";
-      }
-    }
-    $dsnOptions = sizeof(Config::$dboptions) > 0 ? '?'.implode('&', Config::$dboptions) : '';
-    $dsn = Config::$dbdriver . '://' . Config::$dbuser . ':' . Config::$dbpass . '@' . Config::$dbhost . '/' . Config::$dbname . $dsnOptions;
-    $db = \ADONewConnection($dsn);
-    if (!$db) {
-      throw new ApiException('DB connection failed',2 , $this->id, 500);
-    }
-    $db->debug = Config::$debugDb;
-    return $db;
   }
 }
