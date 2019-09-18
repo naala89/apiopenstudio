@@ -20,6 +20,7 @@ class Request
   private $ip;
   private $outFormat;
   private $resource;
+  private $meta;
   private $ttl = 0;
   private $fragments = [];
   private $cacheKey;
@@ -211,6 +212,22 @@ class Request
   public function getResource()
   {
     return $this->resource;
+  }
+
+  /**
+   * @param $var
+   */
+  public function setMeta($var)
+  {
+    $this->meta = $var;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getMeta()
+  {
+    return $this->meta;
   }
 
   /**
