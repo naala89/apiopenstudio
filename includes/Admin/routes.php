@@ -8,6 +8,7 @@ $container = $app->getContainer();
  * Home.
  */
 $app->get('/', 'CtrlHome:index');
+$app->get('/home', 'CtrlHome:index');
 $app->post('/', 'CtrlHome:index')->add(new Authentication($container, $settings, '/login'));
 
 /**
