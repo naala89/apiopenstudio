@@ -50,4 +50,7 @@ class Config {
     throw new ApiException('Invalid configuration key');
   }
 
+  public function all() {
+    return $this->conf;
+  }
 }
