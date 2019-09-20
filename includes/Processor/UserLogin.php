@@ -5,7 +5,7 @@
  */
 
 namespace Gaterdata\Processor;
-use Gaterdata\Config;
+use Gaterdata\Core\Config;
 use Gaterdata\Core;
 use Gaterdata\Db;
 
@@ -61,14 +61,19 @@ class UserLogin extends Core\ProcessorEntity
     }
 
     // generate hash and compare to stored hash this prevents refreshing token with a fake password.
+    if (empty($user->getHash())) {
+      $user->setHash(Core\Hash::generateHash($password));
+      $userMapper->save($user);
+    }
     $hash = Core\Hash::generateHash($password);
-    if ($user->getHash() != null && $user->getHash() != $hash) {
+    $storedHash = $user->getHash();
+    if (!Core\Hash::verifPassword($password, $storedHash)) {
       throw new Core\ApiException('invalid username or password', 4, $this->id, 401);
     }
 
     // if token exists and is active, return it
     $config = new Config();
-    $tokenLife = $config->__get('tokenLife');
+    $tokenLife = $config->__get(['api', 'token_life']);
     if (!empty($user->getToken())
       && !empty($user->getTokenTtl())
       && Core\Utilities::date_mysql2php($user->getTokenTtl()) > time()) {

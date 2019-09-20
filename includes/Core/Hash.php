@@ -26,6 +26,18 @@ class Hash
   }
 
   /**
+   * Verify the password matches the hash.
+   * 
+   * @param string $password
+   * @param string hash
+   * 
+   * @return bool
+   */
+  public function verifPassword($password, $hash) {
+    return password_verify($password, $hash);
+  }
+
+  /**
    * Generate a unique random token, based on a string.
    *
    * @param int $string
