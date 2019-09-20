@@ -25,7 +25,9 @@ services:
     depends_on:
       - php
     networks:
-      - api_network
+      api_network:
+        aliases:
+          - ${API_DOMAIN}
 
   admin:
     image: nginx
@@ -40,7 +42,9 @@ services:
     depends_on:
       - php
     networks:
-      - api_network
+      api_network:
+        aliases:
+          - ${ADMIN_DOMAIN}
     
   php:
     image: php:fpm
