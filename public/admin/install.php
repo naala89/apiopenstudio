@@ -17,7 +17,7 @@ $step = isset($_POST['next_step']) ? intval($_POST['next_step']) : 0;
 $menu = ['Login' => '/'];
 
 // Twig definition.
-$loader = new Twig_Loader_Filesystem($settings->__get(['twig', 'path']));
+$loader = new Twig_Loader_Filesystem($settings->__get(['api', 'base_path']) . $settings->__get(['twig', 'template_path']));
 $twig = new Twig_Environment($loader, $settings->__get(['twig', 'options']));
 if ($settings->__get(['twig', 'options', 'debug'])) {
   $twig->addExtension(new \Twig\Extension\DebugExtension());
@@ -68,7 +68,7 @@ switch ($step) {
     if (isset($_SESSION['token'])) {
       unset ($_SESSION['token']);
     }
-    $yaml = file_get_contents($settings->__get(['db', 'definition']));
+    $yaml = file_get_contents($settings->__get(['api', 'base_path']) . $settings->__get(['db', 'definition_path']));
     $definition = \Spyc::YAMLLoadString($yaml);
     $template = $twig->load('install/install_1.twig');
     $message = [
