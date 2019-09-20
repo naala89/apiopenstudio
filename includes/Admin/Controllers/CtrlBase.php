@@ -112,6 +112,13 @@ class CtrlBase {
       $menus += [
         'Home' => '/',
       ];
+      if (in_array('Owner', $roles)) {
+        $menus += [
+          'Accounts' => '/accounts',
+          'Applications' => '/applications',
+          'Users' => '/users',
+        ];
+      }
       if (in_array('Administrator', $roles)) {
         $menus += [
           'Accounts' => '/accounts',
