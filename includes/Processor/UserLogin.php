@@ -78,7 +78,10 @@ class UserLogin extends Core\ProcessorEntity
       && !empty($user->getTokenTtl())
       && Core\Utilities::date_mysql2php($user->getTokenTtl()) > time()) {
       $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime($tokenLife)));
-      return new Core\DataContainer(['token' => $user->getToken()], 'array');
+      return new Core\DataContainer(
+        ['token' => $user->getToken(), 'uid' => $user->getUid()],
+        'array'
+      );
     }
 
     //perform login
@@ -88,6 +91,9 @@ class UserLogin extends Core\ProcessorEntity
     $user->setTokenTtl(Core\Utilities::date_php2mysql(strtotime($tokenLife)));
     $userMapper->save($user);
 
-    return new Core\DataContainer(['token' => $user->getToken()], 'array');
+    return new Core\DataContainer(
+      ['token' => $user->getToken(), 'uid' => $user->getUid()],
+      'array'
+    );
   }
 }

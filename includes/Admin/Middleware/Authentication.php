@@ -5,8 +5,9 @@ namespace Gaterdata\Admin\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Container;
-use Gaterdata\Admin\User;
 use Gaterdata\Core\ApiException;
+use GuzzleHttp\Client;
+
 
 /**
  * Class Authentication.
@@ -67,10 +68,23 @@ class Authentication {
     if (!empty($username) || !empty($password)) {
       // This is a login attempt.
       try {
-        $userHlp = new User($this->settings['db']);
-        $loginResult = $userHlp->adminLogin($username, $password, $this->settings['user']['token_life']);
-        $_SESSION['token'] = $loginResult['token'];
-        $_SESSION['uid'] = $loginResult['uid'];
+        $client = new Client([
+          'base_uri'        => $this->settings['api']['url'],
+          'timeout'         => 0,
+        ]);
+        $uri = 'http://api.gaterdata.local/' . $this->settings['api']['common_account'] . '/' . $this->settings['api']['common_application'] . '/login';
+        $response = $client->request('POST', $uri, [
+          'form_params' => [
+            'username' => $username, 
+            'password' => $password
+          ]
+        ]);
+        if ($response->getStatusCode() != 200) {
+          throw new ApiException('Access Denied');
+        }
+        $result = json_decode($response->getBody());
+        $_SESSION['token'] = $result['token'];
+        $_SESSION['uid'] = $result['uid'];
       } catch (ApiException $e) {
         unset($_SESSION['token']);
         unset($_SESSION['uid']);
@@ -80,7 +94,7 @@ class Authentication {
 
     // Validate token and uid are set (valid login).
     if (!isset($_SESSION['token']) || !isset($_SESSION['uid'])) {
-      return $response = $response->withRedirect($uri);
+      return $response = $response->withRedirect('/');
     }
     return $next($request, $response);
   }

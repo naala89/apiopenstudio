@@ -3,13 +3,15 @@
 require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
 use Cascade\Cascade;
+use Gaterdata\Core\Config;
 
 session_start();
 
 // Get the settings.
-$settings = require dirname(dirname(__DIR__)) . '/config/settings.php';
+$config = new Config();
+$settings = $config->all();
 
-Cascade::fileConfig($settings['log']['settings']);
+// Cascade::fileConfig($settings->__get(['log', 'settings']));
 
 // Instantiate the app
 $app = new \Slim\App(['settings' => $settings]);
