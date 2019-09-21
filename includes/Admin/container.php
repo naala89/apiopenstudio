@@ -34,12 +34,11 @@ $container['flash'] = function () {
  */
 $container['view'] = function (Container $container) {
   $settings = $container->get('settings');
-  $viewPath = $settings['twig']['path'];
-
+  $viewPath = $settings['api']['base_path'] . $settings['twig']['template_path'];
   $twig = new Twig($viewPath, $settings['twig']['options']);
 
   $loader = $twig->getLoader();
-  $loader->addPath($settings['public'], 'public');
+  $loader->addPath($settings['api']['base_path'] . $settings['api']['public_path'], 'public');
 
   // Instantiate and add Slim specific extension.
   $router = $container->get('router');
