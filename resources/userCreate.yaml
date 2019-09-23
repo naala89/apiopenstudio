@@ -12,7 +12,7 @@ security:
   function: TokenSysAdmin
   id: 1
   token:
-    function: varPost
+    function: var_post
     id: 2
     name: token
 
@@ -20,30 +20,30 @@ process:
   function: datagatorUser
   id: 3
   username:
-    function: varPost
+    function: var_post
     id: 4
     name: username
   active:
-    function: varPost
+    function: var_post
     id: 5
     name: active
   email:
-    function: varPost
+    function: var_post
     id: 6
     name: email
   honorific:
-    function: varPost
+    function: var_post
     id: 7
     name: honorific
   nameFirst:
-    function: varPost
+    function: var_post
     id: 8
     name: nameFirst
   nameLast:
-    function: varPost
+    function: var_post
     id: 9
     name: nameLast
   company:
-    function: varPost
+    function: var_post
     id: 10
     name: company

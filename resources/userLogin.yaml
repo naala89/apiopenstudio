@@ -12,10 +12,10 @@ process:
   function: UserLogin
   id: 1
   username:
-    function: VarPost
+    function: var_post
     id: 2
     name: username
   password:
-    function: VarPost
+    function: var_post
     id: 3
     name: password

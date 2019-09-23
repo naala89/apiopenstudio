@@ -9,33 +9,33 @@ use Gaterdata\Core;
 
 class VarPost extends Core\ProcessorEntity
 {
-  protected $details = array(
+  protected $details = [
     'name' => 'Var (Post)',
-    'machineName' => 'varPost',
+    'machineName' => 'var_post',
     'description' => 'A "post" variable. It fetches a variable from the post request.',
     'menu' => 'Primitive',
     'application' => 'Common',
-    'input' => array(
-      'name' => array(
+    'input' => [
+      'key' => [
         'description' => 'The key or name of the POST variable.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'nullable' => array(
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => [],
+        'default' => '',
+      ],
+      'nullable' => [
         'description' => 'Allow the processing to continue if the POST variable does not exist.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('boolean'),
-        'limitValues' => array(),
+        'limitFunctions' => [],
+        'limitTypes' => ['boolean'],
+        'limitValues' => [],
         'default' => true
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 
   public function process()
   {

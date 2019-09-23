@@ -28,11 +28,11 @@ process:
     normalise: true
     vars:
       username:
-        function: varPost
+        function: var_post
         id: 5
         name: username
       password:
-        function: varPost
+        function: var_post
         id: 6
         name: password
     curlOpts:

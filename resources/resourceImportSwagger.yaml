@@ -12,7 +12,7 @@ security:
   function: tokenDeveloper
   id: 1
   token:
-    function: varPost
+    function: var_post
     id: 2
     name: token
 
