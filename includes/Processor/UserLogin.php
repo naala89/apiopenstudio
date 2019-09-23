@@ -13,8 +13,8 @@ class UserLogin extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'User Login',
-    'machineName' => 'userLogin',
-    'description' => 'Login a user for token-based API access.',
+    'machineName' => 'user_login',
+    'description' => 'Login a user. Token and uid returned.',
     'menu' => 'Validator',
     'application' => 'Common',
     'input' => array(
