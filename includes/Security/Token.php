@@ -14,7 +14,7 @@ class Token extends Core\ProcessorEntity
   protected $details = array(
     'name' => 'Token',
     'machineName' => 'token',
-    'description' => 'Validate the request, requiring the consumer to have a valid token.',
+    'description' => 'Validate that the user has a valid token and roles.',
     'menu' => 'Security',
     'application' => 'Common',
     'input' => array(
