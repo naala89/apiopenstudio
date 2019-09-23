@@ -42,9 +42,9 @@ role:
     rid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: role id }
     name: { type: varchar(255), notnull: true, comment: title of role }
   data:
-    - { name: Owner }
-    - { name: Manager }
     - { name: Administrator }
+    - { name: Account manager }
+    - { name: Application manager }
     - { name: Developer }
     - { name: Consumer }
 
@@ -94,7 +94,7 @@ resource:
     - { accid: 1, appid: 2, name: Resource import JSON, description: Create a resource from a document or string in JSON format, method: post, uri: resource/json, ttl: 0, meta: '{\"security\":{\"function\":\"tokenDeveloper\",\"id\":1,\"token\":{\"function\":\"varPost\",\"id\":2,\"name\":\"token\"}},\"process\":{\"function\":\"resourceJson\",\"id\":3,\"yaml\":{\"function\":\"varPost\",\"id\":4,\"name\":\"yaml\"}}}' }
     - { accid: 1, appid: 2, name: Resource import Swagger, description: Create resource/s from a Swagger document, method: post, uri: resource/swagger, ttl: 0, meta: '{\"security\":{\"function\":\"tokenDeveloper\",\"id\":1,\"token\":{\"function\":\"varPost\",\"id\":2,\"name\":\"token\"}},\"process\":{\"function\":\"resourceSwagger\",\"id\":3,\"resource\":\"resource\"}}' }
     - { accid: 1, appid: 2, name: Resource import YAML, description: Create a resource from a document or string in YAML format, method: post, uri: resource/yaml, ttl: 0, meta: '{\"security\":{\"function\":\"tokenDeveloper\",\"id\":1,\"token\":{\"function\":\"varPost\",\"id\":2,\"name\":{\"function\":\"literal\",\"id\":3,\"value\":\"token\"}}},\"process\":{\"function\":\"resourceYaml\",\"id\":4,\"resource\":{\"function\":\"literal\",\"id\":3,\"value\":\"resource\"}}}' }
-    - { accid: 1, appid: 2, name: User login, description: Login a user to Datagator, method: post, uri: login, ttl: 0, meta: '{\"process\":{\"function\":\"UserLogin\",\"id\":1,\"username\":{\"function\":\"VarPost\",\"id\":2,\"name\":\"username\"},\"password\":{\"function\":\"VarPost\",\"id\":3,\"name\":\"password\"}}}' }
+    - { accid: 1, appid: 2, name: User login, description: Login a user to GaterData, method: post, uri: login, ttl: 0, meta: '{\"process\":{\"function\":\"user_login\",\"id\":1,\"username\":{\"function\":\"VarPost\",\"id\":2,\"name\":\"username\"},\"password\":{\"function\":\"VarPost\",\"id\":3,\"name\":\"password\"}}}' }
 
 external_user:
   columns:
