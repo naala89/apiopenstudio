@@ -28,6 +28,6 @@ process:
     id: 5
     name: applicationName
   roleName:
-    function: varPost
+    function: var_post
     id: 6
     name: roleName

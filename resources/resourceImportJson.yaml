@@ -12,7 +12,7 @@ security:
   function: tokenDeveloper
   id: 1
   token:
-    function: varPost
+    function: var_post
     id: 2
     name: token
 
@@ -20,7 +20,7 @@ process:
   function: resourceJson
   id: 3
   yaml:
-    function: varPost
+    function: var_post
     id: 4
     name: yaml
 
