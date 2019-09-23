@@ -126,6 +126,7 @@ switch ($step) {
       } else {
         $message['text'] .= "CREATE TABLE `$table` success!<br/>";
       }
+      // Add data if required.
       if (isset($tableData['data'])) {
         foreach ($tableData['data'] as $row) {
           $keys = [];
@@ -146,6 +147,7 @@ switch ($step) {
         $message['text'] .= "INSERT into `$table` success!<br/>";
       }
     }
+
     $message['text'] .= 'Database Successfully created!<br />';
     echo $template->render(['messages' => [$message], 'menu' => $menu]);
     exit;
