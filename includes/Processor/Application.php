@@ -10,10 +10,10 @@ namespace Gaterdata\Processor;
 use Gaterdata\Core;
 use Gaterdata\Db;
 
-class DatagatorApplication extends Core\ProcessorEntity
+class Application extends Core\ProcessorEntity
 {
   protected $details = array(
-    'name' => 'Datagator Application',
+    'name' => 'Application',
     'machineName' => 'datagatorApplication',
     'description' => 'CRUD operations for Datagator applications.',
     'menu' => 'Admin',
