@@ -22,7 +22,11 @@ class ProcessorHelper
       throw new ApiException('empty function name', 1, -1, 406);
     }
     $namespaces = empty($namespaces) ? $this->_namespaces : $namespaces;
-    $className = ucfirst(trim($className));
+    $parts = explode('_', $className);
+    foreach ($parts as $key => $part) {
+      $parts[$key] = ucfirst($part);
+    }
+    $className = implode('', $parts);
 
     foreach ($namespaces as $namespace) {
       $classStr = "\\Gaterdata\\$namespace\\$className";
