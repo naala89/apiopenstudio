@@ -17,8 +17,8 @@ class Collection extends Core\ProcessorEntity
     'menu' => 'Primitive',
     'application' => 'Common',
     'input' => [
-      'values' => [
-        'description' => 'The values in the collection',
+      'items' => [
+        'description' => 'The items in the collection',
         'cardinality' => [0, '*'],
         'literalAllowed' => true,
         'limitFunctions' => [],
@@ -33,28 +33,21 @@ class Collection extends Core\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor Collection', 4);
 
-    $values = $this->val('values', true);
+    $items = $this->val('items', true);
 
-    if ($this->isDataContainer($values)) {
-      if ($values->getType == 'array') {
-        return $values;
+    if ($this->isDataContainer($items)) {
+      if ($items->getType == 'array') {
+        return $items;
       }
       // Convert the container of single type into a container of array.
-      return new Core\DataContainer([$values], 'array');
+      return new Core\DataContainer([$items], 'array');
     }
 
     // Convert single value into an array container.
-    if (!is_array($values)) {
-      return new Core\DataContainer([$values], 'array');
+    if (!is_array($items)) {
+      return new Core\DataContainer([$items], 'array');
     }
-
-    // We have an array, keys can be computed to allow dynamic associative arrays.
-    $result = [];
-    foreach ($values as $key => $value) {
-      $key = $this->val($key);
-      $value = $this->val($value);
-      $result[$key] = $value;
-    }
-    return new Core\DataContainer($result, 'array');
+    
+    return new Core\DataContainer($items, 'array');
   }
 }
