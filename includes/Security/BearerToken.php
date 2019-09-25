@@ -1,7 +1,10 @@
 <?php
 
 /**
- * Fetch  bearer token from the Header
+ * Fetch the bearer token from the Header
+ * 
+ * This assumes the format
+ *  Bearer <token>
  */
 
 namespace Gaterdata\Security;
@@ -9,14 +12,14 @@ use Gaterdata\Core;
 
 class BearerToken extends Core\ProcessorEntity
 {
-  protected $details = array(
+  protected $details = [
     'name' => 'Bearer Token',
-    'machineName' => 'bearerToken',
+    'machineName' => 'bearer_token',
     'description' => 'Fetch a bearer token from the request header.',
     'menu' => 'Security',
     'application' => 'Common',
-    'input' => array(),
-  );
+    'input' => [],
+  ];
 
   public function process()
   {
@@ -27,7 +30,7 @@ class BearerToken extends Core\ProcessorEntity
     if (isset($_SERVER['Authorization'])) {
       $headers = trim($_SERVER["Authorization"]);
     } else if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-      //Nginx or fast CGI
+      // Nginx or fast CGI.
       $headers = trim($_SERVER["HTTP_AUTHORIZATION"]);
     } elseif (function_exists('apache_request_headers')) {
       $requestHeaders = apache_request_headers();
