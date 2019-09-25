@@ -1,0 +1,21 @@
+{
+  "name": "User login",
+  "description": "Login a user to Datagator using username/password.",
+  "uri": "user/login",
+  "method": "post",
+  "ttl": 0,
+  "process": {
+    "function": "user_login",
+    "id": "user_login_user_login",
+    "username": {
+      "function": "var_post",
+      "id": "user_login_username",
+      "key": "username"
+    },
+    "password": {
+      "function": "var_post",
+      "id": "user_login_password",
+      "key": "password"
+    }
+  }
+}

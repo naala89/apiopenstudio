@@ -9,13 +9,13 @@ method: post
 ttl: 0
 
 process:
-  function: UserLogin
-  id: 1
+  function: user_login
+  id: user_login_user_login
   username:
     function: var_post
-    id: 2
-    name: username
+    id: user_login_username
+    key: username
   password:
     function: var_post
-    id: 3
-    name: password
+    id: user_login_password
+    key: password
