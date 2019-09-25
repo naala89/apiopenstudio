@@ -14,7 +14,7 @@ class VarInt extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Integer)',
-    'machineName' => 'varInt',
+    'machineName' => 'var_int',
     'description' => 'An integer variable. It validates the input and returns an error if it is not a integer.',
     'menu' => 'Primitive',
     'application' => 'Common',

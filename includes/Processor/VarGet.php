@@ -11,12 +11,12 @@ class VarGet extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Get)',
-    'machineName' => 'varGet',
+    'machineName' => 'var_get',
     'description' => 'A "get" variable. It fetches a variable from the get request.',
     'menu' => 'Primitive',
     'application' => 'Common',
     'input' => array(
-      'name' => array(
+      'key' => array(
         'description' => 'The key or name of the GET variable.',
         'cardinality' => array(1, 1),
         'literalAllowed' => true,
@@ -41,16 +41,16 @@ class VarGet extends Core\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor VarGet', 4);
 
-    $name = $this->val('name', true);
+    $key = $this->val('key', true);
     $vars = $this->request->getGetVars();
     
-    if (isset($vars[$name])) {
-      return new Core\DataContainer($vars[$name], 'text');
+    if (isset($vars[$key])) {
+      return new Core\DataContainer($vars[$key], 'text');
     }
     if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
       return new Core\DataContainer('', 'text');
     }
 
-    throw new Core\ApiException("get variable ($name) not received", 5, $this->id, 417);
+    throw new Core\ApiException("GET variable ($key) not received", 5, $this->id, 417);
   }
 }

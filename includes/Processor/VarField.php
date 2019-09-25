@@ -11,7 +11,7 @@ class VarField extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (field)',
-    'machineName' => 'varField',
+    'machineName' => 'var_field',
     'description' => 'Create a name value pair. This is primarily for use as a field in object.',
     'menu' => 'Primitive',
     'application' => 'Common',

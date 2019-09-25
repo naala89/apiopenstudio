@@ -11,7 +11,7 @@ class VarRand extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Rand)',
-    'machineName' => 'varRand',
+    'machineName' => 'var_rand',
     'description' => 'A random variable. It produces a random variable of any specified length or mix of character types.',
     'menu' => 'Primitive',
     'application' => 'Common',
