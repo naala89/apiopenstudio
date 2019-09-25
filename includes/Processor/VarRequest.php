@@ -11,12 +11,12 @@ class VarRequest extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Request)',
-    'machineName' => 'varRequest',
+    'machineName' => 'var_request',
     'description' => 'A "get" or "post" variable. It fetches a variable from the get or post requests.',
     'menu' => 'Primitive',
     'application' => 'Common',
     'input' => array(
-      'name' => array(
+      'key' => array(
         'description' => 'The key or name of the GET/POST variable.',
         'cardinality' => array(1, 1),
         'literalAllowed' => true,
