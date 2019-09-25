@@ -19,7 +19,7 @@ class VarBody extends VarMixed
 {
   protected $details = array(
     'name' => 'Var (Body)',
-    'machineName' => 'varBody',
+    'machineName' => 'var_body',
     'description' => 'Fetch the entire body of a post into a variable.',
     'menu' => 'Primitive',
     'application' => 'Common',

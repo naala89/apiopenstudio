@@ -11,7 +11,7 @@ class VarStr extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (String)',
-    'machineName' => 'varStr',
+    'machineName' => 'var_str',
     'description' => 'A string variable. It validates the input and returns an error if it is not a string.',
     'menu' => 'Primitive',
     'application' => 'Common',

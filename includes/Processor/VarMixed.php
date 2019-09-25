@@ -11,7 +11,7 @@ class VarMixed extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'Var (Mixed)',
-    'machineName' => 'varMixed',
+    'machineName' => 'var_mixed',
     'description' => 'A variable of any type.',
     'menu' => 'Primitive',
     'application' => 'Common',
