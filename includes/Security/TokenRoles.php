@@ -2,13 +2,14 @@
 
 namespace Gaterdata\Security;
 use Gaterdata\Core;
+use Gaterdata\Core\Debug;
 use Gaterdata\Db;
 
 /**
  * Provide token authentication based on token in DB and the user's roles.
  */
 
-class TokenRoles extends Token
+class TokenRoles extends Core\ProcessorEntity
 {
   protected $details = [
     'name' => 'Token (Roles)',
@@ -24,7 +25,7 @@ class TokenRoles extends Token
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'roles' => [
         'description' => 'A collection of user_role.',
@@ -33,7 +34,7 @@ class TokenRoles extends Token
         'limitFunctions' => ['collection'],
         'limitTypes' => [],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
     ],
   ];
@@ -53,8 +54,7 @@ class TokenRoles extends Token
     }
 
     // invalid token or user not active
-    $db = $this->getDb();
-    $userMapper = new Db\UserMapper($db);
+    $userMapper = new Db\UserMapper($this->db);
     $user = $userMapper->findBytoken($token);
     $uid = $user->getUid();
     if (empty($uid) || $user->getActive() == 0) {
@@ -62,12 +62,13 @@ class TokenRoles extends Token
     }
 
     // Get roles and validate the user.
-    $userRoleMapper = new Db\UserRoleMapper($db);
-    $roleMapper = new RoleMapper($db);
+    $userRoleMapper = new Db\UserRoleMapper($this->db);
+    $roleMapper = new Db\RoleMapper($this->db);
     $collection = $this->val('roles');
     $roleNames = $collection->getData();
     // If a role that fits is found return TRUE, otherwise fall through to the exception.
     foreach($roleNames as $roleName) {
+      Debug::variable(($roleName), 'rolename');
       $row = $roleMapper->findByName($roleName);
       if (empty($rid = $row->getRid())) {
         throw new Core\ApiException('Invalid role declared', 4, $this->id, 401);
