@@ -6,6 +6,7 @@
 
 namespace Gaterdata\Processor;
 use Gaterdata\Core;
+use Gaterdata\Core\Debug;
 
 class VarUri extends Core\ProcessorEntity
 {
@@ -17,7 +18,7 @@ class VarUri extends Core\ProcessorEntity
     'application' => 'Common',
     'input' => array(
       'index' => array(
-        'description' => 'The index of the variable, starting with 0 after the client ID, request noun and verb.',
+        'description' => 'The index of the variable, starting with 0 after the client ID, request path.',
         'cardinality' => array(0, 1),
         'literalAllowed' => true,
         'limitFunctions' => array(),
@@ -30,7 +31,7 @@ class VarUri extends Core\ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor VarUri', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
     $index = $this->val('index', true);
     $args = $this->request->getArgs();
 
