@@ -14,6 +14,7 @@
 
 namespace Gaterdata\Processor;
 use Gaterdata\Core;
+use Gaterdata\Core\Debug;
 
 class VarBody extends VarMixed
 {
@@ -33,7 +34,8 @@ class VarBody extends VarMixed
    */
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor VarBody', 4);
-    return file_get_contents('php://input');
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    $body = file_get_contents('php://input');
+    return $body;
   }
 }
