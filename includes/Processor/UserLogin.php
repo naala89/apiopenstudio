@@ -11,33 +11,33 @@ use Gaterdata\Db;
 
 class UserLogin extends Core\ProcessorEntity
 {
-  protected $details = array(
+  protected $details = [
     'name' => 'User Login',
     'machineName' => 'user_login',
     'description' => 'Login a user. Token and uid returned.',
     'menu' => 'Validator',
     'application' => 'Common',
-    'input' => array(
-      'username' => array(
+    'input' => [
+      'username' => [
         'description' => 'Users username.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => [],
         'default' => ''
-      ),
-      'password' => array(
+      ],
+      'password' => [
         'description' => 'Users password.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => [],
         'default' => ''
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 
   /**
    * @return mixed|string
