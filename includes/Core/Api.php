@@ -159,6 +159,7 @@ class Api
     $request->setMethod($method);
     $request->setGetVars(array_diff_assoc($get, ['request' => $get['request']]));
     $request->setPostVars($_POST);
+    $request->setFiles($_FILES);
     $request->setIp($_SERVER['REMOTE_ADDR']);
     $request->setOutFormat($this->getAccept($this->settings->__get(['api', 'defaultFormat'])));
     $request->setArgs($result['args']);

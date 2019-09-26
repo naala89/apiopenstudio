@@ -8,37 +8,38 @@ namespace Gaterdata\Core;
 
 class Request
 {
-  private $uri;
-  private $accName;
   private $accId;
-  private $appName;
+  private $accName;
   private $appId;
-  private $method;
+  private $appName;
   private $args;
-  private $getVars;
-  private $postVars;
-  private $ip;
-  private $outFormat;
-  private $resource;
-  private $meta;
-  private $ttl = 0;
-  private $fragments = [];
   private $cacheKey;
+  private $files;
+  private $fragments = [];
+  private $getVars;
+  private $ip;
+  private $meta;
+  private $method;
+  private $outFormat;
+  private $postVars;
+  private $resource;
+  private $ttl = 0;
+  private $uri;
 
   /**
    * @param $var
    */
-  public function setUri($var)
+  public function setAccId($var)
   {
-    $this->uri = $var;
+    $this->accId = $var;
   }
 
   /**
    * @return mixed
    */
-  public function getUri()
+  public function getAccId()
   {
-    return $this->uri;
+    return $this->accId;
   }
 
   /**
@@ -60,17 +61,17 @@ class Request
   /**
    * @param $var
    */
-  public function setAccId($var)
+  public function setAppId($var)
   {
-    $this->accId = $var;
+    $this->appId = $var;
   }
 
   /**
    * @return mixed
    */
-  public function getAccId()
+  public function getAppId()
   {
-    return $this->accId;
+    return $this->appId;
   }
 
   /**
@@ -92,17 +93,17 @@ class Request
   /**
    * @param $var
    */
-  public function setAppId($var)
+  public function setUri($var)
   {
-    $this->appId = $var;
+    $this->uri = $var;
   }
 
   /**
    * @return mixed
    */
-  public function getAppId()
+  public function getUri()
   {
-    return $this->appId;
+    return $this->uri;
   }
 
   /**
@@ -167,6 +168,22 @@ class Request
   public function getPostVars()
   {
     return $this->postVars;
+  }
+
+  /**
+   * @param $var
+   */
+  public function setFiles($var)
+  {
+    $this->files = $var;
+  }
+
+  /**
+   * @return array
+   */
+  public function getFiles()
+  {
+    return $this->files;
   }
 
   public function setIp($var)
