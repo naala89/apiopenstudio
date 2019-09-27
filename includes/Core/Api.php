@@ -190,7 +190,7 @@ class Api
   private function _getResource($accId, $appId, $method, $uriParts)
   {
     if (!$this->test) {
-      $resourceMapper = new Db\ApiResourceMapper($this->db);
+      $resourceMapper = new Db\ResourceMapper($this->db);
 
       while (sizeof($uriParts) > 0) {
         $uri = empty($uri) ? array_shift($uriParts) : ("$uri/" . array_shift($uriParts));

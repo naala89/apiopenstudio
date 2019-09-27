@@ -3,11 +3,11 @@
 namespace Gaterdata\Db;
 
 /**
- * Class ApiResource.
+ * Class Resource.
  *
  * @package Gaterdata\Db
  */
-class ApiResource {
+class Resource {
 
   protected $resid;
   protected $accid;

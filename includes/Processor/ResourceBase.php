@@ -6,61 +6,94 @@
 
 namespace Gaterdata\Processor;
 use Gaterdata\Core;
+use Gaterdata\Core\ApiException;
+use Gaterdata\Core\Debug;
+use Gaterdata\Core\ProcessorHelper;
 use Gaterdata\Db;
 
 abstract class ResourceBase extends Core\ProcessorEntity
 {
-  protected $db;
+  const RESERVED_ACC = 'gaterdata';
+  const RESERVED_APP = 'common';
+
   protected $helper;
-  protected $details = array(
+
+  protected $details = [
     'name' => 'Resource',
-    'machineName' => 'resourceBase',
+    'machineName' => 'resource_base',
     'description' => 'Create, edit or fetch a custom API resource for the application. NOTE: in the case of DELETE, the args for the input should be as GET vars - POST vars are not guaranteed on all servers with this method.',
     'menu' => 'Resource',
     'application' => 'Common',
-    'input' => array(
-      'method' => array(
+    'input' => [
+      'method' => [
         'description' => 'The HTTP method of the resource (only used if fetching or deleting a resource).',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array('get', 'post', 'delete', 'push'),
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => ['get', 'post', 'delete', 'push'],
         'default' => ''
-      ),
-      'appName' => array(
-        'description' => 'The application name that the resource is associated with (only used if fetching or deleting a resource).',
-        'cardinality' => array(0, 1),
+      ],
+      'accName' => [
+        'description' => 'The application name that the resource is associated with.',
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => [],
         'default' => ''
-      ),
-      'uri' => array(
+      ],
+      'appName' => [
+        'description' => 'The application name that the resource is associated with.',
+        'cardinality' => [1, 1],
+        'literalAllowed' => true,
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => []
+      ],
+      'uri' => [
         'description' => 'The URI for the resource, i.e. the part after the App ID in the URL (only used if fetching or deleting a resource).',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => [],
         'default' => ''
-      ),
-      'resource' => array(
+      ],
+      'resourceString' => [
         'description' => 'The resource as a string (this input is only used if you are creating or updating a resource).',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => [],
         'default' => ''
-      )
-    )
-  );
-  public function __construct($meta, & $request)
+      ],
+      'resourceFile' => [
+        'description' => 'The resource as a string (this input is only used if you are creating or updating a resource).',
+        'cardinality' => [0, 1],
+        'literalAllowed' => true,
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => [],
+        'default' => ''
+      ],
+    ]
+  ];
+
+  /**
+   * Constructor. Store processor metadata and request data in object.
+   *
+   * If this method is overridden by any derived classes, don't forget to call parent::__construct()
+   *
+   * @param array $meta
+   * @param object $request
+   * @param \ADOConnection $db
+   */
+  public function __construct($meta, & $request, $db)
   {
-    $this->helper = new Core\ProcessorHelper();
-    parent::__construct($meta, $request);
+    parent::__construct($meta, $request, $db);
+    $this->helper = new ProcessorHelper();
   }
 
   /**
@@ -70,22 +103,22 @@ abstract class ResourceBase extends Core\ProcessorEntity
    */
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor ResourceBase', 4);
-
-    $this->db = $this->getDb();
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    
+    $accName = $this->val('accName', true);
+    $appName = $this->val('appName', true);
 
     switch ($this->request->getMethod()) {
       case 'post':
-        $string = $this->val('resource', true);
+        if (empty($accName)) {
+          throw new Core\ApiException('Missing accName', 1, $this->id);
+        }
+        if (empty($appName)) {
+          throw new Core\ApiException('Missing appName', 1, $this->id);
+        }
+        $string = $this->val('resourceString', true);
         $resource = $this->_importData($string);
-        if (sizeof($resource) == 1 && isset($resource[0])) {
-          // resource is not JSON. Fallback to assuming this is a filename.
-          $resource = $this->_importData($this->getFile($resource[0]));
-        }
-        if (empty($resource)) {
-          throw new Core\ApiException('Empty resource', 1, $this->id);
-        }
-        $result = $this->create($resource);
+        $result = $this->create($resource, $accName, $appName);
         break;
       case 'get':
         $appId = $this->request->appId;
@@ -204,13 +237,16 @@ abstract class ResourceBase extends Core\ProcessorEntity
   }
 
   /**
-   * Create or update a resource from input data.
+   * Create or update a resource from input data into the caller's app and acc.
    *
    * @param $data
+   * @param $accName
+   * @param $appName
+   * 
    * @return bool
    * @throws \Gaterdata\Core\ApiException
    */
-  protected function create($data)
+  protected function create($data, $accName, $appName)
   {
     Core\Debug::variable($data, 'New resource', 1);
     $this->_validateData($data);
@@ -218,7 +254,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
     $name = $data['name'];
     $description = $data['description'];
     $method = $data['method'];
-    $identifier = strtolower($data['uri']);
+    $uri = strtolower($data['uri']);
     $meta = array();
     if (!empty($data['security'])) {
       $meta['security'] = $data['security'];
@@ -230,24 +266,31 @@ abstract class ResourceBase extends Core\ProcessorEntity
     $ttl = !empty($data['ttl']) ? $data['ttl'] : 0;
 
     // prevent same URLS as in common
-    $mapper = new Db\ApplicationMapper($this->db);
-    $application = $mapper->findByName('Common');
-    $appId = $application->getAppId();
-    $mapper = new Db\ResourceMapper($this->db);
-    $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
-    if (!empty($resource->getId())) {
-      throw new Core\ApiException("new resource (method: $method and URI: $identifier) is reserved", 6, -1, 406);
+    $accountMapper = new Db\AccountMapper($this->db);
+    $account = $accountMapper->findByName(self::RESERVED_ACC);
+    $accId = $account->getAccid();
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    $application = $applicationMapper->findByAccidName($accId, self::RESERVED_APP);
+    $appId = $application->getAppid();
+    $resourceMapper = new Db\ResourceMapper($this->db);
+    $resource = $resourceMapper->findByAccIdAppIdMethodUri($accId, $appId, $method, $uri);
+    if (!empty($resource->getResid())) {
+      // throw new Core\ApiException("new resource (method: $method and URI: $uri) is reserved", 6, -1, 406);
     }
 
+    $account = $accountMapper->findByName($accName);
+    $accId = $account->getAccid();
+    $application = $applicationMapper->findByAccidName($accId, $appName);
+    $appId = $application->getAppid();
+    $resource = $resourceMapper->findByAccIdAppIdMethodUri($accId, $appId, $method, $uri);
     $mapper = new Db\ResourceMapper($this->db);
-    $resource = $mapper->findByAppIdMethodIdentifier($this->request->getAppId(), $method, $identifier);
-    if (empty($resource->getId())) {
-      $resource->setAppId($this->request->getAppId());
-      $resource->setMethod($method);
-      $resource->setIdentifier($identifier);
-    }
+    $resource = $mapper->findByAccIdAppIdMethodUri($accId, $appId, $method, $uri);
+    $resource->setAppId($appId);
+    $resource->setAccId($accId);
     $resource->setName($name);
     $resource->setDescription($description);
+    $resource->setMethod($method);
+    $resource->setUri($uri);
     $resource->setMeta(json_encode($meta));
     $resource->setTtl($ttl);
 
@@ -262,6 +305,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
    */
   protected function _validateData($data)
   {
+    Debug::message('Validating the new resource...');
     // check mandatory elements exists in data
     if (empty($data)) {
       throw new Core\ApiException("empty resource uploaded", 6, $this->id, 406);
@@ -329,8 +373,8 @@ abstract class ResourceBase extends Core\ProcessorEntity
    */
   private function _identicalIds($meta)
   {
-    $id = array();
-    $stack = array($meta);
+    $id = [];
+    $stack = [$meta];
 
     while ($node = array_shift($stack)) {
       if ($this->helper->isProcessor($node)) {
@@ -364,9 +408,10 @@ abstract class ResourceBase extends Core\ProcessorEntity
       if ($this->helper->isProcessor($node)) {
 
         $classStr = $this->helper->getProcessorString($node['function']);
-        $class = new $classStr($meta, new Core\Request());
+        $class = new $classStr($meta, new Core\Request(), $this->db);
         $details = $class->details();
         $id = $node['id'];
+        Debug::variable($id, 'validating');
 
         foreach ($details['input'] as $inputKey => $inputDef) {
 
@@ -394,7 +439,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 if ($this->helper->isProcessor($item)) {
                   array_unshift($stack, $item);
                 } else {
-                  $this->_validateTypeValue($item, $limitTypes);
+                  $this->_validateTypeValue($item, $limitTypes, $id);
                 }
               }
               $count = sizeof($input);
@@ -407,7 +452,8 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 throw new Core\ApiException("invalid value type for '$inputKey' in function: $id", 6, $id, 406);
               }
               if (!empty($limitTypes)) {
-                $this->_validateTypeValue($input, $limitTypes);
+
+                $this->_validateTypeValue($input, $limitTypes, $id);
               }
               $count = 1;
             }
@@ -441,10 +487,11 @@ abstract class ResourceBase extends Core\ProcessorEntity
    *
    * @param $element
    * @param $accepts
+   * @param $id
    * @return bool
    * @throws \Gaterdata\Core\ApiException
    */
-  private function _validateTypeValue($element, $accepts)
+  private function _validateTypeValue($element, $accepts, $id)
   {
     if (empty($accepts)) {
       return TRUE;
@@ -481,7 +528,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
       }
     }
     if (!$valid) {
-      throw new Core\ApiException("invalid literal in new resource. only '" . implode("', '", $accepts) . "' accepted", 6, -1, 406);
+      throw new Core\ApiException('invalid literal in new resource (' . print_r($element) . '. only "' . implode("', '", $accepts) . '" accepted', 6, $id, 406);
     }
     return $valid;
   }

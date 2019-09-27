@@ -3,11 +3,11 @@
 namespace Gaterdata\Db;
 
 /**
- * Class ApiResourceMapper.
+ * Class ResourceMapper.
  *
  * @package Gaterdata\Db
  */
-class ApiResourceMapper extends Mapper {
+class ResourceMapper extends Mapper {
 
   /**
    * Save an API Resource.
@@ -20,8 +20,8 @@ class ApiResourceMapper extends Mapper {
    *
    * @throws \Gaterdata\Core\ApiException
    */
-  public function save(ApiResource $resource) {
-    if ($resource->getId() == NULL) {
+  public function save(Resource $resource) {
+    if ($resource->getResid() == NULL) {
       $sql = 'INSERT INTO resource (appid, name, description, method, uri, meta, ttl) VALUES (?, ?, ?, ?, ?, ?, ?)';
       $bindParams = [
         $resource->getAppId(),
@@ -52,8 +52,8 @@ class ApiResourceMapper extends Mapper {
   /**
    * Delete an API resource.
    *
-   * @param \Gaterdata\Db\ApiResource $resource
-   *   API resoure object.
+   * @param \Gaterdata\Db\Resource $resource
+   *   Resource object.
    *
    * @return bool
    *   Success.
@@ -67,13 +67,13 @@ class ApiResourceMapper extends Mapper {
   }
 
   /**
-   * Find an API resource by its ID.
+   * Find a resource by its ID.
    *
    * @param int $resid
-   *   API resource ID.
+   *   Resource ID.
    *
-   * @return \Gaterdata\Db\ApiResource
-   *   ApiResource object.
+   * @return \Gaterdata\Db\Resource
+   *   Resource object.
    *
    * @throws ApiException
    */
@@ -84,7 +84,7 @@ class ApiResourceMapper extends Mapper {
   }
 
   /**
-   * Find an API resopurce by account ID, application ID, method and uri.
+   * Find a resource by account ID, application ID, method and uri.
    *
    * @param int $appid
    *   Application ID.
@@ -95,8 +95,8 @@ class ApiResourceMapper extends Mapper {
    * @param string $uri
    *   API resource URI.
    *
-   * @return \Gaterdata\Db\ApiResource
-   *   ApiResource object.
+   * @return \Gaterdata\Db\Resource
+   *   Resource object.
    *
    * @throws ApiException
    */
@@ -117,7 +117,7 @@ class ApiResourceMapper extends Mapper {
    *   Resource uri.
    *
    * @return array
-   *   Array of ApiResource objects.
+   *   Array of Resource objects.
    *
    * @throws ApiException
    */
@@ -157,13 +157,13 @@ class ApiResourceMapper extends Mapper {
   }
 
   /**
-   * Find API Resources by an application ID.
+   * Find Resources by an application ID.
    *
    * @param int $appid
    *   Application ID.
    *
    * @return array
-   *   Array of ApiResource objects.
+   *   Array of Resource objects.
    *
    * @throws ApiException
    */
@@ -179,11 +179,11 @@ class ApiResourceMapper extends Mapper {
    * @param array $row
    *   DB row object.
    *
-   * @return \Gaterdata\Db\ApiResource
+   * @return \Gaterdata\Db\Resource
    *   ApiResource object.
    */
   protected function mapArray(array $row) {
-    $resource = new ApiResource();
+    $resource = new Resource();
 
     $resource->setResid(!empty($row['resid']) ? $row['resid'] : NULL);
     $resource->setAccId(!empty($row['accid']) ? $row['accid'] : NULL);
