@@ -2,6 +2,8 @@ name: Resource export YAML
 
 description: Fetch a resource in string or YAML format.
 
+machine_name: resource_export_yaml
+
 uri: resource/yaml
 
 method: get
@@ -12,22 +14,22 @@ security:
   function: tokenDeveloper
   id: 1
   token:
-    function: varGet
+    function: var_get
     id: 2
-    name: token
+    key: token
 
 process:
-  function: resourceYaml
+  function: resource_export_yaml
   id: 4
   method:
-    function: varGet
+    function: var_get
     id: 5
-    name: method
+    key: method
   noun:
-    function: varGet
+    function: var_get
     id: 7
-    name: noun
+    key: noun
   verb:
-    function: varGet
+    function: var_get
     id: 9
-    name: verb
+    key: verb
