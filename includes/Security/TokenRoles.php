@@ -68,10 +68,10 @@ class TokenRoles extends Core\ProcessorEntity
     $roleNames = $collection->getData();
     // If a role that fits is found return TRUE, otherwise fall through to the exception.
     foreach($roleNames as $roleName) {
-      Debug::variable(($roleName), 'rolename');
+      Debug::variable(($roleName), 'validating user rolename');
       $row = $roleMapper->findByName($roleName);
       if (empty($rid = $row->getRid())) {
-        throw new Core\ApiException('Invalid role declared', 4, $this->id, 401);
+        throw new Core\ApiException('Invalid role defined', 4, $this->id, 401);
       }
       $rid = $row->getRid();
       $userRoles = $userRoleMapper->findByRidUid($rid, $uid);
