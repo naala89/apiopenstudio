@@ -154,7 +154,7 @@ class Debug
     $_interface = is_null($_interface) ? self::$_interface : $_interface;
 
     if ($_interface == self::HTML) {
-      $msg = '<b>' . htmlspecialchars($msg, ENT_QUOTES) . ':</b>';
+      $msg = '<b>' . htmlspecialchars($msg, ENT_QUOTES) . ':</b> ';
       if (is_array($var) || is_object($var)) {
         //$var = self::_htmlspecialchars_array($var);
       } else {
