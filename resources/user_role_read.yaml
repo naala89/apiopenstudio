@@ -1,0 +1,28 @@
+name: User Role read
+
+description: Fetch all roles for a user.
+
+uri: userrole
+
+method: get
+
+ttl: 0
+
+security:
+  function: token_roles
+  id: user_role_read_security
+  token:
+    function: bearer_token
+    id: user_role_read_token
+  roles:
+    - Administrator
+    - Account manager
+    - Application manager
+
+process:
+  function: user_role
+  id: user_role_read_user_role
+  username:
+    function: var_get
+    id: user_role_read_username
+    key: username

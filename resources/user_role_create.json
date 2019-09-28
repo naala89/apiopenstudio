@@ -1,7 +1,7 @@
 {
-  "name": "User Role create/update",
-  "description": "Create or update a role for a user for an application.",
-  "uri": "user/role",
+  "name": "User Role create",
+  "description": "Create a role for a user for an application.",
+  "uri": "userrole",
   "method": "post",
   "ttl": 0,
   "security": {

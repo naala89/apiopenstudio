@@ -118,16 +118,21 @@ class UserRole extends Core\ProcessorEntity
         $account = $accountMapper->findByAccid($accId);
         $result[$accId] = [
           'account_name' => $account->getName(),
+          'account_id' => $account->getAccid(),
         ];
       }
       if (empty($result[$accId][$appId])) {
         $application = $applicationMapper->findByAppid($appId);
         $result[$accId][$appId] = [
           'application_name' => $application->getName(),
+          'application_id' => $application->getAppid(),
         ];
       }
-      $role = $roleMapper->findById($rid);
-      $result[$accId][$appId][$rid] = $role->getName();
+      $role = $roleMapper->findByRid($rid);
+      $result[$accId][$appId][] = [
+        'role_name' => $role->getName(),
+        'role_id' => $role->getRid(),
+      ];
     }
     return $result;
   }

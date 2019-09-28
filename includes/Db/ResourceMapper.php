@@ -48,8 +48,6 @@ class ResourceMapper extends Mapper {
         $resource->getResid(),
       ];
     }
-    Debug::variable($sql, 'sql');
-    Debug::variable($bindParams, 'bindParams');
     return $this->saveDelete($sql, $bindParams);
   }
 
