@@ -66,19 +66,16 @@ class TokenRole extends Core\ProcessorEntity
     $roleMapper = new Db\RoleMapper($this->db);
     $roleName = $this->val('role');
     // If a role that fits is found return TRUE, otherwise fall through to the exception.
-    $row = $roleMapper->findByName($roleName);
-    if (empty($rid = $row->getRid())) {
+    $role = $roleMapper->findByName($roleName);
+    if (empty($rid = $role->getRid())) {
       throw new Core\ApiException('Invalid role defined', 4, $this->id, 401);
     }
-    $rid = $row->getRid();
     $userRoles = $userRoleMapper->findByRidUid($rid, $uid);
+    Debug::variable($userRoles, 'userRoles');
     if (!empty($userRoles)) {
       return TRUE;
     }
     
-    $userRole = $userRoleMapper->findByUserAppRole($uid, $this->request->appId, $rid);
-    if (empty($userRole->getId())) {
-      throw new Core\ApiException('permission denied', 4, $this->id, 401);
-    }
+    throw new Core\ApiException('permission denied', 4, $this->id, 401);
   }
 }
