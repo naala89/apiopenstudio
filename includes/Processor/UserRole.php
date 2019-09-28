@@ -151,7 +151,6 @@ class UserRole extends Core\ProcessorEntity
     if (empty($rid)) {
       throw new Core\ApiException("Invalid role: $roleName", 1, $this->id);
     }
-    Debug::variable($rid, 'rid');
 
     // Get the account id.
     $accountName = $this->val('accountName', TRUE);
@@ -161,7 +160,6 @@ class UserRole extends Core\ProcessorEntity
     if ($roleName != 'Administrator' && empty($accId)) {
       throw new Core\ApiException("Invalid, only an administrator role can be assigned without an account,", 1, $this->id);
     }
-    Debug::variable($accId, 'accId');
 
     // Get the application id.
     $applicationName = $this->val('applicationName', TRUE);
@@ -171,12 +169,11 @@ class UserRole extends Core\ProcessorEntity
     if (!in_array($roleName, ['Administrator', 'Account manager']) && empty($appId)) {
       throw new Core\ApiException("Invalid, only an administrator role can be assigned without an application,", 1, $this->id);
     }
-    Debug::variable($appId, 'appId');
 
     // Validate user role does not already exist.
     $roles = $userRoleMapper->findByUid($uid);
     foreach($roles as $role) {
-      if ($role->getAccid() == $accId
+      if ($role->getUid() == $uid
       && $role->getAppid() == $appId
       && $role->getAccid() == $accId
       && $role->getRid() == $rid) {
@@ -186,7 +183,6 @@ class UserRole extends Core\ProcessorEntity
 
     // Create the user role.
     $userRole = new Db\UserRole(NULL, $accId, $appId, $uid, $rid);
-    Debug::variable($userRole, 'userRole');
     return $userRoleMapper->save($userRole);
   }
 

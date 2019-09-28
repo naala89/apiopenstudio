@@ -74,7 +74,7 @@ class UserRole {
    *   Account ID.
    */
   public function setAccid($accid) {
-    $this->accid = $acc;
+    $this->accid = $accid;
   }
 
   /**
