@@ -201,27 +201,50 @@ class UserRole extends Core\ProcessorEntity
   protected function deleteRole($uid)
   {
     $userRoleMapper = new Db\UserRoleMapper($this->db);
-    $applicationName = $this->val('applicationName');
-    $applicationMapper = new Db\ApplicationMapper($this->db);
-    $application = $applicationMapper->findByName($applicationName);
-    $appId = $application->getAppId();
+    $rolemapper = new Db\RoleMapper($this->db);
 
-    if (empty($appId)) {
-      throw new Core\ApiException("Invalid application: $applicationName", 1, $this->id);
-    }
+    // Get the role id.
+    $roleName = $this->val('roleName', TRUE);
+    $role = $rolemapper->findByName($roleName);
+    $rid = $role->getRid();
     if (empty($rid)) {
       throw new Core\ApiException("Invalid role: $roleName", 1, $this->id);
     }
-
-    $roleName = $this->val('roleName');
-    $rolemapper = new Db\RoleMapper($this->db);
-    $role = $rolemapper->findByName($roleName);
-    $rid = $role->getRid();
-
-    $userRoles = $userRoleMapper->findByMixed($uid, $appId, $rid);
-    foreach ($userRoles as $userRole) {
-      $userRoleMapper->delete($userRole);
+    
+    // Validate there will be at least one administrator left after deletion.
+    if ($roleName == 'Administrator') {
+      $roles = $userRoleMapper->findByRid($rid);
+      if (count($roles) < 2) {
+        throw new Core\ApiException("Cannot delete administrator, You must have at least one administrator.", 1, $this->id);
+      }
     }
-    return true;
+
+    // Get the account id.
+    $accountName = $this->val('accountName', TRUE);
+    if (!empty($accountName)) {
+      $accountMapper = new Db\AccountMapper($this->db);
+      $account = $accountMapper->findByName($accountName);
+      if (empty($accId = $account->getAccid())) {
+        throw new Core\ApiException("Invalid account: $accountName,", 1, $this->id);
+      }
+    } else {
+      $accId = NULL;
+    }
+
+    // Get the application id.
+    $applicationName = $this->val('applicationName', TRUE);
+    if (!empty($applicationName)) {
+      $applicationMapper = new Db\ApplicationMapper($this->db);
+      $application = $applicationMapper->findByAccidAppname($accId, $applicationName);
+      $appId = $application->getAppId();
+      if (!in_array($roleName, ['Administrator', 'Account manager']) && empty($appId)) {
+        throw new Core\ApiException("Invalid, only an administrator role can be assigned without an application,", 1, $this->id);
+      }
+    } else {
+      $appId = NULL;
+    }
+
+    $userRole = $userRoleMapper->findByAccidAppidUidRid($uid, $appId, $uid, $rid);
+    return $userRoleMapper->delete($userRole) ? 'true' : 'false';
   }
 }

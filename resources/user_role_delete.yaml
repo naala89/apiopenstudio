@@ -1,0 +1,40 @@
+name: User Role delete
+
+description: Delete a role for a user for an application.
+
+uri: userrole
+
+method: delete
+
+ttl: 0
+
+security:
+  function: token_roles
+  id: user_role_delete_security
+  token:
+    function: bearer_token
+    id: user_role_delete_token
+  roles:
+    - Administrator
+    - Account manager
+    - Application manager
+
+process:
+  function: user_role
+  id: user_role_delete_user_role
+  accountName:
+    function: var_uri
+    id: user_role_delete_acc_name
+    index: 0
+  applicationName:
+    function: var_uri
+    id: user_role_delete_app_name
+    index: 1
+  username:
+    function: var_uri
+    id: user_role_delete_username
+    index: 2
+  roleName:
+    function: var_uri
+    id: user_role_delete_role_name
+    index: 3

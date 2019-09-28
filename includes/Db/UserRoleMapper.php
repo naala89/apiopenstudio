@@ -142,7 +142,7 @@ class UserRoleMapper extends Mapper {
   }
 
   /**
-   * Find by role ID and ser ID.
+   * Find by role ID and user ID.
    *
    * @param int $rid
    *   Role ID.
@@ -157,7 +157,7 @@ class UserRoleMapper extends Mapper {
   public function findByRidUid($rid, $uid) {
     $sql = 'SELECT * FROM user_role WHERE rid = ? AND uid = ?';
     $bindParams = [$rid, $uid];
-    return $this->fetchRow($sql, $bindParams);
+    return $this->fetchRows($sql, $bindParams);
   }
 
   /**
@@ -198,6 +198,29 @@ class UserRoleMapper extends Mapper {
     $sql = 'SELECT * FROM user_role WHERE accid = ? AND appid = ? AND uid = ?';
     $bindParams = [$accid, $appid, $uid];
     return $this->fetchRows($sql, $bindParams);
+  }
+
+  /**
+   * Find by Account ID, Application ID, User ID and Role ID.
+   *
+   * @param int $accid
+   *   Account ID.
+   * @param int $appid
+   *   Application ID.
+   * @param int $uid
+   *   User ID.
+   * @param int $rid
+   *   Role ID.
+   *
+   * @return \Gaterdata\Db\UserRole
+   *   Mapped UserRole object.
+   *
+   * @throws ApiException
+   */
+  public function findByAccidAppidUidRid($accid, $appid, $uid, $rid) {
+    $sql = 'SELECT * FROM user_role WHERE accid = ? AND appid = ? AND uid = ? AND rid = ?';
+    $bindParams = [$accid, $appid, $uid, $rid];
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
