@@ -5,6 +5,8 @@
  */
 
 namespace Gaterdata\Processor;
+
+use Gaterdata\Core\Config;
 use Gaterdata\Core;
 use Gaterdata\Core\ApiException;
 use Gaterdata\Core\Debug;
@@ -13,9 +15,6 @@ use Gaterdata\Db;
 
 abstract class ResourceBase extends Core\ProcessorEntity
 {
-  const RESERVED_ACC = 'gaterdata';
-  const RESERVED_APP = 'common';
-
   protected $helper;
 
   protected $details = [
@@ -255,7 +254,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
     $description = $data['description'];
     $method = $data['method'];
     $uri = strtolower($data['uri']);
-    $meta = array();
+    $meta = [];
     if (!empty($data['security'])) {
       $meta['security'] = $data['security'];
     }
@@ -265,28 +264,24 @@ abstract class ResourceBase extends Core\ProcessorEntity
     }
     $ttl = !empty($data['ttl']) ? $data['ttl'] : 0;
 
-    // prevent same URLS as in common
-    $accountMapper = new Db\AccountMapper($this->db);
-    $account = $accountMapper->findByName(self::RESERVED_ACC);
-    $accId = $account->getAccid();
-    $applicationMapper = new Db\ApplicationMapper($this->db);
-    $application = $applicationMapper->findByAccidName($accId, self::RESERVED_APP);
-    $appId = $application->getAppid();
-    $resourceMapper = new Db\ResourceMapper($this->db);
-    $resource = $resourceMapper->findByAccIdAppIdMethodUri($accId, $appId, $method, $uri);
-    if (!empty($resource->getResid())) {
-      // throw new Core\ApiException("new resource (method: $method and URI: $uri) is reserved", 6, -1, 406);
+    // Prevent unauthorised editing of admin resources.
+    $settings = new Config();
+    $coreAccountName = $settings->__get(['api', 'core_account']);
+    $coreApplicationName = $settings->__get(['api', 'core_application']);
+    $coreResourceLock = $settings->__get(['api', 'core_resource_lock']);
+    if ($coreResourceLock && $accName == $coreAccountName && $appName == $coreApplicationName) {
+      throw new Core\ApiException("Resources for $coreAccountName/$coreApplicationName are locked", 6, -1, 406);
     }
 
+    $accountMapper = new Db\AccountMapper($this->db);
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    $resourceMapper = new Db\ResourceMapper($this->db);
     $account = $accountMapper->findByName($accName);
     $accId = $account->getAccid();
-    $application = $applicationMapper->findByAccidName($accId, $appName);
+    $application = $applicationMapper->findByAccidAppname($accId, $appName);
     $appId = $application->getAppid();
-    $resource = $resourceMapper->findByAccIdAppIdMethodUri($accId, $appId, $method, $uri);
-    $mapper = new Db\ResourceMapper($this->db);
-    $resource = $mapper->findByAccIdAppIdMethodUri($accId, $appId, $method, $uri);
+    $resource = $resourceMapper->findByAppIdMethodUri($appId, $method, $uri);
     $resource->setAppId($appId);
-    $resource->setAccId($accId);
     $resource->setName($name);
     $resource->setDescription($description);
     $resource->setMethod($method);
@@ -294,7 +289,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
     $resource->setMeta(json_encode($meta));
     $resource->setTtl($ttl);
 
-    return new Core\DataContainer($mapper->save($resource) ? 'true' : 'false', 'text');
+    return new Core\DataContainer($resourceMapper->save($resource) ? 'true' : 'false', 'text');
   }
 
   /**

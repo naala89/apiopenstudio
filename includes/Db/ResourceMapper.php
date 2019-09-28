@@ -2,6 +2,8 @@
 
 namespace Gaterdata\Db;
 
+use Gaterdata\Core\Debug;
+
 /**
  * Class ResourceMapper.
  *
@@ -46,6 +48,8 @@ class ResourceMapper extends Mapper {
         $resource->getResid(),
       ];
     }
+    Debug::variable($sql, 'sql');
+    Debug::variable($bindParams, 'bindParams');
     return $this->saveDelete($sql, $bindParams);
   }
 
@@ -84,12 +88,10 @@ class ResourceMapper extends Mapper {
   }
 
   /**
-   * Find a resource by account ID, application ID, method and uri.
+   * Find a resource by application ID, method and URI.
    *
    * @param int $appid
    *   Application ID.
-   * @param int $accid
-   *   Account ID.
    * @param string $method
    *   API resource method.
    * @param string $uri
@@ -100,9 +102,9 @@ class ResourceMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findByAccIdAppIdMethodUri($accid, $appid, $method, $uri) {
-    $sql = 'SELECT r.* FROM resource AS r WHERE r.accid = ? AND r.appid = ? AND r.method = ? AND r.uri = ?';
-    $bindParams = [$accid, $appid, $method, $uri];
+  public function findByAppIdMethodUri($appid, $method, $uri) {
+    $sql = 'SELECT * FROM resource WHERE appid = ? AND method = ? AND uri = ?';
+    $bindParams = [$appid, $method, $uri];
     return $this->fetchRow($sql, $bindParams);
   }
 
@@ -186,7 +188,6 @@ class ResourceMapper extends Mapper {
     $resource = new Resource();
 
     $resource->setResid(!empty($row['resid']) ? $row['resid'] : NULL);
-    $resource->setAccId(!empty($row['accid']) ? $row['accid'] : NULL);
     $resource->setAppId(!empty($row['appid']) ? $row['appid'] : NULL);
     $resource->setName(!empty($row['name']) ? $row['name'] : NULL);
     $resource->setDescription(!empty($row['description']) ? $row['description'] : NULL);

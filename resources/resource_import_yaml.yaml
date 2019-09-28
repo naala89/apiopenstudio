@@ -1,6 +1,6 @@
 name: Resource import YAML
 
-description: Create a resource from a document or string in YAML format.
+description: Create a resource from a YAML string in the body.
 
 uri: resource/yaml
 
@@ -18,12 +18,12 @@ security:
 
 process:
   function: resource_yaml
-  id: resource_import_yaml_resource
+  id: resource_import_yaml_rsesource_yaml
   resourceString: 
     function: var_body
     id: resource_import_yaml_resource_string
   accName:
-    function: var_uri
+    function: 
     id: resource_import_yaml_acc_name
     index: 0
   appName:

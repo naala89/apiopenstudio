@@ -100,7 +100,7 @@ class ApplicationMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findByAccidName($accid, $name) {
+  public function findByAccidAppname($accid, $name) {
     $sql = 'SELECT * FROM application WHERE accid = ? AND name = ?';
     $bindParams = [
       $accid,
