@@ -3,6 +3,7 @@
 namespace Gaterdata\Processor;
 
 use Gaterdata\Core;
+use Gaterdata\Core\Debug;
 use Gaterdata\Db;
 
 /**
@@ -13,7 +14,7 @@ class UserRole extends Core\ProcessorEntity
 {
   protected $details = array(
     'name' => 'User Role',
-    'machineName' => 'userRole',
+    'machineName' => 'user_role',
     'description' => 'CRUD operations for user roles.',
     'menu' => 'Admin',
     'application' => 'Admin',
@@ -59,12 +60,10 @@ class UserRole extends Core\ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor DatagatorUser', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $db = $this->getDb();
-
-    $username = $this->val('username');
-    $userMapper = new Db\UserMapper($db);
+    $username = $this->val('username', TRUE);
+    $userMapper = new Db\UserMapper($this->db);
     $user = $userMapper->findByUsername($username);
     $uid = $user->getUid();
 
@@ -72,19 +71,19 @@ class UserRole extends Core\ProcessorEntity
       throw new Core\ApiException("Invalid user: $username", 1, $this->id);
     }
 
-    $method = $this->request->method;
+    $method = $this->request->getMethod();
 
     switch ($method) {
       case 'get':
-        return $this->getRoles($db, $uid);
+        return $this->getRoles($uid);
         break;
 
       case 'post':
-        return $this->createRole($db, $uid, $accId, $appId);
+        return $this->createRole($uid);
         break;
 
       case 'delete':
-        return $this->deleteRole($db, $uid, $accId, $appId);
+        return $this->deleteRole($uid);
         break;
 
       default:
@@ -93,12 +92,19 @@ class UserRole extends Core\ProcessorEntity
     }
   }
 
-  protected function getRoles($db, $uid)
+  /**
+   * Get roles for a uid.
+   *
+   * @param int $uid
+   *
+   * @return array
+   */
+  protected function getRoles($uid)
   {
-    $userRoleMapper = new Db\UserRoleMapper($db);
-    $accountMapper = new Db\AccountMapper($db);
-    $applicationMapper = new Db\ApplicationMapper($db);
-    $roleMapper = new Db\RoleMapper($db);
+    $userRoleMapper = new Db\UserRoleMapper($this->db);
+    $accountMapper = new Db\AccountMapper($this->db);
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    $roleMapper = new Db\RoleMapper($this->db);
 
     $userRoles = $userRoleMapper->findByUid($uid);
     $result = [];
@@ -126,36 +132,46 @@ class UserRole extends Core\ProcessorEntity
     return $result;
   }
 
-  protected function createRole($db, $uid, $accId, $appId)
+  /**
+   * createRole
+   *
+   * @param  mixed $uid
+   *
+   * @return void
+   */
+  protected function createRole($uid)
   {
-    $userRoleMapper = new Db\UserRoleMapper($db);
+    $userRoleMapper = new Db\UserRoleMapper($this->db);
 
     // Get the role id.
-    $roleName = $this->val('roleName');
-    $rolemapper = new Db\RoleMapper($db);
+    $roleName = $this->val('roleName', TRUE);
+    $rolemapper = new Db\RoleMapper($this->db);
     $role = $rolemapper->findByName($roleName);
     $rid = $role->getRid();
     if (empty($rid)) {
       throw new Core\ApiException("Invalid role: $roleName", 1, $this->id);
     }
+    Debug::variable($rid, 'rid');
 
     // Get the account id.
-    $accountName = $this->val('accountName');
-    $accountMapper = new Db\AccountMapper($db);
-    $account = $applicationMapper->findByName($accountName);
-    $accId = $account->getId();
+    $accountName = $this->val('accountName', TRUE);
+    $accountMapper = new Db\AccountMapper($this->db);
+    $account = $accountMapper->findByName($accountName);
+    $accId = $account->getAccid();
     if ($roleName != 'Administrator' && empty($accId)) {
-      throw new Core\ApiException("Invalid user role, the role should be assigned to an account,", 1, $this->id);
+      throw new Core\ApiException("Invalid, only an administrator role can be assigned without an account,", 1, $this->id);
     }
+    Debug::variable($accId, 'accId');
 
     // Get the application id.
-    $applicationName = $this->val('applicationName');
-    $applicationMapper = new Db\ApplicationMapper($db);
-    $application = $applicationMapper->findByName($applicationName);
+    $applicationName = $this->val('applicationName', TRUE);
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    $application = $applicationMapper->findByAccidAppname($accId, $applicationName);
     $appId = $application->getAppId();
     if (!in_array($roleName, ['Administrator', 'Account manager']) && empty($appId)) {
-      throw new Core\ApiException("Invalid user role, the role should be assigned to an application.", 1, $this->id);
+      throw new Core\ApiException("Invalid, only an administrator role can be assigned without an application,", 1, $this->id);
     }
+    Debug::variable($appId, 'appId');
 
     // Validate user role does not already exist.
     $roles = $userRoleMapper->findByUid($uid);
@@ -170,14 +186,22 @@ class UserRole extends Core\ProcessorEntity
 
     // Create the user role.
     $userRole = new Db\UserRole(NULL, $accId, $appId, $uid, $rid);
+    Debug::variable($userRole, 'userRole');
     return $userRoleMapper->save($userRole);
   }
 
-  protected function deleteRole($db, $uid, $accId, $appId)
+  /**
+   * deleteRole
+   *
+   * @param  mixed $uid
+   *
+   * @return void
+   */
+  protected function deleteRole($uid)
   {
-    $userRoleMapper = new Db\UserRoleMapper($db);
+    $userRoleMapper = new Db\UserRoleMapper($this->db);
     $applicationName = $this->val('applicationName');
-    $applicationMapper = new Db\ApplicationMapper($db);
+    $applicationMapper = new Db\ApplicationMapper($this->db);
     $application = $applicationMapper->findByName($applicationName);
     $appId = $application->getAppId();
 
@@ -189,7 +213,7 @@ class UserRole extends Core\ProcessorEntity
     }
 
     $roleName = $this->val('roleName');
-    $rolemapper = new Db\RoleMapper($db);
+    $rolemapper = new Db\RoleMapper($this->db);
     $role = $rolemapper->findByName($roleName);
     $rid = $role->getRid();
 
