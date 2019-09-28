@@ -157,7 +157,7 @@ class UserRoleMapper extends Mapper {
   public function findByRidUid($rid, $uid) {
     $sql = 'SELECT * FROM user_role WHERE rid = ? AND uid = ?';
     $bindParams = [$rid, $uid];
-    return $this->fetchRows($sql, $bindParams);
+    return $this->fetchRow($sql, $bindParams);
   }
 
   /**
