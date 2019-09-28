@@ -31,7 +31,7 @@ class Config {
   public function __get($key) {
     if (is_string($key)) {
       if (array_key_exists($key, $this->conf)) {
-        return $this->conf[$var];
+        return $this->conf[$key];
       }
       throw new ApiException("Invalid configuration option: $key");
     }
