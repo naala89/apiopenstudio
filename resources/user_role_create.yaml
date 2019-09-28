@@ -1,8 +1,8 @@
-name: User Role create/update
+name: User Role create
 
-description: Create or update a role for a user for an application.
+description: Create a role for a user for an application.
 
-uri: user/role
+uri: userrole
 
 method: post
 
