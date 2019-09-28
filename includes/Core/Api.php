@@ -141,12 +141,12 @@ class Api
 
       $appName = array_shift($uriParts);
       $appMapper = new Db\ApplicationMapper($this->db);
-      $application = $appMapper->findByAccidName($accId, $appName);
+      $application = $appMapper->findByAccidAppname($accId, $appName);
       if (empty($appId = $application->getAppid())) {
         throw new ApiException("invalid request", 3, -1, 404);
       }
 
-      $result = $this->_getResource($accId, $appId, $method, $uriParts);
+      $result = $this->_getResource($appId, $method, $uriParts);
     }
     catch (ApiEception $e) {
       throw new ApiException($e->getMessage(), 3 -1, 404);
@@ -180,21 +180,20 @@ class Api
   /**
    * Get the requested resource from the DB.
    *
-   * @param int $accId
    * @param int $appId
    * @param $method
    * @param $uriParts
    * @return \Gaterdata\Db\Resource
    * @throws \Gaterdata\Core\ApiException
    */
-  private function _getResource($accId, $appId, $method, $uriParts)
+  private function _getResource($appId, $method, $uriParts)
   {
     if (!$this->test) {
       $resourceMapper = new Db\ResourceMapper($this->db);
 
       while (sizeof($uriParts) > 0) {
         $uri = empty($uri) ? array_shift($uriParts) : ("$uri/" . array_shift($uriParts));
-        $result = $resourceMapper->findByAccIdAppIdMethodUri($accId, $appId, $method, $uri);
+        $result = $resourceMapper->findByAppIdMethodUri($appId, $method, $uri);
         if (!empty($result->getResid())) {
           return [
             'args' => $uriParts,
