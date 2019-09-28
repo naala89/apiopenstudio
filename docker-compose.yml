@@ -13,7 +13,7 @@ services:
       - api_network
 
   api:
-    image: nginx
+    image: nginx:stable
     container_name: "${APP_NAME}-api"
     ports:
       - 80
@@ -30,7 +30,7 @@ services:
           - ${API_DOMAIN}
 
   admin:
-    image: nginx
+    image: nginx:stable
     container_name: "${APP_NAME}-admin"
     ports:
       - 80
@@ -47,7 +47,7 @@ services:
           - ${ADMIN_DOMAIN}
     
   php:
-    image: php:fpm
+    image: php:fpm-stretch
     container_name: "${APP_NAME}-php"
     build: ./docker/php
     ports:
