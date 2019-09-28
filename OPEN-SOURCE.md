@@ -62,15 +62,6 @@ web
 
 - form page to edit your own user details
 
-autoload
---------
-
-IMPORTANT:
-
-- Admin changes autoload to have base namespace only
-  - Rename all /includes/* directories to be uc_first
-  - Use appropriate dir nesting
-
 processors
 ----------
 
@@ -84,11 +75,6 @@ nginx
 -----
 
 create a sample conf file for nginx installs
-
-docker
-------
-
-create a docker package that can use the repo with nginx and mysql
 
 composer
 --------
@@ -139,10 +125,6 @@ github
 
 create a closed repo with ticketing
 
-docker
-------
-
-create a docker package that can use the repo with nginx and mysql
 
 questions
 ---------
