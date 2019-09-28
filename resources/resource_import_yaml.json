@@ -4,19 +4,19 @@
 	"uri":"resource/yaml",
 	"method":"post",
 	"ttl":0,
-	"security":{ 
-		 "function":"token_role",
-		 "id":"resource_import_yaml_security",
-		 "token":{ 
-				"function":"bearer_token",
-				"id":"resource_import_yaml_token"
-		 },
-		 "role": "Developer"
+	"security": {
+		"function": "token_role",
+		"id": "resource_import_yaml_security",
+		"token": {
+			"function": "bearer_token",
+			"id": "resource_import_yaml_token"
+		},
+		"role": "Developer"
 	},
-	"process":{ 
-		"function":"resource_yaml",
-		"id":"resource_import_yaml_rsesource_yaml",
-		"resourceString":{
+	"process": {
+		"function": "resource_yaml",
+		"id": "resource_import_yaml_rsesource_yaml",
+		"resourceString": {
 			"function": "var_body",
 			"id": "resource_import_yaml_resource_string"
 		},

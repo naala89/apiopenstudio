@@ -10,7 +10,6 @@ namespace Gaterdata\Db;
 class Resource {
 
   protected $resid;
-  protected $accid;
   protected $appid;
   protected $name;
   protected $description;
@@ -24,8 +23,6 @@ class Resource {
    *
    * @param int $resid
    *   The resource ID.
-   * @param int $accid
-   *   The account ID.
    * @param int $appid
    *   The application ID.
    * @param string $name
@@ -41,9 +38,8 @@ class Resource {
    * @param string $ttl
    *   The resource TTL.
    */
-  public function __construct($resid = NULL, $accid = NULL, $appid = NULL, $name = NULL, $description = NULL, $method = NULL, $uri = NULL, $meta = NULL, $ttl = NULL) {
+  public function __construct($resid = NULL, $appid = NULL, $name = NULL, $description = NULL, $method = NULL, $uri = NULL, $meta = NULL, $ttl = NULL) {
     $this->resid = $resid;
-    $this->accid = $accid;
     $this->appid = $appid;
     $this->name = $name;
     $this->description = $description;
@@ -71,26 +67,6 @@ class Resource {
    */
   public function setResid($resid) {
     $this->resid = $resid;
-  }
-
-  /**
-   * Get the account ID.
-   *
-   * @return int
-   *   The account ID.
-   */
-  public function getAccId() {
-    return $this->accid;
-  }
-
-  /**
-   * Set the resource account ID.
-   *
-   * @param int $accid
-   *   The account ID.
-   */
-  public function setAccId($accid) {
-    $this->accid = $accid;
   }
 
   /**
@@ -242,7 +218,6 @@ class Resource {
   public function dump() {
     return [
       'resid' => $this->resid,
-      'accid' => $this->accid,
       'appid' => $this->appid,
       'method' => $this->method,
       'uri' => $this->uri,
