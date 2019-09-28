@@ -9,6 +9,7 @@
 
 namespace Gaterdata\Security;
 use Gaterdata\Core;
+use Gaterdata\Core\Debug;
 
 class BearerToken extends Core\ProcessorEntity
 {
@@ -40,13 +41,15 @@ class BearerToken extends Core\ProcessorEntity
         $headers = trim($requestHeaders['Authorization']);
       }
     }
+    $headerParts = explode(' ', $headers);
+    return $headerParts[2];
+    // if (!empty($headers)) {
+    //   if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
+    //     Debug::variable($matches, 'match');
+    //     return $matches[1];
+    //   }
+    // }
 
-    if (!empty($headers)) {
-      if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
-        return $matches[1];
-      }
-    }
-
-    return '';
+    // return '';
   }
 }
