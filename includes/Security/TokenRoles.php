@@ -29,7 +29,7 @@ class TokenRoles extends Core\ProcessorEntity
       ],
       'roles' => [
         'description' => 'A collection of user_role.',
-        'cardinality' => [1, 1],
+        'cardinality' => [1, '*'],
         'literalAllowed' => FALSE,
         'limitFunctions' => ['collection'],
         'limitTypes' => [],
@@ -64,8 +64,7 @@ class TokenRoles extends Core\ProcessorEntity
     // Get roles and validate the user.
     $userRoleMapper = new Db\UserRoleMapper($this->db);
     $roleMapper = new Db\RoleMapper($this->db);
-    $collection = $this->val('roles');
-    $roleNames = $collection->getData();
+    $roleNames = $this->val('roles', TRUE);
     // If a role that fits is found return TRUE, otherwise fall through to the exception.
     foreach($roleNames as $roleName) {
       Debug::variable(($roleName), 'validating user rolename');

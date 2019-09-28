@@ -1,0 +1,40 @@
+name: User Role create/update
+
+description: Create or update a role for a user for an application.
+
+uri: user/role
+
+method: post
+
+ttl: 0
+
+security:
+  function: token_roles
+  id: user_role_create_security
+  token:
+    function: bearer_token
+    id: user_role_create_token
+  roles:
+    - Administrator
+    - Account manager
+    - Application manager
+
+process:
+  function: user_role
+  id: user_role_create_user_role
+  username:
+    function: var_post
+    id: user_role_create_username
+    key: username
+  accountName:
+    function: var_post
+    id: user_role_create_acc_name
+    key: accountName
+  applicationName:
+    function: var_post
+    id: user_role_create_app_name
+    key: applicationName
+  roleName:
+    function: var_post
+    id: user_role_create_role_name
+    key: roleName
