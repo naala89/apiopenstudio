@@ -12,7 +12,7 @@ class VarGet extends Core\ProcessorEntity
   protected $details = array(
     'name' => 'Var (Get)',
     'machineName' => 'var_get',
-    'description' => 'A "get" variable. It fetches a variable from the get request.',
+    'description' => 'A "get" variable. It fetches a urldecoded variable from the get request.',
     'menu' => 'Primitive',
     'application' => 'Common',
     'input' => array(
@@ -45,7 +45,7 @@ class VarGet extends Core\ProcessorEntity
     $vars = $this->request->getGetVars();
     
     if (isset($vars[$key])) {
-      return new Core\DataContainer($vars[$key], 'text');
+      return new Core\DataContainer(urldecode($vars[$key]), 'text');
     }
     if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
       return new Core\DataContainer('', 'text');

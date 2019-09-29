@@ -1,0 +1,26 @@
+name: Account read
+
+description: Fetch an account.
+
+uri: account
+
+method: get
+
+ttl: 0
+
+security:
+  function: token_roles
+  id: security_token_roles
+  roles:
+    - Administrator
+    - Account manager
+    - Application manager
+    - Developer
+
+process:
+  function: account
+  id: account
+  accountName:
+    function: var_get
+    id: 5
+    key: accountName
