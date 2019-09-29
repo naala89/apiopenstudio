@@ -47,7 +47,6 @@ class AccountMapper extends Mapper {
    * @throws \Gaterdata\Core\ApiException
    */
   public function delete(Account $account) {
-
     $sql = 'DELETE FROM account WHERE accid = ?';
     $bindParams = [$account->getAccid()];
     return $this->saveDelete($sql, $bindParams);
@@ -71,16 +70,9 @@ class AccountMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findAll(array $params = NULL) {
+  public function findAll() {
     $sql = 'SELECT * FROM account';
-    $bindParams = [];
-    if (!empty($params)) {
-      if (!empty($params['keyword'])) {
-        $sql .= ' WHERE name like "%' . $params['keyword'] . '%"';
-        unset($params['keyword']);
-      }
-    }
-    return $this->fetchRows($sql, $bindParams, $params);
+    return $this->fetchRows($sql, []);
   }
 
   /**
