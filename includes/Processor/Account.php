@@ -6,6 +6,7 @@
 
 namespace Gaterdata\Processor;
 use Gaterdata\Core;
+use Gaterdata\Core\Debug;
 use Gaterdata\Db;
 
 class Account extends Core\ProcessorEntity
@@ -63,11 +64,19 @@ class Account extends Core\ProcessorEntity
 
       case 'delete':
         $account = $accountMapper->findByName($accountName);
+        if (empty($account->getAccid())) {
+          throw new Core\ApiException('Account does not exist',6, $this->id);
+        }
+        $applicationMapper = new Db\ApplicationMapper($this->db);
+        $applications = $applicationMapper->findByAccid($account->getAccid());
+        if (!empty($applications)) {
+          throw new Core\ApiException('Cannot delete the account, applications are assigned to the account',6, $this->id);
+        }
         return $accountMapper->delete($account);
         break;
 
       default:
-        throw new Core\ApiException('Invalid action', 1, $this->id);
+        throw new Core\ApiException('Invalid action', 3, $this->id);
         break;
     }
   }

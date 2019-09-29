@@ -116,7 +116,7 @@ abstract class Mapper {
       throw new ApiException($message, 2);
     }
 
-    $entries = array();
+    $entries = [];
     while (!$recordSet->EOF) {
       $entries[] = $this->mapArray($recordSet->fields);
       $recordSet->moveNext();
