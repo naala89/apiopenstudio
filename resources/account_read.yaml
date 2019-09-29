@@ -11,6 +11,9 @@ ttl: 0
 security:
   function: token_roles
   id: security_token_roles
+  token:
+    function: bearer_token
+    id: account_delete_bearer_token
   roles:
     - Administrator
     - Account manager
