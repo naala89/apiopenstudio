@@ -1,0 +1,28 @@
+{
+  "name": "Account read",
+  "description": "Fetch an account.",
+  "uri": "account",
+  "method": "post",
+  "ttl": 0,
+  "security": {
+    "function": "bearer_token",
+    "id": {
+      "roles": [
+        "Administrator",
+        "Account manager",
+        "Application manager",
+        "Developer"
+      ]
+    },
+    "token": ""
+  },
+  "process": {
+    "function": "account",
+    "id": "account",
+    "accountName": {
+      "function": "var_get",
+      "id": 5,
+      "key": "accountName"
+    }
+  }
+}
