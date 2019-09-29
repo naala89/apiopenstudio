@@ -1,0 +1,30 @@
+{
+  "name": "Account create/update",
+  "description": "Create or update an account.",
+  "uri": "account",
+  "method": "post",
+  "ttl": 0,
+  "security": {
+    "function": "token_role",
+    "id": "security",
+    "token": {
+      "function": "bearer_token",
+      "id": "security_token"
+    },
+    "role": "Administrator"
+  },
+  "process": {
+    "function": "account",
+    "id": "account",
+    "accountName": {
+      "function": "var_post",
+      "id": "account_name",
+      "key": "accountName"
+    },
+    "oldName": {
+      "function": "var_post",
+      "id": "account_old_name",
+      "key": "oldName"
+    }
+  }
+}
