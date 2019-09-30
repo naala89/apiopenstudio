@@ -1,0 +1,35 @@
+{
+  "name": "Application read",
+  "description": "Fetch an application.",
+  "uri": "application",
+  "method": "get",
+  "ttl": 0,
+  "security": {
+    "function": "token_roles",
+    "id": "application_read_security",
+    "token": {
+      "function": "bearer_token",
+      "id": "application_read_bearer_token"
+    },
+    "roles": [
+      "Administrator",
+      "Account manager",
+      "Application manager",
+      "Developer"
+    ]
+  },
+  "process": {
+    "function": "application",
+    "id": "application_read_process",
+    "accountName": {
+      "function": "var_get",
+      "id": "application_read_account_name",
+      "key": "accountName"
+    },
+    "applicationName": {
+      "function": "var_get",
+      "id": "application_read_application_name",
+      "key": "applicationName"
+    }
+  }
+}

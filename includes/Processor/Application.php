@@ -92,28 +92,21 @@ class Application extends Core\ProcessorEntity
         }
         $application->setAccId($accountId);
         $application->setName(!empty($newApplicationName) ? $newApplicationName : $applicationName);
-        Debug::variable($account->dump());
         return $applicationMapper->save($application);
         break;
 
       case 'get':
-        if (!empty($accountId)) {
-          return $applicationMapper->findByAccId($accountId);
-        } elseif (!empty($applicationName)) {
-          return $applicationMapper->findByName($applicationName);
+        if (empty($application->getAppid())) {
+          throw new Core\ApiException("Application $applicationName in account $accountName does not exist", 6, $this->id);
         }
-        return new Db\Account();
+        return $application->dump();
         break;
 
       case 'delete':
-        if (!empty($accountId)) {
-          $account = $applicationMapper->findByAccId($accountId);
-        } elseif (!empty($applicationName)) {
-          $account = $applicationMapper->findByName($applicationName);
-        } else {
-          $account = new Db\Account();
+        if (empty($application->getAppid())) {
+          throw new Core\ApiException("Application $applicationName in account $accountName does not exist", 6, $this->id);
         }
-        return $applicationMapper->delete($account);
+        return $applicationMapper->delete($application);
         break;
 
       default:
