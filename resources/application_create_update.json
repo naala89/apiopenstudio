@@ -1,0 +1,40 @@
+{
+  "name": "Application create/update",
+  "description": "Create or update an application.",
+  "uri": "application",
+  "method": "post",
+  "ttl": 0,
+  "security": {
+    "function": "token_role",
+    "id": "application_create_update_security",
+    "token": {
+      "function": "bearer_token",
+      "id": "application_create_update_bearer_token"
+    },
+    "role": "Administrator"
+  },
+  "process": {
+    "function": "application",
+    "id": "application_create_update_process",
+    "accountName": {
+      "function": "var_post",
+      "id": "application_create_update_account_name",
+      "key": "accountName"
+    },
+    "applicationName": {
+      "function": "var_post",
+      "id": "application_create_update_application_name",
+      "key": "applicationName"
+    },
+    "newAccountName": {
+      "function": "var_post",
+      "id": "application_create_update_new_account_name",
+      "key": "newAccountName"
+    },
+    "newApplicationName": {
+      "function": "var_post",
+      "id": "application_create_update_new_application_name",
+      "key": "newApplicationName"
+    }
+  }
+}
