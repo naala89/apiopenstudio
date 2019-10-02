@@ -8,6 +8,7 @@ tests/_output/*
 tmp/*
 config/settings.php
 config/settings.ini
+logs/
 
 #composer
 /vendor
