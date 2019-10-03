@@ -39,7 +39,7 @@ class Equation extends Core\ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor Equation', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     $eq = $this->val('equation', true);
     $vars = $this->val('variables', true);

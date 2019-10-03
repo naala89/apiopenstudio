@@ -40,7 +40,7 @@ class GeoPoint extends Core\ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor GeoPoint', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     $lat = $this->val('lat', true);
     $lon = $this->val('lon', true);

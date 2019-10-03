@@ -45,7 +45,7 @@ class UserLogin extends Core\ProcessorEntity
    * @throws \Gaterdata\Processor\ApiException
    */
   public function process() {
-    Core\Debug::variable($this->meta, 'Processor UserLogin', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     $username = $this->val('username');
     $username = $this->isDataContainer($username) ? $username->getData() : $username;

@@ -53,24 +53,13 @@ class LoginStoreDrupal extends Core\ProcessorEntity
   );
 
   /**
-   * @param $meta
-   * @param $request
-   */
-  public function __construct($meta, $request)
-  {
-    parent::__construct($meta, $request);
-    $db = $this->getDb();
-    $this->user = new Db\ExternalUserMapper($db);
-  }
-
-  /**
    * @return array|mixed
    * @throws \Gaterdata\Core\ApiException
    * @throws \Gaterdata\Processor\ApiException
    */
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor LoginStoreDrupal', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     $source = $this->val('source');
     $source = json_decode($source);

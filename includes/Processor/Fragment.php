@@ -30,7 +30,7 @@ class Fragment extends Core\ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor Fragment', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     $name = $this->val('name');
     $fragments = $this->request->getFragments();
