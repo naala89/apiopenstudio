@@ -52,7 +52,7 @@ class Mapper extends Core\ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor Mapper', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     $source = $this->val('source');
     $type = $source->getType();
@@ -223,7 +223,7 @@ class Mapper extends Core\ProcessorEntity
   private function _addResultXml($regex, \DOMNodeList $values)
   {
     $queryNodes = explode('/', trim($regex, '/'));
-    $xpath = new \DOMXPath($this->result);
+    // $xpath = new \DOMXPath($this->result);
     $oldQuery = '';
 
     while ($queryNode = array_shift($queryNodes)) {

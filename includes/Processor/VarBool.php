@@ -33,7 +33,7 @@ class VarBool extends Core\ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor VarBool', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     $result = $this->val('value');
     if (!$this->isDataContainer($result)) {

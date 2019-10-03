@@ -85,7 +85,7 @@ class DatagatorUser extends Core\ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor DatagatorUser', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     $username = $this->val('username');
     $method = $this->request->method;

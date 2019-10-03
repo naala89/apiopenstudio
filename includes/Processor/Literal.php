@@ -9,37 +9,37 @@ use Gaterdata\Core;
 
 class Literal extends Core\ProcessorEntity
 {
-  protected $details = array(
+  protected $details = [
     'name' => 'Literal',
     'machineName' => 'literal',
-    'description' => 'A literal string or value. This accepts only string or number values',
+    'description' => 'A literal string or value.',
     'menu' => 'Primitive',
     'application' => 'Common',
-    'input' => array(
-      'value' => array(
+    'input' => [
+      'value' => [
         'description' => 'The value of the literal.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string', 'integer', 'float'),
-        'limitValues' => array(),
+        'limitFunctions' => [],
+        'limitTypes' => [],
+        'limitValues' => [],
         'default' => ''
-      ),
-      'type' => array(
+      ],
+      'type' => [
         'description' => 'The literal type.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array('text', 'xml', 'json', 'csv'),
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => [],
         'default' => 'text'
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor Literal', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     $value = $this->val('value');
     $type = $this->val('type');

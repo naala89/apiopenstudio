@@ -39,7 +39,7 @@ class VarGet extends Core\ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor VarGet', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     $key = $this->val('key', true);
     $vars = $this->request->getGetVars();

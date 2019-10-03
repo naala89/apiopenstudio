@@ -77,7 +77,7 @@ class Filter extends Core\ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor Filter', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     $filter = $this->val('filter', true);
     $keyOrValue = $this->val('keyOrValue', true);

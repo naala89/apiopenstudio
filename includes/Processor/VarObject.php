@@ -30,7 +30,7 @@ class VarObject extends Core\ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor Object', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
     $attributes = $this->val('attributes', false);
     $result = array();
 

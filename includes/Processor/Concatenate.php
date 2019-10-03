@@ -30,7 +30,7 @@ class Concatenate extends Core\ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor Concatenate', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     $sources = $this->val('sources');
     $result = '';

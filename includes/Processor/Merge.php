@@ -48,7 +48,7 @@ class Merge extends Core\ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'processor Merge', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     $sources = $this->val('sources', true);
     $unique = $this->val('unique', true);

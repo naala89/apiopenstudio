@@ -62,7 +62,7 @@ class VarPersistent extends Core\ProcessorEntity
    */
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor VarPersistent', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     $name = $this->val('name');
     $strict = !empty($this->meta->strict) ? $this->val('strict') : 1;

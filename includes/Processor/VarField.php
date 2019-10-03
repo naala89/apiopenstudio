@@ -39,7 +39,7 @@ class VarField extends Core\ProcessorEntity
 
   public function process()
   {
-    Core\Debug::variable($this->meta, 'Processor Field', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     $key = $this->val('key', true);
     $value = $this->val('value', true);
