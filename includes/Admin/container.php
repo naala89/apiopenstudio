@@ -58,10 +58,10 @@ $container['view'] = function (Container $container) {
  *   CtrlHome object.
  */
 $container['CtrlHome'] = function (Container $container) {
-  $dbSettings = $container->get('settings')['db'];
+  $settings = $container->get('settings');
   $view = $container->get('view');
   $flash = $container->get('flash');
-  return new CtrlHome($dbSettings, $view, $flash);
+  return new CtrlHome($settings, $view, $flash);
 };
 
 /**
@@ -74,10 +74,10 @@ $container['CtrlHome'] = function (Container $container) {
  *   CtrlLogin object.
  */
 $container['CtrlLogin'] = function (Container $container) {
-  $dbSettings = $container->get('settings')['db'];
+  $settings = $container->get('settings');
   $view = $container->get('view');
   $flash = $container->get('flash');
-  return new CtrlLogin($dbSettings, $view, $flash);
+  return new CtrlLogin($settings, $view, $flash);
 };
 
 /**
@@ -90,11 +90,11 @@ $container['CtrlLogin'] = function (Container $container) {
  *   CtrlApplication object.
  */
 $container['CtrlAccount'] = function (Container $container) {
-  $dbSettings = $container->get('settings')['db'];
+  $settings = $container->get('settings');
   $paginationStep = $container->get('settings')['paginationStep'];
   $view = $container->get('view');
   $flash = $container->get('flash');
-  return new CtrlAccount($dbSettings, $paginationStep, $view, $flash);
+  return new CtrlAccount($settings, $paginationStep, $view, $flash);
 };
 
 /**
@@ -107,11 +107,11 @@ $container['CtrlAccount'] = function (Container $container) {
  *   CtrlApplication object.
  */
 $container['CtrlApplication'] = function (Container $container) {
-  $dbSettings = $container->get('settings')['db'];
+  $settings = $container->get('settings');
   $paginationStep = $container->get('settings')['paginationStep'];
   $view = $container->get('view');
   $flash = $container->get('flash');
-  return new CtrlApplication($dbSettings, $paginationStep, $view, $flash);
+  return new CtrlApplication($settings, $paginationStep, $view, $flash);
 };
 
 /**
@@ -124,10 +124,10 @@ $container['CtrlApplication'] = function (Container $container) {
  *   CtrlUser object.
  */
 $container['CtrlUser'] = function (Container $container) {
-  $dbSettings = $container->get('settings')['db'];
+  $settings = $container->get('settings');
   $mailSettings = $container->get('settings')['mail'];
   $paginationStep = $container->get('settings')['paginationStep'];
   $view = $container->get('view');
   $flash = $container->get('flash');
-  return new CtrlUser($dbSettings, $mailSettings, $paginationStep, $view, $flash);
+  return new CtrlUser($settings, $mailSettings, $paginationStep, $view, $flash);
 };

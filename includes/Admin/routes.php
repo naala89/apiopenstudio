@@ -5,19 +5,19 @@ use Gaterdata\Admin\Middleware\Authentication;
 $container = $app->getContainer();
 
 /**
- * Home.
- */
-$app->get('/', 'CtrlHome:index')->add(new Authentication($container, $settings, '/login'));
-$app->get('/home', 'CtrlHome:index')->add(new Authentication($container, $settings, '/login'));
-$app->post('/', 'CtrlHome:index')->add(new Authentication($container, $settings, '/login'));
-
-/**
- * Login.
+ * Login/logout.
  */
 $app->get('/login', 'CtrlLogin:login');
 $app->post('/login', 'CtrlLogin:login')->add(new Authentication($container, $settings, '/login'));
 $app->get('/logout', 'CtrlLogin:logout');
 $app->post('/logout', 'CtrlLogin:logout');
+
+/**
+ * Home.
+ */
+$app->get('/', 'CtrlHome:index')->add(new Authentication($container, $settings, '/login'));
+$app->get('/home', 'CtrlHome:index')->add(new Authentication($container, $settings, '/login'));
+$app->post('/', 'CtrlHome:index')->add(new Authentication($container, $settings, '/login'));
 
 /**
  * Account.
