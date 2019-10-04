@@ -2,10 +2,13 @@
 
 namespace Gaterdata\Admin\Controllers;
 
+use Gaterdata\Core\Debug;
 use Slim\Flash\Messages;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
+use Slim\Collection;
+use stdClass;
 
 /**
  * Class CtrlLogin.
@@ -13,20 +16,6 @@ use Slim\Views\Twig;
  * @package Gaterdata\Admin\Controllers
  */
 class CtrlLogin extends CtrlBase {
-
-  /**
-   * CtrlLogin constructor.
-   *
-   * @param array $dbSettings
-   *   DB settings array.
-   * @param \Slim\Views\Twig $view
-   *   View container.
-   * @param \Slim\Flash\Messages $flash
-   *   Flash messages container.
-   */
-  public function __construct(array $dbSettings, Twig $view, Messages $flash) {
-    parent::__construct($dbSettings, 0, $view, $flash);
-  }
 
   /**
    * Login page.
@@ -42,7 +31,7 @@ class CtrlLogin extends CtrlBase {
    *   Response.
    */
   public function login(Request $request, Response $response, array $args) {
-    $menu = $this->getMenus([]);
+    $menu = $this->getMenus(new stdClass());
     return $this->view->render($response, 'login.twig', [
       'menu' => $menu,
       'messages' => $this->flash->getMessages(),
