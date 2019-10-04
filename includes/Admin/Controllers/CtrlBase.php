@@ -2,11 +2,8 @@
 
 namespace Gaterdata\Admin\Controllers;
 
-use Gaterdata\Core\Debug;
 use Slim\Flash\Messages;
 use Slim\Views\Twig;
-// use Gaterdata\Admin\User;
-// use Gaterdata\Core\ApiException;
 use Slim\Collection;
 use GuzzleHttp\Client;
 use stdClass;
@@ -34,6 +31,10 @@ class CtrlBase {
    * @var array.
    */
   protected $menu;
+  /**
+   * @var stdClass,
+   */
+  protected $userRoles;
   /**
    * @var array
    */
@@ -89,8 +90,8 @@ class CtrlBase {
       }
       $result = new stdClass();
     }
-      
-    return $result;
+
+    $this->userRoles = $result;
   }
 
   /**
@@ -155,6 +156,48 @@ class CtrlBase {
     }
 
     return $menus;
+  }
+
+  /**
+   * Get available accounts for user's roles.
+   *
+   * @param stdClass $roles
+   *   Raw decoded result form gaterdata.
+   *
+   * @return array
+   *   Array of account names indexed by account ID.
+   */
+  protected function getAccounts(stdClass $roles) {
+    $accounts = [];
+
+    foreach($roles as $account) {
+      $accounts[$account->account_id] = $account->account_name;
+    }
+
+    return $accounts;
+  }
+
+  /**
+   * Get available applications for user's roles.
+   *
+   * @param stdClass $roles
+   *   Raw decoded result form gaterdata.
+   *
+   * @return array
+   *   Array of application names indexed by application ID.
+   */
+  protected function getApplications(stdClass $roles) {
+    $applications = [];
+
+    foreach($roles as $account) {
+      foreach($account as $application) {
+        if (is_object($application) && isset($application->application_id) && isset($application->application_name)) {
+          $applications[$application->application_id] = $application->application_name;
+        }
+      }
+    }
+
+    return $applications;
   }
 
   /**
