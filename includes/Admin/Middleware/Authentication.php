@@ -7,7 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Slim\Container;
 use Gaterdata\Core\ApiException;
 use GuzzleHttp\Client;
-
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Class Authentication.
@@ -57,6 +57,8 @@ class Authentication {
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response Interface.
+   * 
+   * @TODO: Validate token resource.
    */
   public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next) {
     // If login post, get login the values.
@@ -68,35 +70,51 @@ class Authentication {
     if (!empty($username) || !empty($password)) {
       // This is a login attempt.
       try {
-        $client = new Client([
-          'base_uri'        => $this->settings['api']['url'],
-          'timeout'         => 0,
-        ]);
-        $api_url = $this->settings['api']['common_account'] . '/' . $this->settings['api']['common_application'] . '/login';
-        $response = $client->request('POST', $api_url, [
+        $domain = $this->settings['api']['url'];
+        $account = $this->settings['api']['core_account'];
+        $application = $this->settings['api']['core_application'];
+        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+        $result = $client->request('POST', "login", [
           'form_params' => [
-            'username' => $username, 
-            'password' => $password
+            "username" => $username,
+            "password" => $password,
           ]
         ]);
-        if ($response->getStatusCode() != 200) {
-          throw new ApiException('Access Denied');
+        $result = json_decode($result->getBody()->getContents());
+        if (!isset($result->token) || !isset($result->uid)) {
+          throw new ApiException('Invalid response from api login');
         }
-        $result = json_decode($response->getBody());
         $_SESSION['token'] = $result->token;
         $_SESSION['uid'] = $result->uid;
+        $_SESSION['username'] = $username;
       } catch (ApiException $e) {
-        unset($_SESSION['token']);
-        unset($_SESSION['uid']);
-        $this->container['flash']->addMessage('error', $e->getMessage());
+        $this->loginError($e);
+      } catch (ClientException $e) {
+        $this->loginError($e);
+      } catch (RequestException $e) {
+        $this->loginError($e);
       }
     }
 
     // Validate token and uid are set (valid login).
-    if (!isset($_SESSION['token']) || !isset($_SESSION['uid'])) {
-      return $response = $response->withRedirect($uri);
+    if (!isset($_SESSION['token']) || !isset($_SESSION['uid']) || !isset($_SESSION['username'])) {
+      // return $response = $response->withRedirect($uri);
+      return $response->withStatus(302)->withHeader('Location', $uri);
     }
     return $next($request, $response);
+  }
+
+  private function loginError($e) {
+    if ($e->hasResponse()) {
+      $responseObject = json_decode($e->getResponse()->getBody()->getContents());
+      $message = $responseObject->error->message;
+    } else {
+      $message = $e->getMessage();
+    }
+    unset($_SESSION['token']);
+    unset($_SESSION['uid']);
+    unset($_SESSION['username']);
+    $this->container['flash']->addMessage('error', $message);
   }
 
 }
