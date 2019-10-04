@@ -65,6 +65,7 @@ class TokenRoles extends Core\ProcessorEntity
     $userRoleMapper = new Db\UserRoleMapper($this->db);
     $roleMapper = new Db\RoleMapper($this->db);
     $roleNames = $this->val('roles', TRUE);
+    
     // If a role that fits is found return TRUE, otherwise fall through to the exception.
     foreach($roleNames as $roleName) {
       Debug::variable(($roleName), 'validating user rolename');
@@ -79,9 +80,6 @@ class TokenRoles extends Core\ProcessorEntity
       }
     }
     
-    $userRole = $userRoleMapper->findByUserAppRole($uid, $this->request->appId, $rid);
-    if (empty($userRole->getId())) {
-      throw new Core\ApiException('permission denied', 4, $this->id, 401);
-    }
+    throw new Core\ApiException('permission denied', 4, $this->id, 401);
   }
 }
