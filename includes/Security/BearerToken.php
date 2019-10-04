@@ -42,14 +42,6 @@ class BearerToken extends Core\ProcessorEntity
       }
     }
     $headerParts = explode(' ', $headers);
-    return $headerParts[2];
-    // if (!empty($headers)) {
-    //   if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
-    //     Debug::variable($matches, 'match');
-    //     return $matches[1];
-    //   }
-    // }
-
-    // return '';
+    return array_pop($headerParts);
   }
 }
