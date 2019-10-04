@@ -2,16 +2,8 @@
 
 namespace Gaterdata\Admin\Controllers;
 
-use Slim\Flash\Messages;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Slim\Views\Twig;
-use Slim\Collection;
-use Gaterdata\Admin\Account;
-use Gaterdata\Admin\Application;
-use Gaterdata\Admin\UserAccount;
-use Gaterdata\Core\ApiException;
-use Gaterdata\Core\Debug;
 
 /**
  * Class CtrlHome.
@@ -34,26 +26,15 @@ class CtrlHome extends CtrlBase {
    */
   public function index(Request $request, Response $response, array $args) {
     $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $roles = $this->getRoles($username);
-    $menu = $this->getMenus($roles);
-
-    // try {
-
-      // $accountHlp = new Account($this->settings);
-      // $applicationHlp = new Application($this->settings);
-      // $accounts = $accountHlp->findAll();
-
-      // $applications = $applicationHlp->findAll();
-    // } catch(ApiException $e) {
-    //   $this->flash->addMessage('error', $e->getMessage());
-    //   $applications = [];
-    //   $accounts = [];
-    // }
+    $this->getRoles($username);
+    $menu = $this->getMenus($this->userRoles);
+    $accounts = $this->getAccounts($this->userRoles);
+    $applications = $this->getApplications($this->userRoles);
 
     return $this->view->render($response, 'home.twig', [
       'menu' => $menu,
-      'accounts' => [],
-      'applications' => [],
+      'accounts' => $accounts,
+      'applications' => $applications,
       'flash' => $this->flash,
     ]);
   }
