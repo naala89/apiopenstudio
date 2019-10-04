@@ -59,6 +59,8 @@ services:
     volumes:
       - ./composer:/composer
       - .:/var/www/html
+      - ./docker/php/php.conf:/usr/local/etc/php-fpm.d/zzz-phpSettings.conf
+      - ${PWD}/logs/php:/var/log
     environment:
       - MYSQL_HOST=db
       - MYSQL_DATABASE=${MYSQL_DATABASE}
