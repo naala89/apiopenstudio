@@ -58,6 +58,14 @@ class Account extends Core\ProcessorEntity
         break;
 
       case 'get':
+        if ($accountName == 'all') {
+          $rows = $accountMapper->findAll();
+          $result = [];
+          foreach ($rows as $row) {
+            $result[$row->getAccid()] = $row->getName();
+          }
+          return $result;
+        }
         $account = $accountMapper->findByName($accountName);
         return $account->dump();
         break;
