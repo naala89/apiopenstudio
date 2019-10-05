@@ -221,5 +221,22 @@ class CtrlBase {
     }
     return FALSE;
   }
+  
+  /**
+   * Get an error message from a API call exception.
+   * 
+   * @param  mixed $e
+   *
+   * @return string
+   */
+  protected function getErrorMessage($e) {
+    if ($e->hasResponse()) {
+      $responseObject = json_decode($e->getResponse()->getBody()->getContents());
+      $message = $responseObject->error->message;
+    } else {
+      $message = $e->getMessage();
+    }
+    return $message;
+  }
 
 }
