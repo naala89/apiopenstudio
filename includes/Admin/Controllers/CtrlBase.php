@@ -153,9 +153,36 @@ class CtrlBase {
    */
   protected function getAccounts() {
     $accounts = [];
+    $isAdmin = $this->isAdmin();
 
-    foreach($this->userAccessRights as $account) {
-      $accounts[$account->account_id] = $account->account_name;
+    if (!$isAdmin) {
+      foreach($this->userAccessRights as $account) {
+        $accounts[$account->account_id] = $account->account_name;
+      }
+    } else {
+      // If user has administrator role, fetch all accounts.
+      try {
+        $domain = $this->settings['api']['url'];
+        $account = $this->settings['api']['core_account'];
+        $application = $this->settings['api']['core_application'];
+        $token = $_SESSION['token'];
+  
+        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+        $result = $client->request('GET', 'account', [
+          'headers' => [
+            'Authorization' => "Bearer $token",
+          ],
+          'query' => [
+            'accountName' => 'all',
+          ],
+        ]);
+        $result = json_decode($result->getBody()->getContents());
+      }
+      catch (ClientException $e) {
+        $message = getErrorMessage($e);
+        $this->flash->addMessage('error', $message);
+        return FALSE;
+      }
     }
 
     return $accounts;
@@ -220,6 +247,35 @@ class CtrlBase {
       }
     }
     return FALSE;
+  }
+
+  /**
+   * Validate if the user has Administrator access.
+   *
+   * @return boolean
+   */
+  protected function isAdmin() {
+    $isAdmin = FALSE;
+
+    foreach ($this->userAccessRights as $account) {
+      if ($account->account_name == $this->settings['api']['core_account']) {
+        foreach ($account as $application) {
+          if (is_object($application) 
+            && isset($application->application_name) 
+            && $application->application_name == $this->settings['api']['core_application']) {
+            foreach ($application as $role) {
+              if (is_object($role) 
+                && isset($role->role_name) 
+                && $role->role_name == 'Administrator') {
+                $isAdmin = TRUE;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return $isAdmin;
   }
   
   /**
