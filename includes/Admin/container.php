@@ -94,7 +94,7 @@ $container['CtrlAccount'] = function (Container $container) {
   $paginationStep = $container->get('settings')['paginationStep'];
   $view = $container->get('view');
   $flash = $container->get('flash');
-  return new CtrlAccount($settings, $paginationStep, $view, $flash);
+  return new CtrlAccount($settings, $view, $flash);
 };
 
 /**
