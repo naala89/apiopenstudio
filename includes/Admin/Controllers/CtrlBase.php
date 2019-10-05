@@ -206,16 +206,14 @@ class CtrlBase {
   /**
    * Validate user access by role.
    *
-   * @param array $roles
-   *   Array of user roles (text).
-   *
    * @return bool
    *   Access validated.
    */
-  protected function checkAccess(array $roles) {
+  protected function checkAccess() {
     if (empty($this->permittedRoles)) {
       return TRUE;
     }
+    $roles = $this->getRoles();
     foreach ($roles as $role) {
       if (in_array($role, $this->permittedRoles)) {
         return TRUE;
