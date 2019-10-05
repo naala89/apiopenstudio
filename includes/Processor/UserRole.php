@@ -114,6 +114,7 @@ class UserRole extends Core\ProcessorEntity
       $appId = $userRole->getAppId();
       $rid = $userRole->getRid();
 
+      // Create account sub-array.
       if (empty($result[$accId])) {
         $account = $accountMapper->findByAccid($accId);
         $result[$accId] = [
@@ -121,6 +122,8 @@ class UserRole extends Core\ProcessorEntity
           'account_id' => $account->getAccid(),
         ];
       }
+
+      // Create application sub-array.
       if (empty($result[$accId][$appId])) {
         $application = $applicationMapper->findByAppid($appId);
         $result[$accId][$appId] = [
@@ -128,12 +131,15 @@ class UserRole extends Core\ProcessorEntity
           'application_id' => $application->getAppid(),
         ];
       }
+
+      // Add tthe role.
       $role = $roleMapper->findByRid($rid);
       $result[$accId][$appId][] = [
         'role_name' => $role->getName(),
         'role_id' => $role->getRid(),
       ];
     }
+    
     return $result;
   }
 
