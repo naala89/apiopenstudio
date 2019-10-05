@@ -44,6 +44,9 @@ $container['view'] = function (Container $container) {
   $router = $container->get('router');
   $uri = Uri::createFromEnvironment($container->get('environment'));
   $twig->addExtension(new TwigExtension($router, $uri));
+  if ($settings['twig']['options']['debug']) {
+    $twig->addExtension(new Twig_Extension_Debug());
+  }
 
   return $twig;
 };
@@ -91,7 +94,6 @@ $container['CtrlLogin'] = function (Container $container) {
  */
 $container['CtrlAccount'] = function (Container $container) {
   $settings = $container->get('settings');
-  $paginationStep = $container->get('settings')['paginationStep'];
   $view = $container->get('view');
   $flash = $container->get('flash');
   return new CtrlAccount($settings, $view, $flash);
@@ -108,10 +110,9 @@ $container['CtrlAccount'] = function (Container $container) {
  */
 $container['CtrlApplication'] = function (Container $container) {
   $settings = $container->get('settings');
-  $paginationStep = $container->get('settings')['paginationStep'];
   $view = $container->get('view');
   $flash = $container->get('flash');
-  return new CtrlApplication($settings, $paginationStep, $view, $flash);
+  return new CtrlApplication($settings, $view, $flash);
 };
 
 /**
@@ -126,8 +127,7 @@ $container['CtrlApplication'] = function (Container $container) {
 $container['CtrlUser'] = function (Container $container) {
   $settings = $container->get('settings');
   $mailSettings = $container->get('settings')['mail'];
-  $paginationStep = $container->get('settings')['paginationStep'];
   $view = $container->get('view');
   $flash = $container->get('flash');
-  return new CtrlUser($settings, $mailSettings, $paginationStep, $view, $flash);
+  return new CtrlUser($settings, $mailSettings, $view, $flash);
 };
