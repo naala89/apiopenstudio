@@ -34,13 +34,14 @@ $container['flash'] = function () {
  */
 $container['view'] = function (Container $container) {
   $settings = $container->get('settings');
-  $viewPath = $settings['api']['base_path'] . $settings['twig']['template_path'];
-  $twig = new Twig($viewPath, $settings['twig']['options']);
+  $viewDir = $settings['api']['base_path'] . $settings['twig']['template_path'];
+  $publicDir = $settings['api']['base_path'] . $settings['api']['public_path'];
 
+  $twig = new Twig($viewDir, $settings['twig']['options']);
   $loader = $twig->getLoader();
-  $loader->addPath($settings['api']['base_path'] . $settings['api']['public_path'], 'public');
+  $loader->addPath($publicDir, 'public');
 
-  // Instantiate and add Slim specific extension.
+  // Instantiate and add twig extension/s.
   $router = $container->get('router');
   $uri = Uri::createFromEnvironment($container->get('environment'));
   $twig->addExtension(new TwigExtension($router, $uri));
@@ -49,22 +50,6 @@ $container['view'] = function (Container $container) {
   }
 
   return $twig;
-};
-
-/**
- * Register Home controller.
- *
- * @param \Slim\Container $container
- *   Slim container.
- *
- * @return Gaterdata\Admin\Controllers\CtrlHome
- *   CtrlHome object.
- */
-$container['CtrlHome'] = function (Container $container) {
-  $settings = $container->get('settings');
-  $view = $container->get('view');
-  $flash = $container->get('flash');
-  return new CtrlHome($settings, $view, $flash);
 };
 
 /**
@@ -81,6 +66,22 @@ $container['CtrlLogin'] = function (Container $container) {
   $view = $container->get('view');
   $flash = $container->get('flash');
   return new CtrlLogin($settings, $view, $flash);
+};
+
+/**
+ * Register Home controller.
+ *
+ * @param \Slim\Container $container
+ *   Slim container.
+ *
+ * @return Gaterdata\Admin\Controllers\CtrlHome
+ *   CtrlHome object.
+ */
+$container['CtrlHome'] = function (Container $container) {
+  $settings = $container->get('settings');
+  $view = $container->get('view');
+  $flash = $container->get('flash');
+  return new CtrlHome($settings, $view, $flash);
 };
 
 /**

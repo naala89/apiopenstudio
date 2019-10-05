@@ -1,27 +1,29 @@
-{% for message in messages %}
-  {% if message.type == 'info' %}
+{% for messagetype, message in messages %}
+  {% if messagetype == 'info' %}
     {% set message_colour = 'green accent-2' %}
   {% endif %}
-  {% if message.type == 'warning' %}
+  {% if messagetype == 'warning' %}
     {% set message_colour = 'yellow lighten-3' %}
   {% endif %}
-  {% if message.type == 'error' %}
+  {% if messagetype == 'error' %}
     {% set message_colour = 'red' %}
   {% endif %}
-  <div class="row gaterdata-alert">
-    <div class="col s10 m12">
-      <div class="card {{ message_colour }}">
-        <div class="row">
-          <div class="col s12 m10">
-            <div class="card-content">
-              <p>{{ message.text | raw }}</p>
+  {% for text in message %}
+    <div class="row gaterdata-alert">
+      <div class="col s10 m12">
+        <div class="card {{ message_colour }}">
+          <div class="row">
+            <div class="col s12 m10">
+              <div class="card-content">
+                <p>{{ text | raw }}</p>
+              </div>
             </div>
-          </div>
-          <div class="col s2 m2">
-            <i class="small material-icons close-gaterdata-alert">close</i>
+            <div class="col s2 m2">
+              <i class="small material-icons close-gaterdata-alert">close</i>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  {% endfor %}  
 {% endfor %}
