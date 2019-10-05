@@ -4,11 +4,10 @@ namespace Gaterdata\Admin\Controllers;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Gaterdata\Admin\Application;
-use Gaterdata\Admin\Manager;
-use Gaterdata\Admin\ApplicationUserRole;
 use Gaterdata\Core\ApiException;
-use Gaterdata\Admin\Account;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Class CtrlAccount.
@@ -33,14 +32,17 @@ class CtrlAccount extends CtrlBase {
    *   Response.
    */
   public function index(Request $request, Response $response, array $args) {
-    $this->permittedRoles = ['Administrator', 'Manager'];
-    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-    $roles = $this->getRoles($uid);
-    if (!$this->checkAccess($roles)) {
+    $this->permittedRoles = ['Administrator', 'Account manager'];
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+    $this->getAccessRights($username);
+    if (!$this->checkAccess()) {
       $this->flash->addMessage('error', 'View accounts: access denied');
-      return $response->withRedirect('/');
+      return $response->withStatus(302)->withHeader('Location', '/');
     }
-    $menu = $this->getMenus($roles);
+    
+    $menu = $this->getMenus();
+    $roles = $this->getRoles();
+    $accounts = $this->getAccounts();
 
     // Filter params.
     $allParams = $request->getParams();
@@ -53,20 +55,36 @@ class CtrlAccount extends CtrlBase {
     $page = isset($allParams['page']) ? $allParams['page'] : 1;
 
     try {
-      $accountHlp = new Account($this->dbSettings);
-      if (in_array('Administrator', $roles)) {
-        $accounts = $accountHlp->findAll($params);
+      $domain = $this->settings['api']['url'];
+      $account = $this->settings['api']['core_account'];
+      $application = $this->settings['api']['core_application'];
+      $token = $_SESSION['token'];
+      $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+      $result = $client->request('GET', 'account', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+        'query' => [
+          'accountName' => 'all',
+        ],
+      ]);
+      $result = json_decode($result->getBody()->getContents());
+      if (!in_array('Administrator', $roles)) {
+        $_accounts = array_intersect((array) $result, $accounts);
       } else {
-        $managerHlp = new Manager($this->dbSettings);
-        $managers = $managerHlp->findByUserId($uid);
-        $accounts = [];
-        foreach ($managers as $manager) {
-          $accounts[] = $accountHlp->findByAccountId($manager['accid'], $params);
-        }
+        $_accounts = (array) $result;
       }
-    } catch (ApiException $e) {
-      $this->flash->addMessage('error', $e->getMessage());
       $accounts = [];
+      foreach ($_accounts as $accid => $name) {
+        $accounts[] = ['accid' => $accid, 'name' => $name];
+      }
+
+    } catch (ClientException $e) {
+      // @TODO: This may not be the best way to trap unauthorized or timed out token.
+      return $response->withStatus(302)->withHeader('Location', '/login');
+    } catch (RequestException $e) {
+      // @TODO: This may not be the best way to trap unauthorized or timed out token.
+      return $response->withStatus(302)->withHeader('Location', '/login');
     }
 
     // Get total number of pages and current page's accounts to display.
