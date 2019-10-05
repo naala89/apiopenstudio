@@ -18,7 +18,7 @@
       {% include 'partials/header.twig' %}
       <main>
         {% include 'partials/title.twig' %}
-        {% include 'partials/flash.twig' %}
+        {% include 'partials/flash.twig' with {'messages': messages}  %}
         {% block content %}{% endblock %}
       </main>
       {% include 'partials/footer.twig' %}
