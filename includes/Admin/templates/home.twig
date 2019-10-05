@@ -8,7 +8,7 @@
       <h6>Welcome to GaterData!</h6>
     </div>
   </div>
-  {% if accounts|length == 1 %}
+  {% if 'Administrator' in roles and accounts|length == 1 %}
     <div class="divider"></div>
     <div class="section">
       <p><i>You do not have any accounts yet.</i></p>
@@ -21,7 +21,7 @@
       <p>Click <a href="/accounts">here</a> to create your account/s.</p>
     </div>
   {% else %}
-    {% if applications|length == 1 %}
+    {% if ('Administrator' in roles or 'Account manager' in roles) and  applications|length == 1 %}
       <div class="divider"></div>
       <div class="section">
         <p><i>You do not have any applications for your accounts yet.</i></p>

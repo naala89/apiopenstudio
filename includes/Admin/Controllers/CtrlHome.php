@@ -26,15 +26,19 @@ class CtrlHome extends CtrlBase {
    */
   public function index(Request $request, Response $response, array $args) {
     $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $this->getRoles($username);
-    $menu = $this->getMenus($this->userRoles);
-    $accounts = $this->getAccounts($this->userRoles);
-    $applications = $this->getApplications($this->userRoles);
+    if (!$this->getAccessRights($username)) {
+      return $response->withStatus(302)->withHeader('Location', '/login');
+    }
+    $roles = $this->getRoles();
+    $menu = $this->getMenus();
+    $accounts = $this->getAccounts();
+    $applications = $this->getApplications();
 
     return $this->view->render($response, 'home.twig', [
       'menu' => $menu,
       'accounts' => $accounts,
       'applications' => $applications,
+      'roles' => $roles,
       'flash' => $this->flash,
     ]);
   }

@@ -6,6 +6,8 @@ use Slim\Flash\Messages;
 use Slim\Views\Twig;
 use Slim\Collection;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 use stdClass;
 
 /**
@@ -34,7 +36,7 @@ class CtrlBase {
   /**
    * @var stdClass,
    */
-  protected $userRoles;
+  protected $userAccessRights;
   /**
    * @var array
    */
@@ -51,21 +53,21 @@ class CtrlBase {
    *   Flash messages container.
    */
   public function __construct(Collection $settings, Twig $view, Messages $flash) {
+    $this->userAccessRights = new stdClass();
     $this->settings = $settings;
     $this->view = $view;
     $this->flash = $flash;
   }
 
   /**
-   * Fetch the roles for a user ID.
+   * Fetch the access rights for a user.
    *
    * @param string $username
    *   Username.
    *
-   * @return stdClass
-   *    Raw decoded result form gaterdata.
+   * @return stdClass user access rights.
    */
-  protected function getRoles($username) {
+  protected function getAccessRights($username) {
     try {
       $domain = $this->settings['api']['url'];
       $account = $this->settings['api']['core_account'];
@@ -82,40 +84,25 @@ class CtrlBase {
       ]);
       $result = json_decode($response->getBody()->getContents());
     } catch (ClientException $e) {
-      $this->catchApiError($e);
-      $result = new stdClass();
+      // @TODO: This may not be the best way to trap unauthorized or timed out token.
+      return false;
     } catch (RequestException $e) {
-      if ($response->getStatusCode() == 401) {
-        $this->catchApiError($e);
-      }
-      $result = new stdClass();
+      // @TODO: This may not be the best way to trap unauthorized or timed out token.
+      return false;
     }
 
-    $this->userRoles = $result;
+    return $this->userAccessRights = $result;
   }
 
   /**
    * Get available menu items for user's roles.
    *
-   * @param stdClass $roles
-   *   Raw decoded result form gaterdata.
-   *
    * @return array
    *   Associative array of menu titles and links.
    */
-  protected function getMenus(stdClass $roles) {
+  protected function getMenus() {
     $menus = [];
-    $roleNames = [];
-
-    foreach($roles as $account) {
-      foreach($account as $application) {
-        foreach($application as $role) {
-          if (is_object($role) && isset($role->role_name) && isset($role->role_id)) {
-            $roleNames[$role->role_id] = $role->role_name;
-          }
-        }
-      }
-    }
+    $roles = $this->getRoles();
 
     if (empty($roles)) {
       $menus += [
@@ -126,26 +113,26 @@ class CtrlBase {
       $menus += [
         'Home' => '/',
       ];
-      if (in_array('Administrator', $roleNames)) {
+      if (in_array('Administrator', $roles)) {
         $menus += [
           'Accounts' => '/accounts',
           'Applications' => '/applications',
           'Users' => '/users',
         ];
       }
-      if (in_array('Account manager', $roleNames)) {
+      if (in_array('Account manager', $roles)) {
         $menus += [
           'Applications' => '/applications',
           'Users' => '/users',
         ];
       }
-      if (in_array('Application manager', $roleNames)) {
+      if (in_array('Application manager', $roles)) {
         $menus += [
           'Applications' => '/applications',
           'Users' => '/users',
         ];
       }
-      if (in_array('Developer', $roleNames)) {
+      if (in_array('Developer', $roles)) {
         $menus += [
           'Resources' => '/resources',
         ];
@@ -161,16 +148,13 @@ class CtrlBase {
   /**
    * Get available accounts for user's roles.
    *
-   * @param stdClass $roles
-   *   Raw decoded result form gaterdata.
-   *
    * @return array
    *   Array of account names indexed by account ID.
    */
-  protected function getAccounts(stdClass $roles) {
+  protected function getAccounts() {
     $accounts = [];
 
-    foreach($roles as $account) {
+    foreach($this->userAccessRights as $account) {
       $accounts[$account->account_id] = $account->account_name;
     }
 
@@ -180,16 +164,13 @@ class CtrlBase {
   /**
    * Get available applications for user's roles.
    *
-   * @param stdClass $roles
-   *   Raw decoded result form gaterdata.
-   *
    * @return array
    *   Array of application names indexed by application ID.
    */
-  protected function getApplications(stdClass $roles) {
+  protected function getApplications() {
     $applications = [];
 
-    foreach($roles as $account) {
+    foreach($this->userAccessRights as $account) {
       foreach($account as $application) {
         if (is_object($application) && isset($application->application_id) && isset($application->application_name)) {
           $applications[$application->application_id] = $application->application_name;
@@ -198,6 +179,28 @@ class CtrlBase {
     }
 
     return $applications;
+  }
+
+  /**
+   * Get available roles for user's roles.
+   *
+   * @return array
+   *   Array of role names indexed by role ID.
+   */
+  protected function getRoles() {
+    $roles = [];
+
+    foreach($this->userAccessRights as $account) {
+      foreach($account as $application) {
+        foreach($application as $role) {
+          if (is_object($role) && isset($role->role_name) && isset($role->role_id)) {
+            $roles[$role->role_id] = $role->role_name;
+          }
+        }
+      }
+    }
+
+    return $roles;
   }
 
   /**
@@ -213,22 +216,12 @@ class CtrlBase {
     if (empty($this->permittedRoles)) {
       return TRUE;
     }
-    foreach ($this->permittedRoles as $permittedRole) {
-      if (in_array($permittedRole, $roles)) {
+    foreach ($roles as $role) {
+      if (in_array($role, $this->permittedRoles)) {
         return TRUE;
       }
     }
     return FALSE;
-  }
-
-  private function catchApiError($e) {
-    if ($e->hasResponse()) {
-      $responseObject = json_decode($e->getResponse()->getBody()->getContents());
-      $message = $responseObject->error->message;
-    } else {
-      $message = $e->getMessage();
-    }
-    $this->container['flash']->addMessage('error', $message);
   }
 
 }

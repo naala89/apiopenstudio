@@ -98,7 +98,6 @@ class Authentication {
 
     // Validate token and uid are set (valid login).
     if (!isset($_SESSION['token']) || !isset($_SESSION['uid']) || !isset($_SESSION['username'])) {
-      // return $response = $response->withRedirect($uri);
       return $response->withStatus(302)->withHeader('Location', $uri);
     }
     return $next($request, $response);
