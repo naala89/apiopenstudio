@@ -117,14 +117,16 @@ class CtrlAccount extends CtrlBase {
    *   Response.
    */
   public function create(Request $request, Response $response, array $args) {
+    // Validate user has permissions.
     $this->permittedRoles = ['Administrator'];
-    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-    $roles = $this->getRoles($uid);
-    if (!$this->checkAccess($roles)) {
-      $this->flash->addMessage('error', 'Create account: access denied');
-      return $response->withRedirect('/');
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+    $this->getAccessRights($username);
+    if (!$this->checkAccess()) {
+      $this->flash->addMessage('error', 'View accounts: access denied');
+      return $response->withStatus(302)->withHeader('Location', '/');
     }
 
+    // Validate the input.
     $allPostVars = $request->getParsedBody();
     if (empty($name = $allPostVars['create-acc-name'])) {
       $this->flash->addMessage('error', 'Cannot create account, no name defined.');
@@ -132,28 +134,30 @@ class CtrlAccount extends CtrlBase {
     }
 
     try {
-      $accountHlp = new Account($this->dbSettings);
-      $account = $accountHlp->findByName($name);
-      if (!$account) {
-        if (empty($name = $allPostVars['create-acc-name'])) {
-          $this->flash->addMessage('error', 'Something went wrong while creating your account. Please check the logs.');
-          return $response->withRedirect('/accounts');
-        }
-      }
-      if (!empty($account['accid'])) {
-        $this->flash->addMessage('error', 'An account with this name already exists.');
-        return $response->withRedirect('/accounts');
-      }
-      if (!$accountHlp->create($name)) {
-        $this->flash->addMessage('error', 'Something went wrong while creating your account. Please check the logs.');
-        return $response->withRedirect('/accounts');
-      } else {
-        $this->flash->addMessage('info', 'Application created');
-        return $response->withRedirect('/accounts');
-      }
-    } catch (ApiException $e) {
-      $this->flash->addMessage('error', $e->getMessage());
-      return $response->withRedirect('/accounts');
+      // Create the new account.
+      $domain = $this->settings['api']['url'];
+      $account = $this->settings['api']['core_account'];
+      $application = $this->settings['api']['core_application'];
+      $token = $_SESSION['token'];
+
+      $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+      $result = $client->request('POST', 'account', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+        'form_params' => [
+          'accountName' => $name,
+        ],
+      ]);
+      $result = json_decode($result->getBody()->getContents());
+
+      $this->flash->addMessage('info', "Account $name created");
+      return $response->withStatus(302)->withHeader('Location', '/accounts');
+    }
+    catch (ClientException $e) {
+      $message = $this->getErrorMessage($e);
+      $this->flash->addMessage('error', $message);
+      return $response->withStatus(302)->withHeader('Location', '/accounts');
     }
   }
 
