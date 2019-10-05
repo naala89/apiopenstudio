@@ -122,7 +122,7 @@ class CtrlAccount extends CtrlBase {
     $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
     $this->getAccessRights($username);
     if (!$this->checkAccess()) {
-      $this->flash->addMessage('error', 'View accounts: access denied');
+      $this->flash->addMessage('error', 'Create account: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
     }
 
@@ -175,31 +175,49 @@ class CtrlAccount extends CtrlBase {
    *   Response.
    */
   public function edit(Request $request, Response $response, array $args) {
+    // Validate user has permissions.
     $this->permittedRoles = ['Administrator'];
-    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-    $roles = $this->getRoles($uid);
-    if (!$this->checkAccess($roles)) {
-      $this->flash->addMessage('error', 'Edit account: access denied');
-      return $response->withRedirect('/');
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+    $this->getAccessRights($username);
+    if (!$this->checkAccess()) {
+      $this->flash->addMessage('error', 'Delete account: access denied');
+      return $response->withStatus(302)->withHeader('Location', '/');
     }
 
+    // Validate the input.
     $allPostVars = $request->getParsedBody();
-    if (empty($name = $allPostVars['edit-acc-name']) || empty($accid = $allPostVars['edit-acc-id'])) {
-      $this->flash->addMessage('error', 'Cannot edit account, no name or ID defined.');
+    if (empty($newName = $allPostVars['new-acc-name']) || empty($name = $allPostVars['acc-name'])) {
+      $this->flash->addMessage('error', 'Cannot edit account, no new or original name defined.');
       return $response->withRedirect('/accounts');
     }
 
     try {
-      $accountHlp = new Account($this->dbSettings);
-      $accountHlp->findByAccountId($accid);
-      $accountHlp->updateName($name);
-    } catch (ApiException $e) {
-      $this->flash->addMessage('error', $e->getMessage());
-      return $response->withRedirect('/accounts');
-    }
+      // Edit the account.
+      $domain = $this->settings['api']['url'];
+      $account = $this->settings['api']['core_account'];
+      $application = $this->settings['api']['core_application'];
+      $token = $_SESSION['token'];
 
-    $this->flash->addMessage('info', 'Account updated');
-    return $response->withRedirect('/accounts');
+      $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+      $result = $client->request('POST', 'account', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+        'form_params' => [
+          'accountName' => $newName,
+          'oldName' => $name,
+        ],
+      ]);
+      $result = json_decode($result->getBody()->getContents());
+
+      $this->flash->addMessage('info', "Account '$name' updated to '$newName'");
+      return $response->withStatus(302)->withHeader('Location', '/accounts');
+    }
+    catch (ClientException $e) {
+      $message = $this->getErrorMessage($e);
+      $this->flash->addMessage('error', $message);
+      return $response->withStatus(302)->withHeader('Location', '/accounts');
+    }
   }
 
   /**
