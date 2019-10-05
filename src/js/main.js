@@ -11,8 +11,8 @@ $(document).ready(function() {
   $('.modal-acc-edit-trigger').click(function() {
     var self = $(this);
     var modal = $('#modal-acc-edit');
-    modal.find('#edit-acc-id').val(self.attr('acc-id'));
-    modal.find('#edit-acc-name').val(self.attr('acc-name'));
+    modal.find('#acc-name').val(self.attr('acc-name'));
+    modal.find('#new-acc-name').val(self.attr('acc-name'));
     modal.modal('open');
   });
 
