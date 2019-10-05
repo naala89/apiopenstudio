@@ -30,7 +30,6 @@ abstract class Output extends Core\ProcessorEntity
    */
   public function process()
   {
-    Core\Debug::variable('Processor Output');
     $this->setStatus();
     $data = $this->getData();
     if (!empty($this->meta)) {

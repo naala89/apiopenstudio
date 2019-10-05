@@ -278,10 +278,8 @@ class Api
     }
 
     $finalId = $meta->id;
-    $stack = array($meta);
-    $results = array();
-    $arrayStack = [];
-    $arrayResults = array();
+    $stack = [$meta];
+    $results = [];
 
     while (sizeof($stack) > 0) {
 

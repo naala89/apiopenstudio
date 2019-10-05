@@ -75,7 +75,6 @@ class Json extends Output
    * @return string
    */
   protected function fromXml(& $data) {
-    Core\Debug::variable($data);
     $xml = simplexml_load_string($data);
     return $this->_xml2json($xml);
   }
