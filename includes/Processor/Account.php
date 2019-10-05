@@ -1,16 +1,19 @@
 <?php
 
 /**
- * Account table CRUD.
+ * Account CRUD.
  */
 
 namespace Gaterdata\Processor;
 use Gaterdata\Core;
-use Gaterdata\Core\Debug;
 use Gaterdata\Db;
 
 class Account extends Core\ProcessorEntity
 {
+  /**
+   * @var array
+   *  The processor details.
+   */
   protected $details = [
     'name' => 'Account',
     'machineName' => 'account',
@@ -39,6 +42,11 @@ class Account extends Core\ProcessorEntity
     ],
   ];
 
+  /**
+   * process
+   *
+   * @return mixed
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
@@ -47,45 +55,111 @@ class Account extends Core\ProcessorEntity
     $oldName = $this->val('oldName', TRUE);
     $method = $this->request->getMethod();
 
-    $accountMapper = new Db\AccountMapper($this->db);
-
     switch ($method) {
-
       case 'post':
-        $account = $accountMapper->findByName(!empty($oldName) ? $oldName : $accountName);
-        $account->setName($accountName);
-        return $accountMapper->save($account);
+        return $this->createUpdate($accountName, $oldName);
         break;
 
       case 'get':
-        if ($accountName == 'all') {
-          $rows = $accountMapper->findAll();
-          $result = [];
-          foreach ($rows as $row) {
-            $result[$row->getAccid()] = $row->getName();
-          }
-          return $result;
-        }
-        $account = $accountMapper->findByName($accountName);
-        return $account->dump();
+        return $this->get($accountName);
         break;
 
       case 'delete':
-        $account = $accountMapper->findByName($accountName);
-        if (empty($account->getAccid())) {
-          throw new Core\ApiException('Account does not exist',6, $this->id);
-        }
-        $applicationMapper = new Db\ApplicationMapper($this->db);
-        $applications = $applicationMapper->findByAccid($account->getAccid());
-        if (!empty($applications)) {
-          throw new Core\ApiException('Cannot delete the account, applications are assigned to the account',6, $this->id);
-        }
-        return $accountMapper->delete($account);
+        return $this->delete($accountName);
         break;
 
       default:
         throw new Core\ApiException('Invalid action', 3, $this->id);
         break;
     }
+  }
+
+  /**
+   * Get account.
+   * 
+   * if $accountName == 'all' then return an array of all accounts.
+   *
+   * @param string $accountName
+   * 
+   * @throws ApiException
+   *
+   * @return array
+   */
+  private function get($accountName) {
+    $accountMapper = new Db\AccountMapper($this->db);
+
+    if ($accountName == 'all') {
+      $rows = $accountMapper->findAll();
+      $result = [];
+      foreach ($rows as $row) {
+        $result[$row->getAccid()] = $row->getName();
+      }
+      return $result;
+    }
+
+    $account = $accountMapper->findByName($accountName);
+    if (empty($account->getAccid())) {
+      throw new Core\ApiException('Account does not exist', 6, $this->id, 400);
+    }
+    return $account->dump();
+  }
+
+  /**
+   * Create or Update an acccount
+   *
+   * @param  mixed $accountName
+   * @param  mixed $oldName
+   * 
+   * @throws ApiException
+   *
+   * @return boolean
+   */
+  private function createUpdate($accountName, $oldName) {
+    $accountMapper = new Db\AccountMapper($this->db);
+
+    if (empty($oldName)) {
+      // This is a create request.
+      $account = $accountMapper->findByName($accountName);
+      if (!empty($account->getAccid())) {
+        throw new Core\ApiException('Account already exists', 6, $this->id, 400);
+      }
+    } else {
+      // This is an update request.
+      $account = $accountMapper->findByName($oldName);
+      if (empty($account->getAccid())) {
+        throw new Core\ApiException('Account does not exist exist', 6, $this->id, 400);
+      }
+    }
+
+    // Fall through and save.
+    $account->setName($accountName);
+    return $accountMapper->save($account);
+  }
+
+  /**
+   * Delete an account.
+   *
+   * @param  mixed $accountName
+   * 
+   * @throws ApiException
+   *
+   * @return boolean
+   */
+  private function delete($accountName) {
+    $accountMapper = new Db\AccountMapper($this->db);
+
+    $account = $accountMapper->findByName($accountName);
+    if (empty($account->getAccid())) {
+      throw new Core\ApiException('Account does not exist',6, $this->id, 400);
+    }
+
+    // Do not delete if applications are attached to the account.
+    $applicationMapper = new Db\ApplicationMapper($this->db);
+    $applications = $applicationMapper->findByAccid($account->getAccid());
+    if (!empty($applications)) {
+      throw new Core\ApiException('Cannot delete the account, applications are assigned to the account',6, $this->id, 400);
+    }
+
+    return $accountMapper->delete($account);
   }
 }
