@@ -97,4 +97,6 @@ gulp.task('watch', function(){
   gulp.src('src/*').pipe(notify('An asset has changed'));
 });
 
+gulp.task('all', ['css', 'js', 'img']);
+
 gulp.task('default', ['css', 'js', 'img', 'watch']);
