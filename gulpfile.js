@@ -99,4 +99,4 @@ gulp.task('watch', function(){
 
 gulp.task('all', ['css', 'js', 'img']);
 
-gulp.task('default', ['css', 'js', 'img', 'watch']);
+gulp.task('default', ['all', 'watch']);
