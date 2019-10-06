@@ -3,7 +3,7 @@ version: '3.7'
 services:
 
   nginx-proxy:
-    image: jwilder/nginx-proxy
+    image: jwilder/nginx-proxy:alpine
     container_name: "${APP_NAME}-proxy"
     ports:
       - "80:80"
@@ -71,7 +71,7 @@ services:
       - api_network
   
   composer:
-    image: composer
+    image: composer:latest
     container_name: "${APP_NAME}-composer"
     ports:
       - "9001:9000"
@@ -82,7 +82,7 @@ services:
       - api_network
 
   db:
-    image: mariadb
+    image: mariadb:latest
     container_name: "${APP_NAME}-db"
     ports:
       - "3306:3306"
