@@ -9,20 +9,19 @@ $(document).ready(function() {
 
   // Edit account modal.
   $('.modal-acc-edit-trigger').click(function() {
-    var self = $(this);
     var modal = $('#modal-acc-edit');
-    modal.find('#acc-name').val(self.attr('acc-name'));
-    modal.find('#new-acc-name').val(self.attr('acc-name'));
+    var acc_name = $(this).attr('acc-name');
+    modal.find('input[name="new-acc-name"]').val(acc_name);
+    modal.find('input[name="acc-name"]').val(acc_name);
     modal.modal('open');
   });
 
   // Delete account modal.
   $('.modal-acc-delete-trigger').click(function() {
-    var self = $(this);
     var modal = $('#modal-acc-delete');
-    modal.find('#delete-name').html(self.attr('acc-name'));
-    modal.find('#delete-acc-id').val(self.attr('acc-id'));
-    modal.find('#delete-acc-name').val(self.attr('acc-name'));
+    var acc_name = $(this).attr('acc-name');
+    modal.find('input[name="acc-name"]').val(acc_name);
+    modal.find('.delete-acc-name').html(acc_name);
     modal.modal('open');
   });
 

@@ -234,58 +234,45 @@ class CtrlAccount extends CtrlBase {
    *   Response.
    */
   public function delete(Request $request, Response $response, array $args) {
+    // Validate user has permissions.
     $this->permittedRoles = ['Administrator'];
-    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-    $roles = $this->getRoles($uid);
-    if (!$this->checkAccess($roles)) {
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+    $this->getAccessRights($username);
+    if (!$this->checkAccess()) {
       $this->flash->addMessage('error', 'Delete account: access denied');
-      return $response->withRedirect('/');
+      return $response->withStatus(302)->withHeader('Location', '/');
     }
 
+    // Validate the input.
     $allPostVars = $request->getParsedBody();
-    if (empty($name = $allPostVars['delete-acc-name']) || empty($accid = $allPostVars['delete-acc-id'])) {
-      $this->flash->addMessage('error', 'Cannot delete account, no name or ID defined.');
+    if (empty($name = $allPostVars['acc-name'])) {
+      $this->flash->addMessage('error', 'Cannot delete account, no account name defined.');
       return $response->withRedirect('/accounts');
     }
 
     try {
-      $applicationUserRoleHlp = new ApplicationUserRole($this->dbSettings);
-      $applicationHlp = new Application($this->dbSettings);
-      $accountHlp = new Account($this->dbSettings);
-      $managerHlp = new Manager($this->dbSettings);
-
-      // Find all applications for the account.
-      $applications = $applicationHlp->findByAccid($accid);
-      foreach ($applications as $application) {
-        // Find all application user roles for each application.
-        $applicationUserRoles = $applicationUserRoleHlp->findByAppid( $application['appid']);
-        foreach ($applicationUserRoles as $applicationUserRole) {
-          // Delete each application user role.
-          $applicationUserRoleHlp->findByAurid($applicationUserRole['aurid']);
-          $applicationUserRoleHlp->delete();
-        }
-        // Delete each application
-        $applicationHlp->findByApplicationId($application['appid']);
-        $applicationHlp->delete();
-      }
-
-      // Delete all managers for the account.
-      $managers = $managerHlp->findByAccountId($accid);
-      foreach ($managers as $manager) {
-        $managerHlp->findByManagerId($manager['mid']);
-        $managerHlp->delete();
-      }
-
       // Delete the account.
-      $accountHlp->findByAccountId($accid);
-      $accountHlp->delete();
-    } catch (ApiException $e) {
-      $this->flash->addMessage('error', $e->getMessage());
-      return $response->withRedirect('/accounts');
-    }
+      $domain = $this->settings['api']['url'];
+      $account = $this->settings['api']['core_account'];
+      $application = $this->settings['api']['core_application'];
+      $token = $_SESSION['token'];
 
-    $this->flash->addMessage('info', 'Account deleted');
-    return $response->withRedirect('/accounts');
+      $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+      $result = $client->request('DELETE', 'account/' . urlencode($name), [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+      ]);
+      $result = json_decode($result->getBody()->getContents());
+
+      $this->flash->addMessage('info', "Account '$name' deleted.");
+      return $response->withStatus(302)->withHeader('Location', '/accounts');
+    }
+    catch (ClientException $e) {
+      $message = $this->getErrorMessage($e);
+      $this->flash->addMessage('error', $message);
+      return $response->withStatus(302)->withHeader('Location', '/accounts');
+    }
   }
 
 }

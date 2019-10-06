@@ -1,12 +1,10 @@
 <!-- Delete account modal -->
 <div id="modal-acc-delete" class="modal">
   <form method="post" action="/account/delete">
-    <input type="hidden" name="delete-acc-id" id="delete-acc-id" value="">
-    <input type="hidden" name="delete-acc-name" id="delete-acc-name" value="">
+    <input type="hidden" name="acc-name" value="">
     <div class="modal-content">
       <h4>Delete Account</h4>
-      <p>Delete account: "<span id="delete-name"></span>"?</p>
-      <p class="red-text">WARNING: this will also delete any applications & resources and assigned user roles belonging to the account!</p>
+      <p>Delete account: "<span class="delete-acc-name"></span>"?</p>
     </div>
     <div class="row">
       <div class="input-field col s3 offset-l9">
