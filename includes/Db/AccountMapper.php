@@ -51,28 +51,21 @@ class AccountMapper extends Mapper {
     $bindParams = [$account->getAccid()];
     return $this->saveDelete($sql, $bindParams);
   }
-
+  
   /**
    * Find an accounts.
    *
    * @param array|NULL $params
-   *   parameters (optional)
-   *     [
-   *       'keyword' => string,
-   *       'sort_by' => string,
-   *       'direction' => string "asc"|"desc",
-   *       'start' => int,
-   *       'limit' => int,
-   *     ]
+   *   @see Gaterdata\Db\Mapper.
    *
    * @return array
    *   array Account objects.
    *
    * @throws ApiException
    */
-  public function findAll() {
+  public function findAll($params = []) {
     $sql = 'SELECT * FROM account';
-    return $this->fetchRows($sql, []);
+    return $this->fetchRows($sql, [], $params);
   }
 
   /**
