@@ -123,11 +123,9 @@ class Account extends Core\ProcessorEntity
       $direction = $this->val('direction', TRUE);
       $params = [];
       if (!empty($keyword)) {
-        $params['filter'] = [
-          [
-            'keyword' => "%$keyword%",
-            'column' => "name",
-          ],
+        $params['filter'][] = [
+          'keyword' => "%$keyword%",
+          'column' => "name",
         ];
       }
       if (!empty($orderBy)) {
