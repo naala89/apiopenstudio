@@ -89,26 +89,50 @@ abstract class Mapper {
    * @param array $params
    *   parameters (optional)
    *     [
-   *       'sort_by' => string,
+   *       'filter' => [
+   *         'keyword' => string,
+   *         'column' => string,
+   *       ]
+   *       'order_by' => string,
    *       'direction' => string "ASC"|"DESC",
-   *       'start' => int,
+   *       'offset' => int,
    *       'limit' => int,
    *     ]
+   * NOTE:
+   *   * ['filter']['keyword'] '%' characters in keyword not added to keyword automatically.
    *
    * @return array
    *   Array of mapped rows.
    *
    * @throws ApiException
    */
-  protected function fetchRows($sql, $bindParams, array $params = NULL) {
+  protected function fetchRows($sql, $bindParams, array $params = []) {
+    // Add filter by keyword.
+    if (!empty($params['filter'])) {
+      $arr = [];
+      foreach ($params['filter'] as $filter) {
+        if (isset($filter['column']) && isset($filter['keyword'])) {
+          $arr[] = mysqli_real_escape_string($this->db->_connectionID, $filter['column']) . ' LIKE ?';
+          $bindParams[] = $filter['keyword'];
+        }
+      }
+      if (!empty($arr)) {
+        $sql .= ' WHERE ' . implode(' AND ', $arr);
+      }
+    }
+
+    // Add order by.
     if (!empty($params['order_by'])) {
-      $sql .= ' ORDER BY ' . $params['order_by'] . ' ';
-      $params['dir'] = strtoupper($params['dir']);
-      $sql .= ($params['dir'] === 'ASC' || $params['dir'] === 'DESC' ? $params['dir'] : 'ASC');
+      $orderBy = mysqli_real_escape_string($this->db->_connectionID, $params['order_by']);
+      $direction = strtoupper(mysqli_real_escape_string($this->db->_connectionID, $params['direction']));
+      $sql .= " ORDER BY $orderBy $direction";
     }
+
+    // Add limit.
     if (!empty($params['offset']) || !empty($params['limit'])) {
-      $recordSet = $this->db->selectLimit($sql, $params['limit'], $params['offset'], $bindParams);
+      $recordSet = $this->db->selectLimit($sql, (integer) $params['limit'], (integer) $params['offset'], $bindParams);
     }
+
     $recordSet = $this->db->Execute($sql, $bindParams);
     if (!$recordSet) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
