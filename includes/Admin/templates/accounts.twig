@@ -14,7 +14,7 @@
       <div class="col s4">
         <div class="input-field">
           <input type="text" class="validate" name="keyword" value="{{ keyword }}">
-          <label for="search">Search text</label>
+          <label for="keyword">Search text</label>
         </div>
       </div>
       <div class="col s3">
@@ -23,16 +23,16 @@
             <option value="accid" {% if order_by == "accid" %}selected{% endif %}>Account ID</option>
             <option value="name" {% if order_by == "name" %}selected{% endif %}>Account name</option>
           </select>
-          <label for="search">Sort by</label>
+          <label for="order_by">Sort by</label>
         </div>
       </div>
       <div class="col 4">
         <div class="input-field">
-          <select class="input-field" name="dir">
-            <option value="ASC" {% if dir == "ASC" %}selected{% endif %}>Ascending</option>
-            <option value="DESC" {% if dir == "DESC" %}selected{% endif %}>Descending</option>
+          <select class="input-field" name="direction">
+            <option value="asc" {% if direction == "asc" %}selected{% endif %}>Ascending</option>
+            <option value="desc" {% if direction == "desc" %}selected{% endif %}>Descending</option>
           </select>
-          <label for="search">Sort by</label>
+          <label for="direction">Direction</label>
         </div>
       </div>
       <div class="col s1">

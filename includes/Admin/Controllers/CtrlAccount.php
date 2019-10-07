@@ -44,29 +44,33 @@ class CtrlAccount extends CtrlBase {
     $roles = $this->getRoles();
     $accounts = $this->getAccounts();
 
-    // Filter params.
+    // Filter params and currect page.
     $allParams = $request->getParams();
     $params = [];
     if (!empty($allParams['keyword'])) {
       $params['keyword'] = $allParams['keyword'];
     }
     $params['order_by'] = !empty($allParams['order_by']) ? $allParams['order_by'] : 'name';
-    $params['dir'] = isset($allParams['dir']) ? $allParams['dir'] : 'ASC';
+    $params['direction'] = isset($allParams['direction']) ? $allParams['direction'] : 'asc';
     $page = isset($allParams['page']) ? $allParams['page'] : 1;
 
     try {
+      // Fetch the accounts for the page.
       $domain = $this->settings['api']['url'];
       $account = $this->settings['api']['core_account'];
       $application = $this->settings['api']['core_application'];
       $token = $_SESSION['token'];
       $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+      $query = ['accountName' => 'all'];
+      foreach($params as $key => $value) {
+        $query[$key] = $value;
+      } 
+
       $result = $client->request('GET', 'account', [
         'headers' => [
           'Authorization' => "Bearer $token",
         ],
-        'query' => [
-          'accountName' => 'all',
-        ],
+        'query' => $query,
       ]);
       $result = json_decode($result->getBody()->getContents());
       if (!in_array('Administrator', $roles)) {
@@ -87,9 +91,10 @@ class CtrlAccount extends CtrlBase {
       return $response->withStatus(302)->withHeader('Location', '/login');
     }
 
+
     // Get total number of pages and current page's accounts to display.
-    $pages = ceil(count($accounts) / $this->paginationStep);
-    $accounts = array_slice($accounts, ($page - 1) * $this->paginationStep, $this->paginationStep, TRUE);
+    $pages = ceil(count($accounts) / $this->settings['admin']['paginationStep']);
+    $accounts = array_slice($accounts, ($page - 1) * $this->settings['admin']['paginationStep'], $this->settings['admin']['paginationStep'], TRUE);
 
     return $this->view->render($response, 'accounts.twig', [
       'keyword' => isset($params['keyword']) ? $params['keyword'] : '',
