@@ -10,10 +10,10 @@ ttl: 0
 
 security:
   function: token_roles
-  id: security_token_roles
+  id: account_read_security
   token:
     function: bearer_token
-    id: account_delete_bearer_token
+    id: account_read_token
   roles:
     - Administrator
     - Account manager
@@ -22,8 +22,23 @@ security:
 
 process:
   function: account
-  id: account
+  id: account_read_process
   accountName:
     function: var_get
-    id: 5
+    id: account_read_account_name
     key: accountName
+  keyword:
+    function: var_get
+    id: account_read_keyword
+    key: keyword
+    nullable: true
+  order_by:
+    function: var_get
+    id: account_read_order_by
+    key: order_by
+    nullable: true
+  direction:
+    function: var_get
+    id: account_read_direction
+    key: direction
+    nullable: true
