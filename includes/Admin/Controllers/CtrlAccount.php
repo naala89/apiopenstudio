@@ -4,10 +4,8 @@ namespace Gaterdata\Admin\Controllers;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Gaterdata\Core\ApiException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\RequestException;
 
 /**
  * Class CtrlAccount.
@@ -84,13 +82,17 @@ class CtrlAccount extends CtrlBase {
       }
 
     } catch (ClientException $e) {
-      // @TODO: This may not be the best way to trap unauthorized or timed out token.
-      return $response->withStatus(302)->withHeader('Location', '/login');
-    } catch (RequestException $e) {
-      // @TODO: This may not be the best way to trap unauthorized or timed out token.
-      return $response->withStatus(302)->withHeader('Location', '/login');
+      $result = $e->getResponse();
+      switch ($result->getStatusCode()) {
+        case 401: 
+          return $response->withStatus(302)->withHeader('Location', '/login');
+          break;
+        default:
+          $this->flash->addMessage('error', $this->getErrorMessage($e));
+          $accounts = [];
+          break;
+      }
     }
-
 
     // Get total number of pages and current page's accounts to display.
     $pages = ceil(count($accounts) / $this->settings['admin']['paginationStep']);
