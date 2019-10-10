@@ -69,6 +69,16 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     networks:
       - api_network
+
+  node:
+    image: node:11
+    container_name: "${APP_NAME}-node"
+    volumes:
+      - .:/usr/src/service
+    working_dir: /usr/src/service
+    command: bash -c "npm install && npm install -g gulp && gulp all"
+    networks:
+      - api_network
   
   composer:
     image: composer:latest
