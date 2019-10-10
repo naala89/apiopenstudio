@@ -13,6 +13,18 @@ use Slim\Http\Response;
 class CtrlHome extends CtrlBase {
 
   /**
+   * Roles allowed to visit the page.
+   * 
+   * @var array
+   */
+  const PERMITTED_ROLES = [
+    'Administrator',
+    'Account manager',
+    'Application manager',
+    'Developer'
+  ];
+
+  /**
    * Home page.
    *
    * @param \Slim\Http\Request $request
@@ -26,8 +38,10 @@ class CtrlHome extends CtrlBase {
    */
   public function index(Request $request, Response $response, array $args) {
     $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    if (!$this->getAccessRights($username)) {
-      return $response->withStatus(302)->withHeader('Location', '/login');
+    $this->getAccessRights($response, $username);
+    if (!$this->checkAccess()) {
+      $this->flash->addMessage('error', 'Access admin: access denied');
+      return $response->withStatus(302)->withHeader('Location', '/logout');
     }
     $roles = $this->getRoles();
     $menu = $this->getMenus();

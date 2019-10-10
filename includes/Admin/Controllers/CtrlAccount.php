@@ -14,7 +14,14 @@ use GuzzleHttp\Exception\ClientException;
  */
 class CtrlAccount extends CtrlBase {
 
-  protected $permittedRoles = ['Administrator', 'Manager'];
+  /**
+   * Roles allowed to visit the page.
+   * 
+   * @var array
+   */
+  const PERMITTED_ROLES = [
+    'Administrator',
+  ];
 
   /**
    * Accounts page.
@@ -30,17 +37,15 @@ class CtrlAccount extends CtrlBase {
    *   Response.
    */
   public function index(Request $request, Response $response, array $args) {
-    $this->permittedRoles = ['Administrator', 'Account manager'];
+    // Validate access.
     $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $this->getAccessRights($username);
+    $this->getAccessRights($response, $username);
     if (!$this->checkAccess()) {
       $this->flash->addMessage('error', 'View accounts: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
     }
     
     $menu = $this->getMenus();
-    $roles = $this->getRoles();
-    $accounts = $this->getAccounts();
 
     // Filter params and currect page.
     $allParams = $request->getParams();
@@ -52,47 +57,7 @@ class CtrlAccount extends CtrlBase {
     $params['direction'] = isset($allParams['direction']) ? $allParams['direction'] : 'asc';
     $page = isset($allParams['page']) ? $allParams['page'] : 1;
 
-    try {
-      // Fetch the accounts for the page.
-      $domain = $this->settings['api']['url'];
-      $account = $this->settings['api']['core_account'];
-      $application = $this->settings['api']['core_application'];
-      $token = $_SESSION['token'];
-      $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-      $query = ['accountName' => 'all'];
-      foreach($params as $key => $value) {
-        $query[$key] = $value;
-      } 
-
-      $result = $client->request('GET', 'account', [
-        'headers' => [
-          'Authorization' => "Bearer $token",
-        ],
-        'query' => $query,
-      ]);
-      $result = json_decode($result->getBody()->getContents());
-      if (!in_array('Administrator', $roles)) {
-        $_accounts = array_intersect((array) $result, $accounts);
-      } else {
-        $_accounts = (array) $result;
-      }
-      $accounts = [];
-      foreach ($_accounts as $accid => $name) {
-        $accounts[] = ['accid' => $accid, 'name' => $name];
-      }
-
-    } catch (ClientException $e) {
-      $result = $e->getResponse();
-      switch ($result->getStatusCode()) {
-        case 401: 
-          return $response->withStatus(302)->withHeader('Location', '/login');
-          break;
-        default:
-          $this->flash->addMessage('error', $this->getErrorMessage($e));
-          $accounts = [];
-          break;
-      }
-    }
+    $accounts = $this->getAllAccountsForUser($response, $params);
 
     // Get total number of pages and current page's accounts to display.
     $pages = ceil(count($accounts) / $this->settings['admin']['paginationStep']);
@@ -124,12 +89,11 @@ class CtrlAccount extends CtrlBase {
    *   Response.
    */
   public function create(Request $request, Response $response, array $args) {
-    // Validate user has permissions.
-    $this->permittedRoles = ['Administrator'];
+    // Validate access.
     $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $this->getAccessRights($username);
+    $this->getAccessRights($response, $username);
     if (!$this->checkAccess()) {
-      $this->flash->addMessage('error', 'Create account: access denied');
+      $this->flash->addMessage('error', 'View accounts: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
     }
 
@@ -182,12 +146,11 @@ class CtrlAccount extends CtrlBase {
    *   Response.
    */
   public function edit(Request $request, Response $response, array $args) {
-    // Validate user has permissions.
-    $this->permittedRoles = ['Administrator'];
+    // Validate access.
     $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $this->getAccessRights($username);
+    $this->getAccessRights($response, $username);
     if (!$this->checkAccess()) {
-      $this->flash->addMessage('error', 'Delete account: access denied');
+      $this->flash->addMessage('error', 'View accounts: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
     }
 
@@ -241,12 +204,11 @@ class CtrlAccount extends CtrlBase {
    *   Response.
    */
   public function delete(Request $request, Response $response, array $args) {
-    // Validate user has permissions.
-    $this->permittedRoles = ['Administrator'];
+    // Validate access.
     $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $this->getAccessRights($username);
+    $this->getAccessRights($response, $username);
     if (!$this->checkAccess()) {
-      $this->flash->addMessage('error', 'Delete account: access denied');
+      $this->flash->addMessage('error', 'View accounts: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
     }
 
