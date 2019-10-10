@@ -1,0 +1,29 @@
+name: User read
+
+description: Fetch a user.
+
+uri: user
+
+method: get
+
+ttl: 0
+
+security:
+  function: token_roles
+  id: user_read_security
+  token:
+    function: bearer_token
+    id: user_read_token
+  roles:
+    - Administrator
+    - Account manager
+    - Application manager
+    - Developer
+
+process:
+  function: user
+  id: user_read_process
+  username:
+    function: var_get
+    id: user_read_username
+    key: username
