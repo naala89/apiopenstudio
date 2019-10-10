@@ -14,7 +14,7 @@ security:
   token:
     function: varRequest
     id: 2
-    name: token
+    key: token
 
 process:
   function: resourceYaml
@@ -22,8 +22,8 @@ process:
   method:
     function: varRequest
     id: 5
-    name: method
+    key: method
   uri:
     function: varRequest
     id: 7
-    name: uri
+    key: uri

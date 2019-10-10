@@ -14,7 +14,7 @@ security:
   token:
     function: var_post
     id: 2
-    name: token
+    key: token
 
 process:
   function: resourceSwagger
