@@ -18,6 +18,12 @@ use stdClass;
 class CtrlBase {
 
   /**
+   * Roles allowed to visit the page.
+   * 
+   * @var array
+   */
+  const PERMITTED_ROLES = [];
+  /**
    * @var Slim\Collection
    */
   protected $settings;
@@ -37,10 +43,6 @@ class CtrlBase {
    * @var stdClass,
    */
   protected $userAccessRights;
-  /**
-   * @var array
-   */
-  protected $permittedRoles = [];
 
   /**
    * Base constructor.
@@ -67,14 +69,14 @@ class CtrlBase {
    *
    * @return stdClass user access rights.
    */
-  protected function getAccessRights($username) {
+  protected function getAccessRights($response, $username) {
     try {
       $domain = $this->settings['api']['url'];
       $account = $this->settings['api']['core_account'];
       $application = $this->settings['api']['core_application'];
       $token = $_SESSION['token'];
       $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-      $response = $client->request('GET', 'userrole', [
+      $result = $client->request('GET', 'userrole', [
         'headers' => [
           'Authorization' => "Bearer $token",
         ],
@@ -82,13 +84,18 @@ class CtrlBase {
           'username' => $username,
         ],
       ]);
-      $result = json_decode($response->getBody()->getContents());
-    } catch (ClientException $e) {
-      // @TODO: This may not be the best way to trap unauthorized or timed out token.
-      return false;
-    } catch (RequestException $e) {
-      // @TODO: This may not be the best way to trap unauthorized or timed out token.
-      return false;
+      $result = json_decode($result->getBody()->getContents());
+    } 
+    catch (ClientException $e) {
+      $result = $e->getResponse();
+      $this->flash->addMessage('error', $this->getErrorMessage($e));
+      switch ($result->getStatusCode()) {
+        case 401: 
+          return $response->withStatus(302)->withHeader('Location', '/login');
+          break;
+        default:
+          break;
+      }
     }
 
     return $this->userAccessRights = $result;
@@ -237,12 +244,13 @@ class CtrlBase {
    *   Access validated.
    */
   protected function checkAccess() {
-    if (empty($this->permittedRoles)) {
+    if (empty(self::PERMITTED_ROLES)) {
       return TRUE;
     }
+
     $roles = $this->getRoles();
     foreach ($roles as $role) {
-      if (in_array($role, $this->permittedRoles)) {
+      if (in_array($role, self::PERMITTED_ROLES)) {
         return TRUE;
       }
     }
@@ -293,6 +301,55 @@ class CtrlBase {
       $message = $e->getMessage();
     }
     return $message;
+  }
+
+  protected function getAllAccountsForUser(& $response, $params) {
+    $roles = $this->getRoles();
+    $accounts = $this->getAccounts();
+
+    try {
+      $domain = $this->settings['api']['url'];
+      $account = $this->settings['api']['core_account'];
+      $application = $this->settings['api']['core_application'];
+      $token = $_SESSION['token'];
+      $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+      $query = ['accountName' => 'all'];
+      foreach($params as $key => $value) {
+        $query[$key] = $value;
+      } 
+
+      $result = $client->request('GET', 'account', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+        'query' => $query,
+      ]);
+      $result = json_decode($result->getBody()->getContents());
+      
+      if (!in_array('Administrator', $roles)) {
+        $_accounts = array_intersect((array) $result, $accounts);
+      } else {
+        $_accounts = (array) $result;
+      }
+      $accounts = [];
+      foreach ($_accounts as $accid => $name) {
+        $accounts[] = ['accid' => $accid, 'name' => $name];
+      }
+
+    } catch (ClientException $e) {
+      $result = $e->getResponse();
+      switch ($result->getStatusCode()) {
+        case 401: 
+          return $response->withStatus(302)->withHeader('Location', '/login');
+          break;
+        default:
+          $this->flash->addMessage('error', $this->getErrorMessage($e));
+          $accounts = [];
+          break;
+      }
+    }
+
+    return $accounts;
   }
 
 }
