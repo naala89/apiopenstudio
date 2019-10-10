@@ -9,6 +9,9 @@ tmp/*
 config/settings.php
 config/settings.ini
 logs/
+public/admin/css/*
+public/admin/js/*
+public/admin/images/*
 
 #composer
 /vendor
