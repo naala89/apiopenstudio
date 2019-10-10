@@ -61,59 +61,104 @@ class Authentication {
    * @TODO: Validate token resource.
    */
   public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next) {
-    // If login post, get login the values.
     $data = $request->getParsedBody();
     $username = isset($data['username']) ? $data['username'] : '';
     $password = isset($data['password']) ? $data['password'] : '';
-    $uri = $request->getUri()->withPath($this->loginPath);
+
+    $domain = $this->settings['api']['url'];
+    $account = $this->settings['api']['core_account'];
+    $application = $this->settings['api']['core_application'];
+    $client = new Client(['base_uri' => "$domain/$account/$application/"]);
 
     if (!empty($username) || !empty($password)) {
       // This is a login attempt.
       try {
-        $domain = $this->settings['api']['url'];
-        $account = $this->settings['api']['core_account'];
-        $application = $this->settings['api']['core_application'];
-        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
         $result = $client->request('POST', "login", [
           'form_params' => [
-            "username" => $username,
-            "password" => $password,
+            'username' => $username,
+            'password' => $password,
           ]
         ]);
         $result = json_decode($result->getBody()->getContents());
         if (!isset($result->token) || !isset($result->uid)) {
+          return $response->withStatus(302)->withHeader('Location', '/login');
           throw new ApiException('Invalid response from api login');
         }
         $_SESSION['token'] = $result->token;
         $_SESSION['uid'] = $result->uid;
         $_SESSION['username'] = $username;
-      } catch (ApiException $e) {
-        $this->loginError($e);
-      } catch (ClientException $e) {
-        $this->loginError($e);
-      } catch (RequestException $e) {
-        $this->loginError($e);
+      }
+      catch (ApiException $e) {
+        $message = $this->loginError($e);
+        $this->container['flash']->addMessage('error', $message);
+      }
+      catch (ClientException $e) {
+        $message = $this->loginError($e);
+        $this->container['flash']->addMessage('error', $message);
+      }
+      catch (RequestException $e) {
+        $message = $this->loginError($e);
+        $this->container['flash']->addMessage('error', $message);
+      }
+    }
+    else {
+      // Validate the token and username.
+      try {
+        $token = isset($_SESSION['token']) ? $_SESSION['token'] : '';
+        $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+        $result = $client->request('GET', "user", [
+          'query' => ['username' => $username],
+          'headers' => ['Authorization' => "Bearer $token"],
+        ]);
+        $result = json_decode($result->getBody()->getContents());
+        if (!isset($result->uid) || empty($result->uid)) {
+          throw new ApiException('Invalid user');
+        }
+      }
+      catch (ApiException $e) {
+        $message = $this->loginError($e);
+        $this->container['flash']->addMessage('error', $message);
+      }
+      catch (ClientException $e) {
+        $message = $this->loginError($e);
+        $this->container['flash']->addMessage('error', $message);
+      }
+      catch (RequestException $e) {
+        $message = $this->loginError($e);
+        $this->container['flash']->addMessage('error', $message);
       }
     }
 
     // Validate token and uid are set (valid login).
     if (!isset($_SESSION['token']) || !isset($_SESSION['uid']) || !isset($_SESSION['username'])) {
-      return $response->withStatus(302)->withHeader('Location', $uri);
+      $loginPath = $request->getUri()->withPath($this->loginPath);
+      return $response->withStatus(302)->withHeader('Location', $loginPath);
     }
     return $next($request, $response);
   }
 
+  /**
+   * Process a login or validation exception.
+   *
+   * @param \Exception $e
+   *
+   * @return void
+   */
   private function loginError($e) {
-    if ($e->hasResponse()) {
-      $responseObject = json_decode($e->getResponse()->getBody()->getContents());
-      $message = $responseObject->error->message;
-    } else {
-      $message = $e->getMessage();
-    }
     unset($_SESSION['token']);
     unset($_SESSION['uid']);
     unset($_SESSION['username']);
-    $this->container['flash']->addMessage('error', $message);
+
+    if ($e->hasResponse()) {
+      $result = $e->getResponse();
+      $responseObject = json_decode($result->getBody()->getContents());
+      $message = $responseObject->error->message;
+
+    } else {
+      $message = $e->getMessage();
+    }
+
+    return $message;
   }
 
 }

@@ -12,9 +12,9 @@ security:
   function: tokenDeveloper
   id: 1
   token:
-    function: varGet
+    function: var_get
     id: 2
-    name: token
+    key: token
 
 process:
   function: ProcessorsAll

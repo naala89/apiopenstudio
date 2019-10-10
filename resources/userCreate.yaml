@@ -14,7 +14,7 @@ security:
   token:
     function: var_post
     id: 2
-    name: token
+    key: token
 
 process:
   function: datagatorUser
@@ -22,28 +22,28 @@ process:
   username:
     function: var_post
     id: 4
-    name: username
+    key: username
   active:
     function: var_post
     id: 5
-    name: active
+    key: active
   email:
     function: var_post
     id: 6
-    name: email
+    key: email
   honorific:
     function: var_post
     id: 7
-    name: honorific
+    key: honorific
   nameFirst:
     function: var_post
     id: 8
-    name: nameFirst
+    key: nameFirst
   nameLast:
     function: var_post
     id: 9
-    name: nameLast
+    key: nameLast
   company:
     function: var_post
     id: 10
-    name: company
+    key: company
