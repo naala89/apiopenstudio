@@ -123,6 +123,7 @@ class CtrlApplication extends CtrlBase {
           ],
         ]);
         $result = json_decode($result->getBody()->getContents());
+        $this->flash->addMessage('info', "Application $appName created.");
       } catch (ClientException $e) {
         $result = $e->getResponse();
         switch ($result->getStatusCode()) {
@@ -153,26 +154,42 @@ class CtrlApplication extends CtrlBase {
    *   Response.
    */
   public function edit(Request $request, Response $response, array $args) {
-    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-    $roles = $this->getRoles($uid);
-    if (!$this->checkAccess($roles)) {
-      $this->flash->addMessage('error', 'Edit Applications: access denied.');
-      $response->withRedirect('/');
+    // Validate access.
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+    $this->getAccessRights($response, $username);
+    if (!$this->checkAccess()) {
+      $this->flash->addMessage('error', 'Update applications: access denied');
+      return $response->withStatus(302)->withHeader('Location', '/');
     }
 
     $allPostVars = $request->getParsedBody();
-    if (empty($accid = $allPostVars['edit-app-accid']) || empty($appid = $allPostVars['edit-app-appid']) || empty($appName = $allPostVars['edit-app-name'])) {
-      $this->flash->addMessage('error', 'Cannot create application, no application ID, name or account ID defined.');
+    if (empty($appid = $allPostVars['edit-app-appid']) || empty($accid = $allPostVars['edit-app-accid']) || empty($name = $allPostVars['edit-app-name'])) {
+      $this->flash->addMessage('error', 'Cannot edit application, Account ID, Application ID or name defined.');
     } else {
       try {
-        $applicationHlp = new Application($this->dbSettings);
-        $application = $applicationHlp->findByApplicationId($appid);
-        $application['accid'] = $accid;
-        $application['name'] = $appName;
-        $applicationHlp->update($application);
-        $this->flash->addMessage('info', 'Application updated.');
-      } catch (ApiException $e) {
-        $this->flash->addMessage('error', $e->getMessage());
+        $domain = $this->settings['api']['url'];
+        $account = $this->settings['api']['core_account'];
+        $application = $this->settings['api']['core_application'];
+        $token = $_SESSION['token'];
+        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+
+        $result = $client->request('PUT', "application/$appid/$accid/$name", [
+          'headers' => [
+            'Authorization' => "Bearer $token",
+          ],
+        ]);
+        $result = json_decode($result->getBody()->getContents());
+        $this->flash->addMessage('info', "Application $appid edited.");
+      } catch (ClientException $e) {
+        $result = $e->getResponse();
+        switch ($result->getStatusCode()) {
+          case 401: 
+            return $response->withStatus(302)->withHeader('Location', '/login');
+            break;
+          default:
+            $this->flash->addMessage('error', $this->getErrorMessage($e));
+            break;
+        }
       }
     }
 
