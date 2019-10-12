@@ -224,14 +224,7 @@ class CtrlBase {
           ],
           'query' => $query,
         ]);
-        $result = json_decode($result->getBody()->getContents());
-        echo "<pre>";
-        var_dump($result);
-        die();
-
-        foreach ((array) $result as $appid => $name) {
-          $applications[$accid] = $name;
-        }
+        $applications = json_decode($result->getBody()->getContents());
       } catch (ClientException $e) {
         $result = $e->getResponse();
         switch ($result->getStatusCode()) {
@@ -252,7 +245,7 @@ class CtrlBase {
       }
     }
 
-    return $accounts;
+    return $applications;
   }
 
   /**
@@ -324,35 +317,6 @@ class CtrlBase {
     }
 
     return $menus;
-  }
-
-  /**
-   * Validate if the user has Administrator access.
-   *
-   * @return boolean
-   */
-  protected function isAdmin() {
-    $isAdmin = FALSE;
-
-    foreach ($this->userAccessRights as $account) {
-      if ($account->account_name == $this->settings['api']['core_account']) {
-        foreach ($account as $application) {
-          if (is_object($application) 
-            && isset($application->application_name) 
-            && $application->application_name == $this->settings['api']['core_application']) {
-            foreach ($application as $role) {
-              if (is_object($role) 
-                && isset($role->role_name) 
-                && $role->role_name == 'Administrator') {
-                $isAdmin = TRUE;
-              }
-            }
-          }
-        }
-      }
-    }
-
-    return $isAdmin;
   }
   
   /**
