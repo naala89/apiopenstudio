@@ -106,7 +106,7 @@ abstract class Mapper {
    *
    * @throws ApiException
    */
-  protected function fetchRows($sql, $bindParams, array $params = []) {
+  protected function fetchRows($sql, $bindParams = [], array $params = []) {
     // Add filter by keyword.
     if (!empty($params['filter'])) {
       $arr = [];
