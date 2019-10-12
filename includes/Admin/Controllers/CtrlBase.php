@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use stdClass;
+use Slim\Http\Response;
 
 /**
  * Class CtrlBase.
@@ -64,6 +65,8 @@ class CtrlBase {
   /**
    * Fetch the access rights for a user.
    *
+   * @param \Slim\Http\Response
+   *   Response object.
    * @param string $username
    *   Username.
    *
@@ -99,6 +102,177 @@ class CtrlBase {
     }
 
     return $this->userAccessRights = $result;
+  }
+
+  /**
+   * Get available roles for user's roles.
+   *
+   * @return array
+   *   Array of role names indexed by role ID.
+   */
+  protected function getRoles() {
+    $roles = [];
+
+    foreach($this->userAccessRights as $account) {
+      foreach($account as $application) {
+        foreach($application as $role) {
+          if (is_object($role) && isset($role->role_name) && isset($role->role_id)) {
+            $roles[$role->role_id] = $role->role_name;
+          }
+        }
+      }
+    }
+
+    return $roles;
+  }
+
+  /**
+   * Get accounts for the user.
+   *
+   * @param \Slim\Http\Response
+   *   Response object.
+   * @param array $params
+   *   Sort and filter params.
+   *
+   * @return array
+   *   Array of account names, indexed by accid.
+   */
+  protected function getAccounts(Response $response, array $params = []) {
+    $roles = $this->getRoles();
+    $accounts = [];
+
+    if (in_array('Administrator', $roles)) {
+      // Fetch all accounts from the API.
+      try {
+        $domain = $this->settings['api']['url'];
+        $account = $this->settings['api']['core_account'];
+        $application = $this->settings['api']['core_application'];
+        $token = $_SESSION['token'];
+        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+        $query = ['accountName' => 'all'];
+        foreach($params as $key => $value) {
+          $query[$key] = $value;
+        }
+
+        $result = $client->request('GET', 'account', [
+          'headers' => [
+            'Authorization' => "Bearer $token",
+          ],
+          'query' => $query,
+        ]);
+        $result = json_decode($result->getBody()->getContents());
+
+        foreach ((array) $result as $accid => $name) {
+          $accounts[$accid] = $name;
+        }
+      } catch (ClientException $e) {
+        $result = $e->getResponse();
+        switch ($result->getStatusCode()) {
+          case 401: 
+            return $response->withStatus(302)->withHeader('Location', '/login');
+            break;
+          default:
+            $this->flash->addMessage('error', $this->getErrorMessage($e));
+            $accounts = [];
+            break;
+        }
+      }
+    }
+    else {
+      // Not admin, so take accounts from user access rights.
+      foreach((array) $this->userAccessRights as $accid => $account) {
+        $accounts[$accid] = $account->account_name;
+      }
+    }
+
+    return $accounts;
+  }
+  
+  /**
+   * Get applications for the user.
+   *
+   * @param \Slim\Http\Response
+   *   Response object.
+   * @param array $params
+   *   Sort and filter params.
+   *
+   * @return array
+   *   Array of applications and the account they belong to:
+   *     [accid => [appid => name]]
+   */
+  protected function getApplications(Response $response, array $params = []) {
+    $roles = $this->getRoles();
+    $applications = [];
+
+    if (in_array('Administrator', $roles)) {
+      // Fetch all accounts from the API.
+      try {
+        $domain = $this->settings['api']['url'];
+        $account = $this->settings['api']['core_account'];
+        $application = $this->settings['api']['core_application'];
+        $token = $_SESSION['token'];
+        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+        $query = ['account_name' => 'all'];
+        $query = ['application_name' => 'all'];
+        foreach($params as $key => $value) {
+          $query[$key] = $value;
+        }
+
+        $result = $client->request('GET', 'application', [
+          'headers' => [
+            'Authorization' => "Bearer $token",
+          ],
+          'query' => $query,
+        ]);
+        $result = json_decode($result->getBody()->getContents());
+        echo "<pre>";
+        var_dump($result);
+        die();
+
+        foreach ((array) $result as $appid => $name) {
+          $applications[$accid] = $name;
+        }
+      } catch (ClientException $e) {
+        $result = $e->getResponse();
+        switch ($result->getStatusCode()) {
+          case 401: 
+            return $response->withStatus(302)->withHeader('Location', '/login');
+            break;
+          default:
+            $this->flash->addMessage('error', $this->getErrorMessage($e));
+            $applications = [];
+            break;
+        }
+      }
+    }
+    else {
+      // Not admin, so take accounts from user access rights.
+      foreach((array) $this->userAccessRights as $accid => $accounts) {
+        var_dump($accounts);die();
+      }
+    }
+
+    return $accounts;
+  }
+
+  /**
+   * Validate user access by role.
+   *
+   * @return bool
+   *   Access validated.
+   */
+  protected function checkAccess() {
+    if (empty(self::PERMITTED_ROLES)) {
+      return TRUE;
+    }
+
+    $roles = $this->getRoles();
+    foreach ($roles as $role) {
+      if (in_array($role, self::PERMITTED_ROLES)) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
   /**
@@ -153,111 +327,6 @@ class CtrlBase {
   }
 
   /**
-   * Get available accounts for user's roles.
-   *
-   * @return array
-   *   Array of account names indexed by account ID.
-   */
-  protected function getAccounts() {
-    $accounts = [];
-    $isAdmin = $this->isAdmin();
-
-    if (!$isAdmin) {
-      foreach($this->userAccessRights as $account) {
-        $accounts[$account->account_id] = $account->account_name;
-      }
-    } else {
-      // If user has administrator role, fetch all accounts.
-      try {
-        $domain = $this->settings['api']['url'];
-        $account = $this->settings['api']['core_account'];
-        $application = $this->settings['api']['core_application'];
-        $token = $_SESSION['token'];
-  
-        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-        $result = $client->request('GET', 'account', [
-          'headers' => [
-            'Authorization' => "Bearer $token",
-          ],
-          'query' => [
-            'accountName' => 'all',
-          ],
-        ]);
-        $result = json_decode($result->getBody()->getContents());
-      }
-      catch (ClientException $e) {
-        $message = getErrorMessage($e);
-        $this->flash->addMessage('error', $message);
-        return FALSE;
-      }
-    }
-
-    return $accounts;
-  }
-
-  /**
-   * Get available applications for user's roles.
-   *
-   * @return array
-   *   Array of application names indexed by application ID.
-   */
-  protected function getApplications() {
-    $applications = [];
-
-    foreach($this->userAccessRights as $account) {
-      foreach($account as $application) {
-        if (is_object($application) && isset($application->application_id) && isset($application->application_name)) {
-          $applications[$application->application_id] = $application->application_name;
-        }
-      }
-    }
-
-    return $applications;
-  }
-
-  /**
-   * Get available roles for user's roles.
-   *
-   * @return array
-   *   Array of role names indexed by role ID.
-   */
-  protected function getRoles() {
-    $roles = [];
-
-    foreach($this->userAccessRights as $account) {
-      foreach($account as $application) {
-        foreach($application as $role) {
-          if (is_object($role) && isset($role->role_name) && isset($role->role_id)) {
-            $roles[$role->role_id] = $role->role_name;
-          }
-        }
-      }
-    }
-
-    return $roles;
-  }
-
-  /**
-   * Validate user access by role.
-   *
-   * @return bool
-   *   Access validated.
-   */
-  protected function checkAccess() {
-    if (empty(self::PERMITTED_ROLES)) {
-      return TRUE;
-    }
-
-    $roles = $this->getRoles();
-    foreach ($roles as $role) {
-      if (in_array($role, self::PERMITTED_ROLES)) {
-        return TRUE;
-      }
-    }
-    return FALSE;
-  }
-
-  /**
    * Validate if the user has Administrator access.
    *
    * @return boolean
@@ -301,55 +370,6 @@ class CtrlBase {
       $message = $e->getMessage();
     }
     return $message;
-  }
-
-  protected function getAllAccountsForUser(& $response, $params) {
-    $roles = $this->getRoles();
-    $accounts = $this->getAccounts();
-
-    try {
-      $domain = $this->settings['api']['url'];
-      $account = $this->settings['api']['core_account'];
-      $application = $this->settings['api']['core_application'];
-      $token = $_SESSION['token'];
-      $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-      $query = ['accountName' => 'all'];
-      foreach($params as $key => $value) {
-        $query[$key] = $value;
-      } 
-
-      $result = $client->request('GET', 'account', [
-        'headers' => [
-          'Authorization' => "Bearer $token",
-        ],
-        'query' => $query,
-      ]);
-      $result = json_decode($result->getBody()->getContents());
-      
-      if (!in_array('Administrator', $roles)) {
-        $_accounts = array_intersect((array) $result, $accounts);
-      } else {
-        $_accounts = (array) $result;
-      }
-      $accounts = [];
-      foreach ($_accounts as $accid => $name) {
-        $accounts[] = ['accid' => $accid, 'name' => $name];
-      }
-
-    } catch (ClientException $e) {
-      $result = $e->getResponse();
-      switch ($result->getStatusCode()) {
-        case 401: 
-          return $response->withStatus(302)->withHeader('Location', '/login');
-          break;
-        default:
-          $this->flash->addMessage('error', $this->getErrorMessage($e));
-          $accounts = [];
-          break;
-      }
-    }
-
-    return $accounts;
   }
 
 }
