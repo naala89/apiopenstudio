@@ -159,8 +159,6 @@ class ApplicationMapper extends Mapper {
     $orderBy = '';
     $sql = 'SELECT * FROM application';
 
-    Debug::variable($params);
-
     foreach ($accids as $accid) {
       $byAccid[] = '?';
       $bindParams[] = $accid;
@@ -197,9 +195,6 @@ class ApplicationMapper extends Mapper {
       $sql .= ' WHERE ' . implode(' AND ', $where);
     }
     $sql .= $orderBy;
-
-    Debug::variable($sql, 'sql');
-    Debug::variable($bindParams, 'bindParams');
 
     return $this->fetchRows($sql, $bindParams);
   }

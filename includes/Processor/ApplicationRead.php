@@ -2,14 +2,10 @@
 
 /**
  * Fetch a single or multiple applications.
- *
- * @TODO: This currently assumes that account name is unique
  */
 
 namespace Gaterdata\Processor;
 use Gaterdata\Core;
-use Gaterdata\Core\Config;
-use Gaterdata\Core\Debug;
 use Gaterdata\Db;
 
 class ApplicationRead extends Core\ProcessorEntity
@@ -109,7 +105,6 @@ class ApplicationRead extends Core\ProcessorEntity
     }
 
     $applicationMapper = new Db\ApplicationMapper($this->db);
-    Debug::variable($params, 'params');
 
     $applications = $applicationMapper->findByAccidsAppnames($accountIds, $applicationNames, $params);
     $result = [];

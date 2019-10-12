@@ -4,11 +4,9 @@ namespace Gaterdata\Admin\Controllers;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
-// use Gaterdata\Admin\Account;
-// use Gaterdata\Admin\ApplicationUserRole;
-// use Gaterdata\Admin\Manager;
 use Gaterdata\Core\ApiException;
-// use Gaterdata\Admin\Application;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 /**
  * Class CtrlApplication.
@@ -46,7 +44,7 @@ class CtrlApplication extends CtrlBase {
     $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
     $this->getAccessRights($response, $username);
     if (!$this->checkAccess()) {
-      $this->flash->addMessage('error', 'View accounts: access denied');
+      $this->flash->addMessage('error', 'View applications: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
     }
 
@@ -66,7 +64,6 @@ class CtrlApplication extends CtrlBase {
     $menu = $this->getMenus();
     $accounts = $this->getAccounts($response);
     $applications = (array) $this->getApplications($response, $params);
-    // echo "<pre>";var_dump($applications);die();
 
     // Get total number of pages and current page's applications to display.
     // $pages = ceil(count($applications) / $this->paginationStep);
@@ -97,11 +94,12 @@ class CtrlApplication extends CtrlBase {
    *   Response.
    */
   public function create(Request $request, Response $response, array $args) {
-    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-    $roles = $this->getRoles($uid);
-    if (!$this->checkAccess($roles)) {
-      $this->flash->addMessage('error', 'View Applications: access denied.');
-      $response->withRedirect('/');
+    // Validate access.
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+    $this->getAccessRights($response, $username);
+    if (!$this->checkAccess()) {
+      $this->flash->addMessage('error', 'Create applications: access denied');
+      return $response->withStatus(302)->withHeader('Location', '/');
     }
 
     $allPostVars = $request->getParsedBody();
@@ -109,11 +107,32 @@ class CtrlApplication extends CtrlBase {
       $this->flash->addMessage('error', 'Cannot create application, no name or account ID defined.');
     } else {
       try {
-        $applicationHlp = new Application($this->dbSettings);
-        $applicationHlp->create($accid, $appName);
-        $this->flash->addMessage('info', 'Application created.');
-      } catch (ApiException $e) {
-        $this->flash->addMessage('error', $e->getMessage());
+        $domain = $this->settings['api']['url'];
+        $account = $this->settings['api']['core_account'];
+        $application = $this->settings['api']['core_application'];
+        $token = $_SESSION['token'];
+        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+
+        $result = $client->request('POST', 'application', [
+          'headers' => [
+            'Authorization' => "Bearer $token",
+          ],
+          'form_params' => [
+            'accid' => $accid,
+            'name' => $appName,
+          ],
+        ]);
+        $result = json_decode($result->getBody()->getContents());
+      } catch (ClientException $e) {
+        $result = $e->getResponse();
+        switch ($result->getStatusCode()) {
+          case 401: 
+            return $response->withStatus(302)->withHeader('Location', '/login');
+            break;
+          default:
+            $this->flash->addMessage('error', $this->getErrorMessage($e));
+            break;
+        }
       }
     }
 

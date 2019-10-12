@@ -1,6 +1,6 @@
 {
   "name": "Application read",
-  "description": "Fetch a single or muliple applications.",
+  "description": "Fetch a single or multiple applications.",
   "uri": "application",
   "method": "get",
   "ttl": 0,
