@@ -86,6 +86,29 @@ class AccountMapper extends Mapper {
   }
 
   /**
+   * Find accounts by IDs.
+   *
+   * @param Array $accids
+   *   Account Ids.
+   *
+   * @return Array
+   *   Array of Account objects.
+   *
+   * @throws ApiException
+   */
+  public function findByAccids(array $accids) {
+    $inAccid = [];
+    foreach ($accids as $accid) {
+      $inAccid[] = '?';
+    }
+    $sql = 'SELECT * FROM account';
+    if (!empty($inAccid)) {
+      $sql .= ' WHERE accid IN (' . implode(', ', $inAccid) . ')';
+    }
+    return $this->fetchRow($sql, $accids);
+  }
+
+  /**
    * Find an account by name.
    *
    * @param string $name
@@ -100,6 +123,27 @@ class AccountMapper extends Mapper {
     $sql = 'SELECT * FROM account WHERE name = ?';
     $bindParams = [$name];
     return $this->fetchRow($sql, $bindParams);
+  }
+
+  /**
+   * Find an accounts by names.
+   *
+   * @param array $names
+   *   Account names.
+   *
+   * @return \Gaterdata\Db\Account
+   *   Account object.
+   *
+   * @throws ApiException
+   */
+  public function findByNames(array $names = []) {
+    $arr = [];
+    foreach ($names as $name) {
+      $arr[] = '?';
+    }
+    $sql = 'SELECT * FROM account WHERE name IN (' . implode(', ', $arr) . ')';
+    $bindParams = $names;
+    return $this->fetchRows($sql, $bindParams);
   }
 
   /**
