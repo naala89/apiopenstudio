@@ -46,20 +46,22 @@
   <table class="highlight">
     <thead>
       <tr>
+        <th>ID</th>
         <th>Name</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
-    {% for key,account in accounts %}
+    {% for accid, name in accounts %}
       <tr>
-        <td><a href="/applications?account={{ account.name }}">{{ account.name }}</a></td>
+        <td><a href="/applications?account={{ accid }}">{{ accid }}</a></td>
+        <td><a href="/applications?account={{ name }}">{{ name }}</a></td>
         <td>
           <a class="btn-floating btn-small white hoverable">
-            <i class="material-icons modal-acc-edit-trigger black-text" acc-name="{{ account.name }}">edit</i>
+            <i class="material-icons modal-acc-edit-trigger black-text" acc-name="{{ name }}">edit</i>
           </a>
           <a class="btn-floating btn-small white hoverable">
-            <i class="material-icons modal-acc-delete-trigger black-text" acc-name="{{ account.name }}">delete</i>
+            <i class="material-icons modal-acc-delete-trigger black-text" acc-name="{{ name }}">delete</i>
           </a>
         </td>
       </tr>
