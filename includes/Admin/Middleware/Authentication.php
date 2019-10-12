@@ -149,11 +149,14 @@ class Authentication {
     unset($_SESSION['uid']);
     unset($_SESSION['username']);
 
-    if ($e->hasResponse()) {
-      $result = $e->getResponse();
-      $responseObject = json_decode($result->getBody()->getContents());
-      $message = $responseObject->error->message;
-
+    if (method_exists($e, 'hasResponse')) {
+      if ($e->hasResponse()) {
+        $result = $e->getResponse();
+        $responseObject = json_decode($result->getBody()->getContents());
+        $message = $responseObject->error->message;
+      } else {
+        $message = 'Unkown response.';
+      }
     } else {
       $message = $e->getMessage();
     }
