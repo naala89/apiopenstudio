@@ -4,11 +4,11 @@ namespace Gaterdata\Admin\Controllers;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Gaterdata\Admin\Account;
-use Gaterdata\Admin\ApplicationUserRole;
-use Gaterdata\Admin\Manager;
+// use Gaterdata\Admin\Account;
+// use Gaterdata\Admin\ApplicationUserRole;
+// use Gaterdata\Admin\Manager;
 use Gaterdata\Core\ApiException;
-use Gaterdata\Admin\Application;
+// use Gaterdata\Admin\Application;
 
 /**
  * Class CtrlApplication.
@@ -17,7 +17,16 @@ use Gaterdata\Admin\Application;
  */
 class CtrlApplication extends CtrlBase {
 
-  protected $permittedRoles = ['Administrator', 'Manager'];
+  /**
+   * Roles allowed to visit the page.
+   * 
+   * @var array
+   */
+  const PERMITTED_ROLES = [
+    'Administrator',
+    'Account manager',
+    'Application manager',
+  ];
 
   /**
    * Applications page.
@@ -33,82 +42,41 @@ class CtrlApplication extends CtrlBase {
    *   Response.
    */
   public function index(Request $request, Response $response, array $args) {
-    $this->permittedRoles = ['Administrator', 'Manager'];
-    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-    $roles = $this->getRoles($uid);
-    if (!$this->checkAccess($roles)) {
-      $this->flash->addMessage('error', 'View Applications: access denied');
-      $response->withRedirect('/');
+    // Validate access.
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+    $this->getAccessRights($response, $username);
+    if (!$this->checkAccess()) {
+      $this->flash->addMessage('error', 'View accounts: access denied');
+      return $response->withStatus(302)->withHeader('Location', '/');
     }
-    $menu = $this->getMenus($roles);
+    
+    $menu = $this->getMenus();
+    $accounts = $this->getAccounts($response);
+    $applications = (array) $this->getApplications($response);
+    // echo "<pre>";var_dump($applications);die();
 
-    // Filter params.
+    // Filter params and currect page.
     $allParams = $request->getParams();
     $params = [];
-    if (!empty($allParams['account'])) {
-      $params['account'] = $allParams['account'];
-    }
     if (!empty($allParams['keyword'])) {
       $params['keyword'] = $allParams['keyword'];
     }
-    $params['order_by'] = !empty($allParams['order_by']) ? $allParams['order_by'] : 'accid';
-    $params['dir'] = isset($allParams['dir']) ? $allParams['dir'] : 'ASC';
+    if (!empty($allParams['account_filter'])) {
+      $params['account_filter'] = $allParams['account_filter'];
+    }
+    $params['order_by'] = !empty($allParams['order_by']) ? $allParams['order_by'] : 'name';
+    $params['direction'] = isset($allParams['direction']) ? $allParams['direction'] : 'asc';
     $page = isset($allParams['page']) ? $allParams['page'] : 1;
 
-    try {
-      $accountHlp = new Account($this->dbSettings);
-      $applicationHlp = new Application($this->dbSettings);
-      $applicationUserRoleHlp = new ApplicationUserRole($this->dbSettings);
-
-      // Find all accounts for the user.
-      if (in_array('Administrator', $roles)) {
-        $accounts = $accountHlp->findAll();
-        $allAccounts = [];
-        foreach ($accounts as $account) {
-          $allAccounts[$account['accid']] = $account;
-        }
-      } else {
-        $allAccounts = [];
-        if (in_array('Manager', $roles)) {
-          $managerHlp = new Manager($this->dbSettings);
-          $managers = $managerHlp->findByUserId($uid);
-          foreach ($managers as $manager) {
-            $allAccounts[$manager['accid']] = $accountHlp->findByAccountId($manager['accid']);
-          }
-        }
-        $allAccounts = array_merge($allAccounts, $applicationUserRoleHlp->findAccountsByUid($uid));
-      }
-
-      // Filter the viewed accounts.
-      if (!isset($params['account'])) {
-        $accounts = $allAccounts;
-      } elseif (isset($allAccounts[$params['account']])) {
-        $accounts = [
-          $params['account'] => $allAccounts[$params['account']]
-        ];
-      } else {
-        $accounts = [];
-      }
-
-      // Find all applications for each account.
-      $accids = array_keys($accounts);
-      $applications = $applicationHlp->findByAccidMult($accids, $params);
-    } catch (ApiException $e) {
-      $this->flash->addMessage('error', $e->getMessage());
-      $accounts = [];
-      $applications = [];
-    }
-
     // Get total number of pages and current page's applications to display.
-    $pages = ceil(count($applications) / $this->paginationStep);
-    $applications = array_slice($applications, ($page - 1) * $this->paginationStep, $this->paginationStep, TRUE);
+    // $pages = ceil(count($applications) / $this->paginationStep);
+    // $applications = array_slice($applications, ($page - 1) * $this->paginationStep, $this->paginationStep, TRUE);
 
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
-      'params' => $params,
-      'page' => $page,
-      'pages' => $pages,
-      'allAccounts' => $allAccounts,
+      'params' => [],
+      'page' => 1,
+      'pages' => 1,
       'accounts' => $accounts,
       'applications' => $applications,
       'messages' => $this->flash->getMessages(),

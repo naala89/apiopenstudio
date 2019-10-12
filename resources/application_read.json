@@ -32,6 +32,30 @@
       "id": "application_read_application_names",
       "nullable": true,
       "key": "application_names"
+    },
+    "accountFilter": {
+      "function": "var_get",
+      "id": "application_read_account_filter",
+      "nullable": true,
+      "key": "account_filter"
+    },
+    "keyword": {
+      "function": "var_get",
+      "id": "application_read_keyword",
+      "nullable": true,
+      "key": "keyword"
+    },
+    "orderBy": {
+      "function": "var_get",
+      "id": "application_read_order_by",
+      "nullable": true,
+      "key": "order_by"
+    },
+    "direction": {
+      "function": "var_get",
+      "id": "application_read_direction",
+      "nullable": true,
+      "key": "direction"
     }
   }
 }

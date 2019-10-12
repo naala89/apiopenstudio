@@ -38,6 +38,42 @@ class ApplicationRead extends Core\ProcessorEntity
         'limitValues' => [],
         'default' => ''
       ],
+      'accountFilter' => [
+        'description' => 'Account ID to filter by.',
+        'cardinality' => [0, 1],
+        'literalAllowed' => TRUE,
+        'limitFunctions' => [],
+        'limitTypes' => ['integer'],
+        'limitValues' => [],
+        'default' => ''
+      ],
+      'keyword' => [
+        'description' => 'Application keyword to filter by.',
+        'cardinality' => [0, 1],
+        'literalAllowed' => TRUE,
+        'limitFunctions' => [],
+        'limitTypes' => ['string', 'integer'],
+        'limitValues' => [],
+        'default' => ''
+      ],
+      'orderBy' => [
+        'description' => 'Order by column.',
+        'cardinality' => [0, 1],
+        'literalAllowed' => TRUE,
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => ['accid', 'appid', 'name'],
+        'default' => ''
+      ],
+      'direction' => [
+        'description' => 'Order by direction.',
+        'cardinality' => [0, 1],
+        'literalAllowed' => TRUE,
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => ['asc', 'desc'],
+        'default' => ''
+      ],
     ],
   ];
 
@@ -50,9 +86,31 @@ class ApplicationRead extends Core\ProcessorEntity
     $applicationNames = $this->val('applicationNames', TRUE);
     $applicationNames = empty($applicationNames) ? [] : $applicationNames;
 
+    // Filter params.
+    $params = [];
+    $accountFilter = $this->val('accountFilter', TRUE);
+    if (!empty($accountFilter)) {
+      $params['filter'] = [
+        'column' => 'accid',
+        'keyword' => $accountFilter
+      ];
+    }
+    $keyword = $this->val('keyword', TRUE);
+    if (!empty($keyword)) {
+      $params['keyword'] = $keyword;
+    }
+    $orderBy = $this->val('orderBy', TRUE);
+    if (!empty($orderBy)) {
+      $params['orderBy'] = $orderBy;
+    }
+    $direction = $this->val('direction', TRUE);
+    if (!empty($direction)) {
+      $params['direction'] = $direction;
+    }
+
     $applicationMapper = new Db\ApplicationMapper($this->db);
 
-    $applications = $applicationMapper->findByAccidsAppnames($accountIds, $applicationNames);
+    $applications = $applicationMapper->findByAccidsAppnames($accountIds, $applicationNames, $params);
     $result = [];
     foreach($applications as $application) {
       $result[$application->getAppid()] = [
