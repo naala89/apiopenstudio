@@ -57,7 +57,7 @@ class CtrlAccount extends CtrlBase {
     $params['direction'] = isset($allParams['direction']) ? $allParams['direction'] : 'asc';
     $page = isset($allParams['page']) ? $allParams['page'] : 1;
 
-    $accounts = $this->getAllAccountsForUser($response, $params);
+    $accounts = $this->getAccounts($response, $params);
 
     // Get total number of pages and current page's accounts to display.
     $pages = ceil(count($accounts) / $this->settings['admin']['paginationStep']);
