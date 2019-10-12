@@ -31,9 +31,9 @@ $app->post('/account/delete', 'CtrlAccount:delete')->add(new Authentication($con
  * Application.
  */
 $app->get('/applications', 'CtrlApplication:index')->add(new Authentication($container, $settings, '/login'));
-$app->post('/application/create', 'CtrlApplication:create')->add(new Authentication($container, $settings, '/login'));
-$app->post('/application/edit', 'CtrlApplication:edit')->add(new Authentication($container, $settings, '/login'));
-$app->post('/application/delete', 'CtrlApplication:delete')->add(new Authentication($container, $settings, '/login'));
+$app->post('/applications/create', 'CtrlApplication:create')->add(new Authentication($container, $settings, '/login'));
+$app->post('/applications/edit', 'CtrlApplication:edit')->add(new Authentication($container, $settings, '/login'));
+$app->post('/applications/delete', 'CtrlApplication:delete')->add(new Authentication($container, $settings, '/login'));
 
 /**
  * User.

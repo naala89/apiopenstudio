@@ -49,11 +49,6 @@ class CtrlApplication extends CtrlBase {
       $this->flash->addMessage('error', 'View accounts: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
     }
-    
-    $menu = $this->getMenus();
-    $accounts = $this->getAccounts($response);
-    $applications = (array) $this->getApplications($response);
-    // echo "<pre>";var_dump($applications);die();
 
     // Filter params and currect page.
     $allParams = $request->getParams();
@@ -67,6 +62,11 @@ class CtrlApplication extends CtrlBase {
     $params['order_by'] = !empty($allParams['order_by']) ? $allParams['order_by'] : 'name';
     $params['direction'] = isset($allParams['direction']) ? $allParams['direction'] : 'asc';
     $page = isset($allParams['page']) ? $allParams['page'] : 1;
+    
+    $menu = $this->getMenus();
+    $accounts = $this->getAccounts($response);
+    $applications = (array) $this->getApplications($response, $params);
+    // echo "<pre>";var_dump($applications);die();
 
     // Get total number of pages and current page's applications to display.
     // $pages = ceil(count($applications) / $this->paginationStep);
@@ -74,7 +74,7 @@ class CtrlApplication extends CtrlBase {
 
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
-      'params' => [],
+      'params' => $params,
       'page' => 1,
       'pages' => 1,
       'accounts' => $accounts,

@@ -155,44 +155,51 @@ class ApplicationMapper extends Mapper {
   public function findByAccidsAppnames(array $accids = [], array $appNames = [], array $params = []) {
     $byAccid = [];
     $bindParams = [];
+    $where = [];
+    $orderBy = '';
+    $sql = 'SELECT * FROM application';
+
+    Debug::variable($params);
 
     foreach ($accids as $accid) {
       $byAccid[] = '?';
       $bindParams[] = $accid;
     }
+    if (!empty($byAccid)) {
+      $where[] = 'accid IN (' . implode(', ', $byAccid) . ')';
+    }
+
     $byAppname = [];
     foreach ($appNames as $appName) {
       $byAppname[] = '?';
       $bindParams[] = $appName;
     }
-
-    $sql = 'SELECT * FROM application';
-    
-    $where = [];
-    if (!empty($byAccid)) {
-      $where[] = 'accid IN (' . implode(', ', $byAccid) . ')';
-    }
     if (!empty($byAppname)) {
       $where[] = 'name IN (' . implode(', ', $byAppname) . ')';
     }
+
     if (!empty($params['filter']) && !empty($params['filter']['column']) && !empty($params['filter']['keyword'])) {
-      $where[] = $params['filter']['column'] . '=' . $params['filter']['keyword'];
+      $where[] = mysqli_real_escape_string($this->db->_connectionID, $params['filter']['column'])  . ' = ?';
+      $bindParams[] = $params['filter']['keyword'];
     }
+
     if (!empty($params['keyword'])) {
-      $where[] = 'name CONtAINS ' . $params['keyword'];
+      $where[] = 'name like ?';
+      $bindParams[] = $params['keyword'];
     }
-    $orderBy = '';
-    if (!empty($params['orderBy'])) {
-      $orderBy .= ' ORDER BY ' . $params['orderBy'];
+    if (!empty($params['order_by'])) {
+      $orderBy .= ' ORDER BY ' . mysqli_real_escape_string($this->db->_connectionID, $params['order_by']);
       if (!empty($params['direction'])) {
-        $orderBy .= ' ' . $params['direction'];
+        $orderBy .= ' ' . strtoupper(mysqli_real_escape_string($this->db->_connectionID, $params['direction']));
       }
     }
     if (!empty($where)) {
-      $sql .= ' WHERE ' . implode(' AND ', $where) . $orderBy;
+      $sql .= ' WHERE ' . implode(' AND ', $where);
     }
+    $sql .= $orderBy;
 
-  Debug::variable($sql, 'sql');
+    Debug::variable($sql, 'sql');
+    Debug::variable($bindParams, 'bindParams');
 
     return $this->fetchRows($sql, $bindParams);
   }

@@ -20,14 +20,14 @@
       </div>
       <div class="col s3">
         <div class="input-field">
-          <select name="account">
-            <option value="">All</option>
-            {% for acc in allAccounts %}
+          <select name="account_filter">
+            <option value="" selected>All</option>
+            {% for accid, account in accounts %}
               {% set selected = '' %}
-              {% if acc.accid == params['account'] %}
+              {% if accid == params['account'] %}
                 {% set selected = 'selected' %}
               {% endif %}
-              <option value="{{ acc.accid }}" {{ selected }}>{{ acc.name }}</option>
+              <option value="{{ accid }}" {{ selected }}>{{ account }}</option>
             {% endfor %}
           </select>
           <label for="filter">Filter by account.</label>
@@ -36,18 +36,18 @@
       <div class="col s2">
         <div class="input-field">
           <select class="input-field" name="order_by">
-            <option value="accid" {% if params['order_by'] == "accid" %}selected{% endif %}>Account</option>
+            <option value="accid" {% if params['order_by'] == "accid" %}selected{% endif %}>Account ID</option>
             <option value="appid" {% if params['order_by'] == "appid" %}selected{% endif %}>Application ID</option>
-            <option value="name" {% if params['order_by'] == "name" %}selected{% endif %}>Application name</option>
+            <option value="name" {% if params['order_by'] == "name" %}selected{% endif %}>Application</option>
           </select>
           <label for="search">Sort by</label>
         </div>
       </div>
       <div class="col s2">
         <div class="input-field">
-          <select class="input-field" name="dir">
-            <option value="ASC" {% if params['dir'] == "ASC" %}selected{% endif %}>Ascending</option>
-            <option value="DESC" {% if params['dir'] == "DESC" %}selected{% endif %}>Descending</option>
+          <select class="input-field" name="direction">
+            <option value="asc" {% if params['direction'] == "asc" %}selected{% endif %}>Ascending</option>
+            <option value="desc" {% if params['direction'] == "desc" %}selected{% endif %}>Descending</option>
           </select>
           <label for="search">Sort direction</label>
         </div>
@@ -70,22 +70,26 @@
     <table class="highlight">
       <thead>
       <tr>
+        <th>Account ID</th>
         <th>Account</th>
+        <th>Application ID</th>
         <th>Application</th>
         <th>Actions</th>
       </tr>
       </thead>
       <tbody>
-        {% for application in applications %}
+        {% for appid, application in applications %}
           <tr>
-            <td>{{ accounts[application['accid']].name }}</td>
+            <td>{{ application.accid }}</td>
+            <td><a href="/accounts?keyword={{ accounts[application.accid] }}" title="View this account.">{{ accounts[application.accid] }}</a></td>
+            <td>{{ appid }}</td>
             <td>{{ application.name }}</td>
             <td>
               <a class="btn-floating btn-small white hoverable">
-                <i class="material-icons modal-app-edit-trigger black-text" acc-id="{{ application.accid }}" app-id="{{ application.appid }}" app-name="{{ application.name }}">edit</i>
+                <i class="material-icons modal-app-edit-trigger black-text" acc-id="{{ application.accid }}" app-id="{{ appid }}" app-name="{{ application.name }}">edit</i>
               </a>
               <a class="btn-floating btn-small white hoverable">
-                <i class="material-icons modal-app-delete-trigger black-text" app-id="{{ application.appid }}" app-name="{{ application.name }}">delete</i>
+                <i class="material-icons modal-app-delete-trigger black-text" app-id="{{ appid }}" app-name="{{ application.name }}">delete</i>
               </a>
             </td>
           </tr>
