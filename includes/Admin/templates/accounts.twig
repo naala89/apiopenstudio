@@ -54,14 +54,14 @@
     <tbody>
     {% for accid, name in accounts %}
       <tr>
-        <td><a href="/applications?account={{ accid }}">{{ accid }}</a></td>
-        <td><a href="/applications?account={{ name }}">{{ name }}</a></td>
+        <td><a href="/applications?account_filter={{ accid }}" title="View applications under this account.">{{ accid }}</a></td>
+        <td><a href="/applications?account_filter={{ accid }}" title="View applications under this account.">{{ name }}</a></td>
         <td>
           <a class="btn-floating btn-small white hoverable">
-            <i class="material-icons modal-acc-edit-trigger black-text" acc-name="{{ name }}">edit</i>
+            <i class="material-icons modal-acc-edit-trigger black-text" acc-name="{{ name }}" title="Edit this account.">edit</i>
           </a>
           <a class="btn-floating btn-small white hoverable">
-            <i class="material-icons modal-acc-delete-trigger black-text" acc-name="{{ name }}">delete</i>
+            <i class="material-icons modal-acc-delete-trigger black-text" acc-name="{{ name }}" title="Delete this account.">delete</i>
           </a>
         </td>
       </tr>

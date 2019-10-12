@@ -30,7 +30,7 @@ class ApplicationRead extends Core\ProcessorEntity
         'default' => ''
       ],
       'applicationNames' => [
-        'description' => 'An array of the application names. NULL or empoty will fetch all applications for the accounts.',
+        'description' => 'An array of the application names. NULL or empty will fetch all applications for the accounts.',
         'cardinality' => [0, 1],
         'literalAllowed' => TRUE,
         'limitFunctions' => [],
@@ -92,16 +92,16 @@ class ApplicationRead extends Core\ProcessorEntity
     if (!empty($accountFilter)) {
       $params['filter'] = [
         'column' => 'accid',
-        'keyword' => $accountFilter
+        'keyword' => $accountFilter,
       ];
     }
     $keyword = $this->val('keyword', TRUE);
     if (!empty($keyword)) {
-      $params['keyword'] = $keyword;
+      $params['keyword'] = "%$keyword%";
     }
     $orderBy = $this->val('orderBy', TRUE);
     if (!empty($orderBy)) {
-      $params['orderBy'] = $orderBy;
+      $params['order_by'] = $orderBy;
     }
     $direction = $this->val('direction', TRUE);
     if (!empty($direction)) {
@@ -109,6 +109,7 @@ class ApplicationRead extends Core\ProcessorEntity
     }
 
     $applicationMapper = new Db\ApplicationMapper($this->db);
+    Debug::variable($params, 'params');
 
     $applications = $applicationMapper->findByAccidsAppnames($accountIds, $applicationNames, $params);
     $result = [];
