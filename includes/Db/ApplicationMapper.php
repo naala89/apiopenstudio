@@ -2,6 +2,8 @@
 
 namespace Gaterdata\Db;
 
+use Gaterdata\Core\Debug;
+
 /**
  * Class ApplicationMapper.
  *
@@ -173,9 +175,24 @@ class ApplicationMapper extends Mapper {
     if (!empty($byAppname)) {
       $where[] = 'name IN (' . implode(', ', $byAppname) . ')';
     }
-    if (!empty($where)) {
-      $sql .= ' WHERE ' . implode(' AND ', $where);
+    if (!empty($params['filter']) && !empty($params['filter']['column']) && !empty($params['filter']['keyword'])) {
+      $where[] = $params['filter']['column'] . '=' . $params['filter']['keyword'];
     }
+    if (!empty($params['keyword'])) {
+      $where[] = 'name CONtAINS ' . $params['keyword'];
+    }
+    $orderBy = '';
+    if (!empty($params['orderBy'])) {
+      $orderBy .= ' ORDER BY ' . $params['orderBy'];
+      if (!empty($params['direction'])) {
+        $orderBy .= ' ' . $params['direction'];
+      }
+    }
+    if (!empty($where)) {
+      $sql .= ' WHERE ' . implode(' AND ', $where) . $orderBy;
+    }
+
+  Debug::variable($sql, 'sql');
 
     return $this->fetchRows($sql, $bindParams);
   }
