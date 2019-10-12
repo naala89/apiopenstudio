@@ -127,8 +127,10 @@ class ApplicationMapper extends Mapper {
   }
 
   /**
-   * Find applications by multiple account IDs.
+   * Find applications by multiple account IDs and/or application names.
    *
+   * @param array $accids
+   *   Array of account IDs.
    * @param array $accids
    *   Array of account IDs.
    * @param array $params
@@ -145,18 +147,37 @@ class ApplicationMapper extends Mapper {
    *   array of mapped Application objects.
    *
    * @throws ApiException
+   * 
+   * @TODO: implement params.
    */
-  public function findByAccidMult(array $accids, array $params = NULL) {
-    $qm = $bindParams = [];
+  public function findByAccidsAppnames(array $accids = [], array $appNames = [], array $params = []) {
+    $byAccid = [];
+    $bindParams = [];
+
     foreach ($accids as $accid) {
-      $qm[] = '?';
+      $byAccid[] = '?';
       $bindParams[] = $accid;
     }
-    $sql = 'SELECT * FROM application WHERE accid IN ('. implode(', ', $qm) . ')';
-    if (!empty($params['keyword'])) {
-      $sql .= ' AND name LIKE "%' . $params['keyword'] . '%"';
-    };
-    return $this->fetchRows($sql, $bindParams, $params);
+    $byAppname = [];
+    foreach ($appNames as $appName) {
+      $byAppname[] = '?';
+      $bindParams[] = $appName;
+    }
+
+    $sql = 'SELECT * FROM application';
+    
+    $where = [];
+    if (!empty($byAccid)) {
+      $where[] = 'accid IN (' . implode(', ', $byAccid) . ')';
+    }
+    if (!empty($byAppname)) {
+      $where[] = 'name IN (' . implode(', ', $byAppname) . ')';
+    }
+    if (!empty($where)) {
+      $sql .= ' WHERE ' . implode(' AND ', $where);
+    }
+
+    return $this->fetchRows($sql, $bindParams);
   }
 
   /**
