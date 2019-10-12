@@ -99,6 +99,7 @@ abstract class Mapper {
    *       'limit' => int,
    *     ]
    * NOTE:
+   *   * This will throw an exception if the sql already contains a WHERE clause and should be calculated separeately in these cases.
    *   * ['filter']['keyword'] '%' characters in keyword not added to keyword automatically.
    *
    * @return array
@@ -117,12 +118,18 @@ abstract class Mapper {
         }
       }
       if (!empty($arr)) {
+        if (stripos($sql, 'where') !== FALSE) {
+          throw new ApiException('Trying to add column filters on SQL with WHERE clause: ' . $sql);
+        }
         $sql .= ' WHERE ' . implode(' AND ', $arr);
       }
     }
 
     // Add order by.
     if (!empty($params['order_by'])) {
+      if (stripos($sql, 'order by') !== FALSE) {
+        throw new ApiException('Trying to add order by params on SQL with ORDER BY clause: ' . $sql);
+      }
       $orderBy = mysqli_real_escape_string($this->db->_connectionID, $params['order_by']);
       $direction = strtoupper(mysqli_real_escape_string($this->db->_connectionID, $params['direction']));
       $sql .= " ORDER BY $orderBy $direction";
@@ -130,6 +137,9 @@ abstract class Mapper {
 
     // Add limit.
     if (!empty($params['offset']) || !empty($params['limit'])) {
+      if (stripos($sql, 'order by') !== FALSE) {
+        throw new ApiException('Trying to limit params on SQL with LIMIT clause: ' . $sql);
+      }
       $recordSet = $this->db->selectLimit($sql, (integer) $params['limit'], (integer) $params['offset'], $bindParams);
     }
 
