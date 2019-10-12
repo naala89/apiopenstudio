@@ -1,6 +1,6 @@
 {
   "name": "Application read",
-  "description": "Fetch an application.",
+  "description": "Fetch a single or muliple applications.",
   "uri": "application",
   "method": "get",
   "ttl": 0,
@@ -19,17 +19,19 @@
     ]
   },
   "process": {
-    "function": "application",
+    "function": "application_read",
     "id": "application_read_process",
-    "accountName": {
+    "accountIds": {
       "function": "var_get",
-      "id": "application_read_account_name",
-      "key": "accountName"
+      "id": "application_read_account_ids",
+      "nullable": true,
+      "key": "account_ids"
     },
-    "applicationName": {
+    "applicationNames": {
       "function": "var_get",
-      "id": "application_read_application_name",
-      "key": "applicationName"
+      "id": "application_read_application_names",
+      "nullable": true,
+      "key": "application_names"
     }
   }
 }
