@@ -2,12 +2,13 @@
 
 /**
  * Account CRUD.
+ * 
+ * @TODO: This should be split into separate processors for each operation.
  */
 
 namespace Gaterdata\Processor;
 use Gaterdata\Core;
 use Gaterdata\Db;
-use Gaterdata\Core\Debug;
 
 class Account extends Core\ProcessorEntity
 {
@@ -20,7 +21,6 @@ class Account extends Core\ProcessorEntity
     'machineName' => 'account',
     'description' => 'CRUD operations for accounts.',
     'menu' => 'Admin',
-    'application' => 'Administrator',
     'input' => [
       'accountName' => [
         'description' => 'The name of the account.',
