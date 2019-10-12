@@ -27,12 +27,16 @@ $(document).ready(function() {
 
   // Edit application modal.
   $('.modal-app-edit-trigger').click(function() {
-    var self = $(this);
     var modal = $('#modal-app-edit');
-    modal.find('#edit-app-accid').val(self.attr('acc-id'));
-    modal.find('#edit-app-accid').formSelect();
-    modal.find('#edit-app-appid').val(self.attr('app-id'));
-    modal.find('#edit-app-name').val(self.attr('app-name'));
+    var accid = $(this).attr('acc-id');
+    var appid = $(this).attr('app-id');
+    var name = $(this).attr('app-name');
+    var select_accid = modal.find('select[name="edit-app-accid"]');
+
+    select_accid.find('option[value="' + accid + '"]').prop('selected', true);
+    select_accid.formSelect();
+    modal.find('input[name="edit-app-appid"]').val(appid);
+    modal.find('input[name="edit-app-name"]').val(name);
     modal.modal('open');
   });
 

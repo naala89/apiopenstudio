@@ -1,6 +1,6 @@
 <!-- Edit application modal -->
 <div id="modal-app-edit" class="modal">
-  <form method="post" action="/application/edit" id="application-edit">
+  <form method="post" action="/applications/edit" id="application-edit">
     <input type="hidden" name="edit-app-appid" id="edit-app-appid">
     <div class="modal-content">
       <h4>Edit Application</h4>
@@ -10,9 +10,9 @@
         <div class="col s6">
           <div class="input-field">
             <select name="edit-app-accid" id="edit-app-accid" autofocus>
-              <option value="" disabled selected>Choose the account</option>
-              {% for accid,account in allAccounts %}
-                <option value="{{ accid }}">{{ account.name }}</option>
+              <option value="" disabled>Choose the account</option>
+              {% for account_id, account_name in accounts %}
+                <option value="{{ account_id }}" {% if account_id == accid %}selected{% endif %}>{{ account_name }}</option>
               {% endfor %}
             </select>
             <label>Account</label>
