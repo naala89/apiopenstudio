@@ -9,21 +9,19 @@ method: delete
 ttl: 0
 
 security:
-  function: token_role
+  function: token_roles
   id: application_delete_security
   token:
     function: bearer_token
     id: application_delete_token
-  role: Administrator
+  roles:
+    - Administrator
+    - Account manager
 
 process:
-  function: application
+  function: application_delete
   id: application_delete_process
-  accountName:
+  applicationId:
     function: var_uri
-    id: application_delete_account_name
+    id: application_delete_application_id
     index: 0
-  applicationName:
-    function: var_uri
-    id: application_delete_application_name
-    index: 1
