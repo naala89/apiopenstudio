@@ -212,31 +212,42 @@ class CtrlApplication extends CtrlBase {
    * TODO: Delete all associated resources and remove user roles.
    */
   public function delete(Request $request, Response $response, array $args) {
-    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-    $roles = $this->getRoles($uid);
-    if (!$this->checkAccess($roles)) {
-      $this->flash->addMessage('error', 'Edit Applications: access denied.');
-      $response->withRedirect('/');
+    // Validate access.
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+    $this->getAccessRights($response, $username);
+    if (!$this->checkAccess()) {
+      $this->flash->addMessage('error', 'Update applications: access denied');
+      return $response->withStatus(302)->withHeader('Location', '/');
     }
 
     $allPostVars = $request->getParsedBody();
     if (empty($appid = $allPostVars['delete-app-appid'])) {
-      $this->flash->addMessage('error', 'Cannot delete application, no application ID defined.');
+      $this->flash->addMessage('error', 'Cannot delete application, application ID not defined.');
     } else {
       try {
-        $applicationHlp = new Application($this->dbSettings);
-        $applicationUserRoleHlp = new ApplicationUserRole($this->dbSettings);
-        // Delete the user roles for this application.
-        $applicationUserRoles = $applicationUserRoleHlp->findByAppid($appid);
-        foreach ($applicationUserRoles as $applicationUserRole) {
-          $applicationUserRoleHlp->delete($applicationUserRole);
+        $domain = $this->settings['api']['url'];
+        $account = $this->settings['api']['core_account'];
+        $application = $this->settings['api']['core_application'];
+        $token = $_SESSION['token'];
+        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+
+        $result = $client->request('DELETE', "application/$appid", [
+          'headers' => [
+            'Authorization' => "Bearer $token",
+          ],
+        ]);
+        $result = json_decode($result->getBody()->getContents());
+        $this->flash->addMessage('info', "Application $appid deleted.");
+      } catch (ClientException $e) {
+        $result = $e->getResponse();
+        switch ($result->getStatusCode()) {
+          case 401: 
+            return $response->withStatus(302)->withHeader('Location', '/login');
+            break;
+          default:
+            $this->flash->addMessage('error', $this->getErrorMessage($e));
+            break;
         }
-        // Delete the application.
-        $applicationHlp->findByApplicationId($appid);
-        $applicationHlp->delete();
-        $this->flash->addMessage('info', 'Application deleted.');
-      } catch (ApiException $e) {
-        $this->flash->addMessage('error', $e->getMessage());
       }
     }
 

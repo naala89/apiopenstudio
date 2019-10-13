@@ -42,10 +42,11 @@ $(document).ready(function() {
 
   // Delete application modal.
   $('.modal-app-delete-trigger').click(function() {
-    var self = $(this);
     var modal = $('#modal-app-delete');
-    modal.find('#delete-app-appid').val(self.attr('app-id'));
-    modal.find('#delete-app-name').html(self.attr('app-name'));
+    var appid = $(this).attr('app-id');
+    var name = $(this).attr('app-name');
+    modal.find('input[name="delete-app-appid"]').val(appid);
+    modal.find('#delete-app-name').html(name);
     modal.modal('open');
   });
 
