@@ -110,10 +110,6 @@ class Authentication {
           'query' => ['username' => $username],
           'headers' => ['Authorization' => "Bearer $token"],
         ]);
-        $result = json_decode($result->getBody()->getContents());
-        if (!isset($result->uid) || empty($result->uid)) {
-          throw new ApiException('Invalid user');
-        }
       }
       catch (ApiException $e) {
         $message = $this->loginError($e);
