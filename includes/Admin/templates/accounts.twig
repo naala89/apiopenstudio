@@ -11,21 +11,13 @@
       <div class="col s1 ">
         <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-acc-create"><i class="material-icons">add</i></a>
       </div>
-      <div class="col s4">
+      <div class="col s6">
         <div class="input-field">
           <input type="text" class="validate" name="keyword" value="{{ keyword }}">
           <label for="keyword">Search text</label>
         </div>
       </div>
-      <div class="col s3">
-        <div class="input-field">
-          <select class="input-field" name="order_by">
-            <option value="name" {% if order_by == "name" %}selected{% endif %}>Account name</option>
-          </select>
-          <label for="order_by">Sort by</label>
-        </div>
-      </div>
-      <div class="col 4">
+      <div class="col s4">
         <div class="input-field">
           <select class="input-field" name="direction">
             <option value="asc" {% if direction == "asc" %}selected{% endif %}>Ascending</option>

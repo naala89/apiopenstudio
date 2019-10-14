@@ -53,7 +53,7 @@ class CtrlAccount extends CtrlBase {
     if (!empty($allParams['keyword'])) {
       $params['keyword'] = $allParams['keyword'];
     }
-    $params['order_by'] = !empty($allParams['order_by']) ? $allParams['order_by'] : 'name';
+    $params['order_by'] = 'name';
     $params['direction'] = isset($allParams['direction']) ? $allParams['direction'] : 'asc';
     $page = isset($allParams['page']) ? $allParams['page'] : 1;
 
@@ -68,8 +68,7 @@ class CtrlAccount extends CtrlBase {
 
     return $this->view->render($response, 'accounts.twig', [
       'keyword' => isset($params['keyword']) ? $params['keyword'] : '',
-      'order_by' => $params['order_by'],
-      'dir' => strtoupper($params['dir']),
+      'direction' => strtoupper($params['direction']),
       'page' => $page,
       'pages' => $pages,
       'menu' => $menu,
