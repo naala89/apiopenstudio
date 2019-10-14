@@ -61,7 +61,10 @@ class CtrlAccount extends CtrlBase {
 
     // Get total number of pages and current page's accounts to display.
     $pages = ceil(count($accounts) / $this->settings['admin']['paginationStep']);
-    $accounts = array_slice($accounts, ($page - 1) * $this->settings['admin']['paginationStep'], $this->settings['admin']['paginationStep'], TRUE);
+    $accounts = array_slice($accounts,
+      ($page - 1) * $this->settings['admin']['paginationStep'],
+      $this->settings['admin']['paginationStep'],
+      TRUE);
 
     return $this->view->render($response, 'accounts.twig', [
       'keyword' => isset($params['keyword']) ? $params['keyword'] : '',
