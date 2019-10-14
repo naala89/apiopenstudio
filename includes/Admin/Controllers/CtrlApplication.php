@@ -69,9 +69,28 @@ class CtrlApplication extends CtrlBase {
     $accounts = $this->getAccounts($response, $accParams);
     $applications = (array) $this->getApplications($response, $appParams);
 
+    // Order by account or app name.
+    $sortedApps = [];
+    if ($allParams['order_by'] == 'account') {
+      foreach ($accounts as $accid => $account) {
+        foreach ($applications as $appid => $application) {
+          if ($accid == $application->accid) {
+            $application->account = $account;
+            $sortedApps[$appid] = $application;
+          }
+        }
+      }
+    }
+    else {
+      foreach ($applications as $appid => $application) {
+        $application->account = $accounts[$application->accid];
+        $sortedApps[$appid] = $application;
+      }
+    }
+
     // Get total number of pages and current page's applications to display.
-    $pages = ceil(count($applications) / $this->settings['admin']['paginationStep']);
-    $applications = array_slice($applications,
+    $pages = ceil(count($sortedApps) / $this->settings['admin']['paginationStep']);
+    $sortedApps = array_slice($sortedApps,
       ($page - 1) * $this->settings['admin']['paginationStep'],
       $this->settings['admin']['paginationStep'],
       TRUE);
@@ -82,7 +101,7 @@ class CtrlApplication extends CtrlBase {
       'page' => $page,
       'pages' => $pages,
       'accounts' => $accounts,
-      'applications' => $applications,
+      'applications' => $sortedApps,
       'messages' => $this->flash->getMessages(),
     ]);
   }
