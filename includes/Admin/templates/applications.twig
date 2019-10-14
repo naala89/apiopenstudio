@@ -93,7 +93,7 @@
     {% else %}
       {% for accid, account in accounts %}
         {% for appid, application in applications %}
-          {% if application['accid'] == accid %}
+          {% if application.accid == accid %}
             <div class="row hoverable">
               <div class="col col-height s5 valign-wrapper">
                 <a href="/accounts?keyword={{ accid }}" title="View this account.">{{ account }}</a>
