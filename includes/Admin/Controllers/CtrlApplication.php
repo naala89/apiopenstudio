@@ -48,51 +48,60 @@ class CtrlApplication extends CtrlBase {
       return $response->withStatus(302)->withHeader('Location', '/');
     }
 
-    // Filter params and currect page.
+    // Filter params and current page.
     $allParams = $request->getParams();
-    $params = [];
+    $appParams = [];
     if (!empty($allParams['keyword'])) {
-      $params['keyword'] = $allParams['keyword'];
+      $appParams['keyword'] = $allParams['keyword'];
     }
     if (!empty($allParams['account_filter'])) {
-      $params['account_filter'] = $allParams['account_filter'];
+      $appParams['account_filter'] = $allParams['account_filter'];
     }
-    $params['order_by'] = !empty($allParams['order_by']) ? $allParams['order_by'] : 'name';
-    $params['direction'] = isset($allParams['direction']) ? $allParams['direction'] : 'asc';
+    $appParams['order_by'] = 'name';
+    $appParams['direction'] = isset($allParams['direction']) ? $allParams['direction'] : 'asc';
+    $accParams = [
+      'order_by' => 'name',
+      'direction' => isset($allParams['direction']) ? $allParams['direction'] : 'asc',
+    ];
     $page = isset($allParams['page']) ? $allParams['page'] : 1;
     
     $menu = $this->getMenus();
-    $accounts = $this->getAccounts($response);
-    $applications = (array) $this->getApplications($response, $params);
+    $accounts = $this->getAccounts($response, $accParams);
+    $applications = (array) $this->getApplications($response, $appParams);
 
     // Get total number of pages and current page's applications to display.
-    // $pages = ceil(count($applications) / $this->paginationStep);
-    // $applications = array_slice($applications, ($page - 1) * $this->paginationStep, $this->paginationStep, TRUE);
+    $pages = ceil(count($applications) / $this->settings['admin']['paginationStep']);
+    $applications = array_slice($applications,
+      ($page - 1) * $this->settings['admin']['paginationStep'],
+      $this->settings['admin']['paginationStep'],
+      TRUE);
 
     return $this->view->render($response, 'applications.twig', [
       'menu' => $menu,
-      'params' => $params,
-      'page' => 1,
-      'pages' => 1,
+      'params' => $allParams,
+      'page' => $page,
+      'pages' => $pages,
       'accounts' => $accounts,
       'applications' => $applications,
       'messages' => $this->flash->getMessages(),
     ]);
   }
 
-  /**
-   * Create an application.
-   *
-   * @param \Slim\Http\Request $request
-   *   Request object.
-   * @param \Slim\Http\Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return \Psr\Http\Message\ResponseInterface
-   *   Response.
-   */
+    /**
+     * Create an application.
+     *
+     * @param \Slim\Http\Request $request
+     *   Request object.
+     * @param \Slim\Http\Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *   Response.
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
   public function create(Request $request, Response $response, array $args) {
     // Validate access.
     $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
