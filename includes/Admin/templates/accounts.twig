@@ -6,9 +6,9 @@
   <div class="row">
     <p>Manage your accounts here. These are distinct business entities, like your organization or clients, that will contain applications and have Account managers assigned to them.</p>
   </div>
-  <div class="row">
+  <div class="row ">
     <form method="get" action="/accounts">
-      <div class="col s1">
+      <div class="col s1 ">
         <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-acc-create"><i class="material-icons">add</i></a>
       </div>
       <div class="col s4">
@@ -20,7 +20,6 @@
       <div class="col s3">
         <div class="input-field">
           <select class="input-field" name="order_by">
-            <option value="accid" {% if order_by == "accid" %}selected{% endif %}>Account ID</option>
             <option value="name" {% if order_by == "name" %}selected{% endif %}>Account name</option>
           </select>
           <label for="order_by">Sort by</label>
@@ -43,31 +42,25 @@
     </form>
   </div>
 
-  <table class="highlight">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for accid, name in accounts %}
-      <tr>
-        <td><a href="/applications?account_filter={{ accid }}" title="View applications under this account.">{{ accid }}</a></td>
-        <td><a href="/applications?account_filter={{ accid }}" title="View applications under this account.">{{ name }}</a></td>
-        <td>
-          <a class="btn-floating btn-small white hoverable">
-            <i class="material-icons modal-acc-edit-trigger black-text" acc-name="{{ name }}" title="Edit this account.">edit</i>
-          </a>
-          <a class="btn-floating btn-small white hoverable">
-            <i class="material-icons modal-acc-delete-trigger black-text" acc-name="{{ name }}" title="Delete this account.">delete</i>
-          </a>
-        </td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+  <div class="row teal lighten-1 white-text">
+    <h6 class="col col-height s10 valign-wrapper">Name</h6>
+    <h6 class="col col-height s2 valign-wrapper">Actions</h6>
+  </div>
+  {% for accid, name in accounts %}
+    <div class="row hoverable">
+      <div class="col col-height s10 valign-wrapper">
+        <a href="/applications?account_filter={{ accid }}" title="View applications under this account.">{{ name }}</a>
+      </div>
+      <div class="col col-height s2 valign-wrapper">
+        <a class="btn-floating btn-small white hoverable">
+          <i class="material-icons modal-acc-edit-trigger black-text" acc-name="{{ name }}" title="Edit this account.">edit</i>
+        </a>
+        <a class="btn-floating btn-small white hoverable">
+          <i class="material-icons modal-acc-delete-trigger black-text" acc-name="{{ name }}" title="Delete this account.">delete</i>
+        </a>
+      </div>
+    </div>
+  {% endfor %}
 
   {% set url = "/accounts?keyword=" ~ keyword ~ "&order_by=" ~ order_by ~ "&dir=" ~ dir %}
   {% include 'partials/pagination.twig' %}
