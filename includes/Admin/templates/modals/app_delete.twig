@@ -1,13 +1,12 @@
 <!-- Delete application modal -->
 <div id="modal-app-delete" class="modal">
-  <form method="post" action="/application/delete" id="application-delete">
+  <form method="post" action="/applications/delete" id="application-delete">
     <input type="hidden" name="delete-app-appid" id="delete-app-appid" value="">
     <div class="modal-content">
       <h4>Delete Application</h4>
 
       <div class="modal-content">
-        <p>Delete application: "<span id="delete-app-name"></span>"?</p>
-        <p class="red-text">WARNING: this will also delete any API resources and assigned user roles belonging to the application!</p>
+        <p class="red-text">Delete application: "<span id="delete-app-name"></span>"?</p>
       </div>
 
       <div class="row">
