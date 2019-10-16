@@ -8,18 +8,9 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use PHPMailer\PHPMailer\PHPMailer;
 use phpmailerException;
-use Gaterdata\Admin\Account;
-use Gaterdata\Admin\Administrator;
-use Gaterdata\Admin\ApplicationUserRole;
-use Gaterdata\Admin\Manager;
-use Gaterdata\Admin\UserAccount;
 use Gaterdata\Core\ApiException;
 use Gaterdata\Core\Hash;
-use Gaterdata\Admin\User;
-use Gaterdata\Admin\UserRole;
-use Gaterdata\Admin\Role;
-use Gaterdata\Admin\Application;
-use Gaterdata\Admin\Invite;
+use GuzzleHttp\Client;
 
 /**
  * Class CtrlUser.
@@ -28,27 +19,16 @@ use Gaterdata\Admin\Invite;
  */
 class CtrlUser extends CtrlBase {
 
-  protected $permittedRoles = ['Administrator', 'Manager'];
-  protected $mailSettings;
-
   /**
-   * CtrlUser constructor.
-   *
-   * @param array $dbSettings
-   *   DB settings array.
-   * @param array $mailSettings
-   *   Mail settings array.
-   * @param int $paginationStep
-   *   Pagination step.
-   * @param \Slim\Views\Twig $view
-   *   View container.
-   * @param \Slim\Flash\Messages $flash
-   *   Flash messages container.
+   * Roles allowed to visit the page.
+   * 
+   * @var array
    */
-  public function __construct(array $dbSettings, array $mailSettings, $paginationStep, Twig $view, Messages $flash) {
-    $this->mailSettings = $mailSettings;
-    parent::__construct($dbSettings, $paginationStep, $view, $flash);
-  }
+  const PERMITTED_ROLES = [
+    'Administrator',
+    'Account manager',
+    'Application manager',
+  ];
 
   /**
    * Display the users page.
@@ -62,98 +42,66 @@ class CtrlUser extends CtrlBase {
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   public function index(Request $request, Response $response, array $args) {
-    $this->permittedRoles = ['Administrator', 'Manager'];
-    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-    $roles = $this->getRoles($uid);
-    if (!$this->checkAccess($roles)) {
-      $this->flash->addMessage('error', 'View users: access denied');
-      return $response->withRedirect('/');
+    // Validate access.
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+    $this->getAccessRights($response, $username);
+    if (!$this->checkAccess()) {
+      $this->flash->addMessage('error', 'Access admin: access denied');
+      return $response->withStatus(302)->withHeader('Location', '/');
     }
-    $menu = $this->getMenus($roles);
 
+    $menu = $this->getMenus();
 
     // Filter params.
+    $query = [];
     $allParams = $request->getParams();
-    $params = [];
     if (!empty($allParams['keyword'])) {
-      $params['keyword'] = $allParams['keyword'];
+      $query['keyword'] = $allParams['keyword'];
     }
-    $params['order_by'] = !empty($allParams['order_by']) ? $allParams['order_by'] : 'name';
-    $params['dir'] = isset($allParams['dir']) ? $allParams['dir'] : 'ASC';
-    $page = isset($allParams['page']) ? $allParams['page'] : 1;
-
+    if (!empty($allParams['order_by'])) {
+      $query['order_by'] = $allParams['order_by'];
+    }
+    if (!empty($allParams['direction'])) {
+      $query['direction'] = $allParams['direction'];
+    }
+    $page = isset($params['page']) ? $allParams['page'] : 1;
+//    var_dump($allParams);die();
+    
     try {
-      $administratorHlp = new Administrator($this->dbSettings);
-      $applicationHlp = new Application($this->dbSettings);
-      $managerHlp = new Manager($this->dbSettings);
-      $accountHlp = new Account($this->dbSettings);
-      $applicationUserRoleHlp = new ApplicationUserRole($this->dbSettings);
-      $userHlp = new User($this->dbSettings);
-      $roleHlp = new Role($this->dbSettings);
-
-      // Find all roles.
-      $roles = $roleHlp->findAll();
-
-      // Find all accounts associated with the current user.
-      if (in_array('Administrator', $roles)) {
-        $accounts = $accountHlp->findAll($params);
-      } else {
-        $results = $managerHlp->findByUserId($uid);
-        $accounts = [];
-        foreach ($results as $result) {
-          $accounts[] = $accountHlp->findByAccountId($result['accid']);
-        }
+      $domain = $this->settings['api']['url'];
+      $account = $this->settings['api']['core_account'];
+      $application = $this->settings['api']['core_application'];
+      $token = $_SESSION['token'];
+      $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+      $result = $client->request('GET', 'user', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+        'query' => $query,
+      ]);
+      $users = (array) json_decode($result->getBody()->getContents());
+    } 
+    catch (ClientException $e) {
+      $result = $e->getResponse();
+      $this->flash->addMessage('error', $this->getErrorMessage($e));
+      switch ($result->getStatusCode()) {
+        case 401: 
+          return $response->withStatus(302)->withHeader('Location', '/login');
+          break;
+        default:
+          $users = [];
+          break;
       }
-
-      var_dump($accounts);
-
-      // Find all administrators.
-      $administrators = [];
-      $results = $administratorHlp->findAll();
-      foreach ($results as $result) {
-        $administrators[] = $userHlp->findByUserId($result['uid']);
-      }
-
-      // Find applications and managers and manager accounts.
-      $applications = $managers = $managerAccounts = [];
-      foreach ($accounts as $account) {
-        $applications = array_merge($applications, $applicationHlp->findByAccid($account['accid']));
-        $results = $managerHlp->findByAccountId($account['accid']);
-        foreach ($results as $result) {
-          if (!isset($managers[$result['uid']])) {
-            $managers[$result['uid']] = $userHlp->findByUserId($result['uid']);
-          }
-          $managerAccounts[$result['uid']][] = $account;
-        }
-      }
-
-      // Find users for the applications.
-      $users = [];
-      foreach ($applications as $application) {
-        $results = $applicationUserRoleHlp->findByAppid($application['appid']);
-        foreach ($results as $result) {
-          if (!isset($users[$result['uid']])) {
-            $users[$result['uid']] = $userHlp->findByUserId($result['uid']);
-          }
-        }
-      }
-    } catch (ApiException $e) {
-      $users = [];
-      $this->flash->addMessage('error', $e->getMessage());
     }
 
     return $this->view->render($response, 'users.twig', [
       'menu' => $menu,
-      'roles' => $roles,
-      'accounts' => $accounts,
-      'applications' => $applications,
-      'administrators' => $administrators,
-      'managers' => $managers,
-      'manager_accounts' => $managerAccounts,
       'users' => $users,
-      'params' => $params,
+      'params' => $allParams,
     ]);
   }
 
