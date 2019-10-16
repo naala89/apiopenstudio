@@ -1,30 +1,61 @@
 {
-  "name": "User read",
-  "description": "Fetch a user.",
-  "uri": "user",
-  "method": "get",
-  "ttl": 0,
-  "security": {
-    "function": "token_roles",
-    "id": "user_read_security",
-    "token": {
-      "function": "bearer_token",
-      "id": "user_read_token"
+  "name":"User read",
+  "description":"Fetch a user.",
+  "uri":"user",
+  "method":"get",
+  "ttl":0,
+  "security":{
+    "function":"token_roles",
+    "id":"user_read_security",
+    "token":{
+      "function":"bearer_token",
+      "id":"user_read_token"
     },
-    "roles": [
+    "roles":[
       "Administrator",
       "Account manager",
       "Application manager",
       "Developer"
     ]
   },
-  "process": {
-    "function": "user",
-    "id": "user_read_process",
-    "username": {
-      "function": "var_get",
-      "id": "user_read_username",
-      "key": "username"
+  "process":{
+    "function":"user_read",
+    "id":"user_read_process",
+    "uid":{
+      "function":"var_get",
+      "id":"user_read_uid",
+      "nullable":true,
+      "key":"uid"
+    },
+    "username":{
+      "function":"var_get",
+      "id":"user_read_username",
+      "nullable":true,
+      "key":"username"
+    },
+    "email":{
+      "function":"var_get",
+      "id":"user_read_email",
+      "nullable":true,
+      "key":"email"
+    },
+    "keyword":{
+      "function":"var_get",
+      "id":"user_read_keyword",
+      "nullable":true,
+      "key":"keyword"
+    },
+    "orderBy":{
+      "function":"var_get",
+      "id":"user_read_order_by",
+      "nullable":true,
+      "key":"order_by"
+    },
+    "direction":{
+      "function":"var_get",
+      "id":"user_read_direction",
+      "nullable":true,
+      "key":"direction"
     }
   }
 }

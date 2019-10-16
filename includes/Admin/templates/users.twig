@@ -4,198 +4,70 @@
 
 {% block content %}
   <div class="row">
-    <p>Manage your users here. View, invite, remove users and assign them roles in applications.</p>
+    <p>Manage your users here. View, invite, edit and remove users.</p>
   </div>
   <div class="row">
     <form method="get" action="/users">
       <div class="col s1">
         <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-user-invite"><i class="material-icons">add</i></a>
       </div>
-      <div class="input-field col s4 offset-s5">
-        <select name="filter-account">
-          {% set selected = '' %}
-          {% if accountFilter == 'all' %}
-            {% set selected = 'selected' %}
-          {% endif %}
-          <option value="all" {{ selected }}>All</option>
-          {% for account in accounts %}
-            {% set selected = '' %}
-            {% if accountFilter == account.accid %}
-              {% set selected = 'selected' %}
-            {% endif %}
-            <option value="{{ account.accid }}" {{ selected }}>{{ account.name }}</option>
-          {% endfor %}
-        </select>
-        <label>Filter by Account</label>
+      <div class="col s5">
+        <div class="input-field">
+          <label for="keyword">Search text</label>
+          <input type="text" class="validate" name="keyword" value="{{ params['keyword'] }}">
+        </div>
       </div>
-      <div class="input-field col s4 offset-s5">
-        <select name="filter-application">
-          {% set selected = '' %}
-          {% if applicationFilter == 'all' %}
-            {% set selected = 'selected' %}
-          {% endif %}
-          <option value="all" {{ selected }}>All</option>
-          {% for application in applications %}
-            {% set selected = '' %}
-            {% if applicationFilter == application.appid %}
-              {% set selected = 'selected' %}
-            {% endif %}
-            <option value="{{ application.appid }}" {{ selected }}>{{ application.name }}</option>
-          {% endfor %}
-        </select>
-        <label>Filter by Application</label>
+      <div class="col s2">
+        <div class="input-field">
+          <select class="input-field" name="order_by">
+            <option value="username" {% if params['order_by'] == "username" %}selected{% endif %}>Username</option>
+            <option value="name_first" {% if params['order_by'] == "name_first" %}selected{% endif %}>First name</option>
+            <option value="name_last" {% if params['order_by'] == "name_last" %}selected{% endif %}>Last name</option>
+            <option value="email" {% if params['order_by'] == "email" %}selected{% endif %}>Email</option>
+          </select>
+          <label for="search">Sort by</label>
+        </div>
       </div>
-      <div class="input-field col s4 offset-s5">
-        <select name="filter-role">
-          {% set selected = '' %}
-          {% if roleFilter == 'all' %}
-            {% set selected = 'selected' %}
-          {% endif %}
-          <option value="all" {{ selected }}>All</option>
-          {% for role in roles %}
-            {% set selected = '' %}
-            {% if roleFilter == role.rid %}
-              {% set selected = 'selected' %}
-            {% endif %}
-            <option value="{{ role.rid }}" {{ selected }}>{{ role.name }}</option>
-          {% endfor %}
-        </select>
-        <label>Filter by Role</label>
+      <div class="col s2">
+        <div class="input-field">
+          <select class="input-field" name="direction">
+            <option value="asc" {% if params.direction == "asc" %}selected{% endif %}>Ascending</option>
+            <option value="desc" {% if params.direction == "desc" %}selected{% endif %}>Descending</option>
+          </select>
+          <label for="direction">Direction</label>
+        </div>
       </div>
       <div class="input-field col s2">
-        <button class="btn waves-effect waves-light" type="submit" name="keyword">Filter
+        <button class="btn waves-effect waves-light" type="submit">Filter
           <i class="material-icons right">send</i>
         </button>
       </div>
     </form>
   </div>
 
-  <div class="row">
-    <div class="card-panel">
-      <h5>Administrators</h5>
-      <table class="responsive-table highlight">
-        <thead>
-        <tr>
-          <th>Username</th>
-          <th>First name</th>
-          <th>Last name</th>
-          <th>Email</th>
-          <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-          {% for administrator in administrators %}
-            <tr>
-              <td>{{ administrator.username }}</td>
-              <td>{{ administrator.nameFirst }}</td>
-              <td>{{ administrator.nameLast }}</td>
-              <td>{{ administrator.email }}</td>
-              <td>
-                <a class="btn-floating btn-small white hoverable">
-                  <i class="material-icons modal-owner-edit-trigger black-text" user-account-id="{{ administrator.uid }}">edit</i>
-                </a>
-                <a class="btn-floating btn-small white hoverable">
-                  <i class="material-icons modal-owner-delete-trigger black-text" user-account-id="{{ administrator.uid }}">delete</i>
-                </a>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+  <div class="row teal lighten-1 white-text">
+    <h6 class="col col-height s3 valign-wrapper">Username</h6>
+    <h6 class="col col-height s2 valign-wrapper">First name</h6>
+    <h6 class="col col-height s2 valign-wrapper">Last name</h6>
+    <h6 class="col col-height s3 valign-wrapper">Email</h6>
+    <h6 class="col col-height s2 valign-wrapper">Actions</h6>
   </div>
-
-  <div class="row">
-    <div class="card-panel">
-      <h5>Account managers</h5>
-      <table class="responsive-table highlight">
-        <thead>
-        <tr>
-          <th>Username</th>
-          <th>First name</th>
-          <th>Last name</th>
-          <th>Email</th>
-          <th>Application</th>
-          <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for manager in managers %}
-          <tr>
-            <td>{{ manager.username }}</td>
-            <td>{{ manager.nameFirst }}</td>
-            <td>{{ manager.nameLast }}</td>
-            <td>{{ manager.email }}</td>
-            <td>
-              <table class="responsive-table highlight">
-                <tbody>
-                {% for manager_account in manager_accounts %}
-                  <td>{{ application.name }}</td>
-                {% endfor %}
-                </tbody>
-              </table>
-            </td>
-
-            <td>
-              <a class="btn-floating btn-small white hoverable" href="/user/edit/{{ user.uaid }}">
-                <i class="material-icons black-text">edit</i>
-              </a>
-              <a class="btn-floating btn-small white hoverable">
-                <i class="material-icons modal-user-delete-trigger black-text" user-account-id="{{ user.uaid }}" user-name="{{ user.username }}">delete</i>
-              </a>
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
+  {% for uid, user in users %}
+    <div class="row hoverable">
+      <div class="col col-height s3 valign-wrapper">{{ user.username }}</div>
+      <div class="col col-height s2 valign-wrapper">{{ user.nameFirst }}</div>
+      <div class="col col-height s2 valign-wrapper">{{ user.nameLast }}</div>
+      <div class="col col-height s3 valign-wrapper">{{ user.email }}</div>
+      <div class="col col-height s2 valign-wrapper">
+        <a class="btn-floating btn-small white hoverable">
+          <i class="material-icons modal-acc-edit-trigger black-text" acc-name="{{ name }}" title="Edit this account.">edit</i>
+        </a>
+        <a class="btn-floating btn-small white hoverable">
+          <i class="material-icons modal-acc-delete-trigger black-text" acc-name="{{ name }}" title="Delete this account.">delete</i>
+        </a>
+      </div>
     </div>
-  </div>
-
-  <div class="row">
-    <div class="card-panel">
-      <h5>Users</h5>
-      <table class="responsive-table highlight">
-        <thead>
-        <tr>
-          <th>Username</th>
-          <th>First name</th>
-          <th>Last name</th>
-          <th>Email</th>
-          <th>Application</th>
-          <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-          <tr>
-            <td>{{ user.username }}</td>
-            <td>{{ user.nameFirst }}</td>
-            <td>{{ user.nameLast }}</td>
-            <td>{{ user.email }}</td>
-            <td>
-              <table class="responsive-table highlight">
-                <tbody>
-                {% for manager_account in manager_accounts %}
-                  <td>{{ application.name }}</td>
-                {% endfor %}
-                </tbody>
-              </table>
-            </td>
-
-            <td>
-              <a class="btn-floating btn-small white hoverable" href="/user/edit/{{ user.uaid }}">
-                <i class="material-icons black-text">edit</i>
-              </a>
-              <a class="btn-floating btn-small white hoverable">
-                <i class="material-icons modal-user-delete-trigger black-text" user-account-id="{{ user.uaid }}" user-name="{{ user.username }}">delete</i>
-              </a>
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
+  {% endfor %}
 
   {% include 'modals/user_invite.twig' %}
 

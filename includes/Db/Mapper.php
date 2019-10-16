@@ -5,6 +5,7 @@ namespace Gaterdata\Db;
 use Gaterdata\Core\ApiException;
 use Cascade\Cascade;
 use ADOConnection;
+use Gaterdata\Core\Debug;
 
 abstract class Mapper {
 
@@ -121,7 +122,7 @@ abstract class Mapper {
         if (stripos($sql, 'where') !== FALSE) {
           throw new ApiException('Trying to add column filters on SQL with WHERE clause: ' . $sql);
         }
-        $sql .= ' WHERE ' . implode(' AND ', $arr);
+        $sql .= ' WHERE (' . implode(' OR ', $arr) . ')';
       }
     }
 
@@ -142,8 +143,10 @@ abstract class Mapper {
       }
       $recordSet = $this->db->selectLimit($sql, (integer) $params['limit'], (integer) $params['offset'], $bindParams);
     }
+    else {
+      $recordSet = $this->db->Execute($sql, $bindParams);
+    }
 
-    $recordSet = $this->db->Execute($sql, $bindParams);
     if (!$recordSet) {
       $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
       Cascade::getLogger('gaterdata')->error($message);

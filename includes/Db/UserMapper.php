@@ -95,15 +95,18 @@ class UserMapper extends Mapper {
   /**
    * Find all user.
    *
+   * @param array $params
+   *   @see \Gaterdata\Db\Mapper.
+   *
    * @return array
    *   $array of Users.
    *
-   * @throws ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
-  public function findAll() {
+  public function findAll($params = []) {
     $sql = 'SELECT * FROM user';
     $bindParams = [];
-    return $this->fetchRows($sql, $bindParams);
+    return $this->fetchRows($sql, $bindParams, $params);
   }
 
   /**
@@ -115,7 +118,7 @@ class UserMapper extends Mapper {
    * @return \Gaterdata\Db\User
    *   User object.
    *
-   * @throws ApiException
+   * @throws \Gaterdata\Core\ApiException
    */
   public function findByUid($uid) {
     $sql = 'SELECT * FROM user WHERE uid = ?';
