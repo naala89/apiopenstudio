@@ -27,6 +27,8 @@ class Config {
    * 
    * @return string|NULL
    *  The value of the config key or NULL.
+   *
+   * @throws \Gaterdata\Core\ApiException
    */
   public function __get($key) {
     if (is_string($key)) {
