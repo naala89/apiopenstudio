@@ -1,0 +1,108 @@
+name: User update
+
+description: Update a users details.
+
+uri: user
+
+method: put
+
+ttl: 0
+
+security:
+  function: token_roles
+  id: user_update_security
+  token:
+    function: bearer_token
+    id: user_update_token
+  roles:
+    - Administrator
+    - Account manager
+    - Application manager
+
+process:
+  function: user_update
+  id: user_update_process
+  uid:
+    function: var_uri
+    id: user_update_uid
+    index: 0
+  username:
+    function: var_get
+    id: user_update_username
+    nullable: true
+    key: username
+  honorific:
+    function: var_get
+    id: user_update_honorific
+    nullable: true
+    key: honorific
+  name_first:
+    function: var_get
+    id: user_update_name_first
+    nullable: true
+    key: name_first
+  name_last:
+    function: var_get
+    id: user_update_name_last
+    nullable: true
+    key: name_last
+  email:
+    function: var_get
+    id: user_update_email
+    nullable: true
+    key: email
+  company:
+    function: var_get
+    id: user_update_company
+    nullable: true
+    key: company
+  website:
+    function: var_get
+    id: user_update_website
+    nullable: true
+    key: website
+  company:
+    function: var_get
+    id: user_update_company
+    nullable: true
+    key: company
+  street_address:
+    function: var_get
+    id: user_update_street_address
+    nullable: true
+    key: street_address
+  suburb:
+    function: var_get
+    id: user_update_suburb
+    nullable: true
+    key: suburb
+  city:
+    function: var_get
+    id: user_update_city
+    nullable: true
+    key: city
+  state:
+    function: var_get
+    id: user_update_state
+    nullable: true
+    key: state
+  country:
+    function: var_get
+    id: user_update_country
+    nullable: true
+    key: country
+  postcode:
+    function: var_get
+    id: user_update_postcode
+    nullable: true
+    key: postcode
+  phone_mobile:
+    function: var_get
+    id: user_update_phone_mobile
+    nullable: true
+    key: phone_mobile
+  phone_work:
+    function: var_get
+    id: user_update_phone_work
+    nullable: true
+    key: phone_work
