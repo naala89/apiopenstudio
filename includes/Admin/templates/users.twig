@@ -59,10 +59,13 @@
       <div class="col col-height s2 valign-wrapper">{{ user.nameLast }}</div>
       <div class="col col-height s3 valign-wrapper">{{ user.email }}</div>
       <div class="col col-height s2 valign-wrapper">
-        <a class="btn-floating btn-small white hoverable">
+        <a class="btn-floating btn-small white hoverable" href="/user/view/{{ user.uid }}"}>
+          <i class="material-icons modal-acc-edit-trigger black-text" acc-name="{{ name }}" title="View this account.">visibility</i>
+        </a>
+        <a class="btn-floating btn-small white hoverable" href="/user/edit/{{ user.uid }}">
           <i class="material-icons modal-acc-edit-trigger black-text" acc-name="{{ name }}" title="Edit this account.">edit</i>
         </a>
-        <a class="btn-floating btn-small white hoverable">
+        <a class="btn-floating btn-small white hoverable" href="/user/delete/{{ user.uid }}">
           <i class="material-icons modal-acc-delete-trigger black-text" acc-name="{{ name }}" title="Delete this account.">delete</i>
         </a>
       </div>

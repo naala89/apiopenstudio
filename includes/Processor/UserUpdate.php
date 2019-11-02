@@ -207,6 +207,9 @@ class UserUpdate extends Core\ProcessorEntity
       }
     }
 
-    return $userMapper->save($user);
+    $userMapper->save($user);
+      $user = $userMapper->findByUid($details['Uid']);
+      return $user->dump();
+
   }
 }

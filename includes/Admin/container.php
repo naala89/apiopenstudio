@@ -6,6 +6,7 @@ use Slim\Http\Uri;
 use Slim\Views\Twig;
 USE Slim\Flash\Messages;
 use Gaterdata\Admin\Controllers\CtrlUser;
+use Gaterdata\Admin\Controllers\CtrlUsers;
 use Gaterdata\Admin\Controllers\CtrlApplication;
 use Gaterdata\Admin\Controllers\CtrlAccount;
 use Gaterdata\Admin\Controllers\CtrlLogin;
@@ -117,6 +118,22 @@ $container['CtrlApplication'] = function (Container $container) {
 };
 
 /**
+ * Register Users controller.
+ *
+ * @param \Slim\Container $container
+ *   Slim container.
+ *
+ * @return Gaterdata\Admin\Controllers\CtrlUsers
+ *   CtrlUser object.
+ */
+$container['CtrlUsers'] = function (Container $container) {
+  $settings = $container->get('settings');
+  $view = $container->get('view');
+  $flash = $container->get('flash');
+  return new CtrlUsers($settings, $view, $flash);
+};
+
+/**
  * Register User controller.
  *
  * @param \Slim\Container $container
@@ -127,8 +144,7 @@ $container['CtrlApplication'] = function (Container $container) {
  */
 $container['CtrlUser'] = function (Container $container) {
   $settings = $container->get('settings');
-  $mailSettings = $container->get('settings')['mail'];
   $view = $container->get('view');
   $flash = $container->get('flash');
-  return new CtrlUser($settings, $mailSettings, $view, $flash);
+  return new CtrlUser($settings, $view, $flash);
 };
