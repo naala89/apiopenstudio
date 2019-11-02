@@ -245,7 +245,7 @@ switch ($step) {
           throw new ApiException('Could not find the newly ccreated user.');
         }
         $roleMapper = new Db\RoleMapper($db);
-        $role = $roleMapper->findByName('Owner');
+        $role = $roleMapper->findByName('Administrator');
         $rid = $role->getRid();
         $userRole = new Db\UserRole(
           NULL,
