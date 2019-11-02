@@ -42,10 +42,10 @@ $app->get('/users', 'CtrlUsers:index')->add(new Authentication($container, $sett
 $app->get('/user/view/{uid}', 'CtrlUser:index')->add(new Authentication($container, $settings, '/login'));
 $app->get('/user/edit/{uid}', 'CtrlUser:index')->add(new Authentication($container, $settings, '/login'));
 $app->post('/user/edit/{uid}', 'CtrlUser:update')->add(new Authentication($container, $settings, '/login'));
+$app->get('/user/delete/{uid}', 'CtrlUser:delete')->add(new Authentication($container, $settings, '/login'));
 $app->post('/user/invite', 'CtrlUser:invite')->add(new Authentication($container, $settings, '/login'));
 $app->get('/users/register/{token}', 'CtrlUser:register')->add(new Authentication($container, $settings, '/login'));
 $app->post('/users/register', 'CtrlUser:register')->add(new Authentication($container, $settings, '/login'));
-$app->get('/users/delete/{uaid}', 'CtrlUser:delete')->add(new Authentication($container, $settings, '/login'));
 
 /**
  * User roles

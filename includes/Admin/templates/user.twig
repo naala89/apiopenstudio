@@ -24,10 +24,17 @@
           <label for="create-app-name">UID</label>
         </div>
         <div class="input-field col s12">
+          <select id="active" name="active" class="validate" required {% if mode == 'view' %}disabled{% endif %}>
+            <option value=""></option>
+            <option value="0" {% if user.active == 0 %}selected{% endif %}>False</option>
+            <option value="1" {% if user.active == 1 %}selected{% endif %}>True</option>
+          </select>
+          <label for="active">Active <span class="red-text">*</span></label>
+        </div>
+        <div class="input-field col s12">
           <input type="text" name="name_first" required {% if mode == 'view' %}disabled{% endif %} value="{{ user.username }}">
           <label for="create-app-name">Username</label>
         </div>
-
         <div class="input-field col s12">
           <select id="honorific" name="honorific" class="validate" required {% if mode == 'view' %}disabled{% endif %}>
             <option value=""></option>
