@@ -48,11 +48,7 @@ switch ($step) {
   case 0:
     // Check user wants to continue.
     $template = $twig->load("install/install_$from.twig");
-    $messages[] = [
-      'type' => 'error',
-      'text' => 'Continuing will create a new database and erase the current database, if it exists.<br />',
-    ];
-    $message['text'] .= '<a href="login">Click here to abort and login</a>.';
+    $messages['error'][] = 'Continuing will create a new database and erase the current database, if it exists.<br />';
     echo $template->render(['messages' => $messages, 'menu' => $menu]);
     exit;
 
@@ -71,23 +67,20 @@ switch ($step) {
     $yaml = file_get_contents($settings->__get(['api', 'base_path']) . $settings->__get(['db', 'definition_path']));
     $definition = \Spyc::YAMLLoadString($yaml);
     $template = $twig->load('install/install_1.twig');
-    $message = [
-      'type' => 'info',
-      'text' => 'Creating database tables...<br />',
-    ];
+    $messages['info'][] = 'Creating database tables...';
 
     // Create the database, user and permissions.
     $sql = 'CREATE DATABASE ' . $settings->__get(['db', 'database']) . 'IF NOT EXISTS';
     $db->execute($sql);
-    $message['text'] .= 'CREATE DATABASE success!<br />';
+    $messages['info'][] = 'CREATE DATABASE success!';
     $sql = 'CREATE USER IF NOT EXISTS "' . $settings->__get(['db', 'username']) . '"@"'  . $settings->__get(['db', 'host']) . '" IDENTIFIED BY "' . $settings->__get(['db', 'password']) . '"';
     $db->execute($sql);
-    $message['text'] .= 'CREATE USER success!<br />';
+    $messages['info'][] = 'CREATE USER success!';
     $sql = 'GRANT ALL PRIVILEGES ON * . * TO "' . $settings->__get(['db', 'username']) . '"@"'  . $settings->__get(['db', 'host']) . '"';
     $db->execute($sql);
     $sql = 'FLUSH PRIVILEGES';
     $db->execute($sql);
-    $message['text'] .= 'GRANT PRIVILEGES success!<br />';
+    $messages['info'][] = 'GRANT PRIVILEGES success!';
 
     // Parse the DB  table definition array.
     foreach ($definition as $table => $tableData) {
@@ -97,10 +90,9 @@ switch ($step) {
         // Column definitions.
         $sqlColumn = "`$column` ";
         if (!isset($columnData['type'])) {
-          $message['text'] .= "CREATE TABLE `$table` fail!<br />";
-          $message['text'] .= "Type missing in the metadata.";
-          $message['type'] = 'error';
-          echo $template->render(['messages' => [$message], 'menu' => $menu]);
+          $messages['error'][] = "CREATE TABLE `$table` fail!";
+          $messages['error'][] = 'Type missing in the metadata.';
+          echo $template->render(['messages' => $messages, 'menu' => $menu]);
           exit;
         }
         $sqlColumn .= ' ' . $columnData['type'];
@@ -118,13 +110,12 @@ switch ($step) {
         // Stop if table create fails.
 
         $logger->error($e->gettrace());
-        $message['text'] .= "CREATE TABLE `$table` fail!<br />";
-        $message['text'] .= "Processing halted. Please check the logs and retry.";
-        $message['type'] = 'error';
-        echo $template->render(['messages' => [$message], 'menu' => $menu]);
+        $messages['error'][] = "CREATE TABLE `$table` fail!";
+        $messages['error'][] = 'Processing halted. Please check the logs and retry';
+        echo $template->render(['messages' => $messages, 'menu' => $menu]);
         exit;
       } else {
-        $message['text'] .= "CREATE TABLE `$table` success!<br/>";
+        $messages['info'][] = "CREATE TABLE `$table` success!";
       }
       // Add data if required.
       if (isset($tableData['data'])) {
@@ -137,19 +128,18 @@ switch ($step) {
           }
           $sqlRow = "INSERT INTO `$table` (" . implode(', ', $keys) . ') VALUES (' . implode(', ', $values) . ');';
           if (empty($db->execute($sqlRow))) {
-            $message['text'] .= "INSERT into `$table` fail!<br />";
-            $message['text'] .= "Processing halted. Please check the logs and retry.";
-            $message['type'] = 'error';
-            echo $template->render(['messages' => [$message], 'menu' => $menu]);
+            $messages['error'][] = "INSERT into `$table` fail!";
+            $messages['error'][] = 'Processing halted. Please check the logs and retry';
+            echo $template->render(['messages' => $messages, 'menu' => $menu]);
             exit;
           }
         }
-        $message['text'] .= "INSERT into `$table` success!<br/>";
+        $messages['info'][] = "INSERT into `$table` success!";
       }
     }
 
-    $message['text'] .= 'Database Successfully created!<br />';
-    echo $template->render(['messages' => [$message], 'menu' => $menu]);
+    $messages['info'][] = 'Database Successfully created!<br />';
+    echo $template->render(['messages' => $messages, 'menu' => $menu]);
     exit;
     break;
 
@@ -180,10 +170,9 @@ switch ($step) {
         empty($nameFirst) ||
         empty($nameLast)) {
         // Missing mandatory fields.
-        $message['text'] = "Required fields not entered.";
-        $message['type'] = 'error';
+        $messages['error'][] = 'Required fields not entered.';
         $template = $twig->load('install/install_2.twig');
-        echo $template->render(['messages' => [$message], 'menu' => $menu]);
+        echo $template->render(['messages' => $messages, 'menu' => $menu]);
         exit;
       }
       // Create the helper classes.
@@ -191,10 +180,9 @@ switch ($step) {
       $user = $userMapper->findByUsername($username);
       if (!empty($user->getUid())) {
         // User already created, user must have revisited the page.
-        $message['text'] = "User already exists, please restart the installation process.";
-        $message['type'] = 'error';
+        $messages['error'][] = 'User already exists, please restart the installation process.';
         $template = $twig->load('install/install_2.twig');
-        echo $template->render(['messages' => [$message], 'menu' => $menu]);
+        echo $template->render(['messages' => $messages, 'menu' => $menu]);
         exit;
       }
       try {
@@ -225,13 +213,9 @@ switch ($step) {
 
       } catch (ApiException $e) {
         $template = $twig->load("install/install_$from.twig");
+        $messages['error'][] = 'An error occurred creating your user: ' . $e->getMessage();
         echo $template->render([
-          'messages' => [
-            [
-              'type' => 'error',
-              'text' => 'An error occurred creating your user: ' . $e->getMessage(),
-            ]
-          ],
+          'messages' => $messages,
           'menu' => $menu,
         ]);
         exit;
@@ -242,7 +226,7 @@ switch ($step) {
         $user = $userMapper->findByUsername($username);
         $uid = $user->getUid();
         if (empty($uid)) {
-          throw new ApiException('Could not find the newly ccreated user.');
+          throw new ApiException('Could not find the newly created user.');
         }
         $roleMapper = new Db\RoleMapper($db);
         $role = $roleMapper->findByName('Administrator');
@@ -258,13 +242,9 @@ switch ($step) {
         $userRoleMapper->save($userRole);
       } catch (ApiException $e) {
         $template = $twig->load("install/install_$from.twig");
+        $messages['error'][] = 'An error occurred creating your Owner role: ' . $e->getMessage();
         echo $template->render([
-          'messages' => [
-            [
-              'type' => 'error',
-              'text' => 'An error occurred creating your Owner role: ' . $e->getMessage(),
-            ]
-          ],
+          'messages' => $messages,
           'menu' => $menu,
         ]);
         exit;
@@ -272,7 +252,7 @@ switch ($step) {
 
       // User created, continue to next page.
       $template = $twig->load('install/install_3.twig');
-      echo $template->render(['menu' => $menu, 'uid' => $newUser['uid']]);
+      echo $template->render(['menu' => $menu, 'username' => $username]);
       exit;
     }
 
