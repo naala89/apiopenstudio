@@ -2,6 +2,10 @@
 
 namespace Gaterdata\Admin\Controllers;
 
+use Gaterdata\Core\Debug;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
+use Psr\Http\Message\ResponseInterface;
 use Slim\Flash\Messages;
 use Slim\Views\Twig;
 use Slim\Http\Request;
@@ -31,19 +35,19 @@ class CtrlUser extends CtrlBase {
   ];
 
   /**
-   * Display the users page.
+   * Display the user page.
    *
-   * @param \Slim\Http\Request $request
+   * @param Request $request
    *   Request object.
-   * @param \Slim\Http\Response $response
+   * @param Response $response
    *   Response object.
    * @param array $args
    *   Request args.
    *
-   * @return \Psr\Http\Message\ResponseInterface
+   * @return ResponseInterface
    *   Response.
    *
-   * @throws \GuzzleHttp\Exception\GuzzleException
+   * @throws GuzzleException
    */
   public function index(Request $request, Response $response, array $args) {
     // Validate access.
@@ -55,22 +59,9 @@ class CtrlUser extends CtrlBase {
     }
 
     $menu = $this->getMenus();
+    $uid = $args['uid'];
+    $mode = strpos($request->getUri()->getPath(), 'edit') !== FALSE ? 'edit' : 'view';
 
-    // Filter params.
-    $query = [];
-    $allParams = $request->getParams();
-    if (!empty($allParams['keyword'])) {
-      $query['keyword'] = $allParams['keyword'];
-    }
-    if (!empty($allParams['order_by'])) {
-      $query['order_by'] = $allParams['order_by'];
-    }
-    if (!empty($allParams['direction'])) {
-      $query['direction'] = $allParams['direction'];
-    }
-    $page = isset($params['page']) ? $allParams['page'] : 1;
-//    var_dump($allParams);die();
-    
     try {
       $domain = $this->settings['api']['url'];
       $account = $this->settings['api']['core_account'];
@@ -81,9 +72,11 @@ class CtrlUser extends CtrlBase {
         'headers' => [
           'Authorization' => "Bearer $token",
         ],
-        'query' => $query,
+        'query' => [
+          'uid' => $uid,
+        ],
       ]);
-      $users = (array) json_decode($result->getBody()->getContents());
+      $user = (array) json_decode($result->getBody()->getContents());
     } 
     catch (ClientException $e) {
       $result = $e->getResponse();
@@ -93,15 +86,99 @@ class CtrlUser extends CtrlBase {
           return $response->withStatus(302)->withHeader('Location', '/login');
           break;
         default:
-          $users = [];
+          $user = [];
           break;
       }
     }
 
-    return $this->view->render($response, 'users.twig', [
+    return $this->view->render($response, 'user.twig', [
       'menu' => $menu,
-      'users' => $users,
-      'params' => $allParams,
+      'user' => $user,
+      'mode' => $mode,
+    ]);
+  }
+
+  /**
+   * Update a user.
+   *
+   * @param Request $request
+   *   Request object.
+   * @param Response $response
+   *   Response object.
+   * @param array $args
+   *   Request args.
+   *
+   * @return ResponseInterface
+   *   Response.
+   *
+   * @throws GuzzleException
+   */
+  public function update(Request $request, Response $response, array $args) {
+    // Validate access.
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+    $this->getAccessRights($response, $username);
+    if (!$this->checkAccess()) {
+      $this->flash->addMessage('error', 'Access admin: access denied');
+      return $response->withStatus(302)->withHeader('Location', '/');
+    }
+
+    $menu = $this->getMenus();
+    $allPostVars = $request->getParams();
+    $uid = $args['uid'];
+
+    try {
+      $domain = $this->settings['api']['url'];
+      $account = $this->settings['api']['core_account'];
+      $application = $this->settings['api']['core_application'];
+      $token = $_SESSION['token'];
+      $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+      $result = $client->request('PUT', "user/$uid", [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+        'query' => $allPostVars,
+      ]);
+    }
+    catch (ClientException $e) {
+      $result = $e->getResponse();
+      $this->flash->addMessage('error', $this->getErrorMessage($e));
+      switch ($result->getStatusCode()) {
+        case 401:
+          return $response->withStatus(302)->withHeader('Location', '/login');
+          break;
+        default:
+          break;
+      }
+    }
+
+    try {
+      $result = $client->request('GET', 'user', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+        'query' => [
+          'uid' => $uid,
+        ],
+      ]);
+      $user = (array) json_decode($result->getBody()->getContents());
+    }
+    catch (ClientException $e) {
+      $result = $e->getResponse();
+      $this->flash->addMessage('error', $this->getErrorMessage($e));
+      switch ($result->getStatusCode()) {
+        case 401:
+          return $response->withStatus(302)->withHeader('Location', '/login');
+          break;
+        default:
+          $user = [];
+          break;
+      }
+    }
+
+    return $this->view->render($response, 'user.twig', [
+      'menu' => $menu,
+      'user' => $user,
+      'mode' => 'edit',
     ]);
   }
 
@@ -110,25 +187,25 @@ class CtrlUser extends CtrlBase {
    *
    * The email templates are in /includes/Admin/templates/invite-user.email.twig.
    *
-   * @param \Slim\Http\Request $request
-   *   Request object.
-   * @param \Slim\Http\Response $response
-   *   Response object.
+   * @param Request $request
+   *   Slim request object.
+   * @param Response $response
+   *   Slim response object.
    * @param array $args
-   *   Request args.
+   *   Slim args array
+   * .
+   * @return ResponseInterface|Response
    *
-   * @return \Psr\Http\Message\ResponseInterface
-   *   Response.
+   * @throws \PHPMailer\PHPMailer\Exception
    */
   public function invite(Request $request, Response $response, array $args) {
-    $this->permittedRoles = ['Administrator', 'Manager'];
-    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-    $roles = $this->getRoles($uid);
-    if (!$this->checkAccess($roles)) {
-      $this->flash->addMessage('error', 'Invite user: access denied');
-      return $response->withRedirect('/');
+    // Validate access.
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+    $this->getAccessRights($response, $username);
+    if (!$this->checkAccess()) {
+      $this->flash->addMessage('error', 'Access admin: access denied');
+      return $response->withStatus(302)->withHeader('Location', '/');
     }
-    $menu = $this->getMenus($roles);
 
     $allPostVars = $request->getParsedBody();
     if (empty($email = $allPostVars['invite-email'])) {
@@ -240,7 +317,7 @@ class CtrlUser extends CtrlBase {
    * @param array $args
    *   Request args.
    *
-   * @return \Psr\Http\Message\ResponseInterface
+   * @return ResponseInterface
    *   Response.
    */
   public function register(Request $request, Response $response, array $args) {
@@ -300,7 +377,7 @@ class CtrlUser extends CtrlBase {
    * @param \Slim\Http\Response $response
    *   Response object.
    *
-   * @return \Psr\Http\Message\ResponseInterface
+   * @return ResponseInterface
    *   Response.
    */
   private function createUser($allVars, $menu, $response) {
@@ -422,7 +499,7 @@ class CtrlUser extends CtrlBase {
    * @param array $args
    *   Request args.
    *
-   * @return \Psr\Http\Message\ResponseInterface
+   * @return ResponseInterface
    *   Response.
    */
   public function delete(Request $request, Response $response, array $args) {
