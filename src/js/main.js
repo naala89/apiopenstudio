@@ -51,20 +51,20 @@ $(document).ready(function() {
   });
 
   // Edit user modal.
-  $('.modal-user-edit-trigger').click(function() {
-    var self = $(this);
-    var modal = $('#modal-user-edit');
-    modal.find('#user-name').html(self.attr('user-name'));
-    modal.find('a#delete-user').attr('href', '/user/delete/' + self.attr('user-account-id'));
-    modal.modal('open');
-  });
+  // $('.modal-user-edit-trigger').click(function() {
+  //   var self = $(this);
+  //   var modal = $('#modal-user-edit');
+  //   modal.find('#user-name').html(self.attr('user-name'));
+  //   modal.find('a#delete-user').attr('href', '/user/delete/' + self.attr('user-account-id'));
+  //   modal.modal('open');
+  // });
 
   // Delete user modal.
   $('.modal-user-delete-trigger').click(function() {
     var self = $(this);
     var modal = $('#modal-user-delete');
-    modal.find('#user-name').html(self.attr('user-name'));
-    modal.find('a#delete-user').attr('href', '/user/delete/' + self.attr('user-account-id'));
+    modal.find('#user-name').html(self.attr('delete-user-username'));
+    modal.find('a#delete-user').attr('href', '/user/delete/' + self.attr('delete-user-uid'));
     modal.modal('open');
   });
 

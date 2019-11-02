@@ -110,6 +110,7 @@ class CtrlUsers extends CtrlBase {
       'page' => $page,
       'pages' => $pages,
       'params' => $allParams,
+      'messages' => $this->flash->getMessages(),
     ]);
   }
 

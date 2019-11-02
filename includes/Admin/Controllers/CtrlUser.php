@@ -183,6 +183,61 @@ class CtrlUser extends CtrlBase {
   }
 
   /**
+   * Delete a user account and its associated roles.
+   *
+   * @param \Slim\Http\Request $request
+   *   Request object.
+   * @param \Slim\Http\Response $response
+   *   Response object.
+   * @param array $args
+   *   Request args.
+   *
+   * @return ResponseInterface
+   *   Response.
+   *
+   * @throws GuzzleException
+   */
+  public function delete(Request $request, Response $response, array $args) {
+    // Validate access.
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+    $this->getAccessRights($response, $username);
+    if (!$this->checkAccess()) {
+      $this->flash->addMessage('error', 'Access admin: access denied');
+      return $response->withStatus(302)->withHeader('Location', '/');
+    }
+
+    $menu = $this->getMenus();
+    $uid = $args['uid'];
+
+    try {
+      $domain = $this->settings['api']['url'];
+      $account = $this->settings['api']['core_account'];
+      $application = $this->settings['api']['core_application'];
+      $token = $_SESSION['token'];
+      $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+      $result = $client->request('DELETE', "user/$uid", [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+      ]);
+      $this->flash->addMessage('info', 'User successfully deleted.');
+    }
+    catch (ClientException $e) {
+      $result = $e->getResponse();
+      $this->flash->addMessage('error', $this->getErrorMessage($e));
+      switch ($result->getStatusCode()) {
+        case 401:
+          return $response->withStatus(302)->withHeader('Location', '/login');
+          break;
+        default:
+          break;
+      }
+    }
+
+    return $response->withStatus(302)->withHeader('Location', '/users');
+  }
+
+  /**
    * Send a user an email with a token to register.
    *
    * The email templates are in /includes/Admin/templates/invite-user.email.twig.
@@ -486,69 +541,6 @@ class CtrlUser extends CtrlBase {
     return $this->view->render($response, 'login.twig', [
       'menu' => $menu,
       'message' => $message,
-    ]);
-  }
-
-  /**
-   * Delete a user account and its associated roles.
-   *
-   * @param \Slim\Http\Request $request
-   *   Request object.
-   * @param \Slim\Http\Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return ResponseInterface
-   *   Response.
-   */
-  public function delete(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
-    $roles = $this->getRoles($uaid);
-    if (!$this->checkAccess($roles)) {
-      $response->withRedirect('/');
-    }
-    $menu = $this->getMenus($roles);
-    if (empty($args['uaid'])) {
-      return $this->view->render($response, 'users.twig', [
-        'menu' => $menu,
-        'message' => [
-          'type' => 'error',
-          'text' => 'Invalid user account ID specified.',
-        ]
-      ]);
-    }
-
-    $userAccountHlp = new UserAccount($this->dbSettings);
-    $userAccount = $userAccountHlp->findByUaid($args['uaid']);
-    if (empty($userAccount['uaid'])) {
-      return $this->view->render($response, 'users.twig', [
-        'menu' => $menu,
-        'message' => [
-          'type' => 'error',
-          'text' => 'Invalid user account ID specified.',
-        ]
-      ]);
-    }
-
-    try {
-      $userAccountHlp->delete();
-    } catch (ApiException $e) {
-      return $this->view->render($response, 'users.twig', [
-        'menu' => $menu,
-        'message' => [
-          'type' => 'error',
-          'text' => 'User account deletion failed: ' . $e->getMessage(),
-        ]
-      ]);
-    }
-
-    return $this->view->render($response, 'users.twig', [
-      'menu' => $menu,
-      'message' => [
-        'type' => 'info',
-        'text' => 'User account and their associated roles successfully deleted.',
-      ]
     ]);
   }
 
