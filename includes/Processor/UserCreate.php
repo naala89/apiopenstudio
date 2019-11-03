@@ -1,34 +1,25 @@
 <?php
 
 /**
- * User update.
+ * User create.
  */
 
 namespace Gaterdata\Processor;
 use Gaterdata\Core;
 use Gaterdata\Db;
 
-class UserUpdate extends Core\ProcessorEntity
+class UserCreate extends Core\ProcessorEntity
 {
   protected $details = [
-    'name' => 'User update',
-    'machineName' => 'user_update',
-    'description' => 'Update a single user.',
+    'name' => 'User create',
+    'machineName' => 'user_create',
+    'description' => 'Create a user.',
     'menu' => 'Admin',
     'application' => 'Admin',
     'input' => [
-      'uid' => [
-        'description' => 'The user ID of the user.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer'],
-        'limitValues' => [],
-        'default' => ''
-      ],
       'username' => [
         'description' => 'The username of the user.',
-        'cardinality' => [0, 1],
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],
         'limitTypes' => ['string'],
@@ -37,7 +28,7 @@ class UserUpdate extends Core\ProcessorEntity
       ],
       'honorific' => [
         'description' => 'The honorific of the user.',
-        'cardinality' => [0, 1],
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],
         'limitTypes' => ['string'],
@@ -46,7 +37,7 @@ class UserUpdate extends Core\ProcessorEntity
       ],
       'name_first' => [
         'description' => 'The first name of the user.',
-        'cardinality' => [0, 1],
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],
         'limitTypes' => ['string'],
@@ -55,7 +46,7 @@ class UserUpdate extends Core\ProcessorEntity
       ],
       'name_last' => [
         'description' => 'The last name of the user.',
-        'cardinality' => [0, 1],
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],
         'limitTypes' => ['string'],
@@ -64,7 +55,7 @@ class UserUpdate extends Core\ProcessorEntity
       ],
       'email' => [
         'description' => 'The email of the user.',
-        'cardinality' => [0, 1],
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],
         'limitTypes' => ['string'],
@@ -89,7 +80,7 @@ class UserUpdate extends Core\ProcessorEntity
         'limitValues' => [],
         'default' => ''
       ],
-      'street_address' => [
+      'address_street' => [
         'description' => 'The street address of the user.',
         'cardinality' => [0, 1],
         'literalAllowed' => true,
@@ -98,7 +89,7 @@ class UserUpdate extends Core\ProcessorEntity
         'limitValues' => [],
         'default' => ''
       ],
-      'suburb' => [
+      'address_suburb' => [
         'description' => 'The suburb of the user.',
         'cardinality' => [0, 1],
         'literalAllowed' => true,
@@ -107,7 +98,7 @@ class UserUpdate extends Core\ProcessorEntity
         'limitValues' => [],
         'default' => ''
       ],
-      'city' => [
+      'address_city' => [
         'description' => 'The city of the user.',
         'cardinality' => [0, 1],
         'literalAllowed' => true,
@@ -116,7 +107,7 @@ class UserUpdate extends Core\ProcessorEntity
         'limitValues' => [],
         'default' => ''
       ],
-      'state' => [
+      'address_state' => [
         'description' => 'The state of the user.',
         'cardinality' => [0, 1],
         'literalAllowed' => true,
@@ -125,7 +116,7 @@ class UserUpdate extends Core\ProcessorEntity
         'limitValues' => [],
         'default' => ''
       ],
-      'country' => [
+      'address_country' => [
         'description' => 'The country of the user.',
         'cardinality' => [0, 1],
         'literalAllowed' => true,
@@ -134,7 +125,7 @@ class UserUpdate extends Core\ProcessorEntity
         'limitValues' => [],
         'default' => ''
       ],
-      'postcode' => [
+      'address_postcode' => [
         'description' => 'The postcode of the user.',
         'cardinality' => [0, 1],
         'literalAllowed' => true,
@@ -171,45 +162,51 @@ class UserUpdate extends Core\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $details = [
-      'Uid' => $this->val('uid', TRUE),
-      'Username' => $this->val('username', TRUE),
-      'Honorific' => $this->val('honorific', TRUE),
-      'Namefirst' => $this->val('name_first', TRUE),
-      'Namelast' => $this->val('name_last', TRUE),
-      'Email' => $this->val('email', TRUE),
-      'Company' => $this->val('company', TRUE),
-      'Website' => $this->val('website', TRUE),
-      'AddressStreet' => $this->val('street_address', TRUE),
-      'AddressSuburb' => $this->val('suburb', TRUE),
-      'AddressCity' => $this->val('city', TRUE),
-      'AddressState' => $this->val('state', TRUE),
-      'AddressCountry' => $this->val('country', TRUE),
-      'AddressPostcode' => $this->val('postcode', TRUE),
-      'PhoneMobile' => $this->val('phone_mobile', TRUE),
-      'PhoneWork' => $this->val('phone_work', TRUE),
-    ];
-
-    if (empty($details['Uid'])) {
-      throw new Core\ApiException('Missing UID', 6, $this->id, 400);
-    }
+    $username = $this->val('username', TRUE);
+    $honorific = $this->val('honorific', TRUE);
+    $nameFirst = $this->val('name_first', TRUE);
+    $nameLast = $this->val('name_last', TRUE);
+    $email = $this->val('email', TRUE);
+    $company = $this->val('company', TRUE);
+    $website = $this->val('website', TRUE);
+    $addressStreet = $this->val('address_street', TRUE);
+    $addressSuburb = $this->val('address_suburb', TRUE);
+    $addressCity = $this->val('address_city', TRUE);
+    $addressState = $this->val('address_state', TRUE);
+    $addressCountry = $this->val('address_country', TRUE);
+    $addressPostcode = $this->val('address_postcode', TRUE);
+    $phoneMobile = $this->val('phone_mobile', TRUE);
+    $phoneWork = $this->val('phone_work', TRUE);
 
     $userMapper = new Db\UserMapper($this->db);
-    $user = $userMapper->findByUid($details['Uid']);
-    if (empty($user->getUid())) {
-      throw new Core\ApiException('Invalid UID' . $details['Uid'], 6, $this->id, 400);
+    $user = $userMapper->findByUsername($username);
+    if (!empty($user->getUid())) {
+      throw new Core\ApiException("Username $username already exists", 6, $this->id, 400);
+    }
+    $user = $userMapper->findByEmail($email);
+    if (!empty($user->getUid())) {
+      throw new Core\ApiException("Email $email already exists", 6, $this->id, 400);
     }
 
-    foreach ($details as $key => $value) {
-      if (!empty($value)) {
-        $function = "set$key";
-        $user->$function($value);
-      }
-    }
+    $user->setUsername($username);
+    $user->setHonorific($honorific);
+    $user->setNameFirst($nameFirst);
+    $user->setNameLast($nameLast);
+    $user->setEmail($email);
+    $user->setCompany($company);
+    $user->setWebsite($website);
+    $user->setAddressStreet($addressStreet);
+    $user->setAddressSuburb($addressSuburb);
+    $user->setAddressCity($addressCity);
+    $user->setAddressState($addressState);
+    $user->setAddressCountry($addressCountry);
+    $user->setAddressPostcode($addressPostcode);
+    $user->setPhoneMobile($phoneMobile);
+    $user->setPhoneWork($phoneWork);
+    $user->setActive(1);
 
     $userMapper->save($user);
-      $user = $userMapper->findByUid($details['Uid']);
-      return $user->dump();
-
+    $user = $userMapper->findByUsername($username);
+    return $user->dump();
   }
 }
