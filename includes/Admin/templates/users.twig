@@ -9,9 +9,12 @@
   <div class="row">
     <form method="get" action="/users">
       <div class="col s1">
-        <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-user-invite"><i class="material-icons">add</i></a>
+        <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-user-invite"><i class="material-icons">email</i></a>
       </div>
-      <div class="col s5">
+      <div class="col s1">
+        <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="/user/create"><i class="material-icons">add</i></a>
+      </div>
+      <div class="col s4">
         <div class="input-field">
           <label for="keyword">Search text</label>
           <input type="text" class="validate" name="keyword" value="{{ params['keyword'] }}">
