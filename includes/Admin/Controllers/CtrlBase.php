@@ -71,6 +71,8 @@ class CtrlBase {
    *   Username.
    *
    * @return stdClass user access rights.
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   protected function getAccessRights($response, $username) {
     try {
@@ -126,7 +128,7 @@ class CtrlBase {
     return $roles;
   }
 
-  /**
+  /**\
    * Get accounts for the user.
    *
    * @param \Slim\Http\Response
@@ -136,7 +138,10 @@ class CtrlBase {
    *
    * @return array
    *   Array of account names, indexed by accid.
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
+
   protected function getAccounts(Response $response, array $params = []) {
     $roles = $this->getRoles();
     $accounts = [];
@@ -187,7 +192,7 @@ class CtrlBase {
 
     return $accounts;
   }
-  
+
   /**
    * Get applications for the user.
    *
@@ -199,6 +204,8 @@ class CtrlBase {
    * @return array
    *   Array of applications and the account they belong to:
    *     [accid => [appid => name]]
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   protected function getApplications(Response $response, array $params = []) {
     $roles = $this->getRoles();
@@ -292,18 +299,23 @@ class CtrlBase {
           'Accounts' => '/accounts',
           'Applications' => '/applications',
           'Users' => '/users',
+          'User Roles' => '/user_roles',
+          'Roles' => '/roles',
         ];
       }
       if (in_array('Account manager', $roles)) {
         $menus += [
           'Applications' => '/applications',
           'Users' => '/users',
+          'User Roles' => '/user_roles',
+          'Roles' => '/roles',
         ];
       }
       if (in_array('Application manager', $roles)) {
         $menus += [
           'Applications' => '/applications',
           'Users' => '/users',
+          'User Roles' => '/user_roles',
         ];
       }
       if (in_array('Developer', $roles)) {
