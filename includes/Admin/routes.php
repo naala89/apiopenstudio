@@ -45,11 +45,20 @@ $app->get('/user/view/{uid}', 'CtrlUser:index')->add(new Authentication($contain
 $app->get('/user/edit/{uid}', 'CtrlUser:index')->add(new Authentication($container, $settings, '/login'));
 $app->post('/user/edit/{uid}', 'CtrlUser:update')->add(new Authentication($container, $settings, '/login'));
 $app->get('/user/delete/{uid}', 'CtrlUser:delete')->add(new Authentication($container, $settings, '/login'));
-$app->post('/user/invite', 'CtrlUser:invite')->add(new Authentication($container, $settings, '/login'));
-$app->get('/user/register_token/{token}', 'CtrlUser:register')->add(new Authentication($container, $settings, '/login'));
-$app->post('/user/register', 'CtrlUser:register')->add(new Authentication($container, $settings, '/login'));
+//$app->post('/user/invite', 'CtrlUser:invite')->add(new Authentication($container, $settings, '/login'));
+//$app->get('/user/register_token/{token}', 'CtrlUser:register')->add(new Authentication($container, $settings, '/login'));
+//$app->post('/user/register', 'CtrlUser:register')->add(new Authentication($container, $settings, '/login'));
 
 /**
  * User roles
  */
-$app->get('/users/edit/{uaid}', 'CtrlUserRole:edit')->add(new Authentication($container, $settings, '/login'));
+//$app->get('/users/edit/{uaid}', 'CtrlUserRole:edit')->add(new Authentication($container, $settings, '/login'));
+
+/**
+ * Roles.
+ */
+
+/**
+ * Resources.
+ */
+$app->get('/resources', 'CtrlResource:index')->add(new Authentication($container, $settings, '/login'));
