@@ -27,6 +27,16 @@ process:
     id: user_create_username
     nullable: false
     key: username
+  password:
+    function: var_post
+    id: user_create_username
+    nullable: true
+    key: password
+  active:
+    function: var_post
+    id: user_create_active
+    nullable: true
+    key: active
   honorific:
     function: var_post
     id: user_create_honorific
