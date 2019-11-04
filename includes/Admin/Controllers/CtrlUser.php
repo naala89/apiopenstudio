@@ -99,6 +99,79 @@ class CtrlUser extends CtrlBase {
   }
 
   /**
+   * Create a new user.
+   *
+   * @param Request $request
+   *   Request object.
+   * @param Response $response
+   *   Response object.
+   * @param array $args
+   *   Request args.
+   *
+   * @return ResponseInterface
+   *   Response.
+   *
+   * @throws GuzzleException
+   */
+  public function create(Request $request, Response $response, array $args) {
+    // Validate access.
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+    $this->getAccessRights($response, $username);
+    if (!$this->checkAccess()) {
+      $this->flash->addMessage('error', 'Access admin: access denied');
+      return $response->withStatus(302)->withHeader('Location', '/');
+    }
+
+    $menu = $this->getMenus();
+
+    if (strtolower($request->getMethod()) == 'get') {
+      return $this->view->render($response, 'user-create.twig', [
+        'menu' => $menu,
+      ]);
+    }
+
+    $allPostVars = $request->getParams();
+
+    try {
+      $domain = $this->settings['api']['url'];
+      $account = $this->settings['api']['core_account'];
+      $application = $this->settings['api']['core_application'];
+      $token = $_SESSION['token'];
+      $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+      $result = $client->request('POST', 'user/create', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+        'form_params' => $allPostVars,
+      ]);
+      $user = (array) json_decode($result->getBody()->getContents());
+    }
+    catch (ClientException $e) {
+      $result = $e->getResponse();
+      $this->flash->addMessage('error', $this->getErrorMessage($e));
+      switch ($result->getStatusCode()) {
+        case 401:
+          return $response->withStatus(302)->withHeader('Location', '/login');
+          break;
+        default:
+          $user = [];
+          break;
+      }
+    }
+
+    if (empty($user['uid'])) {
+      return $this->view->render($response, 'user-create.twig', [
+        'menu' => $menu,
+      ]);
+    }
+    return $this->view->render($response, 'user.twig', [
+      'menu' => $menu,
+      'user' => $user,
+      'mode' => 'edit',
+    ]);
+  }
+
+  /**
    * Update a user.
    *
    * @param Request $request
@@ -420,128 +493,6 @@ class CtrlUser extends CtrlBase {
 
     // Fall through to new user register post form submission.
     return $this->createUser($allVars, $menu, $response);
-  }
-
-  /**
-   * Create a new user form form submission.
-   *
-   * @param array $allVars
-   *   User vars and token.
-   * @param array $menu
-   *   Menu items.
-   * @param \Slim\Http\Response $response
-   *   Response object.
-   *
-   * @return ResponseInterface
-   *   Response.
-   */
-  private function createUser($allVars, $menu, $response) {
-    if (empty($allVars['token']) ||
-      empty($allVars['username']) ||
-      empty($allVars['password']) ||
-      empty($allVars['honorific']) ||
-      empty($allVars['email']) ||
-      empty($allVars['name_first']) ||
-      empty($allVars['name_last'])) {
-      // Missing mandatory fields.
-      $message['text'] = "Required fields not entered.";
-      $message['type'] = 'error';
-      return $this->view->render($response, 'register.twig', [
-        'menu' => $menu,
-        'message' => $message,
-        'token' => $allVars['token'],
-      ]);
-    }
-
-    // Ensure email matches the invite token.
-    $inviteHlp = new Invite($this->dbSettings);
-    $invite = $inviteHlp->findByToken($allVars['token']);
-    if ($invite['email'] != $allVars['email']) {
-      // Delete the invite.
-      $inviteHlp->deleteByToken($allVars['token']);
-      // Redirect to login.
-      $message['type'] = 'error';
-      $message['text'] = "Your email does not match the invite email. Please resend the invite.";
-      return $this->view->render($response, 'login.twig', [
-        'menu' => $menu,
-        'message' => $message,
-      ]);
-    }
-
-    // Validate username and email does not exist.
-    $userHlp = new User($this->dbSettings);
-    $result = $userHlp->findByEmail($allVars['email']);
-    if (!empty($result['uid'])) {
-      $message['type'] = 'error';
-      $message['text'] = 'A user already exists with this email: ' . $allVars['email'] . '.';
-      $message['text'] .= 'Please login.';
-      return $this->view->render($response, 'login.twig', [
-        'menu' => $menu,
-        'message' => $message,
-      ]);
-    }
-    $result = $userHlp->findByUsername($allVars['username']);
-    if (!empty($result['uid'])) {
-      $message['type'] = 'error';
-      $message['text'] = 'A user already exists with this username: ' . $allVars['username'] . '.';
-      $message['text'] .= 'Please use a different username.';
-      return $this->view->render($response, 'register.twig', [
-        'menu' => $menu,
-        'message' => $message,
-        'token' => $allVars['token'],
-      ]);
-    }
-
-    $newUser = $userHlp->create(
-      !empty($allVars['username']) ? $allVars['username'] : '',
-      !empty($allVars['password']) ? $allVars['password'] : '',
-      !empty($allVars['email']) ? $allVars['email'] : '',
-      !empty($allVars['honorific']) ? $allVars['honorific'] : '',
-      !empty($allVars['name_first']) ? $allVars['name_first'] : '',
-      !empty($allVars['name_last']) ? $allVars['name_last'] : '',
-      !empty($allVars['company']) ? $allVars['company'] : '',
-      !empty($allVars['website']) ? $allVars['website'] : '',
-      !empty($allVars['address_street']) ? $allVars['address_street'] : '',
-      !empty($allVars['address_suburb']) ? $allVars['address_suburb'] : '',
-      !empty($allVars['address_city']) ? $allVars['address_city'] : '',
-      !empty($allVars['address_state']) ? $allVars['address_state'] : '',
-      !empty($allVars['address_country']) ? $allVars['address_country'] : '',
-      !empty($allVars['address_postcode']) ? $allVars['address_postcode'] : '',
-      !empty($allVars['phone_mobile']) ? $allVars['phone_mobile'] : '',
-      !empty($allVars['phone_work']) ? $allVars['phone_work'] : ''
-    );
-    if (!$newUser['uid']) {
-      $message['text'] = "Sorry, there was an error creating your user. Please speak to your administrator.";
-      $message['type'] = 'error';
-      return $this->view->render($response, 'login.twig', [
-        'menu' => $menu,
-        'message' => $message,
-      ]);
-    }
-
-    // Assign the user to the account.
-    try {
-      $userAccountHlp = new UserAccount($this->dbSettings);
-      $userAccountHlp->create($invite['accid'], $newUser['uid']);
-    } catch (ApiException $e) {
-      $message['text'] = "Sorry, there was an error assigning your user to the account. Please speak to your administrator.";
-      $message['type'] = 'error';
-      return $this->view->render($response, 'login.twig', [
-        'menu' => $menu,
-        'message' => $message,
-      ]);
-    }
-
-    // Delete the invite.
-    $inviteHlp->deleteByToken($allVars['token']);
-
-    // Redirect to login.
-    $message['text'] = "Congratulations, you are registered. Please login.";
-    $message['type'] = 'info';
-    return $this->view->render($response, 'login.twig', [
-      'menu' => $menu,
-      'message' => $message,
-    ]);
   }
 
   /**

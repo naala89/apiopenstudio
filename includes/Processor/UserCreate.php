@@ -24,43 +24,61 @@ class UserCreate extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
+      ],
+      'password' => [
+        'description' => 'The password of the user.',
+        'cardinality' => [0, 1],
+        'literalAllowed' => true,
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => [],
+        'default' => '',
+      ],
+      'active' => [
+        'description' => 'The active flag for the user.',
+        'cardinality' => [0, 1],
+        'literalAllowed' => true,
+        'limitFunctions' => [],
+        'limitTypes' => ['boolean'],
+        'limitValues' => [],
+        'default' => TRUE,
       ],
       'honorific' => [
         'description' => 'The honorific of the user.',
-        'cardinality' => [1, 1],
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => ['Mr', 'Ms', 'Miss', 'Mrs', 'Dr', 'Prof', 'Hon'],
-        'default' => ''
+        'default' => '',
       ],
       'name_first' => [
         'description' => 'The first name of the user.',
-        'cardinality' => [1, 1],
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'name_last' => [
         'description' => 'The last name of the user.',
-        'cardinality' => [1, 1],
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'email' => [
         'description' => 'The email of the user.',
-        'cardinality' => [1, 1],
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'company' => [
         'description' => 'The company of the user.',
@@ -69,7 +87,7 @@ class UserCreate extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'website' => [
         'description' => 'The website of the user.',
@@ -78,7 +96,7 @@ class UserCreate extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'address_street' => [
         'description' => 'The street address of the user.',
@@ -87,7 +105,7 @@ class UserCreate extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'address_suburb' => [
         'description' => 'The suburb of the user.',
@@ -96,7 +114,7 @@ class UserCreate extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'address_city' => [
         'description' => 'The city of the user.',
@@ -105,7 +123,7 @@ class UserCreate extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'address_state' => [
         'description' => 'The state of the user.',
@@ -114,7 +132,7 @@ class UserCreate extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'address_country' => [
         'description' => 'The country of the user.',
@@ -123,7 +141,7 @@ class UserCreate extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'address_postcode' => [
         'description' => 'The postcode of the user.',
@@ -132,7 +150,7 @@ class UserCreate extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'phone_mobile' => [
         'description' => 'The mobile phone of the user.',
@@ -141,7 +159,7 @@ class UserCreate extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'phone_work' => [
         'description' => 'The work phone of the user.',
@@ -150,7 +168,7 @@ class UserCreate extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
     ],
   ];
@@ -163,6 +181,8 @@ class UserCreate extends Core\ProcessorEntity
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     $username = $this->val('username', TRUE);
+    $password = $this->val('password', TRUE);
+    $active = $this->val('active', TRUE);
     $honorific = $this->val('honorific', TRUE);
     $nameFirst = $this->val('name_first', TRUE);
     $nameLast = $this->val('name_last', TRUE);
@@ -189,6 +209,10 @@ class UserCreate extends Core\ProcessorEntity
     }
 
     $user->setUsername($username);
+    if (!empty($password)) {
+      $user->setPassword($password);
+    }
+    $user->setActive($active ? 1 : 0);
     $user->setHonorific($honorific);
     $user->setNameFirst($nameFirst);
     $user->setNameLast($nameLast);
@@ -203,7 +227,6 @@ class UserCreate extends Core\ProcessorEntity
     $user->setAddressPostcode($addressPostcode);
     $user->setPhoneMobile($phoneMobile);
     $user->setPhoneWork($phoneWork);
-    $user->setActive(1);
 
     $userMapper->save($user);
     $user = $userMapper->findByUsername($username);

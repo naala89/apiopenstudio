@@ -1,0 +1,102 @@
+{% extends "page.twig" %}
+
+{% set title="Users" %}
+
+{% block content %}
+  <form method="post" action="/user/create">
+    <div class="row">
+      <div class="col s6">
+        <div class="input-field col s12">
+          <select id="active" name="active" class="validate" required {% if mode == 'view' %}disabled{% endif %}>
+            <option value="0">False</option>
+            <option value="1" selected>True</option>
+          </select>
+          <label for="active">Active <span class="red-text">*</span></label>
+        </div>
+        <div class="input-field col s12">
+          <input type="text" name="username" required value="{{ user.username }}">
+          <label for="name_first">Username <span class="red-text">*</span></label>
+        </div>
+        <div class="input-field col s12">
+          <input type="password" name="password" value="{{ user.uid }}">
+          <label for="password">Password</label>
+        </div>
+        <div class="input-field col s12">
+          <input type="text" name="email" required value="{{ user.email }}">
+          <label for="email">E-mail <span class="red-text">*</span></label>
+        </div>
+        <div class="input-field col s12">
+          <select id="honorific" name="honorific" class="validate" {% if mode == 'view' %}disabled{% endif %}>
+            <option value=""></option>
+            <option value="Mr" {% if user.honorific == 'Mr' %}selected{% endif %}>Mr</option>
+            <option value="Ms" {% if user.honorific == 'Ms' %}selected{% endif %}>Ms</option>
+            <option value="Miss" {% if user.honorific == 'Miss' %}selected{% endif %}>Miss</option>
+            <option value="Mrs" {% if user.honorific == 'Mrs' %}selected{% endif %}>Mrs</option>
+            <option value="Dr" {% if user.honorific == 'Dr' %}selected{% endif %}>Dr</option>
+            <option value="Prof" {% if user.honorific == 'Prof' %}selected{% endif %}>Prof</option>
+            <option value="Hon" {% if suser.honorific == 'Hon' %}selected{% endif %}>Hon</option>
+          </select>
+          <label for="honorific">Title</label>
+        </div>
+        <div class="input-field col s12">
+          <input type="text" name="name_first" value="{{ user.nameFirst }}">
+          <label for="name_first">First name</label>
+        </div>
+        <div class="input-field col s12">
+          <input type="text" name="name_last" value="{{ user.nameLast }}">
+          <label for="name_last">Last name</label>
+        </div>
+        <div class="input-field col s12">
+          <input type="text" name="company" value="{{ user.company }}">
+          <label for="company">Company</label>
+        </div>
+        <div class="input-field col s12">
+          <input type="text" name="website" value="{{ user.website }}">
+          <label for="website">Website</label>
+        </div>
+      </div>
+      <div class="col s6">
+        <div class="input-field col s12">
+          <input type="text" name="address_street" value="{{ user.addressStreet }}">
+          <label for="address_street">Street</label>
+        </div>
+        <div class="input-field col s12">
+          <input type="text" name="address_suburb" value="{{ user.addressSuburb }}">
+          <label for="address_suburb">Suburb</label>
+        </div>
+        <div class="input-field col s12">
+          <input type="text" name="address_city" value="{{ user.addressCity }}">
+          <label for="address_city">City</label>
+        </div>
+        <div class="input-field col s12">
+          <input type="text" name="address_state" value="{{ user.addressState }}">
+          <label for="address_state">State</label>
+        </div>
+        <div class="input-field col s12">
+          <input type="text" name="address_country" value="{{ user.addressCountry }}">
+          <label for="address_country">Country</label>
+        </div>
+        <div class="input-field col s12">
+          <input type="text" name="address_postcode" value="{{ user.addressPostcode }}">
+          <label for="address_postcode">Postcode</label>
+        </div>
+        <div class="input-field col s12">
+          <input type="text" name="phone_mobile" value="{{ user.phoneMobile }}">
+          <label for="phone_mobile">Mobile</label>
+        </div>
+        <div class="input-field col s12">
+          <input type="text" name="phone_work" value="{{ user.phoneWork }}">
+          <label for="phone_work">Phone</label>
+        </div>
+        <div class="input-field col s12">
+          <button type='submit' class='btn-small green black-text waves-effect z-depth-1 y-depth-1'>Create</button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  {% include 'modals/user_invite.twig' %}
+
+  {% include 'modals/user_delete.twig' %}
+
+{% endblock %}
