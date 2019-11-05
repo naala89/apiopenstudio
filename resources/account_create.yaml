@@ -1,0 +1,25 @@
+name: Account create
+
+description: Create an account.
+
+uri: account
+
+method: post
+
+ttl: 0
+
+security:
+  function: token_role
+  id: security
+  token:
+    function: bearer_token
+    id: security_token
+  role: Administrator
+
+process:
+  function: account_create
+  id: account_craete_process
+  name:
+    function: var_post
+    id: account_create_name
+    key: name
