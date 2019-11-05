@@ -4,45 +4,45 @@
   "uri": "account",
   "method": "post",
   "ttl": 0,
-  "security": {
-    "function": "token_roles",
-    "id": "account_read_security",
-    "token": {
-      "function": "bearer_token",
-      "id": "account_read_token"
+  "security":{
+    "function":"token_roles",
+    "id":"account_read_security",
+    "token":{
+      "function":"bearer_token",
+      "id":"account_read_token"
     },
-    "roles": [
+    "roles":[
       "Administrator",
       "Account manager",
       "Application manager",
       "Developer"
     ]
   },
-  "process": {
-    "function": "account",
-    "id": "account_read_process",
-    "accountName": {
-      "function": "var_get",
-      "id": "account_read_account_name",
-      "key": "accountName"
+  "process":{
+    "function":"account_read",
+    "id":"account_read_process",
+    "accid":{
+      "function":"var_uri",
+      "id":"account_read_accid",
+      "index":0
     },
-    "keyword": {
-      "function": "var_get",
-      "id": "account_read_keyword",
-      "key": "keyword",
-      "nullable": true
+    "keyword":{
+      "function":"var_get",
+      "id":"account_read_keyword",
+      "key":"keyword",
+      "nullable":true
     },
-    "order_by": {
-      "function": "var_get",
-      "id": "account_read_order_by",
-      "key": "order_by",
-      "nullable": true
+    "order_by":{
+      "function":"var_get",
+      "id":"account_read_order_by",
+      "key":"order_by",
+      "nullable":true
     },
-    "direction": {
-      "function": "var_get",
-      "id": "account_read_direction",
-      "key": "direction",
-      "nullable": true
+    "direction":{
+      "function":"var_get",
+      "id":"account_read_direction",
+      "key":"direction",
+      "nullable":true
     }
   }
 }

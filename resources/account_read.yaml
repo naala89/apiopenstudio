@@ -21,12 +21,12 @@ security:
     - Developer
 
 process:
-  function: account
+  function: account_read
   id: account_read_process
-  accountName:
-    function: var_get
-    id: account_read_account_name
-    key: accountName
+  accid:
+    function: var_uri
+    id: account_read_accid
+    index: 0
   keyword:
     function: var_get
     id: account_read_keyword
