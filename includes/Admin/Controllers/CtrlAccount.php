@@ -35,6 +35,8 @@ class CtrlAccount extends CtrlBase {
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   public function index(Request $request, Response $response, array $args) {
     // Validate access.
@@ -47,7 +49,7 @@ class CtrlAccount extends CtrlBase {
     
     $menu = $this->getMenus();
 
-    // Filter params and currect page.
+    // Filter params and current page.
     $allParams = $request->getParams();
     $params = [];
     if (!empty($allParams['keyword'])) {
@@ -89,6 +91,8 @@ class CtrlAccount extends CtrlBase {
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   public function create(Request $request, Response $response, array $args) {
     // Validate access.
@@ -101,7 +105,7 @@ class CtrlAccount extends CtrlBase {
 
     // Validate the input.
     $allPostVars = $request->getParsedBody();
-    if (empty($name = $allPostVars['create-acc-name'])) {
+    if (empty($name = $allPostVars['name'])) {
       $this->flash->addMessage('error', 'Cannot create account, no name defined.');
       return $response->withRedirect('/accounts');
     }
@@ -119,7 +123,7 @@ class CtrlAccount extends CtrlBase {
           'Authorization' => "Bearer $token",
         ],
         'form_params' => [
-          'accountName' => $name,
+          'name' => $name,
         ],
       ]);
       $result = json_decode($result->getBody()->getContents());
@@ -146,6 +150,8 @@ class CtrlAccount extends CtrlBase {
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   public function edit(Request $request, Response $response, array $args) {
     // Validate access.
@@ -158,8 +164,8 @@ class CtrlAccount extends CtrlBase {
 
     // Validate the input.
     $allPostVars = $request->getParsedBody();
-    if (empty($newName = $allPostVars['new-acc-name']) || empty($name = $allPostVars['acc-name'])) {
-      $this->flash->addMessage('error', 'Cannot edit account, no new or original name defined.');
+    if (empty($accid = $allPostVars['accid']) || empty($name = $allPostVars['name'])) {
+      $this->flash->addMessage('error', 'Cannot edit account, invalid accid or name.');
       return $response->withRedirect('/accounts');
     }
 
@@ -171,18 +177,14 @@ class CtrlAccount extends CtrlBase {
       $token = $_SESSION['token'];
 
       $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-      $result = $client->request('POST', 'account', [
+      $result = $client->request('PUT', "account/$accid/" . urlencode($name), [
         'headers' => [
           'Authorization' => "Bearer $token",
-        ],
-        'form_params' => [
-          'accountName' => $newName,
-          'oldName' => $name,
         ],
       ]);
       $result = json_decode($result->getBody()->getContents());
 
-      $this->flash->addMessage('info', "Account '$name' updated to '$newName'");
+      $this->flash->addMessage('info', "Account '$accid' updated to '$name'");
       return $response->withStatus(302)->withHeader('Location', '/accounts');
     }
     catch (ClientException $e) {
@@ -204,6 +206,8 @@ class CtrlAccount extends CtrlBase {
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   public function delete(Request $request, Response $response, array $args) {
     // Validate access.
@@ -216,8 +220,8 @@ class CtrlAccount extends CtrlBase {
 
     // Validate the input.
     $allPostVars = $request->getParsedBody();
-    if (empty($name = $allPostVars['acc-name'])) {
-      $this->flash->addMessage('error', 'Cannot delete account, no account name defined.');
+    if (empty($accid = $allPostVars['accid'])) {
+      $this->flash->addMessage('error', 'Cannot delete account, no accid defined.');
       return $response->withRedirect('/accounts');
     }
 
@@ -229,7 +233,7 @@ class CtrlAccount extends CtrlBase {
       $token = $_SESSION['token'];
 
       $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-      $result = $client->request('DELETE', 'account/' . urlencode($name), [
+      $result = $client->request('DELETE', 'account/' . $accid, [
         'headers' => [
           'Authorization' => "Bearer $token",
         ],
