@@ -19,7 +19,7 @@ security:
 process:
   function: account
   id: account_delete
-  accountName:
+  accid:
     function: var_uri
-    id: account_delete_account_name
+    id: account_delete_accid
     index: 0

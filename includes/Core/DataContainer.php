@@ -29,13 +29,19 @@ class DataContainer extends Entity
   protected $data;
 
   /**
-   * @param $data
-   * @param $type
+   * DataContainer constructor.
+   *
+   * @param mixed $data
+   *   Data stored in the container.
+   * @param string $dataType
+   *   Data type.
+   *
+   * @throws ApiException
    */
-  public function __construct($data, $type)
+  public function __construct($data, $dataType)
   {
     $this->setData($data);
-    $this->setType($type);
+    $this->setType($dataType);
   }
 
   /**

@@ -4,22 +4,22 @@
   "uri": "account",
   "method": "delete",
   "ttl": 0,
-  "security": {
-    "function": "token_role",
-    "id": "account_delete_security",
-    "token": {
-      "function": "bearer_token",
-      "id": "account_delete_bearer_token"
+  "security":{
+    "function":"token_role",
+    "id":"account_delete_security",
+    "token":{
+      "function":"bearer_token",
+      "id":"account_delete_bearer_token"
     },
-    "role": "Administrator"
+    "role":"Administrator"
   },
-  "process": {
-    "function": "account",
-    "id": "account_delete",
-    "accountName": {
-      "function": "var_uri",
-      "id": "account_delete_account_name",
-      "index": 0
+  "process":{
+    "function":"account_delete",
+    "id":"account_delete",
+    "accid":{
+      "function":"var_uri",
+      "id":"account_delete_accid",
+      "index":0
     }
   }
 }
