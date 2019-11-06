@@ -154,12 +154,11 @@ class CtrlBase {
         $application = $this->settings['api']['core_application'];
         $token = $_SESSION['token'];
         $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-        $query = ['accountName' => 'all'];
         foreach($params as $key => $value) {
           $query[$key] = $value;
         }
 
-        $result = $client->request('GET', 'account', [
+        $result = $client->request('GET', 'account/all', [
           'headers' => [
             'Authorization' => "Bearer $token",
           ],
