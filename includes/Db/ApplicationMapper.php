@@ -148,9 +148,7 @@ class ApplicationMapper extends Mapper {
    * @return array
    *   array of mapped Application objects.
    *
-   * @throws ApiException
-   * 
-   * @TODO: implement params.
+   * @throws \Gaterdata\Core\ApiException
    */
   public function findByAccidsAppnames(array $accids = [], array $appNames = [], array $params = []) {
     $byAccid = [];

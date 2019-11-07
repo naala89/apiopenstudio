@@ -80,12 +80,14 @@
             {{ application.name }}
           </div>
           <div class="col col-height s2 valign-wrapper">
-            <a class="btn-floating btn-small white hoverable">
-              <i class="material-icons modal-app-edit-trigger black-text" accid="{{ application.accid }}" appid="{{ appid }}" name="{{ application.name }}" title="Edit this application.">edit</i>
-            </a>
-            <a class="btn-floating btn-small white hoverable">
-              <i class="material-icons modal-app-delete-trigger black-text" appid="{{ appid }}" name="{{ application.name }}" title="Delete this application.">delete</i>
-            </a>
+            {% if appid > 2 %}
+              <a class="btn-floating btn-small white hoverable">
+                <i class="material-icons modal-app-edit-trigger black-text" accid="{{ application.accid }}" appid="{{ appid }}" name="{{ application.name }}" title="Edit this application.">edit</i>
+              </a>
+              <a class="btn-floating btn-small white hoverable">
+                <i class="material-icons modal-app-delete-trigger black-text" appid="{{ appid }}" name="{{ application.name }}" title="Delete this application.">delete</i>
+              </a>
+            {% endif %}
           </div>
         </div>
       {% endfor %}
