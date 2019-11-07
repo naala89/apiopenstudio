@@ -192,7 +192,7 @@ class Api
       $resourceMapper = new Db\ResourceMapper($this->db);
 
       while (sizeof($uriParts) > 0) {
-        $uri = empty($uri) ? array_shift($uriParts) : ("$uri/" . array_shift($uriParts));
+        $uri = implode('/', $uriParts);
         $result = $resourceMapper->findByAppIdMethodUri($appId, $method, $uri);
         if (!empty($result->getResid())) {
           return [
@@ -200,6 +200,7 @@ class Api
             'resource' => $result,
           ];
         }
+        array_shift($uriParts);
       }
       throw new ApiException('invalid request', 3, -1, 404);
     }
