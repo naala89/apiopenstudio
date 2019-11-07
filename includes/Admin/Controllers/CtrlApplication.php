@@ -38,6 +38,8 @@ class CtrlApplication extends CtrlBase {
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   public function index(Request $request, Response $response, array $args) {
     // Validate access.
@@ -180,6 +182,8 @@ class CtrlApplication extends CtrlBase {
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   public function edit(Request $request, Response $response, array $args) {
     // Validate access.
@@ -237,7 +241,7 @@ class CtrlApplication extends CtrlBase {
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
    *
-   * TODO: Delete all associated resources and remove user roles.
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   public function delete(Request $request, Response $response, array $args) {
     // Validate access.
