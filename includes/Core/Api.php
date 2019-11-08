@@ -200,7 +200,7 @@ class Api
             'resource' => $result,
           ];
         }
-        array_shift($uriParts);
+        array_pop($uriParts);
       }
       throw new ApiException('invalid request', 3, -1, 404);
     }
