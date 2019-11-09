@@ -35,18 +35,21 @@ class CtrlHome extends CtrlBase {
    *   Request args.
    *
    * @return \Psr\Http\Message\ResponseInterface
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   public function index(Request $request, Response $response, array $args) {
-    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $this->getAccessRights($response, $username);
+    // Validate access.
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $this->getAccessRights($response, $uid);
     if (!$this->checkAccess()) {
-      $this->flash->addMessage('error', 'Access admin: access denied');
+      $this->flash->addMessage('error', 'Access denied');
       return $response->withStatus(302)->withHeader('Location', '/logout');
     }
-    $roles = $this->getRoles();
+
     $menu = $this->getMenus();
-    $accounts = $this->getAccounts();
-    $applications = $this->getApplications();
+    $accounts = $this->getAccounts($response);
+    $applications = $this->getApplications($response);
 
     return $this->view->render($response, 'home.twig', [
       'menu' => $menu,
