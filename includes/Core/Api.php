@@ -181,26 +181,30 @@ class Api
    * Get the requested resource from the DB.
    *
    * @param int $appId
-   * @param $method
-   * @param $uriParts
-   * @return \Gaterdata\Db\Resource
-   * @throws \Gaterdata\Core\ApiException
+   *   Request application ID.
+   * @param string $method
+   *   Request HTTP method.
+   * @param array $uriParts
+   *   Request URI parts.
+   * @return array|Db\ApiResource
+   * @throws ApiException
    */
   private function _getResource($appId, $method, $uriParts)
   {
     if (!$this->test) {
       $resourceMapper = new Db\ResourceMapper($this->db);
 
+      $args = [];
       while (sizeof($uriParts) > 0) {
         $uri = implode('/', $uriParts);
         $result = $resourceMapper->findByAppIdMethodUri($appId, $method, $uri);
         if (!empty($result->getResid())) {
           return [
-            'args' => $uriParts,
+            'args' => $args,
             'resource' => $result,
           ];
         }
-        array_pop($uriParts);
+        array_unshift($args, array_pop($uriParts));
       }
       throw new ApiException('invalid request', 3, -1, 404);
     }
@@ -247,6 +251,7 @@ class Api
    *
    * @param $cacheKey
    * @return bool
+   * @throws ApiException
    */
   private function _getCache($cacheKey)
   {
@@ -268,9 +273,10 @@ class Api
 
   /**
    * Process the meta data, using depth first iteration.
-   * 
+   *
    * @param $meta
    * @return mixed
+   * @throws ApiException
    */
   private function _crawlMeta($meta)
   {
