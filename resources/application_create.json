@@ -4,30 +4,30 @@
   "uri": "application",
   "method": "post",
   "ttl": 0,
-  "security": {
-    "function": "token_roles",
-    "id": "application_create_security",
-    "token": {
-      "function": "bearer_token",
-      "id": "application_create_token"
+  "security":{
+    "function":"token_roles",
+    "id":"application_create_security",
+    "token":{
+      "function":"bearer_token",
+      "id":"application_create_token"
     },
-    "roles": [
+    "roles":[
       "Administrator",
       "Account manager"
     ]
   },
-  "process": {
-    "function": "application_create",
-    "id": "application_create_process",
-    "accid": {
-      "function": "var_post",
-      "id": "application_create_accid",
-      "key": "accid"
+  "process":{
+    "function":"application_create",
+    "id":"application_create_process",
+    "accid":{
+      "function":"var_post",
+      "id":"application_create_accid",
+      "key":"accid"
     },
-    "name": {
-      "function": "var_post",
-      "id": "application_create_name",
-      "key": "name"
+    "name":{
+      "function":"var_post",
+      "id":"application_create_name",
+      "key":"name"
     }
   }
 }
