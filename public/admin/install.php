@@ -165,10 +165,7 @@ switch ($step) {
       $phoneWork = !empty($_POST['phone_work']) ? $_POST['phone_work'] : 0;
       if (empty($username) ||
         empty($password) ||
-        empty($honorific) ||
-        empty($email) ||
-        empty($nameFirst) ||
-        empty($nameLast)) {
+        empty($email)) {
         // Missing mandatory fields.
         $messages['error'][] = 'Required fields not entered.';
         $template = $twig->load('install/install_2.twig');
