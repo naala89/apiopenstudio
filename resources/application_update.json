@@ -4,35 +4,35 @@
   "uri": "application",
   "method": "put",
   "ttl": 0,
-  "security": {
-    "function": "token_roles",
-    "id": "application_update_security",
-    "token": {
-      "function": "bearer_token",
-      "id": "application_update_token"
+  "security":{
+    "function":"token_roles",
+    "id":"application_update_security",
+    "token":{
+      "function":"bearer_token",
+      "id":"application_update_token"
     },
-    "roles": [
+    "roles":[
       "Administrator",
       "Account manager"
     ]
   },
-  "process": {
-    "function": "application_update",
-    "id": "application_update_process",
-    "appid": {
-      "function": "var_uri",
-      "id": "application_update_appid",
-      "index": 0
+  "process":{
+    "function":"application_update",
+    "id":"application_update_process",
+    "appid":{
+      "function":"var_uri",
+      "id":"application_update_appid",
+      "index":0
     },
-    "accid": {
-      "function": "var_uri",
-      "id": "application_update_accid",
-      "index": 1
+    "accid":{
+      "function":"var_uri",
+      "id":"application_update_accid",
+      "index":1
     },
-    "name": {
-      "function": "var_uri",
-      "id": "application_update_name",
-      "index": 2
+    "name":{
+      "function":"var_uri",
+      "id":"application_update_name",
+      "index":2
     }
   }
 }
