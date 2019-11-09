@@ -145,7 +145,7 @@ class UserRole {
    */
   public function dump() {
     return [
-      'aurid' => $this->aurid,
+      'urid' => $this->urid,
       'accid' => $this->accid,
       'appid' => $this->appid,
       'uid' => $this->uid,
