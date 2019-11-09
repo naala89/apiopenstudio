@@ -13,7 +13,7 @@ class UserUpdate extends Core\ProcessorEntity
   protected $details = [
     'name' => 'User update',
     'machineName' => 'user_update',
-    'description' => 'Update a single user.',
+    'description' => 'Update a user.',
     'menu' => 'Admin',
     'application' => 'Admin',
     'input' => [
@@ -26,135 +26,9 @@ class UserUpdate extends Core\ProcessorEntity
         'limitValues' => [],
         'default' => ''
       ],
-      'username' => [
-        'description' => 'The username of the user.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'honorific' => [
-        'description' => 'The honorific of the user.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => ['Mr', 'Ms', 'Miss', 'Mrs', 'Dr', 'Prof', 'Hon'],
-        'default' => ''
-      ],
-      'name_first' => [
-        'description' => 'The first name of the user.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'name_last' => [
-        'description' => 'The last name of the user.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'email' => [
-        'description' => 'The email of the user.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'company' => [
-        'description' => 'The company of the user.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'website' => [
-        'description' => 'The website of the user.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'street_address' => [
-        'description' => 'The street address of the user.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'suburb' => [
-        'description' => 'The suburb of the user.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'city' => [
-        'description' => 'The city of the user.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'state' => [
-        'description' => 'The state of the user.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'country' => [
-        'description' => 'The country of the user.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'postcode' => [
-        'description' => 'The postcode of the user.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'phone_mobile' => [
-        'description' => 'The mobile phone of the user.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'phone_work' => [
-        'description' => 'The work phone of the user.',
-        'cardinality' => [0, 1],
+      'user_details' => [
+        'description' => 'The user details to edit. A json string is expected.',
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],
         'limitTypes' => ['string'],
@@ -171,45 +45,64 @@ class UserUpdate extends Core\ProcessorEntity
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $details = [
-      'Uid' => $this->val('uid', TRUE),
-      'Username' => $this->val('username', TRUE),
-      'Honorific' => $this->val('honorific', TRUE),
-      'Namefirst' => $this->val('name_first', TRUE),
-      'Namelast' => $this->val('name_last', TRUE),
-      'Email' => $this->val('email', TRUE),
-      'Company' => $this->val('company', TRUE),
-      'Website' => $this->val('website', TRUE),
-      'AddressStreet' => $this->val('street_address', TRUE),
-      'AddressSuburb' => $this->val('suburb', TRUE),
-      'AddressCity' => $this->val('city', TRUE),
-      'AddressState' => $this->val('state', TRUE),
-      'AddressCountry' => $this->val('country', TRUE),
-      'AddressPostcode' => $this->val('postcode', TRUE),
-      'PhoneMobile' => $this->val('phone_mobile', TRUE),
-      'PhoneWork' => $this->val('phone_work', TRUE),
-    ];
-
-    if (empty($details['Uid'])) {
-      throw new Core\ApiException('Missing UID', 6, $this->id, 400);
+    $user_details = json_decode($this->val('user_details', TRUE));
+    if ($user_details == NULL) {
+      throw new Core\ApiException('Invalid user details JSON string', 6, $this->id, 400);
     }
 
+    $uid = $this->val('uid', TRUE);
     $userMapper = new Db\UserMapper($this->db);
-    $user = $userMapper->findByUid($details['Uid']);
+    $user = $userMapper->findByUid($uid);
     if (empty($user->getUid())) {
-      throw new Core\ApiException('Invalid UID' . $details['Uid'], 6, $this->id, 400);
+      throw new Core\ApiException("Invalid UID: $uid", 6, $this->id, 400);
     }
 
-    foreach ($details as $key => $value) {
-      if (!empty($value)) {
-        $function = "set$key";
-        $user->$function($value);
-      }
+    if (!empty($user_details->username)) {
+      $user->setUsername($user_details->username);
     }
-
+    if (!empty($user_details->honorific)) {
+      $user->setHonorific($user_details->honorific);
+    }
+    if (!empty($user_details->email)) {
+      $user->setEmail($user_details->email);
+    }
+    if (!empty($user_details->name_last)) {
+      $user->setNameLast($user_details->name_last);
+    }
+    if (!empty($user_details->company)) {
+      $user->setCompany($user_details->company);
+    }
+    if (!empty($user_details->website)) {
+      $user->setWebsite($user_details->website);
+    }
+    if (!empty($user_details->street_address)) {
+      $user->setAddressStreet($user_details->street_address);
+    }
+    if (!empty($user_details->suburb)) {
+      $user->setAddressSuburb($user_details->suburb);
+    }
+    if (!empty($user_details->city)) {
+      $user->setAddressCity($user_details->city);
+    }
+    if (!empty($user_details->country)) {
+      $user->setAddressCountry($user_details->country);
+    }
+    if (!empty($user_details->postcode)) {
+      $user->setAddressPostcode($user_details->postcode);
+    }
+    if (!empty($user_details->phone_mobile)) {
+      $user->setPhoneMobile($user_details->phone_mobile);
+    }
+    if (!empty($user_details->phone_work)) {
+      $user->setPhoneWork($user_details->phone_work);
+    }
+    if (!empty($user_details->password)) {
+      $user->setPassword($user_details->password);
+    }
+    Core\Debug::variable($user->dump());
     $userMapper->save($user);
-      $user = $userMapper->findByUid($details['Uid']);
-      return $user->dump();
 
+    $user = $userMapper->findByUid($uid);
+    return $user->dump();
   }
 }
