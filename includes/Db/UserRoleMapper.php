@@ -2,6 +2,8 @@
 
 namespace Gaterdata\Db;
 
+use Gaterdata\Core\ApiException;
+
 /**
  * Class UserRoleMapper.
  *
@@ -12,13 +14,13 @@ class UserRoleMapper extends Mapper {
   /**
    * Save the user role.
    *
-   * @param \Gaterdata\Db\UserRole $userRole
+   * @param UserRole $userRole
    *   UserRole object.
    *
    * @return bool
    *   Result of the save.
    *
-   * @throws \Gaterdata\Core\ApiException
+   * @throws ApiException
    */
   public function save(UserRole $userRole) {
     if ($userRole->getUrid() == NULL) {
@@ -46,19 +48,20 @@ class UserRoleMapper extends Mapper {
   /**
    * Delete the user role.
    *
-   * @param \Gaterdata\Db\UserRole $userRole
+   * @param UserRole $userRole
    *   UserRole object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Gaterdata\Core\ApiException
+   * @throws ApiException
    */
   public function delete(UserRole $userRole) {
     $sql = 'DELETE FROM user_role WHERE urid = ?';
     $bindParams = [$userRole->getUrid()];
     return $this->saveDelete($sql, $bindParams);
   }
+
   /**
    * Find all user roles.
    *
@@ -74,153 +77,41 @@ class UserRoleMapper extends Mapper {
   }
 
   /**
-   * Find by user role ID.
+   * Find user roles using filter.
    *
-   * @param int $urid
-   *   User role ID.
-   *
-   * @return \Gaterdata\Db\UserRole
-   *   Mapped UserRole object.
-   *
-   * @throws ApiException
-   */
-  public function findByUrid($urid) {
-    $sql = 'SELECT * FROM user_role WHERE urid = ?';
-    $bindParams = [$urid];
-    return $this->fetchRow($sql, $bindParams);
-  }
-
-  /**
-   * Find by application ID.
-   *
-   * @param int $appid
-   *  Application ID.
-   *
+   * @param array $params
+   *   Associative array of filter poarams.
    * @return array
-   *   Array of mapped UserRole objects.
+   *   User roles
    *
    * @throws ApiException
+   *
+   * @example
+   *   findByFilter([
+   *     'col' => ['rid' => 1],
+   *     'order_by' => 'uid',
+   *     'direction' => 'asc'
+   *   )
    */
-  public function findByAppid($appid) {
-    $sql = 'SELECT * FROM user_role WHERE appid = ?';
-    $bindParams = [$appid];
-    return $this->fetchRows($sql, $bindParams);
-  }
+  public function findByFilter($params) {
+    $sql = 'SELECT * FROM user_role';
+    $where = $bindParams = $order = [];
 
-  /**
-   * Find by user ID.
-   *
-   * @param int $uid
-   *  User ID.
-   *
-   * @return array
-   *   Array of mapped UserRole objects.
-   *
-   * @throws ApiException
-   */
-  public function findByUid($uid) {
-    $sql = 'SELECT * FROM user_role WHERE uid = ?';
-    $bindParams = [$uid];
-    return $this->fetchRows($sql, $bindParams);
-  }
+    if (!empty($params['col'])) {
+      foreach ($params['col'] as $col => $val) {
+        $where[] = "$col=?";
+        $bindParams[] = $val;
+      }
+      $sql .= ' WHERE ' . implode(' AND ', $where);
+    }
+    if (!empty($params['order_by'])) {
+      $order['order_by'] = $params['order_by'];
+    }
+    if (!empty($params['direction'])) {
+      $order['direction'] = $params['direction'];
+    }
 
-  /**
-   * Find by role ID.
-   *
-   * @param int $rid
-   *   Role ID.
-   *
-   * @return array
-   *   Array of mapped UserRole objects.
-   *
-   * @throws ApiException
-   */
-  public function findByRid($rid) {
-    $sql = 'SELECT * FROM user_role WHERE rid = ?';
-    $bindParams = [$rid];
-    return $this->fetchRows($sql, $bindParams);
-  }
-
-  /**
-   * Find by role ID and user ID.
-   *
-   * @param int $rid
-   *   Role ID.
-   * @param int $uid
-   *   User ID.
-   *
-   * @return array
-   *   Array of mapped UserRole objects.
-   *
-   * @throws ApiException
-   */
-  public function findByRidUid($rid, $uid) {
-    $sql = 'SELECT * FROM user_role WHERE rid = ? AND uid = ?';
-    $bindParams = [$rid, $uid];
-    return $this->fetchRows($sql, $bindParams);
-  }
-
-  /**
-   * Find by application ID and user ID.
-   *
-   * @param int $appid
-   *   Application ID.
-   * @param int $uid
-   *   User ID.
-   *
-   * @return array
-   *   Array of mapped UserRole objects.
-   *
-   * @throws ApiException
-   */
-  public function findByAppidUid($appid, $uid) {
-    $sql = 'SELECT * FROM user_role WHERE appid = ? AND uid = ?';
-    $bindParams = [$appid, $uid];
-    return $this->fetchRows($sql, $bindParams);
-  }
-
-  /**
-   * Find by Account ID, Application ID and User ID.
-   *
-   * @param int $accid
-   *   Account ID.
-   * @param int $appid
-   *   Application ID.
-   * @param int $uid
-   *   User ID.
-   *
-   * @return array
-   *   Array of mapped UserRole objects.
-   *
-   * @throws ApiException
-   */
-  public function findByAccidAppidUid($accid, $appid, $uid) {
-    $sql = 'SELECT * FROM user_role WHERE accid = ? AND appid = ? AND uid = ?';
-    $bindParams = [$accid, $appid, $uid];
-    return $this->fetchRows($sql, $bindParams);
-  }
-
-  /**
-   * Find by Account ID, Application ID, User ID and Role ID.
-   *
-   * @param int $accid
-   *   Account ID.
-   * @param int $appid
-   *   Application ID.
-   * @param int $uid
-   *   User ID.
-   * @param int $rid
-   *   Role ID.
-   *
-   * @return \Gaterdata\Db\UserRole
-   *   Mapped UserRole object.
-   *
-   * @throws ApiException
-   */
-  public function findByAccidAppidUidRid($accid, $appid, $uid, $rid) {
-    $sql = 'SELECT * FROM user_role WHERE accid = ? AND appid = ? AND uid = ? AND rid = ?';
-    $bindParams = [$accid, $appid, $uid, $rid];
-    return $this->fetchRow($sql, $bindParams);
+    return $this->fetchRows($sql, $bindParams, $order);
   }
 
   /**
@@ -229,7 +120,7 @@ class UserRoleMapper extends Mapper {
    * @param array $row
    *   DB Row.
    *
-   * @return \Gaterdata\Db\UserRole
+   * @return UserRole
    *   UserRole object.
    */
   protected function mapArray(array $row) {

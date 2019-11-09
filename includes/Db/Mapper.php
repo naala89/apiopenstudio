@@ -100,7 +100,8 @@ abstract class Mapper {
    *       'limit' => int,
    *     ]
    * NOTE:
-   *   * This will throw an exception if the sql already contains a WHERE clause and should be calculated separeately in these cases.
+   *   * This will throw an exception if the sql already contains a WHERE clause and should be calculated separately in
+   *     these cases.
    *   * ['filter']['keyword'] '%' characters in keyword not added to keyword automatically.
    *
    * @return array
