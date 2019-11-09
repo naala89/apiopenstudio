@@ -74,7 +74,7 @@ class TokenRoles extends Core\ProcessorEntity
         throw new Core\ApiException('Invalid role defined', 4, $this->id, 401);
       }
       $rid = $row->getRid();
-      $userRoles = $userRoleMapper->findByRidUid($rid, $uid);
+      $userRoles = $userRoleMapper->findByFilter(['col' => ['rid' => $rid, 'uid' => $uid]]);
       if (!empty($userRoles)) {
         return TRUE;
       }
