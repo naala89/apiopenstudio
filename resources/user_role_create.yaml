@@ -2,7 +2,7 @@ name: User Role create
 
 description: Create a role for a user for an application.
 
-uri: userrole
+uri: user/role
 
 method: post
 

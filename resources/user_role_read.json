@@ -1,7 +1,7 @@
 {
   "name": "User Role read",
   "description": "Fetch all roles for a user.",
-  "uri": "userrole",
+  "uri": "user/role",
   "method": "get",
   "ttl": 0,
   "security": {
