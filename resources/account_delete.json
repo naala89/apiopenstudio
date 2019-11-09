@@ -15,7 +15,7 @@
   },
   "process":{
     "function":"account_delete",
-    "id":"account_delete",
+    "id":"account_delete_process",
     "accid":{
       "function":"var_uri",
       "id":"account_delete_accid",
