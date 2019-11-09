@@ -51,8 +51,8 @@ class CtrlUser extends CtrlBase {
    */
   public function index(Request $request, Response $response, array $args) {
     // Validate access.
-    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $this->getAccessRights($response, $username);
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $this->getAccessRights($response, $uid);
     if (!$this->checkAccess()) {
       $this->flash->addMessage('error', 'Access admin: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
@@ -115,8 +115,8 @@ class CtrlUser extends CtrlBase {
    */
   public function create(Request $request, Response $response, array $args) {
     // Validate access.
-    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $this->getAccessRights($response, $username);
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $this->getAccessRights($response, $uid);
     if (!$this->checkAccess()) {
       $this->flash->addMessage('error', 'Access admin: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
@@ -188,8 +188,8 @@ class CtrlUser extends CtrlBase {
    */
   public function update(Request $request, Response $response, array $args) {
     // Validate access.
-    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $this->getAccessRights($response, $username);
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $this->getAccessRights($response, $uid);
     if (!$this->checkAccess()) {
       $this->flash->addMessage('error', 'Access admin: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
@@ -272,8 +272,8 @@ class CtrlUser extends CtrlBase {
    */
   public function delete(Request $request, Response $response, array $args) {
     // Validate access.
-    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $this->getAccessRights($response, $username);
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $this->getAccessRights($response, $uid);
     if (!$this->checkAccess()) {
       $this->flash->addMessage('error', 'Access admin: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
@@ -321,15 +321,16 @@ class CtrlUser extends CtrlBase {
    *   Slim response object.
    * @param array $args
    *   Slim args array
-   * .
+   *
    * @return ResponseInterface|Response
    *
+   * @throws GuzzleException
    * @throws \PHPMailer\PHPMailer\Exception
    */
   public function invite(Request $request, Response $response, array $args) {
     // Validate access.
-    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $this->getAccessRights($response, $username);
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $this->getAccessRights($response, $uid);
     if (!$this->checkAccess()) {
       $this->flash->addMessage('error', 'Access admin: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');

@@ -43,8 +43,8 @@ class CtrlApplication extends CtrlBase {
    */
   public function index(Request $request, Response $response, array $args) {
     // Validate access.
-    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $this->getAccessRights($response, $username);
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $this->getAccessRights($response, $uid);
     if (!$this->checkAccess()) {
       $this->flash->addMessage('error', 'View applications: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
@@ -125,8 +125,8 @@ class CtrlApplication extends CtrlBase {
      */
   public function create(Request $request, Response $response, array $args) {
     // Validate access.
-    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $this->getAccessRights($response, $username);
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $this->getAccessRights($response, $uid);
     if (!$this->checkAccess()) {
       $this->flash->addMessage('error', 'Create applications: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
@@ -187,8 +187,8 @@ class CtrlApplication extends CtrlBase {
    */
   public function edit(Request $request, Response $response, array $args) {
     // Validate access.
-    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $this->getAccessRights($response, $username);
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $this->getAccessRights($response, $uid);
     if (!$this->checkAccess()) {
       $this->flash->addMessage('error', 'Update applications: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
@@ -245,8 +245,8 @@ class CtrlApplication extends CtrlBase {
    */
   public function delete(Request $request, Response $response, array $args) {
     // Validate access.
-    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $this->getAccessRights($response, $username);
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $this->getAccessRights($response, $uid);
     if (!$this->checkAccess()) {
       $this->flash->addMessage('error', 'Update applications: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
