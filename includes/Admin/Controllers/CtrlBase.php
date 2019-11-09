@@ -44,6 +44,15 @@ class CtrlBase {
    * @var stdClass,
    */
   protected $userAccessRights;
+  /**
+   * @var array,
+   */
+  protected $allRoles = [
+    1 => 'Administrator',
+    2 => 'Account manager',
+    3 => 'Application manager',
+    4 => 'Developer',
+  ];
 
   /**
    * Base constructor.
@@ -54,6 +63,8 @@ class CtrlBase {
    *   View container.
    * @param \Slim\Flash\Messages $flash
    *   Flash messages container.
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   public function __construct(Collection $settings, Twig $view, Messages $flash) {
     $this->userAccessRights = new stdClass();
@@ -67,26 +78,26 @@ class CtrlBase {
    *
    * @param \Slim\Http\Response
    *   Response object.
-   * @param string $username
-   *   Username.
+   * @param string $uid
+   *   User ID.
    *
    * @return stdClass user access rights.
    *
    * @throws \GuzzleHttp\Exception\GuzzleException
    */
-  protected function getAccessRights($response, $username) {
+  protected function getAccessRights($response, $uid) {
     try {
       $domain = $this->settings['api']['url'];
       $account = $this->settings['api']['core_account'];
       $application = $this->settings['api']['core_application'];
       $token = $_SESSION['token'];
       $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-      $result = $client->request('GET', 'userrole', [
+      $result = $client->request('GET', 'user/role', [
         'headers' => [
           'Authorization' => "Bearer $token",
         ],
         'query' => [
-          'username' => $username,
+          'uid' => $uid,
         ],
       ]);
       $result = json_decode($result->getBody()->getContents());
@@ -103,7 +114,17 @@ class CtrlBase {
       }
     }
 
-    return $this->userAccessRights = $result;
+    $this->userAccessRights = [];
+    foreach ($result as $userRole) {
+      if ($userRole->accid == NULL && $userRole->appid == NULL) {
+        $this->userAccessRights[0][0][] = $userRole->rid;
+      }
+      else {
+        $this->userAccessRights[$userRole->accid][$userRole->appid][] = $userRole->rid;
+      }
+    }
+
+    return $this->userAccessRights;
   }
 
   /**
@@ -117,10 +138,8 @@ class CtrlBase {
 
     foreach($this->userAccessRights as $account) {
       foreach($account as $application) {
-        foreach($application as $role) {
-          if (is_object($role) && isset($role->role_name) && isset($role->role_id)) {
-            $roles[$role->role_id] = $role->role_name;
-          }
+        foreach($application as $rid) {
+          $roles[$rid] = $this->allRoles[$rid];
         }
       }
     }
@@ -218,7 +237,6 @@ class CtrlBase {
         $application = $this->settings['api']['core_application'];
         $token = $_SESSION['token'];
         $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-        $query = ['account_name' => 'all'];
         $query = ['application_name' => 'all'];
         foreach($params as $key => $value) {
           $query[$key] = $value;
@@ -266,8 +284,8 @@ class CtrlBase {
     }
 
     $roles = $this->getRoles();
-    foreach ($roles as $role) {
-      if (in_array($role, self::PERMITTED_ROLES)) {
+    foreach ($roles as $rid => $name) {
+      if (in_array($name, self::PERMITTED_ROLES)) {
         return TRUE;
       }
     }
