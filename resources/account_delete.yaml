@@ -17,8 +17,8 @@ security:
   role: Administrator
 
 process:
-  function: account
-  id: account_delete
+  function: account_delete
+  id: account_delete_process
   accid:
     function: var_uri
     id: account_delete_accid
