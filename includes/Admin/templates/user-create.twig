@@ -14,78 +14,78 @@
           <label for="active">Active <span class="red-text">*</span></label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="username" required value="{{ user.username }}">
+          <input type="text" name="username" required value="">
           <label for="name_first">Username <span class="red-text">*</span></label>
         </div>
         <div class="input-field col s12">
-          <input type="password" name="password" value="{{ user.uid }}">
+          <input type="password" name="password" required value="">
           <label for="password">Password</label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="email" required value="{{ user.email }}">
+          <input type="text" name="email" required value="">
           <label for="email">E-mail <span class="red-text">*</span></label>
         </div>
         <div class="input-field col s12">
           <select id="honorific" name="honorific" class="validate" {% if mode == 'view' %}disabled{% endif %}>
             <option value=""></option>
-            <option value="Mr" {% if user.honorific == 'Mr' %}selected{% endif %}>Mr</option>
-            <option value="Ms" {% if user.honorific == 'Ms' %}selected{% endif %}>Ms</option>
-            <option value="Miss" {% if user.honorific == 'Miss' %}selected{% endif %}>Miss</option>
-            <option value="Mrs" {% if user.honorific == 'Mrs' %}selected{% endif %}>Mrs</option>
-            <option value="Dr" {% if user.honorific == 'Dr' %}selected{% endif %}>Dr</option>
-            <option value="Prof" {% if user.honorific == 'Prof' %}selected{% endif %}>Prof</option>
-            <option value="Hon" {% if suser.honorific == 'Hon' %}selected{% endif %}>Hon</option>
+            <option value="Mr">Mr</option>
+            <option value="Ms">Ms</option>
+            <option value="Miss">Miss</option>
+            <option value="Mrs">Mrs</option>
+            <option value="Dr">Dr</option>
+            <option value="Prof">Prof</option>
+            <option value="Hon">Hon</option>
           </select>
           <label for="honorific">Title</label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="name_first" value="{{ user.nameFirst }}">
+          <input type="text" name="name_first" value="">
           <label for="name_first">First name</label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="name_last" value="{{ user.nameLast }}">
+          <input type="text" name="name_last" value="">
           <label for="name_last">Last name</label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="company" value="{{ user.company }}">
+          <input type="text" name="company" value="">
           <label for="company">Company</label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="website" value="{{ user.website }}">
+          <input type="text" name="website" value="">
           <label for="website">Website</label>
         </div>
       </div>
       <div class="col s6">
         <div class="input-field col s12">
-          <input type="text" name="address_street" value="{{ user.addressStreet }}">
+          <input type="text" name="address_street" value="">
           <label for="address_street">Street</label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="address_suburb" value="{{ user.addressSuburb }}">
+          <input type="text" name="address_suburb" value="">
           <label for="address_suburb">Suburb</label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="address_city" value="{{ user.addressCity }}">
+          <input type="text" name="address_city" value="">
           <label for="address_city">City</label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="address_state" value="{{ user.addressState }}">
+          <input type="text" name="address_state" value="">
           <label for="address_state">State</label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="address_country" value="{{ user.addressCountry }}">
+          <input type="text" name="address_country" value="">
           <label for="address_country">Country</label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="address_postcode" value="{{ user.addressPostcode }}">
+          <input type="text" name="address_postcode" value="">
           <label for="address_postcode">Postcode</label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="phone_mobile" value="{{ user.phoneMobile }}">
+          <input type="text" name="phone_mobile" value="">
           <label for="phone_mobile">Mobile</label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="phone_work" value="{{ user.phoneWork }}">
+          <input type="text" name="phone_work" value="">
           <label for="phone_work">Phone</label>
         </div>
         <div class="input-field col s12">
