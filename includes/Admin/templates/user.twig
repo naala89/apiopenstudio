@@ -1,11 +1,20 @@
 {% extends "page.twig" %}
 
-{% set title="Users" %}
+
+{% if mode == 'edit' %}
+  {% set title="User edit" %}
+{% else %}
+  {% set title="User view" %}
+{% endif %}
+
 
 {% block content %}
   <div class="row">
-    <div class="col s6">
-      <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-user-invite" title="Invite a user"><i class="material-icons">add</i></a>
+    <div class="col s1">
+      <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-user-invite"><i class="material-icons">email</i></a>
+    </div>
+    <div class="col s1">
+      <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="/user/create"><i class="material-icons">add</i></a>
     </div>
     {% if mode == 'view' %}
       <div class="col s6 right-align">
@@ -21,7 +30,7 @@
       <div class="col s6">
         <div class="input-field col s12">
           <input type="text" name="uid" disabled value="{{ user.uid }}">
-          <label for="create-app-name">UID</label>
+          <label for="uid">UID</label>
         </div>
         <div class="input-field col s12">
           <select id="active" name="active" class="validate" required {% if mode == 'view' %}disabled{% endif %}>
@@ -32,11 +41,19 @@
           <label for="active">Active <span class="red-text">*</span></label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="name_first" required {% if mode == 'view' %}disabled{% endif %} value="{{ user.username }}">
-          <label for="create-app-name">Username</label>
+          <input type="text" name="edit-username" required {% if mode == 'view' %}disabled{% endif %} value="{{ user.username }}">
+          <label for="edit-username">Username <span class="red-text">*</span></label>
         </div>
         <div class="input-field col s12">
-          <select id="honorific" name="honorific" class="validate" required {% if mode == 'view' %}disabled{% endif %}>
+          <input type="password" name="edit-password" {% if mode == 'view' %}disabled{% endif %} value="{{ user.password }}">
+          <label for="edit-password">Password</label>
+        </div>
+        <div class="input-field col s12">
+          <input type="text" name="email" required {% if mode == 'view' %}disabled{% endif %} value="{{ user.email }}">
+          <label for="email">E-mail <span class="red-text">*</span></label>
+        </div>
+        <div class="input-field col s12">
+          <select id="honorific" name="honorific" class="validate" {% if mode == 'view' %}disabled{% endif %}>
             <option value=""></option>
             <option value="Mr" {% if user.honorific == 'Mr' %}selected{% endif %}>Mr</option>
             <option value="Ms" {% if user.honorific == 'Ms' %}selected{% endif %}>Ms</option>
@@ -46,19 +63,15 @@
             <option value="Prof" {% if user.honorific == 'Prof' %}selected{% endif %}>Prof</option>
             <option value="Hon" {% if suser.honorific == 'Hon' %}selected{% endif %}>Hon</option>
           </select>
-          <label for="honorific">Title <span class="red-text">*</span></label>
+          <label for="honorific">Title</label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="name_first" required {% if mode == 'view' %}disabled{% endif %} value="{{ user.nameFirst }}">
-          <label for="create-app-name">First name</label>
+          <input type="text" name="name_first" {% if mode == 'view' %}disabled{% endif %} value="{{ user.nameFirst }}">
+          <label for="name_first">First name</label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="name_last" required {% if mode == 'view' %}disabled{% endif %} value="{{ user.nameLast }}">
-          <label for="create-app-name">Last name</label>
-        </div>
-        <div class="input-field col s12">
-          <input type="text" name="email" required {% if mode == 'view' %}disabled{% endif %} value="{{ user.email }}">
-          <label for="create-app-name">E-mail</label>
+          <input type="text" name="name_last" {% if mode == 'view' %}disabled{% endif %} value="{{ user.nameLast }}">
+          <label for="name_last">Last name</label>
         </div>
         <div class="input-field col s12">
           <input type="text" name="company" {% if mode == 'view' %}disabled{% endif %} value="{{ user.company }}">
@@ -66,21 +79,17 @@
         </div>
         <div class="input-field col s12">
           <input type="text" name="website" {% if mode == 'view' %}disabled{% endif %} value="{{ user.website }}">
-          <label for="create-app-name">Website</label>
+          <label for="company">Website</label>
         </div>
-        {% if mode == 'edit' %}
-          <div class="input-field col s12">
-            <button type='submit' class='btn-small red black-text waves-effect z-depth-1 y-depth-1'>Edit</button>
-          </div>{% endif %}
       </div>
       <div class="col s6">
         <div class="input-field col s12">
           <input type="text" name="address_street" {% if mode == 'view' %}disabled{% endif %} value="{{ user.addressStreet }}">
-          <label for="create-app-name">Street</label>
+          <label for="address_street">Street</label>
         </div>
         <div class="input-field col s12">
           <input type="text" name="address_suburb" {% if mode == 'view' %}disabled{% endif %} value="{{ user.addressSuburb }}">
-          <label for="create-app-name">Suburb</label>
+          <label for="address_suburb">Suburb</label>
         </div>
         <div class="input-field col s12">
           <input type="text" name="address_city" {% if mode == 'view' %}disabled{% endif %} value="{{ user.addressCity }}">
@@ -88,24 +97,29 @@
         </div>
         <div class="input-field col s12">
           <input type="text" name="address_state" {% if mode == 'view' %}disabled{% endif %} value="{{ user.addressState }}">
-          <label for="create-app-name">State</label>
+          <label for="address_city">State</label>
         </div>
         <div class="input-field col s12">
           <input type="text" name="address_country" {% if mode == 'view' %}disabled{% endif %} value="{{ user.addressCountry }}">
-          <label for="create-app-name">Country</label>
+          <label for="address_country">Country</label>
         </div>
         <div class="input-field col s12">
           <input type="text" name="address_postcode" {% if mode == 'view' %}disabled{% endif %} value="{{ user.addressPostcode }}">
-          <label for="create-app-name">Postcode</label>
+          <label for="address_postcode">Postcode</label>
         </div>
         <div class="input-field col s12">
           <input type="text" name="phone_mobile" {% if mode == 'view' %}disabled{% endif %} value="{{ user.phoneMobile }}">
-          <label for="create-app-name">Mobile</label>
+          <label for="phone_mobile">Mobile</label>
         </div>
         <div class="input-field col s12">
           <input type="text" name="phone_work" {% if mode == 'view' %}disabled{% endif %} value="{{ user.phoneWork }}">
-          <label for="create-app-name">Phone</label>
+          <label for="phone_work">Phone</label>
         </div>
+        {% if mode == 'edit' %}
+          <div class="input-field col s12">
+            <button type='submit' class='btn-small red black-text waves-effect z-depth-1 y-depth-1'>Edit</button>
+          </div>
+        {% endif %}
       </div>
     </div>
   {% if mode == 'edit' %}</form>{% endif %}

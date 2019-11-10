@@ -1,32 +1,32 @@
 {% extends "page.twig" %}
 
-{% set title="Users" %}
+{% set title="User create" %}
 
 {% block content %}
   <form method="post" action="/user/create">
     <div class="row">
       <div class="col s6">
         <div class="input-field col s12">
-          <select id="active" name="active" class="validate" required {% if mode == 'view' %}disabled{% endif %}>
+          <select id="active" name="active" class="validate" required>
             <option value="0">False</option>
             <option value="1" selected>True</option>
           </select>
           <label for="active">Active <span class="red-text">*</span></label>
         </div>
         <div class="input-field col s12">
-          <input type="text" name="username" required value="">
-          <label for="name_first">Username <span class="red-text">*</span></label>
+          <input type="text" name="create-username" required value="">
+          <label for="create-username">Username <span class="red-text">*</span></label>
         </div>
         <div class="input-field col s12">
-          <input type="password" name="password" required value="">
-          <label for="password">Password</label>
+          <input type="password" name="create-password" required value="">
+          <label for="create-password">Password <span class="red-text">*</span></label>
         </div>
         <div class="input-field col s12">
           <input type="text" name="email" required value="">
           <label for="email">E-mail <span class="red-text">*</span></label>
         </div>
         <div class="input-field col s12">
-          <select id="honorific" name="honorific" class="validate" {% if mode == 'view' %}disabled{% endif %}>
+          <select id="honorific" name="honorific" class="validate">
             <option value=""></option>
             <option value="Mr">Mr</option>
             <option value="Ms">Ms</option>
@@ -95,8 +95,8 @@
     </div>
   </form>
 
-  {% include 'modals/user_invite.twig' %}
+{#  {% include 'modals/user_invite.twig' %}#}
 
-  {% include 'modals/user_delete.twig' %}
+{#  {% include 'modals/user_delete.twig' %}#}
 
 {% endblock %}

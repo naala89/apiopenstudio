@@ -2,6 +2,8 @@
 
 namespace Gaterdata\Admin\Middleware;
 
+use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Container;
@@ -17,7 +19,7 @@ use GuzzleHttp\Exception\RequestException;
 class Authentication {
 
   /**
-   * @var \Slim\Container
+   * @var Container
    */
   private $settings;
   /**
@@ -32,7 +34,7 @@ class Authentication {
   /**
    * Authentication constructor.
    *
-   * @param \Slim\Container $container
+   * @param Container $container
    *   Container.
    * @param array $settings
    *   Application settings.
@@ -48,17 +50,17 @@ class Authentication {
   /**
    * Middleware invocation.
    *
-   * @param \Psr\Http\Message\ServerRequestInterface $request
+   * @param ServerRequestInterface $request
    *   PSR7 request.
-   * @param \Psr\Http\Message\ResponseInterface $response
+   * @param ResponseInterface $response
    *   PSR7 Response.
    * @param callable $next
    *   Next middleware.
    *
-   * @return \Psr\Http\Message\ResponseInterface
+   * @return ResponseInterface
    *   Response Interface.
-   * 
-   * @TODO: Validate token resource.
+   *
+   * @throws GuzzleException
    */
   public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next) {
     $data = $request->getParsedBody();
@@ -82,7 +84,6 @@ class Authentication {
         $result = json_decode($result->getBody()->getContents());
         if (!isset($result->token) || !isset($result->uid)) {
           return $response->withStatus(302)->withHeader('Location', '/login');
-          throw new ApiException('Invalid response from api login');
         }
         $_SESSION['token'] = $result->token;
         $_SESSION['uid'] = $result->uid;
@@ -136,7 +137,7 @@ class Authentication {
   /**
    * Process a login or validation exception.
    *
-   * @param \Exception $e
+   * @param Exception $e
    *
    * @return void
    */
@@ -151,7 +152,7 @@ class Authentication {
         $responseObject = json_decode($result->getBody()->getContents());
         $message = $responseObject->error->message;
       } else {
-        $message = 'Unkown response.';
+        $message = 'Unknown response.';
       }
     } else {
       $message = $e->getMessage();

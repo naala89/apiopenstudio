@@ -131,6 +131,11 @@ class CtrlUser extends CtrlBase {
     }
 
     $allPostVars = $request->getParams();
+    // Workaround for Authentication middleware that will think this is a login attempt.
+    $allPostVars['username'] = $allPostVars['create-username'];
+    unset($allPostVars['create-username']);
+    $allPostVars['password'] = $allPostVars['create-password'];
+    unset($allPostVars['create-password']);
 
     try {
       $domain = $this->settings['api']['url'];
@@ -138,7 +143,7 @@ class CtrlUser extends CtrlBase {
       $application = $this->settings['api']['core_application'];
       $token = $_SESSION['token'];
       $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-      $result = $client->request('POST', 'user/create', [
+      $result = $client->request('POST', 'user', [
         'headers' => [
           'Authorization' => "Bearer $token",
         ],
@@ -198,18 +203,24 @@ class CtrlUser extends CtrlBase {
     $menu = $this->getMenus();
     $allPostVars = $request->getParams();
     $uid = $args['uid'];
+    // Workaround for Authentication middleware that will think this is a login attempt.
+    $allPostVars['username'] = $allPostVars['edit-username'];
+    unset($allPostVars['edit-username']);
+    $allPostVars['password'] = $allPostVars['edit-password'];
+    unset($allPostVars['edit-password']);
+
+    $domain = $this->settings['api']['url'];
+    $account = $this->settings['api']['core_account'];
+    $application = $this->settings['api']['core_application'];
+    $token = $_SESSION['token'];
 
     try {
-      $domain = $this->settings['api']['url'];
-      $account = $this->settings['api']['core_account'];
-      $application = $this->settings['api']['core_application'];
-      $token = $_SESSION['token'];
       $client = new Client(['base_uri' => "$domain/$account/$application/"]);
       $result = $client->request('PUT', "user/$uid", [
         'headers' => [
           'Authorization' => "Bearer $token",
         ],
-        'query' => $allPostVars,
+        'body' => json_encode($allPostVars),
       ]);
     }
     catch (ClientException $e) {
@@ -225,6 +236,7 @@ class CtrlUser extends CtrlBase {
     }
 
     try {
+      $client = new Client(['base_uri' => "$domain/$account/$application/"]);
       $result = $client->request('GET', 'user', [
         'headers' => [
           'Authorization' => "Bearer $token",
