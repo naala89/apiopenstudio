@@ -53,7 +53,7 @@ abstract class Mapper {
       throw new ApiException('Affected rows: 0, no error message returned. There was possibly nothing to update', 2);
     }
     $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-    Cascade::getLogger('gaterdata')->error($message);
+//    Cascade::getLogger('gaterdata')->error($message);
     throw new ApiException($message, 2);
   }
 

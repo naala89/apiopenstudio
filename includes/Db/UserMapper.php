@@ -2,6 +2,8 @@
 
 namespace Gaterdata\Db;
 
+use Gaterdata\Core\ApiException;
+use Gaterdata\Core\Debug;
 use Gaterdata\Core\Utilities;
 
 /**
@@ -14,13 +16,13 @@ class UserMapper extends Mapper {
   /**
    * Save the user.
    *
-   * @param \Gaterdata\Db\User $user
+   * @param User $user
    *   User object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Gaterdata\Core\ApiException
+   * @throws ApiException
    */
   public function save(User $user) {
     if (empty($user->getUid())) {
@@ -78,13 +80,13 @@ class UserMapper extends Mapper {
   /**
    * Delete a user.
    *
-   * @param \Gaterdata\Db\User $user
+   * @param User $user
    *   The user object.
    *
    * @return bool
    *   Success.
    *
-   * @throws \Gaterdata\Core\ApiException
+   * @throws ApiException
    */
   public function delete(User $user) {
     $sql = 'DELETE FROM user WHERE uid = ?';
@@ -101,7 +103,7 @@ class UserMapper extends Mapper {
    * @return array
    *   $array of Users.
    *
-   * @throws \Gaterdata\Core\ApiException
+   * @throws ApiException
    */
   public function findAll($params = []) {
     $sql = 'SELECT * FROM user';
@@ -115,10 +117,10 @@ class UserMapper extends Mapper {
    * @param int $uid
    *   User ID.
    *
-   * @return \Gaterdata\Db\User
+   * @return User
    *   User object.
    *
-   * @throws \Gaterdata\Core\ApiException
+   * @throws ApiException
    */
   public function findByUid($uid) {
     $sql = 'SELECT * FROM user WHERE uid = ?';
@@ -132,7 +134,7 @@ class UserMapper extends Mapper {
    * @param string $email
    *   Users email.
    *
-   * @return \Gaterdata\Db\User
+   * @return User
    *   User object.
    *
    * @throws ApiException
@@ -149,7 +151,7 @@ class UserMapper extends Mapper {
    * @param string $username
    *   Users usdername.
    *
-   * @return \Gaterdata\Db\User
+   * @return User
    *   User object.
    *
    * @throws ApiException
@@ -166,7 +168,7 @@ class UserMapper extends Mapper {
    * @param string $token
    *   User auth token.
    *
-   * @return \Gaterdata\Db\User
+   * @return User
    *   User object.
    *
    * @throws ApiException
@@ -183,7 +185,7 @@ class UserMapper extends Mapper {
    * @param array $row
    *   DB row object.
    *
-   * @return \Gaterdata\Db\User
+   * @return User
    *   Mapped User object.
    */
   protected function mapArray(array $row) {
