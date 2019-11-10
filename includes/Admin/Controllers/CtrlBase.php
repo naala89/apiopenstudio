@@ -2,6 +2,7 @@
 
 namespace Gaterdata\Admin\Controllers;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Slim\Flash\Messages;
 use Slim\Views\Twig;
 use Slim\Collection;
@@ -57,14 +58,12 @@ class CtrlBase {
   /**
    * Base constructor.
    *
-   * @param \Slim\Collection $settings
+   * @param Collection $settings
    *   Settings array.
-   * @param \Slim\Views\Twig $view
+   * @param Twig $view
    *   View container.
-   * @param \Slim\Flash\Messages $flash
+   * @param Messages $flash
    *   Flash messages container.
-   *
-   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   public function __construct(Collection $settings, Twig $view, Messages $flash) {
     $this->userAccessRights = new stdClass();
@@ -76,14 +75,14 @@ class CtrlBase {
   /**
    * Fetch the access rights for a user.
    *
-   * @param \Slim\Http\Response
+   * @param Response
    *   Response object.
    * @param string $uid
    *   User ID.
    *
    * @return stdClass user access rights.
    *
-   * @throws \GuzzleHttp\Exception\GuzzleException
+   * @throws GuzzleException
    */
   protected function getAccessRights($response, $uid) {
     try {
@@ -150,7 +149,7 @@ class CtrlBase {
   /**\
    * Get accounts for the user.
    *
-   * @param \Slim\Http\Response
+   * @param Response $response
    *   Response object.
    * @param array $params
    *   Sort and filter params.
@@ -158,7 +157,7 @@ class CtrlBase {
    * @return array
    *   Array of account names, indexed by accid.
    *
-   * @throws \GuzzleHttp\Exception\GuzzleException
+   * @throws GuzzleException
    */
 
   protected function getAccounts(Response $response, array $params = []) {
@@ -214,7 +213,7 @@ class CtrlBase {
   /**
    * Get applications for the user.
    *
-   * @param \Slim\Http\Response
+   * @param Response $response
    *   Response object.
    * @param array $params
    *   Sort and filter params.
@@ -223,7 +222,7 @@ class CtrlBase {
    *   Array of applications and the account they belong to:
    *     [accid => [appid => name]]
    *
-   * @throws \GuzzleHttp\Exception\GuzzleException
+   * @throws GuzzleException
    */
   protected function getApplications(Response $response, array $params = []) {
     $roles = $this->getRoles();
