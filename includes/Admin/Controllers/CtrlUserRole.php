@@ -2,6 +2,9 @@
 
 namespace Gaterdata\Admin\Controllers;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use Psr\Http\Message\ResponseInterface;
 use Slim\Views\Twig;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -17,72 +20,197 @@ use Gaterdata\Admin\UserRole;
  */
 class CtrlUserRole extends CtrlBase {
 
-  protected $permittedRoles = ['Owner'];
-
   /**
-   * CtrlUser constructor.
+   * Roles allowed to visit the page.
    *
-   * @param array $dbSettings
-   *   DB settings array.
-   * @param array $mailSettings
-   *   Mail settings array.
-   * @param \Slim\Views\Twig $view
-   *   View container.
+   * @var array
    */
-  public function __construct(array $dbSettings, array $mailSettings, Twig $view) {
-    $this->mailSettings = $mailSettings;
-    parent::__construct($dbSettings, $view);
-  }
+  const PERMITTED_ROLES = [
+    'Administrator',
+    'Account manager',
+    'Application manager',
+  ];
 
   /**
-   * Edit a users roles page.
+   * List user roles.
    *
-   * @param \Slim\Http\Request $request
+   * @param Request $request
    *   Request object.
-   * @param \Slim\Http\Response $response
+   * @param Response $response
    *   Response object.
    * @param array $args
    *   Request args.
    *
-   * @return \Psr\Http\Message\ResponseInterface
+   * @return ResponseInterface
    *   Response.
+   *
+   * @throws GuzzleException
    */
-  public function edit(Request $request, Response $response, array $args) {
-    $uaid = isset($_SESSION['uaid']) ? $_SESSION['uaid'] : '';
-    $roles = $this->getRoles($uaid);
-    if (!$this->checkAccess($roles)) {
-      $response->withRedirect('/');
+  public function index(Request $request, Response $response, array $args) {
+    // Validate access.
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $this->getAccessRights($response, $uid);
+    if (!$this->checkAccess()) {
+      $this->flash->addMessage('error', 'Access admin: access denied');
+      return $response->withStatus(302)->withHeader('Location', '/');
     }
-    $menu = $this->getMenus($roles);
-    if (empty($args['uid'])) {
-      return $this->view->render($response, 'users.twig', [
-        'menu' => $menu,
-        'message' => [
-          'type' => 'error',
-          'text' => 'No user account ID received.',
+
+    $menu = $this->getMenus();
+    $params = $request->getQueryParams();
+
+    $domain = $this->settings['api']['url'];
+    $account = $this->settings['api']['core_account'];
+    $application = $this->settings['api']['core_application'];
+    $token = $_SESSION['token'];
+    $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+
+    try {
+      $result = $client->request('GET', 'user/role', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+        'query' => $params,
+      ]);
+      $userRoles = (array) json_decode($result->getBody()->getContents());
+      $result = $client->request('GET', 'account/all', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
         ],
       ]);
+      $accounts = (array) json_decode($result->getBody()->getContents());
+      $result = $client->request('GET', 'application', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+      ]);
+      $applications = (array) json_decode($result->getBody()->getContents());
+      $result = $client->request('GET', 'user', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+      ]);
+      $users = (array) json_decode($result->getBody()->getContents());
     }
-
-    // Fetch the user details.
-    $userHlp = new UserAccount($this->dbSettings);
-    $user = $userHlp->findByUserId($args['uid']);
-
-    // Fetch all user accounts for the user.
-    $userAccountHlp = new UserAccount($this->dbSettings);
-    $userAccounts = $userAccountHlp->findByUserId($user['uid']);
-
-    // Fetch the application for each of the user's user accounts.
-    $applicationHlp = new Application($this->dbSettings);
-    $applications = [];
-    foreach ($userAccounts as $userAccount) {
-      if (!empty($userAccount['appid'])) {
-        $application = $applicationHlp->findByApplicationId($userAccount['appid']);
-        $applications[$application['appid']] = $application;
+    catch (ClientException $e) {
+      $result = $e->getResponse();
+      $this->flash->addMessage('error', $this->getErrorMessage($e));
+      switch ($result->getStatusCode()) {
+        case 401:
+          return $response->withStatus(302)->withHeader('Location', '/login');
+          break;
+        default:
+          return $this->view->render($response, 'user-roles.twig', [
+            'menu' => $menu,
+            'user_roles' => [],
+          ]);
+          break;
       }
     }
 
-    // Fetch the roles for each user account.
+    return $this->view->render($response, 'user-roles.twig', [
+      'menu' => $menu,
+      'params' => $params,
+      'user_roles' => $userRoles,
+      'accounts' => $accounts,
+      'applications' => $applications,
+      'users' => $users,
+      'roles'=> $this->allRoles,
+    ]);
+  }
+
+  /**
+   * Create a user role.
+   *
+   * @param Request $request
+   *   Request object.
+   * @param Response $response
+   *   Response object.
+   * @param array $args
+   *   Request args.
+   *
+   * @return ResponseInterface
+   *   Response.
+   *
+   * @throws GuzzleException
+   */
+  public function create(Request $request, Response $response, array $args) {
+    // Validate access.
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $this->getAccessRights($response, $uid);
+    if (!$this->checkAccess()) {
+      $this->flash->addMessage('error', 'Access admin: access denied');
+      return $response->withStatus(302)->withHeader('Location', '/');
+    }
+
+    $menu = $this->getMenus();
+    $allPostVars = $request->getParsedBody();
+    $domain = $this->settings['api']['url'];
+    $account = $this->settings['api']['core_account'];
+    $application = $this->settings['api']['core_application'];
+    $token = $_SESSION['token'];
+    $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+
+    try {
+      $result = $client->request('POST', 'user/role', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+        'form_params' => [
+          'uid' => $allPostVars['uid'],
+          'accid' => $allPostVars['accid'],
+          'appid' => $allPostVars['appid'],
+          'rid' => $allPostVars['rid'],
+        ],
+      ]);
+      $result = $client->request('GET', 'user/role', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+      ]);
+      $userRoles = (array) json_decode($result->getBody()->getContents());
+      $result = $client->request('GET', 'account/all', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+      ]);
+      $accounts = (array) json_decode($result->getBody()->getContents());
+      $result = $client->request('GET', 'application', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+      ]);
+      $applications = (array) json_decode($result->getBody()->getContents());
+      $result = $client->request('GET', 'user', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+      ]);
+      $users = (array) json_decode($result->getBody()->getContents());
+    }
+    catch (ClientException $e) {
+      $result = $e->getResponse();
+      $this->flash->addMessage('error', $this->getErrorMessage($e));
+      switch ($result->getStatusCode()) {
+        case 401:
+          return $response->withStatus(302)->withHeader('Location', '/login');
+          break;
+        default:
+          return $this->view->render($response, 'user-roles.twig', [
+            'menu' => $menu,
+            'user_roles' => [],
+          ]);
+          break;
+      }
+    }
+
+    return $this->view->render($response, 'user-roles.twig', [
+      'menu' => $menu,
+      'user_roles' => $userRoles,
+      'accounts' => $accounts,
+      'applications' => $applications,
+      'users' => $users,
+      'roles'=> $this->allRoles,
+    ]);
   }
 
 }

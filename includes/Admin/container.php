@@ -1,23 +1,19 @@
 <?php
 
+use Gaterdata\Admin\Controllers\CtrlUserRole;
 use Slim\Container;
 use Slim\Views\TwigExtension;
 use Slim\Http\Uri;
 use Slim\Views\Twig;
 USE Slim\Flash\Messages;
-use Gaterdata\Admin\Controllers\CtrlUser;
-use Gaterdata\Admin\Controllers\CtrlUsers;
-use Gaterdata\Admin\Controllers\CtrlApplication;
-use Gaterdata\Admin\Controllers\CtrlAccount;
-use Gaterdata\Admin\Controllers\CtrlLogin;
-use Gaterdata\Admin\Controllers\CtrlHome;
+use Gaterdata\Admin\Controllers;
 
 $container = $app->getContainer();
 
 /**
  * Flash container.
  *
- * @return \Slim\Flash\Messages
+ * @return Messages
  */
 $container['flash'] = function () {
   return new Messages();
@@ -27,10 +23,10 @@ $container['flash'] = function () {
 /**
  * Register Twig View container.
  *
- * @param \Slim\Container $container
+ * @param Container $container
  *   Slim container.
  *
- * @return \Slim\Views\Twig
+ * @return Twig
  *   Twig object.
  */
 $container['view'] = function (Container $container) {
@@ -56,7 +52,7 @@ $container['view'] = function (Container $container) {
 /**
  * Register Login controller.
  *
- * @param \Slim\Container $container
+ * @param Container $container
  *   Slim container.
  *
  * @return Gaterdata\Admin\Controllers\CtrlLogin
@@ -66,13 +62,13 @@ $container['CtrlLogin'] = function (Container $container) {
   $settings = $container->get('settings');
   $view = $container->get('view');
   $flash = $container->get('flash');
-  return new CtrlLogin($settings, $view, $flash);
+  return new Controllers\CtrlLogin($settings, $view, $flash);
 };
 
 /**
  * Register Home controller.
  *
- * @param \Slim\Container $container
+ * @param Container $container
  *   Slim container.
  *
  * @return Gaterdata\Admin\Controllers\CtrlHome
@@ -82,13 +78,13 @@ $container['CtrlHome'] = function (Container $container) {
   $settings = $container->get('settings');
   $view = $container->get('view');
   $flash = $container->get('flash');
-  return new CtrlHome($settings, $view, $flash);
+  return new Controllers\CtrlHome($settings, $view, $flash);
 };
 
 /**
  * Register Account controller.
  *
- * @param \Slim\Container $container
+ * @param Container $container
  *   Slim container.
  *
  * @return Gaterdata\Admin\Controllers\CtrlAccount
@@ -98,13 +94,13 @@ $container['CtrlAccount'] = function (Container $container) {
   $settings = $container->get('settings');
   $view = $container->get('view');
   $flash = $container->get('flash');
-  return new CtrlAccount($settings, $view, $flash);
+  return new Controllers\CtrlAccount($settings, $view, $flash);
 };
 
 /**
  * Register Application controller.
  *
- * @param \Slim\Container $container
+ * @param Container $container
  *   Slim container.
  *
  * @return Gaterdata\Admin\Controllers\CtrlApplication
@@ -114,13 +110,13 @@ $container['CtrlApplication'] = function (Container $container) {
   $settings = $container->get('settings');
   $view = $container->get('view');
   $flash = $container->get('flash');
-  return new CtrlApplication($settings, $view, $flash);
+  return new Controllers\CtrlApplication($settings, $view, $flash);
 };
 
 /**
  * Register Users controller.
  *
- * @param \Slim\Container $container
+ * @param Container $container
  *   Slim container.
  *
  * @return Gaterdata\Admin\Controllers\CtrlUsers
@@ -130,13 +126,13 @@ $container['CtrlUsers'] = function (Container $container) {
   $settings = $container->get('settings');
   $view = $container->get('view');
   $flash = $container->get('flash');
-  return new CtrlUsers($settings, $view, $flash);
+  return new Controllers\CtrlUsers($settings, $view, $flash);
 };
 
 /**
  * Register User controller.
  *
- * @param \Slim\Container $container
+ * @param Container $container
  *   Slim container.
  *
  * @return Gaterdata\Admin\Controllers\CtrlUser
@@ -146,5 +142,21 @@ $container['CtrlUser'] = function (Container $container) {
   $settings = $container->get('settings');
   $view = $container->get('view');
   $flash = $container->get('flash');
-  return new CtrlUser($settings, $view, $flash);
+  return new Controllers\CtrlUser($settings, $view, $flash);
+};
+
+/**
+ * Register User controller.
+ *
+ * @param Container $container
+ *   Slim container.
+ *
+ * @return Controllers\CtrlUserRole
+ *   CtrlUserRole object.
+ */
+$container['CtrlUserRole'] = function (Container $container) {
+  $settings = $container->get('settings');
+  $view = $container->get('view');
+  $flash = $container->get('flash');
+  return new Controllers\CtrlUserRole($settings, $view, $flash);
 };

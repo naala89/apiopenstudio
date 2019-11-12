@@ -52,7 +52,8 @@ $app->get('/user/delete/{uid}', 'CtrlUser:delete')->add(new Authentication($cont
 /**
  * User roles
  */
-//$app->get('/users/edit/{uaid}', 'CtrlUserRole:edit')->add(new Authentication($container, $settings, '/login'));
+$app->get('/user/roles', 'CtrlUserRole:index')->add(new Authentication($container, $settings, '/login'));
+$app->post('/user/roles/create', 'CtrlUserRole:create')->add(new Authentication($container, $settings, '/login'));
 
 /**
  * Roles.
@@ -61,4 +62,4 @@ $app->get('/user/delete/{uid}', 'CtrlUser:delete')->add(new Authentication($cont
 /**
  * Resources.
  */
-$app->get('/resources', 'CtrlResource:index')->add(new Authentication($container, $settings, '/login'));
+//$app->get('/resources', 'CtrlResource:index')->add(new Authentication($container, $settings, '/login'));
