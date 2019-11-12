@@ -1,15 +1,16 @@
 <?php
 
 namespace Gaterdata\Security;
+
 use Gaterdata\Core;
 use Gaterdata\Core\Debug;
 use Gaterdata\Db;
 
 /**
- * Provide token authentication based on token in DB and the user's roles.
+ * Provide token authentication based on token and the multiple user roles.
  */
 
-class TokenRoles extends Core\ProcessorEntity
+class TokenRoles extends TokenRole
 {
   protected $details = [
     'name' => 'Token (Roles)',
@@ -45,7 +46,7 @@ class TokenRoles extends Core\ProcessorEntity
    * @throws \Gaterdata\Security\ApiException
    */
   public function process() {
-    Core\Debug::variable($this->meta, 'Security TokenRole', 4);
+    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
     // no token
     $token = $this->val('token');
@@ -62,24 +63,12 @@ class TokenRoles extends Core\ProcessorEntity
     }
 
     // Get roles and validate the user.
-    $userRoleMapper = new Db\UserRoleMapper($this->db);
-    $roleMapper = new Db\RoleMapper($this->db);
     $roleNames = $this->val('roles', TRUE);
-    
-    // If a role that fits is found return TRUE, otherwise fall through to the exception.
     foreach($roleNames as $roleName) {
-      Debug::variable(($roleName), 'validating user rolename');
-      $row = $roleMapper->findByName($roleName);
-      if (empty($rid = $row->getRid())) {
-        throw new Core\ApiException('Invalid role defined', 4, $this->id, 401);
-      }
-      $rid = $row->getRid();
-      $userRoles = $userRoleMapper->findByFilter(['col' => ['rid' => $rid, 'uid' => $uid]]);
-      if (!empty($userRoles)) {
+      if ($this->validateUser($uid, $roleName) == TRUE) {
         return TRUE;
       }
     }
-    
     throw new Core\ApiException('permission denied', 4, $this->id, 401);
   }
 }
