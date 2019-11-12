@@ -6,7 +6,12 @@ use Gaterdata\Core\Debug;
 use Gaterdata\Db;
 
 /**
- * Provide token authentication based on token in DB and the user's role.
+ * Provide token authentication based and the user's role.
+ *
+ * Validation:
+ *   * If user is Administrator then only against role.
+ *   * If user is Account manager then against role and account.
+ *   * All others against role and application.
  */
 
 class TokenRole extends Core\ProcessorEntity
@@ -61,20 +66,54 @@ class TokenRole extends Core\ProcessorEntity
       throw new Core\ApiException('permission denied', 4, -1, 401);
     }
 
-    // Get roles and validate the user.
-    $userRoleMapper = new Db\UserRoleMapper($this->db);
-    $roleMapper = new Db\RoleMapper($this->db);
+    // Validate user against the role.
     $roleName = $this->val('role');
-    // If a role that fits is found return TRUE, otherwise fall through to the exception.
+    if ($this->validateUser($uid, $roleName)) {
+      return TRUE;
+    }
+    throw new Core\ApiException('permission denied', 4, $this->id, 401);
+  }
+
+  /**
+   * Validate a user against roles and the account/application of the resource.
+   *
+   * @param $uid
+   *   User ID
+   * @param $roleName
+   *   Role name.
+   *
+   * @return bool
+   *
+   * @throws Core\ApiException
+   */
+  protected function validateUser($uid, $roleName) {
+    $roleMapper = new Db\RoleMapper($this->db);
     $role = $roleMapper->findByName($roleName);
     if (empty($rid = $role->getRid())) {
       throw new Core\ApiException('Invalid role defined', 4, $this->id, 401);
     }
-    $userRoles = $userRoleMapper->findByFilter(['col' => ['rid' => $rid, 'uid' => $uid]]);
-    if (!empty($userRoles)) {
-      return TRUE;
+
+    $userRoleMapper = new Db\UserRoleMapper($this->db);
+    switch ($roleName) {
+      case 'Administrator':
+        $userRoles = $userRoleMapper->findByFilter(['col' => ['uid' => $uid, 'rid' => $rid]]);
+        if (!empty($userRoles)) {
+          return TRUE;
+        }
+        break;
+      case 'Account manager':
+        $userRoles = $userRoleMapper->findByFilter(['col' => ['uid' => $uid, 'accid' => $this->request->getAccId(), 'rid' => $rid]]);
+        if (!empty($userRoles)) {
+          return TRUE;
+        }
+        break;
+      default:
+        $userRoles = $userRoleMapper->findByFilter(['col' => ['uid' => $uid, 'appid' => $this->request->getAppId(), 'rid' => $rid]]);
+        if (!empty($userRoles)) {
+          return TRUE;
+        }
     }
-    
-    throw new Core\ApiException('permission denied', 4, $this->id, 401);
+
+    return FALSE;
   }
 }
