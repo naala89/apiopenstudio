@@ -1,6 +1,6 @@
 name: User Role create
 
-description: Create a role for a user for an application.
+description: Assign a role to a user for an account/application.
 
 uri: user/role
 
@@ -20,21 +20,25 @@ security:
     - Application manager
 
 process:
-  function: user_role
-  id: user_role_create_user_role
-  username:
+  function: user_role_create
+  id: user_role_create_process
+  uid:
     function: var_post
-    id: user_role_create_username
-    key: username
-  accountName:
+    id: user_role_create_uid
+    nullable: false
+    key: uid
+  accid:
     function: var_post
-    id: user_role_create_acc_name
-    key: accountName
-  applicationName:
+    id: user_role_create_accid
+    nullable: true
+    key: accid
+  appid:
     function: var_post
-    id: user_role_create_app_name
-    key: applicationName
-  roleName:
+    id: user_role_create_appid
+    nullable: true
+    key: appid
+  rid:
     function: var_post
-    id: user_role_create_role_name
-    key: roleName
+    id: user_role_create_rid
+    nullable: false
+    key: rid
