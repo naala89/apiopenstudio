@@ -315,7 +315,7 @@ class CtrlBase {
           'Accounts' => '/accounts',
           'Applications' => '/applications',
           'Users' => '/users',
-          'User Roles' => '/user_roles',
+          'User Roles' => '/user/roles',
           'Roles' => '/roles',
         ];
       }
@@ -323,7 +323,7 @@ class CtrlBase {
         $menus += [
           'Applications' => '/applications',
           'Users' => '/users',
-          'User Roles' => '/user_roles',
+          'User Roles' => '/user/roles',
           'Roles' => '/roles',
         ];
       }
@@ -331,7 +331,7 @@ class CtrlBase {
         $menus += [
           'Applications' => '/applications',
           'Users' => '/users',
-          'User Roles' => '/user_roles',
+          'User Roles' => '/user/roles',
         ];
       }
       if (in_array('Developer', $roles)) {
