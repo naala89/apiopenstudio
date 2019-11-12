@@ -86,33 +86,28 @@ class UserRead extends Core\ProcessorEntity
     $orderBy = empty($orderBy) ? 'uid' : $orderBy;
     $direction = $this->val('direction', TRUE);
     $direction = empty($direction) ? 'asc' : $direction;
-
     $userMapper = new Db\UserMapper($this->db);
-    $result = [];
 
     if (!empty($uid)) {
       // Find by UID.
-      $user = $userMapper->findByUid($uid);
-      if (empty($user->getUid())) {
+      $users = $userMapper->findByUid($uid);
+      if (empty($users->getUid())) {
         throw new Core\ApiException("User does not exist, uid: $uid", 6, $this->id, 400);
-      }
-      $result = $user->dump();
+      };
     }
     elseif (!empty($username)) {
       // Find by username.
-      $user = $userMapper->findByUsername($username);
-      if (empty($user->getUid())) {
+      $users = $userMapper->findByUsername($username);
+      if (empty($users->getUid())) {
         throw new Core\ApiException("User does not exist, username: $username", 6, $this->id, 400);
       }
-      $result = $user->dump();
     }
     elseif (!empty($email)) {
       // Find by email.
-      $user = $userMapper->findByEmail($email);
-      if (empty($user->getUid())) {
+      $users = $userMapper->findByEmail($email);
+      if (empty($users->getUid())) {
         throw new Core\ApiException("User does not exist, email: $email", 6, $this->id, 400);
       }
-      $result = $user->dump();
     }
     elseif (!empty($keyword)) {
       // Find by keyword.
@@ -127,9 +122,6 @@ class UserRead extends Core\ProcessorEntity
         'direction' => $direction,
       ];
       $users = $userMapper->findAll($params);
-      foreach ($users as $user) {
-        $result[] = $user->dump();
-      }
     }
     else {
       // Fetch all.
@@ -138,12 +130,14 @@ class UserRead extends Core\ProcessorEntity
         'direction' => $direction,
       ];
       $users = $userMapper->findAll($params);
-      foreach ($users as $user) {
-        $result[] = $user->dump();
-      }
+    }
+
+    $result = [];
+    foreach ($users as $user) {
+      $u = $user->dump();
+      $result[$u['uid']] = $u;
     }
 
     return $result;
-
   }
 }
