@@ -52,15 +52,6 @@ $(document).ready(function() {
     modal.modal('open');
   });
 
-  // Edit user modal.
-  // $('.modal-user-edit-trigger').click(function() {
-  //   var self = $(this);
-  //   var modal = $('#modal-user-edit');
-  //   modal.find('#user-name').html(self.attr('user-name'));
-  //   modal.find('a#delete-user').attr('href', '/user/delete/' + self.attr('user-account-id'));
-  //   modal.modal('open');
-  // });
-
   // Delete user modal.
   $('.modal-user-delete-trigger').click(function() {
     var self = $(this);
@@ -68,6 +59,32 @@ $(document).ready(function() {
     modal.find('#user-name').html(self.attr('delete-user-username'));
     modal.find('a#delete-user').attr('href', '/user/delete/' + self.attr('delete-user-uid'));
     modal.modal('open');
+  });
+
+  // User role create - role select
+  $("#modal-user-role-create select[name='rid']").on('change', function() {
+    var selected = $(this).find('option:selected').text();
+    var modal = $('#modal-user-role-create');
+    var selectAccid = modal.find("select[name='accid']");
+    var selectAppid = modal.find("select[name='appid']");
+    if (selected == 'Administrator') {
+      selectAccid.val('').prop('disabled', true);
+      selectAccid.formSelect();
+      selectAppid.val('').prop('disabled', true);
+      selectAppid.formSelect();
+    }
+    else if (selected == 'Account manager') {
+      selectAccid.prop('disabled', false);
+      selectAccid.formSelect();
+      selectAppid.val('').prop('disabled', true);
+      selectAppid.formSelect();
+    }
+    else {
+      selectAccid.prop('disabled', false);
+      selectAccid.formSelect();
+      selectAppid.prop('disabled', false);
+      selectAppid.formSelect();
+    }
   });
 
 });
