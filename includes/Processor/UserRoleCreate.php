@@ -69,8 +69,11 @@ class UserRoleCreate extends Core\ProcessorEntity
     $appid = !empty($appid) ? $appid : NULL;
     $rid = $this->val('rid', TRUE);
 
-    if ($rid != 1 && (empty($accid) || empty($appid))) {
-      throw new Core\ApiException('Only Administrator role can have NULL assigned to account and application.', 6, $this->id, 400);
+    if ($rid > 2 && empty($appid)) {
+      throw new Core\ApiException('Only Administrator or Account manager roles can have NULL assigned to application.', 6, $this->id, 400);
+    }
+    elseif ($rid > 1 && empty($accid)) {
+      throw new Core\ApiException('Only Administrator role can have NULL assigned to account.', 6, $this->id, 400);
     }
 
     $userRoleMapper = new Db\UserRoleMapper($this->db);
