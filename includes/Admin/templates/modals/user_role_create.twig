@@ -25,6 +25,17 @@
         </div>
         <div class="col s3">
           <div class="input-field">
+            <select class="input-field" name="rid">
+              <option value="">Please select</option>
+              {% for rid, role in roles %}
+                <option value="{{ rid }}">{{ role }}</option>
+              {% endfor %}
+            </select>
+            <label for="rid">Role</label>
+          </div>
+        </div>
+        <div class="col s3">
+          <div class="input-field">
             <select class="input-field" name="accid">
               <option value="">None</option>
               {% for accid, account in accounts %}
@@ -43,17 +54,6 @@
               {% endfor %}
             </select>
             <label for="appid">Application</label>
-          </div>
-        </div>
-        <div class="col s3">
-          <div class="input-field">
-            <select class="input-field" name="rid">
-              <option value="">Please select</option>
-              {% for rid, role in roles %}
-                <option value="{{ rid }}">{{ role }}</option>
-              {% endfor %}
-            </select>
-            <label for="rid">Role</label>
           </div>
         </div>
       </div>
