@@ -1,4 +1,11 @@
 <!-- Create account modal -->
+<script>
+  // var GATERDATA = GATERDATA || {};
+  GATERDATA.accAppMap = [];
+  {% for appid, application in applications %}
+    GATERDATA.accAppMap[{{ appid }}] = {'accid': {{ application.accid }}, 'name': "{{ application.name }}"};
+  {% endfor %}
+</script>
 <div id="modal-user-role-create" class="modal">
   <form method="post" action="/user/role/create" id="user-role-create">
     <div class="modal-content">
@@ -32,7 +39,7 @@
             <select class="input-field" name="appid">
               <option value="">None</option>
               {% for appid, application in applications %}
-                <option value="{{ appid }}">{{ application.name }}</option>
+                <option value="{{ appid }}" accid="{{ application.accid }}">{{ application.name }}</option>
               {% endfor %}
             </select>
             <label for="appid">Application</label>

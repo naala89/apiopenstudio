@@ -48,7 +48,7 @@ class ApplicationDelete extends Core\ProcessorEntity
     if (!empty($resources)) {
       throw new ApiException("Delete application, resources are assigned to this application: $appid", 6, $this->id, 417);
     }
-    $userRoles = $userRoleMapper->findByAppid($appid);
+    $userRoles = $userRoleMapper->findByFilter(['col' => ['appid' => $appid]]);
     if (!empty($userRoles)) {
       throw new ApiException("Delete application, users are assigned to this application: $appid", 6, $this->id, 417);
     }

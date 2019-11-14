@@ -87,4 +87,20 @@ $(document).ready(function() {
     }
   });
 
+  // User role create - application select
+  $("#modal-user-role-create select[name='accid']").on('change', function() {
+    var accid = $(this).val(),
+        selectAppid = $('#modal-user-role-create').find("select[name='appid']");
+    selectAppid.find('option').remove();
+    GATERDATA.accAppMap.forEach(function (application, appid) {
+      if (accid == application.accid) {
+        selectAppid.append($('<option>', {
+          value: appid,
+          text : application.name
+        }));
+      }
+    });
+    selectAppid.formSelect();
+  });
+
 });
