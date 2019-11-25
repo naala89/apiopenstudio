@@ -43,11 +43,10 @@ class UserRoleDelete extends Core\ProcessorEntity
       'urid' => $urid,
     ]]);
     $userRole = $userRoles[0];
-    var_dump($userRole->getUrid());die();
     if (empty($userRole->getUrid())) {
       throw new Core\ApiException('User role does not exist', 6, $this->id, 400);
     }
-    if ($userRole->rid == 1) {
+    if ($userRole->getUrid() == 1) {
       $userRoles = $userRoleMapper->findByFilter(['col' => [
         'rid' => 1,
       ]]);
@@ -56,7 +55,6 @@ class UserRoleDelete extends Core\ProcessorEntity
       }
     }
 
-    $userRole = new Db\UserRole($userRole->urid);
     return $userRoleMapper->delete($userRole);
   }
 
