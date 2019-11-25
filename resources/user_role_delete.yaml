@@ -20,21 +20,9 @@ security:
     - Application manager
 
 process:
-  function: user_role
-  id: user_role_delete_user_role
-  accountName:
+  function: user_role_delete
+  id: user_role_delete_process
+  urid:
     function: var_uri
-    id: user_role_delete_acc_name
+    id: user_role_delete_urid
     index: 0
-  applicationName:
-    function: var_uri
-    id: user_role_delete_app_name
-    index: 1
-  username:
-    function: var_uri
-    id: user_role_delete_username
-    index: 2
-  roleName:
-    function: var_uri
-    id: user_role_delete_role_name
-    index: 3
