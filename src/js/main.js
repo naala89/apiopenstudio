@@ -103,7 +103,7 @@ $(document).ready(function() {
     selectAppid.formSelect();
   });
 
-  // User role create - application select
+  // User role delete
   $(".modal-user-role-delete-trigger").on('click', function() {
     var urid = $(this).attr('urid'),
         user = $(this).attr('user'),
@@ -111,6 +111,7 @@ $(document).ready(function() {
         application = $(this).attr('app'),
         role = $(this).attr('role'),
         modal = $('#modal-user-role-delete');
+    modal.find("input[name='urid']").val(urid);
     modal.find('.user').html(user);
     modal.find('.acc').html(account);
     modal.find('.app').html(application);
