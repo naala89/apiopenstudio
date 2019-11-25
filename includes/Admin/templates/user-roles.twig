@@ -63,22 +63,29 @@
     </form>
   </div>
   <div class="row teal lighten-1 white-text">
-    <div class="col col-height s3 valign-wrapper">Username</div>
-    <div class="col col-height s3 valign-wrapper">Email</div>
+    <div class="col col-height s2 valign-wrapper">Username</div>
+    <div class="col col-height s2 valign-wrapper">Email</div>
     <div class="col col-height s2 valign-wrapper">Account</div>
     <div class="col col-height s2 valign-wrapper">Application</div>
     <div class="col col-height s2 valign-wrapper">Role</div>
+    <div class="col col-height s2">Actions</div>
   </div>
   {% for urid, user_role in user_roles %}
     <div class="row">
-      <div class="col s3">{{ users[user_role.uid].username }}</div>
-      <div class="col s3">{{ users[user_role.uid].email }}</div>
+      <div class="col s2">{{ users[user_role.uid].username }}</div>
+      <div class="col s2">{{ users[user_role.uid].email }}</div>
       <div class="col s2">{{ accounts[user_role.accid] }}</div>
       <div class="col s2">{{ applications[user_role.appid].name }}</div>
       <div class="col s2">{{ roles[user_role.rid] }}</div>
+      <div class="col col-height s2">
+        <a class="btn-floating btn-small white hoverable">
+          <i class="material-icons modal-user-role-delete-trigger black-text" urid="{{ urid }}" user="{{ users[user_role.uid].username }}" acc="{{ accounts[user_role.accid] }}" app="{{ applications[user_role.appid].name }}" role="{{ roles[user_role.rid] }}" title="Delete this user role.">delete</i>
+        </a>
+      </div>
     </div>
   {% endfor %}
 
   {% include 'modals/user_role_create.twig' %}
+  {% include 'modals/user_role_delete.twig' %}
 
 {% endblock %}
