@@ -72,10 +72,10 @@
   </div>
   {% for user_role in user_roles %}
     <div class="row hoverable">
-      <div class="col col-height s2 valign-wrapper">{{ users[user_role.uid].username }}</div>
-      <div class="col col-height s2 valign-wrapper">{{ users[user_role.uid].email }}</div>
-      <div class="col col-height s2 valign-wrapper">{{ accounts[user_role.accid] }}</div>
-      <div class="col col-height s2 valign-wrapper">{{ applications[user_role.appid].name }}</div>
+      <div class="col col-height s2 valign-wrapper"><a href="/users?keyword={{ users[user_role.uid].username }}">{{ users[user_role.uid].username }}</a></div>
+      <div class="col col-height s2 valign-wrapper"><a href="/users?keyword={{ users[user_role.uid].email }}">{{ users[user_role.uid].email }}</a></div>
+      <div class="col col-height s2 valign-wrapper"><a href="/accounts?keyword={{ accounts[user_role.accid] }}">{{ accounts[user_role.accid] }}</a></div>
+      <div class="col col-height s2 valign-wrapper"><a href="/applications?keyword={{ applications[user_role.appid].name }}">{{ applications[user_role.appid].name }}</a> </div>
       <div class="col col-height s2 valign-wrapper">{{ roles[user_role.rid] }}</div>
       <div class="col col-height s2 valign-wrapper">
         <a class="btn-floating btn-small white hoverable">
