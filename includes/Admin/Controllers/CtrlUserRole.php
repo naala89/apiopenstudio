@@ -104,6 +104,7 @@ class CtrlUserRole extends CtrlBase {
           return $this->view->render($response, 'user-roles.twig', [
             'menu' => $menu,
             'user_roles' => [],
+            'messages' => $this->flash->getMessages(),
           ]);
           break;
       }
@@ -117,6 +118,7 @@ class CtrlUserRole extends CtrlBase {
       'applications' => $applications,
       'users' => $users,
       'roles'=> $this->allRoles,
+      'messages' => $this->flash->getMessages(),
     ]);
   }
 
@@ -172,13 +174,13 @@ class CtrlUserRole extends CtrlBase {
           return $response->withStatus(302)->withHeader('Location', '/login');
           break;
         default:
-          return $this->index($request, $response, $args);
+          return $response->withStatus(302)->withHeader('Location', '/user/roles');
           break;
       }
     }
 
     $this->flash->addMessage('info', 'User role created.');
-    return $this->index($request, $response, $args);
+    return $response->withStatus(302)->withHeader('Location', '/user/roles');
   }
 
   /**
@@ -233,13 +235,13 @@ class CtrlUserRole extends CtrlBase {
           return $response->withStatus(302)->withHeader('Location', '/login');
           break;
         default:
-          return $this->index($request, $response, $args);
+          return $response->withStatus(302)->withHeader('Location', '/user/roles');
           break;
       }
     }
 
-    $this->flash->addMessage('info', 'User role delete.');
-    return $this->index($request, $response, $args);
+    $this->flash->addMessage('info', 'User role deleted.');
+    return $response->withStatus(302)->withHeader('Location', '/user/roles');
   }
 
 }

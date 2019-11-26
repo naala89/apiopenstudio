@@ -99,8 +99,13 @@ class UserRoleMapper extends Mapper {
 
     if (!empty($params['col'])) {
       foreach ($params['col'] as $col => $val) {
-        $where[] = "$col=?";
-        $bindParams[] = $val;
+        if (empty($val)) {
+          $where[] = "isnull($col)";
+        }
+        else {
+          $where[] = "$col=?";
+          $bindParams[] = $val;
+        }
       }
       $sql .= ' WHERE ' . implode(' AND ', $where);
     }
