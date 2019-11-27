@@ -222,6 +222,7 @@ class Resource {
       'method' => $this->method,
       'uri' => $this->uri,
       'ttl' => $this->ttl,
+      'meta' => $this->meta,
     ];
   }
 
