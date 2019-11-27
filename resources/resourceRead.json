@@ -1,0 +1,23 @@
+{
+  "name":"Resource read",
+  "description":"Fetch a single or multiple resources.",
+  "uri":"resource",
+  "method":"get",
+  "ttl":0,
+  "process":{
+    "function":"resource_read",
+    "id":"resource_read_process",
+    "res_id":{
+      "function":"var_get",
+      "id":"resource_read_res_id",
+      "nullable":true,
+      "key":"res_id"
+    },
+    "app_id":{
+      "function":"var_get",
+      "id":"resource_read_app_id",
+      "nullable":true,
+      "key":"app_id"
+    }
+  }
+}
