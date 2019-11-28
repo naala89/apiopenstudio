@@ -218,6 +218,8 @@ class Resource {
   public function dump() {
     return [
       'resid' => $this->resid,
+      'name' => $this->name,
+      'description' => $this->description,
       'appid' => $this->appid,
       'method' => $this->method,
       'uri' => $this->uri,

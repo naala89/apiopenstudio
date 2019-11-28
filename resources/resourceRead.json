@@ -4,6 +4,17 @@
   "uri":"resource",
   "method":"get",
   "ttl":0,
+  "security":{
+    "function":"token_roles",
+    "id":"resource_read_security",
+    "token":{
+      "function":"bearer_token",
+      "id":"resource_read_token"
+    },
+    "roles":[
+      "Developer"
+    ]
+  },
   "process":{
     "function":"resource_read",
     "id":"resource_read_process",
@@ -18,6 +29,24 @@
       "id":"resource_read_app_id",
       "nullable":true,
       "key":"app_id"
+    },
+    "keyword":{
+      "function":"var_get",
+      "id":"resource_read_keyword",
+      "nullable":true,
+      "key":"keyword"
+    },
+    "order_by":{
+      "function":"var_get",
+      "id":"resource_read_order_by",
+      "nullable":true,
+      "key":"order_by"
+    },
+    "direction":{
+      "function":"var_get",
+      "id":"resource_read_direction",
+      "nullable":true,
+      "key":"direction"
     }
   }
 }
