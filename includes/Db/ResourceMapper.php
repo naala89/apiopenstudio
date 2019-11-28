@@ -174,13 +174,15 @@ class ResourceMapper extends Mapper {
    *
    * @param int|array $appids
    *   Application ID or an array of appid's.
+   * @param array $params
+   *   Filter and order params.
    *
    * @return array
    *   Array of Resource objects.
    *
    * @throws ApiException
    */
-  public function findByAppId($appids) {
+  public function findByAppId($appids, $params = []) {
     if (!is_array($appids)) {
       $sql = 'SELECT * FROM resource WHERE appid = ?';
       $bindParams = [$appids];
@@ -188,15 +190,16 @@ class ResourceMapper extends Mapper {
     else {
       $placeholders = $bindParams = [];
       foreach ($appids as $appid) {
-        if (!is_integer($appid)) {
-          throw new ApiException('Unknown resource', 6, $this->id, 401);
+        if (!is_numeric($appid)) {
+          throw new ApiException("invalid appid: $appid", 6, $this->id, 401);
         }
         $placeholders[] = '?';
         $bindParams[] = (Integer) $appid;
       }
       $sql = 'SELECT * FROM resource WHERE appid IN (' . implode(', ', $placeholders) . ')';
     }
-    return $this->fetchRows($sql, $bindParams);
+    
+    return $this->fetchRows($sql, $bindParams, $params);
   }
 
   /**

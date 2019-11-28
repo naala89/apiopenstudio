@@ -120,10 +120,12 @@ abstract class Mapper {
         }
       }
       if (!empty($arr)) {
-        if (stripos($sql, 'where') !== FALSE) {
-          throw new ApiException('Trying to add column filters on SQL with WHERE clause: ' . $sql);
+        if (stripos($sql, ' where ') !== FALSE) {
+          $sql .= ' AND (' . implode(' OR ', $arr) . ')';
         }
-        $sql .= ' WHERE (' . implode(' OR ', $arr) . ')';
+        else {
+          $sql .= ' WHERE (' . implode(' OR ', $arr) . ')';
+        }
       }
     }
 

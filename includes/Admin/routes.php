@@ -59,6 +59,7 @@ $app->post('/user/role/delete', 'CtrlUserRole:delete')->add(new Authentication($
 /**
  * Roles.
  */
+//$app->get('/roles', 'CtrRole:index')->add(new Authentication($container, $settings, '/login'));
 
 /**
  * Vars.
@@ -67,4 +68,4 @@ $app->post('/user/role/delete', 'CtrlUserRole:delete')->add(new Authentication($
 /**
  * Resources.
  */
-//$app->get('/resources', 'CtrlResource:index')->add(new Authentication($container, $settings, '/login'));
+$app->get('/resources', 'CtrlResource:index')->add(new Authentication($container, $settings, '/login'));
