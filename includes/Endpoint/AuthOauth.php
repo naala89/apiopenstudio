@@ -9,12 +9,14 @@ use Gaterdata\Core;
 
 class AuthOAuth extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = array(
     'name' => 'Auth (OAuth)',
-    'machineName' => 'authOAuth',
+    'machineName' => 'auth_oauth',
     'description' => 'Authentication for remote server, using OAuth signature in the header.',
     'menu' => 'Authentication',
-    'application' => 'Common',
     'input' => array(
       'key' => array(
         'description' => 'The consumer key.',
@@ -64,6 +66,9 @@ class AuthOAuth extends Core\ProcessorEntity
     ),
   );
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Auth o-auth(header)', 4);

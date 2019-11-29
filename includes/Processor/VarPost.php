@@ -9,12 +9,14 @@ use Gaterdata\Core;
 
 class VarPost extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'Var (Post)',
     'machineName' => 'var_post',
     'description' => 'A "post" variable. It fetches a variable from the post request.',
     'menu' => 'Primitive',
-    'application' => 'Common',
     'input' => [
       'key' => [
         'description' => 'The key or name of the POST variable.',
@@ -32,11 +34,14 @@ class VarPost extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['boolean'],
         'limitValues' => [],
-        'default' => true
+        'default' => true,
       ],
     ],
   ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

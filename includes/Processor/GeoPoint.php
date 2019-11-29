@@ -10,34 +10,39 @@ use Gaterdata\Core;
 
 class GeoPoint extends Core\ProcessorEntity
 {
-  protected $details = array(
+  /**
+   * {@inheritDoc}
+   */
+  protected $details = [
     'name' => 'Geo-Point',
     'machineName' => 'geoPoint',
     'description' => 'GeoPoint function is a container object that holds geographic point coordinates and attributes. Each entry of a coordinate pair and associated attributes, if any, represent a discrete element in the geopoint vector.',
     'menu' => 'Primitive',
-    'application' => 'Common',
-    'input' => array(
-      'lat' => array(
+    'input' => [
+      'lat' => [
         'description' => 'The latitude of the geo point.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('float', 'integer'),
-        'limitValues' => array(),
+        'limitFunctions' => [],
+        'limitTypes' => ['float', 'integer'],
+        'limitValues' => [],
         'default' => 0
-      ),
-      'lon' => array(
+      ],
+      'lon' => [
         'description' => 'The longitude of the geo point.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('float', 'integer'),
-        'limitValues' => array(),
+        'limitFunctions' => [],
+        'limitTypes' => ['float', 'integer'],
+        'limitValues' => [],
         'default' => 0
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

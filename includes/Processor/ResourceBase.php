@@ -17,12 +17,14 @@ abstract class ResourceBase extends Core\ProcessorEntity
 {
   protected $helper;
 
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'Resource',
     'machineName' => 'resource_base',
     'description' => 'Create, edit or fetch a custom API resource for the application. NOTE: in the case of DELETE, the args for the input should be as GET vars - POST vars are not guaranteed on all servers with this method.',
-    'menu' => 'Resource',
-    'application' => 'Common',
+    'menu' => 'Admin',
     'input' => [
       'method' => [
         'description' => 'The HTTP method of the resource (only used if fetching or deleting a resource).',
@@ -31,7 +33,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => ['get', 'post', 'delete', 'push'],
-        'default' => ''
+        'default' => '',
       ],
       'accName' => [
         'description' => 'The application name that the resource is associated with.',
@@ -40,7 +42,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'appName' => [
         'description' => 'The application name that the resource is associated with.',
@@ -48,7 +50,8 @@ abstract class ResourceBase extends Core\ProcessorEntity
         'literalAllowed' => true,
         'limitFunctions' => [],
         'limitTypes' => ['string'],
-        'limitValues' => []
+        'limitValues' => [],
+        'default' => '',
       ],
       'uri' => [
         'description' => 'The URI for the resource, i.e. the part after the App ID in the URL (only used if fetching or deleting a resource).',
@@ -57,7 +60,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'resourceString' => [
         'description' => 'The resource as a string (this input is only used if you are creating or updating a resource).',
@@ -66,7 +69,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'resourceFile' => [
         'description' => 'The resource as a string (this input is only used if you are creating or updating a resource).',
@@ -75,7 +78,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
     ]
   ];
@@ -96,9 +99,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
   }
 
   /**
-   * @return bool|string
-   * @throws \Gaterdata\Core\ApiException
-   * @throws \Gaterdata\Processor\ApiException
+   * {@inheritDoc}
    */
   public function process()
   {

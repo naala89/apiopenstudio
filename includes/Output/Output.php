@@ -25,8 +25,7 @@ abstract class Output extends Core\ProcessorEntity
   }
 
   /**
-   * @return mixed
-   * @throws \Gaterdata\Core\ApiException
+   * {@inheritDoc}
    */
   public function process()
   {

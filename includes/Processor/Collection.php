@@ -10,12 +10,14 @@ use Gaterdata\Core;
 
 class Collection extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'Collection',
     'machineName' => 'collection',
     'description' => 'Collection contains multiple values, like an array or list.',
     'menu' => 'Primitive',
-    'application' => 'Common',
     'input' => [
       'items' => [
         'description' => 'The items in the collection',
@@ -29,6 +31,9 @@ class Collection extends Core\ProcessorEntity
     ],
   ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

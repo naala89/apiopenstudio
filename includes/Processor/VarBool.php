@@ -12,25 +12,30 @@ use Gaterdata\Core;
 
 class VarBool extends Core\ProcessorEntity
 {
-  protected $details = array(
+  /**
+   * {@inheritDoc}
+   */
+  protected $details = [
     'name' => 'Var (Boolean)',
     'machineName' => 'var_bool',
     'description' => 'A boolean variable. It validates the input (0,1,yes,no,true,false) into a boolean value, and returns an error if it is not a boolean.',
     'menu' => 'Primitive',
-    'application' => 'Common',
-    'input' => array(
-      'value' => array(
+    'input' => [
+      'value' => [
         'description' => 'The value of the variable.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('boolean'),
-        'limitValues' => array(),
-        'default' => false
-      ),
-    ),
-  );
+        'limitFunctions' => [],
+        'limitTypes' => ['boolean'],
+        'limitValues' => [],
+        'default' => false,
+      ],
+    ],
+  ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

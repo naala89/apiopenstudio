@@ -11,12 +11,14 @@ use Gaterdata\Db;
 class Token extends Core\ProcessorEntity
 {
   protected $role = false;
+  /**
+   * {@inheritDoc}
+   */
   protected $details = array(
     'name' => 'Token',
     'machineName' => 'token',
     'description' => 'Validate that the user has a valid token and roles.',
     'menu' => 'Security',
-    'application' => 'Common',
     'input' => array(
       'token' => array(
         'description' => 'The consumers token.',
@@ -31,8 +33,7 @@ class Token extends Core\ProcessorEntity
   );
 
   /**
-   * @return array
-   * @throws \Gaterdata\Core\ApiException
+   * {@inheritDoc}
    */
   public function process() {
     Core\Debug::variable($this->meta, 'Security Token', 4);

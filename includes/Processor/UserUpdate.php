@@ -10,12 +10,14 @@ use Gaterdata\Db;
 
 class UserUpdate extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'User update',
     'machineName' => 'user_update',
     'description' => 'Update a user.',
     'menu' => 'Admin',
-    'application' => 'Admin',
     'input' => [
       'uid' => [
         'description' => 'The user ID of the user.',
@@ -24,7 +26,7 @@ class UserUpdate extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['integer'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'user_details' => [
         'description' => 'The user details to edit. A json string is expected.',
@@ -33,13 +35,13 @@ class UserUpdate extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
     ],
   ];
 
   /**
-   * {inheritDoc}
+   * {@inheritDoc}
    */
   public function process()
   {

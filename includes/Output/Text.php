@@ -6,12 +6,14 @@ use Gaterdata\Core;
 class Text extends Output
 {
   protected $header = 'Content-Type:text/text';
+  /**
+   * {@inheritDoc}
+   */
   protected $details = array(
     'name' => 'Text',
     'machineName' => 'text',
     'description' => 'Output in text format.',
     'menu' => 'Output',
-    'application' => 'Common',
     'input' => array(
       'destination' => array(
         'description' => 'Destination URLs for the output.',

@@ -12,12 +12,14 @@ use Gaterdata\Db;
 
 class UserRoleDelete extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'User Role delete',
     'machineName' => 'user_role_delete',
     'description' => 'Delete a role for a user.',
     'menu' => 'Admin',
-    'application' => 'Admin',
     'input' => [
       'urid' => [
         'description' => 'The user role ID.',
@@ -26,11 +28,14 @@ class UserRoleDelete extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['integer'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
     ],
   ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

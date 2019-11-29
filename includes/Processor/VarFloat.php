@@ -12,25 +12,30 @@ use Gaterdata\Core;
 
 class VarFloat extends Core\ProcessorEntity
 {
-  protected $details = array(
+  /**
+   * {@inheritDoc}
+   */
+  protected $details = [
     'name' => 'Var (Float)',
     'machineName' => 'var_float',
     'description' => 'A float variable. It validates the input and returns an error if it is not a float.',
     'menu' => 'Primitive',
-    'application' => 'Common',
-    'input' => array(
-      'value' => array(
+    'input' => [
+      'value' => [
         'description' => 'The value of the variable.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('float'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-    ),
-  );
+        'limitFunctions' => [],
+        'limitTypes' => ['float'],
+        'limitValues' => [],
+        'default' => '',
+      ],
+    ],
+  ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

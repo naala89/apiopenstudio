@@ -12,12 +12,14 @@ class Email extends Output
     'from' => 'resource@datagator.com.au',
     'format' => 'json',
   );
+  /**
+   * {@inheritDoc}
+   */
   protected $details = array(
     'name' => 'Email',
     'machineName' => 'email',
     'description' => 'Output in email format.',
     'menu' => 'Output',
-    'application' => 'Common',
     'input' => array(
       'to' => array(
         'description' => 'Destination emails for the output.',
@@ -59,13 +61,7 @@ class Email extends Output
   );
 
   /**
-   * Override the parent class process(), because we want to generate the data in another Output processor
-   * and then send it in emails.
-   *
-   * @return bool
-   * @throws \Gaterdata\Core\ApiException
-   * @throws \Exception
-   * @throws \phpmailerException
+   * {@inheritDoc}
    */
   public function process() {
     Core\Debug::message("Output Email");
@@ -85,7 +81,6 @@ class Email extends Output
     $html .= '<div style="width: 640px; font-family: Arial, Helvetica, sans-serif; font-size: 11px;"><p>';// . $data . '</p></div></body></html>';
     switch ($format) {
       case 'html':
-      default:
         $html .= $data . '</p>';
         break;
       case 'json':

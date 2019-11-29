@@ -10,55 +10,56 @@ use Gaterdata\Db;
 
 class VarTemporary extends Core\ProcessorEntity
 {
-  protected $details = array(
+  /**
+   * {@inheritDoc}
+   */
+  protected $details = [
     'name' => 'Var (Temporary)',
     'machineName' => 'var_temporary',
     'description' => 'A temporarily stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time during your resource call. The value can be deleted, updated and fetched in future resource..',
     'menu' => 'Primitive',
-    'application' => 'Common',
-    'input' => array(
-      'key' => array(
+    'input' => [
+      'key' => [
         'description' => 'The key or name of the variable.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'value' => array(
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => [],
+        'default' => '',
+      ],
+      'value' => [
         'description' => 'The value of the variable. This input is only used in save operations.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'operation' => array(
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => [],
+        'default' => '',
+      ],
+      'operation' => [
         'description' => 'The operation to be performed on the variable.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array('save', 'delete', 'fetch'),
-        'default' => ''
-      ),
-      'strict' => array(
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => ['save', 'delete', 'fetch'],
+        'default' => '',
+      ],
+      'strict' => [
         'description' => 'If set to true then return null if var does not exist. If set to false throw exception if var does not exist. Default is strict. Only used in fetch or delete operations.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('boolean'),
-        'limitValues' => array(),
-        'default' => true
-      ),
-    ),
-  );
+        'limitFunctions' => [],
+        'limitTypes' => ['boolean'],
+        'limitValues' => [],
+        'default' => true,
+      ],
+    ],
+  ];
 
   /**
-   * @return bool|string
-   * @throws \Gaterdata\Core\ApiException
+   * {@inheritDoc}
    */
   public function process()
   {

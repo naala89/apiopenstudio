@@ -11,8 +11,7 @@ use Gaterdata\Db;
 class AccountUpdate extends Core\ProcessorEntity
 {
   /**
-   * @var array
-   *  The processor details.
+   * {@inheritDoc}
    */
   protected $details = [
     'name' => 'Account update',
@@ -42,9 +41,7 @@ class AccountUpdate extends Core\ProcessorEntity
   ];
 
   /**
-   *
-   * @return array|bool|Core\Error
-   * @throws Core\ApiException
+   * {@inheritDoc}
    */
   public function process()
   {

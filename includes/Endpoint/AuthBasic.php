@@ -9,12 +9,14 @@ use Gaterdata\Core;
 
 class AuthBasic extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = array(
     'name' => 'Auth (Basic User/Pass)',
-    'machineName' => 'authBasic',
+    'machineName' => 'auth_basic',
     'description' => 'Basic authentication for remote server, using username/password.',
     'menu' => 'Authentication',
-    'application' => 'Common',
     'input' => array(
       'username' => array(
         'description' => 'The username.',
@@ -37,6 +39,9 @@ class AuthBasic extends Core\ProcessorEntity
     ),
   );
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Auth Basic', 4);

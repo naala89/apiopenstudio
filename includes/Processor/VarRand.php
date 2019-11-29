@@ -9,62 +9,66 @@ use Gaterdata\Core;
 
 class VarRand extends Core\ProcessorEntity
 {
-  protected $details = array(
+  /**
+   * {@inheritDoc}
+   */
+  protected $details = [
     'name' => 'Var (Rand)',
     'machineName' => 'var_rand',
     'description' => 'A random variable. It produces a random variable of any specified length or mix of character types.',
     'menu' => 'Primitive',
-    'application' => 'Common',
-    'input' => array(
-      'length' => array(
+    'input' => [
+      'length' => [
         'description' => 'The length of the variable.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('integer'),
-        'limitValues' => array(),
-        'default' => 8
-      ),
-      'lower' => array(
+        'limitFunctions' => [],
+        'limitTypes' => ['integer'],
+        'limitValues' => [],
+        'default' => 8,
+      ],
+      'lower' => [
         'description' => 'Use lower-case alpha characters.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('boolean'),
-        'limitValues' => array(),
-        'default' => true
-      ),
-      'upper' => array(
+        'limitFunctions' => [],
+        'limitTypes' => ['boolean'],
+        'limitValues' => [],
+        'default' => true,
+      ],
+      'upper' => [
         'description' => 'Use upper-case alpha characters.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('boolean'),
-        'limitValues' => array(),
-        'default' => true
-      ),
-      'numeric' => array(
+        'limitFunctions' => [],
+        'limitTypes' => ['boolean'],
+        'limitValues' => [],
+        'default' => true,
+      ],
+      'numeric' => [
         'description' => 'Use numeric characters.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('boolean'),
-        'limitValues' => array(),
-        'default' => true
-      ),
-      'special' => array(
+        'limitFunctions' => [],
+        'limitTypes' => ['boolean'],
+        'limitValues' => [],
+        'default' => true,
+      ],
+      'special' => [
         'description' => 'Use special characters.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('boolean'),
-        'limitValues' => array(),
-        'default' => false
-      ),
-    ),
-  );
+        'limitFunctions' => [],
+        'limitTypes' => ['boolean'],
+        'limitValues' => [],
+        'default' => false,
+      ],
+    ],
+  ];
 
-
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

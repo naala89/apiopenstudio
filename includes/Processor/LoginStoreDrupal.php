@@ -24,38 +24,38 @@ class LoginStoreDrupal extends Core\ProcessorEntity
 {
   private $user;
   private $defaultEntity = 'drupal';
-  protected $details = array(
+  /**
+   * {@inheritDoc}
+   */
+  protected $details = [
     'name' => 'Login Store Drupal',
     'machineName' => 'loginStoreDrupal',
     'description' => 'Login the user Stores the access details from a users login to a remote drupal site for future use.',
-    'menu' => 'External',
-    'application' => 'Common',
-    'input' => array(
-      'source' => array(
+    'menu' => 'Process',
+    'input' => [
+      'source' => [
         'description' => 'The results of a login attempt to the remote site. i.e. Processor InputUrl.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'externalEntity' => array(
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => [],
+        'default' => '',
+      ],
+      'externalEntity' => [
         'description' => 'The name of the external entity this user is tied to (use custom names if you access more than one drupal site).',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => 'drupal'
-      ),
-    ),
-  );
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => [],
+        'default' => 'drupal',
+      ],
+    ],
+  ];
 
   /**
-   * @return array|mixed
-   * @throws \Gaterdata\Core\ApiException
-   * @throws \Gaterdata\Processor\ApiException
+   * {@inheritDoc}
    */
   public function process()
   {

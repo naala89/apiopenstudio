@@ -9,12 +9,14 @@ use Gaterdata\Core;
 
 class AuthCookie extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = array(
     'name' => 'Auth (Cookie)',
-    'machineName' => 'authCookie',
+    'machineName' => 'auth_cookie',
     'description' => 'Authentication for remote server, using a cookie.',
     'menu' => 'Authentication',
-    'application' => 'Common',
     'input' => array(
       'cookie' => array(
         'description' => 'The cookie string.',
@@ -28,6 +30,9 @@ class AuthCookie extends Core\ProcessorEntity
     ),
   );
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Auth Cookie', 4);

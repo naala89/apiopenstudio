@@ -10,12 +10,14 @@ use Gaterdata\Core;
 
 class Xml extends Output {
   protected $header = 'Content-Type:application/xml';
+  /**
+   * {@inheritDoc}
+   */
   protected $details = array(
     'name' => 'Xml',
     'machineName' => 'xml',
     'description' => 'Output in XML format.',
     'menu' => 'Output',
-    'application' => 'Common',
     'input' => array(
       'destination' => array(
         'description' => 'Destination URLs for the output.',

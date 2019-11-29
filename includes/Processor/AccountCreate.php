@@ -11,8 +11,7 @@ use Gaterdata\Db;
 class AccountCreate extends Core\ProcessorEntity
 {
   /**
-   * @var array
-   *  The processor details.
+   * {@inheritDoc}
    */
   protected $details = [
     'name' => 'Account create',
@@ -33,9 +32,7 @@ class AccountCreate extends Core\ProcessorEntity
   ];
 
   /**
-   *
-   * @return array|bool|Core\Error
-   * @throws Core\ApiException
+   * {@inheritDoc}
    */
   public function process()
   {

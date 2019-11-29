@@ -9,34 +9,39 @@ use Gaterdata\Core;
 
 class VarField extends Core\ProcessorEntity
 {
-  protected $details = array(
+  /**
+   * {@inheritDoc}
+   */
+  protected $details = [
     'name' => 'Var (field)',
     'machineName' => 'var_field',
     'description' => 'Create a name value pair. This is primarily for use as a field in object.',
     'menu' => 'Primitive',
-    'application' => 'Common',
-    'input' => array(
-      'key' => array(
+    'input' => [
+      'key' => [
         'description' => 'The key of the nvp.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'value' => array(
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => [],
+        'default' => '',
+      ],
+      'value' => [
         'description' => 'The value of the nvp.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array(),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-    ),
-  );
+        'limitFunctions' => [],
+        'limitTypes' => [],
+        'limitValues' => [],
+        'default' => '',
+      ],
+    ],
+  ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
@@ -44,6 +49,6 @@ class VarField extends Core\ProcessorEntity
     $key = $this->val('key', true);
     $value = $this->val('value', true);
 
-    return new Core\DataContainer(array($key => $value), 'array');
+    return new Core\DataContainer([$key => $value], 'array');
   }
 }

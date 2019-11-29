@@ -10,12 +10,14 @@ use Gaterdata\Db\ResourceMapper;
 
 class ResourceRead extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'Resource read',
     'machineName' => 'resource_read',
     'description' => 'List resources. If no appid/s ir resid is defined, all will be returned.',
     'menu' => 'Admin',
-    'application' => 'Admin',
     'input' => [
       'res_id' => [
         'description' => 'The Resource ID to filter by".',
@@ -24,7 +26,7 @@ class ResourceRead extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['integer'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'app_id' => [
         'description' => 'The application IDs to filter by. Comma separated if Multiple.',
@@ -33,7 +35,7 @@ class ResourceRead extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['integer', 'string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'order_by' => [
         'description' => 'order by column',
@@ -42,7 +44,7 @@ class ResourceRead extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => ['accid', 'appid', 'method', 'uri'],
-        'default' => ''
+        'default' => '',
       ],
       'direction' => [
         'description' => 'Sort direction',
@@ -51,7 +53,7 @@ class ResourceRead extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => ['asc', 'desc'],
-        'default' => ''
+        'default' => '',
       ],
       'keyword' => [
         'description' => 'Keyword search',
@@ -60,13 +62,13 @@ class ResourceRead extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => [],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
     ],
   ];
 
   /**
-   * {inheritDoc}
+   * {@inheritDoc}
    */
   public function process()
   {

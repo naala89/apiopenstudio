@@ -12,12 +12,14 @@ use Gaterdata\Db;
 
 class TokenRoles extends TokenRole
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'Token (Roles)',
     'machineName' => 'token_roles',
     'description' => 'Validate that the user has a valid token and roles.',
     'menu' => 'Security',
-    'application' => 'Common',
     'input' => [
       'token' => [
         'description' => 'The consumers token.',
@@ -41,9 +43,7 @@ class TokenRoles extends TokenRole
   ];
 
   /**
-   * @return bool
-   * @throws \Gaterdata\Core\ApiException
-   * @throws \Gaterdata\Security\ApiException
+   * {@inheritDoc}
    */
   public function process() {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

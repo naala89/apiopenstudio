@@ -10,12 +10,14 @@ use Gaterdata\Db;
 
 class UserCreate extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'User create',
     'machineName' => 'user_create',
     'description' => 'Create a user.',
     'menu' => 'Admin',
-    'application' => 'Admin',
     'input' => [
       'username' => [
         'description' => 'The username of the user.',
@@ -174,7 +176,7 @@ class UserCreate extends Core\ProcessorEntity
   ];
 
   /**
-   * {inheritDoc}
+   * {@inheritDoc}
    */
   public function process()
   {

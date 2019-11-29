@@ -11,8 +11,7 @@ use Gaterdata\Db;
 class AccountDelete extends Core\ProcessorEntity
 {
   /**
-   * @var array
-   *  The processor details.
+   * {@inheritDoc}
    */
   protected $details = [
     'name' => 'Account delete',
@@ -33,8 +32,7 @@ class AccountDelete extends Core\ProcessorEntity
   ];
 
   /**
-   * @return array|bool|Core\Error
-   * @throws Core\ApiException
+   * {@inheritDoc}
    */
   public function process()
   {

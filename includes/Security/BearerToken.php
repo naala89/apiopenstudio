@@ -13,15 +13,20 @@ use Gaterdata\Core\Debug;
 
 class BearerToken extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'Bearer Token',
     'machineName' => 'bearer_token',
     'description' => 'Fetch a bearer token from the request header. This takes the form of "Authorization: Beaarer <token>"',
     'menu' => 'Security',
-    'application' => 'Common',
     'input' => [],
   ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor BearerToken', 4);

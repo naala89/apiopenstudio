@@ -12,12 +12,14 @@ use Facebook\Exceptions;
 
 class Facebook extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = array(
     'name' => 'Facebook',
     'machineName' => 'facebook',
     'description' => 'Fetch results from facebook Graph API.',
     'menu' => 'Endpoint',
-    'application' => 'Common',
     'input' => array(
       'appId' => array(
         'description' => 'The app_id that you will be accessing facebook with.',
@@ -86,10 +88,7 @@ class Facebook extends Core\ProcessorEntity
   );
 
   /**
-   * Retrieve data from an endpoint URL.
-   *
-   * @return mixed
-   * @throws \Gaterdata\Core\ApiException
+   * {@inheritDoc}
    */
   public function process()
   {

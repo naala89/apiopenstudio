@@ -11,12 +11,14 @@ use Gaterdata\Core;
 
 class VarGet extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'Var (Get)',
     'machineName' => 'var_get',
     'description' => 'A "get" variable. It fetches a urldecoded variable from the get request.',
     'menu' => 'Primitive',
-    'application' => 'Common',
     'input' => [
       'key' => [
         'description' => 'The key or name of the GET variable.',
@@ -25,7 +27,7 @@ class VarGet extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'nullable' => [
         'description' => 'Allow the processing to continue if the GET variable does not exist.',
@@ -34,11 +36,14 @@ class VarGet extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['boolean'],
         'limitValues' => [],
-        'default' => false
+        'default' => false,
       ],
     ],
   ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
