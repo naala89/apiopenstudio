@@ -61,7 +61,9 @@ class Functions extends Core\ProcessorEntity
       $classNames = $this->_getClassList($namespace);
       foreach ($classNames as $className) {
         $detail = $this->_getDetails($namespace, $className);
-        $details[$detail['machineName']] =  $detail;
+        if ($detail !== FALSE) {
+          $details[$detail['machineName']] =  $detail;
+        }
       }
     }
 
@@ -112,8 +114,11 @@ class Functions extends Core\ProcessorEntity
   private function _getDetails($namespace, $className)
   {
     $reflector = new ReflectionClass("\\Gaterdata\\$namespace\\$className");
-    $properties = $reflector->getDefaultProperties();
+    if (!$reflector->isAbstract()) {
+      $properties = $reflector->getDefaultProperties();
+      return $properties['details'];
+    }
 
-    return !$reflector->isAbstract() && !empty($properties['details']) ? $properties['details'] : [];
+    return FALSE;
   }
 }

@@ -69,3 +69,4 @@ $app->post('/user/role/delete', 'CtrlUserRole:delete')->add(new Authentication($
  * Resources.
  */
 $app->get('/resources', 'CtrlResource:index')->add(new Authentication($container, $settings, '/login'));
+$app->get('/resource/create', 'CtrlResource:create')->add(new Authentication($container, $settings, '/login'));
