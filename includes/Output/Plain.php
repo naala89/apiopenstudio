@@ -5,12 +5,14 @@ namespace Gaterdata\Output;
 class Plain extends Text
 {
   protected $header = 'Content-Type:text/plain';
+  /**
+   * {@inheritDoc}
+   */
   protected $details = array(
     'name' => 'Plain',
     'machineName' => 'plain',
     'description' => 'Output in plain-text format.',
     'menu' => 'Output',
-    'application' => 'Common',
     'input' => array(
       'destination' => array(
         'description' => 'Destination URLs for the output.',

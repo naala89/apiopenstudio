@@ -9,12 +9,14 @@ use Gaterdata\Core;
 
 class AuthDigest extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = array(
     'name' => 'Auth (Digest User/Pass)',
-    'machineName' => 'authDigest',
+    'machineName' => 'auth_digest',
     'description' => 'Digest authentication for remote server, using username/password.',
     'menu' => 'Authentication',
-    'application' => 'Common',
     'input' => array(
       'username' => array(
         'description' => 'The username.',
@@ -37,6 +39,9 @@ class AuthDigest extends Core\ProcessorEntity
     ),
   );
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Auth Digest', 4);

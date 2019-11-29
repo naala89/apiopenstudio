@@ -6,50 +6,54 @@
 
 namespace Gaterdata\Processor;
 use Gaterdata\Core;
-//use Peekmo\JsonPath\JsonStore;
 use JmesPath;
 
 class Mapper extends Core\ProcessorEntity
 {
-  protected $details = array(
+  /**
+   * {@inheritDoc}
+   */
+  protected $details = [
     'name' => 'Mapper',
     'machineName' => 'mapper',
     'description' => 'Mapper allows the mapping of elements from a source to a destination.',
-    'menu' => 'Operation',
-    'application' => 'Common',
-    'input' => array(
-      'source' => array(
+    'menu' => 'Process',
+    'input' => [
+      'source' => [
         'description' => 'The source object to perform the mapping on.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array(),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'mappings' => array(
+        'limitFunctions' => [],
+        'limitTypes' => [],
+        'limitValues' => [],
+        'default' => '',
+      ],
+      'mappings' => [
         'description' => 'A list of individual xpath values for the the get/set tuplets ( e.g. ["get": "//foo/bar", "set": "/foo/bar])".',
-        'cardinality' => array(0, '*'),
+        'cardinality' => [0, '*'],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array(),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'format' => array(
+        'limitFunctions' => [],
+        'limitTypes' => [],
+        'limitValues' => [],
+        'default' => '',
+      ],
+      'format' => [
         'description' => 'Output format. If ommitted, the result wil be same format as input.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array('xml', 'json'),
-        'default' => ''
-      ),
-    ),
-  );
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => ['xml', 'json'],
+        'default' => '',
+      ],
+    ],
+  ];
 
   private $result = '';
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

@@ -9,12 +9,14 @@ use Gaterdata\Core;
 
 class Url extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = array(
     'name' => 'Url',
     'machineName' => 'url',
     'description' => 'Fetch the result form an external URL.',
     'menu' => 'Endpoint',
-    'application' => 'Common',
     'input' => array(
       'method' => array(
         'description' => 'The HTTP method.',
@@ -93,11 +95,7 @@ class Url extends Core\ProcessorEntity
   );
 
   /**
-   * Retrieve data from an endpoint URL.
-   *
-   * @return mixed
-   * @throws \Gaterdata\Core\ApiException
-   * @throws \Gaterdata\Processor\ApiException
+   * {@inheritDoc}
    */
   public function process()
   {

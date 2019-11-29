@@ -9,34 +9,39 @@ use Gaterdata\Core;
 
 class VarRequest extends Core\ProcessorEntity
 {
-  protected $details = array(
+  /**
+   * {@inheritDoc}
+   */
+  protected $details = [
     'name' => 'Var (Request)',
     'machineName' => 'var_request',
     'description' => 'A "get" or "post" variable. It fetches a variable from the get or post requests.',
     'menu' => 'Primitive',
-    'application' => 'Common',
-    'input' => array(
-      'key' => array(
+    'input' => [
+      'key' => [
         'description' => 'The key or name of the GET/POST variable.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'nullable' => array(
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => [],
+        'default' => '',
+      ],
+      'nullable' => [
         'description' => 'Allow the processing to continue if the GET or POST variable does not exist.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('boolean'),
-        'limitValues' => array(),
-        'default' => true
-      ),
-    ),
-  );
+        'limitFunctions' => [],
+        'limitTypes' => ['boolean'],
+        'limitValues' => [],
+        'default' => true,
+      ],
+    ],
+  ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

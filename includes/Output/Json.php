@@ -6,12 +6,14 @@ use Gaterdata\Core;
 class Json extends Output
 {
   protected $header = 'Content-Type: application/json';
+  /**
+   * {@inheritDoc}
+   */
   protected $details = array(
     'name' => 'Json',
     'machineName' => 'json',
     'description' => 'Output in JSON format.',
     'menu' => 'Output',
-    'application' => 'Common',
     'input' => array(
       'destination' => array(
         'description' => 'Destination URLs for the output.',

@@ -11,70 +11,75 @@ use Symfony\Component\Console\Helper\DebugFormatterHelper;
 
 class Filter extends Core\ProcessorEntity
 {
-  protected $details = array(
+  /**
+   * {@inheritDoc}
+   */
+  protected $details = [
     'name' => 'Filter',
     'machineName' => 'filter',
     'description' => 'Filter values from a data-set.',
     'menu' => 'Operation',
-    'application' => 'Common',
-    'input' => array(
-      'values' => array(
+    'input' => [
+      'values' => [
         'description' => 'The data-set to filter.',
-        'cardinality' => array(0, '*'),
+        'cardinality' => [0, '*'],
         'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array(),
-        'limitValues' => array(),
+        'limitFunctions' => [],
+        'limitTypes' => [],
+        'limitValues' => [],
         'default' => ''
-      ),
-      'filter' => array(
+      ],
+      'filter' => [
         'description' => 'The literal values to filter out.',
-        'cardinality' => array(0, '*'),
+        'cardinality' => [0, '*'],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string', 'array'),
-        'limitValues' => array(),
+        'limitFunctions' => [],
+        'limitTypes' => ['string', 'array'],
+        'limitValues' => [],
         'default' => ''
-      ),
-      'regex' => array(
+      ],
+      'regex' => [
         'description' => 'If set ot true, use the filter string as a regex. If set to false, use the filter string for exact comparison.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('boolean'),
-        'limitValues' => array(),
+        'limitFunctions' => [],
+        'limitTypes' => ['boolean'],
+        'limitValues' => [],
         'default' => 'false'
-      ),
-      'keyOrValue' => array(
+      ],
+      'keyOrValue' => [
         'description' => 'Filter by key or value.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array('key', 'value'),
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => ['key', 'value'],
         'default' => 'value'
-      ),
-      'recursive' => array(
+      ],
+      'recursive' => [
         'description' => 'Recursively filter the data set. Is set to false, the filter will only apply to the outer data-set. If set to true, the filter will apply to the entire data-set (warning: use sparingly, this could incur long processing times).',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('boolean'),
-        'limitValues' => array(),
+        'limitFunctions' => [],
+        'limitTypes' => ['boolean'],
+        'limitValues' => [],
         'default' => false
-      ),
-      'inverse' => array(
+      ],
+      'inverse' => [
         'description' => 'If set to true, the filter will keep matching data. If set to false, the filter will only keep non-matching data.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('boolean'),
-        'limitValues' => array(),
+        'limitFunctions' => [],
+        'limitTypes' => ['boolean'],
+        'limitValues' => [],
         'default' => false
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

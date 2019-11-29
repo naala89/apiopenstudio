@@ -5,12 +5,14 @@ namespace Gaterdata\Output;
 class Html extends Xml
 {
   protected $header = 'Content-Type:text/html';
+  /**
+   * {@inheritDoc}
+   */
   protected $details = array(
     'name' => 'Html',
     'machineName' => 'html',
     'description' => 'Output in HTML format.',
     'menu' => 'Output',
-    'application' => 'Common',
     'input' => array(
       'destination' => array(
         'description' => 'Destination URLs for the output.',

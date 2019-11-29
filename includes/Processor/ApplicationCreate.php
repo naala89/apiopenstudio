@@ -11,6 +11,9 @@ use Gaterdata\Db;
 
 class ApplicationCreate extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'Application create',
     'machineName' => 'application_create',
@@ -38,6 +41,9 @@ class ApplicationCreate extends Core\ProcessorEntity
     ],
   ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

@@ -10,12 +10,14 @@ use Gaterdata\Db;
 
 class UserDelete extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'User delete',
     'machineName' => 'user_delete',
     'description' => 'Delete a user.',
     'menu' => 'Admin',
-    'application' => 'Admin',
     'input' => [
       'uid' => [
         'description' => 'The user ID of the user.',
@@ -29,6 +31,9 @@ class UserDelete extends Core\ProcessorEntity
     ],
   ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

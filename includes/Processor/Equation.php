@@ -9,34 +9,39 @@ use jlawrence\eos\Parser;
  */
 class Equation extends Core\ProcessorEntity
 {
-  protected $details = array(
+  /**
+   * {@inheritDoc}
+   */
+  protected $details = [
     'name' => 'Equation',
     'machineName' => 'equation',
     'description' => 'This function allows you to define an equation with variables. These input variables are name/value pairs and substitute variables in th4e equation.',
     'menu' => 'Operation',
-    'application' => 'Common',
-    'input' => array(
-      'equation' => array(
+    'input' => [
+      'equation' => [
         'description' => 'The equation.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array(),
-        'limitValues' => array(),
+        'limitFunctions' => [],
+        'limitTypes' => [],
+        'limitValues' => [],
         'default' => ''
-      ),
-      'variables' => array(
+      ],
+      'variables' => [
         'description' => 'The variables. These are an associative array',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array('varObject'),
-        'limitTypes' => array(),
-        'limitValues' => array(),
+        'limitFunctions' => ['varObject'],
+        'limitTypes' => [],
+        'limitValues' => [],
         'default' => ''
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

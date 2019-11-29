@@ -9,61 +9,66 @@ use Gaterdata\Core;
 
 class IfThenElse extends Core\ProcessorEntity
 {
-  protected $details = array(
+  /**
+   * {@inheritDoc}
+   */
+  protected $details = [
     'name' => 'If Then Else',
     'machineName' => 'ifThenElse',
     'description' => 'An if then else logic gate.',
     'menu' => 'Logic',
-    'application' => 'Common',
-    'input' => array(
-      'lhs' => array(
+    'input' => [
+      'lhs' => [
         'description' => 'The left-land side value in the equation.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array(),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'rhs' => array(
+        'limitFunctions' => [],
+        'limitTypes' => [],
+        'limitValues' => [],
+        'default' => '',
+      ],
+      'rhs' => [
         'description' => 'The right-land side value in the equation.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array(),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'operator' => array(
+        'limitFunctions' => [],
+        'limitTypes' => [],
+        'limitValues' => [],
+        'default' => '',
+      ],
+      'operator' => [
         'description' => 'The comparison operator in the equation.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array('==', '!=', '>', '>=', '<', '<='),
-        'default' => ''
-      ),
-      'then' => array(
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => ['==', '!=', '>', '>=', '<', '<='],
+        'default' => '',
+      ],
+      'then' => [
         'description' => 'What to do if the equation returns true.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array(),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'else' => array(
+        'limitFunctions' => [],
+        'limitTypes' => [],
+        'limitValues' => [],
+        'default' => '',
+      ],
+      'else' => [
         'description' => 'What to do if the equation returns false.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array(),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-    ),
-  );
+        'limitFunctions' => [],
+        'limitTypes' => [],
+        'limitValues' => [],
+        'default' => '',
+      ],
+    ],
+  ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

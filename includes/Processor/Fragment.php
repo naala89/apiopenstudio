@@ -9,25 +9,30 @@ use Gaterdata\Core;
 
 class Fragment extends Core\ProcessorEntity
 {
-  protected $details = array(
+  /**
+   * {@inheritDoc}
+   */
+  protected $details = [
     'name' => 'Fragment',
     'machineName' => 'fragment',
     'description' => 'Insert the result of a fragment declaration.',
-    'menu' => 'Common',
-    'application' => 'Common',
-    'input' => array(
-      'name' => array(
+    'menu' => 'Logic',
+    'input' => [
+      'name' => [
         'description' => 'The name of the fragment',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array(),
-        'limitValues' => array(),
+        'limitFunctions' => [],
+        'limitTypes' => [],
+        'limitValues' => [],
         'default' => ''
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

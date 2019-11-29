@@ -10,6 +10,9 @@ use Gaterdata\Db;
 
 class ApplicationRead extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'Application read',
     'machineName' => 'application_read',
@@ -73,6 +76,9 @@ class ApplicationRead extends Core\ProcessorEntity
     ],
   ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

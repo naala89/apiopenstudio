@@ -9,25 +9,30 @@ use Gaterdata\Core;
 
 class VarStr extends Core\ProcessorEntity
 {
-  protected $details = array(
+  /**
+   * {@inheritDoc}
+   */
+  protected $details = [
     'name' => 'Var (String)',
     'machineName' => 'var_str',
     'description' => 'A string variable. It validates the input and returns an error if it is not a string.',
     'menu' => 'Primitive',
-    'application' => 'Common',
-    'input' => array(
-      'value' => array(
+    'input' => [
+      'value' => [
         'description' => 'The value of the variable.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-    ),
-  );
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => [],
+        'default' => '',
+      ],
+    ],
+  ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

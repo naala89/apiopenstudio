@@ -12,12 +12,14 @@ use Gaterdata\Db;
 
 class UserRoleCreate extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'User Role create',
     'machineName' => 'user_role_create',
     'description' => 'Create a role for a user.',
     'menu' => 'Admin',
-    'application' => 'Admin',
     'input' => [
       'uid' => [
         'description' => 'The user id of the user.',
@@ -58,6 +60,9 @@ class UserRoleCreate extends Core\ProcessorEntity
     ],
   ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

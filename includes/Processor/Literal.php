@@ -9,12 +9,14 @@ use Gaterdata\Core;
 
 class Literal extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'Literal',
     'machineName' => 'literal',
     'description' => 'A literal string or value.',
-    'menu' => 'Primitive',
-    'application' => 'Common',
+    'menu' => 'Admin',
     'input' => [
       'value' => [
         'description' => 'The value of the literal.',
@@ -37,6 +39,9 @@ class Literal extends Core\ProcessorEntity
     ],
   ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

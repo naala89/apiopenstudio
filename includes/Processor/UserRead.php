@@ -10,12 +10,14 @@ use Gaterdata\Db;
 
 class UserRead extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'User read',
     'machineName' => 'user_read',
     'description' => 'Fetch a single or multiple users.',
     'menu' => 'Admin',
-    'application' => 'Admin',
     'input' => [
       'uid' => [
         'description' => 'The user ID of the user.',
@@ -74,6 +76,9 @@ class UserRead extends Core\ProcessorEntity
     ],
   ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

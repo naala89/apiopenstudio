@@ -11,6 +11,9 @@ use Gaterdata\Db;
 
 class ApplicationUpdate extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'Application update',
     'machineName' => 'application_update',
@@ -47,6 +50,9 @@ class ApplicationUpdate extends Core\ProcessorEntity
     ],
   ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

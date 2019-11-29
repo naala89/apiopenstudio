@@ -9,43 +9,48 @@ use Gaterdata\Core;
 
 class Merge extends Core\ProcessorEntity
 {
-  protected $details = array(
+  /**
+   * {@inheritDoc}
+   */
+  protected $details = [
     'name' => 'Merge',
     'machineName' => 'merge',
     'description' => 'Merge multiple data-sets.',
-    'menu' => 'Operation',
-    'application' => 'Common',
-    'input' => array(
-      'sources' => array(
+    'menu' => 'Process',
+    'input' => [
+      'sources' => [
         'description' => 'The data-sets to be merged.',
-        'cardinality' => array(2, '*'),
+        'cardinality' => [2, '*'],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array(),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'mergeType' => array(
+        'limitFunctions' => [],
+        'limitTypes' => [],
+        'limitValues' => [],
+        'default' => '',
+      ],
+      'mergeType' => [
         'description' => 'The merge operation to perform.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array('union', 'intersect', 'difference'),
-        'default' => 'union'
-      ),
-      'unique' => array(
+        'limitFunctions' => [],
+        'limitTypes' => ['string'],
+        'limitValues' => ['union', 'intersect', 'difference'],
+        'default' => 'union',
+      ],
+      'unique' => [
         'description' => 'Disallow duplicate values.',
-        'cardinality' => array(0, 1),
+        'cardinality' => [0, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('boolean'),
-        'limitValues' => array(),
-        'default' => false
-      ),
-    ),
-  );
+        'limitFunctions' => [],
+        'limitTypes' => ['boolean'],
+        'limitValues' => [],
+        'default' => false,
+      ],
+    ],
+  ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

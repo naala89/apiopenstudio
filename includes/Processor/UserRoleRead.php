@@ -12,12 +12,14 @@ use Gaterdata\Db;
 
 class UserRoleRead extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'User Role read',
     'machineName' => 'user_role_read',
     'description' => 'Fetch a single or all user roles.',
     'menu' => 'Admin',
-    'application' => 'Admin',
     'input' => [
       'uid' => [
         'description' => 'The user id of the user.',
@@ -26,7 +28,7 @@ class UserRoleRead extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['integer'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'accid' => [
         'description' => 'The account ID of user roles.',
@@ -35,7 +37,7 @@ class UserRoleRead extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['integer'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'appid' => [
         'description' => 'The application ID of user roles.',
@@ -44,7 +46,7 @@ class UserRoleRead extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['integer'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'rid' => [
         'description' => 'The user role ID of user roles.',
@@ -53,7 +55,7 @@ class UserRoleRead extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['integer'],
         'limitValues' => [],
-        'default' => ''
+        'default' => '',
       ],
       'order_by' => [
         'description' => 'The column to order the results by.',
@@ -62,7 +64,7 @@ class UserRoleRead extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => ['uid', 'accid', 'appid', 'rid'],
-        'default' => ''
+        'default' => '',
       ],
       'direction' => [
         'description' => 'The direction to order the results.',
@@ -71,11 +73,14 @@ class UserRoleRead extends Core\ProcessorEntity
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => ['asc', 'desc'],
-        'default' => 'asc'
+        'default' => 'asc',
       ],
     ],
   ];
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

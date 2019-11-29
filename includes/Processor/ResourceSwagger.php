@@ -10,27 +10,32 @@ use Gaterdata\Db\ResourceMapper;
 
 class ResourceSwagger extends ResourceBase
 {
-  protected $details = array(
+  /**
+   * {@inheritDoc}
+   */
+  protected $details = [
     'name' => 'Import Swagger',
     'machineName' => 'resourceSwagger',
     'description' => 'Create a custom API resource using a Swagger YAML document.',
-    'menu' => 'Resource',
-    'application' => 'Common',
-    'input' => array(
-      'resource' => array(
+    'menu' => 'Admin',
+    'input' => [
+      'resource' => [
         'description' => 'The resource string or file. This can be an attached file or a urlencoded GET var.',
-        'cardinality' => array(1, 1),
+        'cardinality' => [1, 1],
         'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string', 'file'),
-        'limitValues' => array(),
-        'default' => ''
-      )
-    )
-  );
+        'limitFunctions' => [],
+        'limitTypes' => ['string', 'file'],
+        'limitValues' => [],
+        'default' => '',
+      ],
+    ],
+  ];
 
   private $paramCount;
 
+  /**
+   * {@inheritDoc}
+   */
   public function process()
   {
     $this->paramCount = 2;

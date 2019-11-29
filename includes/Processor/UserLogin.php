@@ -11,12 +11,14 @@ use Gaterdata\Db;
 
 class UserLogin extends Core\ProcessorEntity
 {
+  /**
+   * {@inheritDoc}
+   */
   protected $details = [
     'name' => 'User Login',
     'machineName' => 'user_login',
     'description' => 'Login a user. Token and uid returned.',
     'menu' => 'Validator',
-    'application' => 'Common',
     'input' => [
       'username' => [
         'description' => 'Users username.',
@@ -40,9 +42,7 @@ class UserLogin extends Core\ProcessorEntity
   ];
 
   /**
-   * @return mixed|string
-   * @throws \Gaterdata\Core\ApiException
-   * @throws \Gaterdata\Processor\ApiException
+   * {@inheritDoc}
    */
   public function process() {
     Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
