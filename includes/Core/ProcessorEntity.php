@@ -10,29 +10,35 @@ abstract class ProcessorEntity extends Entity
    * @var integer
    */
   protected $id = '';
+
   /**
    * Meta required for this processor.
    * @var integer
    */
   protected $meta;
+
   /**
    * All of the request details.
    * @var stdClass
    */
   protected $request;
+
   /**
    * An array of details of the processor, used to configure the frontend GUI and metadata construction.
    *
    * Indexes:
-   *  name: name of the processor
+   *  name: name of the processor.
    *
-   *  description: description of the processor
+   *  machineName: machine name of the processor.
    *
-   *  menu: lists the immediate menu parents
+   *  description: description of the processor.
+   *
+   *  account: The account that can use the processor.
+   *
+   *  menu: lists the immediate menu parents.
    *
    *    examples:
    *      'menu' => 'menu1' - belongs to menu1
-   *      'menu' => array('menu1', 'menu2') - belongs to menu1, and menu2
    *
    *  input: list the input nodes for this processor
    *    This is an array with the following indexes:
