@@ -125,4 +125,69 @@ class CtrlResource extends CtrlBase {
     ]);
   }
 
+  /**
+   * Create a resource page.
+   *
+   * @param Request $request
+   *   Request object.
+   * @param Response $response
+   *   Response object.
+   * @param array $args
+   *   Request args.
+   *
+   * @return ResponseInterface
+   *   Response.
+   *
+   * @throws GuzzleException
+   */
+  public function create(Request $request, Response $response, array $args) {
+    // Validate access.
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $this->getAccessRights($response, $uid);
+    if (!$this->checkAccess()) {
+      $this->flash->addMessage('error', 'View accounts: access denied');
+      return $response->withStatus(302)->withHeader('Location', '/');
+    }
+
+    $menu = $this->getMenus();
+
+    $domain = $this->settings['api']['url'];
+    $account = $this->settings['api']['core_account'];
+    $application = $this->settings['api']['core_application'];
+    $token = $_SESSION['token'];
+    $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+
+    try {
+      $result = $client->request('GET', 'functions/all', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+      ]);
+      $functions = (array) json_decode($result->getBody()->getContents(), TRUE);
+    }
+    catch (ClientException $e) {
+      $result = $e->getResponse();
+      $this->flash->addMessage('error', $this->getErrorMessage($e));
+      switch ($result->getStatusCode()) {
+        case 401:
+          return $response->withStatus(302)->withHeader('Location', '/login');
+          break;
+        default:
+          $functions = [];
+          break;
+      }
+    }
+
+    $sortedFunctions = [];
+    foreach ($functions as $function) {
+      $sortedFunctions[$function['menu']][] = $function;
+    }
+
+    return $this->view->render($response, 'resource-create.twig', [
+      'menu' => $menu,
+      'functions' => $sortedFunctions,
+      'messages' => $this->flash->getMessages(),
+    ]);
+  }
+
 }
