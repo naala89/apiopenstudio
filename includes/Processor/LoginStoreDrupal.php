@@ -30,7 +30,8 @@ class LoginStoreDrupal extends Core\ProcessorEntity
     protected $details = [
     'name' => 'Login Store Drupal',
     'machineName' => 'loginStoreDrupal',
-    'description' => 'Login the user Stores the access details from a users login to a remote drupal site for future use.',
+    'description' => 'Login the user Stores the access details from a users login to a remote drupal site for future \
+    use.',
     'menu' => 'Process',
     'input' => [
       'source' => [
@@ -43,7 +44,8 @@ class LoginStoreDrupal extends Core\ProcessorEntity
         'default' => '',
       ],
       'externalEntity' => [
-        'description' => 'The name of the external entity this user is tied to (use custom names if you access more than one drupal site).',
+        'description' => 'The name of the external entity this user is tied to (use custom names if you access more \
+        than one drupal site).',
         'cardinality' => [0, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],

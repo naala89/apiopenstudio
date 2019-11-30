@@ -39,7 +39,8 @@ class Filter extends Core\ProcessorEntity
         'default' => ''
       ],
       'regex' => [
-        'description' => 'If set ot true, use the filter string as a regex. If set to false, use the filter string for exact comparison.',
+        'description' => 'If set ot true, use the filter string as a regex. If set to false, use the filter string \
+        for exact comparison.',
         'cardinality' => [0, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],
@@ -57,7 +58,9 @@ class Filter extends Core\ProcessorEntity
         'default' => 'value'
       ],
       'recursive' => [
-        'description' => 'Recursively filter the data set. Is set to false, the filter will only apply to the outer data-set. If set to true, the filter will apply to the entire data-set (warning: use sparingly, this could incur long processing times).',
+        'description' => 'Recursively filter the data set. Is set to false, the filter will only apply to the outer \
+        data-set. If set to true, the filter will apply to the entire data-set (warning: use sparingly, this could \
+        incur long processing times).',
         'cardinality' => [0, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],
@@ -66,7 +69,8 @@ class Filter extends Core\ProcessorEntity
         'default' => false
       ],
       'inverse' => [
-        'description' => 'If set to true, the filter will keep matching data. If set to false, the filter will only keep non-matching data.',
+        'description' => 'If set to true, the filter will keep matching data. \
+        If set to false, the filter will only keep non-matching data.',
         'cardinality' => [0, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],

@@ -15,7 +15,8 @@ class Sort extends Core\ProcessorEntity
     protected $details = array(
     'name' => 'Sort',
     'machineName' => 'sort',
-    'description' => 'Sort an input of multiple values. The values can be singular items or name/value pairs (sorted by key or value). Singular items cannot be mixed with name/value pairs.',
+    'description' => 'Sort an input of multiple values. The values can be singular items or name/value pairs (sorted \
+    by key or value). Singular items cannot be mixed with name/value pairs.',
     'menu' => 'Process',
     'input' => array(
       'values' => array(

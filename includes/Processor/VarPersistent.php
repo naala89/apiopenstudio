@@ -16,7 +16,9 @@ class VarPersistent extends Core\ProcessorEntity
     protected $details = [
     'name' => 'Var (Persistent)',
     'machineName' => 'var_persistent',
-    'description' => 'A persistently stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time. The value can be deleted, updated and fetched in future resource and Processor calls.',
+    'description' => 'A persistently stored variable. This allows you to store a regularly used variable with a single \
+    value and fetch it at any time. The value can be deleted, updated and fetched in future resource and Processor \
+    calls.',
     'menu' => 'Primitive',
     'input' => [
       'key' => [
@@ -47,7 +49,8 @@ class VarPersistent extends Core\ProcessorEntity
         'default' => '',
       ],
       'strict' => [
-        'description' => 'If set to 0 then return null if var does not exist. If set to 1 throw exception if var does not exist. Default is strict. Only used in fetch or delete operations.',
+        'description' => 'If set to 0 then return null if var does not exist. \
+        If set to 1 throw exception if var does not exist. Default is strict. Only used in fetch or delete operations.',
         'cardinality' => [0, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],

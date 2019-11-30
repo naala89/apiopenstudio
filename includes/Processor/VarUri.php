@@ -16,7 +16,8 @@ class VarUri extends Core\ProcessorEntity
     protected $details = [
     'name' => 'Var (URI)',
     'machineName' => 'var_uri',
-    'description' => 'A urldecoded value from the request URI. It fetches the value of a particular param in the URI, based on the index value.',
+    'description' => 'A urldecoded value from the request URI. It fetches the value of a particular param in the URI, \
+    based on the index value.',
     'menu' => 'Primitive',
     'input' => [
       'index' => [

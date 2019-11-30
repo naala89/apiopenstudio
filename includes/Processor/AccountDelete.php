@@ -51,7 +51,8 @@ class AccountDelete extends Core\ProcessorEntity
         $applicationMapper = new Db\ApplicationMapper($this->db);
         $applications = $applicationMapper->findByAccid($accid);
         if (!empty($applications)) {
-            throw new Core\ApiException('Cannot delete the account, applications are assigned to the account', 6, $this->id, 400);
+            $message = 'Cannot delete the account, applications are assigned to the account';
+            throw new Core\ApiException($message, 6, $this->id, 400);
         }
 
         return $accountMapper->delete($account);

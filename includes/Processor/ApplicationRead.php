@@ -20,7 +20,8 @@ class ApplicationRead extends Core\ProcessorEntity
     'menu' => 'Admin',
     'input' => [
       'accountIds' => [
-        'description' => 'An array of the IDs of the account to fetch applications by. NULL or empty will fetch for all accounts.',
+        'description' => 'An array of the IDs of the account to fetch applications by. NULL or empty will fetch for \
+        all accounts.',
         'cardinality' => [0, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],
@@ -29,7 +30,8 @@ class ApplicationRead extends Core\ProcessorEntity
         'default' => ''
       ],
       'applicationNames' => [
-        'description' => 'An array of the application names. NULL or empty will fetch all applications for the accounts.',
+        'description' => 'An array of the application names. NULL or empty will fetch all applications for the \
+        accounts.',
         'cardinality' => [0, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],

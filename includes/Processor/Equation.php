@@ -15,7 +15,8 @@ class Equation extends Core\ProcessorEntity
     protected $details = [
     'name' => 'Equation',
     'machineName' => 'equation',
-    'description' => 'This function allows you to define an equation with variables. These input variables are name/value pairs and substitute variables in th4e equation.',
+    'description' => 'This function allows you to define an equation with variables. These input variables are \
+    name/value pairs and substitute variables in th4e equation.',
     'menu' => 'Operation',
     'input' => [
       'equation' => [
