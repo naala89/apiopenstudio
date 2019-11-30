@@ -11,8 +11,8 @@ session_start();
 $config = new Config();
 $settings = $config->all();
 // Move slim config to the root of the settings dir.
-foreach($settings['admin']['slim'] as $key => $value) {
-  $settings[$key] = $value;
+foreach ($settings['admin']['slim'] as $key => $value) {
+    $settings[$key] = $value;
 }
 
 // Cascade::fileConfig($settings->__get(['log', 'settings']));
