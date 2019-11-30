@@ -3,109 +3,78 @@
 {% set title="Resources" %}
 
 {% block content %}
-<div class="row">
-  <p>Create a new resource.</p>
-  <p>Import a GaterData or Swagger file using the upload button.</p>
-</div>
-<form method="get" action="/resources">
-
+  <script>
+    // var GATERDATA = GATERDATA || {};
+    GATERDATA.accAppMap = [];
+    {% for appid, application in applications %}
+      GATERDATA.accAppMap[{{ appid }}] = {'accid': {{ application.accid }}, 'name': "{{ application.name }}"};
+    {% endfor %}
+  </script>
   <div class="row">
-    <div class="col s4">
-      <label>Upload a file into the resource definition.</label>
-      <div class="file-field input-field">
-        <div class="btn">
-          <span>Browse</span>
-          <input type="file" id="upload-resource-file">
-        </div>
-        <div class="file-path-wrapper">
-          <input class="file-path validate" type="text">
+    <p>Create a new resource.</p>
+    <p>Import a GaterData or Swagger file using the upload button.</p>
+  </div>
+  <form method="get" action="/resources" id="create-resource">
+
+    <div class="row">
+      <div class="col s4">
+        <label>Upload a local file into the resource definition.</label>
+        <div class="file-field input-field">
+          <div class="btn">
+            <span>Browse</span>
+            <input type="file" id="upload-resource-file">
+          </div>
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text">
+          </div>
         </div>
       </div>
-{#      <input type="file" title="" id="upload-resource-file">#}
-    </div>
-  </div>
-
-  <div class="row teal lighten-1 white-text">
-    <div class="col col-height s8 valign-wrapper">Resource definition</div>
-    <div class="col col-height s4 valign-wrapper">Functions</div>
-  </div>
-
-  <div class="row">
-
-    <div class="input-field col s8">
-      <textarea id="meta" class="materialize-textarea" placeholder="Enter your resource definition here..."></textarea>
     </div>
 
-    <div class="col s4">
-      <ul class="collapsible" data-collapsible="accordion">
-        {% for menu, details in functions %}
-        <li>
-          <div class="collapsible-header teal lighten-1 white-text">{{ menu }}</div>
-          <div class="collapsible-body">
-            <div class="row">
-              <ul class="collapsible" data-collapsible="accordion">
-                {% for detail in details %}
-                <li>
-                  <div class="collapsible-header teal lighten-1 white-text">{{ detail.name }}</div>
-                  <div class="collapsible-body">
-                    <div class="row"><b>Description:</b> {{ detail.description }}</div>
-                    <div class="row"><b>Machine name:</b> {{ detail.machineName }}</div>
-                    <div class="row teal lighten-1 white-text">Inputs</div>
-                      <dl>
-                        {% for key, input in detail.input %}
-                        <dt>{{ key }}</dt>
-                        <dd>
-                          <ul>
-                            <li><b>Description:</b> {{ input.description }}</li>
-                            <li><b>Cardinality:</b> {{ input.cardinality[0] }} : {{ input.cardinality[1] }}</li>
-                            <li><b>Literal allowed:</b> {% if input.literalAllowed %}True{% else %}False{% endif %}</li>
-                            <li>
-                              <b>Functions allowed: </b>
-                              {% if input.limitFunctions is empty %}
-                                All
-                              {% else %}
-                                {% for limit_function in input.limitFunctions %}
-                                  {{ limit_function }}
-                                  {% if not loop.last %}, {% endif %}
-                                {% endfor %}
-                              {% endif %}
-                            </li>
-                            <li>
-                              <b>Var types allowed: </b>
-                              {% if input.limitTypes is empty %}
-                                All
-                              {% else %}
-                                {% for limit_type in input.limitTypes %}
-                                  {{ limit_type }}
-                                  {% if not loop.last %}, {% endif %}
-                                {% endfor %}
-                              {% endif %}
-                            </li>
-                            <li>
-                              <b>Values allowed: </b>
-                              {% if input.limitValues is empty %}
-                              All
-                              {% else %}
-                                {% for limit_value in input.limitValues %}
-                                  "{{ limit_value }}"
-                                  {% if not loop.last %}, {% endif %}
-                                {% endfor %}
-                              {% endif %}
-                            <li><b>default:</b> {% if input.default is empty %}None{% else %}"{{ input.default }}"{% endif %}</li>
-                          </ul>
-                        </dd>
-                        {% endfor %}
-                      </dl>
-                  </div>
-                </li>
-                {% endfor %}
-              </ul>
-            </div>
+    <div class="row teal lighten-1 white-text">
+      <div class="col col-height s8 valign-wrapper">Resource definition</div>
+      <div class="col col-height s4 valign-wrapper">Functions</div>
+    </div>
+
+    <div class="row">
+
+      <div class="input-field col s8">
+        <div class="row">
+          <div class="input-field col s6">
+            <select required class="validate" name="accid">
+              <option value="" disabled selected>Please select</option>
+              {% for accid, name in accounts %}
+                <option value="{{ accid }}">{{ name }}</option>
+              {% endfor %}
+            </select>
+            <label>Account</label>
           </div>
-        </li>
-        {% endfor %}
-      </ul>
+          <div class="input-field col s6">
+            <select required class="validate" name="appid">
+              <option value="" disabled selected>Please select</option>
+              {% for appid, application in applications %}
+                <option value="{{ appid }}">{{ application.name }}</option>
+              {% endfor %}
+            </select>
+            <label>Application</label>
+          </div>
+        </div>
+        <div class="row">
+          <label>Metadata</label>
+          <textarea class="materialize-textarea" placeholder="Enter your resource definition here..." name="meta" required class="validate"></textarea>
+        </div>
+        <div class="row">
+          <div class="col">
+            <button class="btn waves-effect waves-light" type="submit" name="action">
+              Upload<i class="material-icons right">send</i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col s4">
+        {% include 'partials/processor-definitions.twig' %}
+      </div>
     </div>
-  </div>
-</form>
+  </form>
 {% endblock %}

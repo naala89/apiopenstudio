@@ -1,0 +1,68 @@
+<ul class="collapsible" data-collapsible="accordion">
+    {% for menu, details in functions %}
+        <li>
+            <div class="collapsible-header teal lighten-1 white-text">{{ menu }}</div>
+            <div class="collapsible-body">
+                <div class="row">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        {% for detail in details %}
+                            <li>
+                                <div class="collapsible-header teal lighten-1 white-text">{{ detail.name }}</div>
+                                <div class="collapsible-body">
+                                    <div class="row"><b>Description:</b> {{ detail.description }}</div>
+                                    <div class="row"><b>Machine name:</b> {{ detail.machineName }}</div>
+                                    <div class="row teal lighten-1 white-text">Inputs</div>
+                                    <dl>
+                                        {% for key, input in detail.input %}
+                                            <dt>{{ key }}</dt>
+                                            <dd>
+                                                <ul>
+                                                    <li><b>Description:</b> {{ input.description }}</li>
+                                                    <li><b>Cardinality:</b> {{ input.cardinality[0] }} : {{ input.cardinality[1] }}</li>
+                                                    <li><b>Literal allowed:</b> {% if input.literalAllowed %}True{% else %}False{% endif %}</li>
+                                                    <li>
+                                                        <b>Functions allowed: </b>
+                                                        {% if input.limitFunctions is empty %}
+                                                            All
+                                                        {% else %}
+                                                            {% for limit_function in input.limitFunctions %}
+                                                                {{ limit_function }}
+                                                                {% if not loop.last %}, {% endif %}
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    </li>
+                                                    <li>
+                                                        <b>Var types allowed: </b>
+                                                        {% if input.limitTypes is empty %}
+                                                            All
+                                                        {% else %}
+                                                            {% for limit_type in input.limitTypes %}
+                                                                {{ limit_type }}
+                                                                {% if not loop.last %}, {% endif %}
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    </li>
+                                                    <li>
+                                                        <b>Values allowed: </b>
+                                                        {% if input.limitValues is empty %}
+                                                            All
+                                                        {% else %}
+                                                            {% for limit_value in input.limitValues %}
+                                                                "{{ limit_value }}"
+                                                                {% if not loop.last %}, {% endif %}
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    <li><b>default:</b> {% if input.default is empty %}None{% else %}"{{ input.default }}"{% endif %}</li>
+                                                </ul>
+                                            </dd>
+                                        {% endfor %}
+                                    </dl>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </li>
+    {% endfor %}
+</ul>
