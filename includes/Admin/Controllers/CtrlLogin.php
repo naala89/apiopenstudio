@@ -30,13 +30,14 @@ class CtrlLogin extends CtrlBase {
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
    */
-  public function login(Request $request, Response $response, array $args) {
-    $menu = $this->getMenus(new stdClass());
-    return $this->view->render($response, 'login.twig', [
-      'menu' => $menu,
-      'messages' => $this->flash->getMessages(),
-    ]);
-  }
+    public function login(Request $request, Response $response, array $args)
+    {
+        $menu = $this->getMenus(new stdClass());
+        return $this->view->render($response, 'login.twig', [
+        'menu' => $menu,
+        'messages' => $this->flash->getMessages(),
+        ]);
+    }
 
   /**
    * Logout page.
@@ -51,14 +52,15 @@ class CtrlLogin extends CtrlBase {
    * @return \Psr\Http\Message\ResponseInterface
    *   Response.
    */
-  public function logout(Request $request, Response $response, array $args) {
-    $menu = $this->getMenus([]);
-    unset($_SESSION['token']);
-    unset($_SESSION['uid']);
-    return $this->view->render($response, 'login.twig', [
-      'menu' => $menu,
-      'messages' => $this->flash->getMessages(),
-    ]);
-  }
+    public function logout(Request $request, Response $response, array $args)
+    {
+        $menu = $this->getMenus([]);
+        unset($_SESSION['token']);
+        unset($_SESSION['uid']);
+        return $this->view->render($response, 'login.twig', [
+        'menu' => $menu,
+        'messages' => $this->flash->getMessages(),
+        ]);
+    }
 
 }
