@@ -12,7 +12,7 @@ class AuthOAuth extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = array(
+    protected $details = array(
     'name' => 'Auth (OAuth)',
     'machineName' => 'auth_oauth',
     'description' => 'Authentication for remote server, using OAuth signature in the header.',
@@ -64,25 +64,25 @@ class AuthOAuth extends Core\ProcessorEntity
         'default' => '1.0'
       ),
     ),
-  );
+    );
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Auth o-auth(header)', 4);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Auth o-auth(header)', 4);
 
-    $headers = array(
-      Authorization => OAuth,
-      'oauth_consumer_key' => $this->val('key', true),
-      'oauth_nonce' => $this->val('nonce', true),
-      'oauth_signature' => $this->val('signature', true),
-      'oauth_signature_method' => $this->val('signatureMethod', true),
-      'oauth_timestamp' => time(),
-      'oauth_version' => $this->val('oauthVersion', true)
-     );
+        $headers = array(
+        Authorization => OAuth,
+        'oauth_consumer_key' => $this->val('key', true),
+        'oauth_nonce' => $this->val('nonce', true),
+        'oauth_signature' => $this->val('signature', true),
+        'oauth_signature_method' => $this->val('signatureMethod', true),
+        'oauth_timestamp' => time(),
+        'oauth_version' => $this->val('oauthVersion', true)
+        );
 
-    return array(CURLOPT_HTTPHEADER => $headers);
-  }
+        return array(CURLOPT_HTTPHEADER => $headers);
+    }
 }

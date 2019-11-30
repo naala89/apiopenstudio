@@ -12,7 +12,7 @@ class AuthBasic extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = array(
+    protected $details = array(
     'name' => 'Auth (Basic User/Pass)',
     'machineName' => 'auth_basic',
     'description' => 'Basic authentication for remote server, using username/password.',
@@ -37,18 +37,18 @@ class AuthBasic extends Core\ProcessorEntity
         'default' => ''
       ),
     ),
-  );
+    );
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Auth Basic', 4);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Auth Basic', 4);
 
-    $username = $this->val('username', true);
-    $password = $this->val('password', true);
+        $username = $this->val('username', true);
+        $password = $this->val('password', true);
 
-    return array(CURLOPT_USERPWD => "$username:$password");
-  }
+        return array(CURLOPT_USERPWD => "$username:$password");
+    }
 }

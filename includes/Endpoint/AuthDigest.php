@@ -12,7 +12,7 @@ class AuthDigest extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = array(
+    protected $details = array(
     'name' => 'Auth (Digest User/Pass)',
     'machineName' => 'auth_digest',
     'description' => 'Digest authentication for remote server, using username/password.',
@@ -37,21 +37,21 @@ class AuthDigest extends Core\ProcessorEntity
         'default' => ''
       ),
     ),
-  );
+    );
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Auth Digest', 4);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Auth Digest', 4);
 
-    $username = $this->val('username', true);
-    $password = $this->val('password', true);
+        $username = $this->val('username', true);
+        $password = $this->val('password', true);
 
-    return array(
-      CURLOPT_USERPWD => "$username:$password",
-      CURLOPT_HTTPAUTH => CURLAUTH_DIGEST
-    );
-  }
+        return array(
+        CURLOPT_USERPWD => "$username:$password",
+        CURLOPT_HTTPAUTH => CURLAUTH_DIGEST
+        );
+    }
 }
