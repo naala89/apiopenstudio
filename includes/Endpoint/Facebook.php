@@ -5,6 +5,7 @@
  */
 
 namespace Gaterdata\Endpoint;
+
 use Gaterdata\Processor;
 use Gaterdata\Core;
 use Facebook\Authentication;
@@ -12,84 +13,84 @@ use Facebook\Exceptions;
 
 class Facebook extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
-    protected $details = array(
-    'name' => 'Facebook',
-    'machineName' => 'facebook',
-    'description' => 'Fetch results from facebook Graph API.',
-    'menu' => 'Endpoint',
-    'input' => array(
-      'appId' => array(
-        'description' => 'The app_id that you will be accessing facebook with.',
-        'cardinality' => array(1, 1),
-        'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'appSecret' => array(
-        'description' => 'The app_secret that you will be accessing facebook with.',
-        'cardinality' => array(1, 1),
-        'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'graphVersion' => array(
-        'description' => 'The version of graph to use (do not prefix with "v", e.g. use "2.4").',
-        'cardinality' => array(1, 1),
-        'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'node' => array(
-        'description' => 'The node or edge that you want to fetch or post to facebook.',
-        'cardinality' => array(1, 1),
-        'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'fields' => array(
-        'description' => 'The fields that you want to fetch from the node.',
-        'cardinality' => array(0, '*'),
-        'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'data' => array(
-        'description' => 'An array of the data that you want to send from the node.',
-        'cardinality' => array(0, '*'),
-        'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'objectType' => array(
-        'description' => 'The object type that you want to send from the node, i.e. photos.',
-        'cardinality' => array(0, '*'),
-        'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-    ),
-    );
+    /**
+     * {@inheritDoc}
+     */
+    protected $details = [
+        'name' => 'Facebook',
+        'machineName' => 'facebook',
+        'description' => 'Fetch results from facebook Graph API.',
+        'menu' => 'Endpoint',
+        'input' => [
+            'appId' => [
+                'description' => 'The app_id that you will be accessing facebook with.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'appSecret' => [
+                'description' => 'The app_secret that you will be accessing facebook with.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'graphVersion' => [
+                'description' => 'The version of graph to use (do not prefix with "v", e.g. use "2.4").',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'node' => [
+                'description' => 'The node or edge that you want to fetch or post to facebook.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'fields' => [
+                'description' => 'The fields that you want to fetch from the node.',
+                'cardinality' => [0, '*'],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'data' => [
+                'description' => 'An array of the data that you want to send from the node.',
+                'cardinality' => [0, '*'],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'objectType' => [
+                'description' => 'The object type that you want to send from the node, i.e. photos.',
+                'cardinality' => [0, '*'],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+        ],
+    ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Endpoint Facebook', 4);
@@ -114,14 +115,14 @@ class Facebook extends Core\ProcessorEntity
         return $this->{"_$method"}($fb, $node, $accessToken);
     }
 
-  /**
-   * Generate an FB access token/
-   *
-   * @param $fb
-   * @param bool|TRUE $longLived
-   * @return mixed
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Generate an FB access token/
+     *
+     * @param $fb
+     * @param bool|TRUE $longLived
+     * @return mixed
+     * @throws \Gaterdata\Core\ApiException
+     */
     private function _getToken($fb, $longLived = true)
     {
         $helper = $fb->getRedirectLoginHelper();
@@ -129,10 +130,10 @@ class Facebook extends Core\ProcessorEntity
         try {
             $accessToken = $helper->getAccessToken();
         } catch (Exceptions\FacebookResponseException $e) {
-          // When Graph returns an error
+            // When Graph returns an error
             throw new Core\ApiException('Graph returned an error: ' . $e->getMessage(), 5, $this->id);
         } catch (Exceptions\FacebookSDKException $e) {
-          // When validation fails or other local issues
+            // When validation fails or other local issues
             throw new Core\ApiException('Graph SDK returned an error: ' . $e->getMessage(), 5, $this->id);
         }
 
@@ -161,15 +162,15 @@ class Facebook extends Core\ProcessorEntity
         return $accessToken;
     }
 
-  /**
-   * Get data from FB.
-   *
-   * @param $fb
-   * @param $node
-   * @param $accessToken
-   * @return mixed
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Get data from FB.
+     *
+     * @param $fb
+     * @param $node
+     * @param $accessToken
+     * @return mixed
+     * @throws \Gaterdata\Core\ApiException
+     */
     private function _get($fb, $node, $accessToken)
     {
         $fields = $this->val('fields');
@@ -185,19 +186,18 @@ class Facebook extends Core\ProcessorEntity
         return $response->getDecodedBody();
     }
 
-  /**
-   * Post data to FB.
-   * @param $fb
-   * @param $node
-   * @param $accessToken
-   * @return mixed
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Post data to FB.
+     * @param $fb
+     * @param $node
+     * @param $accessToken
+     * @return mixed
+     * @throws \Gaterdata\Core\ApiException
+     */
     private function _post($fb, $node, $accessToken)
     {
         $objectType = $this->val('objectType');
         $data = $this->val('data');
-
 
         try {
             $response = $fb->get("/$node?fields=" . implode(',', $fields), $accessToken);
