@@ -45,7 +45,7 @@ class CtrlResource extends CtrlBase {
     $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
     $this->getAccessRights($response, $uid);
     if (!$this->checkAccess()) {
-      $this->flash->addMessage('error', 'View accounts: access denied');
+      $this->flash->addMessage('error', 'View resources: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
     }
 
@@ -145,7 +145,7 @@ class CtrlResource extends CtrlBase {
     $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
     $this->getAccessRights($response, $uid);
     if (!$this->checkAccess()) {
-      $this->flash->addMessage('error', 'View accounts: access denied');
+      $this->flash->addMessage('error', 'Create a resource: access denied');
       return $response->withStatus(302)->withHeader('Location', '/');
     }
 
@@ -204,6 +204,67 @@ class CtrlResource extends CtrlBase {
       'functions' => $sortedFunctions,
       'messages' => $this->flash->getMessages(),
     ]);
+  }
+
+  /**
+   * Upload a resource.
+   *
+   * @param Request $request
+   *   Request object.
+   * @param Response $response
+   *   Response object.
+   * @param array $args
+   *   Request args.
+   *
+   * @return ResponseInterface
+   *   Response.
+   *
+   * @throws GuzzleException
+   */
+  public function upload(Request $request, Response $response, array $args) {
+    // Validate access.
+    $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+    $this->getAccessRights($response, $uid);
+    if (!$this->checkAccess()) {
+      $this->flash->addMessage('error', 'Upload a resource: access denied');
+      return $response->withStatus(302)->withHeader('Location', '/');
+    }
+
+    $allPostVars = $request->getParsedBody();
+    if (empty($allPostVars['acc']) || empty($allPostVars['app']) || empty($allPostVars['meta'])) {
+      $this->flash->addMessage('error', 'Cannot upload resource, not all information recieved');
+      return $response->withStatus(302)->withHeader('Location', '/resource/create');
+    }
+
+    $domain = $this->settings['api']['url'];
+    $account = $this->settings['api']['core_account'];
+    $application = $this->settings['api']['core_application'];
+    $token = $_SESSION['token'];
+    $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+
+    try {
+      $result = $client->request('POST', 'resource/yaml/' . $allPostVars['acc'] . '/' . $allPostVars['app'], [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+        'body' => $allPostVars['meta'],
+      ]);
+      $result = json_decode($result->getBody()->getContents(), TRUE);
+    }
+    catch (ClientException $e) {
+      $result = $e->getResponse();
+      $this->flash->addMessage('error', $this->getErrorMessage($e));
+      switch ($result->getStatusCode()) {
+        case 401:
+          return $response->withStatus(302)->withHeader('Location', '/login');
+          break;
+        default:
+          return $response->withStatus(302)->withHeader('Location', '/resources');
+          break;
+      }
+    }
+    $this->flash->addMessage('info', 'Resource successfully created.');
+    return $this->index($request, $response, []);
   }
 
 }

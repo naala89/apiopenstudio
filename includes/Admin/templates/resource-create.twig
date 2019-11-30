@@ -7,14 +7,14 @@
     // var GATERDATA = GATERDATA || {};
     GATERDATA.accAppMap = [];
     {% for appid, application in applications %}
-      GATERDATA.accAppMap[{{ appid }}] = {'accid': {{ application.accid }}, 'name': "{{ application.name }}"};
+      GATERDATA.accAppMap["{{ application.name }}"] = "{{ accounts[application.accid] }}";
     {% endfor %}
   </script>
   <div class="row">
     <p>Create a new resource.</p>
     <p>Import a GaterData or Swagger file using the upload button.</p>
   </div>
-  <form method="get" action="/resources" id="create-resource">
+  <form method="post" action="/resource/upload" id="create-resource">
 
     <div class="row">
       <div class="col s4">
@@ -41,19 +41,19 @@
       <div class="input-field col s8">
         <div class="row">
           <div class="input-field col s6">
-            <select required class="validate" name="accid">
+            <select required class="validate" name="acc">
               <option value="" disabled selected>Please select</option>
-              {% for accid, name in accounts %}
-                <option value="{{ accid }}">{{ name }}</option>
+              {% for name in accounts %}
+                <option value="{{ name }}">{{ name }}</option>
               {% endfor %}
             </select>
             <label>Account</label>
           </div>
           <div class="input-field col s6">
-            <select required class="validate" name="appid">
+            <select required class="validate" name="app">
               <option value="" disabled selected>Please select</option>
-              {% for appid, application in applications %}
-                <option value="{{ appid }}">{{ application.name }}</option>
+              {% for application in applications %}
+                <option value="{{ application.name }}">{{ application.name }}</option>
               {% endfor %}
             </select>
             <label>Application</label>

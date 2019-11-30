@@ -142,23 +142,24 @@ $(document).ready(function() {
   });
 
   // resource create - application select
-  $("#create-resource select[name='accid']").on('change', function() {
-    var accid = $(this).val(),
-        selectAppid = $('#create-resource').find("select[name='appid']");
-    selectAppid.find('option').remove();selectAppid.append($('<option>', {
+  $("#create-resource select[name='acc']").on('change', function() {
+    var acc = $(this).val(),
+        selectApp = $('#create-resource').find("select[name='app']");
+    selectApp.find('option').remove();
+    selectApp.append($('<option>', {
       value: "",
       text: "Please select"
     }));
-    GATERDATA.accAppMap.forEach(function (application, appid) {
-      if (accid == application.accid) {
-        selectAppid.append($('<option>', {
-          value: appid,
-          text : application.name
+    for (var application in GATERDATA.accAppMap) {
+      if (acc == GATERDATA.accAppMap[application]) {
+        selectApp.append($('<option>', {
+          value: application,
+          text : application
         }));
       }
-    });
-    selectAppid.val("");
-    selectAppid.formSelect();
+    }
+    selectApp.val("");
+    selectApp.formSelect();
   });
 
 });
