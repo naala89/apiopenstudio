@@ -20,22 +20,22 @@ class RoleMapper extends Mapper {
    *
    * @throws \Gaterdata\Core\ApiException
    */
-  public function save(Role $role) {
-    if ($role->getRid() == NULL) {
-      $sql = 'INSERT INTO role (name) VALUES (?, ?)';
-      $bindParams = [
-        $role->getName(),
-      ];
+    public function save(Role $role)
+    {
+        if ($role->getRid() == null) {
+            $sql = 'INSERT INTO role (name) VALUES (?, ?)';
+            $bindParams = [
+            $role->getName(),
+            ];
+        } else {
+            $sql = 'UPDATE external_user SET name = ? WHERE rid = ?';
+            $bindParams = [
+            $role->getName(),
+            $role->getRid(),
+            ];
+        }
+        return $this->saveDelete($sql, $bindParams);
     }
-    else {
-      $sql = 'UPDATE external_user SET name = ? WHERE rid = ?';
-      $bindParams = [
-        $role->getName(),
-        $role->getRid(),
-      ];
-    }
-    return $this->saveDelete($sql, $bindParams);
-  }
 
   /**
    * Delete a Role.
@@ -48,11 +48,12 @@ class RoleMapper extends Mapper {
    *
    * @throws \Gaterdata\Core\ApiException
    */
-  public function delete(Role $role) {
-    $sql = 'DELETE FROM role WHERE rid = ?';
-    $bindParams = [$role->getRid()];
-    return $this->saveDelete($sql, $bindParams);
-  }
+    public function delete(Role $role)
+    {
+        $sql = 'DELETE FROM role WHERE rid = ?';
+        $bindParams = [$role->getRid()];
+        return $this->saveDelete($sql, $bindParams);
+    }
 
   /**
    * Find all roles.
@@ -62,10 +63,11 @@ class RoleMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findAll() {
-    $sql = 'SELECT * FROM role';
-    return $this->fetchRows($sql, []);
-  }
+    public function findAll()
+    {
+        $sql = 'SELECT * FROM role';
+        return $this->fetchRows($sql, []);
+    }
 
   /**
    * Find a role by its ID.
@@ -78,11 +80,12 @@ class RoleMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findByRid($rid) {
-    $sql = 'SELECT * FROM role WHERE rid = ?';
-    $bindParams = [$rid];
-    return $this->fetchRow($sql, $bindParams);
-  }
+    public function findByRid($rid)
+    {
+        $sql = 'SELECT * FROM role WHERE rid = ?';
+        $bindParams = [$rid];
+        return $this->fetchRow($sql, $bindParams);
+    }
 
   /**
    * Find a role by its name.
@@ -95,11 +98,12 @@ class RoleMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findByName($name) {
-    $sql = 'SELECT * FROM role WHERE name = ?';
-    $bindParams = [$name];
-    return $this->fetchRow($sql, $bindParams);
-  }
+    public function findByName($name)
+    {
+        $sql = 'SELECT * FROM role WHERE name = ?';
+        $bindParams = [$name];
+        return $this->fetchRow($sql, $bindParams);
+    }
 
   /**
    * Map a DB row to the internal attributes.
@@ -110,13 +114,14 @@ class RoleMapper extends Mapper {
    * @return \Gaterdata\Db\Role
    *   Role object.
    */
-  protected function mapArray(array $row) {
-    $role = new Role();
+    protected function mapArray(array $row)
+    {
+        $role = new Role();
 
-    $role->setRid(!empty($row['rid']) ? $row['rid'] : NULL);
-    $role->setName(!empty($row['name']) ? $row['name'] : NULL);
+        $role->setRid(!empty($row['rid']) ? $row['rid'] : null);
+        $role->setName(!empty($row['name']) ? $row['name'] : null);
 
-    return $role;
-  }
+        return $role;
+    }
 
 }

@@ -9,8 +9,8 @@ namespace Gaterdata\Db;
  */
 class Role {
 
-  protected $rid;
-  protected $name;
+    protected $rid;
+    protected $name;
 
   /**
    * Role constructor.
@@ -20,10 +20,11 @@ class Role {
    * @param string $name
    *   Role name.
    */
-  public function __construct($rid = NULL, $name = NULL) {
-    $this->rid = $rid;
-    $this->name = $name;
-  }
+    public function __construct($rid = null, $name = null)
+    {
+        $this->rid = $rid;
+        $this->name = $name;
+    }
 
   /**
    * Get the role ID.
@@ -31,9 +32,10 @@ class Role {
    * @return int
    *   Role ID.
    */
-  public function getRid() {
-    return $this->rid;
-  }
+    public function getRid()
+    {
+        return $this->rid;
+    }
 
   /**
    * Set the role ID.
@@ -41,9 +43,10 @@ class Role {
    * @param int $rid
    *   Role ID.
    */
-  public function setRid($rid) {
-    $this->rid = $rid;
-  }
+    public function setRid($rid)
+    {
+        $this->rid = $rid;
+    }
 
   /**
    * Get the role name.
@@ -51,9 +54,10 @@ class Role {
    * @return int
    *   Name
    */
-  public function getName() {
-    return $this->name;
-  }
+    public function getName()
+    {
+        return $this->name;
+    }
 
   /**
    * Set the role name.
@@ -61,9 +65,10 @@ class Role {
    * @param string $name
    *   Role name.
    */
-  public function setName($name) {
-    $this->name = $name;
-  }
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
   /**
    * Return the values as an associative array.
@@ -71,11 +76,12 @@ class Role {
    * @return array
    *   Role object.
    */
-  public function dump() {
-    return [
-      'rid' => $this->rid,
-      'name' => $this->name,
-    ];
-  }
+    public function dump()
+    {
+        return [
+        'rid' => $this->rid,
+        'name' => $this->name,
+        ];
+    }
 
 }

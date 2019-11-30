@@ -8,10 +8,10 @@ namespace Gaterdata\Db;
  * @package Gaterdata\Db
  */
 class Vars {
-  protected $id;
-  protected $appId;
-  protected $name;
-  protected $val;
+    protected $id;
+    protected $appId;
+    protected $name;
+    protected $val;
 
   /**
    * Vars constructor.
@@ -25,12 +25,13 @@ class Vars {
    * @param mixed $val
    *   The var value.
    */
-  public function __construct($id = NULL, $appId = NULL, $name = NULL, $val = NULL) {
-    $this->id = $id;
-    $this->accId = $appId;
-    $this->name = $name;
-    $this->val = $val;
-  }
+    public function __construct($id = null, $appId = null, $name = null, $val = null)
+    {
+        $this->id = $id;
+        $this->accId = $appId;
+        $this->name = $name;
+        $this->val = $val;
+    }
 
   /**
    * Get the var ID.
@@ -38,9 +39,10 @@ class Vars {
    * @return int
    *   The var ID.
    */
-  public function getId() {
-    return $this->id;
-  }
+    public function getId()
+    {
+        return $this->id;
+    }
 
   /**
    * Set the var ID.
@@ -48,9 +50,10 @@ class Vars {
    * @param int $id
    *   The var ID.
    */
-  public function setId($id) {
-    $this->id = $id;
-  }
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 
   /**
    * Get the var application ID.
@@ -58,9 +61,10 @@ class Vars {
    * @return int
    *   The var application ID.
    */
-  public function getAppId() {
-    return $this->appId;
-  }
+    public function getAppId()
+    {
+        return $this->appId;
+    }
 
   /**
    * Set the var application ID.
@@ -68,9 +72,10 @@ class Vars {
    * @param int $appId
    *   The avr application ID.
    */
-  public function setAppId($appId) {
-    $this->appId = $appId;
-  }
+    public function setAppId($appId)
+    {
+        $this->appId = $appId;
+    }
 
   /**
    * Get the var name.
@@ -78,9 +83,10 @@ class Vars {
    * @return string
    *   The var name.
    */
-  public function getName() {
-    return $this->name;
-  }
+    public function getName()
+    {
+        return $this->name;
+    }
 
   /**
    * Set the var name.
@@ -88,9 +94,10 @@ class Vars {
    * @param string $name
    *   The var name.
    */
-  public function setName($name) {
-    $this->name = $name;
-  }
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
   /**
    * Get the var value.
@@ -98,9 +105,10 @@ class Vars {
    * @return string
    *   The var alue.
    */
-  public function getVal() {
-    return $this->val;
-  }
+    public function getVal()
+    {
+        return $this->val;
+    }
 
   /**
    * Set the var value.
@@ -108,9 +116,10 @@ class Vars {
    * @param mixed $val
    *   The var value.
    */
-  public function setVal($val) {
-    $this->val = $val;
-  }
+    public function setVal($val)
+    {
+        $this->val = $val;
+    }
 
   /**
    * Return the values as an associative array.
@@ -118,13 +127,14 @@ class Vars {
    * @return array
    *   Associative array of var attributes.
    */
-  public function dump() {
-    return [
-      'id' => $this->id,
-      'appId' => $this->appId,
-      'name' => $this->name,
-      'val' => $this->val,
-    ];
-  }
+    public function dump()
+    {
+        return [
+        'id' => $this->id,
+        'appId' => $this->appId,
+        'name' => $this->name,
+        'val' => $this->val,
+        ];
+    }
 
 }

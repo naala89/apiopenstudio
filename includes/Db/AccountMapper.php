@@ -20,20 +20,20 @@ class AccountMapper extends Mapper {
    *
    * @throws \Gaterdata\Core\ApiException
    */
-  public function save(Account $account) {
-    if ($account->getAccid() == NULL) {
-      $sql = 'INSERT INTO account (name) VALUES (?)';
-      $bindParams = [$account->getName()];
+    public function save(Account $account)
+    {
+        if ($account->getAccid() == null) {
+            $sql = 'INSERT INTO account (name) VALUES (?)';
+            $bindParams = [$account->getName()];
+        } else {
+            $sql = 'UPDATE account SET name = ? WHERE accid = ?';
+            $bindParams = [
+            $account->getName(),
+            $account->getAccid(),
+            ];
+        }
+        return $this->saveDelete($sql, $bindParams);
     }
-    else {
-      $sql = 'UPDATE account SET name = ? WHERE accid = ?';
-      $bindParams = [
-        $account->getName(),
-        $account->getAccid(),
-      ];
-    }
-    return $this->saveDelete($sql, $bindParams);
-  }
 
   /**
    * Delete an account.
@@ -46,11 +46,12 @@ class AccountMapper extends Mapper {
    *
    * @throws \Gaterdata\Core\ApiException
    */
-  public function delete(Account $account) {
-    $sql = 'DELETE FROM account WHERE accid = ?';
-    $bindParams = [$account->getAccid()];
-    return $this->saveDelete($sql, $bindParams);
-  }
+    public function delete(Account $account)
+    {
+        $sql = 'DELETE FROM account WHERE accid = ?';
+        $bindParams = [$account->getAccid()];
+        return $this->saveDelete($sql, $bindParams);
+    }
   
   /**
    * Find an accounts.
@@ -63,10 +64,11 @@ class AccountMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findAll($params = []) {
-    $sql = 'SELECT * FROM account';
-    return $this->fetchRows($sql, [], $params);
-  }
+    public function findAll($params = [])
+    {
+        $sql = 'SELECT * FROM account';
+        return $this->fetchRows($sql, [], $params);
+    }
 
   /**
    * Find an account by ID.
@@ -79,11 +81,12 @@ class AccountMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findByAccid($accid) {
-    $sql = 'SELECT * FROM account WHERE accid = ?';
-    $bindParams = [$accid];
-    return $this->fetchRow($sql, $bindParams);
-  }
+    public function findByAccid($accid)
+    {
+        $sql = 'SELECT * FROM account WHERE accid = ?';
+        $bindParams = [$accid];
+        return $this->fetchRow($sql, $bindParams);
+    }
 
   /**
    * Find accounts by IDs.
@@ -96,17 +99,18 @@ class AccountMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findByAccids(array $accids) {
-    $inAccid = [];
-    foreach ($accids as $accid) {
-      $inAccid[] = '?';
+    public function findByAccids(array $accids)
+    {
+        $inAccid = [];
+        foreach ($accids as $accid) {
+            $inAccid[] = '?';
+        }
+        $sql = 'SELECT * FROM account';
+        if (!empty($inAccid)) {
+            $sql .= ' WHERE accid IN (' . implode(', ', $inAccid) . ')';
+        }
+        return $this->fetchRow($sql, $accids);
     }
-    $sql = 'SELECT * FROM account';
-    if (!empty($inAccid)) {
-      $sql .= ' WHERE accid IN (' . implode(', ', $inAccid) . ')';
-    }
-    return $this->fetchRow($sql, $accids);
-  }
 
   /**
    * Find an account by name.
@@ -119,11 +123,12 @@ class AccountMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findByName($name) {
-    $sql = 'SELECT * FROM account WHERE name = ?';
-    $bindParams = [$name];
-    return $this->fetchRow($sql, $bindParams);
-  }
+    public function findByName($name)
+    {
+        $sql = 'SELECT * FROM account WHERE name = ?';
+        $bindParams = [$name];
+        return $this->fetchRow($sql, $bindParams);
+    }
 
   /**
    * Find an accounts by names.
@@ -136,15 +141,16 @@ class AccountMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findByNames(array $names = []) {
-    $arr = [];
-    foreach ($names as $name) {
-      $arr[] = '?';
+    public function findByNames(array $names = [])
+    {
+        $arr = [];
+        foreach ($names as $name) {
+            $arr[] = '?';
+        }
+        $sql = 'SELECT * FROM account WHERE name IN (' . implode(', ', $arr) . ')';
+        $bindParams = $names;
+        return $this->fetchRows($sql, $bindParams);
     }
-    $sql = 'SELECT * FROM account WHERE name IN (' . implode(', ', $arr) . ')';
-    $bindParams = $names;
-    return $this->fetchRows($sql, $bindParams);
-  }
 
   /**
    * Map a DB row into an Account object.
@@ -155,13 +161,14 @@ class AccountMapper extends Mapper {
    * @return \Gaterdata\Db\Account
    *   Account object.
    */
-  protected function mapArray(array $row) {
-    $account = new Account();
+    protected function mapArray(array $row)
+    {
+        $account = new Account();
 
-    $account->setAccid(!empty($row['accid']) ? $row['accid'] : NULL);
-    $account->setName(!empty($row['name']) ? $row['name'] : NULL);
+        $account->setAccid(!empty($row['accid']) ? $row['accid'] : null);
+        $account->setName(!empty($row['name']) ? $row['name'] : null);
 
-    return $account;
-  }
+        return $account;
+    }
 
 }
