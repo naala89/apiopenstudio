@@ -16,7 +16,9 @@ class VarTemporary extends Core\ProcessorEntity
     protected $details = [
     'name' => 'Var (Temporary)',
     'machineName' => 'var_temporary',
-    'description' => 'A temporarily stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time during your resource call. The value can be deleted, updated and fetched in future resource..',
+    'description' => 'A temporarily stored variable. This allows you to store a regularly used variable with a single \
+    value and fetch it at any time during your resource call. The value can be deleted, updated and fetched in future \
+    resource.',
     'menu' => 'Primitive',
     'input' => [
       'key' => [
@@ -47,7 +49,8 @@ class VarTemporary extends Core\ProcessorEntity
         'default' => '',
       ],
       'strict' => [
-        'description' => 'If set to true then return null if var does not exist. If set to false throw exception if var does not exist. Default is strict. Only used in fetch or delete operations.',
+        'description' => 'If set to true then return null if var does not exist. If set to false throw exception if \
+        var does not exist. Default is strict. Only used in fetch or delete operations.',
         'cardinality' => [0, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],

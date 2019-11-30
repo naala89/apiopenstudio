@@ -18,7 +18,8 @@ class VarBool extends Core\ProcessorEntity
     protected $details = [
     'name' => 'Var (Boolean)',
     'machineName' => 'var_bool',
-    'description' => 'A boolean variable. It validates the input (0,1,yes,no,true,false) into a boolean value, and returns an error if it is not a boolean.',
+    'description' => 'A boolean variable. It validates the input (0,1,yes,no,true,false) into a boolean value, and \
+    returns an error if it is not a boolean.',
     'menu' => 'Primitive',
     'input' => [
       'value' => [

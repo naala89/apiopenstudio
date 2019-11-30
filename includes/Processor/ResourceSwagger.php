@@ -65,7 +65,8 @@ class ResourceSwagger extends ResourceBase
 
                 $resource = array();
                 $resource['name'] = !empty($definition['operationId']) ? $definition['operationId'] : 'noName';
-                $resource['description'] = !empty($definition['description']) ? $definition['description'] : 'noDescription';
+                $resource['description'] = !empty($definition['description'])
+                    ? $definition['description'] : 'noDescription';
                 $resource['uri']['noun'] = $noun;
                 $resource['uri']['verb'] = $verb;
                 $resource['method'] = $method;
