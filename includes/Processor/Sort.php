@@ -12,7 +12,7 @@ class Sort extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = array(
+    protected $details = array(
     'name' => 'Sort',
     'machineName' => 'sort',
     'description' => 'Sort an input of multiple values. The values can be singular items or name/value pairs (sorted by key or value). Singular items cannot be mixed with name/value pairs.',
@@ -46,58 +46,58 @@ class Sort extends Core\ProcessorEntity
         'default' => 'key',
       ),
     ),
-  );
+    );
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $values = $this->val('values', true);
+        $values = $this->val('values', true);
 
-    if (empty($values) || !is_array($values)) {
-      return $values;
+        if (empty($values) || !is_array($values)) {
+            return $values;
+        }
+
+        $direction = $this->val('direction', true);
+        $sortBy = $this->val('sortBy', true);
+
+        Core\Debug::variable($values, 'values before sort');
+
+        if ($sortBy == 'key') {
+            if ($direction == 'asc') {
+                if (!Core\Utilities::isAssoc($values)) {
+                    // do nothing, this is a normal array
+                } else {
+                    ksort($values);
+                }
+            } else {
+                if (!Core\Utilities::isAssoc($values)) {
+                    $values = array_reverse($values);
+                } else {
+                    krsort($values);
+                }
+            }
+        } else {
+            if ($direction == 'asc') {
+                if (!Core\Utilities::isAssoc($values)) {
+                    sort($values);
+                } else {
+                    asort($values);
+                }
+            } else {
+                if (!Core\Utilities::isAssoc($values)) {
+                    rsort($values);
+                } else {
+                    arsort($values);
+                }
+            }
+        }
+
+        Core\Debug::variable($values, 'values after sort');
+
+        return $values;
     }
-
-    $direction = $this->val('direction', true);
-    $sortBy = $this->val('sortBy', true);
-
-    Core\Debug::variable($values, 'values before sort');
-
-    if ($sortBy == 'key') {
-      if ($direction == 'asc') {
-        if (!Core\Utilities::is_assoc($values)) {
-          // do nothing, this is a normal array
-        } else {
-          ksort($values);
-        }
-      } else {
-        if (!Core\Utilities::is_assoc($values)) {
-          $values = array_reverse($values);
-        } else {
-          krsort($values);
-        }
-      }
-    } else {
-      if ($direction == 'asc') {
-        if (!Core\Utilities::is_assoc($values)) {
-          sort($values);
-        } else {
-          asort($values);
-        }
-      } else {
-        if (!Core\Utilities::is_assoc($values)) {
-          rsort($values);
-        } else {
-          arsort($values);
-        }
-      }
-    }
-
-    Core\Debug::variable($values, 'values after sort');
-
-    return $values;
-  }
 }

@@ -14,7 +14,7 @@ class Filter extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Filter',
     'machineName' => 'filter',
     'description' => 'Filter values from a data-set.',
@@ -75,51 +75,51 @@ class Filter extends Core\ProcessorEntity
         'default' => false
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $filter = $this->val('filter', true);
-    $keyOrValue = $this->val('keyOrValue', true);
-    $recursive = $this->val('recursive', true);
-    $inverse = $this->val('inverse', true);
-    $regex = $this->val('regex', true);
-    $values = $this->val('values', true);
+        $filter = $this->val('filter', true);
+        $keyOrValue = $this->val('keyOrValue', true);
+        $recursive = $this->val('recursive', true);
+        $inverse = $this->val('inverse', true);
+        $regex = $this->val('regex', true);
+        $values = $this->val('values', true);
 
-    // Nothing to filter.
-    if (empty($values)) {
-      return $this->val('values');
+      // Nothing to filter.
+        if (empty($values)) {
+            return $this->val('values');
+        }
+
+      // Nothing to filter.
+        if (empty($filter)) {
+            return $this->val('values');
+        }
+
+      // Test for multiple filters if regex (not allowed because it is inefficient).
+        if ($regex === true && is_array($filter)) {
+            throw new Core\ApiException('cannot have an array of regexes as a filter', 0, $this->id, 417);
+        }
+
+      // Regex filter accepted as a string, convert to array so it is always an array
+        if (!$regex && !is_array($filter)) {
+            $filter = array($filter);
+        }
+
+        $func = '_filterBy' . ucfirst($keyOrValue) . ($recursive ? 'Recursive' : 'Nonrecursive');
+        $getCallback = '_callback' . ($inverse ? 'Inverse' : 'Noninverse') . ($regex ? 'Regex' : 'Nonregex');
+        $callback = $this->{$getCallback}($filter);
+
+        $values = $this->{$func}($values, $callback);
+
+      // TODO: better dynamic container type
+        return new Core\DataContainer($values, is_array($values) ? 'array' : 'text');
     }
-
-    // Nothing to filter.
-    if (empty($filter)) {
-      return $this->val('values');
-    }
-
-    // Test for multiple filters if regex (not allowed because it is inefficient).
-    if ($regex === true && is_array($filter)) {
-      throw new Core\ApiException('cannot have an array of regexes as a filter', 0, $this->id, 417);
-    }
-
-    // Regex filter accepted as a string, convert to array so it is always an array
-    if (!$regex && !is_array($filter)) {
-      $filter = array($filter);
-    }
-
-    $func = '_filterBy' . ucfirst($keyOrValue) . ($recursive ? 'Recursive' : 'Nonrecursive');
-    $getCallback = '_callback' . ($inverse ? 'Inverse' : 'Noninverse') . ($regex ? 'Regex' : 'Nonregex');
-    $callback = $this->{$getCallback}($filter);
-
-    $values = $this->{$func}($values, $callback);
-
-    // TODO: better dynamic container type
-    return new Core\DataContainer($values, is_array($values) ? 'array' : 'text');
-  }
 
   /**
    * Perform non-recursive filter on $data, based on key value.
@@ -129,14 +129,14 @@ class Filter extends Core\ProcessorEntity
    * @param $callback
    * @return array
    */
-  private function _filterByKeyNonrecursive($data, $callback)
-  {
-    if (!is_array($data)) {
-      return $data;
-    }
+    private function _filterByKeyNonrecursive($data, $callback)
+    {
+        if (!is_array($data)) {
+            return $data;
+        }
 
-    return array_filter($data, $callback, ARRAY_FILTER_USE_KEY);
-  }
+        return array_filter($data, $callback, ARRAY_FILTER_USE_KEY);
+    }
 
   /**
    * Perform recursive filter on $data, based on key value.
@@ -144,117 +144,117 @@ class Filter extends Core\ProcessorEntity
    * @param $callback
    * @return array
    */
-  private function _filterByKeyRecursive($data, $callback)
-  {
-    if (!is_array($data)) {
-      return $data;
-    }
-
-    $data = array_filter($data, $callback, ARRAY_FILTER_USE_KEY);
-
-    foreach ($data as $key => $item) {
-      if (is_array($item)) {
-        $data[$key] = $this->_filterByKeyRecursive($item, $callback);
-      }
-    }
-
-    return $data;
-  }
-
-  /**
-   * Perform non-recursive filter on $data, based on value.
-   * @param $data
-   * @param $callback
-   * @return array
-   */
-  private function _filterByValueNonrecursive($data, $callback)
-  {
-    if (!is_array($data)) {
-      return !$callback($data) ? null : $data;
-    }
-
-    foreach ($data as $key => $item) {
-      if (!is_array($item) && !$callback($item)) {
-        unset($data[$key]);
-      }
-    }
-
-    return $data;
-  }
-
-  /**
-   * Perform non-recursive filter on $data, based on value.
-   * @param $data
-   * @param $callback
-   * @return array
-   */
-  private function _filterByValueRecursive($data, $callback)
-  {
-    if (!is_array($data)) {
-      return $callback($data) ? null : $data;
-    }
-
-    foreach ($data as $key => $item) {
-      if (!is_array($item)) {
-        if (!$callback($item)) {
-          unset($data[$key]);
+    private function _filterByKeyRecursive($data, $callback)
+    {
+        if (!is_array($data)) {
+            return $data;
         }
-      } else {
-        $data[$key] = $this->_filterByValueRecursive($item, $callback);
-      }
+
+        $data = array_filter($data, $callback, ARRAY_FILTER_USE_KEY);
+
+        foreach ($data as $key => $item) {
+            if (is_array($item)) {
+                $data[$key] = $this->_filterByKeyRecursive($item, $callback);
+            }
+        }
+
+        return $data;
     }
 
-    return $data;
-  }
+  /**
+   * Perform non-recursive filter on $data, based on value.
+   * @param $data
+   * @param $callback
+   * @return array
+   */
+    private function _filterByValueNonrecursive($data, $callback)
+    {
+        if (!is_array($data)) {
+            return !$callback($data) ? null : $data;
+        }
+
+        foreach ($data as $key => $item) {
+            if (!is_array($item) && !$callback($item)) {
+                unset($data[$key]);
+            }
+        }
+
+        return $data;
+    }
+
+  /**
+   * Perform non-recursive filter on $data, based on value.
+   * @param $data
+   * @param $callback
+   * @return array
+   */
+    private function _filterByValueRecursive($data, $callback)
+    {
+        if (!is_array($data)) {
+            return $callback($data) ? null : $data;
+        }
+
+        foreach ($data as $key => $item) {
+            if (!is_array($item)) {
+                if (!$callback($item)) {
+                    unset($data[$key]);
+                }
+            } else {
+                $data[$key] = $this->_filterByValueRecursive($item, $callback);
+            }
+        }
+
+        return $data;
+    }
 
   /**
    * Filter callback for non-inverse, non-regex.
    * @param $filter
    * @return \Closure
    */
-  private function _callbackNoninverseNonregex($filter)
-  {
-    return function($item) use ($filter) {
-      return !in_array($item, $filter);
-    };
-  }
+    private function _callbackNoninverseNonregex($filter)
+    {
+        return function ($item) use ($filter) {
+            return !in_array($item, $filter);
+        };
+    }
 
   /**
    * Filter callback for inverse, non-regex.
    * @param $filter
    * @return \Closure
    */
-  private function _callbackInverseNonregex($filter)
-  {
-    return function($item) use ($filter) {
-      return in_array($item, $filter);
-    };
-  }
+    private function _callbackInverseNonregex($filter)
+    {
+        return function ($item) use ($filter) {
+            return in_array($item, $filter);
+        };
+    }
 
   /**
    * Filter callback for non-inverse, regex.
    * @param $filter
    * @return \Closure
    */
-  private function _callbackNoninverseRegex($filter)
-  {
-    return function($item) use ($filter) {
-//      var_dump($item);
-//      var_dump($filter);
-//      var_dump(preg_match($filter, $item));
-      return preg_match($filter, $item) == 0;
-    };
-  }
+    private function _callbackNoninverseRegex($filter)
+    {
+        return function ($item) use ($filter) {
+    //      var_dump($item);
+    //      var_dump($filter);
+    //      var_dump(preg_match($filter, $item));
+            return preg_match($filter, $item) == 0;
+        };
+    }
 
   /**
    * Filter callback for inverse, regex.
    * @param $filter
    * @return \Closure
    */
-  private function _callbackInverseRegex($filter)
-  {
-    return function($item) use ($filter) {
-      return preg_match($filter, $item) > 0;
-    };
-  }
+    private function _callbackInverseRegex($filter)
+    {
+        return function ($item) use ($filter) {
+            return preg_match($filter, $item) > 0;
+        };
+    }
 }

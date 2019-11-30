@@ -12,7 +12,7 @@ class IfThenElse extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'If Then Else',
     'machineName' => 'ifThenElse',
     'description' => 'An if then else logic gate.',
@@ -64,46 +64,46 @@ class IfThenElse extends Core\ProcessorEntity
         'default' => '',
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
-    $lhs = $this->val('lhs', true);
-    $rhs = $this->val('rhs', true);
-    $operator = $this->val('operator', true);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $lhs = $this->val('lhs', true);
+        $rhs = $this->val('rhs', true);
+        $operator = $this->val('operator', true);
 
-    switch ($operator) {
-      case '==':
-        $result = $lhs == $rhs;
-        break;
-      case '!=':
-        $result = $lhs != $rhs;
-        break;
-      case '>':
-        $result = $lhs > $rhs;
-        break;
-      case '>=':
-        $result = $lhs >= $rhs;
-        break;
-      case '<':
-        $result = $lhs < $rhs;
-        break;
-      case '<=':
-        $result = $lhs <= $rhs;
-        break;
-      default:
-        throw new Core\ApiException("invalid operator: $operator", 1, $this->id);
-        break;
-    }
+        switch ($operator) {
+            case '==':
+                $result = $lhs == $rhs;
+            break;
+            case '!=':
+                $result = $lhs != $rhs;
+            break;
+            case '>':
+                $result = $lhs > $rhs;
+            break;
+            case '>=':
+                $result = $lhs >= $rhs;
+            break;
+            case '<':
+                $result = $lhs < $rhs;
+            break;
+            case '<=':
+                $result = $lhs <= $rhs;
+            break;
+            default:
+            throw new Core\ApiException("invalid operator: $operator", 1, $this->id);
+            break;
+        }
 
-    if ($result) {
-      return $this->val('then');
-    } else {
-      return $this->val('else');
+        if ($result) {
+            return $this->val('then');
+        } else {
+            return $this->val('else');
+        }
     }
-  }
 }

@@ -13,10 +13,12 @@ class GeoPoint extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Geo-Point',
     'machineName' => 'geoPoint',
-    'description' => 'GeoPoint function is a container object that holds geographic point coordinates and attributes. Each entry of a coordinate pair and associated attributes, if any, represent a discrete element in the geopoint vector.',
+    'description' => 'GeoPoint function is a container object that holds geographic point coordinates and attributes. \
+    Each entry of a coordinate pair and associated attributes, if any, \
+    represent a discrete element in the geopoint vector.',
     'menu' => 'Primitive',
     'input' => [
       'lat' => [
@@ -38,18 +40,18 @@ class GeoPoint extends Core\ProcessorEntity
         'default' => 0
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $lat = $this->val('lat', true);
-    $lon = $this->val('lon', true);
+        $lat = $this->val('lat', true);
+        $lon = $this->val('lon', true);
 
-    return new Core\DataContainer(array('lat' => $lat, 'lon' => $lon), 'array');
-  }
+        return new Core\DataContainer(array('lat' => $lat, 'lon' => $lon), 'array');
+    }
 }

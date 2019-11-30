@@ -13,7 +13,7 @@ class VarPersistent extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Var (Persistent)',
     'machineName' => 'var_persistent',
     'description' => 'A persistently stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time. The value can be deleted, updated and fetched in future resource and Processor calls.',
@@ -56,50 +56,50 @@ class VarPersistent extends Core\ProcessorEntity
         'default' => '',
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $name = $this->val('name');
-    $strict = !empty($this->meta->strict) ? $this->val('strict') : 1;
-    $operation = $this->val('operation');
-    $db = $this->getDb();
-    $mapper = new Db\VarsMapper($db);
-    $vars = $mapper->findByAppIdName($this->request->appId, $name);
+        $name = $this->val('name');
+        $strict = !empty($this->meta->strict) ? $this->val('strict') : 1;
+        $operation = $this->val('operation');
+        $db = $this->getDb();
+        $mapper = new Db\VarsMapper($db);
+        $vars = $mapper->findByAppIdName($this->request->appId, $name);
 
-    switch($operation) {
-      case 'save':
-        $val = $this->val('value');
-        if ($vars->getId() === NULL) {
-          $vars->setName($name);
-          $vars->setAppId($this->request->appId);
+        switch ($operation) {
+            case 'save':
+                $val = $this->val('value');
+                if ($vars->getId() === null) {
+                    $vars->setName($name);
+                    $vars->setAppId($this->request->appId);
+                }
+                $vars->setVal($val);
+            return new Core\DataContainer('true', 'text');
+            break;
+            case 'delete':
+                if (empty($vars->getId())) {
+                    if ($strict) {
+                        throw new Core\ApiException('could not delete variable, does not exist', 6, $this->id, 417);
+                    }
+                    return new Core\DataContainer('true', 'text');
+                }
+            return new Core\DataContainer($mapper->delete($vars), 'text');
+            break;
+            case 'fetch':
+                if ($strict && empty($vars->getId())) {
+                    throw new Core\ApiException('could not fetch variable, does not exist', 6, $this->id, 417);
+                }
+            return new Core\DataContainer($vars->getVal(), 'text');
+            break;
+            default:
+            throw new Core\ApiException("invalid operation: $operation", 6, $this->id, 417);
+            break;
         }
-        $vars->setVal($val);
-        return new Core\DataContainer('true', 'text');
-        break;
-      case 'delete':
-        if (empty($vars->getId())) {
-          if ($strict) {
-            throw new Core\ApiException('could not delete variable, does not exist', 6, $this->id, 417);
-          }
-          return new Core\DataContainer('true', 'text');
-        }
-        return new Core\DataContainer($mapper->delete($vars), 'text');
-        break;
-      case 'fetch':
-        if ($strict && empty($vars->getId())) {
-          throw new Core\ApiException('could not fetch variable, does not exist', 6, $this->id, 417);
-        }
-        return new Core\DataContainer($vars->getVal(), 'text');
-        break;
-      default:
-        throw new Core\ApiException("invalid operation: $operation", 6, $this->id, 417);
-        break;
     }
-  }
 }

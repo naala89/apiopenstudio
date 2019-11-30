@@ -22,12 +22,12 @@ use Gaterdata\Db;
 
 class LoginStoreDrupal extends Core\ProcessorEntity
 {
-  private $user;
-  private $defaultEntity = 'drupal';
+    private $user;
+    private $defaultEntity = 'drupal';
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Login Store Drupal',
     'machineName' => 'loginStoreDrupal',
     'description' => 'Login the user Stores the access details from a users login to a remote drupal site for future use.',
@@ -52,38 +52,38 @@ class LoginStoreDrupal extends Core\ProcessorEntity
         'default' => 'drupal',
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $source = $this->val('source');
-    $source = json_decode($source);
-    if (empty($source->token) || empty($source->user) || empty($source->user->uid)) {
-      throw new Core\ApiException('login failed, no token received', 4, $this->id, 419);
+        $source = $this->val('source');
+        $source = json_decode($source);
+        if (empty($source->token) || empty($source->user) || empty($source->user->uid)) {
+            throw new Core\ApiException('login failed, no token received', 4, $this->id, 419);
+        }
+        $externalEntity = !empty($this->meta->externalEntity) ? $this->val('externalEntity') : $this->defaultEntity;
+        $externalId = $source->user->uid;
+        $appid = $this->request->appId;
+        $db = $this->getDb();
+
+        $userMapper = new Db\ExternalUserMapper($db);
+        $user = $userMapper->findByAppIdEntityExternalId($appid, $externalEntity, $externalId);
+        if ($user->getId() == null) {
+            $user->setAppId($appid);
+            $user->setExternalEntity($externalEntity);
+            $user->setExternalId($externalId);
+        }
+        $user->setDataField1($source->token);
+        $user->setDataField2($source->session_name);
+        $user->setDataField3($source->sessid);
+
+        $userMapper->save($user);
+
+        return $source;
     }
-    $externalEntity = !empty($this->meta->externalEntity) ? $this->val('externalEntity') : $this->defaultEntity;
-    $externalId = $source->user->uid;
-    $appid = $this->request->appId;
-    $db = $this->getDb();
-
-    $userMapper = new Db\ExternalUserMapper($db);
-    $user = $userMapper->findByAppIdEntityExternalId($appid, $externalEntity, $externalId);
-    if ($user->getId() == NULL) {
-      $user->setAppId($appid);
-      $user->setExternalEntity($externalEntity);
-      $user->setExternalId($externalId);
-    }
-    $user->setDataField1($source->token);
-    $user->setDataField2($source->session_name);
-    $user->setDataField3($source->sessid);
-
-    $userMapper->save($user);
-
-    return $source;
-  }
 }

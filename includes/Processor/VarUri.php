@@ -13,7 +13,7 @@ class VarUri extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Var (URI)',
     'machineName' => 'var_uri',
     'description' => 'A urldecoded value from the request URI. It fetches the value of a particular param in the URI, based on the index value.',
@@ -29,21 +29,21 @@ class VarUri extends Core\ProcessorEntity
         'default' => 0,
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
-    $index = $this->val('index', true);
-    $args = $this->request->getArgs();
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $index = $this->val('index', true);
+        $args = $this->request->getArgs();
 
-    if (!isset($args[$index])) {
-      throw new Core\ApiException('URI index "' . $index . '" does not exist', 6, $this->id, 417);
+        if (!isset($args[$index])) {
+            throw new Core\ApiException('URI index "' . $index . '" does not exist', 6, $this->id, 417);
+        }
+
+        return new Core\DataContainer(urldecode($args[intval($index)]), 'text');
     }
-
-    return new Core\DataContainer(urldecode($args[intval($index)]), 'text');
-  }
 }

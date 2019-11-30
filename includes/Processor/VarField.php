@@ -12,7 +12,7 @@ class VarField extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Var (field)',
     'machineName' => 'var_field',
     'description' => 'Create a name value pair. This is primarily for use as a field in object.',
@@ -37,18 +37,18 @@ class VarField extends Core\ProcessorEntity
         'default' => '',
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $key = $this->val('key', true);
-    $value = $this->val('value', true);
+        $key = $this->val('key', true);
+        $value = $this->val('value', true);
 
-    return new Core\DataContainer([$key => $value], 'array');
-  }
+        return new Core\DataContainer([$key => $value], 'array');
+    }
 }

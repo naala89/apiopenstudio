@@ -12,7 +12,7 @@ class Equation extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Equation',
     'machineName' => 'equation',
     'description' => 'This function allows you to define an equation with variables. These input variables are name/value pairs and substitute variables in th4e equation.',
@@ -37,24 +37,24 @@ class Equation extends Core\ProcessorEntity
         'default' => ''
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $eq = $this->val('equation', true);
-    $vars = $this->val('variables', true);
+        $eq = $this->val('equation', true);
+        $vars = $this->val('variables', true);
 
-    try {
-      $result = Parser::solve($eq, $vars);
-    } catch (\Exception $e) {
-      throw new Core\ApiException($e->getMessage(), 0, $this->id);
+        try {
+            $result = Parser::solve($eq, $vars);
+        } catch (\Exception $e) {
+            throw new Core\ApiException($e->getMessage(), 0, $this->id);
+        }
+
+        return new Core\DataContainer($result, 'number');
     }
-
-    return new Core\DataContainer($result, 'number');
-  }
 }

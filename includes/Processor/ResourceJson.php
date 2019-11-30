@@ -16,34 +16,34 @@ class ResourceJson extends ResourceBase
    * @param $meta
    * @param $request
    */
-  public function __construct($meta, $request)
-  {
-    $this->request['name'] = 'Resource (JSON)';
-    $this->request['machineName'] = 'resourceJson';
-    $this->request['description'] = 'Create edit or fetch a custom API resource for the application in JSON form.';
-    parent::__construct($meta, $request);
-  }
+    public function __construct($meta, $request)
+    {
+        $this->request['name'] = 'Resource (JSON)';
+        $this->request['machineName'] = 'resourceJson';
+        $this->request['description'] = 'Create edit or fetch a custom API resource for the application in JSON form.';
+        parent::__construct($meta, $request);
+    }
 
   /**
    * @param $data
    * @return mixed
    * @throws \Gaterdata\Core\ApiException
    */
-  protected function _importData($data)
-  {
-    $json = json_decode(json_encode($data), true);
-    if (empty($json)) {
-      throw new Core\ApiException('Invalid or no JSON supplied', 6, $this->id, 417);
+    protected function _importData($data)
+    {
+        $json = json_decode(json_encode($data), true);
+        if (empty($json)) {
+            throw new Core\ApiException('Invalid or no JSON supplied', 6, $this->id, 417);
+        }
+        return $json;
     }
-    return $json;
-  }
 
   /**
    * @param array $data
    * @return string
    */
-  protected function _exportData($data)
-  {
-    return json_encode($data);
-  }
+    protected function _exportData($data)
+    {
+        return json_encode($data);
+    }
 }

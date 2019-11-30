@@ -12,7 +12,7 @@ class Concatenate extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Concatenate',
     'machineName' => 'concatenate',
     'description' => 'Concatenate a series of strings or numbers into a single string.',
@@ -28,21 +28,21 @@ class Concatenate extends Core\ProcessorEntity
         'default' => ''
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $sources = $this->val('sources');
-    $result = '';
-    foreach ($sources as $source) {
-      $result .= (string) $this->isDataContainer($source) ? $source->getData() : $source;
+        $sources = $this->val('sources');
+        $result = '';
+        foreach ($sources as $source) {
+            $result .= (string) $this->isDataContainer($source) ? $source->getData() : $source;
+        }
+
+        return new Core\DataContainer($result, 'text');
     }
-
-    return new Core\DataContainer($result, 'text');
-  }
 }

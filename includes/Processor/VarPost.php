@@ -12,7 +12,7 @@ class VarPost extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Var (Post)',
     'machineName' => 'var_post',
     'description' => 'A "post" variable. It fetches a variable from the post request.',
@@ -37,25 +37,25 @@ class VarPost extends Core\ProcessorEntity
         'default' => true,
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $key = $this->val('key', true);
-    $vars = $this->request->getPostVars();
+        $key = $this->val('key', true);
+        $vars = $this->request->getPostVars();
 
-    if (isset($vars[$key])) {
-      return new Core\DataContainer($vars[$key], 'text');
+        if (isset($vars[$key])) {
+            return new Core\DataContainer($vars[$key], 'text');
+        }
+        if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
+            return new Core\DataContainer('', 'text');
+        }
+
+        throw new Core\ApiException("post variable ($key) not received", 5, $this->id, 417);
     }
-    if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
-      return new Core\DataContainer('', 'text');
-    }
-
-    throw new Core\ApiException("post variable ($key) not received", 5, $this->id, 417);
-  }
 }

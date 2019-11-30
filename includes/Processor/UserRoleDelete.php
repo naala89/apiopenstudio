@@ -15,7 +15,7 @@ class UserRoleDelete extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'User Role delete',
     'machineName' => 'user_role_delete',
     'description' => 'Delete a role for a user.',
@@ -24,43 +24,43 @@ class UserRoleDelete extends Core\ProcessorEntity
       'urid' => [
         'description' => 'The user role ID.',
         'cardinality' => [1, 1],
-        'literalAllowed' => TRUE,
+        'literalAllowed' => true,
         'limitFunctions' => [],
         'limitTypes' => ['integer'],
         'limitValues' => [],
         'default' => '',
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $urid = $this->val('urid', TRUE);
+        $urid = $this->val('urid', true);
 
-    $userRoleMapper = new Db\UserRoleMapper($this->db);
+        $userRoleMapper = new Db\UserRoleMapper($this->db);
 
-    $userRoles = $userRoleMapper->findByFilter(['col' => [
-      'urid' => $urid,
-    ]]);
-    $userRole = $userRoles[0];
-    if (empty($userRole->getUrid())) {
-      throw new Core\ApiException('User role does not exist', 6, $this->id, 400);
+        $userRoles = $userRoleMapper->findByFilter(['col' => [
+        'urid' => $urid,
+        ]]);
+        $userRole = $userRoles[0];
+        if (empty($userRole->getUrid())) {
+            throw new Core\ApiException('User role does not exist', 6, $this->id, 400);
+        }
+        if ($userRole->getUrid() == 1) {
+            $userRoles = $userRoleMapper->findByFilter(['col' => [
+            'rid' => 1,
+            ]]);
+            if (count($userRoles) < 2) {
+                throw new Core\ApiException('Cannot delete Administrator role if only one exists', 6, $this->id, 400);
+            }
+        }
+
+        return $userRoleMapper->delete($userRole);
     }
-    if ($userRole->getUrid() == 1) {
-      $userRoles = $userRoleMapper->findByFilter(['col' => [
-        'rid' => 1,
-      ]]);
-      if (count($userRoles) < 2) {
-        throw new Core\ApiException('Cannot delete Administrator role if only one exists', 6, $this->id, 400);
-      }
-    }
-
-    return $userRoleMapper->delete($userRole);
-  }
 
 }

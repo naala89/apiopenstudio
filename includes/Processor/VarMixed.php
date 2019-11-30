@@ -12,7 +12,7 @@ class VarMixed extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Var (Mixed)',
     'machineName' => 'var_mixed',
     'description' => 'A variable of any type.',
@@ -28,20 +28,20 @@ class VarMixed extends Core\ProcessorEntity
         'default' => '',
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $result = $this->val('value');
-    if (!$this->isDataContainer($result)) {
-      $result = new Core\DataContainer($result, 'text');
+        $result = $this->val('value');
+        if (!$this->isDataContainer($result)) {
+            $result = new Core\DataContainer($result, 'text');
+        }
+
+        return $result;
     }
-
-    return $result;
-  }
 }
