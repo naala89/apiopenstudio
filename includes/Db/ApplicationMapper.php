@@ -22,24 +22,24 @@ class ApplicationMapper extends Mapper {
    *
    * @throws \Gaterdata\Core\ApiException
    */
-  public function save(Application $application) {
-    if ($application->getAppid() == NULL) {
-      $sql = 'INSERT INTO application (accid, name) VALUES (?, ?)';
-      $bindParams = [
-        $application->getAccid(),
-        $application->getName(),
-      ];
+    public function save(Application $application)
+    {
+        if ($application->getAppid() == null) {
+            $sql = 'INSERT INTO application (accid, name) VALUES (?, ?)';
+            $bindParams = [
+            $application->getAccid(),
+            $application->getName(),
+            ];
+        } else {
+            $sql = 'UPDATE application SET accid = ?, name = ? WHERE appid = ?';
+            $bindParams = [
+            $application->getAccid(),
+            $application->getName(),
+            $application->getAppid(),
+            ];
+        }
+        return $this->saveDelete($sql, $bindParams);
     }
-    else {
-      $sql = 'UPDATE application SET accid = ?, name = ? WHERE appid = ?';
-      $bindParams = [
-        $application->getAccid(),
-        $application->getName(),
-        $application->getAppid(),
-      ];
-    }
-    return $this->saveDelete($sql, $bindParams);
-  }
 
   /**
    * Delete an application.
@@ -52,11 +52,12 @@ class ApplicationMapper extends Mapper {
    *
    * @throws \Gaterdata\Core\ApiException
    */
-  public function delete(Application $application) {
-    $sql = 'DELETE FROM application WHERE appid = ?';
-    $bindParams = [$application->getAppid()];
-    return $this->saveDelete($sql, $bindParams);
-  }
+    public function delete(Application $application)
+    {
+        $sql = 'DELETE FROM application WHERE appid = ?';
+        $bindParams = [$application->getAppid()];
+        return $this->saveDelete($sql, $bindParams);
+    }
 
   /**
    * Find applications.
@@ -66,11 +67,12 @@ class ApplicationMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findAll() {
-    $sql = 'SELECT * FROM application';
-    $bindParams = [];
-    return $this->fetchRows($sql, $bindParams);
-  }
+    public function findAll()
+    {
+        $sql = 'SELECT * FROM application';
+        $bindParams = [];
+        return $this->fetchRows($sql, $bindParams);
+    }
 
   /**
    * Find application by application ID.
@@ -83,11 +85,12 @@ class ApplicationMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findByAppid($appid) {
-    $sql = 'SELECT * FROM application WHERE appid = ?';
-    $bindParams = [$appid];
-    return $this->fetchRow($sql, $bindParams);
-  }
+    public function findByAppid($appid)
+    {
+        $sql = 'SELECT * FROM application WHERE appid = ?';
+        $bindParams = [$appid];
+        return $this->fetchRow($sql, $bindParams);
+    }
 
   /**
    * Find application by account ID and application name.
@@ -102,14 +105,15 @@ class ApplicationMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findByAccidAppname($accid, $name) {
-    $sql = 'SELECT * FROM application WHERE accid = ? AND name = ?';
-    $bindParams = [
-      $accid,
-      $name,
-    ];
-    return $this->fetchRow($sql, $bindParams);
-  }
+    public function findByAccidAppname($accid, $name)
+    {
+        $sql = 'SELECT * FROM application WHERE accid = ? AND name = ?';
+        $bindParams = [
+        $accid,
+        $name,
+        ];
+        return $this->fetchRow($sql, $bindParams);
+    }
 
   /**
    * Find applications by account ID.
@@ -122,11 +126,12 @@ class ApplicationMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findByAccid($accid) {
-    $sql = 'SELECT * FROM application WHERE accid = ?';
-    $bindParams = [$accid];
-    return $this->fetchRows($sql, $bindParams);
-  }
+    public function findByAccid($accid)
+    {
+        $sql = 'SELECT * FROM application WHERE accid = ?';
+        $bindParams = [$accid];
+        return $this->fetchRows($sql, $bindParams);
+    }
 
   /**
    * Find applications by multiple account IDs and/or application names.
@@ -150,52 +155,53 @@ class ApplicationMapper extends Mapper {
    *
    * @throws \Gaterdata\Core\ApiException
    */
-  public function findByAccidsAppnames(array $accids = [], array $appNames = [], array $params = []) {
-    $byAccid = [];
-    $bindParams = [];
-    $where = [];
-    $orderBy = '';
-    $sql = 'SELECT * FROM application';
+    public function findByAccidsAppnames(array $accids = [], array $appNames = [], array $params = [])
+    {
+        $byAccid = [];
+        $bindParams = [];
+        $where = [];
+        $orderBy = '';
+        $sql = 'SELECT * FROM application';
 
-    foreach ($accids as $accid) {
-      $byAccid[] = '?';
-      $bindParams[] = $accid;
-    }
-    if (!empty($byAccid)) {
-      $where[] = 'accid IN (' . implode(', ', $byAccid) . ')';
-    }
+        foreach ($accids as $accid) {
+            $byAccid[] = '?';
+            $bindParams[] = $accid;
+        }
+        if (!empty($byAccid)) {
+            $where[] = 'accid IN (' . implode(', ', $byAccid) . ')';
+        }
 
-    $byAppname = [];
-    foreach ($appNames as $appName) {
-      $byAppname[] = '?';
-      $bindParams[] = $appName;
-    }
-    if (!empty($byAppname)) {
-      $where[] = 'name IN (' . implode(', ', $byAppname) . ')';
-    }
+        $byAppname = [];
+        foreach ($appNames as $appName) {
+            $byAppname[] = '?';
+            $bindParams[] = $appName;
+        }
+        if (!empty($byAppname)) {
+            $where[] = 'name IN (' . implode(', ', $byAppname) . ')';
+        }
 
-    if (!empty($params['filter']) && !empty($params['filter']['column']) && !empty($params['filter']['keyword'])) {
-      $where[] = mysqli_real_escape_string($this->db->_connectionID, $params['filter']['column'])  . ' = ?';
-      $bindParams[] = $params['filter']['keyword'];
-    }
+        if (!empty($params['filter']) && !empty($params['filter']['column']) && !empty($params['filter']['keyword'])) {
+            $where[] = mysqli_real_escape_string($this->db->_connectionID, $params['filter']['column'])  . ' = ?';
+            $bindParams[] = $params['filter']['keyword'];
+        }
 
-    if (!empty($params['keyword'])) {
-      $where[] = 'name like ?';
-      $bindParams[] = $params['keyword'];
-    }
-    if (!empty($params['order_by'])) {
-      $orderBy .= ' ORDER BY ' . mysqli_real_escape_string($this->db->_connectionID, $params['order_by']);
-      if (!empty($params['direction'])) {
-        $orderBy .= ' ' . strtoupper(mysqli_real_escape_string($this->db->_connectionID, $params['direction']));
-      }
-    }
-    if (!empty($where)) {
-      $sql .= ' WHERE ' . implode(' AND ', $where);
-    }
-    $sql .= $orderBy;
+        if (!empty($params['keyword'])) {
+            $where[] = 'name like ?';
+            $bindParams[] = $params['keyword'];
+        }
+        if (!empty($params['order_by'])) {
+            $orderBy .= ' ORDER BY ' . mysqli_real_escape_string($this->db->_connectionID, $params['order_by']);
+            if (!empty($params['direction'])) {
+                $orderBy .= ' ' . strtoupper(mysqli_real_escape_string($this->db->_connectionID, $params['direction']));
+            }
+        }
+        if (!empty($where)) {
+            $sql .= ' WHERE ' . implode(' AND ', $where);
+        }
+        $sql .= $orderBy;
 
-    return $this->fetchRows($sql, $bindParams);
-  }
+        return $this->fetchRows($sql, $bindParams);
+    }
 
   /**
    * Map a DB row into an Application object.
@@ -206,14 +212,15 @@ class ApplicationMapper extends Mapper {
    * @return \Gaterdata\Db\Application
    *   Application object
    */
-  protected function mapArray(array $row) {
-    $application = new Application();
+    protected function mapArray(array $row)
+    {
+        $application = new Application();
 
-    $application->setAppid(!empty($row['appid']) ? $row['appid'] : NULL);
-    $application->setAccid(!empty($row['accid']) ? $row['accid'] : NULL);
-    $application->setName(!empty($row['name']) ? $row['name'] : NULL);
+        $application->setAppid(!empty($row['appid']) ? $row['appid'] : null);
+        $application->setAccid(!empty($row['accid']) ? $row['accid'] : null);
+        $application->setName(!empty($row['name']) ? $row['name'] : null);
 
-    return $application;
-  }
+        return $application;
+    }
 
 }

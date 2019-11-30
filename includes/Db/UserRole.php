@@ -9,11 +9,11 @@ namespace Gaterdata\Db;
  */
 class UserRole {
 
-  protected $urid;
-  protected $accid;
-  protected $appid;
-  protected $uid;
-  protected $rid;
+    protected $urid;
+    protected $accid;
+    protected $appid;
+    protected $uid;
+    protected $rid;
 
   /**
    * UserRole constructor.
@@ -29,13 +29,14 @@ class UserRole {
    * @param int $rid
    *   The role ID.
    */
-  public function __construct($urid = NULL, $accid = NULL, $appid = NULL, $uid = NULL, $rid = NULL) {
-    $this->urid = $urid;
-    $this->accid = $accid;
-    $this->appid = $appid;
-    $this->uid = $uid;
-    $this->rid = $rid;
-  }
+    public function __construct($urid = null, $accid = null, $appid = null, $uid = null, $rid = null)
+    {
+        $this->urid = $urid;
+        $this->accid = $accid;
+        $this->appid = $appid;
+        $this->uid = $uid;
+        $this->rid = $rid;
+    }
 
   /**
    * Get the user role ID.
@@ -43,9 +44,10 @@ class UserRole {
    * @return int
    *   user role ID.
    */
-  public function getUrid() {
-    return $this->urid;
-  }
+    public function getUrid()
+    {
+        return $this->urid;
+    }
 
   /**
    * Set the user role ID.
@@ -53,9 +55,10 @@ class UserRole {
    * @param int $urid
    *   User role ID.
    */
-  public function setUrid($urid) {
-    $this->urid = $urid;
-  }
+    public function setUrid($urid)
+    {
+        $this->urid = $urid;
+    }
 
   /**
    * Get the account ID.
@@ -63,9 +66,10 @@ class UserRole {
    * @return int
    *   Account ID.
    */
-  public function getAccid() {
-    return $this->accid;
-  }
+    public function getAccid()
+    {
+        return $this->accid;
+    }
 
   /**
    * Get the account ID.
@@ -73,9 +77,10 @@ class UserRole {
    * @param int $accid
    *   Account ID.
    */
-  public function setAccid($accid) {
-    $this->accid = $accid;
-  }
+    public function setAccid($accid)
+    {
+        $this->accid = $accid;
+    }
 
   /**
    * Get the application ID.
@@ -83,9 +88,10 @@ class UserRole {
    * @return int
    *   Application ID.
    */
-  public function getAppid() {
-    return $this->appid;
-  }
+    public function getAppid()
+    {
+        return $this->appid;
+    }
 
   /**
    * Get the application ID.
@@ -93,9 +99,10 @@ class UserRole {
    * @param int $appid
    *   Application ID.
    */
-  public function setAppid($appid) {
-    $this->appid = $appid;
-  }
+    public function setAppid($appid)
+    {
+        $this->appid = $appid;
+    }
 
   /**
    * Get the user ID.
@@ -103,9 +110,10 @@ class UserRole {
    * @return int
    *   User ID.
    */
-  public function getUid() {
-    return $this->uid;
-  }
+    public function getUid()
+    {
+        return $this->uid;
+    }
 
   /**
    * Get the application user ID.
@@ -113,9 +121,10 @@ class UserRole {
    * @param int $uid
    *   Application user ID.
    */
-  public function setUid($uid) {
-    $this->uid = $uid;
-  }
+    public function setUid($uid)
+    {
+        $this->uid = $uid;
+    }
 
   /**
    * Get the role ID.
@@ -123,9 +132,10 @@ class UserRole {
    * @return int
    *   The role ID.
    */
-  public function getRid() {
-    return $this->rid;
-  }
+    public function getRid()
+    {
+        return $this->rid;
+    }
 
   /**
    * Set the role ID.
@@ -133,9 +143,10 @@ class UserRole {
    * @param int $rid
    *   The role ID.
    */
-  public function setRid($rid) {
-    $this->rid = $rid;
-  }
+    public function setRid($rid)
+    {
+        $this->rid = $rid;
+    }
 
   /**
    * Return the user account role as an associative array.
@@ -143,14 +154,15 @@ class UserRole {
    * @return array
    *   Associative array.
    */
-  public function dump() {
-    return [
-      'urid' => $this->urid,
-      'accid' => $this->accid,
-      'appid' => $this->appid,
-      'uid' => $this->uid,
-      'rid' => $this->rid,
-    ];
-  }
+    public function dump()
+    {
+        return [
+        'urid' => $this->urid,
+        'accid' => $this->accid,
+        'appid' => $this->appid,
+        'uid' => $this->uid,
+        'rid' => $this->rid,
+        ];
+    }
 
 }

@@ -9,9 +9,9 @@ namespace Gaterdata\Db;
  */
 class Application {
 
-  protected $appid;
-  protected $accid;
-  protected $name;
+    protected $appid;
+    protected $accid;
+    protected $name;
 
   /**
    * Application constructor.
@@ -23,11 +23,12 @@ class Application {
    * @param string $name
    *   Application name.
    */
-  public function __construct($appid = NULL, $accid = NULL, $name = NULL) {
-    $this->appid = $appid;
-    $this->accid = $accid;
-    $this->name = $name;
-  }
+    public function __construct($appid = null, $accid = null, $name = null)
+    {
+        $this->appid = $appid;
+        $this->accid = $accid;
+        $this->name = $name;
+    }
 
   /**
    * Get application IOD.
@@ -35,9 +36,10 @@ class Application {
    * @return int
    *   Application ID.
    */
-  public function getAppid() {
-    return $this->appid;
-  }
+    public function getAppid()
+    {
+        return $this->appid;
+    }
 
   /**
    * Set the application ID.
@@ -45,9 +47,10 @@ class Application {
    * @param int $appid
    *   Application ID.
    */
-  public function setAppid($appid) {
-    $this->appid = $appid;
-  }
+    public function setAppid($appid)
+    {
+        $this->appid = $appid;
+    }
 
   /**
    * Get the account ID.
@@ -55,9 +58,10 @@ class Application {
    * @return int
    *   Account ID.
    */
-  public function getAccid() {
-    return $this->accid;
-  }
+    public function getAccid()
+    {
+        return $this->accid;
+    }
 
   /**
    * Set the account ID.
@@ -65,9 +69,10 @@ class Application {
    * @param int $accid
    *   Account ID.
    */
-  public function setAccid($accid) {
-    $this->accid = $accid;
-  }
+    public function setAccid($accid)
+    {
+        $this->accid = $accid;
+    }
 
   /**
    * Get the application name.
@@ -75,9 +80,10 @@ class Application {
    * @return int
    *   Application name.
    */
-  public function getName() {
-    return $this->name;
-  }
+    public function getName()
+    {
+        return $this->name;
+    }
 
   /**
    * Set the application name.
@@ -85,9 +91,10 @@ class Application {
    * @param string $name
    *   Application name.
    */
-  public function setName($name) {
-    $this->name = $name;
-  }
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
   /**
    * Return the values as an associative array.
@@ -95,12 +102,13 @@ class Application {
    * @return array
    *   Application.
    */
-  public function dump() {
-    return [
-      'appid' => $this->appid,
-      'accid' => $this->accid,
-      'name' => $this->name,
-    ];
-  }
+    public function dump()
+    {
+        return [
+        'appid' => $this->appid,
+        'accid' => $this->accid,
+        'name' => $this->name,
+        ];
+    }
 
 }

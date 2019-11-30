@@ -22,28 +22,28 @@ class UserRoleMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function save(UserRole $userRole) {
-    if ($userRole->getUrid() == NULL) {
-      $sql = 'INSERT INTO user_role (accid, appid, uid, rid) VALUES (?, ?, ?, ?)';
-      $bindParams = [
-        $userRole->getAccid(),
-        $userRole->getAppid(),
-        $userRole->getUid(),
-        $userRole->getRid(),
-      ];
+    public function save(UserRole $userRole)
+    {
+        if ($userRole->getUrid() == null) {
+            $sql = 'INSERT INTO user_role (accid, appid, uid, rid) VALUES (?, ?, ?, ?)';
+            $bindParams = [
+            $userRole->getAccid(),
+            $userRole->getAppid(),
+            $userRole->getUid(),
+            $userRole->getRid(),
+            ];
+        } else {
+            $sql = 'UPDATE user_role SET (accid, appid, uid, rid) WHERE urid = ?';
+            $bindParams = [
+            $userRole->getAccid(),
+            $userRole->getAppid(),
+            $userRole->getUid(),
+            $userRole->getRid(),
+            $userRole->getUrid(),
+            ];
+        }
+        return $this->saveDelete($sql, $bindParams);
     }
-    else {
-      $sql = 'UPDATE user_role SET (accid, appid, uid, rid) WHERE urid = ?';
-      $bindParams = [
-        $userRole->getAccid(),
-        $userRole->getAppid(),
-        $userRole->getUid(),
-        $userRole->getRid(),
-        $userRole->getUrid(),
-      ];
-    }
-    return $this->saveDelete($sql, $bindParams);
-  }
 
   /**
    * Delete the user role.
@@ -56,11 +56,12 @@ class UserRoleMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function delete(UserRole $userRole) {
-    $sql = 'DELETE FROM user_role WHERE urid = ?';
-    $bindParams = [$userRole->getUrid()];
-    return $this->saveDelete($sql, $bindParams);
-  }
+    public function delete(UserRole $userRole)
+    {
+        $sql = 'DELETE FROM user_role WHERE urid = ?';
+        $bindParams = [$userRole->getUrid()];
+        return $this->saveDelete($sql, $bindParams);
+    }
 
   /**
    * Find all user roles.
@@ -70,11 +71,12 @@ class UserRoleMapper extends Mapper {
    *
    * @throws ApiException
    */
-  public function findAll() {
-    $sql = 'SELECT * FROM user_role';
-    $bindParams = [];
-    return $this->fetchRows($sql, $bindParams);
-  }
+    public function findAll()
+    {
+        $sql = 'SELECT * FROM user_role';
+        $bindParams = [];
+        return $this->fetchRows($sql, $bindParams);
+    }
 
   /**
    * Find user roles using filter.
@@ -93,31 +95,31 @@ class UserRoleMapper extends Mapper {
    *     'direction' => 'asc'
    *   )
    */
-  public function findByFilter($params) {
-    $sql = 'SELECT * FROM user_role';
-    $where = $bindParams = $order = [];
+    public function findByFilter($params)
+    {
+        $sql = 'SELECT * FROM user_role';
+        $where = $bindParams = $order = [];
 
-    if (!empty($params['col'])) {
-      foreach ($params['col'] as $col => $val) {
-        if (empty($val)) {
-          $where[] = "isnull($col)";
+        if (!empty($params['col'])) {
+            foreach ($params['col'] as $col => $val) {
+                if (empty($val)) {
+                    $where[] = "isnull($col)";
+                } else {
+                    $where[] = "$col=?";
+                    $bindParams[] = $val;
+                }
+            }
+            $sql .= ' WHERE ' . implode(' AND ', $where);
         }
-        else {
-          $where[] = "$col=?";
-          $bindParams[] = $val;
+        if (!empty($params['order_by'])) {
+            $order['order_by'] = $params['order_by'];
         }
-      }
-      $sql .= ' WHERE ' . implode(' AND ', $where);
-    }
-    if (!empty($params['order_by'])) {
-      $order['order_by'] = $params['order_by'];
-    }
-    if (!empty($params['direction'])) {
-      $order['direction'] = $params['direction'];
-    }
+        if (!empty($params['direction'])) {
+            $order['direction'] = $params['direction'];
+        }
 
-    return $this->fetchRows($sql, $bindParams, $order);
-  }
+        return $this->fetchRows($sql, $bindParams, $order);
+    }
 
   /**
    * Map a DB row to a UserRole object.
@@ -128,16 +130,17 @@ class UserRoleMapper extends Mapper {
    * @return UserRole
    *   UserRole object.
    */
-  protected function mapArray(array $row) {
-    $userRole = new UserRole();
+    protected function mapArray(array $row)
+    {
+        $userRole = new UserRole();
 
-    $userRole->setUrid(!empty($row['urid']) ? $row['urid'] : NULL);
-    $userRole->setAccid(!empty($row['accid']) ? $row['accid'] : NULL);
-    $userRole->setAppid(!empty($row['appid']) ? $row['appid'] : NULL);
-    $userRole->setUid(!empty($row['uid']) ? $row['uid'] : NULL);
-    $userRole->setRid(!empty($row['rid']) ? $row['rid'] : NULL);
+        $userRole->setUrid(!empty($row['urid']) ? $row['urid'] : null);
+        $userRole->setAccid(!empty($row['accid']) ? $row['accid'] : null);
+        $userRole->setAppid(!empty($row['appid']) ? $row['appid'] : null);
+        $userRole->setUid(!empty($row['uid']) ? $row['uid'] : null);
+        $userRole->setRid(!empty($row['rid']) ? $row['rid'] : null);
 
-    return $userRole;
-  }
+        return $userRole;
+    }
 
 }

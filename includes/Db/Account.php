@@ -9,8 +9,8 @@ namespace Gaterdata\Db;
  */
 class Account {
 
-  protected $accid;
-  protected $name;
+    protected $accid;
+    protected $name;
 
   /**
    * Account constructor.
@@ -20,10 +20,11 @@ class Account {
    * @param string $name
    *   Account name.
    */
-  public function __construct($accid = NULL, $name = NULL) {
-    $this->accid = $accid;
-    $this->name = $name;
-  }
+    public function __construct($accid = null, $name = null)
+    {
+        $this->accid = $accid;
+        $this->name = $name;
+    }
 
   /**
    * Get the account ID.
@@ -31,9 +32,10 @@ class Account {
    * @return int
    *   Account ID.
    */
-  public function getAccid() {
-    return $this->accid;
-  }
+    public function getAccid()
+    {
+        return $this->accid;
+    }
 
   /**
    * Set the account ID.
@@ -41,9 +43,10 @@ class Account {
    * @param int $accid
    *   Account ID.
    */
-  public function setAccid($accid) {
-    $this->accid = $accid;
-  }
+    public function setAccid($accid)
+    {
+        $this->accid = $accid;
+    }
 
   /**
    * Get the account name.
@@ -51,9 +54,10 @@ class Account {
    * @return string
    *   Account name.
    */
-  public function getName() {
-    return $this->name;
-  }
+    public function getName()
+    {
+        return $this->name;
+    }
 
   /**
    * Set the account name.
@@ -61,9 +65,10 @@ class Account {
    * @param string $name
    *   Account name.
    */
-  public function setName($name) {
-    $this->name = $name;
-  }
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
   /**
    * Return the values as an associative array.
@@ -71,11 +76,12 @@ class Account {
    * @return array
    *   Account.
    */
-  public function dump() {
-    return [
-      'accid' => $this->accid,
-      'name' => $this->name,
-    ];
-  }
+    public function dump()
+    {
+        return [
+        'accid' => $this->accid,
+        'name' => $this->name,
+        ];
+    }
 
 }

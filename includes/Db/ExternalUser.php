@@ -9,13 +9,13 @@ namespace Gaterdata\Db;
  */
 class ExternalUser {
 
-  protected $id;
-  protected $appId;
-  protected $externalId;
-  protected $externalEntity;
-  protected $dataField1;
-  protected $dataField2;
-  protected $dataField3;
+    protected $id;
+    protected $appId;
+    protected $externalId;
+    protected $externalEntity;
+    protected $dataField1;
+    protected $dataField2;
+    protected $dataField3;
 
   /**
    * ExternalUser constructor.
@@ -35,15 +35,23 @@ class ExternalUser {
    * @param string $dataField3
    *   Spare data field 3.
    */
-  public function __construct($id = NULL, $appId = NULL, $externalId = NULL, $externalEntity = NULL, $dataField1 = NULL, $dataField2 = NULL, $dataField3 = NULL) {
-    $this->id = $id;
-    $this->appId = $appId;
-    $this->externalId = $externalId;
-    $this->externalEntity = $externalEntity;
-    $this->dataField1 = $dataField1;
-    $this->dataField2 = $dataField2;
-    $this->dataField3 = $dataField3;
-  }
+    public function __construct(
+        $id = null,
+        $appId = null,
+        $externalId = null,
+        $externalEntity = null,
+        $dataField1 = null,
+        $dataField2 = null,
+        $dataField3 = null
+    ) {
+        $this->id = $id;
+        $this->appId = $appId;
+        $this->externalId = $externalId;
+        $this->externalEntity = $externalEntity;
+        $this->dataField1 = $dataField1;
+        $this->dataField2 = $dataField2;
+        $this->dataField3 = $dataField3;
+    }
 
   /**
    * Get External user ID.
@@ -51,9 +59,10 @@ class ExternalUser {
    * @return int
    *   External user ID.
    */
-  public function getId() {
-    return $this->id;
-  }
+    public function getId()
+    {
+        return $this->id;
+    }
 
   /**
    * Set External user ID.
@@ -61,9 +70,10 @@ class ExternalUser {
    * @param int $id
    *   External user ID.
    */
-  public function setId($id) {
-    $this->id = $id;
-  }
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 
   /**
    * Get Application ID.
@@ -71,9 +81,10 @@ class ExternalUser {
    * @return int
    *   Application ID.
    */
-  public function getAppId() {
-    return $this->appId;
-  }
+    public function getAppId()
+    {
+        return $this->appId;
+    }
 
   /**
    * Set application ID.
@@ -81,9 +92,10 @@ class ExternalUser {
    * @param int $appId
    *   Application ID.
    */
-  public function setAppId($appId) {
-    $this->appId = $appId;
-  }
+    public function setAppId($appId)
+    {
+        $this->appId = $appId;
+    }
 
   /**
    * Get External ID.
@@ -91,9 +103,10 @@ class ExternalUser {
    * @return mixed
    *   External ID.
    */
-  public function getExternalId() {
-    return $this->externalId;
-  }
+    public function getExternalId()
+    {
+        return $this->externalId;
+    }
 
   /**
    * Set External ID.
@@ -101,9 +114,10 @@ class ExternalUser {
    * @param mixed $externalId
    *   External ID.
    */
-  public function setExternalId($externalId) {
-    $this->externalId = $externalId;
-  }
+    public function setExternalId($externalId)
+    {
+        $this->externalId = $externalId;
+    }
 
   /**
    * Get External entity.
@@ -111,9 +125,10 @@ class ExternalUser {
    * @return mixed
    *   External entity.
    */
-  public function getExternalEntity() {
-    return $this->externalEntity;
-  }
+    public function getExternalEntity()
+    {
+        return $this->externalEntity;
+    }
 
   /**
    * Set External entity.
@@ -121,9 +136,10 @@ class ExternalUser {
    * @param string $externalEntity
    *   External entity.
    */
-  public function setExternalEntity($externalEntity) {
-    $this->externalEntity = $externalEntity;
-  }
+    public function setExternalEntity($externalEntity)
+    {
+        $this->externalEntity = $externalEntity;
+    }
 
   /**
    * Get data field 1.
@@ -131,9 +147,10 @@ class ExternalUser {
    * @return mixed
    *   Data field 1.
    */
-  public function getDataField1() {
-    return $this->dataField1;
-  }
+    public function getDataField1()
+    {
+        return $this->dataField1;
+    }
 
   /**
    * Set data field 1.
@@ -141,9 +158,10 @@ class ExternalUser {
    * @param mixed $dataField1
    *   Data field 1.
    */
-  public function setDataField1($dataField1) {
-    $this->dataField1 = $dataField1;
-  }
+    public function setDataField1($dataField1)
+    {
+        $this->dataField1 = $dataField1;
+    }
 
   /**
    * Get data field 2.
@@ -151,9 +169,10 @@ class ExternalUser {
    * @return mixed
    *   Data field 2.
    */
-  public function getDataField2() {
-    return $this->dataField2;
-  }
+    public function getDataField2()
+    {
+        return $this->dataField2;
+    }
 
   /**
    * Set data field 2.
@@ -161,9 +180,10 @@ class ExternalUser {
    * @param mixed $dataField2
    *   Data field 2.
    */
-  public function setDataField2($dataField2) {
-    $this->dataField2 = $dataField2;
-  }
+    public function setDataField2($dataField2)
+    {
+        $this->dataField2 = $dataField2;
+    }
 
   /**
    * Get data field 3.
@@ -171,9 +191,10 @@ class ExternalUser {
    * @return mixed
    *   Data field 3.
    */
-  public function getDataField3() {
-    return $this->dataField3;
-  }
+    public function getDataField3()
+    {
+        return $this->dataField3;
+    }
 
   /**
    * Set data field 3.
@@ -181,9 +202,10 @@ class ExternalUser {
    * @param mixed $dataField3
    *   Data field 3.
    */
-  public function setDataField3($dataField3) {
-    $this->dataField3 = $dataField3;
-  }
+    public function setDataField3($dataField3)
+    {
+        $this->dataField3 = $dataField3;
+    }
 
   /**
    * Return the values as an associative array.
@@ -191,16 +213,17 @@ class ExternalUser {
    * @return array
    *   External user.
    */
-  public function dump() {
-    return [
-      'uid' => $this->uid,
-      'appId' => $this->appId,
-      'externalId' => $this->externalId,
-      'externalEntity' => $this->externalEntity,
-      'dataField1' => $this->dataField1,
-      'dataField2' => $this->dataField2,
-      'dataField3' => $this->dataField3,
-    ];
-  }
+    public function dump()
+    {
+        return [
+        'uid' => $this->uid,
+        'appId' => $this->appId,
+        'externalId' => $this->externalId,
+        'externalEntity' => $this->externalEntity,
+        'dataField1' => $this->dataField1,
+        'dataField2' => $this->dataField2,
+        'dataField3' => $this->dataField3,
+        ];
+    }
 
 }

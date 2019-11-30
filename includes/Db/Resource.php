@@ -9,14 +9,14 @@ namespace Gaterdata\Db;
  */
 class Resource {
 
-  protected $resid;
-  protected $appid;
-  protected $name;
-  protected $description;
-  protected $method;
-  protected $uri;
-  protected $meta;
-  protected $ttl;
+    protected $resid;
+    protected $appid;
+    protected $name;
+    protected $description;
+    protected $method;
+    protected $uri;
+    protected $meta;
+    protected $ttl;
 
   /**
    * Resource constructor.
@@ -38,16 +38,25 @@ class Resource {
    * @param string $ttl
    *   The resource TTL.
    */
-  public function __construct($resid = NULL, $appid = NULL, $name = NULL, $description = NULL, $method = NULL, $uri = NULL, $meta = NULL, $ttl = NULL) {
-    $this->resid = $resid;
-    $this->appid = $appid;
-    $this->name = $name;
-    $this->description = $description;
-    $this->method = $method;
-    $this->uri = $uri;
-    $this->meta = $meta;
-    $this->ttl = $ttl;
-  }
+    public function __construct(
+        $resid = null,
+        $appid = null,
+        $name = null,
+        $description = null,
+        $method = null,
+        $uri = null,
+        $meta = null,
+        $ttl = null
+    ) {
+        $this->resid = $resid;
+        $this->appid = $appid;
+        $this->name = $name;
+        $this->description = $description;
+        $this->method = $method;
+        $this->uri = $uri;
+        $this->meta = $meta;
+        $this->ttl = $ttl;
+    }
 
   /**
    * Get the resource ID.
@@ -55,9 +64,10 @@ class Resource {
    * @return int
    *   The resource ID
    */
-  public function getResid() {
-    return $this->resid;
-  }
+    public function getResid()
+    {
+        return $this->resid;
+    }
 
   /**
    * Set the resource ID.
@@ -65,9 +75,10 @@ class Resource {
    * @param int $resid
    *   The resource ID.
    */
-  public function setResid($resid) {
-    $this->resid = $resid;
-  }
+    public function setResid($resid)
+    {
+        $this->resid = $resid;
+    }
 
   /**
    * Get the application ID.
@@ -75,9 +86,10 @@ class Resource {
    * @return int
    *   The application ID.
    */
-  public function getAppId() {
-    return $this->appid;
-  }
+    public function getAppId()
+    {
+        return $this->appid;
+    }
 
   /**
    * Set the resource application ID.
@@ -85,9 +97,10 @@ class Resource {
    * @param int $appid
    *   The application ID.
    */
-  public function setAppId($appid) {
-    $this->appid = $appid;
-  }
+    public function setAppId($appid)
+    {
+        $this->appid = $appid;
+    }
 
   /**
    * Get the resource nanme.
@@ -95,9 +108,10 @@ class Resource {
    * @return string
    *   The resource name.
    */
-  public function getName() {
-    return $this->name;
-  }
+    public function getName()
+    {
+        return $this->name;
+    }
 
   /**
    * Set the resource name.
@@ -105,9 +119,10 @@ class Resource {
    * @param string $name
    *   The resource name.
    */
-  public function setName($name) {
-    $this->name = $name;
-  }
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
   /**
    * Get the resource description.
@@ -115,9 +130,10 @@ class Resource {
    * @return string
    *   The resource description.
    */
-  public function getDescription() {
-    return $this->description;
-  }
+    public function getDescription()
+    {
+        return $this->description;
+    }
 
   /**
    * Set the resource description.
@@ -125,9 +141,10 @@ class Resource {
    * @param string $description
    *   The resource description.
    */
-  public function setDescription($description) {
-    $this->description = $description;
-  }
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
 
   /**
    * Get the resource method.
@@ -135,9 +152,10 @@ class Resource {
    * @return string
    *   Resource method.
    */
-  public function getMethod() {
-    return $this->method;
-  }
+    public function getMethod()
+    {
+        return $this->method;
+    }
 
   /**
    * Set the resource method.
@@ -145,9 +163,10 @@ class Resource {
    * @param string $method
    *   The resource method.
    */
-  public function setMethod($method) {
-    $this->method = $method;
-  }
+    public function setMethod($method)
+    {
+        $this->method = $method;
+    }
 
   /**
    * Get the resource URI.
@@ -155,9 +174,10 @@ class Resource {
    * @return string
    *   The  resource URI.
    */
-  public function getUri() {
-    return $this->uri;
-  }
+    public function getUri()
+    {
+        return $this->uri;
+    }
 
   /**
    * Set the resource URI.
@@ -165,9 +185,10 @@ class Resource {
    * @param string $uri
    *   Resource URI.
    */
-  public function setUri($uri) {
-    $this->uri = $uri;
-  }
+    public function setUri($uri)
+    {
+        $this->uri = $uri;
+    }
 
   /**
    * Get the json encoded resource metadata.
@@ -175,9 +196,10 @@ class Resource {
    * @return string
    *   Json encoded resource metadata.
    */
-  public function getMeta() {
-    return $this->meta;
-  }
+    public function getMeta()
+    {
+        return $this->meta;
+    }
 
   /**
    * Set the json encoded resource metadata.
@@ -185,9 +207,10 @@ class Resource {
    * @param string $meta
    *   The json encoded resource metadata.
    */
-  public function setMeta($meta) {
-    $this->meta = $meta;
-  }
+    public function setMeta($meta)
+    {
+        $this->meta = $meta;
+    }
 
   /**
    * Get the resource TTL.
@@ -195,9 +218,10 @@ class Resource {
    * @return int
    *   Time to live.
    */
-  public function getTtl() {
-    return $this->ttl;
-  }
+    public function getTtl()
+    {
+        return $this->ttl;
+    }
 
   /**
    * Set the TTL.
@@ -205,9 +229,10 @@ class Resource {
    * @param int $ttl
    *   Time to live.
    */
-  public function setTtl($ttl) {
-    $this->ttl = $ttl;
-  }
+    public function setTtl($ttl)
+    {
+        $this->ttl = $ttl;
+    }
 
   /**
    * Return the values as an associative array.
@@ -215,17 +240,18 @@ class Resource {
    * @return array
    *   Api resource.
    */
-  public function dump() {
-    return [
-      'resid' => $this->resid,
-      'name' => $this->name,
-      'description' => $this->description,
-      'appid' => $this->appid,
-      'method' => $this->method,
-      'uri' => $this->uri,
-      'ttl' => $this->ttl,
-      'meta' => $this->meta,
-    ];
-  }
+    public function dump()
+    {
+        return [
+        'resid' => $this->resid,
+        'name' => $this->name,
+        'description' => $this->description,
+        'appid' => $this->appid,
+        'method' => $this->method,
+        'uri' => $this->uri,
+        'ttl' => $this->ttl,
+        'meta' => $this->meta,
+        ];
+    }
 
 }
