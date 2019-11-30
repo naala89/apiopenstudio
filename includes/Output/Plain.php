@@ -4,114 +4,120 @@ namespace Gaterdata\Output;
 
 class Plain extends Text
 {
-  protected $header = 'Content-Type:text/plain';
-  /**
-   * {@inheritDoc}
-   */
-  protected $details = array(
-    'name' => 'Plain',
-    'machineName' => 'plain',
-    'description' => 'Output in plain-text format.',
-    'menu' => 'Output',
-    'input' => array(
-      'destination' => array(
-        'description' => 'Destination URLs for the output.',
-        'cardinality' => array(1, '*'),
-        'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'method' => array(
-        'description' => 'HTTP delivery method when sending output. Only used in the output section.',
-        'cardinality' => array(0, 1),
-        'literalAllowed' => true,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array('get', 'post'),
-        'default' => ''
-      ),
-      'options' => array(
-        'description' => 'Extra Curl options to be applied when sent to the destination  (e.g. cursor: -1, screen_name: foobarapi, skip_status: true, etc).',
-        'cardinality' => array(0, '*'),
-        'literalAllowed' => true,
-        'limitFunctions' => array('field'),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-    ),
-  );
+    /**
+     * {@inheritDoc}
+     */
+    protected $header = 'Content-Type:text/plain';
 
-  /**
-   * @param $data
-   * @return string
-   */
-  protected function fromBoolean(& $data)
-  {
-    return $data ? 'true' : 'false';
-  }
+    /**
+     * {@inheritDoc}
+     */
+    protected $details = [
+        'name' => 'Plain',
+        'machineName' => 'plain',
+        'description' => 'Output in plain-text format.',
+        'menu' => 'Output',
+        'input' => [
+            'destination' => [
+                'description' => 'Destination URLs for the output.',
+                'cardinality' => [1, '*'],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'method' => [
+                'description' => 'HTTP delivery method when sending output. Only used in the output section.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => ['get', 'post'],
+                'default' => '',
+            ],
+            'options' => [
+                // phpcs:ignore
+                'description' => 'Extra Curl options to be applied when sent to the destination (e.g. cursor: -1, screen_name: foobarapi, skip_status: true, etc).',
+                'cardinality' => [0, '*'],
+                'literalAllowed' => true,
+                'limitFunctions' => ['field'],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+        ],
+    ];
 
-  /**
-   * @param $data
-   * @return string
-   */
-  protected function fromInteger(& $data)
-  {
-    return $data;
-  }
+    /**
+     * {@inheritDoc}
+     */
+    protected function fromBoolean(&$data)
+    {
+        return $data ? 'true' : 'false';
+    }
 
-  /**
-   * @param $data
-   * @return string
-   */
-  protected function fromFloat(& $data)
-  {
-    return $data;
-  }
+    /**
+     * {@inheritDoc}
+     */
+    protected function fromInteger(&$data)
+    {
+        return $data;
+    }
 
-  /**
-   * @param $data
-   * @return string
-   */
-  protected function fromXml(& $data) {
-    return $data;
-  }
+    /**
+     * {@inheritDoc}
+     */
+    protected function fromFloat(&$data)
+    {
+        return $data;
+    }
 
-  /**
-   * @param $data
-   * @return mixed
-   */
-  protected function fromHtml(& $data) {
-    return $data;
-  }
+    /**
+     * {@inheritDoc}
+     */
+    protected function fromXml(&$data)
+    {
+        return $data;
+    }
 
-  /**
-   * @param $data
-   * @return mixed
-   */
-  protected function fromText(& $data) {
-    return $data;
-  }
+    /**
+     * {@inheritDoc}
+     */
+    protected function fromHtml(&$data)
+    {
+        return $data;
+    }
 
-  /**
-   * @param $data
-   * @return mixed
-   */
-  protected function fromArray(& $data) {
-    return json_encode($data);
-  }
+    /**
+     * {@inheritDoc}
+     */
+    protected function fromText(&$data)
+    {
+        return $data;
+    }
 
-  /**
-   * @param $data
-   * @return mixed
-   */
-  protected function fromJson(& $data) {
-    return $data;
-  }
+    /**
+     * {@inheritDoc}
+     */
+    protected function fromArray(&$data)
+    {
+        return json_encode($data);
+    }
 
-  protected function fromImage(& $data) {
-    return $data;
-  }
+    /**
+     * {@inheritDoc}
+     */
+    protected function fromJson(&$data)
+    {
+        return $data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function fromImage(&$data)
+    {
+        return $data;
+    }
 }

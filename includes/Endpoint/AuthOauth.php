@@ -5,6 +5,7 @@
  */
 
 namespace Gaterdata\Endpoint;
+
 use Gaterdata\Core;
 
 class AuthOAuth extends Core\ProcessorEntity
@@ -12,59 +13,59 @@ class AuthOAuth extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-    protected $details = array(
-    'name' => 'Auth (OAuth)',
-    'machineName' => 'auth_oauth',
-    'description' => 'Authentication for remote server, using OAuth signature in the header.',
-    'menu' => 'Authentication',
-    'input' => array(
-      'key' => array(
-        'description' => 'The consumer key.',
-        'cardinality' => array(1, 1),
-        'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'nonce' => array(
-        'description' => 'The nonce.',
-        'cardinality' => array(1, 1),
-        'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'signature' => array(
-        'description' => 'The signature.',
-        'cardinality' => array(1, 1),
-        'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => ''
-      ),
-      'signatureMethod' => array(
-        'description' => 'The signature method.',
-        'cardinality' => array(0, 1),
-        'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => 'HMAC-SHA1'
-      ),
-      'oauthVersion' => array(
-        'description' => 'The OAuth version.',
-        'cardinality' => array(0, 1),
-        'literalAllowed' => false,
-        'limitFunctions' => array(),
-        'limitTypes' => array('string'),
-        'limitValues' => array(),
-        'default' => '1.0'
-      ),
-    ),
-    );
+    protected $details = [
+        'name' => 'Auth (OAuth)',
+        'machineName' => 'auth_oauth',
+        'description' => 'Authentication for remote server, using OAuth signature in the header.',
+        'menu' => 'Authentication',
+        'input' => [
+            'key' => [
+                'description' => 'The consumer key.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => false,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'nonce' => [
+                'description' => 'The nonce.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => false,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'signature' => [
+                'description' => 'The signature.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => false,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'signatureMethod' => [
+                'description' => 'The signature method.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => false,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => 'HMAC-SHA1',
+            ],
+            'oauthVersion' => [
+                'description' => 'The OAuth version.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => false,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '1.0',
+            ],
+        ],
+    ];
 
   /**
    * {@inheritDoc}

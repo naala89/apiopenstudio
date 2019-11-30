@@ -21,9 +21,11 @@
 
     <!-- All PHP files MUST end with a single blank line. -->
     <!-- checked by PSR2.Files.EndFileNewline -->
+    <rule ref="PSR2.Files.EndFileNewline"/>
 
     <!-- The closing ?> tag MUST be omitted from files containing only PHP. -->
     <!-- checked by PSR2.Files.ClosingTag -->
+    <rule ref="PSR2.Files.ClosingTag"/>
 
     <!-- 2.3 Lines -->
 
@@ -79,11 +81,13 @@
 
     <!-- When present, there MUST be one blank line after the namespace declaration. -->
     <!-- checked by PSR2.Namespaces.NamespaceDeclaration -->
+    <rule ref="PSR2.Namespaces.NamespaceDeclaration"/>
 
     <!-- When present, all use declarations MUST go after the namespace declaration.
          There MUST be one use keyword per declaration.
          There MUST be one blank line after the use block. -->
     <!-- checked by PSR2.Namespaces.UseDeclaration -->
+    <rule ref="PSR2.Namespaces.UseDeclaration"/>
 
     <!-- 4. Classes, Properties, and Methods -->
 
@@ -93,6 +97,7 @@
          The opening brace for the class go MUST go on its own line; the closing brace for the class MUST go on the next line after the body.
          Lists of implements MAY be split across multiple lines, where each subsequent line is indented once. When doing so, the first item in the list MUST be on the next line, and there MUST be only one interface per line. -->
     <!-- checked by PSR2.Classes.ClassDeclaration -->
+    <rule ref="PSR2.Classes.ClassDeclaration"/>
 
     <!-- 4.2. Properties -->
 
@@ -199,6 +204,7 @@
 
     <!-- The keyword elseif SHOULD be used instead of else if so that all control keywords look like single words. -->
     <!-- checked by PSR2.ControlStructures.ElseIfDeclaration -->
+    <rule ref="PSR2.ControlStructures.ElseIfDeclaration"/>
 
     <!-- 5.2. switch, case -->
 
