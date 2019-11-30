@@ -12,7 +12,7 @@ class AuthBearerToken extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = array(
+    protected $details = array(
     'name' => 'Auth (Bearer token)',
     'machineName' => 'auth_bearer_token',
     'description' => 'Authentication for remote server, presenting a bearer token in the header.',
@@ -28,17 +28,17 @@ class AuthBearerToken extends Core\ProcessorEntity
         'default' => ''
       ),
     ),
-  );
+    );
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Auth (bearer token)', 4);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Auth (bearer token)', 4);
 
-    $token = $this->val('token', TRUE);
+        $token = $this->val('token', true);
 
-    return array(CURLOPT_HTTPHEADER => "Authorization: Bearer $token");
-  }
+        return array(CURLOPT_HTTPHEADER => "Authorization: Bearer $token");
+    }
 }
