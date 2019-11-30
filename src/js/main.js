@@ -119,4 +119,21 @@ $(document).ready(function() {
     modal.modal('open');
   });
 
+  // Upload a resource file into the editor
+  $("#upload-resource-file").on('change',  function() {
+    var $input = $(this);
+    var inputFiles = this.files;
+    if(inputFiles == undefined || inputFiles.length == 0) {
+      return;
+    }
+    var inputFile = inputFiles[0];
+
+    var reader = new FileReader();
+    reader.onload = function(event) {
+      $('#meta').val(this.result);
+      M.textareaAutoResize($('#meta'));
+    };
+    reader.readAsText(inputFile);
+  });
+
 });

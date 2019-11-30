@@ -4,6 +4,7 @@ To set up dev:
 2. $ npm install
 3. $ gulp
 4. make changes.
+5. $ gulp all
  */
 
 // Dependencies.
