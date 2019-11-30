@@ -8,12 +8,12 @@ namespace Gaterdata\Core;
 
 class Curl
 {
-  public $httpStatus;
-  public $curlStatus;
-  public $errorMsg;
-  public $type;
-  public $options = array(CURLOPT_RETURNTRANSFER => TRUE);
-  public $url;
+    public $httpStatus;
+    public $curlStatus;
+    public $errorMsg;
+    public $type;
+    public $options = array(CURLOPT_RETURNTRANSFER => true);
+    public $url;
   /**
    * Curl constants
    *
@@ -41,11 +41,11 @@ class Curl
    *
    * @return string
    */
-  public function get($url, array $options=array())
-  {
-    $options[CURLOPT_HTTPGET] = TRUE;
-    return $this->_exec($url, $options);
-  }
+    public function get($url, array $options = array())
+    {
+        $options[CURLOPT_HTTPGET] = true;
+        return $this->_exec($url, $options);
+    }
 
   /**
    * Send a POST request using cURL.
@@ -57,11 +57,11 @@ class Curl
    *
    * @return string
    */
-  public function post($url, array $options=array())
-  {
-    $options[CURLOPT_POST] = TRUE;
-    return $this->_exec($url, $options);
-  }
+    public function post($url, array $options = array())
+    {
+        $options[CURLOPT_POST] = true;
+        return $this->_exec($url, $options);
+    }
 
   /**
    * Utility function to get options after adding them to the default curl options.
@@ -74,10 +74,10 @@ class Curl
    * @return array
    *  array of options
    */
-  private function _getCurlOptions($url, array $options=array())
-  {
-    return $this->options + array(CURLOPT_URL => $url) + $options;
-  }
+    private function _getCurlOptions($url, array $options = array())
+    {
+        return $this->options + array(CURLOPT_URL => $url) + $options;
+    }
 
   /**
    * Perform a cURL request.
@@ -89,20 +89,20 @@ class Curl
    *
    * @return string
    */
-  private function _exec($url, array $options=array())
-  {
-    $options = $this->_getCurlOptions($url, $options);
-    Debug::variable($options, 'Curl options', 4);
+    private function _exec($url, array $options = array())
+    {
+        $options = $this->_getCurlOptions($url, $options);
+        Debug::variable($options, 'Curl options', 4);
 
-    $ch = curl_init();
-    curl_setopt_array($ch, $options);
-    $response = curl_exec($ch);
-    $this->httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $this->type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-    $this->curlStatus = curl_errno($ch);
-    $this->errorMsg = curl_error($ch);
-    curl_close($ch);
+        $ch = curl_init();
+        curl_setopt_array($ch, $options);
+        $response = curl_exec($ch);
+        $this->httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $this->type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+        $this->curlStatus = curl_errno($ch);
+        $this->errorMsg = curl_error($ch);
+        curl_close($ch);
 
-    return $response;
-  }
+        return $response;
+    }
 }

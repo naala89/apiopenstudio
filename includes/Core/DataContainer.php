@@ -7,7 +7,7 @@ class DataContainer extends Entity
   /**
    * @var array
    */
-  private $types = array(
+    private $types = array(
     'boolean',
     'integer',
     'float',
@@ -16,17 +16,17 @@ class DataContainer extends Entity
     'json',
     'xml',
     'image'
-  );
+    );
   /**
    * Data type
    * @var
    */
-  protected $type = '';
+    protected $type = '';
   /**
    * Data
    * @var mixed
    */
-  protected $data;
+    protected $data;
 
   /**
    * DataContainer constructor.
@@ -38,62 +38,62 @@ class DataContainer extends Entity
    *
    * @throws ApiException
    */
-  public function __construct($data, $dataType)
-  {
-    $this->setData($data);
-    $this->setType($dataType);
-  }
+    public function __construct($data, $dataType)
+    {
+        $this->setData($data);
+        $this->setType($dataType);
+    }
 
   /**
    * @return mixed
    */
-  public function getData()
-  {
-    if ($this->type == 'boolean') {
-      return filter_var($this->data, FILTER_VALIDATE_BOOLEAN);
+    public function getData()
+    {
+        if ($this->type == 'boolean') {
+            return filter_var($this->data, FILTER_VALIDATE_BOOLEAN);
+        }
+        if ($this->type == 'integer') {
+            return filter_var($this->data, FILTER_VALIDATE_INT);
+        }
+        if ($this->type == 'float') {
+            return filter_var($this->data, FILTER_VALIDATE_FLOAT);
+        }
+        return $this->data;
     }
-    if ($this->type == 'integer') {
-      return filter_var($this->data, FILTER_VALIDATE_INT);
-    }
-    if ($this->type == 'float') {
-      return filter_var($this->data, FILTER_VALIDATE_FLOAT);
-    }
-    return $this->data;
-  }
 
   /**
    * @param $val
    */
-  public function setData($val)
-  {
-    $this->data = $val;
-  }
+    public function setData($val)
+    {
+        $this->data = $val;
+    }
 
   /**
    * @return mixed
    */
-  public function getType()
-  {
-    return $this->type;
-  }
+    public function getType()
+    {
+        return $this->type;
+    }
 
   /**
    * @param $val
    * @throws \Gaterdata\Core\ApiException
    */
-  public function setType($val)
-  {
-    if (!in_array($val, $this->types)) {
-      throw new ApiException("trying to to set an invalid type: $val");
+    public function setType($val)
+    {
+        if (!in_array($val, $this->types)) {
+            throw new ApiException("trying to to set an invalid type: $val");
+        }
+        $this->type = $val;
     }
-    $this->type = $val;
-  }
 
   /**
    * @return mixed
    */
-  public function getTypes()
-  {
-    return $this->types;
-  }
+    public function getTypes()
+    {
+        return $this->types;
+    }
 }

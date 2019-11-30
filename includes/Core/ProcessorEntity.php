@@ -9,19 +9,19 @@ abstract class ProcessorEntity extends Entity
    * Processor ID.
    * @var integer
    */
-  protected $id = '';
+    protected $id = '';
 
   /**
    * Meta required for this processor.
    * @var integer
    */
-  protected $meta;
+    protected $meta;
 
   /**
    * All of the request details.
    * @var stdClass
    */
-  protected $request;
+    protected $request;
 
   /**
    * An array of details of the processor, used to configure the frontend GUI and metadata construction.
@@ -62,17 +62,21 @@ abstract class ProcessorEntity extends Entity
    *
    *    examples:
    *      input => array(
-   *        'sources' => array('description' => 'desc1', 'cardinality' => array(1, '*'), type => array('function', 'literal'))
+   *        'sources' => array('description' => 'desc1', 'cardinality' => array(1, '*'),
+   *            type => array('function', 'literal'))
    *      )
    *          This processor has only one input, called sources.
    *          Sources must contain at least one value.
    *          The inputs can only be string or another processor.
    *
    *      input => array(
-   *        'method' => array('description' => 'desc1', 'cardinality' => array(1, 1), 'accepts' => array('literal' => array('"get"', '"post"'))),
+   *        'method' => array('description' => 'desc1', 'cardinality' => array(1, 1),
+   *           'accepts' => array('literal' => array('"get"', '"post"'))),
    *        'auth' => array('description' => 'desc2', 'cardinality' => array(1, 1), 'accepts' => array('function'),
-   *        'vars' => array('description' => 'desc3', 'cardinality' => array(0, '*'), type => array('function', 'integer')),
-   *        't' => array('description' => 'desc4', 'cardinality' => array(0, '*'), type => array('processor field', 'string'))
+   *        'vars' => array('description' => 'desc3', 'cardinality' => array(0, '*'),
+   *            type => array('function', 'integer')),
+   *        't' => array('description' => 'desc4', 'cardinality' => array(0, '*'),
+   *            type => array('processor field', 'string'))
    *      )
    *          This Processor has 3 inputs:
    *          method, which has only one sub-input, of type string, with only 2 possible values ('get' and 'post')
@@ -82,12 +86,12 @@ abstract class ProcessorEntity extends Entity
    *
    * @var array
    */
-  protected $details = array();
+    protected $details = array();
 
   /**
    * @param \ADOConnection $dbLayer
   */
-  protected $db;
+    protected $db;
 
   /**
    * Constructor. Store processor metadata and request data in object.
@@ -98,13 +102,13 @@ abstract class ProcessorEntity extends Entity
    * @param object $request
    * @param \ADOConnection $db
    */
-  public function __construct($meta, & $request, $db)
-  {
-    $this->meta = $meta;
-    $this->request = $request;
-    $this->id = isset($meta->id) ? $meta->id : -1;
-    $this->db = $db;
-  }
+    public function __construct($meta, &$request, $db)
+    {
+        $this->meta = $meta;
+        $this->request = $request;
+        $this->id = isset($meta->id) ? $meta->id : -1;
+        $this->db = $db;
+    }
 
   /**
    * Main processor function.
@@ -116,17 +120,17 @@ abstract class ProcessorEntity extends Entity
    *
    * @return array|Error
    */
-  abstract public function process();
+    abstract public function process();
 
   /**
    * Return details for processor.
    *
    * @return array
    */
-  public function details()
-  {
-    return $this->details;
-  }
+    public function details()
+    {
+        return $this->details;
+    }
 
   /**
    * Get a file.
@@ -135,38 +139,38 @@ abstract class ProcessorEntity extends Entity
    * @return bool|string
    * @throws \Gaterdata\Core\ApiException
    */
-  protected function getFile($file)
-  {
-    if (empty($_FILES[$file])) {
-      return false;
-    }
+    protected function getFile($file)
+    {
+        if (empty($_FILES[$file])) {
+            return false;
+        }
 
-    // Check for error
-    switch ($_FILES[$file]['error']) {
-      case UPLOAD_ERR_OK:
-        break;
-      case UPLOAD_ERR_NO_FILE:
-        throw new ApiException('No file sent.', 1, $this->id);
-      case UPLOAD_ERR_INI_SIZE:
-      case UPLOAD_ERR_FORM_SIZE:
-        throw new ApiException('Exceeded filesize limit.', 1, $this->id);
-      default:
-        throw new ApiException('Unknown errors.', 1, $this->id);
-    }
+      // Check for error
+        switch ($_FILES[$file]['error']) {
+            case UPLOAD_ERR_OK:
+            break;
+            case UPLOAD_ERR_NO_FILE:
+            throw new ApiException('No file sent.', 1, $this->id);
+            case UPLOAD_ERR_INI_SIZE:
+            case UPLOAD_ERR_FORM_SIZE:
+            throw new ApiException('Exceeded filesize limit.', 1, $this->id);
+            default:
+            throw new ApiException('Unknown errors.', 1, $this->id);
+        }
 
-    // Check for upload attack.
-    $newFile = $_SERVER['DOCUMENT_ROOT'] . Config::$dirUploads . basename($_FILES[$file]['name']);
-    if (!move_uploaded_file($_FILES[$file]['tmp_name'], $newFile)) {
-      throw new ApiException('Possible file upload attack!', 1, $this->id);
-    }
+      // Check for upload attack.
+        $newFile = $_SERVER['DOCUMENT_ROOT'] . Config::$dirUploads . basename($_FILES[$file]['name']);
+        if (!move_uploaded_file($_FILES[$file]['tmp_name'], $newFile)) {
+            throw new ApiException('Possible file upload attack!', 1, $this->id);
+        }
 
-    $result = file_get_contents($newFile);
-    if (!unlink($newFile)) {
-      throw new ApiException('failed to cleanup and delete uploaded file. Please contact support.', 1, $this->id);
-    }
+        $result = file_get_contents($newFile);
+        if (!unlink($newFile)) {
+            throw new ApiException('failed to cleanup and delete uploaded file. Please contact support.', 1, $this->id);
+        }
 
-    return $result;
-  }
+        return $result;
+    }
 
   /**
    * Process a variable into a final result for the processor.
@@ -182,57 +186,58 @@ abstract class ProcessorEntity extends Entity
    * @return array
    * @throws \Gaterdata\Core\ApiException
    */
-  protected function val($key, $realValue=false)
-  {
-    $inputDet = $this->details['input'];
-    if (!isset($inputDet[$key])) {
-      // undefined input key for this processor type
-      throw new ApiException("invalid key: $key", 1, $this->id);
+    protected function val($key, $realValue = false)
+    {
+        $inputDet = $this->details['input'];
+        if (!isset($inputDet[$key])) {
+          // undefined input key for this processor type
+            throw new ApiException("invalid key: $key", 1, $this->id);
+        }
+
+        $min = $inputDet[$key]['cardinality'][0];
+        $max = $inputDet[$key]['cardinality'][1];
+        $limitValues = $inputDet[$key]['limitValues'];
+        $limitTypes = $inputDet[$key]['limitTypes'];
+        $default = $inputDet[$key]['default'];
+
+        $count = empty($this->meta->$key) ? 0 : is_array($this->meta->$key) ? sizeof($this->meta->$key) : 1;
+        if ($count < $min || ($max != '*' && $count > $max)) {
+          // invalid cardinality
+            throw new ApiException("invalid number of inputs ($count) in $key, requires $min - $max", 1, $this->id);
+        }
+
+      // return default if empty
+        if (!isset($this->meta->$key)
+            || ($this->isDataContainer($this->meta->$key) && $this->meta->$key->getData() === '')) {
+            return $default;
+        }
+
+        $result = $this->meta->$key;
+
+        if (is_array($result)) {
+            foreach ($result as & $r) {
+                $value = $this->isDataContainer($r) ? $r->getData() : $r;
+                $this->_validateAllowedValues($value, $limitValues);
+                $this->_validateAllowedTypes($value, $limitTypes);
+            }
+        } else {
+            $value = $this->isDataContainer($result) ? $result->getData() : $result;
+            $this->_validateAllowedValues($value, $limitValues);
+            $this->_validateAllowedTypes($value, $limitTypes);
+        }
+
+        return $realValue && $this->isDataContainer($result) ? $result->getData() : $result;
     }
-
-    $min = $inputDet[$key]['cardinality'][0];
-    $max = $inputDet[$key]['cardinality'][1];
-    $limitValues = $inputDet[$key]['limitValues'];
-    $limitTypes = $inputDet[$key]['limitTypes'];
-    $default = $inputDet[$key]['default'];
-
-    $count = empty($this->meta->$key) ? 0 : is_array($this->meta->$key) ? sizeof($this->meta->$key) : 1;
-    if ($count < $min || ($max != '*' && $count > $max)) {
-      // invalid cardinality
-      throw new ApiException("invalid number of inputs ($count) in $key, requires $min - $max", 1, $this->id);
-    }
-
-    // return default if empty
-    if (!isset($this->meta->$key) || ($this->isDataContainer($this->meta->$key) && $this->meta->$key->getData() === '')) {
-      return $default;
-    }
-
-    $result = $this->meta->$key;
-
-    if (is_array($result)) {
-      foreach ($result as & $r) {
-        $value = $this->isDataContainer($r) ? $r->getData() : $r;
-        $this->_validateAllowedValues($value, $limitValues);
-        $this->_validateAllowedTypes($value, $limitTypes);
-      }
-    } else {
-      $value = $this->isDataContainer($result) ? $result->getData() : $result;
-      $this->_validateAllowedValues($value, $limitValues);
-      $this->_validateAllowedTypes($value, $limitTypes);
-    }
-
-    return $realValue && $this->isDataContainer($result) ? $result->getData() : $result;
-  }
 
   /**
    * Validate if a set of data is wrapped in a DataContainer object.
    * @param $data
    * @return bool
    */
-  protected function isDataContainer($data)
-  {
-    return is_object($data) && get_class($data) == 'Gaterdata\Core\DataContainer';
-  }
+    protected function isDataContainer($data)
+    {
+        return is_object($data) && get_class($data) == 'Gaterdata\Core\DataContainer';
+    }
 
   /**
    * Validate an input for allowed values
@@ -241,15 +246,17 @@ abstract class ProcessorEntity extends Entity
    * @param array $limitValues
    * @throws \Gaterdata\Core\ApiException
    */
-  private function _validateAllowedValues($val, array $limitValues)
-  {
-    if (empty($limitValues)) {
-      return;
+    private function _validateAllowedValues($val, array $limitValues)
+    {
+        if (empty($limitValues)) {
+            return;
+        }
+        if (!in_array($val, $limitValues)) {
+            throw new ApiException("invalid value ($val). Only '"
+                . implode("', '", $limitValues)
+                . "' allowed", 5, $this->id, 417);
+        }
     }
-    if (!in_array($val, $limitValues)) {
-      throw new ApiException("invalid value ($val). Only '" . implode("', '",$limitValues) . "' allowed", 5, $this->id, 417);
-    }
-  }
 
   /**
    * Validate an input for allowed variable types
@@ -258,44 +265,49 @@ abstract class ProcessorEntity extends Entity
    * @param array $limitTypes
    * @throws \Gaterdata\Core\ApiException
    */
-  private function _validateAllowedTypes($val, array $limitTypes)
-  {
-    if (empty($limitTypes)) {
-      return;
-    }
-    if (in_array('boolean', $limitTypes) && $this->_checkBool($val)) {
-      return;
-    }
-    if (in_array('integer', $limitTypes) && $this->_checkInt($val)) {
-      return;
-    }
-    if (in_array('float', $limitTypes) && $this->_checkFloat($val)) {
-      return;
-    }
-    if (in_array('array', $limitTypes) && is_array($val)) {
-      return;
-    }
-    if (!empty($val)) {
-      $type = gettype($val);
-      if (!in_array($type, $limitTypes)) {
-        $text = $val;
-        if ($type == 'array' || $type == 'object') {
-          $text = 'compound object';
+    private function _validateAllowedTypes($val, array $limitTypes)
+    {
+        if (empty($limitTypes)) {
+            return;
         }
-        throw new ApiException("invalid value ($text), only '" . implode("', '", $limitTypes) .  "' allowed", 5, $this->id, 417);
-      }
+        if (in_array('boolean', $limitTypes) && $this->_checkBool($val)) {
+            return;
+        }
+        if (in_array('integer', $limitTypes) && $this->_checkInt($val)) {
+            return;
+        }
+        if (in_array('float', $limitTypes) && $this->_checkFloat($val)) {
+            return;
+        }
+        if (in_array('array', $limitTypes) && is_array($val)) {
+            return;
+        }
+        if (!empty($val)) {
+            $type = gettype($val);
+            if (!in_array($type, $limitTypes)) {
+                $text = $val;
+                if ($type == 'array' || $type == 'object') {
+                    $text = 'compound object';
+                }
+                throw new ApiException("invalid value ($text), only '"
+                    . implode("', '", $limitTypes)
+                    . "' allowed", 5, $this->id, 417);
+            }
+        }
     }
-  }
 
-  public function _checkBool($var) {
-    return null !== filter_var($var, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-  }
+    public function _checkBool($var)
+    {
+        return null !== filter_var($var, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    }
 
-  public function _checkFloat($var) {
-    return null !== filter_var($var, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
-  }
+    public function _checkFloat($var)
+    {
+        return null !== filter_var($var, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
+    }
 
-  public function _checkInt($var) {
-    return null !== filter_var($var, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-  }
+    public function _checkInt($var)
+    {
+        return null !== filter_var($var, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+    }
 }
