@@ -163,7 +163,19 @@ class CtrlResource extends CtrlBase {
           'Authorization' => "Bearer $token",
         ],
       ]);
-      $functions = (array) json_decode($result->getBody()->getContents(), TRUE);
+      $functions = json_decode($result->getBody()->getContents(), TRUE);
+      $result = $client->request('GET', 'account/all', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+      ]);
+      $accounts = json_decode($result->getBody()->getContents(), TRUE);
+      $result = $client->request('GET', 'application', [
+        'headers' => [
+          'Authorization' => "Bearer $token",
+        ],
+      ]);
+      $applications = json_decode($result->getBody()->getContents(), TRUE);
     }
     catch (ClientException $e) {
       $result = $e->getResponse();
@@ -173,6 +185,8 @@ class CtrlResource extends CtrlBase {
           return $response->withStatus(302)->withHeader('Location', '/login');
           break;
         default:
+          $accounts = [];
+          $applications = [];
           $functions = [];
           break;
       }
@@ -185,6 +199,8 @@ class CtrlResource extends CtrlBase {
 
     return $this->view->render($response, 'resource-create.twig', [
       'menu' => $menu,
+      'accounts' => $accounts,
+      'applications' => $applications,
       'functions' => $sortedFunctions,
       'messages' => $this->flash->getMessages(),
     ]);

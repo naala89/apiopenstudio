@@ -92,6 +92,10 @@ $(document).ready(function() {
     var accid = $(this).val(),
         selectAppid = $('#modal-user-role-create').find("select[name='appid']");
     selectAppid.find('option').remove();
+    selectAppid.find('option').remove();selectAppid.append($('<option>', {
+      value: "",
+      text: "Please select"
+    }));
     GATERDATA.accAppMap.forEach(function (application, appid) {
       if (accid == application.accid) {
         selectAppid.append($('<option>', {
@@ -100,6 +104,7 @@ $(document).ready(function() {
         }));
       }
     });
+    selectAppid.val("");
     selectAppid.formSelect();
   });
 
@@ -130,10 +135,30 @@ $(document).ready(function() {
 
     var reader = new FileReader();
     reader.onload = function(event) {
-      $('#meta').val(this.result);
-      M.textareaAutoResize($('#meta'));
+      $('textarea[name="meta"]').val(this.result);
+      M.textareaAutoResize($('textarea[name="meta"]'));
     };
     reader.readAsText(inputFile);
+  });
+
+  // resource create - application select
+  $("#create-resource select[name='accid']").on('change', function() {
+    var accid = $(this).val(),
+        selectAppid = $('#create-resource').find("select[name='appid']");
+    selectAppid.find('option').remove();selectAppid.append($('<option>', {
+      value: "",
+      text: "Please select"
+    }));
+    GATERDATA.accAppMap.forEach(function (application, appid) {
+      if (accid == application.accid) {
+        selectAppid.append($('<option>', {
+          value: appid,
+          text : application.name
+        }));
+      }
+    });
+    selectAppid.val("");
+    selectAppid.formSelect();
   });
 
 });
