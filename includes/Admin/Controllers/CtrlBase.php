@@ -21,39 +21,39 @@ class CtrlBase {
 
   /**
    * Roles allowed to visit the page.
-   * 
+   *
    * @var array
    */
-  const PERMITTED_ROLES = [];
+    const PERMITTED_ROLES = [];
   /**
    * @var Slim\Collection
    */
-  protected $settings;
+    protected $settings;
   /**
    * @var Twig
    */
-  protected $view;
+    protected $view;
   /**
    * @var Messages.
    */
-  protected $flash;
+    protected $flash;
   /**
    * @var array.
    */
-  protected $menu;
+    protected $menu;
   /**
    * @var stdClass,
    */
-  protected $userAccessRights;
+    protected $userAccessRights;
   /**
    * @var array,
    */
-  protected $allRoles = [
+    protected $allRoles = [
     1 => 'Administrator',
     2 => 'Account manager',
     3 => 'Application manager',
     4 => 'Developer',
-  ];
+    ];
 
   /**
    * Base constructor.
@@ -65,12 +65,13 @@ class CtrlBase {
    * @param Messages $flash
    *   Flash messages container.
    */
-  public function __construct(Collection $settings, Twig $view, Messages $flash) {
-    $this->userAccessRights = new stdClass();
-    $this->settings = $settings;
-    $this->view = $view;
-    $this->flash = $flash;
-  }
+    public function __construct(Collection $settings, Twig $view, Messages $flash)
+    {
+        $this->userAccessRights = new stdClass();
+        $this->settings = $settings;
+        $this->view = $view;
+        $this->flash = $flash;
+    }
 
   /**
    * Fetch the access rights for a user.
@@ -84,47 +85,46 @@ class CtrlBase {
    *
    * @throws GuzzleException
    */
-  protected function getAccessRights($response, $uid) {
-    try {
-      $domain = $this->settings['api']['url'];
-      $account = $this->settings['api']['core_account'];
-      $application = $this->settings['api']['core_application'];
-      $token = $_SESSION['token'];
-      $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-      $result = $client->request('GET', 'user/role', [
-        'headers' => [
-          'Authorization' => "Bearer $token",
-        ],
-        'query' => [
-          'uid' => $uid,
-        ],
-      ]);
-      $result = json_decode($result->getBody()->getContents());
-    } 
-    catch (ClientException $e) {
-      $result = $e->getResponse();
-      $this->flash->addMessage('error', $this->getErrorMessage($e));
-      switch ($result->getStatusCode()) {
-        case 401: 
-          return $response->withStatus(302)->withHeader('Location', '/login');
-          break;
-        default:
-          break;
-      }
-    }
+    protected function getAccessRights($response, $uid)
+    {
+        try {
+            $domain = $this->settings['api']['url'];
+            $account = $this->settings['api']['core_account'];
+            $application = $this->settings['api']['core_application'];
+            $token = $_SESSION['token'];
+            $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+            $result = $client->request('GET', 'user/role', [
+            'headers' => [
+            'Authorization' => "Bearer $token",
+            ],
+            'query' => [
+            'uid' => $uid,
+            ],
+            ]);
+            $result = json_decode($result->getBody()->getContents());
+        } catch (ClientException $e) {
+            $result = $e->getResponse();
+            $this->flash->addMessage('error', $this->getErrorMessage($e));
+            switch ($result->getStatusCode()) {
+                case 401:
+                return $response->withStatus(302)->withHeader('Location', '/login');
+                break;
+                default:
+                break;
+            }
+        }
 
-    $this->userAccessRights = [];
-    foreach ($result as $userRole) {
-      if ($userRole->accid == NULL && $userRole->appid == NULL) {
-        $this->userAccessRights[0][0][] = $userRole->rid;
-      }
-      else {
-        $this->userAccessRights[$userRole->accid][$userRole->appid][] = $userRole->rid;
-      }
-    }
+        $this->userAccessRights = [];
+        foreach ($result as $userRole) {
+            if ($userRole->accid == null && $userRole->appid == null) {
+                $this->userAccessRights[0][0][] = $userRole->rid;
+            } else {
+                $this->userAccessRights[$userRole->accid][$userRole->appid][] = $userRole->rid;
+            }
+        }
 
-    return $this->userAccessRights;
-  }
+        return $this->userAccessRights;
+    }
 
   /**
    * Get available roles for user's roles.
@@ -132,19 +132,20 @@ class CtrlBase {
    * @return array
    *   Array of role names indexed by role ID.
    */
-  protected function getRoles() {
-    $roles = [];
+    protected function getRoles()
+    {
+        $roles = [];
 
-    foreach($this->userAccessRights as $account) {
-      foreach($account as $application) {
-        foreach($application as $rid) {
-          $roles[$rid] = $this->allRoles[$rid];
+        foreach ($this->userAccessRights as $account) {
+            foreach ($account as $application) {
+                foreach ($application as $rid) {
+                    $roles[$rid] = $this->allRoles[$rid];
+                }
+            }
         }
-      }
-    }
 
-    return $roles;
-  }
+        return $roles;
+    }
 
   /**\
    * Get accounts for the user.
@@ -160,55 +161,55 @@ class CtrlBase {
    * @throws GuzzleException
    */
 
-  protected function getAccounts(Response $response, array $params = []) {
-    $roles = $this->getRoles();
-    $accounts = [];
+    protected function getAccounts(Response $response, array $params = [])
+    {
+        $roles = $this->getRoles();
+        $accounts = [];
 
-    if (in_array('Administrator', $roles)) {
-      // Fetch all accounts from the API.
-      try {
-        $domain = $this->settings['api']['url'];
-        $account = $this->settings['api']['core_account'];
-        $application = $this->settings['api']['core_application'];
-        $token = $_SESSION['token'];
-        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-        foreach($params as $key => $value) {
-          $query[$key] = $value;
+        if (in_array('Administrator', $roles)) {
+          // Fetch all accounts from the API.
+            try {
+                $domain = $this->settings['api']['url'];
+                $account = $this->settings['api']['core_account'];
+                $application = $this->settings['api']['core_application'];
+                $token = $_SESSION['token'];
+                $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+                foreach ($params as $key => $value) {
+                    $query[$key] = $value;
+                }
+
+                $result = $client->request('GET', 'account/all', [
+                'headers' => [
+                'Authorization' => "Bearer $token",
+                ],
+                'query' => $query,
+                ]);
+                $result = json_decode($result->getBody()->getContents());
+
+                foreach ((array) $result as $accid => $name) {
+                      $accounts[$accid] = $name;
+                }
+            } catch (ClientException $e) {
+                $result = $e->getResponse();
+                switch ($result->getStatusCode()) {
+                    case 401:
+                      return $response->withStatus(302)->withHeader('Location', '/login');
+                    break;
+                    default:
+                        $this->flash->addMessage('error', $this->getErrorMessage($e));
+                        $accounts = [];
+                      break;
+                }
+            }
+        } else {
+          // Not admin, so take accounts from user access rights.
+            foreach ((array) $this->userAccessRights as $accid => $account) {
+                $accounts[$accid] = $account->account_name;
+            }
         }
 
-        $result = $client->request('GET', 'account/all', [
-          'headers' => [
-            'Authorization' => "Bearer $token",
-          ],
-          'query' => $query,
-        ]);
-        $result = json_decode($result->getBody()->getContents());
-
-        foreach ((array) $result as $accid => $name) {
-          $accounts[$accid] = $name;
-        }
-      } catch (ClientException $e) {
-        $result = $e->getResponse();
-        switch ($result->getStatusCode()) {
-          case 401: 
-            return $response->withStatus(302)->withHeader('Location', '/login');
-            break;
-          default:
-            $this->flash->addMessage('error', $this->getErrorMessage($e));
-            $accounts = [];
-            break;
-        }
-      }
+        return $accounts;
     }
-    else {
-      // Not admin, so take accounts from user access rights.
-      foreach((array) $this->userAccessRights as $accid => $account) {
-        $accounts[$accid] = $account->account_name;
-      }
-    }
-
-    return $accounts;
-  }
 
   /**
    * Get applications for the user.
@@ -224,52 +225,53 @@ class CtrlBase {
    *
    * @throws GuzzleException
    */
-  protected function getApplications(Response $response, array $params = []) {
-    $roles = $this->getRoles();
-    $applications = [];
+    protected function getApplications(Response $response, array $params = [])
+    {
+        $roles = $this->getRoles();
+        $applications = [];
 
-    if (in_array('Administrator', $roles)) {
-      // Fetch all accounts from the API.
-      try {
-        $domain = $this->settings['api']['url'];
-        $account = $this->settings['api']['core_account'];
-        $application = $this->settings['api']['core_application'];
-        $token = $_SESSION['token'];
-        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-        $query = ['application_name' => 'all'];
-        foreach($params as $key => $value) {
-          $query[$key] = $value;
+        if (in_array('Administrator', $roles)) {
+          // Fetch all accounts from the API.
+            try {
+                $domain = $this->settings['api']['url'];
+                $account = $this->settings['api']['core_account'];
+                $application = $this->settings['api']['core_application'];
+                $token = $_SESSION['token'];
+                $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+                $query = ['application_name' => 'all'];
+                foreach ($params as $key => $value) {
+                    $query[$key] = $value;
+                }
+
+                $result = $client->request('GET', 'application', [
+                'headers' => [
+                'Authorization' => "Bearer $token",
+                ],
+                'query' => $query,
+                ]);
+                $applications = json_decode($result->getBody()->getContents());
+            } catch (ClientException $e) {
+                $result = $e->getResponse();
+                switch ($result->getStatusCode()) {
+                    case 401:
+                      return $response->withStatus(302)->withHeader('Location', '/login');
+                    break;
+                    default:
+                        $this->flash->addMessage('error', $this->getErrorMessage($e));
+                        $applications = [];
+                      break;
+                }
+            }
+        } else {
+          // Not admin, so take accounts from user access rights.
+            foreach ((array) $this->userAccessRights as $accid => $accounts) {
+                var_dump($accounts);
+                die();
+            }
         }
 
-        $result = $client->request('GET', 'application', [
-          'headers' => [
-            'Authorization' => "Bearer $token",
-          ],
-          'query' => $query,
-        ]);
-        $applications = json_decode($result->getBody()->getContents());
-      } catch (ClientException $e) {
-        $result = $e->getResponse();
-        switch ($result->getStatusCode()) {
-          case 401: 
-            return $response->withStatus(302)->withHeader('Location', '/login');
-            break;
-          default:
-            $this->flash->addMessage('error', $this->getErrorMessage($e));
-            $applications = [];
-            break;
-        }
-      }
+        return $applications;
     }
-    else {
-      // Not admin, so take accounts from user access rights.
-      foreach((array) $this->userAccessRights as $accid => $accounts) {
-        var_dump($accounts);die();
-      }
-    }
-
-    return $applications;
-  }
 
   /**
    * Validate user access by role.
@@ -277,19 +279,20 @@ class CtrlBase {
    * @return bool
    *   Access validated.
    */
-  protected function checkAccess() {
-    if (empty(self::PERMITTED_ROLES)) {
-      return TRUE;
-    }
+    protected function checkAccess()
+    {
+        if (empty(self::PERMITTED_ROLES)) {
+            return true;
+        }
 
-    $roles = $this->getRoles();
-    foreach ($roles as $rid => $name) {
-      if (in_array($name, self::PERMITTED_ROLES)) {
-        return TRUE;
-      }
+        $roles = $this->getRoles();
+        foreach ($roles as $rid => $name) {
+            if (in_array($name, self::PERMITTED_ROLES)) {
+                return true;
+            }
+        }
+        return false;
     }
-    return FALSE;
-  }
 
   /**
    * Get available menu items for user's roles.
@@ -297,71 +300,72 @@ class CtrlBase {
    * @return array
    *   Associative array of menu titles and links.
    */
-  protected function getMenus() {
-    $menus = [];
-    $roles = $this->getRoles();
+    protected function getMenus()
+    {
+        $menus = [];
+        $roles = $this->getRoles();
 
-    if (empty($roles)) {
-      $menus += [
-        'Login' => '/login',
-      ];
-    }
-    else {
-      $menus += [
-        'Home' => '/',
-      ];
-      if (in_array('Administrator', $roles)) {
-        $menus += [
-          'Accounts' => '/accounts',
-          'Applications' => '/applications',
-          'Users' => '/users',
-          'User Roles' => '/user/roles',
-          'Roles' => '/roles',
-        ];
-      }
-      if (in_array('Account manager', $roles)) {
-        $menus += [
-          'Applications' => '/applications',
-          'Users' => '/users',
-          'User Roles' => '/user/roles',
-          'Roles' => '/roles',
-        ];
-      }
-      if (in_array('Application manager', $roles)) {
-        $menus += [
-          'Applications' => '/applications',
-          'Users' => '/users',
-          'User Roles' => '/user/roles',
-        ];
-      }
-      if (in_array('Developer', $roles)) {
-        $menus += [
-          'Resources' => '/resources',
-        ];
-      }
-      $menus += [
-        'Logout' => '/logout',
-      ];
-    }
+        if (empty($roles)) {
+            $menus += [
+            'Login' => '/login',
+            ];
+        } else {
+            $menus += [
+            'Home' => '/',
+            ];
+            if (in_array('Administrator', $roles)) {
+                $menus += [
+                'Accounts' => '/accounts',
+                'Applications' => '/applications',
+                'Users' => '/users',
+                'User Roles' => '/user/roles',
+                'Roles' => '/roles',
+                ];
+            }
+            if (in_array('Account manager', $roles)) {
+                $menus += [
+                'Applications' => '/applications',
+                'Users' => '/users',
+                'User Roles' => '/user/roles',
+                'Roles' => '/roles',
+                ];
+            }
+            if (in_array('Application manager', $roles)) {
+                $menus += [
+                'Applications' => '/applications',
+                'Users' => '/users',
+                'User Roles' => '/user/roles',
+                ];
+            }
+            if (in_array('Developer', $roles)) {
+                $menus += [
+                'Resources' => '/resources',
+                ];
+            }
+            $menus += [
+            'Logout' => '/logout',
+            ];
+        }
 
-    return $menus;
-  }
+        return $menus;
+    }
   
   /**
    * Get an error message from a API call exception.
-   * 
+   *
    * @param  mixed $e
    *
    * @return string
    */
-  protected function getErrorMessage($e) {
-    if ($e->hasResponse()) {
-      $responseObject = json_decode($e->getResponse()->getBody()->getContents());
-      $message = $responseObject->error->message;
-    } else {
-      $message = $e->getMessage();
+    protected function getErrorMessage($e)
+    {
+        if ($e->hasResponse()) {
+            $responseObject = json_decode($e->getResponse()->getBody()->getContents());
+            $message = $responseObject->error->message;
+        } else {
+            $message = $e->getMessage();
+        }
+        return $message;
     }
-    return $message;
-  }
 
 }
