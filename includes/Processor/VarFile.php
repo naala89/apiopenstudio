@@ -12,14 +12,15 @@ class VarFile extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Var (File)',
     'machineName' => 'var_file',
     'description' => 'Fetch file/s from a request.',
     'menu' => 'Primitive',
     'input' => [
       'key' => [
-        'description' => 'The name of the file/s in the request. If emoty, all files from the request will be returned.',
+        'description' => 'The name of the file/s in the request. \
+        If empty, all files from the request will be returned.',
         'cardinality' => [0, 1],
         'literalAllowed' => true,
         'limitFunctions' => [],
@@ -37,33 +38,33 @@ class VarFile extends Core\ProcessorEntity
         'default' => true,
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $key = $this->val('key', true);
-    $files = $this->request->getFiles();
-    $nullable = filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN);
+        $key = $this->val('key', true);
+        $files = $this->request->getFiles();
+        $nullable = filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN);
 
-    if (!empty($key)) {
-      if (empty($files) || !isset($files[$key])) {
-        if ($nullable) {
-          return new Core\DataContainer([], 'array');
+        if (!empty($key)) {
+            if (empty($files) || !isset($files[$key])) {
+                if ($nullable) {
+                    return new Core\DataContainer([], 'array');
+                }
+                throw new Core\ApiException("file ($key) not received", 5, $this->id, 417);
+            }
+            return new Core\DataContainer($files[$key], 'array');
         }
-        throw new Core\ApiException("file ($key) not received", 5, $this->id, 417);
-      }
-      return new Core\DataContainer($files[$key], 'array');
-    }
 
-    if (!$nullable && empty($files)) {
-      throw new Core\ApiException("files not received", 5, $this->id, 417);
-    }
+        if (!$nullable && empty($files)) {
+            throw new Core\ApiException("files not received", 5, $this->id, 417);
+        }
 
-    return new Core\DataContainer($files, 'array');
-  }
+        return new Core\DataContainer($files, 'array');
+    }
 }

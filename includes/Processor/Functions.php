@@ -19,7 +19,7 @@ class Functions extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Functions',
     'machineName' => 'functions',
     'description' => 'Fetch data on a single or all Functions.',
@@ -28,54 +28,54 @@ class Functions extends Core\ProcessorEntity
       'machine_name' => [
         'description' => 'The resource machine_name or "all" for all functions.',
         'cardinality' => [1, 1],
-        'literalAllowed' => TRUE,
+        'literalAllowed' => true,
         'limitFunctions' => [],
         'limitTypes' => ['string'],
         'limitValues' => [],
         'default' => '',
       ],
     ],
-  ];
+    ];
 
   /**
    * @var array list of namespaces to fetch.
    */
-  private $namespaces = [
+    private $namespaces = [
     'Endpoint',
     'Output',
     'Processor',
     'Security',
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $machineName = $this->val('machine_name', TRUE);
+        $machineName = $this->val('machine_name', true);
 
-    $details = [];
-    foreach ($this->namespaces as $namespace) {
-      $classNames = $this->_getClassList($namespace);
-      foreach ($classNames as $className) {
-        $detail = $this->_getDetails($namespace, $className);
-        if ($detail !== FALSE) {
-          $details[$detail['machineName']] =  $detail;
+        $details = [];
+        foreach ($this->namespaces as $namespace) {
+            $classNames = $this->_getClassList($namespace);
+            foreach ($classNames as $className) {
+                $detail = $this->_getDetails($namespace, $className);
+                if ($detail !== false) {
+                    $details[$detail['machineName']] =  $detail;
+                }
+            }
         }
-      }
-    }
 
-    if ($machineName == 'all') {
-      return $details;
-    }
+        if ($machineName == 'all') {
+            return $details;
+        }
 
-    if (!isset($details[$machineName])) {
-      throw new Core\ApiException("Invalid machine name: $machineName",6, $this->id, 401);
+        if (!isset($details[$machineName])) {
+            throw new Core\ApiException("Invalid machine name: $machineName", 6, $this->id, 401);
+        }
+        return $details[$machineName];
     }
-    return $details[$machineName];
-  }
 
   /**
    * Get a list of classes from a directory.
@@ -86,17 +86,17 @@ class Functions extends Core\ProcessorEntity
    * @return array
    *   The list of class names.
    */
-  private function _getClassList($namespace)
-  {
-    $iterator = new RecursiveIteratorIterator(new \RecursiveDirectoryIterator(__DIR__ . '/../' . $namespace));
-    $objects = new RegexIterator($iterator, '/[a-z0-9]+\.php/i', \RecursiveRegexIterator::GET_MATCH);
-    $result = [];
-    foreach($objects as $name => $object) {
-      preg_match('/([a-zA-Z0-9]+)\.php$/i', $name, $className);
-      $result[] = $className[1];
+    private function _getClassList($namespace)
+    {
+        $iterator = new RecursiveIteratorIterator(new \RecursiveDirectoryIterator(__DIR__ . '/../' . $namespace));
+        $objects = new RegexIterator($iterator, '/[a-z0-9]+\.php/i', \RecursiveRegexIterator::GET_MATCH);
+        $result = [];
+        foreach ($objects as $name => $object) {
+            preg_match('/([a-zA-Z0-9]+)\.php$/i', $name, $className);
+            $result[] = $className[1];
+        }
+        return $result;
     }
-    return $result;
-  }
 
   /**
    * Return the default details attributed from a class.
@@ -111,14 +111,14 @@ class Functions extends Core\ProcessorEntity
    *
    * @throws \ReflectionException
    */
-  private function _getDetails($namespace, $className)
-  {
-    $reflector = new ReflectionClass("\\Gaterdata\\$namespace\\$className");
-    if (!$reflector->isAbstract()) {
-      $properties = $reflector->getDefaultProperties();
-      return $properties['details'];
-    }
+    private function _getDetails($namespace, $className)
+    {
+        $reflector = new ReflectionClass("\\Gaterdata\\$namespace\\$className");
+        if (!$reflector->isAbstract()) {
+            $properties = $reflector->getDefaultProperties();
+            return $properties['details'];
+        }
 
-    return FALSE;
-  }
+        return false;
+    }
 }

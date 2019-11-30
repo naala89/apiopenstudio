@@ -13,7 +13,7 @@ class Collection extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Collection',
     'machineName' => 'collection',
     'description' => 'Collection contains multiple values, like an array or list.',
@@ -29,30 +29,30 @@ class Collection extends Core\ProcessorEntity
         'default' => ''
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $items = $this->val('items', true);
+        $items = $this->val('items', true);
 
-    if ($this->isDataContainer($items)) {
-      if ($items->getType == 'array') {
-        return $items;
-      }
-      // Convert the container of single type into a container of array.
-      return new Core\DataContainer([$items], 'array');
-    }
+        if ($this->isDataContainer($items)) {
+            if ($items->getType == 'array') {
+                return $items;
+            }
+          // Convert the container of single type into a container of array.
+            return new Core\DataContainer([$items], 'array');
+        }
 
-    // Convert single value into an array container.
-    if (!is_array($items)) {
-      return new Core\DataContainer([$items], 'array');
-    }
+      // Convert single value into an array container.
+        if (!is_array($items)) {
+            return new Core\DataContainer([$items], 'array');
+        }
     
-    return new Core\DataContainer($items, 'array');
-  }
+        return new Core\DataContainer($items, 'array');
+    }
 }

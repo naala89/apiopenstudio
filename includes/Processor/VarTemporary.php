@@ -13,7 +13,7 @@ class VarTemporary extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Var (Temporary)',
     'machineName' => 'var_temporary',
     'description' => 'A temporarily stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time during your resource call. The value can be deleted, updated and fetched in future resource..',
@@ -56,43 +56,43 @@ class VarTemporary extends Core\ProcessorEntity
         'default' => true,
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $name = $this->val('name');
-    $strict = !empty($this->meta->strict) ? $this->val('strict') : 1;
-    $operation = $this->val('operation');
+        $name = $this->val('name');
+        $strict = !empty($this->meta->strict) ? $this->val('strict') : 1;
+        $operation = $this->val('operation');
 
-    switch($operation) {
-      case 'save':
-        $_SESSION[$name] = $this->meta->value;
-        return new Core\DataContainer('true', 'text');
-        break;
-      case 'delete':
-        if (!isset($_SESSION[$name])) {
-          if ($strict) {
-            throw new Core\ApiException('could not delete variable, does not exist', 6, $this->id, 417);
-          }
-          return new Core\DataContainer('true', 'text');
+        switch ($operation) {
+            case 'save':
+                $_SESSION[$name] = $this->meta->value;
+            return new Core\DataContainer('true', 'text');
+            break;
+            case 'delete':
+                if (!isset($_SESSION[$name])) {
+                    if ($strict) {
+                        throw new Core\ApiException('could not delete variable, does not exist', 6, $this->id, 417);
+                    }
+                    return new Core\DataContainer('true', 'text');
+                }
+                unset($_SESSION[$name]);
+            return new Core\DataContainer('true', 'text');
+            break;
+            case 'fetch':
+                if ($strict && !isset($_SESSION[$name])) {
+                    throw new Core\ApiException('could not fetch variable, does not exist', 6, $this->id, 417);
+                }
+            return new Core\DataContainer($_SESSION[$name], 'text');
+            break;
+            default:
+            throw new Core\ApiException("invalid operation: $operation", 6, $this->id, 417);
+            break;
         }
-        unset($_SESSION[$name]);
-        return new Core\DataContainer('true', 'text');
-        break;
-      case 'fetch':
-        if ($strict && !isset($_SESSION[$name])) {
-          throw new Core\ApiException('could not fetch variable, does not exist', 6, $this->id, 417);
-        }
-        return new Core\DataContainer($_SESSION[$name], 'text');
-        break;
-      default:
-        throw new Core\ApiException("invalid operation: $operation", 6, $this->id, 417);
-        break;
     }
-  }
 }

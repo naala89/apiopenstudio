@@ -12,7 +12,7 @@ class VarRequest extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Var (Request)',
     'machineName' => 'var_request',
     'description' => 'A "get" or "post" variable. It fetches a variable from the get or post requests.',
@@ -37,24 +37,24 @@ class VarRequest extends Core\ProcessorEntity
         'default' => true,
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $key = $this->val('key', true);
-    $vars = array_merge($this->request->getGetVars(), $this->request->getPostVars());
+        $key = $this->val('key', true);
+        $vars = array_merge($this->request->getGetVars(), $this->request->getPostVars());
 
-    if (isset($vars[$key])) {
-      return new Core\DataContainer($vars[$key], 'text');
+        if (isset($vars[$key])) {
+            return new Core\DataContainer($vars[$key], 'text');
+        }
+        if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
+            return new Core\DataContainer('', 'text');
+        }
+        throw new Core\ApiException("request var $key not available", 1, $this->id);
     }
-    if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
-      return new Core\DataContainer('', 'text');
-    }
-    throw new Core\ApiException("request var $key not available", 1, $this->id);
-  }
 }

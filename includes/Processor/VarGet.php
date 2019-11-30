@@ -2,7 +2,7 @@
 
 /**
  * Get variable.
- * 
+ *
  * @TODO: Should we cater for urlencoded keys in array values?
  */
 
@@ -14,7 +14,7 @@ class VarGet extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Var (Get)',
     'machineName' => 'var_get',
     'description' => 'A "get" variable. It fetches a urldecoded variable from the get request.',
@@ -39,31 +39,31 @@ class VarGet extends Core\ProcessorEntity
         'default' => false,
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $key = $this->val('key', true);
-    $vars = $this->request->getGetVars();
+        $key = $this->val('key', true);
+        $vars = $this->request->getGetVars();
     
-    if (isset($vars[$key])) {
-      if (is_array($vars[$key])) {
-        foreach ($vars[$key] as $index => $val) {
-          $vars[$key][$index] = urldecode($val);
+        if (isset($vars[$key])) {
+            if (is_array($vars[$key])) {
+                foreach ($vars[$key] as $index => $val) {
+                    $vars[$key][$index] = urldecode($val);
+                }
+                return new Core\DataContainer($vars[$key], 'array');
+            }
+            return new Core\DataContainer(urldecode($vars[$key]), 'text');
         }
-        return new Core\DataContainer($vars[$key], 'array');
-      }
-      return new Core\DataContainer(urldecode($vars[$key]), 'text');
-    }
-    if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
-      return new Core\DataContainer('', 'text');
-    }
+        if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
+            return new Core\DataContainer('', 'text');
+        }
 
-    throw new Core\ApiException("GET variable ($key) not received", 5, $this->id, 417);
-  }
+        throw new Core\ApiException("GET variable ($key) not received", 5, $this->id, 417);
+    }
 }

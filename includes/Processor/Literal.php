@@ -12,7 +12,7 @@ class Literal extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Literal',
     'machineName' => 'literal',
     'description' => 'A literal string or value.',
@@ -37,18 +37,18 @@ class Literal extends Core\ProcessorEntity
         'default' => 'text'
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $value = $this->val('value');
-    $type = $this->val('type');
+        $value = $this->val('value');
+        $type = $this->val('type');
 
-    return new Core\DataContainer($value, $type);
-  }
+        return new Core\DataContainer($value, $type);
+    }
 }

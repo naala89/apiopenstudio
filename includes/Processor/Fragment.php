@@ -12,7 +12,7 @@ class Fragment extends Core\ProcessorEntity
   /**
    * {@inheritDoc}
    */
-  protected $details = [
+    protected $details = [
     'name' => 'Fragment',
     'machineName' => 'fragment',
     'description' => 'Insert the result of a fragment declaration.',
@@ -28,21 +28,21 @@ class Fragment extends Core\ProcessorEntity
         'default' => ''
       ],
     ],
-  ];
+    ];
 
   /**
    * {@inheritDoc}
    */
-  public function process()
-  {
-    Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-    $name = $this->val('name');
-    $fragments = $this->request->getFragments();
-    if (empty($fragments) || empty($fragments->$name)) {
-      throw new Core\ApiException("invalid fragment name: $name", $this->id);
+        $name = $this->val('name');
+        $fragments = $this->request->getFragments();
+        if (empty($fragments) || empty($fragments->$name)) {
+            throw new Core\ApiException("invalid fragment name: $name", $this->id);
+        }
+
+        return $fragments->$name;
     }
-
-    return $fragments->$name;
-  }
 }
