@@ -4,7 +4,8 @@ namespace Gaterdata\Core;
 
 use Gaterdata\Core\ApiException;
 
-class Config {
+class Config
+{
 
   /**
    * @var array

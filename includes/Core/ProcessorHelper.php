@@ -1,6 +1,7 @@
 <?php
 
 namespace Gaterdata\Core;
+
 use Gaterdata\Security;
 use Gaterdata\Endpoint;
 use Gaterdata\Output;
