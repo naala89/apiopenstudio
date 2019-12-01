@@ -4,7 +4,8 @@ namespace Gaterdata\Core;
 
 use Exception;
 
-class ApiException extends Exception {
+class ApiException extends Exception
+{
 
     private $processor;
     private $htmlCode;

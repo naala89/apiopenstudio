@@ -1,6 +1,7 @@
 <?php
 
 namespace Gaterdata\Core;
+
 use Gaterdata\Config;
 
 abstract class ProcessorEntity extends Entity
