@@ -7,19 +7,20 @@ namespace Gaterdata\Db;
  *
  * @package Gaterdata\Db
  */
-class ExternalUserMapper extends Mapper {
+class ExternalUserMapper extends Mapper
+{
 
-  /**
-   * Save an external user object.
-   *
-   * @param \Gaterdata\Db\ExternalUser $user
-   *   ExternalUser object.
-   *
-   * @return bool
-   *   Success.
-   *
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Save an external user object.
+     *
+     * @param \Gaterdata\Db\ExternalUser $user
+     *   ExternalUser object.
+     *
+     * @return bool
+     *   Success.
+     *
+     * @throws \Gaterdata\Core\ApiException
+     */
     public function save(ExternalUser $user)
     {
         if ($user->getId() == null) {
@@ -49,17 +50,17 @@ class ExternalUserMapper extends Mapper {
         return $this->saveDelete($sql, $bindParams);
     }
 
-  /**
-   * Delete an external user.
-   *
-   * @param \Gaterdata\Db\ExternalUser $externalUser
-   *   ExternalUser object.
-   *
-   * @return bool
-   *   Success.
-   *
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Delete an external user.
+     *
+     * @param \Gaterdata\Db\ExternalUser $externalUser
+     *   ExternalUser object.
+     *
+     * @return bool
+     *   Success.
+     *
+     * @throws \Gaterdata\Core\ApiException
+     */
     public function delete(ExternalUser $externalUser)
     {
         $sql = 'DELETE FROM external_user WHERE id = ?';
@@ -67,17 +68,17 @@ class ExternalUserMapper extends Mapper {
         return $this->saveDelete($sql, $bindParams);
     }
 
-  /**
-   * Find an external user by ID.
-   *
-   * @param int $id
-   *   External user ID.
-   *
-   * @return \Gaterdata\Db\ExternalUser
-   *   External user object.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Find an external user by ID.
+     *
+     * @param int $id
+     *   External user ID.
+     *
+     * @return \Gaterdata\Db\ExternalUser
+     *   External user object.
+     *
+     * @throws \Gaterdata\Core\ApiException
+     */
     public function findById($id)
     {
         $sql = 'SELECT * FROM external_user WHERE id = ?';
@@ -85,21 +86,21 @@ class ExternalUserMapper extends Mapper {
         return $this->fetchRow($sql, $bindParams);
     }
 
-  /**
-   * Find an external user by app ID, external entity name and external ID.
-   *
-   * @param int $appId
-   *   Application ID.
-   * @param string $externalEntity
-   *   External entity name.
-   * @param int $externalId
-   *   External ID.
-   *
-   * @return \Gaterdata\Db\ExternalUser
-   *   External user object.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Find an external user by app ID, external entity name and external ID.
+     *
+     * @param int $appId
+     *   Application ID.
+     * @param string $externalEntity
+     *   External entity name.
+     * @param int $externalId
+     *   External ID.
+     *
+     * @return \Gaterdata\Db\ExternalUser
+     *   External user object.
+     *
+     * @throws \Gaterdata\Core\ApiException
+     */
     public function findByAppIdEntityExternalId($appId, $externalEntity, $externalId)
     {
         $sql = 'SELECT * FROM external_user WHERE appid = ? AND external_entity = ? AND external_id = ?';
@@ -111,17 +112,17 @@ class ExternalUserMapper extends Mapper {
         return $this->fetchRow($sql, $bindParams);
     }
 
-  /**
-   * Find an external user by application ID.
-   *
-   * @param int $appId
-   *   Application ID.
-   *
-   * @return array
-   *   External user object.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Find an external user by application ID.
+     *
+     * @param int $appId
+     *   Application ID.
+     *
+     * @return array
+     *   External user object.
+     *
+     * @throws \Gaterdata\Core\ApiException
+     */
     public function findByAppid($appId)
     {
         $sql = 'SELECT * FROM external_user WHERE appid = ?';
@@ -129,15 +130,15 @@ class ExternalUserMapper extends Mapper {
         return $this->fetchRows($sql, $bindParams);
     }
 
-  /**
-   * Map a DB results row to this object.
-   *
-   * @param array $row
-   *   DB row results object.
-   *
-   * @return \Gaterdata\Db\ExternalUser
-   *   ExternalUser object.
-   */
+    /**
+     * Map a DB results row to this object.
+     *
+     * @param array $row
+     *   DB row results object.
+     *
+     * @return \Gaterdata\Db\ExternalUser
+     *   ExternalUser object.
+     */
     protected function mapArray(array $row)
     {
         $user = new ExternalUser();
@@ -152,5 +153,4 @@ class ExternalUserMapper extends Mapper {
 
         return $user;
     }
-
 }

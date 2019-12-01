@@ -5,70 +5,71 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 
 class IfThenElse extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'If Then Else',
-    'machineName' => 'ifThenElse',
-    'description' => 'An if then else logic gate.',
-    'menu' => 'Logic',
-    'input' => [
-      'lhs' => [
-        'description' => 'The left-land side value in the equation.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'rhs' => [
-        'description' => 'The right-land side value in the equation.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'operator' => [
-        'description' => 'The comparison operator in the equation.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => ['==', '!=', '>', '>=', '<', '<='],
-        'default' => '',
-      ],
-      'then' => [
-        'description' => 'What to do if the equation returns true.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => false,
-        'limitFunctions' => [],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'else' => [
-        'description' => 'What to do if the equation returns false.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => false,
-        'limitFunctions' => [],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => '',
-      ],
-    ],
+        'name' => 'If Then Else',
+        'machineName' => 'ifThenElse',
+        'description' => 'An if then else logic gate.',
+        'menu' => 'Logic',
+        'input' => [
+          'lhs' => [
+            'description' => 'The left-land side value in the equation.',
+            'cardinality' => [1, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => [],
+            'limitValues' => [],
+            'default' => '',
+          ],
+          'rhs' => [
+            'description' => 'The right-land side value in the equation.',
+            'cardinality' => [1, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => [],
+            'limitValues' => [],
+            'default' => '',
+          ],
+          'operator' => [
+            'description' => 'The comparison operator in the equation.',
+            'cardinality' => [1, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => ['string'],
+            'limitValues' => ['==', '!=', '>', '>=', '<', '<='],
+            'default' => '',
+          ],
+          'then' => [
+            'description' => 'What to do if the equation returns true.',
+            'cardinality' => [1, 1],
+            'literalAllowed' => false,
+            'limitFunctions' => [],
+            'limitTypes' => [],
+            'limitValues' => [],
+            'default' => '',
+          ],
+          'else' => [
+            'description' => 'What to do if the equation returns false.',
+            'cardinality' => [1, 1],
+            'literalAllowed' => false,
+            'limitFunctions' => [],
+            'limitTypes' => [],
+            'limitValues' => [],
+            'default' => '',
+          ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

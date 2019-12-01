@@ -8,35 +8,36 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 
 class VarBool extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Var (Boolean)',
-    'machineName' => 'var_bool',
-    'description' => 'A boolean variable. It validates the input (0,1,yes,no,true,false) into a boolean value, and \
-    returns an error if it is not a boolean.',
-    'menu' => 'Primitive',
-    'input' => [
-      'value' => [
-        'description' => 'The value of the variable.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['boolean'],
-        'limitValues' => [],
-        'default' => false,
-      ],
-    ],
+        'name' => 'Var (Boolean)',
+        'machineName' => 'var_bool',
+        'description' => 'A boolean variable. It validates the input (0,1,yes,no,true,false) into a boolean value, and \
+        returns an error if it is not a boolean.',
+        'menu' => 'Primitive',
+        'input' => [
+            'value' => [
+                'description' => 'The value of the variable.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => false,
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

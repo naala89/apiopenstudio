@@ -5,82 +5,83 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use Gaterdata\Db;
 
 class ApplicationRead extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Application read',
-    'machineName' => 'application_read',
-    'description' => 'Fetch a single or multiple applications.',
-    'menu' => 'Admin',
-    'input' => [
-      'accountIds' => [
-        'description' => 'An array of the IDs of the account to fetch applications by. NULL or empty will fetch for \
-        all accounts.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['array'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'applicationNames' => [
-        'description' => 'An array of the application names. NULL or empty will fetch all applications for the \
-        accounts.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['array'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'accountFilter' => [
-        'description' => 'Account ID to filter by.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'keyword' => [
-        'description' => 'Application keyword to filter by.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string', 'integer'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'orderBy' => [
-        'description' => 'Order by column.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => ['accid', 'appid', 'name'],
-        'default' => ''
-      ],
-      'direction' => [
-        'description' => 'Order by direction.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => ['asc', 'desc'],
-        'default' => ''
-      ],
-    ],
+        'name' => 'Application read',
+        'machineName' => 'application_read',
+        'description' => 'Fetch a single or multiple applications.',
+        'menu' => 'Admin',
+        'input' => [
+            'accountIds' => [
+                // phpcs:ignore
+                'description' => 'An array of the IDs of the account to fetch applications by. NULL or empty will fetch for all accounts.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['array'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'applicationNames' => [
+                // phpcs:ignore
+                'description' => 'An array of the application names. NULL or empty will fetch all applications for the accounts.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['array'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'accountFilter' => [
+                'description' => 'Account ID to filter by.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'keyword' => [
+                'description' => 'Application keyword to filter by.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string', 'integer'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'orderBy' => [
+                'description' => 'Order by column.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => ['accid', 'appid', 'name'],
+                'default' => '',
+            ],
+            'direction' => [
+                'description' => 'Order by direction.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => ['asc', 'desc'],
+                'default' => '',
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

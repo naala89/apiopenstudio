@@ -7,44 +7,47 @@ use Cascade\Cascade;
 use ADOConnection;
 use Gaterdata\Core\Debug;
 
-abstract class Mapper {
-
+abstract class Mapper
+{
+    /**
+     * @var ADOConnection DB Instance.
+     */
     protected $db;
 
-  /**
-   * Mapper constructor.
-   *
-   * @param \ADOConnection $dbLayer
-   *   DB connection object.
-   */
+    /**
+     * Mapper constructor.
+     *
+     * @param \ADOConnection $dbLayer
+     *   DB connection object.
+     */
     public function __construct(ADOConnection $dbLayer)
     {
         $this->db = $dbLayer;
     }
 
-  /**
-   * Map a DB row into an object.
-   *
-   * @param array $row
-   *   DB row.
-   *
-   * @return mixed
-   */
+    /**
+     * Map a DB row into an object.
+     *
+     * @param array $row
+     *   DB row.
+     *
+     * @return mixed
+     */
     abstract protected function mapArray(array $row);
 
-  /**
-   * Perform a save or delete.
-   *
-   * @param string $sql
-   *   Query string.
-   * @param array $bindParams
-   *   Array of bind params.
-   *
-   * @return bool
-   *   Success status.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Perform a save or delete.
+     *
+     * @param string $sql
+     *   Query string.
+     * @param array $bindParams
+     *   Array of bind params.
+     *
+     * @return bool
+     *   Success status.
+     *
+     * @throws ApiException
+     */
     protected function saveDelete($sql, array $bindParams)
     {
         $this->db->Execute($sql, $bindParams);
@@ -56,23 +59,23 @@ abstract class Mapper {
             throw new ApiException($message, 2);
         }
         $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-  //    Cascade::getLogger('gaterdata')->error($message);
+        // Cascade::getLogger('gaterdata')->error($message);
         throw new ApiException($message, 2);
     }
 
-  /**
-   * Perform an SQL statement that expects a single row.
-   *
-   * @param string $sql
-   *   Query string.
-   * @param array $bindParams
-   *   Array of bind params.
-   *
-   * @return mixed
-   *   Mapped row.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Perform an SQL statement that expects a single row.
+     *
+     * @param string $sql
+     *   Query string.
+     * @param array $bindParams
+     *   Array of bind params.
+     *
+     * @return mixed
+     *   Mapped row.
+     *
+     * @throws ApiException
+     */
     protected function fetchRow($sql, $bindParams)
     {
         $row = $this->db->GetRow($sql, $bindParams);
@@ -84,38 +87,38 @@ abstract class Mapper {
         return $this->mapArray($row);
     }
 
-  /**
-   * Perform an SQL statement that expects multiple rows.
-   *
-   * @param string $sql
-   *   Query string.
-   * @param array $bindParams
-   *   Array of bind params.
-   * @param array $params
-   *   parameters (optional)
-   *     [
-   *       'filter' => [
-   *         'keyword' => string,
-   *         'column' => string,
-   *       ]
-   *       'order_by' => string,
-   *       'direction' => string "ASC"|"DESC",
-   *       'offset' => int,
-   *       'limit' => int,
-   *     ]
-   * NOTE:
-   *   * This will throw an exception if the sql already contains a WHERE clause and should be calculated separately in
-   *     these cases.
-   *   * ['filter']['keyword'] '%' characters in keyword not added to keyword automatically.
-   *
-   * @return array
-   *   Array of mapped rows.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Perform an SQL statement that expects multiple rows.
+     *
+     * @param string $sql
+     *   Query string.
+     * @param array $bindParams
+     *   Array of bind params.
+     * @param array $params
+     *   parameters (optional)
+     *     [
+     *       'filter' => [
+     *         'keyword' => string,
+     *         'column' => string,
+     *       ]
+     *       'order_by' => string,
+     *       'direction' => string "ASC"|"DESC",
+     *       'offset' => int,
+     *       'limit' => int,
+     *     ]
+     * NOTE:
+     *   * This will throw an exception if the sql already contains a WHERE clause and should be calculated separately
+     *     in these cases.
+     *   * ['filter']['keyword'] '%' characters in keyword not added to keyword automatically.
+     *
+     * @return array
+     *   Array of mapped rows.
+     *
+     * @throws ApiException
+     */
     protected function fetchRows($sql, $bindParams = [], array $params = [])
     {
-      // Add filter by keyword.
+        // Add filter by keyword.
         if (!empty($params['filter'])) {
             $arr = [];
             foreach ($params['filter'] as $filter) {
@@ -133,7 +136,7 @@ abstract class Mapper {
             }
         }
 
-      // Add order by.
+        // Add order by.
         if (!empty($params['order_by'])) {
             if (stripos($sql, 'order by') !== false) {
                 throw new ApiException('Trying to add order by params on SQL with ORDER BY clause: ' . $sql);
@@ -143,7 +146,7 @@ abstract class Mapper {
             $sql .= " ORDER BY $orderBy $direction";
         }
 
-      // Add limit.
+        // Add limit.
         if (!empty($params['offset']) || !empty($params['limit'])) {
             if (stripos($sql, 'order by') !== false) {
                 throw new ApiException('Trying to limit params on SQL with LIMIT clause: ' . $sql);
@@ -168,5 +171,4 @@ abstract class Mapper {
 
         return $entries;
     }
-
 }

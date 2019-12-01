@@ -5,37 +5,36 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 
 class VarObject extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Var (object)',
-    'machineName' => 'var_object',
-    'description' => 'Create a custom object from inputs. \
-    This is useful for creating an output of object from selected input fields. \
-    You can use field processor for name value pairs, or other processors or literals to create single values. \
-    It can also be used to parse XML, JSON input from an external source into an object that you can work with.',
-    'menu' => 'Primitive',
-    'input' => [
-      'attributes' => [
-        'description' => 'The value of an attribute or a complex object.',
-        'cardinality' => [0, '*'],
-        'literalAllowed' => true,
-        'limitFunctions' => ['varField'],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => '',
-      ],
-    ],
+        'name' => 'Var (object)',
+        'machineName' => 'var_object',
+        // phpcs:ignore
+        'description' => 'Create a custom object from inputs. This is useful for creating an output of object from selected input fields. You can use field processor for name value pairs, or other processors or literals to create single values. It can also be used to parse XML, JSON input from an external source into an object that you can work with.',
+        'menu' => 'Primitive',
+        'input' => [
+            'attributes' => [
+                'description' => 'The value of an attribute or a complex object.',
+                'cardinality' => [0, '*'],
+                'literalAllowed' => true,
+                'limitFunctions' => ['varField'],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => '',
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

@@ -5,62 +5,64 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use Gaterdata\Db;
 
 class AccountRead extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Account read',
-    'machineName' => 'account_read',
-    'description' => 'Fetch a single or all accounts.',
-    'menu' => 'Admin',
-    'input' => [
-      'accid' => [
-        'description' => 'The account ID or "all".',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string', 'integer'],
-        'limitValues' => [],
-        'default' => 'all'
-      ],
-      'keyword' => [
-        'description' => 'Keyword to filter by in the account name. This is only used iwhen getting "all" accounts.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'order_by' => [
-        'description' => 'Order by column. This is only used when getting "all" accounts.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => ['accid', 'name'],
-        'default' => ''
-      ],
-      'direction' => [
-        'description' => 'Order by direction. This is only used when getting "all" accounts.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => ['asc', 'desc'],
-        'default' => ''
-      ],
-    ],
+        'name' => 'Account read',
+        'machineName' => 'account_read',
+        'description' => 'Fetch a single or all accounts.',
+        'menu' => 'Admin',
+        'input' => [
+            'accid' => [
+                'description' => 'The account ID or "all".',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string', 'integer'],
+                'limitValues' => [],
+                'default' => 'all',
+            ],
+            'keyword' => [
+                // phpcs:ignore
+                'description' => 'Keyword to filter by in the account name. This is only used iwhen getting "all" accounts.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'order_by' => [
+                'description' => 'Order by column. This is only used when getting "all" accounts.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => ['accid', 'name'],
+                'default' => '',
+            ],
+            'direction' => [
+                'description' => 'Order by direction. This is only used when getting "all" accounts.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => ['asc', 'desc'],
+                'default' => '',
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

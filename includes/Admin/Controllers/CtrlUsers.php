@@ -17,7 +17,8 @@ use GuzzleHttp\Client;
  *
  * @package Gaterdata\Admin\Controllers
  */
-class CtrlUsers extends CtrlBase {
+class CtrlUsers extends CtrlBase
+{
 
   /**
    * Roles allowed to visit the page.
@@ -113,5 +114,4 @@ class CtrlUsers extends CtrlBase {
         'messages' => $this->flash->getMessages(),
         ]);
     }
-
 }

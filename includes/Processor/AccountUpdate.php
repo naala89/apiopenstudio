@@ -5,44 +5,45 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use Gaterdata\Db;
 
 class AccountUpdate extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Account update',
-    'machineName' => 'account_update',
-    'description' => 'Rename an account.',
-    'menu' => 'Admin',
-    'input' => [
-      'accid' => [
-        'description' => 'The account ID.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'name' => [
-        'description' => 'The new name for the account.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-    ],
+        'name' => 'Account update',
+        'machineName' => 'account_update',
+        'description' => 'Rename an account.',
+        'menu' => 'Admin',
+        'input' => [
+          'accid' => [
+            'description' => 'The account ID.',
+            'cardinality' => [1, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => ['integer'],
+            'limitValues' => [],
+            'default' => ''
+          ],
+          'name' => [
+            'description' => 'The new name for the account.',
+            'cardinality' => [1, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => ['string'],
+            'limitValues' => [],
+            'default' => ''
+          ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

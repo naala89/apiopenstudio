@@ -16,30 +16,30 @@ use RegexIterator;
 
 class Functions extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Functions',
-    'machineName' => 'functions',
-    'description' => 'Fetch data on a single or all Functions.',
-    'menu' => 'System',
-    'input' => [
-      'machine_name' => [
-        'description' => 'The resource machine_name or "all" for all functions.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-    ],
+        'name' => 'Functions',
+        'machineName' => 'functions',
+        'description' => 'Fetch data on a single or all Functions.',
+        'menu' => 'System',
+        'input' => [
+          'machine_name' => [
+            'description' => 'The resource machine_name or "all" for all functions.',
+            'cardinality' => [1, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => ['string'],
+            'limitValues' => [],
+            'default' => '',
+          ],
+        ],
     ];
 
-  /**
-   * @var array list of namespaces to fetch.
-   */
+    /**
+     * @var array list of namespaces to fetch.
+     */
     private $namespaces = [
     'Endpoint',
     'Output',
@@ -47,9 +47,9 @@ class Functions extends Core\ProcessorEntity
     'Security',
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
@@ -77,15 +77,15 @@ class Functions extends Core\ProcessorEntity
         return $details[$machineName];
     }
 
-  /**
-   * Get a list of classes from a directory.
-   *
-   * @param string $namespace
-   *   The subdirectory/namespace.
-   *
-   * @return array
-   *   The list of class names.
-   */
+    /**
+     * Get a list of classes from a directory.
+     *
+     * @param string $namespace
+     *   The subdirectory/namespace.
+     *
+     * @return array
+     *   The list of class names.
+     */
     private function _getClassList($namespace)
     {
         $iterator = new RecursiveIteratorIterator(new \RecursiveDirectoryIterator(__DIR__ . '/../' . $namespace));
@@ -98,19 +98,19 @@ class Functions extends Core\ProcessorEntity
         return $result;
     }
 
-  /**
-   * Return the default details attributed from a class.
-   *
-   * @param string $namespace
-   *   The namespace that the class belongs to.
-   * @param string $className
-   *   The classname.
-   *
-   * @return array
-   *   The details array.
-   *
-   * @throws \ReflectionException
-   */
+    /**
+     * Return the default details attributed from a class.
+     *
+     * @param string $namespace
+     *   The namespace that the class belongs to.
+     * @param string $className
+     *   The classname.
+     *
+     * @return array
+     *   The details array.
+     *
+     * @throws \ReflectionException
+     */
     private function _getDetails($namespace, $className)
     {
         $reflector = new ReflectionClass("\\Gaterdata\\$namespace\\$className");

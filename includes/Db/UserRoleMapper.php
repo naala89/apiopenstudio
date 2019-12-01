@@ -9,19 +9,20 @@ use Gaterdata\Core\ApiException;
  *
  * @package Gaterdata\Db
  */
-class UserRoleMapper extends Mapper {
+class UserRoleMapper extends Mapper
+{
 
-  /**
-   * Save the user role.
-   *
-   * @param UserRole $userRole
-   *   UserRole object.
-   *
-   * @return bool
-   *   Result of the save.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Save the user role.
+     *
+     * @param UserRole $userRole
+     *   UserRole object.
+     *
+     * @return bool
+     *   Result of the save.
+     *
+     * @throws ApiException
+     */
     public function save(UserRole $userRole)
     {
         if ($userRole->getUrid() == null) {
@@ -45,17 +46,17 @@ class UserRoleMapper extends Mapper {
         return $this->saveDelete($sql, $bindParams);
     }
 
-  /**
-   * Delete the user role.
-   *
-   * @param UserRole $userRole
-   *   UserRole object.
-   *
-   * @return bool
-   *   Success.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Delete the user role.
+     *
+     * @param UserRole $userRole
+     *   UserRole object.
+     *
+     * @return bool
+     *   Success.
+     *
+     * @throws ApiException
+     */
     public function delete(UserRole $userRole)
     {
         $sql = 'DELETE FROM user_role WHERE urid = ?';
@@ -63,14 +64,14 @@ class UserRoleMapper extends Mapper {
         return $this->saveDelete($sql, $bindParams);
     }
 
-  /**
-   * Find all user roles.
-   *
-   * @return array
-   *   Array of mapped UserRole objects.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Find all user roles.
+     *
+     * @return array
+     *   Array of mapped UserRole objects.
+     *
+     * @throws ApiException
+     */
     public function findAll()
     {
         $sql = 'SELECT * FROM user_role';
@@ -78,23 +79,23 @@ class UserRoleMapper extends Mapper {
         return $this->fetchRows($sql, $bindParams);
     }
 
-  /**
-   * Find user roles using filter.
-   *
-   * @param array $params
-   *   Associative array of filter poarams.
-   * @return array
-   *   User roles
-   *
-   * @throws ApiException
-   *
-   * @example
-   *   findByFilter([
-   *     'col' => ['rid' => 1],
-   *     'order_by' => 'uid',
-   *     'direction' => 'asc'
-   *   )
-   */
+    /**
+     * Find user roles using filter.
+     *
+     * @param array $params
+     *  Associative array of filter poarams.
+     * @return array
+     *   User roles
+     *
+     * @throws ApiException
+     *
+     * @example
+     *   findByFilter([
+     *     'col' => ['rid' => 1],
+     *     'order_by' => 'uid',
+     *     'direction' => 'asc'
+     *   )
+     */
     public function findByFilter($params)
     {
         $sql = 'SELECT * FROM user_role';
@@ -121,15 +122,15 @@ class UserRoleMapper extends Mapper {
         return $this->fetchRows($sql, $bindParams, $order);
     }
 
-  /**
-   * Map a DB row to a UserRole object.
-   *
-   * @param array $row
-   *   DB Row.
-   *
-   * @return UserRole
-   *   UserRole object.
-   */
+    /**
+     * Map a DB row to a UserRole object.
+     *
+     * @param array $row
+     *   DB Row.
+     *
+     * @return UserRole
+     *   UserRole object.
+     */
     protected function mapArray(array $row)
     {
         $userRole = new UserRole();
@@ -142,5 +143,4 @@ class UserRoleMapper extends Mapper {
 
         return $userRole;
     }
-
 }

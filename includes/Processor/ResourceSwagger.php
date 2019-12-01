@@ -5,37 +5,35 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use Gaterdata\Db\ResourceMapper;
 
 class ResourceSwagger extends ResourceBase
 {
-  /**
-   * {@inheritDoc}
-   */
     protected $details = [
     'name' => 'Import Swagger',
-    'machineName' => 'resourceSwagger',
-    'description' => 'Create a custom API resource using a Swagger YAML document.',
-    'menu' => 'Admin',
-    'input' => [
-      'resource' => [
-        'description' => 'The resource string or file. This can be an attached file or a urlencoded GET var.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string', 'file'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-    ],
+        'machineName' => 'resourceSwagger',
+        'description' => 'Create a custom API resource using a Swagger YAML document.',
+        'menu' => 'Admin',
+        'input' => [
+            'resource' => [
+                'description' => 'The resource string or file. This can be an attached file or a urlencoded GET var.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string', 'file'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+        ],
     ];
 
     private $paramCount;
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         $this->paramCount = 2;
@@ -101,15 +99,15 @@ class ResourceSwagger extends ResourceBase
         return $resources;
     }
 
-  /**
-   * Create or update a resource from YAML.
-   * The Yaml is either post string 'yaml', or file 'yaml'.
-   * File takes precedence over the string if both present.
-   *
-   * @param null $data
-   * @return bool
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Create or update a resource from YAML.
+     * The Yaml is either post string 'yaml', or file 'yaml'.
+     * File takes precedence over the string if both present.
+     *
+     * @param null $data
+     * @return bool
+     * @throws \Gaterdata\Core\ApiException
+     */
     protected function save($data)
     {
         $this->_validateData($data);
@@ -137,25 +135,28 @@ class ResourceSwagger extends ResourceBase
         return $mapper->save($resource);
     }
 
-  /**
-   * @return array|string
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * @return array|string
+     * @throws \Gaterdata\Core\ApiException
+     */
     protected function _importData($data)
     {
         return \Spyc::YAMLLoadString($data);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function _exportData($data)
     {
 
     }
 
-  /**
-   * @param $uriParams
-   * @return array
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * @param $uriParams
+     * @return array
+     * @throws \Gaterdata\Core\ApiException
+     */
     protected function _extractUriParams($uriParams)
     {
         $result = array();
@@ -173,12 +174,12 @@ class ResourceSwagger extends ResourceBase
         return $result;
     }
 
-  /**
-   * @param $parameters
-   * @param $method
-   * @return array
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * @param $parameters
+     * @param $method
+     * @return array
+     * @throws \Gaterdata\Core\ApiException
+     */
     protected function _extractParameters($parameters, $method)
     {
         $result = array();
@@ -196,7 +197,7 @@ class ResourceSwagger extends ResourceBase
                     $p['meta']['id'] = $this->paramCount++;
                   break;
             }
-          // strongly typed
+            // strongly typed
             if (!empty($parameter['items']['type'])) {
                 Core\Debug::variable($parameter['items']['type'], 'strongly typed');
                 $p = array(

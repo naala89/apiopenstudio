@@ -16,7 +16,8 @@ use GuzzleHttp\Exception\RequestException;
  *
  * @package Gaterdata\Admin\Middleware
  */
-class Authentication {
+class Authentication
+{
 
   /**
    * @var Container
@@ -156,5 +157,4 @@ class Authentication {
 
         return $message;
     }
-
 }

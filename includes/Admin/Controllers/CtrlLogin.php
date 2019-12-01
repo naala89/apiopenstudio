@@ -15,7 +15,8 @@ use stdClass;
  *
  * @package Gaterdata\Admin\Controllers
  */
-class CtrlLogin extends CtrlBase {
+class CtrlLogin extends CtrlBase
+{
 
   /**
    * Login page.
@@ -34,8 +35,8 @@ class CtrlLogin extends CtrlBase {
     {
         $menu = $this->getMenus(new stdClass());
         return $this->view->render($response, 'login.twig', [
-        'menu' => $menu,
-        'messages' => $this->flash->getMessages(),
+            'menu' => $menu,
+            'messages' => $this->flash->getMessages(),
         ]);
     }
 
@@ -58,9 +59,8 @@ class CtrlLogin extends CtrlBase {
         unset($_SESSION['token']);
         unset($_SESSION['uid']);
         return $this->view->render($response, 'login.twig', [
-        'menu' => $menu,
-        'messages' => $this->flash->getMessages(),
+            'menu' => $menu,
+            'messages' => $this->flash->getMessages(),
         ]);
     }
-
 }

@@ -5,35 +5,36 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use Gaterdata\Db;
 
 class AccountDelete extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Account delete',
-    'machineName' => 'account_delete',
-    'description' => 'Delete an account.',
-    'menu' => 'Admin',
-    'input' => [
-      'accid' => [
-        'description' => 'The account ID.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-    ],
+        'name' => 'Account delete',
+        'machineName' => 'account_delete',
+        'description' => 'Delete an account.',
+        'menu' => 'Admin',
+        'input' => [
+          'accid' => [
+            'description' => 'The account ID.',
+            'cardinality' => [1, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => ['integer'],
+            'limitValues' => [],
+            'default' => ''
+          ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
@@ -47,7 +48,7 @@ class AccountDelete extends Core\ProcessorEntity
         if (empty($account->getAccid())) {
             throw new Core\ApiException("Account does not exist: $accid", 6, $this->id, 400);
         }
-      // Do not delete if applications are attached to the account.
+        // Do not delete if applications are attached to the account.
         $applicationMapper = new Db\ApplicationMapper($this->db);
         $applications = $applicationMapper->findByAccid($accid);
         if (!empty($applications)) {

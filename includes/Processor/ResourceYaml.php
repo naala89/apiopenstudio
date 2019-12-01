@@ -7,19 +7,19 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use Gaterdata\Core\Debug;
 
 class ResourceYaml extends ResourceBase
 {
-
-  /**
-   * Convert YAML string to YAML array.
-   *
-   * @param $string
-   * @return string
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Convert YAML string to YAML array.
+     *
+     * @param $string
+     * @return string
+     * @throws \Gaterdata\Core\ApiException
+     */
     protected function _importData($string)
     {
         $yaml = \Spyc::YAMLLoadString($string);
@@ -29,11 +29,11 @@ class ResourceYaml extends ResourceBase
         return $yaml;
     }
 
-  /**
-   * Convert YAML array to YAML string
-   * @param array $data
-   * @return string
-   */
+    /**
+     * Convert YAML array to YAML string
+     * @param array $data
+     * @return string
+     */
     protected function _exportData($data)
     {
         return \Spyc::YAMLDump($data);

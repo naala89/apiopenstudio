@@ -5,45 +5,46 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use Gaterdata\Core\ApiException;
 use Gaterdata\Db;
 
 class ApplicationCreate extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Application create',
-    'machineName' => 'application_create',
-    'description' => 'Create an application.',
-    'menu' => 'Admin',
-    'input' => [
-      'accid' => [
-        'description' => 'The parent account ID for the application.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'name' => [
-        'description' => 'The application name.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-    ],
+        'name' => 'Application create',
+        'machineName' => 'application_create',
+        'description' => 'Create an application.',
+        'menu' => 'Admin',
+        'input' => [
+          'accid' => [
+            'description' => 'The parent account ID for the application.',
+            'cardinality' => [1, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => ['integer'],
+            'limitValues' => [],
+            'default' => ''
+          ],
+          'name' => [
+            'description' => 'The application name.',
+            'cardinality' => [1, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => ['string'],
+            'limitValues' => [],
+            'default' => ''
+          ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

@@ -17,94 +17,94 @@ abstract class ResourceBase extends Core\ProcessorEntity
 {
     protected $helper;
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Resource',
-    'machineName' => 'resource_base',
-    'description' => 'Create, edit or fetch a custom API resource for the application. NOTE: in the case of DELETE, \
-    the args for the input should be as GET vars - POST vars are not guaranteed on all servers with this method.',
-    'menu' => 'Admin',
-    'input' => [
-      'method' => [
-        'description' => 'The HTTP method of the resource (only used if fetching or deleting a resource).',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => ['get', 'post', 'delete', 'push'],
-        'default' => '',
-      ],
-      'accName' => [
-        'description' => 'The application name that the resource is associated with.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'appName' => [
-        'description' => 'The application name that the resource is associated with.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'uri' => [
-        'description' => 'The URI for the resource, i.e. the part after the App ID in the URL \
-        (only used if fetching or deleting a resource).',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'resourceString' => [
-        'description' => 'The resource as a string \
-        (this input is only used if you are creating or updating a resource).',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'resourceFile' => [
-        'description' => 'The resource as a string \
-        (this input is only used if you are creating or updating a resource).',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-    ]
+        'name' => 'Resource',
+        'machineName' => 'resource_base',
+        // phpcs:ignore
+        'description' => 'Create, edit or fetch a custom API resource for the application. NOTE: in the case of DELETE, the args for the input should be as GET vars - POST vars are not guaranteed on all servers with this method.',
+        'menu' => 'Admin',
+        'input' => [
+            'method' => [
+                'description' => 'The HTTP method of the resource (only used if fetching or deleting a resource).',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => ['get', 'post', 'delete', 'push'],
+                'default' => '',
+            ],
+            'accName' => [
+                'description' => 'The application name that the resource is associated with.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'appName' => [
+                'description' => 'The application name that the resource is associated with.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'uri' => [
+                // phpcs:ignore
+                'description' => 'The URI for the resource, i.e. the part after the App ID in the URL (only used if fetching or deleting a resource).',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'resourceString' => [
+                // phpcs:ignore
+                'description' => 'The resource as a string (this input is only used if you are creating or updating a resource).',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'resourceFile' => [
+                // phpcs:ignore
+                'description' => 'The resource as a string (this input is only used if you are creating or updating a resource).',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+        ]
     ];
 
-  /**
-   * Constructor. Store processor metadata and request data in object.
-   *
-   * If this method is overridden by any derived classes, don't forget to call parent::__construct()
-   *
-   * @param array $meta
-   * @param object $request
-   * @param \ADOConnection $db
-   */
+    /**
+     * Constructor. Store processor metadata and request data in object.
+     *
+     * If this method is overridden by any derived classes, don't forget to call parent::__construct()
+     *
+     * @param array $meta
+     * @param object $request
+     * @param \ADOConnection $db
+     */
     public function __construct($meta, &$request, $db)
     {
         parent::__construct($meta, $request, $db);
         $this->helper = new ProcessorHelper();
     }
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
@@ -156,33 +156,33 @@ abstract class ResourceBase extends Core\ProcessorEntity
         return $result;
     }
 
-  /**
-   * Abstract class used to fetch input resource into the correct array format.
-   * This has to be declared in each derived class, so that we can cater for many input formats.
-   *
-   * @param $data
-   * @return mixed
-   */
+    /**
+     * Abstract class used to fetch input resource into the correct array format.
+     * This has to be declared in each derived class, so that we can cater for many input formats.
+     *
+     * @param $data
+     * @return mixed
+     */
     abstract protected function _importData($data);
 
-  /**
-   * Abstract class used to fetch input resource into the correct array format.
-   * This has to be declared in each derived class, so that we can cater for many output formats.
-   *
-   * @param array $data
-   * @return mixed
-   */
+    /**
+     * Abstract class used to fetch input resource into the correct array format.
+     * This has to be declared in each derived class, so that we can cater for many output formats.
+     *
+     * @param array $data
+     * @return mixed
+     */
     abstract protected function _exportData($data);
 
-  /**
-   * Fetch a resource.
-   *
-   * @param $appId
-   * @param $method
-   * @param $uri
-   * @return mixed
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Fetch a resource.
+     *
+     * @param $appId
+     * @param $method
+     * @param $uri
+     * @return mixed
+     * @throws \Gaterdata\Core\ApiException
+     */
     protected function read($appId, $method, $uri)
     {
         if (empty($appId)) {
@@ -212,15 +212,15 @@ abstract class ResourceBase extends Core\ProcessorEntity
         return new Core\DataContainer($this->_exportData($result), 'text');
     }
 
-  /**
-   * Delete a resource.
-   *
-   * @param $appId
-   * @param $method
-   * @param $uri
-   * @return bool
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Delete a resource.
+     *
+     * @param $appId
+     * @param $method
+     * @param $uri
+     * @return bool
+     * @throws \Gaterdata\Core\ApiException
+     */
     protected function delete($appId, $method, $uri)
     {
         if (empty($appId)) {
@@ -240,16 +240,16 @@ abstract class ResourceBase extends Core\ProcessorEntity
         return new Core\DataContainer($mapper->delete($resource) ? 'true' : 'false', 'text');
     }
 
-  /**
-   * Create or update a resource from input data into the caller's app and acc.
-   *
-   * @param $data
-   * @param $accName
-   * @param $appName
-   *
-   * @return bool
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Create or update a resource from input data into the caller's app and acc.
+     *
+     * @param $data
+     * @param $accName
+     * @param $appName
+     *
+     * @return bool
+     * @throws \Gaterdata\Core\ApiException
+     */
     protected function create($data, $accName, $appName)
     {
         Core\Debug::variable($data, 'New resource', 1);
@@ -297,16 +297,16 @@ abstract class ResourceBase extends Core\ProcessorEntity
         return new Core\DataContainer($resourceMapper->save($resource) ? 'true' : 'false', 'text');
     }
 
-  /**
-   * Validate input data is well formed.
-   *
-   * @param $data
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Validate input data is well formed.
+     *
+     * @param $data
+     * @throws \Gaterdata\Core\ApiException
+     */
     protected function _validateData($data)
     {
         Debug::message('Validating the new resource...');
-      // check mandatory elements exists in data
+        // check mandatory elements exists in data
         if (empty($data)) {
             throw new Core\ApiException("empty resource uploaded", 6, $this->id, 406);
         }
@@ -333,12 +333,12 @@ abstract class ResourceBase extends Core\ProcessorEntity
             throw new Core\ApiException("missing or negative ttl in new resource", 6, -1, 406);
         }
 
-      // validate for identical IDs
+        // validate for identical IDs
         $this->_identicalIds($data);
 
-      // validate dictionaries
+        // validate dictionaries
         if (isset($data['security'])) {
-          // check for identical IDs
+            // check for identical IDs
             $this->_validateDetails($data['security']);
         }
         if (!empty($data['output'])) {
@@ -368,11 +368,11 @@ abstract class ResourceBase extends Core\ProcessorEntity
         $this->_validateDetails($data['process']);
     }
 
-  /**
-   * Search for identical IDs.
-   * @param $meta
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Search for identical IDs.
+     * @param $meta
+     * @throws \Gaterdata\Core\ApiException
+     */
     private function _identicalIds($meta)
     {
         $id = [];
@@ -395,12 +395,12 @@ abstract class ResourceBase extends Core\ProcessorEntity
         return;
     }
 
-  /**
-   * Validate a resource section
-   *
-   * @param $meta
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Validate a resource section
+     *
+     * @param $meta
+     * @throws \Gaterdata\Core\ApiException
+     */
     private function _validateDetails($meta)
     {
         $stack = array($meta);
@@ -475,32 +475,24 @@ abstract class ResourceBase extends Core\ProcessorEntity
             }
         }
 
-
-
-
     }
 
-  /**
-   * Compare an element type and possible literal value or type in the input resource with the definition in the
-   * Processor it refers to. If the element type is processor, recursively iterate through, using the calling
-   * function _validateProcessor().
-   *
-   * @param $element
-   * @param $accepts
-   * @param $id
-   * @return bool
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Compare an element type and possible literal value or type in the input resource with the definition in the
+     * Processor it refers to. If the element type is processor, recursively iterate through, using the calling
+     * function _validateProcessor().
+     *
+     * @param $element
+     * @param $accepts
+     * @param $id
+     * @return bool
+     * @throws \Gaterdata\Core\ApiException
+     */
     private function _validateTypeValue($element, $accepts, $id)
     {
         if (empty($accepts)) {
             return true;
         }
-      /*
-      if (is_array($element) && isset($element['function']) && isset($element['id'])) {
-      return TRUE;
-      }
-      */
         $valid = false;
 
         foreach ($accepts as $accept) {

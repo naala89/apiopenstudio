@@ -5,34 +5,35 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 
 class Fragment extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Fragment',
-    'machineName' => 'fragment',
-    'description' => 'Insert the result of a fragment declaration.',
-    'menu' => 'Logic',
-    'input' => [
-      'name' => [
-        'description' => 'The name of the fragment',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => ''
-      ],
-    ],
+        'name' => 'Fragment',
+        'machineName' => 'fragment',
+        'description' => 'Insert the result of a fragment declaration.',
+        'menu' => 'Logic',
+        'input' => [
+          'name' => [
+            'description' => 'The name of the fragment',
+            'cardinality' => [1, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => [],
+            'limitValues' => [],
+            'default' => ''
+          ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

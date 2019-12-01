@@ -17,7 +17,8 @@ use Slim\Http\Response;
  *
  * @package Gaterdata\Admin\Controllers
  */
-class CtrlBase {
+class CtrlBase
+{
 
   /**
    * Roles allowed to visit the page.
@@ -367,5 +368,4 @@ class CtrlBase {
         }
         return $message;
     }
-
 }

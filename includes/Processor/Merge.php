@@ -5,52 +5,53 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 
 class Merge extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Merge',
-    'machineName' => 'merge',
-    'description' => 'Merge multiple data-sets.',
-    'menu' => 'Process',
-    'input' => [
-      'sources' => [
-        'description' => 'The data-sets to be merged.',
-        'cardinality' => [2, '*'],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'mergeType' => [
-        'description' => 'The merge operation to perform.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => ['union', 'intersect', 'difference'],
-        'default' => 'union',
-      ],
-      'unique' => [
-        'description' => 'Disallow duplicate values.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['boolean'],
-        'limitValues' => [],
-        'default' => false,
-      ],
-    ],
+        'name' => 'Merge',
+        'machineName' => 'merge',
+        'description' => 'Merge multiple data-sets.',
+        'menu' => 'Process',
+        'input' => [
+          'sources' => [
+            'description' => 'The data-sets to be merged.',
+            'cardinality' => [2, '*'],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => [],
+            'limitValues' => [],
+            'default' => '',
+          ],
+          'mergeType' => [
+            'description' => 'The merge operation to perform.',
+            'cardinality' => [1, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => ['string'],
+            'limitValues' => ['union', 'intersect', 'difference'],
+            'default' => 'union',
+          ],
+          'unique' => [
+            'description' => 'Disallow duplicate values.',
+            'cardinality' => [0, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => ['boolean'],
+            'limitValues' => [],
+            'default' => false,
+          ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
@@ -70,10 +71,10 @@ class Merge extends Core\ProcessorEntity
         return $this->$method($sources);
     }
 
-  /**
-   * @param $values
-   * @return array|mixed
-   */
+    /**
+     * @param $values
+     * @return array|mixed
+     */
     private function _union($values)
     {
         $result = array_shift($values);
@@ -85,10 +86,10 @@ class Merge extends Core\ProcessorEntity
         return $result;
     }
 
-  /**
-   * @param $values
-   * @return array|mixed
-   */
+    /**
+     * @param $values
+     * @return array|mixed
+     */
     private function _intersect($values)
     {
         $result = array_shift($values);
@@ -100,6 +101,10 @@ class Merge extends Core\ProcessorEntity
         return $result;
     }
 
+    /**
+     * @param $values
+     * @return array|mixed
+     */
     private function _difference($values)
     {
         $result = array_shift($values);

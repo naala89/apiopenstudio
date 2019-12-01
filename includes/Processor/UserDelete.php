@@ -5,35 +5,36 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use Gaterdata\Db;
 
 class UserDelete extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'User delete',
-    'machineName' => 'user_delete',
-    'description' => 'Delete a user.',
-    'menu' => 'Admin',
-    'input' => [
-      'uid' => [
-        'description' => 'The user ID of the user.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-    ],
+        'name' => 'User delete',
+        'machineName' => 'user_delete',
+        'description' => 'Delete a user.',
+        'menu' => 'Admin',
+        'input' => [
+            'uid' => [
+                'description' => 'The user ID of the user.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => ''
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
@@ -44,7 +45,7 @@ class UserDelete extends Core\ProcessorEntity
 
         $userMapper = new Db\UserMapper($this->db);
 
-      // Find by UID.
+        // Find by UID.
         $user = $userMapper->findByUid($uid);
         if (empty($user->getUid())) {
             throw new Core\ApiException("User does not exist, uid: $uid", 6, $this->id, 400);

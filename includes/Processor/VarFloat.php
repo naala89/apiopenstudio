@@ -8,34 +8,35 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 
 class VarFloat extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Var (Float)',
-    'machineName' => 'var_float',
-    'description' => 'A float variable. It validates the input and returns an error if it is not a float.',
-    'menu' => 'Primitive',
-    'input' => [
-      'value' => [
-        'description' => 'The value of the variable.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['float'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-    ],
+        'name' => 'Var (Float)',
+        'machineName' => 'var_float',
+        'description' => 'A float variable. It validates the input and returns an error if it is not a float.',
+        'menu' => 'Primitive',
+        'input' => [
+            'value' => [
+                'description' => 'The value of the variable.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['float'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

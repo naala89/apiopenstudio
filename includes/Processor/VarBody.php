@@ -13,26 +13,27 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use Gaterdata\Core\ApiException;
 use Gaterdata\Core\Debug;
 
 class VarBody extends VarMixed
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Var (Body)',
-    'machineName' => 'var_body',
-    'description' => 'Fetch the entire body of a post into a variable.',
-    'menu' => 'Primitive',
-    'input' => [],
+        'name' => 'Var (Body)',
+        'machineName' => 'var_body',
+        'description' => 'Fetch the entire body of a post into a variable.',
+        'menu' => 'Primitive',
+        'input' => [],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

@@ -5,34 +5,35 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 
 class VarMixed extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Var (Mixed)',
-    'machineName' => 'var_mixed',
-    'description' => 'A variable of any type.',
-    'menu' => 'Primitive',
-    'input' => [
-      'value' => [
-        'description' => 'The value of the variable.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => '',
-      ],
-    ],
+        'name' => 'Var (Mixed)',
+        'machineName' => 'var_mixed',
+        'description' => 'A variable of any type.',
+        'menu' => 'Primitive',
+        'input' => [
+            'value' => [
+                'description' => 'The value of the variable.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => '',
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

@@ -9,19 +9,19 @@ use Gaterdata\Core\ApiException;
  *
  * @package Gaterdata\Db
  */
-class ResourceMapper extends Mapper {
-
-  /**
-   * Save an API Resource.
-   *
-   * @param Resource $resource
-   *   The API Resource.
-   *
-   * @return bool
-   *   Success.
-   *
-   * @throws ApiException
-   */
+class ResourceMapper extends Mapper
+{
+    /**
+     * Save an API Resource.
+     *
+     * @param Resource $resource
+     *   The API Resource.
+     *
+     * @return bool
+     *   Success.
+     *
+     * @throws ApiException
+     */
     public function save(Resource $resource)
     {
         if ($resource->getResid() == null) {
@@ -53,16 +53,16 @@ class ResourceMapper extends Mapper {
         return $this->saveDelete($sql, $bindParams);
     }
 
-  /**
-   * Delete an API resource.
-   *
-   * @param ApiResource $resource
-   *   Resource object.
-   * @return bool
-   *   Success.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Delete an API resource.
+     *
+     * @param ApiResource $resource
+     *   Resource object.
+     * @return bool
+     *   Success.
+     *
+     * @throws ApiException
+     */
     public function delete(ApiResource $resource)
     {
         $sql = 'DELETE FROM resource WHERE resid = ?';
@@ -70,32 +70,32 @@ class ResourceMapper extends Mapper {
         return $this->fetchRow($sql, $bindParams);
     }
 
-  /**
-   * Find all resources.
-   *
-   * @return Resource
-   *   Resource object.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Find all resources.
+     *
+     * @return Resource
+     *   Resource object.
+     *
+     * @throws ApiException
+     */
     public function all()
     {
         $sql = 'SELECT * FROM resource';
         return $this->fetchRows($sql);
     }
 
-  /**
-   * Find a resource by its ID.
-   *
-   * @param int $resid
-   *   Resource ID.
-   * @return mixed
-   *
-   * @return Resource
-   *   Resource object.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Find a resource by its ID.
+     *
+     * @param int $resid
+     *   Resource ID.
+     * @return mixed
+     *
+     * @return Resource
+     *   Resource object.
+     *
+     * @throws ApiException
+     */
     public function findId($resid)
     {
         $sql = 'SELECT * FROM resource WHERE resid = ?';
@@ -103,21 +103,21 @@ class ResourceMapper extends Mapper {
         return $this->fetchRow($sql, $bindParams);
     }
 
-  /**
-   * Find a resource by application ID, method and URI.
-   *
-   * @param int $appid
-   *   Application ID.
-   * @param string $method
-   *   API resource method.
-   * @param string $uri
-   *   API resource URI.
-   *
-   * @return Resource
-   *   Resource object.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Find a resource by application ID, method and URI.
+     *
+     * @param int $appid
+     *   Application ID.
+     * @param string $method
+     *   API resource method.
+     * @param string $uri
+     *   API resource URI.
+     *
+     * @return Resource
+     *   Resource object.
+     *
+     * @throws ApiException
+     */
     public function findByAppIdMethodUri($appid, $method, $uri)
     {
         $sql = 'SELECT * FROM resource WHERE appid = ? AND method = ? AND uri = ?';
@@ -125,21 +125,21 @@ class ResourceMapper extends Mapper {
         return $this->fetchRow($sql, $bindParams);
     }
 
-  /**
-   * Find a resource by application name/s, method and uri.
-   *
-   * @param array|string $appNames
-   *   Application name or array of application names.
-   * @param string $method
-   *   Resource method.
-   * @param string $uri
-   *   Resource uri.
-   *
-   * @return array
-   *   Array of Resource objects.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Find a resource by application name/s, method and uri.
+     *
+     * @param array|string $appNames
+     *   Application name or array of application names.
+     * @param string $method
+     *   Resource method.
+     * @param string $uri
+     *   Resource uri.
+     *
+     * @return array
+     *   Array of Resource objects.
+     *
+     * @throws ApiException
+     */
     public function findByAppNamesMethodUri($appNames, $method, $uri)
     {
         $sql = 'SELECT r.* FROM resource AS r INNER JOIN application AS a ON r.appid=a.appid WHERE';
@@ -175,19 +175,19 @@ class ResourceMapper extends Mapper {
         return $entries;
     }
 
-  /**
-   * Find Resources by an application ID.
-   *
-   * @param int|array $appids
-   *   Application ID or an array of appid's.
-   * @param array $params
-   *   Filter and order params.
-   *
-   * @return array
-   *   Array of Resource objects.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Find Resources by an application ID.
+     *
+     * @param int|array $appids
+     *   Application ID or an array of appid's.
+     * @param array $params
+     *   Filter and order params.
+     *
+     * @return array
+     *   Array of Resource objects.
+     *
+     * @throws ApiException
+     */
     public function findByAppId($appids, $params = [])
     {
         if (!is_array($appids)) {
@@ -208,15 +208,15 @@ class ResourceMapper extends Mapper {
         return $this->fetchRows($sql, $bindParams, $params);
     }
 
-  /**
-   * Map a DB row to this object.
-   *
-   * @param array $row
-   *   DB row object.
-   *
-   * @return Resource ApiResource object.
-   *   ApiResource object.
-   */
+    /**
+     * Map a DB row to this object.
+     *
+     * @param array $row
+     *   DB row object.
+     *
+     * @return Resource|mixed ApiResource object.
+     *   ApiResource object.
+     */
     protected function mapArray(array $row)
     {
         $resource = new Resource();
@@ -232,5 +232,4 @@ class ResourceMapper extends Mapper {
 
         return $resource;
     }
-
 }

@@ -10,30 +10,30 @@ use Gaterdata\Core;
 
 class Collection extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Collection',
-    'machineName' => 'collection',
-    'description' => 'Collection contains multiple values, like an array or list.',
-    'menu' => 'Primitive',
-    'input' => [
-      'items' => [
-        'description' => 'The items in the collection',
-        'cardinality' => [0, '*'],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => ''
-      ],
-    ],
+        'name' => 'Collection',
+        'machineName' => 'collection',
+        'description' => 'Collection contains multiple values, like an array or list.',
+        'menu' => 'Primitive',
+        'input' => [
+          'items' => [
+            'description' => 'The items in the collection',
+            'cardinality' => [0, '*'],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => [],
+            'limitValues' => [],
+            'default' => ''
+          ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
@@ -44,11 +44,11 @@ class Collection extends Core\ProcessorEntity
             if ($items->getType == 'array') {
                 return $items;
             }
-          // Convert the container of single type into a container of array.
+            // Convert the container of single type into a container of array.
             return new Core\DataContainer([$items], 'array');
         }
 
-      // Convert single value into an array container.
+        // Convert single value into an array container.
         if (!is_array($items)) {
             return new Core\DataContainer([$items], 'array');
         }

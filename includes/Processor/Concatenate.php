@@ -5,34 +5,35 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 
 class Concatenate extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Concatenate',
-    'machineName' => 'concatenate',
-    'description' => 'Concatenate a series of strings or numbers into a single string.',
-    'menu' => 'Primitive',
-    'input' => [
-      'sources' => [
-        'description' => 'The values to concatenate',
-        'cardinality' => [2, '*'],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => ''
-      ],
-    ],
+        'name' => 'Concatenate',
+        'machineName' => 'concatenate',
+        'description' => 'Concatenate a series of strings or numbers into a single string.',
+        'menu' => 'Primitive',
+        'input' => [
+          'sources' => [
+            'description' => 'The values to concatenate',
+            'cardinality' => [2, '*'],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => [],
+            'limitValues' => [],
+            'default' => ''
+          ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
