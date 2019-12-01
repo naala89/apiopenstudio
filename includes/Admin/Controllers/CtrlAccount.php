@@ -12,7 +12,8 @@ use GuzzleHttp\Exception\ClientException;
  *
  * @package Gaterdata\Admin\Controllers
  */
-class CtrlAccount extends CtrlBase {
+class CtrlAccount extends CtrlBase
+{
 
   /**
    * Roles allowed to visit the page.
@@ -250,5 +251,4 @@ class CtrlAccount extends CtrlBase {
             return $response->withStatus(302)->withHeader('Location', '/accounts');
         }
     }
-
 }

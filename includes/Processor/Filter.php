@@ -5,85 +5,85 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Console\Helper\DebugFormatterHelper;
 
 class Filter extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Filter',
-    'machineName' => 'filter',
-    'description' => 'Filter values from a data-set.',
-    'menu' => 'Operation',
-    'input' => [
-      'values' => [
-        'description' => 'The data-set to filter.',
-        'cardinality' => [0, '*'],
-        'literalAllowed' => false,
-        'limitFunctions' => [],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'filter' => [
-        'description' => 'The literal values to filter out.',
-        'cardinality' => [0, '*'],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string', 'array'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'regex' => [
-        'description' => 'If set ot true, use the filter string as a regex. If set to false, use the filter string \
-        for exact comparison.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['boolean'],
-        'limitValues' => [],
-        'default' => 'false'
-      ],
-      'keyOrValue' => [
-        'description' => 'Filter by key or value.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => ['key', 'value'],
-        'default' => 'value'
-      ],
-      'recursive' => [
-        'description' => 'Recursively filter the data set. Is set to false, the filter will only apply to the outer \
-        data-set. If set to true, the filter will apply to the entire data-set (warning: use sparingly, this could \
-        incur long processing times).',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['boolean'],
-        'limitValues' => [],
-        'default' => false
-      ],
-      'inverse' => [
-        'description' => 'If set to true, the filter will keep matching data. \
-        If set to false, the filter will only keep non-matching data.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['boolean'],
-        'limitValues' => [],
-        'default' => false
-      ],
-    ],
+        'name' => 'Filter',
+        'machineName' => 'filter',
+        'description' => 'Filter values from a data-set.',
+        'menu' => 'Operation',
+        'input' => [
+            'values' => [
+                'description' => 'The data-set to filter.',
+                'cardinality' => [0, '*'],
+                'literalAllowed' => false,
+                'limitFunctions' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => ''
+            ],
+            'filter' => [
+                'description' => 'The literal values to filter out.',
+                'cardinality' => [0, '*'],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string', 'array'],
+                'limitValues' => [],
+                'default' => ''
+            ],
+            'regex' => [
+                // phpcs:ignore
+                'description' => 'If set ot true, use the filter string as a regex. If set to false, use the filter string for exact comparison.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => 'false'
+            ],
+            'keyOrValue' => [
+                'description' => 'Filter by key or value.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => ['key', 'value'],
+                'default' => 'value'
+            ],
+            'recursive' => [
+                // phpcs:ignore
+                'description' => 'Recursively filter the data set. Is set to false, the filter will only apply to the outer data-set. If set to true, the filter will apply to the entire data-set (warning: use sparingly, this could incur long processing times).',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => false
+            ],
+            'inverse' => [
+                // phpcs:ignore
+                'description' => 'If set to true, the filter will keep matching data. If set to false, the filter will only keep non-matching data.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => false
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
@@ -95,22 +95,22 @@ class Filter extends Core\ProcessorEntity
         $regex = $this->val('regex', true);
         $values = $this->val('values', true);
 
-      // Nothing to filter.
+        // Nothing to filter.
         if (empty($values)) {
             return $this->val('values');
         }
 
-      // Nothing to filter.
+        // Nothing to filter.
         if (empty($filter)) {
             return $this->val('values');
         }
 
-      // Test for multiple filters if regex (not allowed because it is inefficient).
+        // Test for multiple filters if regex (not allowed because it is inefficient).
         if ($regex === true && is_array($filter)) {
             throw new Core\ApiException('cannot have an array of regexes as a filter', 0, $this->id, 417);
         }
 
-      // Regex filter accepted as a string, convert to array so it is always an array
+        // Regex filter accepted as a string, convert to array so it is always an array
         if (!$regex && !is_array($filter)) {
             $filter = array($filter);
         }
@@ -121,18 +121,18 @@ class Filter extends Core\ProcessorEntity
 
         $values = $this->{$func}($values, $callback);
 
-      // TODO: better dynamic container type
+        // TODO: better dynamic container type
         return new Core\DataContainer($values, is_array($values) ? 'array' : 'text');
     }
 
-  /**
-   * Perform non-recursive filter on $data, based on key value.
-   * @see https://wpscholar.com/blog/filter-multidimensional-array-php/
-   * @see http://www.phptherightway.com/pages/Functional-Programming.html
-   * @param $data
-   * @param $callback
-   * @return array
-   */
+    /**
+     * Perform non-recursive filter on $data, based on key value.
+     * @see https://wpscholar.com/blog/filter-multidimensional-array-php/
+     * @see http://www.phptherightway.com/pages/Functional-Programming.html
+     * @param $data
+     * @param $callback
+     * @return array
+     */
     private function _filterByKeyNonrecursive($data, $callback)
     {
         if (!is_array($data)) {
@@ -142,12 +142,12 @@ class Filter extends Core\ProcessorEntity
         return array_filter($data, $callback, ARRAY_FILTER_USE_KEY);
     }
 
-  /**
-   * Perform recursive filter on $data, based on key value.
-   * @param $data
-   * @param $callback
-   * @return array
-   */
+    /**
+     * Perform recursive filter on $data, based on key value.
+     * @param $data
+     * @param $callback
+     * @return array
+     */
     private function _filterByKeyRecursive($data, $callback)
     {
         if (!is_array($data)) {
@@ -165,12 +165,12 @@ class Filter extends Core\ProcessorEntity
         return $data;
     }
 
-  /**
-   * Perform non-recursive filter on $data, based on value.
-   * @param $data
-   * @param $callback
-   * @return array
-   */
+    /**
+     * Perform non-recursive filter on $data, based on value.
+     * @param $data
+     * @param $callback
+     * @return array
+     */
     private function _filterByValueNonrecursive($data, $callback)
     {
         if (!is_array($data)) {
@@ -186,12 +186,12 @@ class Filter extends Core\ProcessorEntity
         return $data;
     }
 
-  /**
-   * Perform non-recursive filter on $data, based on value.
-   * @param $data
-   * @param $callback
-   * @return array
-   */
+    /**
+     * Perform non-recursive filter on $data, based on value.
+     * @param $data
+     * @param $callback
+     * @return array
+     */
     private function _filterByValueRecursive($data, $callback)
     {
         if (!is_array($data)) {
@@ -211,11 +211,11 @@ class Filter extends Core\ProcessorEntity
         return $data;
     }
 
-  /**
-   * Filter callback for non-inverse, non-regex.
-   * @param $filter
-   * @return \Closure
-   */
+    /**
+     * Filter callback for non-inverse, non-regex.
+     * @param $filter
+     * @return \Closure
+     */
     private function _callbackNoninverseNonregex($filter)
     {
         return function ($item) use ($filter) {
@@ -223,11 +223,11 @@ class Filter extends Core\ProcessorEntity
         };
     }
 
-  /**
-   * Filter callback for inverse, non-regex.
-   * @param $filter
-   * @return \Closure
-   */
+    /**
+     * Filter callback for inverse, non-regex.
+     * @param $filter
+     * @return \Closure
+     */
     private function _callbackInverseNonregex($filter)
     {
         return function ($item) use ($filter) {
@@ -235,26 +235,23 @@ class Filter extends Core\ProcessorEntity
         };
     }
 
-  /**
-   * Filter callback for non-inverse, regex.
-   * @param $filter
-   * @return \Closure
-   */
+    /**
+     * Filter callback for non-inverse, regex.
+     * @param $filter
+     * @return \Closure
+     */
     private function _callbackNoninverseRegex($filter)
     {
         return function ($item) use ($filter) {
-    //      var_dump($item);
-    //      var_dump($filter);
-    //      var_dump(preg_match($filter, $item));
             return preg_match($filter, $item) == 0;
         };
     }
 
-  /**
-   * Filter callback for inverse, regex.
-   * @param $filter
-   * @return \Closure
-   */
+    /**
+     * Filter callback for inverse, regex.
+     * @param $filter
+     * @return \Closure
+     */
     private function _callbackInverseRegex($filter)
     {
         return function ($item) use ($filter) {

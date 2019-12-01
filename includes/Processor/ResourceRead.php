@@ -5,71 +5,72 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use Gaterdata\Db\ResourceMapper;
 
 class ResourceRead extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Resource read',
-    'machineName' => 'resource_read',
-    'description' => 'List resources. If no appid/s ir resid is defined, all will be returned.',
-    'menu' => 'Admin',
-    'input' => [
-      'res_id' => [
-        'description' => 'The Resource ID to filter by".',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'app_id' => [
-        'description' => 'The application IDs to filter by. Comma separated if Multiple.',
-        'cardinality' => [0, '*'],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer', 'string'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'order_by' => [
-        'description' => 'order by column',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => ['accid', 'appid', 'method', 'uri'],
-        'default' => '',
-      ],
-      'direction' => [
-        'description' => 'Sort direction',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => ['asc', 'desc'],
-        'default' => '',
-      ],
-      'keyword' => [
-        'description' => 'Keyword search',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => '',
-      ],
-    ],
+        'name' => 'Resource read',
+        'machineName' => 'resource_read',
+        'description' => 'List resources. If no appid/s ir resid is defined, all will be returned.',
+        'menu' => 'Admin',
+        'input' => [
+          'res_id' => [
+            'description' => 'The Resource ID to filter by".',
+            'cardinality' => [0, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => ['integer'],
+            'limitValues' => [],
+            'default' => '',
+          ],
+          'app_id' => [
+            'description' => 'The application IDs to filter by. Comma separated if Multiple.',
+            'cardinality' => [0, '*'],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => ['integer', 'string'],
+            'limitValues' => [],
+            'default' => '',
+          ],
+          'order_by' => [
+            'description' => 'order by column',
+            'cardinality' => [0, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => ['string'],
+            'limitValues' => ['accid', 'appid', 'method', 'uri'],
+            'default' => '',
+          ],
+          'direction' => [
+            'description' => 'Sort direction',
+            'cardinality' => [0, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => ['string'],
+            'limitValues' => ['asc', 'desc'],
+            'default' => '',
+          ],
+          'keyword' => [
+            'description' => 'Keyword search',
+            'cardinality' => [0, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => [],
+            'limitValues' => [],
+            'default' => '',
+          ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

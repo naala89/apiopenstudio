@@ -17,6 +17,7 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use Gaterdata\Db;
 
@@ -24,41 +25,41 @@ class LoginStoreDrupal extends Core\ProcessorEntity
 {
     private $user;
     private $defaultEntity = 'drupal';
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Login Store Drupal',
-    'machineName' => 'loginStoreDrupal',
-    'description' => 'Login the user Stores the access details from a users login to a remote drupal site for future \
-    use.',
-    'menu' => 'Process',
-    'input' => [
-      'source' => [
-        'description' => 'The results of a login attempt to the remote site. i.e. Processor InputUrl.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => false,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'externalEntity' => [
-        'description' => 'The name of the external entity this user is tied to (use custom names if you access more \
-        than one drupal site).',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => 'drupal',
-      ],
-    ],
+        'name' => 'Login Store Drupal',
+        'machineName' => 'loginStoreDrupal',
+        // phpcs:ignore
+        'description' => 'Login the user Stores the access details from a users login to a remote drupal site for future use.',
+        'menu' => 'Process',
+        'input' => [
+            'source' => [
+                'description' => 'The results of a login attempt to the remote site. i.e. Processor InputUrl.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => false,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'externalEntity' => [
+                  // phpcs:ignore
+                'description' => 'The name of the external entity this user is tied to (use custom names if you access more than one drupal site).',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => 'drupal',
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

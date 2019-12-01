@@ -1,6 +1,7 @@
 <?php
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use jlawrence\eos\Parser;
 
@@ -9,40 +10,40 @@ use jlawrence\eos\Parser;
  */
 class Equation extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Equation',
-    'machineName' => 'equation',
-    'description' => 'This function allows you to define an equation with variables. These input variables are \
-    name/value pairs and substitute variables in th4e equation.',
-    'menu' => 'Operation',
-    'input' => [
-      'equation' => [
-        'description' => 'The equation.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'variables' => [
-        'description' => 'The variables. These are an associative array',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => ['varObject'],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => ''
-      ],
-    ],
+        'name' => 'Equation',
+        'machineName' => 'equation',
+        // phpcs:ignore
+        'description' => 'This function allows you to define an equation with variables. These input variables are name/value pairs and substitute variables in th4e equation.',
+        'menu' => 'Operation',
+        'input' => [
+            'equation' => [
+                'description' => 'The equation.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'variables' => [
+                'description' => 'The variables. These are an associative array',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => ['varObject'],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => '',
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

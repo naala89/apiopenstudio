@@ -8,34 +8,35 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 
 class VarInt extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
     'name' => 'Var (Integer)',
-    'machineName' => 'var_int',
-    'description' => 'An integer variable. It validates the input and returns an error if it is not a integer.',
-    'menu' => 'Primitive',
-    'input' => [
-      'value' => [
-        'description' => 'The value of the variable.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-    ],
+        'machineName' => 'var_int',
+        'description' => 'An integer variable. It validates the input and returns an error if it is not a integer.',
+        'menu' => 'Primitive',
+        'input' => [
+            'value' => [
+                'description' => 'The value of the variable.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

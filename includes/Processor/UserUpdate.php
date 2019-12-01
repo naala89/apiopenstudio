@@ -5,44 +5,45 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use Gaterdata\Db;
 
 class UserUpdate extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'User update',
-    'machineName' => 'user_update',
-    'description' => 'Update a user.',
-    'menu' => 'Admin',
-    'input' => [
-      'uid' => [
-        'description' => 'The user ID of the user.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'user_details' => [
-        'description' => 'The user details to edit. A json string is expected.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-    ],
+        'name' => 'User update',
+        'machineName' => 'user_update',
+        'description' => 'Update a user.',
+        'menu' => 'Admin',
+        'input' => [
+            'uid' => [
+                'description' => 'The user ID of the user.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'user_details' => [
+                'description' => 'The user details to edit. A json string is expected.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

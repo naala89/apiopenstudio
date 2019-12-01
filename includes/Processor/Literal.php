@@ -5,43 +5,44 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 
 class Literal extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Literal',
-    'machineName' => 'literal',
-    'description' => 'A literal string or value.',
-    'menu' => 'Admin',
-    'input' => [
-      'value' => [
-        'description' => 'The value of the literal.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => ''
-      ],
-      'type' => [
-        'description' => 'The literal type.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => 'text'
-      ],
-    ],
+        'name' => 'Literal',
+        'machineName' => 'literal',
+        'description' => 'A literal string or value.',
+        'menu' => 'Admin',
+        'input' => [
+          'value' => [
+            'description' => 'The value of the literal.',
+            'cardinality' => [1, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => [],
+            'limitValues' => [],
+            'default' => ''
+          ],
+          'type' => [
+            'description' => 'The literal type.',
+            'cardinality' => [0, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => ['string'],
+            'limitValues' => [],
+            'default' => 'text'
+          ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

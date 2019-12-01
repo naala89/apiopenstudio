@@ -5,56 +5,55 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use JmesPath;
 
 class Mapper extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Mapper',
-    'machineName' => 'mapper',
-    'description' => 'Mapper allows the mapping of elements from a source to a destination.',
-    'menu' => 'Process',
-    'input' => [
-      'source' => [
-        'description' => 'The source object to perform the mapping on.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'mappings' => [
-        'description' => 'A list of individual xpath values for the the get/set tuplets \
-        ( e.g. ["get": "//foo/bar", "set": "/foo/bar])".',
-        'cardinality' => [0, '*'],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => [],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'format' => [
-        'description' => 'Output format. If ommitted, the result wil be same format as input.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => ['xml', 'json'],
-        'default' => '',
-      ],
-    ],
+        'name' => 'Mapper',
+        'machineName' => 'mapper',
+        'description' => 'Mapper allows the mapping of elements from a source to a destination.',
+        'menu' => 'Process',
+        'input' => [
+            'source' => [
+                'description' => 'The source object to perform the mapping on.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'mappings' => [
+                // phpcs:ignore
+                'description' => 'A list of individual xpath values for the the get/set tuplets ( e.g. ["get": "//foo/bar", "set": "/foo/bar])".',
+                'cardinality' => [0, '*'],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'format' => [
+                'description' => 'Output format. If ommitted, the result wil be same format as input.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => ['xml', 'json'],
+                'default' => '',
+            ],
+        ],
     ];
 
-    private $result = '';
-
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
@@ -109,16 +108,16 @@ class Mapper extends Core\ProcessorEntity
         }
     }
 
-  /**
-   * Perform mappings to JSON source.
-   *
-   * @param $source
-   * @param $mappings
-   * @param $format
-   * @return \Gaterdata\Core\DataContainer
-   * @throws \Gaterdata\Core\ApiException
-   * @see https://github.com/jmespath/jmespath.php
-   */
+    /**
+     * Perform mappings to JSON source.
+     *
+     * @param $source
+     * @param $mappings
+     * @param $format
+     * @return \Gaterdata\Core\DataContainer
+     * @throws \Gaterdata\Core\ApiException
+     * @see https://github.com/jmespath/jmespath.php
+     */
     private function _mapJson(\stdClass &$source, $mappings, $format)
     {
         $resultFunc = '_addResult' . ucfirst($format);
@@ -138,15 +137,15 @@ class Mapper extends Core\ProcessorEntity
         return;
     }
 
-  /**
-   * Add to result object.
-   *  parents separated by '/'
-   *  foobar[] - add to array foobar
-   *  foo[fbar] = add to object foo as index bar
-   *
-   * @param $regex
-   * @param $value
-   */
+    /**
+     * Add to result object.
+     *  parents separated by '/'
+     *  foobar[] - add to array foobar
+     *  foo[fbar] = add to object foo as index bar
+     *
+     * @param $regex
+     * @param $value
+     */
     private function _addResultJson($regex, $value)
     {
         $nodes = explode('/', $regex);
@@ -168,9 +167,9 @@ class Mapper extends Core\ProcessorEntity
                 }
                 $currentNode = & $currentNode[$node];
             } else {
-              // this is last one, add node and value
+                // this is last one, add node and value
                 if (preg_match("/.+\[\]/", $node)) {
-                  // add value as array value
+                    // add value as array value
                     $left = strpos($node, '[');
                     $nodeName = substr($node, 0, $left);
                     if (!isset($currentNode[$nodeName])) {
@@ -180,7 +179,7 @@ class Mapper extends Core\ProcessorEntity
                         $currentNode[$nodeName] += array_merge($currentNode[$nodeName], $value);
                     }
                 } elseif (preg_match("/.+\[.+\]/", $node)) {
-                  // add value as object value with textual index
+                    // add value as object value with textual index
                     $left = strpos($node, '[');
                     $right = strpos($node, ']');
                     $nodeName = substr($node, 0, $left);
@@ -194,15 +193,15 @@ class Mapper extends Core\ProcessorEntity
         }
     }
 
-  /**
-   * Perform mappings to XML source.
-   *
-   * @param $source
-   * @param $mappings
-   * @param $format
-   * @return \Gaterdata\Core\DataContainer
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Perform mappings to XML source.
+     *
+     * @param $source
+     * @param $mappings
+     * @param $format
+     * @return \Gaterdata\Core\DataContainer
+     * @throws \Gaterdata\Core\ApiException
+     */
     private function _mapXml(\DOMDocument $source, $mappings, $format)
     {
         $resultFunc = '_addResult' . ucfirst($format);
@@ -220,19 +219,19 @@ class Mapper extends Core\ProcessorEntity
         return new Core\DataContainer($this->result->saveXML(), strtolower($format));
     }
 
-  /**
-   * Add to result object.
-   *  parents separated by '/'
-   *  foo/bar - add the node bar as the child of foo
-   *  foo[@bar] = add to node as an attribute <foo bar="value"></foo>
-   * @param $regex
-   * @param \DOMNodeList $values
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Add to result object.
+     *  parents separated by '/'
+     *  foo/bar - add the node bar as the child of foo
+     *  foo[@bar] = add to node as an attribute <foo bar="value"></foo>
+     * @param $regex
+     * @param \DOMNodeList $values
+     * @throws \Gaterdata\Core\ApiException
+     */
     private function _addResultXml($regex, \DOMNodeList $values)
     {
         $queryNodes = explode('/', trim($regex, '/'));
-      // $xpath = new \DOMXPath($this->result);
+        // $xpath = new \DOMXPath($this->result);
         $oldQuery = '';
 
         while ($queryNode = array_shift($queryNodes)) {
@@ -243,7 +242,7 @@ class Mapper extends Core\ProcessorEntity
             $newQuery = "$oldQuery/$queryNode";
 
             if (!empty($queryNodes)) {
-              // not the end node, just add node (if not already exists)
+                // not the end node, just add node (if not already exists)
                 $entries = $xpath->query($newQuery);
                 if ($entries->length == 0) {
                     $entries = $xpath->query(empty($oldQuery) ? '/' : $oldQuery);
@@ -251,9 +250,9 @@ class Mapper extends Core\ProcessorEntity
                     $entries->item(0)->appendChild($node);
                 }
             } else {
-              // this is last one, add node and value
+                // this is last one, add node and value
                 if (preg_match("/^[a-zA-Z0-9\-_]+$/", $queryNode)) { // /foo/bar
-                  // add value as with node name as child
+                    // add value as with node name as child
                     $entries = $xpath->query($newQuery);
                     if ($entries->length == 0) {
                         // create parent node if needed
@@ -266,7 +265,7 @@ class Mapper extends Core\ProcessorEntity
                         $entries->item(0)->appendChild($this->result->importNode($value, true));
                     }
                 } elseif (preg_match("/^[a-zA-Z0-9]+\[\@.+\]$/", $queryNode)) { // /foo/bar[@foobar]
-                  // add value as attribute of a node
+                    // add value as attribute of a node
                     if ($values->length > 1) {
                         $message = "error, cannot add multiple valies to attribute to XML ($regex).";
                         throw new Core\ApiException($message, 6, $this->id, 417 );
@@ -277,7 +276,7 @@ class Mapper extends Core\ProcessorEntity
                     $attributeName = substr($queryNode, $left + 2, $right - $left - 2);
                     $entries = $xpath->query("$oldQuery/$nodeName");
                     if ($entries->length == 0) {
-                      // create parent node if needed
+                        // create parent node if needed
                         $entries = $xpath->query(empty($oldQuery) ? '/' : $oldQuery);
                         $node = $this->result->createElement($nodeName);
                         $entries->item(0)->appendChild($node);

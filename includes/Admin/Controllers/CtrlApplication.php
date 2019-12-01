@@ -13,7 +13,8 @@ use GuzzleHttp\Exception\ClientException;
  *
  * @package Gaterdata\Admin\Controllers
  */
-class CtrlApplication extends CtrlBase {
+class CtrlApplication extends CtrlBase
+{
 
   /**
    * Roles allowed to visit the page.
@@ -290,5 +291,4 @@ class CtrlApplication extends CtrlBase {
 
         return $response->withRedirect('/applications');
     }
-
 }

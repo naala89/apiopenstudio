@@ -5,65 +5,65 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use Gaterdata\Db;
 
 class VarPersistent extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Var (Persistent)',
-    'machineName' => 'var_persistent',
-    'description' => 'A persistently stored variable. This allows you to store a regularly used variable with a single \
-    value and fetch it at any time. The value can be deleted, updated and fetched in future resource and Processor \
-    calls.',
-    'menu' => 'Primitive',
-    'input' => [
-      'key' => [
-        'description' => 'The key/name of the variable.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'value' => [
-        'description' => 'The value of the variable. This input is only used in save operations.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'operation' => [
-        'description' => 'The operation to be performed on the variable.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => ['save', 'delete', 'fetch'],
-        'default' => '',
-      ],
-      'strict' => [
-        'description' => 'If set to 0 then return null if var does not exist. \
-        If set to 1 throw exception if var does not exist. Default is strict. Only used in fetch or delete operations.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['boolean'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-    ],
+        'name' => 'Var (Persistent)',
+        'machineName' => 'var_persistent',
+        // phpcs:ignore
+        'description' => 'A persistently stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time. The value can be deleted, updated and fetched in future resource and Processor calls.',
+        'menu' => 'Primitive',
+        'input' => [
+            'key' => [
+                'description' => 'The key/name of the variable.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'value' => [
+                'description' => 'The value of the variable. This input is only used in save operations.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'operation' => [
+                'description' => 'The operation to be performed on the variable.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => ['save', 'delete', 'fetch'],
+                'default' => '',
+            ],
+            'strict' => [
+                // phpcs:ignore
+                'description' => 'If set to 0 then return null if var does not exist. If set to 1 throw exception if var does not exist. Default is strict. Only used in fetch or delete operations.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

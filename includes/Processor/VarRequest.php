@@ -5,43 +5,44 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 
 class VarRequest extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Var (Request)',
-    'machineName' => 'var_request',
-    'description' => 'A "get" or "post" variable. It fetches a variable from the get or post requests.',
-    'menu' => 'Primitive',
-    'input' => [
-      'key' => [
-        'description' => 'The key or name of the GET/POST variable.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'nullable' => [
-        'description' => 'Allow the processing to continue if the GET or POST variable does not exist.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['boolean'],
-        'limitValues' => [],
-        'default' => true,
-      ],
-    ],
+        'name' => 'Var (Request)',
+        'machineName' => 'var_request',
+        'description' => 'A "get" or "post" variable. It fetches a variable from the get or post requests.',
+        'menu' => 'Primitive',
+        'input' => [
+            'key' => [
+                'description' => 'The key or name of the GET/POST variable.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'nullable' => [
+                'description' => 'Allow the processing to continue if the GET or POST variable does not exist.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => true,
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

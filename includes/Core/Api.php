@@ -408,7 +408,7 @@ class Api
         if ($method == 'post' && array_key_exists('HTTP_X_HTTP_METHOD', $_SERVER)) {
             if ($_SERVER['HTTP_X_HTTP_METHOD'] == 'DELETE') {
                 $method = 'delete';
-            } else if ($_SERVER['HTTP_X_HTTP_METHOD'] == 'PUT') {
+            } elseif ($_SERVER['HTTP_X_HTTP_METHOD'] == 'PUT') {
                 $method = 'put';
             } else {
                 throw new ApiException("unexpected header", 3, -1, 406);

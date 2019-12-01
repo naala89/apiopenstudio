@@ -20,7 +20,8 @@ use Gaterdata\Admin\UserRole;
  *
  * @package Gaterdata\Admin\Controllers
  */
-class CtrlUserRole extends CtrlBase {
+class CtrlUserRole extends CtrlBase
+{
 
   /**
    * Roles allowed to visit the page.
@@ -243,5 +244,4 @@ class CtrlUserRole extends CtrlBase {
         $this->flash->addMessage('info', 'User role deleted.');
         return $response->withStatus(302)->withHeader('Location', '/user/roles');
     }
-
 }

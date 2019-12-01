@@ -5,17 +5,16 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 
 class ResourceJson extends ResourceBase
 {
-
-  /**
-   * Constructor. Store processor metadata and request data in object.
-   *
-   * @param $meta
-   * @param $request
-   */
+    /**
+     * ResourceJson constructor.
+     * @param $meta
+     * @param $request
+     */
     public function __construct($meta, $request)
     {
         $this->request['name'] = 'Resource (JSON)';
@@ -24,11 +23,11 @@ class ResourceJson extends ResourceBase
         parent::__construct($meta, $request);
     }
 
-  /**
-   * @param $data
-   * @return mixed
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * @param $data
+     * @return mixed
+     * @throws \Gaterdata\Core\ApiException
+     */
     protected function _importData($data)
     {
         $json = json_decode(json_encode($data), true);
@@ -38,10 +37,10 @@ class ResourceJson extends ResourceBase
         return $json;
     }
 
-  /**
-   * @param array $data
-   * @return string
-   */
+    /**
+     * @param array $data
+     * @return string
+     */
     protected function _exportData($data)
     {
         return json_encode($data);

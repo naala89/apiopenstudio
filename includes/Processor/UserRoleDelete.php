@@ -12,30 +12,30 @@ use Gaterdata\Db;
 
 class UserRoleDelete extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'User Role delete',
-    'machineName' => 'user_role_delete',
-    'description' => 'Delete a role for a user.',
-    'menu' => 'Admin',
-    'input' => [
-      'urid' => [
-        'description' => 'The user role ID.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-    ],
+        'name' => 'User Role delete',
+        'machineName' => 'user_role_delete',
+        'description' => 'Delete a role for a user.',
+        'menu' => 'Admin',
+        'input' => [
+            'urid' => [
+                'description' => 'The user role ID.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
@@ -62,5 +62,4 @@ class UserRoleDelete extends Core\ProcessorEntity
 
         return $userRoleMapper->delete($userRole);
     }
-
 }

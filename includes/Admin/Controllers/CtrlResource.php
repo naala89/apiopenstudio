@@ -14,7 +14,8 @@ use GuzzleHttp\Exception\ClientException;
  *
  * @package Gaterdata\Admin\Controllers
  */
-class CtrlResource extends CtrlBase {
+class CtrlResource extends CtrlBase
+{
 
   /**
    * Roles allowed to visit the page.
@@ -266,5 +267,4 @@ class CtrlResource extends CtrlBase {
         $this->flash->addMessage('info', 'Resource successfully created.');
         return $this->index($request, $response, []);
     }
-
 }

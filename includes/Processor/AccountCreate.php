@@ -5,35 +5,36 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use Gaterdata\Db;
 
 class AccountCreate extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Account create',
-    'machineName' => 'account_create',
-    'description' => 'Create an account.',
-    'menu' => 'Admin',
-    'input' => [
-      'name' => [
-        'description' => 'The name of the account.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-    ],
+        'name' => 'Account create',
+        'machineName' => 'account_create',
+        'description' => 'Create an account.',
+        'menu' => 'Admin',
+        'input' => [
+          'name' => [
+            'description' => 'The name of the account.',
+            'cardinality' => [1, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => ['string'],
+            'limitValues' => [],
+            'default' => ''
+          ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

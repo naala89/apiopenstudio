@@ -10,7 +10,8 @@ use Slim\Http\Response;
  *
  * @package Gaterdata\Admin\Controllers
  */
-class CtrlHome extends CtrlBase {
+class CtrlHome extends CtrlBase
+{
 
   /**
    * Roles allowed to visit the page.
@@ -60,5 +61,4 @@ class CtrlHome extends CtrlBase {
         'flash' => $this->flash,
         ]);
     }
-
 }

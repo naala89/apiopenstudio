@@ -7,24 +7,37 @@ namespace Gaterdata\Db;
  *
  * @package Gaterdata\Db
  */
-class Vars {
+class Vars
+{
+    /**
+     * @var int Var ID.
+     */
     protected $id;
+    /**
+     * @var int Application ID.
+     */
     protected $appId;
+    /**
+     * @var string Var key.
+     */
     protected $name;
+    /**
+     * @var mixed Var value.
+     */
     protected $val;
 
-  /**
-   * Vars constructor.
-   *
-   * @param int $id
-   *   The var ID.
-   * @param int $appId
-   *   The var application ID.
-   * @param string $name
-   *   The var name.
-   * @param mixed $val
-   *   The var value.
-   */
+    /**
+     * Vars constructor.
+     *
+     * @param int $id
+     *   The var ID.
+     * @param int $appId
+     *   The var application ID.
+     * @param string $name
+     *   The var name.
+     * @param mixed $val
+     *   The var value.
+     */
     public function __construct($id = null, $appId = null, $name = null, $val = null)
     {
         $this->id = $id;
@@ -33,100 +46,100 @@ class Vars {
         $this->val = $val;
     }
 
-  /**
-   * Get the var ID.
-   *
-   * @return int
-   *   The var ID.
-   */
+    /**
+     * Get the var ID.
+     *
+     * @return int
+     *   The var ID.
+     */
     public function getId()
     {
         return $this->id;
     }
 
-  /**
-   * Set the var ID.
-   *
-   * @param int $id
-   *   The var ID.
-   */
+    /**
+     * Set the var ID.
+     *
+     * @param int $id
+     *   The var ID.
+     */
     public function setId($id)
     {
         $this->id = $id;
     }
 
-  /**
-   * Get the var application ID.
-   *
-   * @return int
-   *   The var application ID.
-   */
+    /**
+     * Get the var application ID.
+     *
+     * @return int
+     *   The var application ID.
+     */
     public function getAppId()
     {
         return $this->appId;
     }
 
-  /**
-   * Set the var application ID.
-   *
-   * @param int $appId
-   *   The avr application ID.
-   */
+    /**
+     * Set the var application ID.
+     *
+     * @param int $appId
+     *   The avr application ID.
+     */
     public function setAppId($appId)
     {
         $this->appId = $appId;
     }
 
-  /**
-   * Get the var name.
-   *
-   * @return string
-   *   The var name.
-   */
+    /**
+     * Get the var name.
+     *
+     * @return string
+     *   The var name.
+     */
     public function getName()
     {
         return $this->name;
     }
 
-  /**
-   * Set the var name.
-   *
-   * @param string $name
-   *   The var name.
-   */
+    /**
+     * Set the var name.
+     *
+     * @param string $name
+     *   The var name.
+     */
     public function setName($name)
     {
         $this->name = $name;
     }
 
-  /**
-   * Get the var value.
-   *
-   * @return string
-   *   The var alue.
-   */
+    /**
+     * Get the var value.
+     *
+     * @return string
+     *   The var value.
+     */
     public function getVal()
     {
         return $this->val;
     }
 
-  /**
-   * Set the var value.
-   *
-   * @param mixed $val
-   *   The var value.
-   */
+    /**
+     * Set the var value.
+     *
+     * @param mixed $val
+     *   The var value.
+     */
     public function setVal($val)
     {
         $this->val = $val;
     }
 
-  /**
-   * Return the values as an associative array.
-   *
-   * @return array
-   *   Associative array of var attributes.
-   */
+    /**
+     * Return the values as an associative array.
+     *
+     * @return array
+     *   Associative array of var attributes.
+     */
     public function dump()
     {
         return [
@@ -136,5 +149,4 @@ class Vars {
         'val' => $this->val,
         ];
     }
-
 }

@@ -5,36 +5,37 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use Gaterdata\Core\Debug;
 
 class VarUri extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Var (URI)',
-    'machineName' => 'var_uri',
-    'description' => 'A urldecoded value from the request URI. It fetches the value of a particular param in the URI, \
-    based on the index value.',
-    'menu' => 'Primitive',
-    'input' => [
-      'index' => [
-        'description' => 'The index of the variable, starting with 0 after the client ID, request path.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer'],
-        'limitValues' => [],
-        'default' => 0,
-      ],
-    ],
+        'name' => 'Var (URI)',
+        'machineName' => 'var_uri',
+        // phpcs:ignore
+        'description' => 'A urldecoded value from the request URI. It fetches the value of a particular param in the URI, based on the index value.',
+        'menu' => 'Primitive',
+        'input' => [
+            'index' => [
+                'description' => 'The index of the variable, starting with 0 after the client ID, request path.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => 0,
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

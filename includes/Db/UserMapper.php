@@ -11,19 +11,20 @@ use Gaterdata\Core\Utilities;
  *
  * @package Gaterdata\Db
  */
-class UserMapper extends Mapper {
+class UserMapper extends Mapper
+{
 
-  /**
-   * Save the user.
-   *
-   * @param User $user
-   *   User object.
-   *
-   * @return bool
-   *   Success.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Save the user.
+     *
+     * @param User $user
+     *   User object.
+     *
+     * @return bool
+     *   Success.
+     *
+     * @throws ApiException
+     */
     public function save(User $user)
     {
         if (empty($user->getUid())) {
@@ -83,17 +84,17 @@ class UserMapper extends Mapper {
         return $this->saveDelete($sql, $bindParams);
     }
 
-  /**
-   * Delete a user.
-   *
-   * @param User $user
-   *   The user object.
-   *
-   * @return bool
-   *   Success.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Delete a user.
+     *
+     * @param User $user
+     *   The user object.
+     *
+     * @return bool
+     *   Success.
+     *
+     * @throws ApiException
+     */
     public function delete(User $user)
     {
         $sql = 'DELETE FROM user WHERE uid = ?';
@@ -101,17 +102,17 @@ class UserMapper extends Mapper {
         return $this->saveDelete($sql, $bindParams);
     }
 
-  /**
-   * Find all user.
-   *
-   * @param array $params
-   *   @see \Gaterdata\Db\Mapper.
-   *
-   * @return array
-   *   $array of Users.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Find all user.
+     *
+     * @param array $params
+     *   @see \Gaterdata\Db\Mapper.
+     *
+     * @return array
+     *   $array of Users.
+     *
+     * @throws ApiException
+     */
     public function findAll($params = [])
     {
         $sql = 'SELECT * FROM user';
@@ -119,17 +120,17 @@ class UserMapper extends Mapper {
         return $this->fetchRows($sql, $bindParams, $params);
     }
 
-  /**
-   * Find a user by user ID.
-   *
-   * @param int $uid
-   *   User ID.
-   *
-   * @return User
-   *   User object.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Find a user by user ID.
+     *
+     * @param int $uid
+     *   User ID.
+     *
+     * @return User
+     *   User object.
+     *
+     * @throws ApiException
+     */
     public function findByUid($uid)
     {
         $sql = 'SELECT * FROM user WHERE uid = ?';
@@ -137,17 +138,17 @@ class UserMapper extends Mapper {
         return $this->fetchRow($sql, $bindParams);
     }
 
-  /**
-   * Find a user by email address.
-   *
-   * @param string $email
-   *   Users email.
-   *
-   * @return User
-   *   User object.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Find a user by email address.
+     *
+     * @param string $email
+     *   Users email.
+     *
+     * @return User
+     *   User object.
+     *
+     * @throws ApiException
+     */
     public function findByEmail($email)
     {
         $sql = 'SELECT * FROM user WHERE email = ?';
@@ -155,17 +156,17 @@ class UserMapper extends Mapper {
         return $this->fetchRow($sql, $bindParams);
     }
 
-  /**
-   * Find user bu username.
-   *
-   * @param string $username
-   *   Users usdername.
-   *
-   * @return User
-   *   User object.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Find user bu username.
+     *
+     * @param string $username
+     *   Users usdername.
+     *
+     * @return User
+     *   User object.
+     *
+     * @throws ApiException
+     */
     public function findByUsername($username)
     {
         $sql = 'SELECT * FROM user WHERE username = ?';
@@ -173,17 +174,17 @@ class UserMapper extends Mapper {
         return $this->fetchRow($sql, $bindParams);
     }
 
-  /**
-   * Find a user by their auth token.
-   *
-   * @param string $token
-   *   User auth token.
-   *
-   * @return User
-   *   User object.
-   *
-   * @throws ApiException
-   */
+    /**
+     * Find a user by their auth token.
+     *
+     * @param string $token
+     *   User auth token.
+     *
+     * @return User
+     *   User object.
+     *
+     * @throws ApiException
+     */
     public function findBytoken($token)
     {
         $sql = 'SELECT * FROM user WHERE token = ? AND token_ttl > ?';
@@ -191,15 +192,15 @@ class UserMapper extends Mapper {
         return $this->fetchRow($sql, $bindParams);
     }
 
-  /**
-   * Map a DB row into a User object.
-   *
-   * @param array $row
-   *   DB row object.
-   *
-   * @return User
-   *   Mapped User object.
-   */
+    /**
+     * Map a DB row into a User object.
+     *
+     * @param array $row
+     *   DB row object.
+     *
+     * @return User
+     *   Mapped User object.
+     */
     protected function mapArray(array $row)
     {
         $user = new User();
@@ -225,5 +226,4 @@ class UserMapper extends Mapper {
         $user->setPhoneWork(!empty($row['phone_work']) ? $row['phone_work'] : null);
         return $user;
     }
-
 }

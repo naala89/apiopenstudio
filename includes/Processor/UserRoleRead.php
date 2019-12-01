@@ -12,75 +12,75 @@ use Gaterdata\Db;
 
 class UserRoleRead extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'User Role read',
-    'machineName' => 'user_role_read',
-    'description' => 'Fetch a single or all user roles.',
-    'menu' => 'Admin',
-    'input' => [
-      'uid' => [
-        'description' => 'The user id of the user.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'accid' => [
-        'description' => 'The account ID of user roles.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'appid' => [
-        'description' => 'The application ID of user roles.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'rid' => [
-        'description' => 'The user role ID of user roles.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'order_by' => [
-        'description' => 'The column to order the results by.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => ['uid', 'accid', 'appid', 'rid'],
-        'default' => '',
-      ],
-      'direction' => [
-        'description' => 'The direction to order the results.',
-        'cardinality' => [0, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => ['asc', 'desc'],
-        'default' => 'asc',
-      ],
-    ],
+        'name' => 'User Role read',
+        'machineName' => 'user_role_read',
+        'description' => 'Fetch a single or all user roles.',
+        'menu' => 'Admin',
+        'input' => [
+            'uid' => [
+                'description' => 'The user id of the user.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'accid' => [
+                'description' => 'The account ID of user roles.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'appid' => [
+                'description' => 'The application ID of user roles.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'rid' => [
+                'description' => 'The user role ID of user roles.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'order_by' => [
+                'description' => 'The column to order the results by.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => ['uid', 'accid', 'appid', 'rid'],
+                'default' => '',
+            ],
+            'direction' => [
+                'description' => 'The direction to order the results.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => ['asc', 'desc'],
+                'default' => 'asc',
+            ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

@@ -21,7 +21,8 @@ use GuzzleHttp\Client;
  *
  * @package Gaterdata\Admin\Controllers
  */
-class CtrlUser extends CtrlBase {
+class CtrlUser extends CtrlBase
+{
 
   /**
    * Roles allowed to visit the page.
@@ -29,9 +30,9 @@ class CtrlUser extends CtrlBase {
    * @var array
    */
     const PERMITTED_ROLES = [
-    'Administrator',
-    'Account manager',
-    'Application manager',
+        'Administrator',
+        'Account manager',
+        'Application manager',
     ];
 
   /**
@@ -51,7 +52,7 @@ class CtrlUser extends CtrlBase {
    */
     public function index(Request $request, Response $response, array $args)
     {
-      // Validate access.
+        // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
@@ -115,7 +116,7 @@ class CtrlUser extends CtrlBase {
    */
     public function create(Request $request, Response $response, array $args)
     {
-      // Validate access.
+        // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
@@ -132,7 +133,7 @@ class CtrlUser extends CtrlBase {
         }
 
         $allPostVars = $request->getParams();
-      // Workaround for Authentication middleware that will think this is a login attempt.
+        // Workaround for Authentication middleware that will think this is a login attempt.
         $allPostVars['username'] = $allPostVars['create-username'];
         unset($allPostVars['create-username']);
         $allPostVars['password'] = $allPostVars['create-password'];
@@ -193,7 +194,7 @@ class CtrlUser extends CtrlBase {
    */
     public function update(Request $request, Response $response, array $args)
     {
-      // Validate access.
+        // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
@@ -204,7 +205,7 @@ class CtrlUser extends CtrlBase {
         $menu = $this->getMenus();
         $allPostVars = $request->getParams();
         $uid = $args['uid'];
-      // Workaround for Authentication middleware that will think this is a login attempt.
+        // Workaround for Authentication middleware that will think this is a login attempt.
         $allPostVars['username'] = $allPostVars['edit-username'];
         unset($allPostVars['edit-username']);
         $allPostVars['password'] = $allPostVars['edit-password'];
@@ -283,7 +284,7 @@ class CtrlUser extends CtrlBase {
    */
     public function delete(Request $request, Response $response, array $args)
     {
-      // Validate access.
+        // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
@@ -340,7 +341,7 @@ class CtrlUser extends CtrlBase {
    */
     public function invite(Request $request, Response $response, array $args)
     {
-      // Validate access.
+        // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
@@ -354,7 +355,7 @@ class CtrlUser extends CtrlBase {
             return $response->withRedirect('/users');
         }
 
-      // Check if user already exists.
+        // Check if user already exists.
         try {
             $userHlp = new User($this->dbSettings);
             $user = $userHlp->findByEmail($email);
@@ -377,20 +378,20 @@ class CtrlUser extends CtrlBase {
             ]);
         }
 
-      // Generate vars for the email.
+        // Generate vars for the email.
         $token = Hash::generateToken($email);
         $host = $this->getHost();
         $scheme = $request->getUri()->getScheme();
         $link = "$scheme://$host/user/register/$token";
 
-      // Add invite to DB.
+        // Add invite to DB.
         try {
             $accountHlp = new Account($this->dbSettings);
             $account = $accountHlp->findByUaid($uaid);
             $inviteHlp = new Invite($this->dbSettings);
-          // Remove any old invites for this email.
+            // Remove any old invites for this email.
             $inviteHlp->deleteByEmail($email);
-          // Add new invite.
+            // Add new invite.
             $inviteHlp->create($account['accid'], $email, $token);
         } catch (ApiException $e) {
             return $this->view->render($response, 'users.twig', [
@@ -402,7 +403,7 @@ class CtrlUser extends CtrlBase {
             ]);
         }
 
-      // Send the email.
+        // Send the email.
         $mail = new PHPMailer(true); // Passing `true` enables exceptions
         try {
           //Server settings
@@ -415,12 +416,12 @@ class CtrlUser extends CtrlBase {
             $mail->SMTPSecure = $this->mailSettings['smtpSecure'];
             $mail->Port = $this->mailSettings['port'];
 
-          //Recipients
+            //Recipients
             $mail->addAddress($email);
             $mail->setFrom($this->mailSettings['from']['email'], $this->mailSettings['from']['name']);
             $mail->addReplyTo($this->mailSettings['from']['email'], $this->mailSettings['from']['name']);
 
-          //Content
+            //Content
             $mail->Subject = $this->view->fetchBlock('invite-user.email.twig', 'subject');
             $mail->Body = $this->view->fetchBlock('invite-user.email.twig', 'body_html', [
             'link' => $link,
@@ -470,21 +471,21 @@ class CtrlUser extends CtrlBase {
             $allVars = $args;
         }
 
-      // Token not received.
+        // Token not received.
         if (empty($allVars['token'])) {
             return $response->withRedirect('/login');
         }
 
         $token = $allVars['token'];
 
-      // Invalid token.
+        // Invalid token.
         $inviteHlp = new Invite($this->dbSettings);
         $invite = $inviteHlp->findByToken($token);
         if (empty($invite['iid'])) {
             return $response->withRedirect('/login');
         }
 
-      // Validate User is not already in the system.
+        // Validate User is not already in the system.
         $userHlp = new User($this->dbSettings);
         $user = $userHlp->findByEmail($invite['email']);
         if (!empty($user['uid'])) {
@@ -498,14 +499,14 @@ class CtrlUser extends CtrlBase {
         }
 
         if ($request->isGet()) {
-          // Display the register form.
+            // Display the register form.
             return $this->view->render($response, 'register.twig', [
             'menu' => $menu,
             'token' => $token,
             ]);
         }
 
-      // Fall through to new user register post form submission.
+        // Fall through to new user register post form submission.
         return $this->createUser($allVars, $menu, $response);
     }
 
@@ -519,10 +520,10 @@ class CtrlUser extends CtrlBase {
     {
         $possibleHostSources = ['HTTP_X_FORWARDED_HOST', 'HTTP_HOST', 'SERVER_NAME', 'SERVER_ADDR'];
         $sourceTransformations = [
-        "HTTP_X_FORWARDED_HOST" => function ($value) {
-            $elements = explode(',', $value);
-            return trim(end($elements));
-        }
+                "HTTP_X_FORWARDED_HOST" => function ($value) {
+                    $elements = explode(',', $value);
+                    return trim(end($elements));
+                }
         ];
         $host = '';
         foreach ($possibleHostSources as $source) {
@@ -538,10 +539,9 @@ class CtrlUser extends CtrlBase {
             }
         }
 
-      // Remove port number from host
+        // Remove port number from host
         $host = preg_replace('/:\d+$/', '', $host);
 
         return trim($host);
     }
-
 }

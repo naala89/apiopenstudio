@@ -5,6 +5,7 @@
  */
 
 namespace Gaterdata\Processor;
+
 use Gaterdata\Core;
 use Gaterdata\Core\ApiException;
 use Gaterdata\Db;
@@ -12,30 +13,30 @@ use Gaterdata\Db\UserRoleMapper;
 
 class ApplicationDelete extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
-    'name' => 'Application delete',
-    'machineName' => 'application_delete',
-    'description' => 'Delete an application.',
-    'menu' => 'Admin',
-    'input' => [
-      'applicationId' => [
-        'description' => 'The appication ID of the application.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['integer'],
-        'limitValues' => [],
-        'default' => ''
-      ],
-    ],
+        'name' => 'Application delete',
+        'machineName' => 'application_delete',
+        'description' => 'Delete an application.',
+        'menu' => 'Admin',
+        'input' => [
+          'applicationId' => [
+            'description' => 'The appication ID of the application.',
+            'cardinality' => [1, 1],
+            'literalAllowed' => true,
+            'limitFunctions' => [],
+            'limitTypes' => ['integer'],
+            'limitValues' => [],
+            'default' => ''
+          ],
+        ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);

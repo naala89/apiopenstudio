@@ -7,22 +7,31 @@ namespace Gaterdata\Db;
  *
  * @package Gaterdata\Db
  */
-class Application {
-
+class Application
+{
+    /**
+     * @var int Application ID.
+     */
     protected $appid;
+    /**
+     * @var int Account ID.
+     */
     protected $accid;
+    /**
+     * @var int Application name.
+     */
     protected $name;
 
-  /**
-   * Application constructor.
-   *
-   * @param int $appid
-   *   Application ID.
-   * @param int $accid
-   *   Account ID.
-   * @param string $name
-   *   Application name.
-   */
+    /**
+     * Application constructor.
+     *
+     * @param int $appid
+     *   Application ID.
+     * @param int $accid
+     *   Account ID.
+     * @param string $name
+     *   Application name.
+     */
     public function __construct($appid = null, $accid = null, $name = null)
     {
         $this->appid = $appid;
@@ -30,78 +39,78 @@ class Application {
         $this->name = $name;
     }
 
-  /**
-   * Get application IOD.
-   *
-   * @return int
-   *   Application ID.
-   */
+    /**
+     * Get application IOD.
+     *
+     * @return int
+     *   Application ID.
+     */
     public function getAppid()
     {
         return $this->appid;
     }
 
-  /**
-   * Set the application ID.
-   *
-   * @param int $appid
-   *   Application ID.
-   */
+    /**
+     * Set the application ID.
+     *
+     * @param int $appid
+     *   Application ID.
+     */
     public function setAppid($appid)
     {
         $this->appid = $appid;
     }
 
-  /**
-   * Get the account ID.
-   *
-   * @return int
-   *   Account ID.
-   */
+    /**
+     * Get the account ID.
+     *
+     * @return int
+     *   Account ID.
+     */
     public function getAccid()
     {
         return $this->accid;
     }
 
-  /**
-   * Set the account ID.
-   *
-   * @param int $accid
-   *   Account ID.
-   */
+    /**
+     * Set the account ID.
+     *
+     * @param int $accid
+     *   Account ID.
+     */
     public function setAccid($accid)
     {
         $this->accid = $accid;
     }
 
-  /**
-   * Get the application name.
-   *
-   * @return int
-   *   Application name.
-   */
+    /**
+     * Get the application name.
+     *
+     * @return int
+     *   Application name.
+     */
     public function getName()
     {
         return $this->name;
     }
 
-  /**
-   * Set the application name.
-   *
-   * @param string $name
-   *   Application name.
-   */
+    /**
+     * Set the application name.
+     *
+     * @param string $name
+     *   Application name.
+     */
     public function setName($name)
     {
         $this->name = $name;
     }
 
-  /**
-   * Return the values as an associative array.
-   *
-   * @return array
-   *   Application.
-   */
+    /**
+     * Return the values as an associative array.
+     *
+     * @return array
+     *   Application.
+     */
     public function dump()
     {
         return [
@@ -110,5 +119,4 @@ class Application {
         'name' => $this->name,
         ];
     }
-
 }
