@@ -4,49 +4,49 @@ namespace Gaterdata\Core;
 
 class DataContainer extends Entity
 {
-  /**
-   * @var array
-   */
-    private $types = array(
-    'boolean',
-    'integer',
-    'float',
-    'text',
-    'array',
-    'json',
-    'xml',
-    'image'
-    );
-  /**
-   * Data type
-   * @var
-   */
+    /**
+     * @var array Data types.
+     */
+    private $types = [
+        'boolean',
+        'integer',
+        'float',
+        'text',
+        'array',
+        'json',
+        'xml',
+        'image'
+    ];
+
+    /**
+     * @var string Data type
+     */
     protected $type = '';
-  /**
-   * Data
-   * @var mixed
-   */
+
+    /**
+     * @var mixed Data
+     */
     protected $data;
 
-  /**
-   * DataContainer constructor.
-   *
-   * @param mixed $data
-   *   Data stored in the container.
-   * @param string $dataType
-   *   Data type.
-   *
-   * @throws ApiException
-   */
+    /**
+     * DataContainer constructor.
+     *
+     * @param mixed $data
+     *   Data stored in the container.
+     * @param string $dataType
+     *   Data type.
+     *
+     * @throws ApiException
+     */
     public function __construct($data, $dataType)
     {
         $this->setData($data);
         $this->setType($dataType);
     }
 
-  /**
-   * @return mixed
-   */
+    /**
+     * @return mixed
+     */
     public function getData()
     {
         if ($this->type == 'boolean') {
@@ -61,26 +61,26 @@ class DataContainer extends Entity
         return $this->data;
     }
 
-  /**
-   * @param $val
-   */
+    /**
+     * @param $val
+     */
     public function setData($val)
     {
         $this->data = $val;
     }
 
-  /**
-   * @return mixed
-   */
+    /**
+     * @return string
+     */
     public function getType()
     {
         return $this->type;
     }
 
-  /**
-   * @param $val
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * @param $val
+     * @throws ApiException
+     */
     public function setType($val)
     {
         if (!in_array($val, $this->types)) {
@@ -89,9 +89,9 @@ class DataContainer extends Entity
         $this->type = $val;
     }
 
-  /**
-   * @return mixed
-   */
+    /**
+     * @return array
+     */
     public function getTypes()
     {
         return $this->types;
