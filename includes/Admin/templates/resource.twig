@@ -1,0 +1,124 @@
+{% extends "page.twig" %}
+
+{% set title="Resources" %}
+
+{% block content %}
+  <script src="/js/js-yaml.min.js"></script>
+  <script>
+    // var GATERDATA = GATERDATA || {};
+    GATERDATA.accAppMap = [];
+    {% for appid, application in applications %}
+    GATERDATA.accAppMap[{{ appid }}] = {'accid': {{ application.accid }}, 'name': "{{ application.name }}"};
+    {% endfor %}
+  </script>
+  <div class="row">
+    <p>Create a new resource.</p>
+    <p>Import a GaterData or Swagger file using the upload button.</p>
+  </div>
+  <form method="post" action="/resource/upload" id="create-resource">
+
+    <div class="row">
+      <div class="col s4">
+        <label>Upload a local file into the resource definition.</label>
+        <div class="file-field input-field">
+          <div class="btn">
+            <span>Browse</span>
+            <input type="file" id="upload-resource-file">
+          </div>
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row teal lighten-1 white-text">
+      <div class="col col-height s8 valign-wrapper">Resource definition</div>
+      <div class="col col-height s4 valign-wrapper">Functions</div>
+    </div>
+
+    <div class="row">
+
+      <div class="input-field col s8">
+
+        <div class="row">
+          <div class="input-field col s6">
+            <input placeholder="Enter resource name here..." name="name" id="name" type="text" class="validate" value="{{ resource.name }}">
+            <label for="name">Name</label>
+          </div>
+          <div class="input-field col s6">
+            <input placeholder="Enter resource description here..." name="description" id="description" type="text" class="validate" value="{{ resource.description }}">
+            <label for="description">Description</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s6">
+            <select required class="validate" name="accid" id="accid">
+              <option value="" disabled selected>Please select</option>
+              {% for accid, account in accounts %}
+                <option value="{{ accid }}" {% if GATERDATA.accAppMap[appid] is not empty %}selected{% endif %}>{{ account }}</option>
+              {% endfor %}
+            </select>
+            <label>Account</label>
+          </div>
+          <div class="input-field col s6">
+            <select required class="validate" name="appid" id="appid">
+              <option value="" disabled selected>Please select</option>
+              {% for appid, application in applications %}
+                <option value="{{ appid }}" {% if resource.appid == appid %}selected{% endif %}>{{ application.name }}</option>
+              {% endfor %}
+            </select>
+            <label>Application</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s6">
+            <select required class="validate" name="method" id="method">
+              <option value="" disabled selected>Please select</option>
+              <option value="get" {% if resource.method == 'get' %}selected{% endif %}>GET</option>
+              <option value="post" {% if resource.method == 'post' %}selected{% endif %}>POST</option>
+              <option value="delete" {% if resource.method == 'delete' %}selected{% endif %}>DELETE</option>
+              <option value="put" {% if resource.method == 'put' %}selected{% endif %}>PUT</option>
+            </select>
+            <label>Method</label>
+          </div>
+          <div class="input-field col s6">
+            <input placeholder="Enter resource URI here..." name="uri" id="uri" type="text" class="validate" value="{{ resource.uri }}">
+            <label for="uri">URI</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s6">
+            <input placeholder="" name="ttl" id="ttl" type="text" class="validate" value="{{ resource.ttl }}">
+            <label for="name">TTL (seconds)</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <label>Security</label>
+          <textarea class="materialize-textarea" placeholder="Enter your resource security definition here..." name="security" id="security" required class="validate">{{ resource.security }}</textarea>
+        </div>
+
+        <div class="row">
+          <label>Process</label>
+          <textarea class="materialize-textarea" placeholder="Enter your resource security process here..." name="process" id="process" required class="validate">{{ resource.process }}</textarea>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <button class="btn waves-effect waves-light" type="submit" name="action">
+              Upload<i class="material-icons right">send</i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col s4">
+        {% include 'partials/processor-definitions.twig' %}
+      </div>
+    </div>
+  </form>
+{% endblock %}

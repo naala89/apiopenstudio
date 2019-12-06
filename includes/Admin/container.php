@@ -1,11 +1,11 @@
 <?php
 
-use Gaterdata\Admin\Controllers\CtrlUserRole;
 use Slim\Container;
 use Slim\Views\TwigExtension;
+use Twig\Extension\DebugExtension;
 use Slim\Http\Uri;
 use Slim\Views\Twig;
-USE Slim\Flash\Messages;
+use Slim\Flash\Messages;
 use Gaterdata\Admin\Controllers;
 
 $container = $app->getContainer();
@@ -16,7 +16,7 @@ $container = $app->getContainer();
  * @return Messages
  */
 $container['flash'] = function () {
-  return new Messages();
+    return new Messages();
 };
 
 
@@ -30,23 +30,23 @@ $container['flash'] = function () {
  *   Twig object.
  */
 $container['view'] = function (Container $container) {
-  $settings = $container->get('settings');
-  $viewDir = $settings['api']['base_path'] . $settings['twig']['template_path'];
-  $publicDir = $settings['api']['base_path'] . $settings['api']['public_path'];
+    $settings = $container->get('settings');
+    $viewDir = $settings['api']['base_path'] . $settings['twig']['template_path'];
+    $publicDir = $settings['api']['base_path'] . $settings['api']['public_path'];
 
-  $twig = new Twig($viewDir, $settings['twig']['options']);
-  $loader = $twig->getLoader();
-  $loader->addPath($publicDir, 'public');
+    $twigSettings = $settings['twig']['options'];
+    $twigSettings['debug'] = $settings['debug'];
+    $twig = new Twig($viewDir, $twigSettings);
+    $loader = $twig->getLoader();
+    $loader->addPath($publicDir, 'public');
 
-  // Instantiate and add twig extension/s.
-  $router = $container->get('router');
-  $uri = Uri::createFromEnvironment($container->get('environment'));
-  $twig->addExtension(new TwigExtension($router, $uri));
-  if ($settings['twig']['options']['debug']) {
-    $twig->addExtension(new Twig_Extension_Debug());
-  }
+    // Instantiate and add twig extension/s.
+    $router = $container->get('router');
+    $uri = Uri::createFromEnvironment($container->get('environment'));
+    $twig->addExtension(new TwigExtension($router, $uri));
+    $twig->addExtension(new DebugExtension());
 
-  return $twig;
+    return $twig;
 };
 
 /**
@@ -59,10 +59,10 @@ $container['view'] = function (Container $container) {
  *   CtrlLogin object.
  */
 $container['CtrlLogin'] = function (Container $container) {
-  $settings = $container->get('settings');
-  $view = $container->get('view');
-  $flash = $container->get('flash');
-  return new Controllers\CtrlLogin($settings, $view, $flash);
+    $settings = $container->get('settings');
+    $view = $container->get('view');
+    $flash = $container->get('flash');
+    return new Controllers\CtrlLogin($settings, $view, $flash);
 };
 
 /**
@@ -75,10 +75,10 @@ $container['CtrlLogin'] = function (Container $container) {
  *   CtrlHome object.
  */
 $container['CtrlHome'] = function (Container $container) {
-  $settings = $container->get('settings');
-  $view = $container->get('view');
-  $flash = $container->get('flash');
-  return new Controllers\CtrlHome($settings, $view, $flash);
+    $settings = $container->get('settings');
+    $view = $container->get('view');
+    $flash = $container->get('flash');
+    return new Controllers\CtrlHome($settings, $view, $flash);
 };
 
 /**
@@ -91,10 +91,10 @@ $container['CtrlHome'] = function (Container $container) {
  *   CtrlApplication object.
  */
 $container['CtrlAccount'] = function (Container $container) {
-  $settings = $container->get('settings');
-  $view = $container->get('view');
-  $flash = $container->get('flash');
-  return new Controllers\CtrlAccount($settings, $view, $flash);
+    $settings = $container->get('settings');
+    $view = $container->get('view');
+    $flash = $container->get('flash');
+    return new Controllers\CtrlAccount($settings, $view, $flash);
 };
 
 /**
@@ -107,10 +107,10 @@ $container['CtrlAccount'] = function (Container $container) {
  *   CtrlApplication object.
  */
 $container['CtrlApplication'] = function (Container $container) {
-  $settings = $container->get('settings');
-  $view = $container->get('view');
-  $flash = $container->get('flash');
-  return new Controllers\CtrlApplication($settings, $view, $flash);
+    $settings = $container->get('settings');
+    $view = $container->get('view');
+    $flash = $container->get('flash');
+    return new Controllers\CtrlApplication($settings, $view, $flash);
 };
 
 /**
@@ -123,10 +123,10 @@ $container['CtrlApplication'] = function (Container $container) {
  *   CtrlUser object.
  */
 $container['CtrlUsers'] = function (Container $container) {
-  $settings = $container->get('settings');
-  $view = $container->get('view');
-  $flash = $container->get('flash');
-  return new Controllers\CtrlUsers($settings, $view, $flash);
+    $settings = $container->get('settings');
+    $view = $container->get('view');
+    $flash = $container->get('flash');
+    return new Controllers\CtrlUsers($settings, $view, $flash);
 };
 
 /**
@@ -139,10 +139,10 @@ $container['CtrlUsers'] = function (Container $container) {
  *   CtrlUser object.
  */
 $container['CtrlUser'] = function (Container $container) {
-  $settings = $container->get('settings');
-  $view = $container->get('view');
-  $flash = $container->get('flash');
-  return new Controllers\CtrlUser($settings, $view, $flash);
+    $settings = $container->get('settings');
+    $view = $container->get('view');
+    $flash = $container->get('flash');
+    return new Controllers\CtrlUser($settings, $view, $flash);
 };
 
 /**
@@ -155,10 +155,10 @@ $container['CtrlUser'] = function (Container $container) {
  *   CtrlUserRole object.
  */
 $container['CtrlUserRole'] = function (Container $container) {
-  $settings = $container->get('settings');
-  $view = $container->get('view');
-  $flash = $container->get('flash');
-  return new Controllers\CtrlUserRole($settings, $view, $flash);
+    $settings = $container->get('settings');
+    $view = $container->get('view');
+    $flash = $container->get('flash');
+    return new Controllers\CtrlUserRole($settings, $view, $flash);
 };
 
 /**
@@ -171,8 +171,8 @@ $container['CtrlUserRole'] = function (Container $container) {
  *   CtrlResource object.
  */
 $container['CtrlResource'] = function (Container $container) {
-  $settings = $container->get('settings');
-  $view = $container->get('view');
-  $flash = $container->get('flash');
-  return new Controllers\CtrlResource($settings, $view, $flash);
+    $settings = $container->get('settings');
+    $view = $container->get('view');
+    $flash = $container->get('flash');
+    return new Controllers\CtrlResource($settings, $view, $flash);
 };

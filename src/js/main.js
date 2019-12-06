@@ -2,12 +2,65 @@ $(document).ready(function() {
 
   M.AutoInit();
 
-  // Close alert panel.
+  /**
+   * Reset options in applications to all.
+   * @param string selector
+   *   Applications element selector.
+   */
+  GATERDATA.resetApplications = function(selector) {
+    var selectApp = $(selector);
+    selectApp.find('option').remove();
+    selectApp.append($('<option>', {value: "", text: "Please select"}));
+    GATERDATA.accAppMap.forEach(function(application, appid) {
+        $(selector).append($('<option>', {value: appid, text : application.name}));
+    });
+    selectApp.val("");
+    selectApp.formSelect();
+  };
+
+  /**
+   * Update an account selector based on application ID
+   * @param integer appid
+   *   Application ID.
+   * @param string selector
+   *   JQuery selector for the account select element.
+   */
+  GATERDATA.setAccount = function(appid, selector) {
+    var selectAcc = $(selector);
+    selectAcc.val(GATERDATA.accAppMap[appid].accid);
+    selectAcc.formSelect();
+  };
+
+  /**
+   * Update an application selector based on account ID
+   * @param integer accid
+   *   Account ID
+   * @param string selector
+   *   JQuery selector for the application select element.
+   */
+  GATERDATA.setApplicationOptions = function(accid, selector) {
+    var selectApp = $(selector);
+    selectApp.find('option').remove();
+    selectApp.append($('<option>', {value: "", text: "Please select"}));
+    GATERDATA.accAppMap.forEach(function (application, appid) {
+      if (accid == application.accid) {
+        selectApp.append($('<option>', {value: appid, text : application.name}));
+      }
+    });
+    selectApp.val("");
+    selectApp.formSelect();
+  };
+
+  /**
+   * Close alert panel.
+   */
   $('.close-gaterdata-alert').click(function(){
     $(this).closest('.gaterdata-alert').fadeOut("slow", function() {});
   });
 
-  // Edit account modal.
+  /**
+   * Edit account modal.
+   */
   $('.modal-acc-edit-trigger').click(function() {
     var modal = $('#modal-acc-edit');
     var accid = $(this).attr('accid');
@@ -17,7 +70,9 @@ $(document).ready(function() {
     modal.modal('open');
   });
 
-  // Delete account modal.
+  /**
+   * Delete account modal.
+   */
   $('.modal-acc-delete-trigger').click(function() {
     var modal = $('#modal-acc-delete');
     var accid = $(this).attr('accid');
@@ -27,7 +82,9 @@ $(document).ready(function() {
     modal.modal('open');
   });
 
-  // Edit application modal.
+  /**
+   * Edit application modal.
+   */
   $('.modal-app-edit-trigger').click(function() {
     var modal = $('#modal-app-edit');
     var accid = $(this).attr('accid');
@@ -42,7 +99,9 @@ $(document).ready(function() {
     modal.modal('open');
   });
 
-  // Delete application modal.
+  /**
+   * Delete application modal.
+   */
   $('.modal-app-delete-trigger').click(function() {
     var modal = $('#modal-app-delete');
     var appid = $(this).attr('appid');
@@ -52,7 +111,9 @@ $(document).ready(function() {
     modal.modal('open');
   });
 
-  // Delete user modal.
+  /**
+   * Delete user modal.
+   */
   $('.modal-user-delete-trigger').click(function() {
     var self = $(this);
     var modal = $('#modal-user-delete');
@@ -61,7 +122,9 @@ $(document).ready(function() {
     modal.modal('open');
   });
 
-  // User role create - role select
+  /**
+   * User role create - role select.
+   */
   $("#modal-user-role-create select[name='rid']").on('change', function() {
     var selected = $(this).find('option:selected').text();
     var modal = $('#modal-user-role-create');
@@ -87,28 +150,16 @@ $(document).ready(function() {
     }
   });
 
-  // User role create - application select
+  /**
+   * User role create - account select.
+   */
   $("#modal-user-role-create select[name='accid']").on('change', function() {
-    var accid = $(this).val(),
-        selectAppid = $('#modal-user-role-create').find("select[name='appid']");
-    selectAppid.find('option').remove();
-    selectAppid.find('option').remove();selectAppid.append($('<option>', {
-      value: "",
-      text: "Please select"
-    }));
-    GATERDATA.accAppMap.forEach(function (application, appid) {
-      if (accid == application.accid) {
-        selectAppid.append($('<option>', {
-          value: appid,
-          text : application.name
-        }));
-      }
-    });
-    selectAppid.val("");
-    selectAppid.formSelect();
+    GATERDATA.setApplicationOptions($(this).val(), '#modal-user-role-create select[name="appid"]');
   });
 
-  // User role delete
+  /**
+   * User role delete.
+   */
   $(".modal-user-role-delete-trigger").on('click', function() {
     var urid = $(this).attr('urid'),
         user = $(this).attr('user'),
@@ -124,42 +175,69 @@ $(document).ready(function() {
     modal.modal('open');
   });
 
-  // Upload a resource file into the editor
+  /**
+   * Upload a resource file into the editor.
+   */
   $("#upload-resource-file").on('change',  function() {
-    var $input = $(this);
-    var inputFiles = this.files;
+    var inputFiles = this.files,
+        inputFile = inputFiles[0],
+        reader = new FileReader();
     if(inputFiles == undefined || inputFiles.length == 0) {
       return;
     }
-    var inputFile = inputFiles[0];
 
-    var reader = new FileReader();
     reader.onload = function(event) {
-      $('textarea[name="meta"]').val(this.result);
-      M.textareaAutoResize($('textarea[name="meta"]'));
+      try {
+        GATERDATA.doc = jsyaml.safeLoad(this.result);
+      } catch (e) {
+        M.toast({html: e});
+      }
+
+      ['name', 'description', 'uri', 'ttl'].forEach(function (item) {
+        if (typeof GATERDATA.doc[item] != 'undefined') {
+          $('#' + item).val(GATERDATA.doc[item]);
+        } else {
+          $('#' + item).val('');
+        }
+      });
+
+      GATERDATA.resetApplications('#appid');
+      ['appid', 'method'].forEach(function (item) {
+        if (typeof GATERDATA.doc[item] != 'undefined') {
+          $('#' + item).val(GATERDATA.doc[item]);
+        } else {
+          $('#' + item).val('');
+        }
+        $('#' + item).formSelect();
+      });
+      GATERDATA.setAccount($('#appid').val(), '#accid');
+
+      $('#accid').formSelect();
+      ['security', 'process'].forEach(function (item) {
+        if (typeof GATERDATA.doc[item] != 'undefined') {
+          $('#' + item).val(jsyaml.dump(GATERDATA.doc[item]));
+        } else {
+          $('#' + item).val('');
+        }
+        M.textareaAutoResize($('#' + item));
+      });
     };
+
     reader.readAsText(inputFile);
   });
 
-  // resource create - application select
-  $("#create-resource select[name='acc']").on('change', function() {
-    var acc = $(this).val(),
-        selectApp = $('#create-resource').find("select[name='app']");
-    selectApp.find('option').remove();
-    selectApp.append($('<option>', {
-      value: "",
-      text: "Please select"
-    }));
-    for (var application in GATERDATA.accAppMap) {
-      if (acc == GATERDATA.accAppMap[application]) {
-        selectApp.append($('<option>', {
-          value: application,
-          text : application
-        }));
-      }
-    }
-    selectApp.val("");
-    selectApp.formSelect();
+  /**
+   * resource create - account select.
+   */
+  $("#create-resource select[name='accid']").on('change', function() {
+    GATERDATA.setApplicationOptions($(this).val(), '#appid')
+  });
+
+  /**
+   * resource create - application select.
+   */
+  $("#create-resource select[name='appid']").on('change', function() {
+    GATERDATA.setAccount($(this).val(), '#accid')
   });
 
 });

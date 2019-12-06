@@ -14,7 +14,10 @@
 
   <body>
     <script>
-      GATERDATA = {};
+      (function(window) {
+        // set something to the global object
+        window.GATERDATA = {};
+      })(window);
     </script>
     <div class="container">
       {% include 'partials/header.twig' %}

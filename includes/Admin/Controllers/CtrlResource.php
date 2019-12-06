@@ -16,34 +16,33 @@ use GuzzleHttp\Exception\ClientException;
  */
 class CtrlResource extends CtrlBase
 {
-
-  /**
-   * Roles allowed to visit the page.
-   *
-   * @var array
-   */
+    /**
+     * Roles allowed to visit the page.
+     *
+     * @var array
+     */
     const PERMITTED_ROLES = [
-    'Developer',
+        'Developer',
     ];
 
-  /**
-   * Resources page.
-   *
-   * @param Request $request
-   *   Request object.
-   * @param Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return ResponseInterface
-   *   Response.
-   *
-   * @throws GuzzleException
-   */
+    /**
+     * Resources page.
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
     public function index(Request $request, Response $response, array $args)
     {
-      // Validate access.
+        // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
@@ -78,17 +77,17 @@ class CtrlResource extends CtrlBase
 
         try {
             $result = $client->request('GET', 'resource', [
-            'headers' => [
-            'Authorization' => "Bearer $token",
-            ],
-            'query' => $query,
+                'headers' => [
+                    'Authorization' => "Bearer $token",
+                ],
+                'query' => ['all' => 'true'],
             ]);
             $resources = (array) json_decode($result->getBody()->getContents());
 
             $result = $client->request('GET', 'account/all', [
-            'headers' => [
-              'Authorization' => "Bearer $token",
-            ],
+                'headers' => [
+                  'Authorization' => "Bearer $token",
+                ],
             ]);
             $accounts = (array) json_decode($result->getBody()->getContents());
         } catch (ClientException $e) {
@@ -106,7 +105,7 @@ class CtrlResource extends CtrlBase
             }
         }
 
-      // Pagination.
+        // Pagination.
         $page = isset($allParams['page']) ? $allParams['page'] : 1;
         $pages = ceil(count($resources) / $this->settings['admin']['paginationStep']);
         $resources = array_slice($resources,
@@ -115,35 +114,35 @@ class CtrlResource extends CtrlBase
         true);
 
         return $this->view->render($response, 'resources.twig', [
-        'menu' => $menu,
-        'params' => $query,
-        'resources' => $resources,
-        'page' => $page,
-        'pages' => $pages,
-        'accounts' => $accounts,
-        'applications' => (array) $applications,
-        'messages' => $this->flash->getMessages(),
+            'menu' => $menu,
+            'params' => $query,
+            'resources' => $resources,
+            'page' => $page,
+            'pages' => $pages,
+            'accounts' => $accounts,
+            'applications' => (array) $applications,
+            'messages' => $this->flash->getMessages(),
         ]);
     }
 
-  /**
-   * Create a resource page.
-   *
-   * @param Request $request
-   *   Request object.
-   * @param Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return ResponseInterface
-   *   Response.
-   *
-   * @throws GuzzleException
-   */
+    /**
+     * Create a resource page.
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
     public function create(Request $request, Response $response, array $args)
     {
-      // Validate access.
+        // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
@@ -161,21 +160,21 @@ class CtrlResource extends CtrlBase
 
         try {
             $result = $client->request('GET', 'functions/all', [
-            'headers' => [
-            'Authorization' => "Bearer $token",
-            ],
+                'headers' => [
+                    'Authorization' => "Bearer $token",
+                ],
             ]);
             $functions = json_decode($result->getBody()->getContents(), true);
             $result = $client->request('GET', 'account/all', [
-            'headers' => [
-              'Authorization' => "Bearer $token",
-            ],
+                'headers' => [
+                  'Authorization' => "Bearer $token",
+                ],
             ]);
             $accounts = json_decode($result->getBody()->getContents(), true);
             $result = $client->request('GET', 'application', [
-            'headers' => [
-              'Authorization' => "Bearer $token",
-            ],
+                'headers' => [
+                  'Authorization' => "Bearer $token",
+                ],
             ]);
             $applications = json_decode($result->getBody()->getContents(), true);
         } catch (ClientException $e) {
@@ -198,33 +197,121 @@ class CtrlResource extends CtrlBase
             $sortedFunctions[$function['menu']][] = $function;
         }
 
-        return $this->view->render($response, 'resource-create.twig', [
-        'menu' => $menu,
-        'accounts' => $accounts,
-        'applications' => $applications,
-        'functions' => $sortedFunctions,
-        'messages' => $this->flash->getMessages(),
+        return $this->view->render($response, 'resource.twig', [
+            'menu' => $menu,
+            'accounts' => $accounts,
+            'applications' => $applications,
+            'resource' => '',
+            'functions' => $sortedFunctions,
+            'messages' => $this->flash->getMessages(),
         ]);
     }
 
-  /**
-   * Upload a resource.
-   *
-   * @param Request $request
-   *   Request object.
-   * @param Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return ResponseInterface
-   *   Response.
-   *
-   * @throws GuzzleException
-   */
+    /**
+     * Edit a resource.
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
+    public function edit(Request $request, Response $response, array $args)
+    {
+        // Validate access.
+        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+        $this->getAccessRights($response, $uid);
+        if (!$this->checkAccess()) {
+            $this->flash->addMessage('error', 'Create a resource: access denied');
+            return $response->withStatus(302)->withHeader('Location', '/');
+        }
+
+        $menu = $this->getMenus();
+
+        $domain = $this->settings['api']['url'];
+        $account = $this->settings['api']['core_account'];
+        $application = $this->settings['api']['core_application'];
+        $token = $_SESSION['token'];
+        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+
+        try {
+            $result = $client->request('GET', 'resource', [
+                'headers' => [
+                    'Authorization' => "Bearer $token",
+                ],
+                'query' => ['all' => 'true'],
+            ]);
+            $resource = json_decode($result->getBody()->getContents(), true);
+            $result = $client->request('GET', 'functions/all', [
+                'headers' => [
+                    'Authorization' => "Bearer $token",
+                ],
+            ]);
+            $functions = json_decode($result->getBody()->getContents(), true);
+            $result = $client->request('GET', 'account/all', [
+                'headers' => [
+                    'Authorization' => "Bearer $token",
+                ],
+            ]);
+            $accounts = json_decode($result->getBody()->getContents(), true);
+            $result = $client->request('GET', 'application', [
+                'headers' => [
+                    'Authorization' => "Bearer $token",
+                ],
+            ]);
+            $applications = json_decode($result->getBody()->getContents(), true);
+        } catch (ClientException $e) {
+            $result = $e->getResponse();
+            $this->flash->addMessage('error', $this->getErrorMessage($e));
+            switch ($result->getStatusCode()) {
+                case 401:
+                    return $response->withStatus(302)->withHeader('Location', '/login');
+                    break;
+                default:
+                    return $response->withStatus(302)->withHeader('Location', '/resources');
+                    break;
+            }
+        }
+
+        $sortedFunctions = [];
+        foreach ($functions as $function) {
+            $sortedFunctions[$function['menu']][] = $function;
+        }
+
+        return $this->view->render($response, 'resource.twig', [
+            'menu' => $menu,
+            'accounts' => $accounts,
+            'applications' => $applications,
+            'resource' => $resource,
+            'functions' => $sortedFunctions,
+            'messages' => $this->flash->getMessages(),
+        ]);
+    }
+
+    /**
+     * Upload a resource.
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
     public function upload(Request $request, Response $response, array $args)
     {
-      // Validate access.
+        // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
@@ -246,10 +333,10 @@ class CtrlResource extends CtrlBase
 
         try {
             $result = $client->request('POST', 'resource/yaml/' . $allPostVars['acc'] . '/' . $allPostVars['app'], [
-            'headers' => [
-            'Authorization' => "Bearer $token",
-            ],
-            'body' => $allPostVars['meta'],
+                'headers' => [
+                    'Authorization' => "Bearer $token",
+                ],
+                'body' => $allPostVars['meta'],
             ]);
             $result = json_decode($result->getBody()->getContents(), true);
         } catch (ClientException $e) {
