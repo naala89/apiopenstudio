@@ -6,7 +6,6 @@
 #gaterdata
 tests/_output/*
 tmp/*
-config/settings.php
 config/settings.ini
 logs/
 public/admin/css/*

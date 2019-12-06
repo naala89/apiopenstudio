@@ -19,5 +19,8 @@
     "gulp-sass": "^4.0.1",
     "gulp-strip-debug": "^3.0.0",
     "gulp-uglify": "^3.0.1"
+  },
+  "dependencies": {
+    "js-yaml": "^3.13.1"
   }
 }
