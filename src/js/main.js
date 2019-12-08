@@ -249,15 +249,21 @@ $(document).ready(function() {
    */
   $("#create-resource a[href='#yaml']").on('click', function() {
     if (!$(this).hasClass('active')) {
-      ['security', 'process'].forEach(function (item) {
-        var obj = jsyaml.safeLoad($('#json textarea[name="' + item + '"]').val());
-        if (typeof obj != 'undefined') {
-          $('#yaml textarea[name="' + item + '"]').val(jsyaml.dump(obj));
-        } else {
-          $('#json textarea[name="' + item + '"]').val('');
-        }
-        M.textareaAutoResize($('#json textarea[name="' + item + '"]'));
-      });
+      try {
+        ['security', 'process'].forEach(function (item) {
+          var obj = jsyaml.safeLoad($('textarea[name="' + item + '"]').val());
+          if (typeof obj != 'undefined') {
+            $('textarea[name="' + item + '"]').val(jsyaml.dump(obj));
+            $('input[name="format"]').val('yaml');
+          } else {
+            $('textarea[name="' + item + '"]').val('');
+          }
+          M.textareaAutoResize($('textarea[name="' + item + '"]'));
+        });
+      } catch (e) {
+        M.toast({html: e});
+        return;
+      }
     }
   });
 
@@ -266,15 +272,21 @@ $(document).ready(function() {
    */
   $("#create-resource a[href='#json']").on('click', function() {
     if (!$(this).hasClass('active')) {
-      ['security', 'process'].forEach(function (item) {
-        var obj = jsyaml.safeLoad($('#yaml textarea[name="' + item + '"]').val());
-        if (typeof obj != 'undefined') {
-          $('#json textarea[name="' + item + '"]').val(JSON.stringify(obj, null, 2));
-        } else {
-          $('#json textarea[name="' + item + '"]').val('');
-        }
-        M.textareaAutoResize($('#json textarea[name="' + item + '"]'));
-      });
+      try {
+        ['security', 'process'].forEach(function (item) {
+          var obj = jsyaml.safeLoad($('textarea[name="' + item + '"]').val());
+          if (typeof obj != 'undefined') {
+            $('textarea[name="' + item + '"]').val(JSON.stringify(obj, null, 2));
+            $('input[name="format"]').val('json');
+          } else {
+            $('textarea[name="' + item + '"]').val('');
+          }
+          M.textareaAutoResize($('textarea[name="' + item + '"]'));
+        });
+      } catch (e) {
+        M.toast({html: e});
+        return;
+      }
     }
   });
 });
