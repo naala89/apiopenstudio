@@ -6,6 +6,8 @@ uri: user/role
 
 method: delete
 
+appid: 2
+
 ttl: 0
 
 security:

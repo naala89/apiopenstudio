@@ -6,6 +6,8 @@ uri: resource
 
 method: delete
 
+appid: 2
+
 ttl: 0
 
 security:

@@ -1,10 +1,12 @@
-key: User login Drupal
+name: User login Drupal
 
 description: Login a user to the system, using user/pass validation on an external Drupal site
 
 uri: user/login/drupal
 
 method: post
+
+appid: 2
 
 ttl: 0
 

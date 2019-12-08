@@ -6,6 +6,8 @@ uri: resource/json
 
 method: post
 
+appid: 2
+
 ttl: 0
 
 security:

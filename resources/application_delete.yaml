@@ -6,6 +6,8 @@ uri: application
 
 method: delete
 
+appid: 2
+
 ttl: 0
 
 security:

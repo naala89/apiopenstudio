@@ -6,6 +6,8 @@ uri: user
 
 method: put
 
+appid: 2
+
 ttl: 0
 
 security:
