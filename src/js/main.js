@@ -210,16 +210,20 @@ $(document).ready(function() {
         }
         $('#' + item).formSelect();
       });
-      GATERDATA.setAccount($('#appid').val(), '#accid');
 
+      GATERDATA.setAccount($('#appid').val(), '#accid');
       $('#accid').formSelect();
+
+      $('ul.tabs').tabs('select', 'yaml');
       ['security', 'process'].forEach(function (item) {
         if (typeof GATERDATA.doc[item] != 'undefined') {
-          $('#' + item).val(jsyaml.dump(GATERDATA.doc[item]));
+          $("#yaml textarea[name='" + item + "']").val(jsyaml.dump(GATERDATA.doc[item]));
         } else {
-          $('#' + item).val('');
+          $("#yaml textarea[name='" + item + "']").val('');
         }
-        M.textareaAutoResize($('#' + item));
+        $("#json textarea[name='" + item + "']").val('');
+        M.textareaAutoResize($("#json textarea[name='" + item + "']"));
+        M.textareaAutoResize($("#yaml textarea[name='" + item + "']"));
       });
     };
 
@@ -240,4 +244,37 @@ $(document).ready(function() {
     GATERDATA.setAccount($(this).val(), '#accid')
   });
 
+  /**
+   * resource create - YAML view.
+   */
+  $("#create-resource a[href='#yaml']").on('click', function() {
+    if (!$(this).hasClass('active')) {
+      ['security', 'process'].forEach(function (item) {
+        var obj = jsyaml.safeLoad($('#json textarea[name="' + item + '"]').val());
+        if (typeof obj != 'undefined') {
+          $('#yaml textarea[name="' + item + '"]').val(jsyaml.dump(obj));
+        } else {
+          $('#json textarea[name="' + item + '"]').val('');
+        }
+        M.textareaAutoResize($('#json textarea[name="' + item + '"]'));
+      });
+    }
+  });
+
+  /**
+   * resource create - JSON view.
+   */
+  $("#create-resource a[href='#json']").on('click', function() {
+    if (!$(this).hasClass('active')) {
+      ['security', 'process'].forEach(function (item) {
+        var obj = jsyaml.safeLoad($('#yaml textarea[name="' + item + '"]').val());
+        if (typeof obj != 'undefined') {
+          $('#json textarea[name="' + item + '"]').val(JSON.stringify(obj, null, 2));
+        } else {
+          $('#json textarea[name="' + item + '"]').val('');
+        }
+        M.textareaAutoResize($('#json textarea[name="' + item + '"]'));
+      });
+    }
+  });
 });

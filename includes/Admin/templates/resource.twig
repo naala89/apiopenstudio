@@ -98,14 +98,38 @@
         </div>
 
         <div class="row">
-          <label>Security</label>
-          <textarea class="materialize-textarea" placeholder="Enter your resource security definition here..." name="security" id="security" required class="validate">{{ resource.security }}</textarea>
+          <div class="col s12">
+            <ul class="tabs">
+              <li class="tab col s6"><a class="active" href="#yaml">YAML</a></li>
+              <li class="tab col s6"><a href="#json">JSON</a></li>
+            </ul>
+          </div>
+
+          <div id="yaml" class="col s12">
+            <div class="row">
+              <label>Security</label>
+              <textarea class="materialize-textarea" placeholder="Enter your yaml resource security definition here..." name="security" required class="validate">{{ resource.security }}</textarea>
+            </div>
+
+            <div class="row">
+              <label>Process</label>
+              <textarea class="materialize-textarea" placeholder="Enter your yaml resource security process here..." name="process" required class="validate">{{ resource.process }}</textarea>
+            </div>
+          </div>
+
+          <div id="json" class="col s12">
+            <div class="row">
+              <label>Security</label>
+              <textarea class="materialize-textarea" placeholder="Enter your json resource security definition here..." name="security" required class="validate">{{ resource.security }}</textarea>
+            </div>
+
+            <div class="row">
+              <label>Process</label>
+              <textarea class="materialize-textarea" placeholder="Enter your json resource process definition here..." name="process" required class="validate">{{ resource.process }}</textarea>
+            </div>
+          </div>
         </div>
 
-        <div class="row">
-          <label>Process</label>
-          <textarea class="materialize-textarea" placeholder="Enter your resource security process here..." name="process" id="process" required class="validate">{{ resource.process }}</textarea>
-        </div>
 
         <div class="row">
           <div class="col">

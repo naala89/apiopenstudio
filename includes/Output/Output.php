@@ -3,11 +3,15 @@
 namespace Gaterdata\Output;
 
 use Gaterdata\Core;
-use Gaterdata\Processor;
 use Gaterdata\Config;
 
 abstract class Output extends Core\ProcessorEntity
 {
+    /**
+     * @var Core\Config
+     */
+    protected $settings;
+
     /**
      * @var mixed The output data.
      */
@@ -29,6 +33,7 @@ abstract class Output extends Core\ProcessorEntity
     public $status;
 
     /**
+     * Output constructor.
      * @param $data
      *     Output data.
      * @param $status
@@ -38,6 +43,7 @@ abstract class Output extends Core\ProcessorEntity
      */
     public function __construct($data, $status, $meta = null)
     {
+        $this->settings = new Core\Config();
         $this->status = $status;
         $this->data = $data;
         $this->meta = $meta;
@@ -86,7 +92,13 @@ abstract class Output extends Core\ProcessorEntity
      */
     public function setHeader()
     {
-        if (Config::$debugInterface != 'HTML' || (Config::$debug < 1 && Config::$debugDb < 1)) {
+        if (
+            $this->settings->__get(['debug', 'debugInterface']) != 'HTML'
+            || (
+                $this->settings->__get(['debug', 'debug']) < 1
+                && $this->settings->__get(['debug', 'debugDb']) < 1
+            )
+        ) {
             header($this->header);
         }
     }
