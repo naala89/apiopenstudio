@@ -1,6 +1,10 @@
 {% extends "page.twig" %}
 
-{% set title="Resources" %}
+{% if operation == 'create' %}
+  {% set title="Create a resource" %}
+{% else %}
+  {% set title="Edit a resource" %}
+{% endif %}
 
 {% block content %}
   <script src="/js/js-yaml.min.js"></script>
@@ -12,10 +16,12 @@
     {% endfor %}
   </script>
   <div class="row">
-    <p>Create a new resource.</p>
+    <p>{% if operation == 'create' %}Create a new resource.{% else %}Edit an existing resource.{% endif %}</p>
     <p>Import a GaterData or Swagger file using the upload button.</p>
   </div>
   <form method="post" action="/resource/upload" id="create-resource">
+
+    <input type="hidden" name="resid" value="{{ resource.resid }}" />
 
     <div class="row">
       <div class="col s4">
@@ -108,24 +114,24 @@
           <div id="yaml" class="col s12">
             <div class="row">
               <label>Security</label>
-              <textarea class="materialize-textarea" placeholder="Enter your yaml resource security definition here..." name="security" required class="validate">{{ resource.security }}</textarea>
+              <textarea class="materialize-textarea" placeholder="Enter your yaml resource security definition here..." name="security" required class="validate">{{ resource.meta.security }}</textarea>
             </div>
 
             <div class="row">
               <label>Process</label>
-              <textarea class="materialize-textarea" placeholder="Enter your yaml resource security process here..." name="process" required class="validate">{{ resource.process }}</textarea>
+              <textarea class="materialize-textarea" placeholder="Enter your yaml resource security process here..." name="process" required class="validate">{{ resource.meta.process }}</textarea>
             </div>
           </div>
 
           <div id="json" class="col s12">
             <div class="row">
               <label>Security</label>
-              <textarea class="materialize-textarea" placeholder="Enter your json resource security definition here..." name="security" required class="validate">{{ resource.security }}</textarea>
+              <textarea class="materialize-textarea" placeholder="Enter your json resource security definition here..." name="security" required class="validate"></textarea>
             </div>
 
             <div class="row">
               <label>Process</label>
-              <textarea class="materialize-textarea" placeholder="Enter your json resource process definition here..." name="process" required class="validate">{{ resource.process }}</textarea>
+              <textarea class="materialize-textarea" placeholder="Enter your json resource process definition here..." name="process" required class="validate"></textarea>
             </div>
           </div>
         </div>
