@@ -8,6 +8,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class CtrlResource.
@@ -198,6 +199,7 @@ class CtrlResource extends CtrlBase
         }
 
         return $this->view->render($response, 'resource.twig', [
+            'operation' => 'create',
             'menu' => $menu,
             'accounts' => $accounts,
             'applications' => $applications,
@@ -233,6 +235,7 @@ class CtrlResource extends CtrlBase
         }
 
         $menu = $this->getMenus();
+        $resid = $args['resid'];
 
         $domain = $this->settings['api']['url'];
         $account = $this->settings['api']['core_account'];
@@ -245,7 +248,7 @@ class CtrlResource extends CtrlBase
                 'headers' => [
                     'Authorization' => "Bearer $token",
                 ],
-                'query' => ['all' => 'true'],
+                'query' => ['resid' => $resid],
             ]);
             $resource = json_decode($result->getBody()->getContents(), true);
             $result = $client->request('GET', 'functions/all', [
@@ -284,13 +287,23 @@ class CtrlResource extends CtrlBase
             $sortedFunctions[$function['menu']][] = $function;
         }
 
+        $obj = json_decode($resource['meta'], true);
+        $resource['meta'] = [];
+        if (isset($obj['security'])) {
+            $resource['meta']['security'] = Yaml::dump($obj['security'], Yaml::PARSE_OBJECT);
+        }
+        if (isset($obj['process'])) {
+            $resource['meta']['process'] = Yaml::dump($obj['process'], Yaml::PARSE_OBJECT);
+        }
         return $this->view->render($response, 'resource.twig', [
+            'operation' => 'edit',
             'menu' => $menu,
             'accounts' => $accounts,
             'applications' => $applications,
             'resource' => $resource,
             'functions' => $sortedFunctions,
             'messages' => $this->flash->getMessages(),
+            'resid' => $resid,
         ]);
     }
 
