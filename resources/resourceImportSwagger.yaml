@@ -6,6 +6,8 @@ uri: resource/swagger
 
 method: post
 
+appid: 2
+
 ttl: 0
 
 security:

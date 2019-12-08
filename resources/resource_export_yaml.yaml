@@ -2,11 +2,11 @@ name: Resource export YAML
 
 description: Fetch a resource in string or YAML format.
 
-machine_name: resource_export_yaml
-
 uri: resource/yaml
 
 method: get
+
+appid: 2
 
 ttl: 0
 

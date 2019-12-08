@@ -6,6 +6,8 @@ uri: functions
 
 method: get
 
+appid: 2
+
 ttl: 3600
 
 security:
