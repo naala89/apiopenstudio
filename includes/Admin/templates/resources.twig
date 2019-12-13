@@ -64,14 +64,14 @@
       <div class="col col-height s2 valign-wrapper">{{ resource.method }}</div>
       <div class="col col-height s2 valign-wrapper">{{ resource.uri }}</div>
       <div class="col col-height s2 valign-wrapper">
-        {% if resource.appid > 2 %}
+{#        {% if resource.appid > 2 %}#}
           <a class="btn-floating btn-small white hoverable" href="/resource/edit/{{ resource.resid }}">
             <i class="material-icons black-text" title="Edit this resource.">edit</i>
           </a>
           <a class="btn-floating btn-small white hoverable" href="#">
             <i class="material-icons modal-resource-delete-trigger black-text" resid="{{ resource.resid }}" title="Delete this resource.">delete</i>
           </a>
-        {% endif %}
+{#        {% endif %}#}
       </div>
     </div>
   {% endfor %}
