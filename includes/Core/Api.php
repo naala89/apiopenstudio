@@ -51,7 +51,7 @@ class Api
    */
     public function process()
     {
-      // DB link.
+        // DB link.
         $dsnOptionsArr = [];
         foreach ($this->settings->__get(['db', 'options']) as $k => $v) {
             $dsnOptionsArr[] = "$k=$v";
