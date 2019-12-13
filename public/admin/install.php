@@ -1,6 +1,5 @@
 <?php
 
-use Gaterdata\Admin;
 use Gaterdata\Db;
 use Gaterdata\Core\ApiException;
 use Gaterdata\Core\Config;
@@ -19,7 +18,7 @@ $menu = ['Login' => '/'];
 // Twig definition.
 $loader = new Twig_Loader_Filesystem($settings->__get(['api', 'base_path']) . $settings->__get(['twig', 'template_path']));
 $twig = new Twig_Environment($loader, $settings->__get(['twig', 'options']));
-if ($settings->__get(['twig', 'options', 'debug'])) {
+if ($settings->__get(['debug', 'debug'])) {
   $twig->addExtension(new \Twig\Extension\DebugExtension());
 }
 
