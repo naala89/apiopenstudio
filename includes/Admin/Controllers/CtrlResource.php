@@ -333,9 +333,31 @@ class CtrlResource extends CtrlBase
         }
 
         $allPostVars = $request->getParsedBody();
-        if (empty($allPostVars['acc']) || empty($allPostVars['app']) || empty($allPostVars['meta'])) {
+        if (
+            empty($allPostVars['format'])
+            || empty($allPostVars['name'])
+            || empty($allPostVars['description'])
+            || empty($allPostVars['appid'])
+            || empty($allPostVars['method'])
+            || empty($allPostVars['uri'])
+            || empty($allPostVars['ttl'])
+        ) {
             $this->flash->addMessage('error', 'Cannot upload resource, not all information recieved');
             return $response->withStatus(302)->withHeader('Location', '/resource/create');
+        }
+        $method = isset($allPostVars['resid']) ? 'PUT' : 'POST';
+        switch ($allPostVars['format']) {
+            case 'json':
+                $meta = [];
+                $meta['security'] = !empty($allPostVars['security']) ? json_decode($allPostVars['security']) : '';
+                $meta['process'] = !empty($allPostVars['process']) ? json_decode($allPostVars['process']) : '';
+                $meta = json_encode($meta);
+                break;
+            case 'yaml':
+                $meta = '';
+                $meta = !empty($allPostVars['security']) ? ("security:\n  " . $allPostVars['security']) . "\n" : '';
+                $meta = !empty($allPostVars['process']) ? ("process:\n  " . $allPostVars['process']) . "\n" : '';
+                break;
         }
 
         $domain = $this->settings['api']['url'];
@@ -345,7 +367,7 @@ class CtrlResource extends CtrlBase
         $client = new Client(['base_uri' => "$domain/$account/$application/"]);
 
         try {
-            $result = $client->request('POST', 'resource/yaml/' . $allPostVars['acc'] . '/' . $allPostVars['app'], [
+            $result = $client->request($method, 'resource/yaml/' . $allPostVars['acc'] . '/' . $allPostVars['app'], [
                 'headers' => [
                     'Authorization' => "Bearer $token",
                 ],

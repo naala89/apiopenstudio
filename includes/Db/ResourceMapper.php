@@ -73,15 +73,18 @@ class ResourceMapper extends Mapper
     /**
      * Find all resources.
      *
+     * @param array $params
+     *   Filter and order params.
+     *
      * @return Resource
      *   Resource object.
      *
      * @throws ApiException
      */
-    public function all()
+    public function all($params = [])
     {
         $sql = 'SELECT * FROM resource';
-        return $this->fetchRows($sql);
+        return $this->fetchRows($sql, [], $params);
     }
 
     /**

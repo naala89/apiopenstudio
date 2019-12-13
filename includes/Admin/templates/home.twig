@@ -21,7 +21,7 @@
       <p>Click <a href="/accounts">here</a> to create your account/s.</p>
     </div>
   {% else %}
-    {% if ('Administrator' in roles or 'Account manager' in roles) and  applications|length == 1 %}
+    {% if ('Administrator' in roles or 'Account manager' in roles) and  applications|length < 3 %}
       <div class="divider"></div>
       <div class="section">
         <p><i>You do not have any applications for your accounts yet.</i></p>

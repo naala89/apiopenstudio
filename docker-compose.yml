@@ -2,6 +2,7 @@ version: '3.7'
 
 services:
 
+  # Reverse Proxy.
   nginx-proxy:
     image: jwilder/nginx-proxy:alpine
     container_name: "${APP_NAME}-proxy"
@@ -12,6 +13,7 @@ services:
     networks:
       - api_network
 
+  # NGINX API server.
   api:
     image: nginx:stable
     container_name: "${APP_NAME}-api"
@@ -31,6 +33,7 @@ services:
         aliases:
           - ${API_DOMAIN}
 
+  # Admin API server.
   admin:
     image: nginx:stable
     container_name: "${APP_NAME}-admin"
@@ -49,7 +52,27 @@ services:
       api_network:
         aliases:
           - ${ADMIN_DOMAIN}
-    
+
+  # Comment out this section if you want to serve the wiki.
+  # NGINX wiki server.
+  wiki:
+    image: nginx:stable
+    container_name: "${APP_NAME}-wiki"
+    hostname: "${WIKI_DOMAIN}"
+    ports:
+      - 80
+    volumes:
+      - ./docker/nginx/wiki.conf:/etc/nginx/conf.d/default.conf
+      - ${PWD}/public/wiki:/var/www/html
+      - ${PWD}/logs/wiki:/var/log/nginx
+    environment:
+      - VIRTUAL_HOST=${WIKI_DOMAIN}
+    networks:
+      api_network:
+        aliases:
+          - ${WIKI_DOMAIN}
+
+  #  Generic PHP container.
   php:
     image: php:fpm-stretch
     container_name: "${APP_NAME}-php"
@@ -70,6 +93,7 @@ services:
     networks:
       - api_network
 
+  # Node container to install npm requires and run gulp.
   node:
     image: node:11
     container_name: "${APP_NAME}-node"
@@ -79,7 +103,8 @@ services:
     command: bash -c "npm install && npm install -g gulp && gulp all"
     networks:
       - api_network
-  
+
+  # Install composer requires.
   composer:
     image: composer:latest
     container_name: "${APP_NAME}-composer"
@@ -91,6 +116,7 @@ services:
     networks:
       - api_network
 
+  # Database container.
   db:
     image: mariadb:latest
     container_name: "${APP_NAME}-db"

@@ -10,20 +10,21 @@ use Gaterdata\Core\ApiException;
  *
  * @package Gaterdata\Admin
  */
-class Invite {
+class Invite
+{
 
   /**
    * @var array
    */
-  private $dbSettings;
+    private $dbSettings;
   /**
    * @var \ADOConnection
    */
-  private $db;
+    private $db;
   /**
    * @var  Db\Invite
    */
-  private $invite;
+    private $invite;
 
   /**
    * Invite constructor.
@@ -33,24 +34,25 @@ class Invite {
    *
    * @throws ApiException
    */
-  public function __construct(array $dbSettings) {
-    $this->dbSettings = $dbSettings;
+    public function __construct(array $dbSettings)
+    {
+        $this->dbSettings = $dbSettings;
 
-    $dsnOptionsArr = [];
-    foreach ($dbSettings['options'] as $k => $v) {
-      $dsnOptionsArr[] = "$k=$v";
+        $dsnOptionsArr = [];
+        foreach ($dbSettings['options'] as $k => $v) {
+            $dsnOptionsArr[] = "$k=$v";
+        }
+        $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
+        $dsn = $dbSettings['driver'] . '://'
+        . $dbSettings['username'] . ':'
+        . $dbSettings['password'] . '@'
+        . $dbSettings['host'] . '/'
+        . $dbSettings['database'] . $dsnOptions;
+        $this->db = ADONewConnection($dsn);
+        if (!$this->db) {
+            throw new ApiException('Failed to connect to the database.');
+        }
     }
-    $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
-    $dsn = $dbSettings['driver'] . '://'
-      . $dbSettings['username'] . ':'
-      . $dbSettings['password'] . '@'
-      . $dbSettings['host'] . '/'
-      . $dbSettings['database'] . $dsnOptions;
-    $this->db = ADONewConnection($dsn);
-    if (!$this->db) {
-      throw new ApiException('Failed to connect to the database.');
-    }
-  }
 
   /**
    * Get the Invite.
@@ -58,9 +60,10 @@ class Invite {
    * @return array
    *   Invite.
    */
-  public function getInvite() {
-    return $this->invite->dump();
-  }
+    public function getInvite()
+    {
+        return $this->invite->dump();
+    }
 
   /**
    * Create an invite.
@@ -77,19 +80,20 @@ class Invite {
    *
    * @throws \Gaterdata\Core\ApiException
    */
-  public function create($accid, $email, $token) {
-    $invite = new Db\Invite(
-      NULL,
-      $accid,
-      $email,
-      $token
-    );
+    public function create($accid, $email, $token)
+    {
+        $invite = new Db\Invite(
+            null,
+            $accid,
+            $email,
+            $token
+        );
 
-    $inviteMapper = new Db\InviteMapper($this->db);
-    $inviteMapper->save($invite);
-    $this->invite = $inviteMapper->findByToken($token);
-    return $this->getInvite();
-  }
+        $inviteMapper = new Db\InviteMapper($this->db);
+        $inviteMapper->save($invite);
+        $this->invite = $inviteMapper->findByToken($token);
+        return $this->getInvite();
+    }
 
   /**
    * Delete all invites by email.
@@ -102,14 +106,15 @@ class Invite {
    *
    * @throws \Gaterdata\Core\ApiException
    */
-  public function deleteByEmail($email) {
-    $inviteMapper = new Db\InviteMapper($this->db);
-    $invites = $inviteMapper->findByEmail($email);
-    foreach ($invites as $invite) {
-      $inviteMapper->delete($invite);
+    public function deleteByEmail($email)
+    {
+        $inviteMapper = new Db\InviteMapper($this->db);
+        $invites = $inviteMapper->findByEmail($email);
+        foreach ($invites as $invite) {
+            $inviteMapper->delete($invite);
+        }
+        return true;
     }
-    return TRUE;
-  }
 
   /**
    * Delete all invites by token.
@@ -122,12 +127,13 @@ class Invite {
    *
    * @throws \Gaterdata\Core\ApiException
    */
-  public function deleteByToken($token) {
-    $inviteMapper = new Db\InviteMapper($this->db);
-    $invite = $inviteMapper->findByToken($token);
-    $inviteMapper->delete($invite);
-    return TRUE;
-  }
+    public function deleteByToken($token)
+    {
+        $inviteMapper = new Db\InviteMapper($this->db);
+        $invite = $inviteMapper->findByToken($token);
+        $inviteMapper->delete($invite);
+        return true;
+    }
 
   /**
    * Find by iid.
@@ -138,40 +144,36 @@ class Invite {
    * @return array
    *   Invite.
    */
-  public function findById($iid) {
-    $inviteMapper = new Db\InviteMapper($this->db);
-    $this->invite = $inviteMapper->findById($iid);
-    return $this->getInvite();
-  }
+    public function findById($iid)
+    {
+        $inviteMapper = new Db\InviteMapper($this->db);
+        $this->invite = $inviteMapper->findById($iid);
+        return $this->getInvite();
+    }
 
-  /**
-   * Find by email,
-   *
-   * @param string $email
-   *   Invite email.
-   *
-   * @return array
-   *   Invite.
-   */
-  public function findByEmail($email) {
-    $inviteMapper = new Db\InviteMapper($this->db);
-    $this->invite = $inviteMapper->findByEmail($email);
-    return $this->getInvite();
-  }
+    /**
+     * Find by email,
+     * @param $email
+     * @return array
+     * @throws ApiException
+     */
+    public function findByEmail($email)
+    {
+        $inviteMapper = new Db\InviteMapper($this->db);
+        $this->invite = $inviteMapper->findByEmail($email);
+        return $this->getInvite();
+    }
 
-  /**
-   * Find by token.
-   *
-   * @param string $token
-   *   Invite token.
-   *
-   * @return array
-   *   Invite.
-   */
-  public function findByToken($token) {
-    $inviteMapper = new Db\InviteMapper($this->db);
-    $this->invite = $inviteMapper->findByToken($token);
-    return $this->getInvite();
-  }
-
+    /**
+     * Find by token.
+     * @param $token
+     * @return array
+     * @throws ApiException
+     */
+    public function findByToken($token)
+    {
+        $inviteMapper = new Db\InviteMapper($this->db);
+        $this->invite = $inviteMapper->findByToken($token);
+        return $this->getInvite();
+    }
 }

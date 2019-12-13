@@ -240,6 +240,37 @@ abstract class ProcessorEntity extends Entity
         return is_object($data) && get_class($data) == 'Gaterdata\Core\DataContainer';
     }
 
+    /**
+     * Generate the params array for the sql search.
+     *
+     * @param string $keyword
+     *   Search keyword
+     * @param array $keywordCols
+     *   Columns to search for the keyword.
+     * @param string $orderBy
+     *   Order by column.
+     * @param string $direction
+     *   Order direction.
+     *
+     * @return array
+     */
+    protected function generateParams($keyword, $keywordCols, $orderBy, $direction)
+    {
+        $params = [];
+        if (!empty($keyword) && !empty($keywordCols)) {
+            foreach ($keywordCols as $keywordCol) {
+                $params['filter'][] = ['keyword' => "%$keyword%", 'column' => $keywordCol];
+            }
+        }
+        if (!empty($orderBy)) {
+            $params['order_by'] = $orderBy;
+        }
+        if (!empty($direction)) {
+            $params['direction'] = $direction;
+        }
+        return $params;
+    }
+
   /**
    * Validate an input for allowed values
    *
