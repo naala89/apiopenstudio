@@ -29,13 +29,13 @@ class Api
     private $db;
     private $settings;
 
-  /**
-   * Constructor
-   *
-   * @param mixed $cache
-   *  type of cache to use
-   *  @see Cache->setup($type)
-   */
+    /**
+     * Constructor
+     *
+     * @param mixed $cache
+     *  type of cache to use
+     *  @see Cache->setup($type)
+     */
     public function __construct($cache = false)
     {
         $this->settings = new Config();
@@ -43,12 +43,12 @@ class Api
         $this->helper = new ProcessorHelper();
     }
 
-  /**
-   * Process the rest request.
-   *
-   * @return mixed
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Process the rest request.
+     *
+     * @return mixed
+     * @throws \Gaterdata\Core\ApiException
+     */
     public function process()
     {
         // DB link.
@@ -67,7 +67,7 @@ class Api
         }
         $this->db->debug = $this->settings->__get(['debug', 'debugDb']);
 
-      // get the request data for processing.
+        // get the request data for processing.
         $this->request = $this->_getData();
         Debug::variable($this->request, 'request', 3);
         $resource = $this->request->getResource();
@@ -75,18 +75,18 @@ class Api
         $meta = json_decode($resource->getMeta());
         Debug::variable($meta, 'meta', 3);
 
-      // validate user access rights for the call.
+        // validate user access rights for the call.
         if (!empty($meta->security)) {
             Debug::variable($meta->security, 'Process security', 3);
             $this->_crawlMeta($meta->security);
         }
 
-      // fetch the cache of the call, and process into output if it is not stale
+        // fetch the cache of the call, and process into output if it is not stale
         $result = $this->_getCache($this->request->getCacheKey());
         if ($result !== false) {
             return $this->_getOutput($result);
         }
-      // set fragments in Meta class
+        // set fragments in Meta class
         if (isset($meta->fragments)) {
             $fragments = $meta->fragments;
             foreach ($fragments as $fragKey => $fragVal) {
@@ -96,27 +96,27 @@ class Api
             $this->request->setFragments($fragments);
         }
 
-      // process the call
+        // process the call
         Debug::variable($meta->process, 'Process resource', 3);
         $result = $this->_crawlMeta($meta->process);
 
-      // store the results in cache for next time
+        // store the results in cache for next time
         if (is_object($result) && get_class($result) == 'Error') {
             Debug::message('Not caching, result is error object');
         } else {
             $cacheData = array('data' => $result);
             $ttl = empty($this->request->getTtl()) ? 0 : $this->request->getTtl();
-            $this->cache->set($cacheKey, $cacheData, $ttl);
+            $this->cache->set($this->request->getCacheKey(), $cacheData, $ttl);
         }
 
         return $this->_getOutput($result);
     }
 
-  /**
-   * Process the request and request header into a meaningful array object.
-   *
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Process the request and request header into a meaningful array object.
+     *
+     * @throws \Gaterdata\Core\ApiException
+     */
     private function _getData()
     {
         $method = $this->_getMethod();
@@ -177,18 +177,18 @@ class Api
         return $request;
     }
 
-  /**
-   * Get the requested resource from the DB.
-   *
-   * @param int $appId
-   *   Request application ID.
-   * @param string $method
-   *   Request HTTP method.
-   * @param array $uriParts
-   *   Request URI parts.
-   * @return array|Db\ApiResource
-   * @throws ApiException
-   */
+    /**
+     * Get the requested resource from the DB.
+     *
+     * @param int $appId
+     *   Request application ID.
+     * @param string $method
+     *   Request HTTP method.
+     * @param array $uriParts
+     *   Request URI parts.
+     * @return array|Db\ApiResource
+     * @throws ApiException
+     */
     private function _getResource($appId, $method, $uriParts)
     {
         if (!$this->test) {
@@ -233,12 +233,12 @@ class Api
         return $resource;
     }
 
-  /**
-   * Get the cache key for a request.
-   *
-   * @param $uriParts
-   * @return string
-   */
+    /**
+     * Get the cache key for a request.
+     *
+     * @param $uriParts
+     * @return string
+     */
     private function _getCacheKey($uriParts)
     {
         $cacheKey = $this->_cleanData($this->request->getMethod() . '_' . implode('_', $uriParts));
@@ -246,13 +246,13 @@ class Api
         return $cacheKey;
     }
 
-  /**
-   * Check cache for any results.
-   *
-   * @param $cacheKey
-   * @return bool
-   * @throws ApiException
-   */
+    /**
+     * Check cache for any results.
+     *
+     * @param $cacheKey
+     * @return bool
+     * @throws ApiException
+     */
     private function _getCache($cacheKey)
     {
         if (!$this->cache->cacheActive()) {
@@ -271,13 +271,13 @@ class Api
         return false;
     }
 
-  /**
-   * Process the meta data, using depth first iteration.
-   *
-   * @param $meta
-   * @return mixed
-   * @throws ApiException
-   */
+    /**
+     * Process the meta data, using depth first iteration.
+     *
+     * @param $meta
+     * @return mixed
+     * @throws ApiException
+     */
     private function _crawlMeta($meta)
     {
         if (!$this->helper->isProcessor($meta)) {
@@ -292,9 +292,9 @@ class Api
             $node = array_shift($stack);
             $processNode = true;
 
-          // traverse through each attribute on the node
+            // traverse through each attribute on the node
             foreach ($node as $key => $value) {
-              // $value is a processor and has not been calculated yet, add it to the front of $stack
+                // $value is a processor and has not been calculated yet, add it to the front of $stack
                 if ($this->helper->isProcessor($value) && !isset($results[$value->id])) {
                     if ($processNode) {
                         array_unshift($stack, $node);
@@ -302,9 +302,8 @@ class Api
                     }
                     array_unshift($stack, $value);
                     $processNode = false;
-
-                    // $value is an array of values, add to $stack
                 } elseif (is_array($value)) {
+                    // $value is an array of values, add to $stack
                     foreach ($value as $index => $item) {
                         if ($this->helper->isProcessor($item) && !isset($results[$item->id])) {
                             if ($processNode) {
@@ -318,9 +317,9 @@ class Api
                 }
             }
 
-          // No new attributes have been added to the stack, so we can process the node
+            // No new attributes have been added to the stack, so we can process the node
             if ($processNode) {
-              // traverse through each attribute on the node and place values from $results into $node
+                // traverse through each attribute on the node and place values from $results into $node
                 foreach ($node as $key => $value) {
                     if ($this->helper->isProcessor($value)) {
                         // single processor - if value exists in $results,
@@ -350,22 +349,22 @@ class Api
         return $results[$finalId];
     }
 
-  /**
-   * Get the formatted output.
-   *
-   * @param $data
-   * @return bool
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Get the formatted output.
+     *
+     * @param $data
+     * @return bool
+     * @throws \Gaterdata\Core\ApiException
+     */
     private function _getOutput($data)
     {
         $result = true;
         $resource = $this->request->getResource();
 
-      // default to response output if no output defined
         if (empty($resource->output)) {
+            // default to response output if no output defined
             Debug::message('no output section defined - returning the result in the response');
-          // translate the output to the correct format as requested in header and return in the response
+            // translate the output to the correct format as requested in header and return in the response
             $class = $this->helper->getProcessorString(ucfirst($this->request->getOutFormat()), array('Output'));
             $obj = new $class($data, 200);
             $result = $obj->process();
@@ -383,8 +382,9 @@ class Api
                     $obj->setStatus();
                     $obj->setHeader();
                 } else {
-                  // treat as a multiple output and let the class take care of the output.
+                    // treat as a multiple output and let the class take care of the output.
                     foreach ($output as $type => $meta) {
+                        $outFormat = ucfirst($this->_cleanData($this->request->outFormat));
                         $class = $this->helper->getProcessor($outFormat, array('Output'));
                         $obj = new $class($data, 200, $meta);
                         $obj->process();
@@ -396,12 +396,12 @@ class Api
         return $result;
     }
 
-  /**
-   * Utility function to get the REST method from the $_SERVER var.
-   *
-   * @return string
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Utility function to get the REST method from the $_SERVER var.
+     *
+     * @return string
+     * @throws \Gaterdata\Core\ApiException
+     */
     private function _getMethod()
     {
         $method = strtolower($_SERVER['REQUEST_METHOD']);
@@ -417,13 +417,13 @@ class Api
         return $method;
     }
 
-  /**
-   * Calculate a format from string of header Content-Type or Accept.
-   *
-   * @param $key
-   * @param bool|FALSE $default
-   * @return bool|string
-   */
+    /**
+     * Calculate a format from string of header Content-Type or Accept.
+     *
+     * @param $key
+     * @param bool|FALSE $default
+     * @return bool|string
+     */
     public function getAccept($default = null)
     {
         $key = 'accept';
@@ -452,16 +452,16 @@ class Api
         $result = '';
         switch ($values[0]['mimeType']) {
             case 'image' :
-            return 'image';
+                return 'image';
             case 'text':
             case 'application':
-            return ($result == '*' || $result == '**') ? $default : $values[0]['mimeSubType'];
+                return ($result == '*' || $result == '**') ? $default : $values[0]['mimeSubType'];
             default:
-            return $default;
+                return $default;
         }
-        return ($values[0]['mimeSubType'] == '*' || $values[0]['mimeSubType'] == '**')
-            ? $default
-            : $values[0]['mimeSubType'];
+//        return ($values[0]['mimeSubType'] == '*' || $values[0]['mimeSubType'] == '**')
+//            ? $default
+//            : $values[0]['mimeSubType'];
     }
 
     private static function _sortHeadersWeight($a, $b)
@@ -472,12 +472,12 @@ class Api
         return $a['weight'] > $b['weight'] ? -1 : 1;
     }
 
-  /**
-   * Utility recursive function to clean vars for processing.
-   *
-   * @param $data
-   * @return array|string
-   */
+    /**
+     * Utility recursive function to clean vars for processing.
+     *
+     * @param $data
+     * @return array|string
+     */
     private function _cleanData($data)
     {
         $cleaned = array();

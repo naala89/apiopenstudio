@@ -20,7 +20,7 @@ abstract class ProcessorEntity extends Entity
 
   /**
    * All of the request details.
-   * @var stdClass
+   * @var Request
    */
     protected $request;
 
@@ -100,7 +100,7 @@ abstract class ProcessorEntity extends Entity
    * If this method is overridden by any derived classes, don't forget to call parent::__construct()
    *
    * @param array $meta
-   * @param object $request
+   * @param Request $request
    * @param \ADOConnection $db
    */
     public function __construct($meta, &$request, $db)
@@ -146,7 +146,7 @@ abstract class ProcessorEntity extends Entity
             return false;
         }
 
-      // Check for error
+        // Check for error
         switch ($_FILES[$file]['error']) {
             case UPLOAD_ERR_OK:
             break;
@@ -159,7 +159,7 @@ abstract class ProcessorEntity extends Entity
             throw new ApiException('Unknown errors.', 1, $this->id);
         }
 
-      // Check for upload attack.
+        // Check for upload attack.
         $newFile = $_SERVER['DOCUMENT_ROOT'] . Config::$dirUploads . basename($_FILES[$file]['name']);
         if (!move_uploaded_file($_FILES[$file]['tmp_name'], $newFile)) {
             throw new ApiException('Possible file upload attack!', 1, $this->id);
@@ -191,7 +191,7 @@ abstract class ProcessorEntity extends Entity
     {
         $inputDet = $this->details['input'];
         if (!isset($inputDet[$key])) {
-          // undefined input key for this processor type
+            // undefined input key for this processor type
             throw new ApiException("invalid key: $key", 1, $this->id);
         }
 
@@ -203,11 +203,11 @@ abstract class ProcessorEntity extends Entity
 
         $count = empty($this->meta->$key) ? 0 : is_array($this->meta->$key) ? sizeof($this->meta->$key) : 1;
         if ($count < $min || ($max != '*' && $count > $max)) {
-          // invalid cardinality
+            // invalid cardinality
             throw new ApiException("invalid number of inputs ($count) in $key, requires $min - $max", 1, $this->id);
         }
 
-      // return default if empty
+        // return default if empty
         if (!isset($this->meta->$key)
             || ($this->isDataContainer($this->meta->$key) && $this->meta->$key->getData() === '')) {
             return $default;
