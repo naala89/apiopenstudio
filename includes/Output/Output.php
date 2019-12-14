@@ -178,7 +178,7 @@ abstract class Output extends Core\ProcessorEntity
             return $this->fromImage($this->data);
             break;
             default:
-            throw new Core\ApiException("unknown output type: '$type'. Cannot convert to XML");
+            throw new Core\ApiException("unknown output type: '$type'. Cannot convert.");
             break;
         }
     }

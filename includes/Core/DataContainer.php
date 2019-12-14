@@ -15,7 +15,8 @@ class DataContainer extends Entity
         'array',
         'json',
         'xml',
-        'image'
+        'image',
+        'file',
     ];
 
     /**

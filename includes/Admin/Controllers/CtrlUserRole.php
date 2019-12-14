@@ -23,35 +23,35 @@ use Gaterdata\Admin\UserRole;
 class CtrlUserRole extends CtrlBase
 {
 
-  /**
-   * Roles allowed to visit the page.
-   *
-   * @var array
-   */
+    /**
+     * Roles allowed to visit the page.
+     *
+     * @var array
+     */
     const PERMITTED_ROLES = [
     'Administrator',
     'Account manager',
     'Application manager',
     ];
 
-  /**
-   * List user roles.
-   *
-   * @param Request $request
-   *   Request object.
-   * @param Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return ResponseInterface
-   *   Response.
-   *
-   * @throws GuzzleException
-   */
+    /**
+     * List user roles.
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
     public function index(Request $request, Response $response, array $args)
     {
-      // Validate access.
+        // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
@@ -123,24 +123,24 @@ class CtrlUserRole extends CtrlBase
         ]);
     }
 
-  /**
-   * Create a user role.
-   *
-   * @param Request $request
-   *   Request object.
-   * @param Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return ResponseInterface
-   *   Response.
-   *
-   * @throws GuzzleException
-   */
+    /**
+     * Create a user role.
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
     public function create(Request $request, Response $response, array $args)
     {
-      // Validate access.
+        // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
@@ -158,14 +158,14 @@ class CtrlUserRole extends CtrlBase
         try {
             $result = $client->request('POST', 'user/role', [
             'headers' => [
-            'Authorization' => "Bearer $token",
-            ],
-            'form_params' => [
-            'uid' => $allPostVars['uid'],
-            'accid' => $allPostVars['accid'],
-            'appid' => $allPostVars['appid'],
-            'rid' => $allPostVars['rid'],
-            ],
+                    'Authorization' => "Bearer $token",
+                ],
+                    'form_params' => [
+                    'uid' => $allPostVars['uid'],
+                    'accid' => $allPostVars['accid'],
+                    'appid' => $allPostVars['appid'],
+                    'rid' => $allPostVars['rid'],
+                ],
             ]);
         } catch (ClientException $e) {
             $result = $e->getResponse();
@@ -184,24 +184,24 @@ class CtrlUserRole extends CtrlBase
         return $response->withStatus(302)->withHeader('Location', '/user/roles');
     }
 
-  /**
-   * Delete a user role.
-   *
-   * @param Request $request
-   *   Request object.
-   * @param Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return ResponseInterface
-   *   Response.
-   *
-   * @throws GuzzleException
-   */
+    /**
+     * Delete a user role.
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
     public function delete(Request $request, Response $response, array $args)
     {
-      // Validate access.
+        // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
