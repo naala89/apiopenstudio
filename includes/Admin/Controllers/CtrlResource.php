@@ -3,6 +3,7 @@
 namespace Gaterdata\Admin\Controllers;
 
 use GuzzleHttp\Exception\GuzzleException;
+use phpDocumentor\Reflection\Types\Integer;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -203,7 +204,9 @@ class CtrlResource extends CtrlBase
             'menu' => $menu,
             'accounts' => $accounts,
             'applications' => $applications,
-            'resource' => '',
+            'format' => $args['format'],
+            'resource' => !empty($args['resource']) ? $args['resource'] : '',
+            'resid' => !empty($args['resid']) ? $args['resid'] : '',
             'functions' => $sortedFunctions,
             'messages' => $this->flash->getMessages(),
         ]);
@@ -340,23 +343,26 @@ class CtrlResource extends CtrlBase
             || empty($allPostVars['appid'])
             || empty($allPostVars['method'])
             || empty($allPostVars['uri'])
-            || empty($allPostVars['ttl'])
+            || !isset($allPostVars['ttl'])
         ) {
-            $this->flash->addMessage('error', 'Cannot upload resource, not all information recieved');
+            $this->flash->addMessage('error', 'Cannot upload resource, not all information received');
             return $response->withStatus(302)->withHeader('Location', '/resource/create');
         }
-        $method = isset($allPostVars['resid']) ? 'PUT' : 'POST';
+        $method = intval($allPostVars['resid']) > 1 ? 'PUT' : 'POST';
         switch ($allPostVars['format']) {
+            case 'yaml':
+                $meta = '';
+                $meta .= !empty($allPostVars['security']) ? ("security:\n  " . $allPostVars['security']) . "\n" : '';
+                $meta .= !empty($allPostVars['process']) ? ("process:\n  " . $allPostVars['process']) . "\n" : '';
+                break;
             case 'json':
                 $meta = [];
                 $meta['security'] = !empty($allPostVars['security']) ? json_decode($allPostVars['security']) : '';
                 $meta['process'] = !empty($allPostVars['process']) ? json_decode($allPostVars['process']) : '';
                 $meta = json_encode($meta);
                 break;
-            case 'yaml':
+            default:
                 $meta = '';
-                $meta = !empty($allPostVars['security']) ? ("security:\n  " . $allPostVars['security']) . "\n" : '';
-                $meta = !empty($allPostVars['process']) ? ("process:\n  " . $allPostVars['process']) . "\n" : '';
                 break;
         }
 
@@ -365,28 +371,79 @@ class CtrlResource extends CtrlBase
         $application = $this->settings['api']['core_application'];
         $token = $_SESSION['token'];
         $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-
         try {
-            $result = $client->request($method, 'resource/yaml/' . $allPostVars['acc'] . '/' . $allPostVars['app'], [
+            $client->request($method, 'resource', [
                 'headers' => [
                     'Authorization' => "Bearer $token",
                 ],
-                'body' => $allPostVars['meta'],
+                'form_params' => [
+                    'resid' => !empty($allPostVars['resid']) ? $allPostVars['resid'] : null,
+                    'name' => $allPostVars['name'],
+                    'description' => $allPostVars['description'],
+                    'appid' => $allPostVars['appid'],
+                    'method' => $allPostVars['method'],
+                    'uri' => $allPostVars['uri'],
+                    'ttl' => $allPostVars['ttl'],
+                    'format' => $allPostVars['format'],
+                    'meta' => $meta,
+                ],
             ]);
-            $result = json_decode($result->getBody()->getContents(), true);
+            $this->flash->addMessageNow('info', 'Resource successfully created.');
         } catch (ClientException $e) {
             $result = $e->getResponse();
-            $this->flash->addMessage('error', $this->getErrorMessage($e));
+            $this->flash->addMessageNow('error', $this->getErrorMessage($e));
             switch ($result->getStatusCode()) {
                 case 401:
-                return $response->withStatus(302)->withHeader('Location', '/login');
-                break;
+                    return $response->withStatus(302)->withHeader('Location', '/login');
+                    break;
                 default:
-                return $response->withStatus(302)->withHeader('Location', '/resources');
-                break;
+                    $resource = $this->getResource($allPostVars);
+                    return !empty($allPostVars['resid']) ?
+                        $this->edit($request, $response, [
+                            'format' => $allPostVars['format'],
+                            'resource' => $resource,
+                            'resid' => $allPostVars['resid'],
+                        ]) :
+                        $this->create($request, $response, [
+                            'format' => $allPostVars['format'],
+                            'resource' => $resource,
+                        ]);
             }
         }
-        $this->flash->addMessage('info', 'Resource successfully created.');
-        return $this->index($request, $response, []);
+
+        $resource = $this->getResource($allPostVars);
+        return !empty($allPostVars['resid']) ?
+            $this->edit($request, $response, [
+                'format' => $allPostVars['format'],
+                'resource' => $resource,
+                'resid' => $allPostVars['resid'],
+            ]) :
+            $this->create($request, $response, [
+                'format' => $allPostVars['format'],
+                'resource' => $resource,
+            ]);
+    }
+
+    /**
+     * Generate the array for Twig for the current resource to be created/edited.
+     *
+     * @param array $allPostVars
+     *   Post vars in this request.
+     * @return array
+     *   Twig vars.
+     */
+    private function getResource($allPostVars) {
+        return [
+            'name' => $allPostVars['name'],
+            'description' => $allPostVars['description'],
+            'appid' => $allPostVars['appid'],
+            'method' => $allPostVars['method'],
+            'uri' => $allPostVars['uri'],
+            'ttl' => $allPostVars['ttl'],
+            'meta' => [
+                'security' =>  $allPostVars['security'],
+                'process' =>  $allPostVars['process'],
+            ]
+        ];
     }
 }

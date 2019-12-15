@@ -17,7 +17,6 @@
   </script>
   <div class="row">
     <p>{% if operation == 'create' %}Create a new resource.{% else %}Edit an existing resource.{% endif %}</p>
-    <p>Import a GaterData or Swagger file using the upload button.</p>
   </div>
   <form method="post" action="/resource/upload" id="create-resource">
 
@@ -26,7 +25,7 @@
 
     <div class="row">
       <div class="col s4">
-        <label>Upload a local file into the resource definition.</label>
+        <label>Import a GaterData resource file into the resource definition.</label>
         <div class="file-field input-field">
           <div class="btn">
             <span>Browse</span>
@@ -61,7 +60,7 @@
 
         <div class="row">
           <div class="input-field col s6">
-            <select required class="validate" name="accid" id="accid">
+            <select name="accid" id="accid">
               <option value="" disabled selected>Please select</option>
               {% for accid, account in accounts %}
                 <option value="{{ accid }}" {% if GATERDATA.accAppMap[appid] is not empty %}selected{% endif %}>{{ account }}</option>
@@ -107,8 +106,8 @@
         <div class="row">
           <div class="col s12">
             <ul class="tabs">
-              <li class="tab col s6"><a class="active" href="#yaml">YAML</a></li>
-              <li class="tab col s6"><a href="#json">JSON</a></li>
+              <li class="tab col s6"><a {% if format != 'json' %}class="active"{% endif %} href="#yaml">YAML</a></li>
+              <li class="tab col s6"><a {% if format == 'json' %}class="active"{% endif %} href="#json">JSON</a></li>
             </ul>
           </div>
         </div>
@@ -116,7 +115,7 @@
         <div class="col s12">
           <div class="row">
             <label>Security</label>
-            <textarea class="materialize-textarea" placeholder="Enter your yaml resource security definition here..." name="security" required class="validate">{{ resource.meta.security }}</textarea>
+            <textarea class="materialize-textarea" placeholder="Enter your yaml resource security definition here..." name="security" class="validate">{{ resource.meta.security }}</textarea>
           </div>
 
           <div class="row">

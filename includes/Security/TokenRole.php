@@ -3,7 +3,6 @@
 namespace Gaterdata\Security;
 
 use Gaterdata\Core;
-use Gaterdata\Core\Debug;
 use Gaterdata\Db;
 
 /**
@@ -14,37 +13,36 @@ use Gaterdata\Db;
  *   * If user is Account manager then against role and account.
  *   * All others against role and application.
  */
-
 class TokenRole extends Core\ProcessorEntity
 {
   /**
    * {@inheritDoc}
    */
     protected $details = [
-    'name' => 'Token (Role)',
-    'machineName' => 'token_role',
-    'description' => 'Validate that the user has a valid token and role. This is faster than Token Roles,',
-    'menu' => 'Security',
-    'input' => [
-      'token' => [
-        'description' => 'The consumers token.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => false,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-      'role' => [
-        'description' => 'A user_role.',
-        'cardinality' => [1, 1],
-        'literalAllowed' => true,
-        'limitFunctions' => [],
-        'limitTypes' => ['string'],
-        'limitValues' => [],
-        'default' => '',
-      ],
-    ],
+        'name' => 'Token (Role)',
+        'machineName' => 'token_role',
+        'description' => 'Validate that the user has a valid token and role. This is faster than Token Roles,',
+        'menu' => 'Security',
+        'input' => [
+            'token' => [
+                'description' => 'The consumers token.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => false,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'role' => [
+                'description' => 'A user_role.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+        ],
     ];
 
   /**

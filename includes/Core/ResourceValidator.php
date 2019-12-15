@@ -43,17 +43,8 @@ class ResourceValidator
         if (empty($data)) {
             throw new Core\ApiException("empty resource uploaded", 6, $this->id, 406);
         }
-        if (!isset($data['name'])) {
-            throw new Core\ApiException("missing name in new resource", 6, -1, 406);
-        }
-        if (!isset($data['description'])) {
-            throw new Core\ApiException("missing description in new resource", 6, -1, 406);
-        }
         if (!isset($data['process'])) {
             throw new Core\ApiException("missing process in new resource", 6, -1, 406);
-        }
-        if (!isset($data['ttl']) || strlen($data['ttl']) < 1) {
-            throw new Core\ApiException("missing or negative ttl in new resource", 6, -1, 406);
         }
 
         // validate for identical IDs
