@@ -19,7 +19,7 @@ class UserLogin extends Core\ProcessorEntity
         'name' => 'User Login',
         'machineName' => 'user_login',
         'description' => 'Login a user. Token and uid returned.',
-        'menu' => 'Validator',
+        'menu' => 'Security',
         'input' => [
             'username' => [
                 'description' => 'Users username.',

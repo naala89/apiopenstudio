@@ -14,6 +14,7 @@ use Gaterdata\Db\Resource;
 use Gaterdata\Db\ResourceMapper;
 use Gaterdata\Db\UserRoleMapper;
 use Gaterdata\Core\ResourceValidator;
+use Spyc;
 
 class ResourceCreate extends Core\ProcessorEntity
 {
@@ -52,7 +53,7 @@ class ResourceCreate extends Core\ProcessorEntity
      */
     protected $details = [
         'name' => 'Resource create',
-        'machineName' => 'resource_read',
+        'machineName' => 'resource_create',
         'description' => 'Create a resource.',
         'menu' => 'Admin',
         'input' => [
@@ -67,7 +68,7 @@ class ResourceCreate extends Core\ProcessorEntity
             ],
             'description' => [
                 'description' => 'The resource description.',
-                'cardinality' => [1, 1],
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
                 'limitTypes' => ['string'],
@@ -111,7 +112,7 @@ class ResourceCreate extends Core\ProcessorEntity
                 'default' => 0,
             ],
             'format' => [
-                'description' => 'Sort resource metadata format type (json or yaml).',
+                'description' => 'The resource metadata format type (json or yaml).',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
@@ -120,7 +121,7 @@ class ResourceCreate extends Core\ProcessorEntity
                 'default' => '',
             ],
             'meta' => [
-                'description' => 'Sort resource metadata.',
+                'description' => 'The resource metadata (security and process sections) as a YAML or JSON string',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
@@ -157,6 +158,7 @@ class ResourceCreate extends Core\ProcessorEntity
         $appid = $this->val('appid', true);
         $method = $this->val('method', true);
         $uri = $this->val('uri', true);
+        $ttl = $this->val('ttl', true);
         $format = $this->val('format', true);
         $meta = $this->val('meta', true);
 
@@ -169,7 +171,7 @@ class ResourceCreate extends Core\ProcessorEntity
             $account->getName() == $this->settings->__get(['api', 'core_account'])
             && $application->getName() == $this->settings->__get(['api', 'core_application'])
         ) {
-            throw new Core\ApiException("Unauthorised: this is the core application", 6, $this->id, 400);
+            throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
         $userRole = $this->userRoleMapper->findByFilter([
             'appid' => $appid,
@@ -183,11 +185,10 @@ class ResourceCreate extends Core\ProcessorEntity
             throw new Core\ApiException('Resource already exists', 6, $this->id, 400);
         }
 
-        $array = $this->translateMetaString($format, $meta);
+        $meta = $this->translateMetaString($format, $meta);
+        $this->validator->validate(json_decode($meta, true));
 
-        $this->validator->validate($array);
-
-        return $this->create($name, $description, $appid, $method, $uri, $meta);
+        return $this->create($name, $description, $method, $uri, $appid, $ttl, $meta);
     }
 
     /**
@@ -208,8 +209,8 @@ class ResourceCreate extends Core\ProcessorEntity
         $array = [];
         switch ($format) {
             case 'yaml':
-                $array = \Spyc::YAMLLoadString($string);
-                if (empty($yaml)) {
+                $array = Spyc::YAMLLoadString($string);
+                if (empty($array)) {
                     throw new Core\ApiException('Invalid or no YAML supplied', 6, $this->id, 417);
                 }
                 break;
@@ -222,7 +223,7 @@ class ResourceCreate extends Core\ProcessorEntity
             default:
                 break;
         }
-        return $array;
+        return json_encode($array);
     }
 
     /**
