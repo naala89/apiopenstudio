@@ -217,13 +217,13 @@ $(document).ready(function() {
       $('ul.tabs').tabs('select', 'yaml');
       ['security', 'process'].forEach(function (item) {
         if (typeof GATERDATA.doc[item] != 'undefined') {
-          $("#yaml textarea[name='" + item + "']").val(jsyaml.dump(GATERDATA.doc[item]));
+          $("textarea[name='" + item + "']").val(jsyaml.dump(GATERDATA.doc[item]));
         } else {
-          $("#yaml textarea[name='" + item + "']").val('');
+          $("textarea[name='" + item + "']").val('');
         }
         $("#json textarea[name='" + item + "']").val('');
-        M.textareaAutoResize($("#json textarea[name='" + item + "']"));
-        M.textareaAutoResize($("#yaml textarea[name='" + item + "']"));
+        M.textareaAutoResize($("textarea[name='" + item + "']"));
+        M.textareaAutoResize($("textarea[name='" + item + "']"));
       });
     };
 
