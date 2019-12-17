@@ -3,6 +3,7 @@
 use Gaterdata\Db;
 use Gaterdata\Core\ApiException;
 use Gaterdata\Core\Config;
+use Spyc;
 
 require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
@@ -66,20 +67,16 @@ switch ($step) {
     $yaml = file_get_contents($settings->__get(['api', 'base_path']) . $settings->__get(['db', 'definition_path']));
     $definition = \Spyc::YAMLLoadString($yaml);
     $template = $twig->load('install/install_1.twig');
-    $messages['info'][] = 'Creating database tables...';
 
     // Create the database, user and permissions.
     $sql = 'CREATE DATABASE ' . $settings->__get(['db', 'database']) . 'IF NOT EXISTS';
     $db->execute($sql);
-    $messages['info'][] = 'CREATE DATABASE success!';
     $sql = 'CREATE USER IF NOT EXISTS "' . $settings->__get(['db', 'username']) . '"@"'  . $settings->__get(['db', 'host']) . '" IDENTIFIED BY "' . $settings->__get(['db', 'password']) . '"';
     $db->execute($sql);
-    $messages['info'][] = 'CREATE USER success!';
     $sql = 'GRANT ALL PRIVILEGES ON * . * TO "' . $settings->__get(['db', 'username']) . '"@"'  . $settings->__get(['db', 'host']) . '"';
     $db->execute($sql);
     $sql = 'FLUSH PRIVILEGES';
     $db->execute($sql);
-    $messages['info'][] = 'GRANT PRIVILEGES success!';
 
     // Parse the DB  table definition array.
     foreach ($definition as $table => $tableData) {
@@ -113,8 +110,6 @@ switch ($step) {
         $messages['error'][] = 'Processing halted. Please check the logs and retry';
         echo $template->render(['messages' => $messages, 'menu' => $menu]);
         exit;
-      } else {
-        $messages['info'][] = "CREATE TABLE `$table` success!";
       }
       // Add data if required.
       if (isset($tableData['data'])) {
@@ -133,10 +128,38 @@ switch ($step) {
             exit;
           }
         }
-        $messages['info'][] = "INSERT into `$table` success!";
       }
     }
-
+    // Add resource data from the resources directory
+    $dir = '../../includes/resources';
+    $filenames = scandir($dir);
+    foreach ($filenames as $filename) {
+        if (pathinfo($filename, PATHINFO_EXTENSION) != 'yaml') {
+            continue;
+        }
+        $yaml = Spyc::YAMLLoadString(file_get_contents("$dir/$filename"));
+        $name = $yaml['name'];
+        $description = $yaml['description'];
+        $uri = $yaml['uri'];
+        $method = $yaml['method'];
+        $appid = $yaml['appid'];
+        $ttl = $yaml['ttl'];
+        $meta = [];
+        if (!empty($yaml['security'])) {
+            $meta[] = '"security": ' . json_encode($yaml['security']);
+        }
+        if (!empty($yaml['process'])) {
+            $meta[] = '"process": ' . json_encode($yaml['process']);
+        }
+        $meta = '{' . implode(', ', $meta) . '}';
+        $sqlRow = "INSERT INTO resource (`appid`, `name`, `description`, `method`, `uri`, `meta`, `ttl`) VALUES ($appid, '$name', '$description', '$method', '$uri', '$meta', $ttl)";
+        if (empty($db->execute($sqlRow))) {
+            $messages['error'][] = "INSERT $name into `resource` fail!";
+            $messages['error'][] = 'Processing halted. Please check the logs and retry';
+            echo $template->render(['messages' => $messages, 'menu' => $menu]);
+            exit;
+        }
+    }
     $messages['info'][] = 'Database Successfully created!<br />';
     echo $template->render(['messages' => $messages, 'menu' => $menu]);
     exit;

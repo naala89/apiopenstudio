@@ -1,0 +1,31 @@
+name: Resource delete
+
+description: Delete a resource.
+
+uri: resource
+
+method: delete
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: tokenDeveloper
+  id: 1
+  token:
+    function: varRequest
+    id: 2
+    key: token
+
+process:
+  function: resourceYaml
+  id: 4
+  method:
+    function: varRequest
+    id: 5
+    key: method
+  uri:
+    function: varRequest
+    id: 7
+    key: uri
