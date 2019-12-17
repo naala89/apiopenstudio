@@ -1,0 +1,34 @@
+name: Resource import YAML
+
+description: Create a resource from a YAML string in the body.
+
+uri: resource/yaml
+
+method: post
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_role
+  id: resource_import_yaml_security
+  token:
+    function: bearer_token
+    id: resource_import_yaml_token
+  role: Developer
+
+process:
+  function: resource_yaml
+  id: resource_import_yaml_rsesource_yaml
+  resourceString: 
+    function: var_body
+    id: resource_import_yaml_resource_string
+  accName:
+    function: 
+    id: resource_import_yaml_acc_name
+    index: 0
+  appName:
+    function: var_uri
+    id: resource_import_yaml_app_name
+    index: 1

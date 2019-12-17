@@ -1,0 +1,30 @@
+name: User delete
+
+description: Delete a user.
+
+uri: user
+
+method: delete
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_roles
+  id: user_delete_security
+  token:
+    function: bearer_token
+    id: user_delete_token
+  roles:
+    - Administrator
+    - Account manager
+    - Application manager
+
+process:
+  function: user_delete
+  id: user_delete_process
+  uid:
+    function: var_uri
+    id: user_delete_uid
+    index: 0
