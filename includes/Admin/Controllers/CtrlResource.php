@@ -470,6 +470,74 @@ class CtrlResource extends CtrlBase
     }
 
     /**
+     * Delete a resource.
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
+    public function delete(Request $request, Response $response, array $args)
+    {
+        // Validate access.
+        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+        $this->getAccessRights($response, $uid);
+        if (!$this->checkAccess()) {
+            $this->flash->addMessage('error', 'Delete a resource: access denied');
+            return $response->withStatus(302)->withHeader('Location', '/');
+        }
+
+        $allPostVars = $request->getParsedBody();
+        $resid = $args['resid'];
+
+        $domain = $this->settings['api']['url'];
+        $account = $this->settings['api']['core_account'];
+        $application = $this->settings['api']['core_application'];
+        $token = $_SESSION['token'];
+        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
+
+        if (empty($resid)) {
+            try {
+                $result = $client->request('DELETE', 'resource', [
+                    'headers' => [
+                        'Authorization' => "Bearer $token",
+                    ],
+                    'json' => [
+                        'resid' => $allPostVars['resid'],
+                    ],
+                ]);
+                $result = json_decode($result->getBody()->getContents(), true);
+            } catch (ClientException $e) {
+                $result = $e->getResponse();
+                $this->flash->addMessage('error', $this->getErrorMessage($e));
+                switch ($result->getStatusCode()) {
+                    case 401:
+                        return $response->withStatus(302)->withHeader('Location', '/login');
+                        break;
+                    default:
+                        return $response->withStatus(302)->withHeader('Location', '/resources');
+                        break;
+                }
+            }
+        } else {
+            $this->flash->addMessage('error', 'Cannot delete resource, no resid received.');
+        }
+        if ($result == 'true') {
+            $this->flash->addMessage('info', 'Resource successfully deleted.');
+        } else {
+            $this->flash->addMessage('error', 'Resource failed to delete, please check the logs.');
+        }
+        return $response->withStatus(302)->withHeader('Location', '/resources');
+    }
+
+    /**
      * Generate the array for Twig for the current resource to be created/edited.
      *
      * @param array $allPostVars

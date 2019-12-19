@@ -1,0 +1,42 @@
+name: Resource delete
+
+description: Delete a resource.
+
+uri: resource
+
+method: delete
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_role
+  id: resource_delete_security
+  token:
+    function: bearer_token
+    id: resource_delete_token
+  role: Developer
+
+process:
+  function: resource_delete
+  id: resource_delete_process
+  resid:
+    function: field_value
+    id: resource_delete_resid
+    key_value: value
+    field:
+      function: var_field
+      id: resource_delete_field
+      array:
+        function: filter
+        id: resource_delete_filter
+        filter: resid
+        inverse: true
+        source:
+          function: convert_to_array
+          id: resource_delete_array
+          source:
+            function: var_body
+            id: resource_delete_body
+            nullable: false
