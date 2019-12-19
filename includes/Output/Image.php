@@ -19,8 +19,7 @@ class Image extends Output
     protected $details = [
         'name' => 'Image',
         'machineName' => 'image',
-        // phpcs:ignore
-        'description' => 'Output in image format. The data fed into the output can be a URL (must start with http) or an input filename.',
+        'description' => 'Output in the results of the resource in image format to a remote server.',
         'menu' => 'Output',
         'input' => [
             'destination' => [

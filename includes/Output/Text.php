@@ -17,7 +17,7 @@ class Text extends Output
     protected $details = [
         'name' => 'Text',
         'machineName' => 'text',
-        'description' => 'Output in text format.',
+        'description' => 'Output in the results of the resource in text format to a remote server.',
         'menu' => 'Output',
         'input' => [
             'destination' => [

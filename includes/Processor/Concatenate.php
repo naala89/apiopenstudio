@@ -17,7 +17,7 @@ class Concatenate extends Core\ProcessorEntity
         'name' => 'Concatenate',
         'machineName' => 'concatenate',
         'description' => 'Concatenate a series of strings or numbers into a single string.',
-        'menu' => 'Primitive',
+        'menu' => 'Data operation',
         'input' => [
           'sources' => [
             'description' => 'The values to concatenate',
