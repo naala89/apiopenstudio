@@ -76,7 +76,12 @@ services:
   php:
     image: php:fpm-stretch
     container_name: "${APP_NAME}-php"
-    build: ./docker/php
+    build:
+      context: ./docker/php
+      args:
+        - WITH_XDEBUG=true
+    env_file:
+      .env
     ports:
       - "9000:9000"
     volumes:
@@ -93,7 +98,7 @@ services:
     networks:
       - api_network
 
-  # Node container to install npm requires and run gulp.
+# Node container to install npm requires and run gulp.
   node:
     image: node:11
     container_name: "${APP_NAME}-node"
