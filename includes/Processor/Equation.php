@@ -18,7 +18,7 @@ class Equation extends Core\ProcessorEntity
         'machineName' => 'equation',
         // phpcs:ignore
         'description' => 'This function allows you to define an equation with variables. These input variables are name/value pairs and substitute variables in th4e equation.',
-        'menu' => 'Operation',
+        'menu' => 'Math',
         'input' => [
             'equation' => [
                 'description' => 'The equation.',

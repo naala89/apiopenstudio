@@ -18,7 +18,7 @@ class Sort extends Core\ProcessorEntity
         'machineName' => 'sort',
         // phpcs:ignore
         'description' => 'Sort an input of multiple values. The values can be singular items or name/value pairs (sorted by key or value). Singular items cannot be mixed with name/value pairs.',
-        'menu' => 'Process',
+        'menu' => 'Data operation',
         'input' => [
             'values' => [
                 'description' => 'The values to sort.',

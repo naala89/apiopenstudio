@@ -17,7 +17,7 @@ class AuthOAuth extends Core\ProcessorEntity
         'name' => 'Auth (OAuth)',
         'machineName' => 'auth_oauth',
         'description' => 'Authentication for remote server, using OAuth signature in the header.',
-        'menu' => 'Authentication',
+        'menu' => 'Endpoint authentication',
         'input' => [
             'key' => [
                 'description' => 'The consumer key.',

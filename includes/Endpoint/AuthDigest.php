@@ -17,7 +17,7 @@ class AuthDigest extends Core\ProcessorEntity
         'name' => 'Auth (Digest User/Pass)',
         'machineName' => 'auth_digest',
         'description' => 'Digest authentication for remote server, using username/password.',
-        'menu' => 'Authentication',
+        'menu' => 'Endpoint authentication',
         'input' => [
             'username' => [
                 'description' => 'The username.',
