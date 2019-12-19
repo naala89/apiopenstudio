@@ -63,8 +63,8 @@ abstract class Output extends Core\ProcessorEntity
             $method = $this->val('method');
             foreach ($this->meta->destination as $destination) {
                 $url = $this->val($destination);
-                $data = array('data' => $data);
-                $curlOpts = array();
+                $data = ['data' => $data];
+                $curlOpts = [];
                 if ($method == 'post') {
                     $curlOpts[CURLOPT_POSTFIELDS] = http_build_query($data);
                 } elseif ($method == 'get') {
@@ -151,35 +151,35 @@ abstract class Output extends Core\ProcessorEntity
 
         switch ($type) {
             case 'boolean':
-            return $this->fromBoolean($this->data);
-            break;
+                return $this->fromBoolean($this->data);
+                break;
             case 'integer':
-            return $this->fromInteger($this->data);
-            break;
+                return $this->fromInteger($this->data);
+                break;
             case 'float':
-            return $this->fromFloat($this->data);
-            break;
+                return $this->fromFloat($this->data);
+                break;
             case 'text':
-            return $this->fromText($this->data);
-            break;
+                return $this->fromText($this->data);
+                break;
             case 'array':
-            return $this->fromArray($this->data);
-            break;
+                return $this->fromArray($this->data);
+                break;
             case 'json':
-            return $this->fromJson($this->data);
-            break;
+                return $this->fromJson($this->data);
+                break;
             case 'xml':
-            return $this->fromXml($this->data);
-            break;
+                return $this->fromXml($this->data);
+                break;
             case 'html':
-            return $this->fromHtml($this->data);
-            break;
+                return $this->fromHtml($this->data);
+                break;
             case 'image':
-            return $this->fromImage($this->data);
-            break;
+                return $this->fromImage($this->data);
+                break;
             default:
-            throw new Core\ApiException("unknown output type: '$type'. Cannot convert.");
-            break;
+                throw new Core\ApiException("unknown output type: '$type'. Cannot convert.");
+                break;
         }
     }
 
