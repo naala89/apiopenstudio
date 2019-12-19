@@ -246,14 +246,32 @@ class CtrlResource extends CtrlBase
         $token = $_SESSION['token'];
         $client = new Client(['base_uri' => "$domain/$account/$application/"]);
 
+        if (empty($args['resource'])) {
+            try {
+                $result = $client->request('GET', 'resource', [
+                    'headers' => [
+                        'Authorization' => "Bearer $token",
+                    ],
+                    'query' => ['resid' => $resid],
+                ]);
+                $resource = json_decode($result->getBody()->getContents(), true);
+            } catch (ClientException $e) {
+                $result = $e->getResponse();
+                $this->flash->addMessage('error', $this->getErrorMessage($e));
+                switch ($result->getStatusCode()) {
+                    case 401:
+                        return $response->withStatus(302)->withHeader('Location', '/login');
+                        break;
+                    default:
+                        return $response->withStatus(302)->withHeader('Location', '/resources');
+                        break;
+                }
+            }
+        } else {
+            $resource = $args['resource'];
+        }
+
         try {
-            $result = $client->request('GET', 'resource', [
-                'headers' => [
-                    'Authorization' => "Bearer $token",
-                ],
-                'query' => ['resid' => $resid],
-            ]);
-            $resource = json_decode($result->getBody()->getContents(), true);
             $result = $client->request('GET', 'functions/all', [
                 'headers' => [
                     'Authorization' => "Bearer $token",
@@ -343,22 +361,30 @@ class CtrlResource extends CtrlBase
             || empty($allPostVars['appid'])
             || empty($allPostVars['method'])
             || empty($allPostVars['uri'])
+            || empty($allPostVars['process'])
             || !isset($allPostVars['ttl'])
         ) {
             $this->flash->addMessage('error', 'Cannot upload resource, not all information received');
             return $response->withStatus(302)->withHeader('Location', '/resource/create');
         }
-        $method = intval($allPostVars['resid']) > 1 ? 'PUT' : 'POST';
         switch ($allPostVars['format']) {
             case 'yaml':
                 $meta = '';
-                $meta .= !empty($allPostVars['security']) ? ("security:\n  " . $allPostVars['security']) . "\n" : '';
-                $meta .= !empty($allPostVars['process']) ? ("process:\n  " . $allPostVars['process']) . "\n" : '';
+                $meta .= !empty($allPostVars['security']) ?
+                    ("security:\n  " . preg_replace("/([\n\r])/","$1  ", $allPostVars['security']) . "\n") :
+                    '';
+                $meta .= !empty($allPostVars['process']) ?
+                    ("process:\n  " . preg_replace("/([\n\r])/","$1  ", $allPostVars['process']) . "\n") :
+                    '';
                 break;
             case 'json':
                 $meta = [];
-                $meta['security'] = !empty($allPostVars['security']) ? json_decode($allPostVars['security']) : '';
-                $meta['process'] = !empty($allPostVars['process']) ? json_decode($allPostVars['process']) : '';
+                $meta['security'] = !empty($allPostVars['security']) ?
+                    ("security: {" . json_decode($allPostVars['security']) . "}") :
+                    '';
+                $meta['process'] = !empty($allPostVars['process']) ?
+                    ("process: { " . json_decode($allPostVars['process']) . "}") :
+                    '';
                 $meta = json_encode($meta);
                 break;
             default:
@@ -372,23 +398,42 @@ class CtrlResource extends CtrlBase
         $token = $_SESSION['token'];
         $client = new Client(['base_uri' => "$domain/$account/$application/"]);
         try {
-            $client->request($method, 'resource', [
-                'headers' => [
-                    'Authorization' => "Bearer $token",
-                ],
-                'form_params' => [
-                    'resid' => !empty($allPostVars['resid']) ? $allPostVars['resid'] : null,
-                    'name' => $allPostVars['name'],
-                    'description' => $allPostVars['description'],
-                    'appid' => $allPostVars['appid'],
-                    'method' => $allPostVars['method'],
-                    'uri' => $allPostVars['uri'],
-                    'ttl' => $allPostVars['ttl'],
-                    'format' => $allPostVars['format'],
-                    'meta' => $meta,
-                ],
-            ]);
-            $this->flash->addMessageNow('info', 'Resource successfully created.');
+            if (intval($allPostVars['resid']) > 1) {
+                $client->request('PUT', 'resource', [
+                    'headers' => [
+                        'Authorization' => "Bearer $token",
+                    ],
+                    'json' => [
+                        'resid' => $allPostVars['resid'],
+                        'name' => $allPostVars['name'],
+                        'description' => $allPostVars['description'],
+                        'appid' => $allPostVars['appid'],
+                        'method' => $allPostVars['method'],
+                        'uri' => $allPostVars['uri'],
+                        'ttl' => $allPostVars['ttl'],
+                        'format' => $allPostVars['format'],
+                        'meta' => $meta,
+                    ],
+                ]);
+                $this->flash->addMessageNow('info', 'Resource successfully updated.');
+            } else {
+                $client->request('POST', 'resource', [
+                    'headers' => [
+                        'Authorization' => "Bearer $token",
+                    ],
+                    'form_params' => [
+                        'name' => $allPostVars['name'],
+                        'description' => $allPostVars['description'],
+                        'appid' => $allPostVars['appid'],
+                        'method' => $allPostVars['method'],
+                        'uri' => $allPostVars['uri'],
+                        'ttl' => $allPostVars['ttl'],
+                        'format' => $allPostVars['format'],
+                        'meta' => $meta,
+                    ],
+                ]);
+                $this->flash->addMessageNow('info', 'Resource successfully created.');
+            }
         } catch (ClientException $e) {
             $result = $e->getResponse();
             $this->flash->addMessageNow('error', $this->getErrorMessage($e));
@@ -433,7 +478,7 @@ class CtrlResource extends CtrlBase
      *   Twig vars.
      */
     private function getResource($allPostVars) {
-        return [
+        $arr = [
             'name' => $allPostVars['name'],
             'description' => $allPostVars['description'],
             'appid' => $allPostVars['appid'],
@@ -445,5 +490,9 @@ class CtrlResource extends CtrlBase
                 'process' =>  $allPostVars['process'],
             ]
         ];
+        if (isset($allPostVars['resid'])) {
+            $arr['resid'] = $allPostVars['resid'];
+        }
+        return $arr;
     }
 }

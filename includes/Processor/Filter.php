@@ -19,16 +19,16 @@ class Filter extends Core\ProcessorEntity
         'name' => 'Filter',
         'machineName' => 'filter',
         'description' => 'Filter values from a data-set.',
-        'menu' => 'Operation',
+        'menu' => 'Data operation',
         'input' => [
-            'values' => [
+            'source' => [
                 'description' => 'The data-set to filter.',
                 'cardinality' => [0, '*'],
                 'literalAllowed' => false,
                 'limitFunctions' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => ''
+                'default' => '',
             ],
             'filter' => [
                 'description' => 'The literal values to filter out.',
@@ -37,7 +37,7 @@ class Filter extends Core\ProcessorEntity
                 'limitFunctions' => [],
                 'limitTypes' => ['string', 'array'],
                 'limitValues' => [],
-                'default' => ''
+                'default' => '',
             ],
             'regex' => [
                 // phpcs:ignore
@@ -47,7 +47,7 @@ class Filter extends Core\ProcessorEntity
                 'limitFunctions' => [],
                 'limitTypes' => ['boolean'],
                 'limitValues' => [],
-                'default' => 'false'
+                'default' => false,
             ],
             'keyOrValue' => [
                 'description' => 'Filter by key or value.',
@@ -56,17 +56,17 @@ class Filter extends Core\ProcessorEntity
                 'limitFunctions' => [],
                 'limitTypes' => ['string'],
                 'limitValues' => ['key', 'value'],
-                'default' => 'value'
+                'default' => 'key',
             ],
             'recursive' => [
                 // phpcs:ignore
-                'description' => 'Recursively filter the data set. Is set to false, the filter will only apply to the outer data-set. If set to true, the filter will apply to the entire data-set (warning: use sparingly, this could incur long processing times).',
+                'description' => 'Recursively filter the data set. If set to false, the filter will only apply to the outer data-set. If set to true, the filter will apply to the entire data-set (warning: use sparingly, this could incur long processing times).',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
                 'limitTypes' => ['boolean'],
                 'limitValues' => [],
-                'default' => false
+                'default' => false,
             ],
             'inverse' => [
                 // phpcs:ignore
@@ -76,7 +76,7 @@ class Filter extends Core\ProcessorEntity
                 'limitFunctions' => [],
                 'limitTypes' => ['boolean'],
                 'limitValues' => [],
-                'default' => false
+                'default' => false,
             ],
         ],
     ];
@@ -93,16 +93,11 @@ class Filter extends Core\ProcessorEntity
         $recursive = $this->val('recursive', true);
         $inverse = $this->val('inverse', true);
         $regex = $this->val('regex', true);
-        $values = $this->val('values', true);
+        $source = $this->val('source', true);
 
         // Nothing to filter.
-        if (empty($values)) {
-            return $this->val('values');
-        }
-
-        // Nothing to filter.
-        if (empty($filter)) {
-            return $this->val('values');
+        if (empty($source)) {
+            return $this->val('source');
         }
 
         // Test for multiple filters if regex (not allowed because it is inefficient).
@@ -119,19 +114,21 @@ class Filter extends Core\ProcessorEntity
         $getCallback = '_callback' . ($inverse ? 'Inverse' : 'Noninverse') . ($regex ? 'Regex' : 'Nonregex');
         $callback = $this->{$getCallback}($filter);
 
-        $values = $this->{$func}($values, $callback);
+        $source = $this->{$func}($source, $callback);
 
         // TODO: better dynamic container type
-        return new Core\DataContainer($values, is_array($values) ? 'array' : 'text');
+        return new Core\DataContainer($source, is_array($source) ? 'array' : 'text');
     }
 
     /**
      * Perform non-recursive filter on $data, based on key value.
-     * @see https://wpscholar.com/blog/filter-multidimensional-array-php/
-     * @see http://www.phptherightway.com/pages/Functional-Programming.html
+     *
      * @param $data
      * @param $callback
      * @return array
+     *
+     * @see https://wpscholar.com/blog/filter-multidimensional-array-php/
+     * @see http://www.phptherightway.com/pages/Functional-Programming.html
      */
     private function _filterByKeyNonrecursive($data, $callback)
     {
@@ -144,6 +141,7 @@ class Filter extends Core\ProcessorEntity
 
     /**
      * Perform recursive filter on $data, based on key value.
+     *
      * @param $data
      * @param $callback
      * @return array
@@ -167,6 +165,7 @@ class Filter extends Core\ProcessorEntity
 
     /**
      * Perform non-recursive filter on $data, based on value.
+     *
      * @param $data
      * @param $callback
      * @return array
@@ -178,6 +177,7 @@ class Filter extends Core\ProcessorEntity
         }
 
         foreach ($data as $key => $item) {
+            var_dump($key);
             if (!is_array($item) && !$callback($item)) {
                 unset($data[$key]);
             }
@@ -188,6 +188,7 @@ class Filter extends Core\ProcessorEntity
 
     /**
      * Perform non-recursive filter on $data, based on value.
+     *
      * @param $data
      * @param $callback
      * @return array
@@ -213,6 +214,7 @@ class Filter extends Core\ProcessorEntity
 
     /**
      * Filter callback for non-inverse, non-regex.
+     *
      * @param $filter
      * @return \Closure
      */
@@ -225,6 +227,7 @@ class Filter extends Core\ProcessorEntity
 
     /**
      * Filter callback for inverse, non-regex.
+     *
      * @param $filter
      * @return \Closure
      */
@@ -237,6 +240,7 @@ class Filter extends Core\ProcessorEntity
 
     /**
      * Filter callback for non-inverse, regex.
+     *
      * @param $filter
      * @return \Closure
      */
@@ -249,6 +253,7 @@ class Filter extends Core\ProcessorEntity
 
     /**
      * Filter callback for inverse, regex.
+     *
      * @param $filter
      * @return \Closure
      */

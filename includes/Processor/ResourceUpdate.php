@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Create a resource.
+ * Update a resource.
  */
 
 namespace Gaterdata\Processor;
@@ -16,7 +16,7 @@ use Gaterdata\Db\UserRoleMapper;
 use Gaterdata\Core\ResourceValidator;
 use Spyc;
 
-class ResourceCreate extends Core\ProcessorEntity
+class ResourceUpdate extends Core\ProcessorEntity
 {
     /**
      * @var Config
@@ -52,11 +52,20 @@ class ResourceCreate extends Core\ProcessorEntity
      * {@inheritDoc}
      */
     protected $details = [
-        'name' => 'Resource create',
-        'machineName' => 'resource_create',
-        'description' => 'Create a resource.',
+        'name' => 'Resource update',
+        'machineName' => 'resource_update',
+        'description' => 'Update a resource.',
         'menu' => 'Admin',
         'input' => [
+            'resid' => [
+                'description' => 'The resource ID.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => 0,
+            ],
             'name' => [
                 'description' => 'The resource name.',
                 'cardinality' => [1, 1],
@@ -138,12 +147,12 @@ class ResourceCreate extends Core\ProcessorEntity
     public function __construct($meta, &$request, $db)
     {
         parent::__construct($meta, $request, $db);
+        $this->settings = new Config();
+        $this->accountMapper = new AccountMapper($this->db);
         $this->applicationMapper = new ApplicationMapper($db);
-        $this->accountMapper = new AccountMapper($db);
         $this->resourceMapper = new ResourceMapper($db);
         $this->userRoleMapper = new UserRoleMapper($db);
         $this->validator = new ResourceValidator($db);
-        $this->settings = new Config();
     }
 
     /**
@@ -153,6 +162,7 @@ class ResourceCreate extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
+        $resid = $this->val('resid', true);
         $name = $this->val('name', true);
         $description = $this->val('description', true);
         $appid = $this->val('appid', true);
@@ -162,15 +172,26 @@ class ResourceCreate extends Core\ProcessorEntity
         $format = $this->val('format', true);
         $meta = $this->val('meta', true);
 
+        $resource = $this->resourceMapper->findId($resid);
+        if (empty($resource->getResid())) {
+            throw new Core\ApiException("Resource does not exist: $resid", 6, $this->id, 400);
+        }
+        $test = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
+        if ($test->getResid() != $resid) {
+            throw new Core\ApiException('A resource with this method and uri already exists for the application', 6, $this->id, 400);
+        }
         $application = $this->applicationMapper->findByAppid($appid);
         if (empty($application)) {
             throw new Core\ApiException("Invalid application: $appid", 6, $this->id, 400);
         }
         $account = $this->accountMapper->findByAccid($application->getAccid());
         if (
-            $account->getName() == $this->settings->__get(['api', 'core_account'])
-            && $application->getName() == $this->settings->__get(['api', 'core_application'])
-        ) {
+            $account->getName() == $this->settings->__get(['api', 'core_account'])) {
+            throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
+        }
+        $account = $this->accountMapper->findByAccid($resource->getAccid());
+        if (
+            $account->getName() == $this->settings->__get(['api', 'core_account'])) {
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
         $userRole = $this->userRoleMapper->findByFilter([
@@ -180,15 +201,11 @@ class ResourceCreate extends Core\ProcessorEntity
         if (empty($userRole)) {
             throw new Core\ApiException('Permission denied', 6, $this->id, 400);
         }
-        $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
-        if (!empty($resource->getresid())) {
-            throw new Core\ApiException('Resource already exists', 6, $this->id, 400);
-        }
 
         $meta = $this->translateMetaString($format, $meta);
         $this->validator->validate(json_decode($meta, true));
 
-        return $this->create($name, $description, $method, $uri, $appid, $ttl, $meta);
+        return $this->update($resid, $name, $description, $method, $uri, $appid, $ttl, $meta);
     }
 
     /**
@@ -229,6 +246,8 @@ class ResourceCreate extends Core\ProcessorEntity
     /**
      * Create the resource in the DB.
      *
+     * @param integer $resid
+     *   The resource ID.
      * @param string $name
      *   The resource name.
      * @param string $description
@@ -249,10 +268,10 @@ class ResourceCreate extends Core\ProcessorEntity
      *
      * @throws Core\ApiException
      */
-    private function create($name, $description, $method, $uri, $appid, $ttl, $meta)
+    private function update($resid, $name, $description, $method, $uri, $appid, $ttl, $meta)
     {
         $resource = new Resource(
-            null,
+            $resid,
             $appid,
             $name,
             $description,
@@ -261,6 +280,7 @@ class ResourceCreate extends Core\ProcessorEntity
             $meta,
             $ttl
         );
+        echo "<pre>";var_dump($resource->dump());
         return new Core\DataContainer(
             $this->resourceMapper->save($resource) ? 'true' : 'false',
             'text'
