@@ -56,14 +56,14 @@ class ResourceMapper extends Mapper
     /**
      * Delete an API resource.
      *
-     * @param ApiResource $resource
+     * @param Resource $resource
      *   Resource object.
      * @return bool
      *   Success.
      *
      * @throws ApiException
      */
-    public function delete(ApiResource $resource)
+    public function delete(Resource $resource)
     {
         $sql = 'DELETE FROM resource WHERE resid = ?';
         $bindParams = [$resource->getResid()];

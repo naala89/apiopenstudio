@@ -1,0 +1,16 @@
+<!-- Delete resource modal -->
+<div id="modal-resource-delete" class="modal">
+  <form method="post" action="/resource/delete">
+    <input type="hidden" name="resid" value="">
+    <div class="modal-content">
+      <h4>Delete Resource</h4>
+      <p>Delete resource: "<span class="name"></span>"?</p>
+    </div>
+    <div class="row">
+      <div class="input-field col s3 offset-l9">
+        <a class=" modal-action modal-close">Cancel</a>
+        <button class="btn waves-effect waves-light red" type="submit">Delete</button>
+      </div>
+    </div>
+  </form>
+</div>
