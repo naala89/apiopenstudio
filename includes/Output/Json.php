@@ -17,7 +17,7 @@ class Json extends Output
     protected $details = [
         'name' => 'Json',
         'machineName' => 'json',
-        'description' => 'Output in JSON format.',
+        'description' => 'Output in the results of the resource in JSON format to a remote server.',
         'menu' => 'Output',
         'input' => [
             'destination' => [

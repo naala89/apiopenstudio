@@ -17,7 +17,7 @@ class FieldValue extends Core\ProcessorEntity
         'name' => 'Field value',
         'machineName' => 'field_value',
         'description' => 'Returns the key oy value from a field.',
-        'menu' => 'Primitive',
+        'menu' => 'Data operation',
         'input' => [
             'field' => [
                 'description' => 'The input field.',

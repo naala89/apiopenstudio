@@ -22,7 +22,7 @@ class Email extends Output
     protected $details = [
         'name' => 'Email',
         'machineName' => 'email',
-        'description' => 'Output in email format.',
+        'description' => 'Output in the results of the resource into an email.',
         'menu' => 'Output',
         'input' => [
             'to' => [
