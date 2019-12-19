@@ -206,7 +206,7 @@ class CtrlResource extends CtrlBase
             'applications' => $applications,
             'format' => $args['format'],
             'resource' => !empty($args['resource']) ? $args['resource'] : '',
-            'resid' => !empty($args['resid']) ? $args['resid'] : '',
+            'resid' => '',
             'functions' => $sortedFunctions,
             'messages' => $this->flash->getMessages(),
         ]);
@@ -321,7 +321,7 @@ class CtrlResource extends CtrlBase
             'menu' => $menu,
             'accounts' => $accounts,
             'applications' => $applications,
-            'resource' => $resource,
+            'resource' => !empty($args['resource']) ? $args['resource'] : $resource,
             'functions' => $sortedFunctions,
             'messages' => $this->flash->getMessages(),
             'resid' => $resid,
