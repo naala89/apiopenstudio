@@ -4,23 +4,22 @@ namespace Gaterdata\Db;
 
 use Gaterdata\Core\ApiException;
 use Cascade\Cascade;
-use ADOConnection;
-use Gaterdata\Core\Debug;
+use ADODB_mysqli;
 
 abstract class Mapper
 {
     /**
-     * @var ADOConnection DB Instance.
+     * @var ADODB_mysqli DB Instance.
      */
     protected $db;
 
     /**
      * Mapper constructor.
      *
-     * @param \ADOConnection $dbLayer
+     * @param ADODB_mysqli $dbLayer
      *   DB connection object.
      */
-    public function __construct(ADOConnection $dbLayer)
+    public function __construct(ADODB_mysqli $dbLayer)
     {
         $this->db = $dbLayer;
     }

@@ -2,8 +2,6 @@
 
 namespace Gaterdata\Db;
 
-use Gaterdata\Core\Debug;
-
 /**
  * Class ApplicationMapper.
  *
