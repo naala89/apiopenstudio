@@ -101,7 +101,7 @@ abstract class ProcessorEntity extends Entity
    *
    * @param array $meta
    * @param Request $request
-   * @param \ADOConnection $db
+   * @param ADODB_mysqli $db
    */
     public function __construct($meta, &$request, $db)
     {
@@ -328,18 +328,111 @@ abstract class ProcessorEntity extends Entity
         }
     }
 
+    /**
+     * Validate a variable is boolean.
+     *
+     * @param $var
+     * @return bool
+     */
     public function _checkBool($var)
     {
         return null !== filter_var($var, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
     }
 
+    /**
+     * Validate a variable is float.
+     *
+     * @param $var
+     * @return bool
+     */
     public function _checkFloat($var)
     {
         return null !== filter_var($var, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
     }
 
+    /**
+     * Validate a variable is integer.
+     *
+     * @param $var
+     * @return bool
+     */
     public function _checkInt($var)
     {
         return null !== filter_var($var, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+    }
+
+    /**
+     * Validate a variable is JSON.
+     *
+     * @param $var
+     * @return bool
+     */
+    public function _checkJson($var)
+    {
+        json_decode($var);
+        return (json_last_error() == JSON_ERROR_NONE);
+    }
+
+    /**
+     * Validate a variable is HTML.
+     *
+     * @param $var
+     * @return bool
+     */
+    public function _checkHtml($var)
+    {
+        libxml_use_internal_errors(true);
+        $testXml = simplexml_load_string($var);
+        if ($testXml) {
+            if (stripos($var, '<!DOCTYPE html>') !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Validate a variable is XML.
+     *
+     * @param $var
+     * @return bool
+     */
+    public function _checkXml($var)
+    {
+        libxml_use_internal_errors(true);
+        $testXml = simplexml_load_string($var);
+        if ($testXml) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Detect the type of data for the input string.
+     *
+     * @param string $data
+     * @return string
+     *   The data type.
+     */
+    protected function detectType($data) {
+        if ($this->_checkBool($data)) {
+            return 'boolean';
+        }
+        if ($this->_checkInt($data)) {
+            return 'integer';
+        }
+        if ($this->_checkFloat($data)) {
+            return 'float';
+        }
+        if ($this->_checkJson($data)) {
+            return 'json';
+        }
+        if ($this->_checkHtml($data)) {
+            return 'html';
+        }
+        if ($this->_checkXml($data)) {
+            return 'xml';
+        }
+        return 'text';
     }
 }

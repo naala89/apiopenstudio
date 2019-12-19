@@ -17,17 +17,21 @@ class ResourceValidator
     protected $helper;
 
     /**
+     * @var ADODB_mysqli
+     */
+    private $db;
+
+    /**
      * Constructor. Store processor metadata and request data in object.
      *
      * If this method is overridden by any derived classes, don't forget to call parent::__construct()
      *
-     * @param array $meta
-     * @param object $request
-     * @param \ADOConnection $db
+     * @param ADODB_mysqli $db
      */
-    public function __construct()
+    public function __construct($db)
     {
         $this->helper = new ProcessorHelper();
+        $this->db = $db;
     }
 
     /**
@@ -41,7 +45,7 @@ class ResourceValidator
         Debug::message('Validating the new resource...');
         // check mandatory elements exists in data
         if (empty($data)) {
-            throw new Core\ApiException("empty resource uploaded", 6, $this->id, 406);
+            throw new Core\ApiException("empty resource uploaded", 6, -1, 406);
         }
         if (!isset($data['process'])) {
             throw new Core\ApiException("missing process in new resource", 6, -1, 406);
@@ -52,7 +56,6 @@ class ResourceValidator
 
         // validate dictionaries
         if (isset($data['security'])) {
-            // check for identical IDs
             $this->validateDetails($data['security']);
         }
         if (!empty($data['output'])) {

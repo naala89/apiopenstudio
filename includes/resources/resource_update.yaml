@@ -1,0 +1,194 @@
+name: Resource update
+
+description: update a resource.
+
+uri: resource
+
+method: put
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_role
+  id: resource_update_security
+  token:
+    function: bearer_token
+    id: resource_update_token
+  role: Developer
+
+process:
+  function: resource_update
+  id: resource_update_process
+  resid:
+    function: field_value
+    id: resource_update_resid
+    key_value: value
+    field:
+      function: var_field
+      id: resource_update_field_resid
+      array:
+        function: filter
+        id: resource_update_filter_resid
+        filter: resid
+        inverse: true
+        source:
+          function: convert_to_array
+          id: resource_update_array_resid
+          source:
+            function: var_body
+            id: resource_update_body_resid
+            nullable: false
+  name:
+    function: field_value
+    id: resource_update_name
+    key_value: value
+    field:
+      function: var_field
+      id: resource_update_field_name
+      array:
+        function: filter
+        id: resource_update_filter_name
+        filter: name
+        inverse: true
+        source:
+          function: convert_to_array
+          id: resource_update_array_name
+          source:
+            function: var_body
+            id: resource_update_body_name
+            nullable: false
+  description:
+    function: field_value
+    id: resource_update_description
+    key_value: value
+    field:
+      function: var_field
+      id: resource_update_field_description
+      array:
+        function: filter
+        id: resource_update_filter_description
+        filter: description
+        inverse: true
+        source:
+          function: convert_to_array
+          id: resource_update_array_description
+          source:
+            function: var_body
+            id: resource_update_body_description
+            nullable: false
+  appid:
+    function: field_value
+    id: resource_update_appid
+    key_value: value
+    field:
+      function: var_field
+      id: resource_update_field_appid
+      array:
+        function: filter
+        id: resource_update_filter_appid
+        filter: appid
+        inverse: true
+        source:
+          function: convert_to_array
+          id: resource_update_array_appid
+          source:
+            function: var_body
+            id: resource_update_body_appid
+            nullable: false
+  method:
+    function: field_value
+    id: resource_update_method
+    key_value: value
+    field:
+      function: var_field
+      id: resource_update_field_method
+      array:
+        function: filter
+        id: resource_update_filter_method
+        filter: method
+        inverse: true
+        source:
+          function: convert_to_array
+          id: resource_update_array_method
+          source:
+            function: var_body
+            id: resource_update_body_method
+            nullable: false
+  uri:
+    function: field_value
+    id: resource_update_uri
+    key_value: value
+    field:
+      function: var_field
+      id: resource_update_field_uri
+      array:
+        function: filter
+        id: resource_update_filter_uri
+        filter: uri
+        inverse: true
+        source:
+          function: convert_to_array
+          id: resource_update_array_uri
+          source:
+            function: var_body
+            id: resource_update_body_uri
+            nullable: false
+  ttl:
+    function: field_value
+    id: resource_update_ttl
+    key_value: value
+    field:
+      function: var_field
+      id: resource_update_field_ttl
+      array:
+        function: filter
+        id: resource_update_filter_ttl
+        filter: ttl
+        inverse: true
+        source:
+          function: convert_to_array
+          id: resource_update_array_ttl
+          source:
+            function: var_body
+            id: resource_update_body_ttl
+            nullable: false
+  format:
+    function: field_value
+    id: resource_update_format
+    key_value: value
+    field:
+      function: var_field
+      id: resource_update_field_format
+      array:
+        function: filter
+        id: resource_update_filter_format
+        filter: format
+        inverse: true
+        source:
+          function: convert_to_array
+          id: resource_update_array_format
+          source:
+            function: var_body
+            id: resource_update_body_format
+            nullable: false
+  meta:
+    function: field_value
+    id: resource_update_meta
+    key_value: value
+    field:
+      function: var_field
+      id: resource_update_field_meta
+      array:
+        function: filter
+        id: resource_update_filter_meta
+        filter: meta
+        inverse: true
+        source:
+          function: convert_to_array
+          id: resource_update_array_meta
+          source:
+            function: var_body
+            id: resource_update_body_meta
+            nullable: false
