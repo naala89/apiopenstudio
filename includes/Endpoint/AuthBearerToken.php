@@ -17,7 +17,7 @@ class AuthBearerToken extends Core\ProcessorEntity
         'name' => 'Auth (Bearer token)',
         'machineName' => 'auth_bearer_token',
         'description' => 'Authentication for remote server, presenting a bearer token in the header.',
-        'menu' => 'Authentication',
+        'menu' => 'Endpoint authentication',
         'input' => [
             'token' => [
                 'description' => 'The token string (e.g. 907c762e069589c2cd2a229cdae7b8778caa9f07).',

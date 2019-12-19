@@ -17,7 +17,7 @@ class Literal extends Core\ProcessorEntity
         'name' => 'Literal',
         'machineName' => 'literal',
         'description' => 'A literal string or value.',
-        'menu' => 'Admin',
+        'menu' => 'Primitive',
         'input' => [
           'value' => [
             'description' => 'The value of the literal.',

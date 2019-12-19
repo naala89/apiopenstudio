@@ -33,7 +33,7 @@ class LoginStoreDrupal extends Core\ProcessorEntity
         'machineName' => 'loginStoreDrupal',
         // phpcs:ignore
         'description' => 'Login the user Stores the access details from a users login to a remote drupal site for future use.',
-        'menu' => 'Process',
+        'menu' => 'Endpoint',
         'input' => [
             'source' => [
                 'description' => 'The results of a login attempt to the remote site. i.e. Processor InputUrl.',

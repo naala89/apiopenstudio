@@ -17,7 +17,7 @@ class Merge extends Core\ProcessorEntity
         'name' => 'Merge',
         'machineName' => 'merge',
         'description' => 'Merge multiple data-sets.',
-        'menu' => 'Process',
+        'menu' => 'Data operation',
         'input' => [
           'sources' => [
             'description' => 'The data-sets to be merged.',

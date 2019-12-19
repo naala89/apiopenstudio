@@ -17,7 +17,7 @@ class AuthCookie extends Core\ProcessorEntity
         'name' => 'Auth (Cookie)',
         'machineName' => 'auth_cookie',
         'description' => 'Authentication for remote server, using a cookie.',
-        'menu' => 'Authentication',
+        'menu' => 'Endpoint authentication',
         'input' => [
             'cookie' => [
                 'description' => 'The cookie string.',

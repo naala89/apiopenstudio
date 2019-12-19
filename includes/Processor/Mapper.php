@@ -18,7 +18,7 @@ class Mapper extends Core\ProcessorEntity
         'name' => 'Mapper',
         'machineName' => 'mapper',
         'description' => 'Mapper allows the mapping of elements from a source to a destination.',
-        'menu' => 'Process',
+        'menu' => 'Data operation',
         'input' => [
             'source' => [
                 'description' => 'The source object to perform the mapping on.',

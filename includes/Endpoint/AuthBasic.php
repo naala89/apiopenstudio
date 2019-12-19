@@ -17,7 +17,7 @@ class AuthBasic extends Core\ProcessorEntity
         'name' => 'Auth (Basic User/Pass)',
         'machineName' => 'auth_basic',
         'description' => 'Basic authentication for remote server, using username/password.',
-        'menu' => 'Authentication',
+        'menu' => 'Endpoint authentication',
         'input' => [
             'username' => [
                 'description' => 'The username.',
