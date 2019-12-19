@@ -16,7 +16,7 @@
     {% endfor %}
   </script>
   <div class="row">
-    <p>{% if operation == 'create' %}Create a new resource.{% else %}Edit an existing resource.{% endif %}</p>
+    <p>{% if operation == 'create' %}Create a new resource.{% else %}Edit resource #{{ resid }}: "{{ resource.name }}".{% endif %}</p>
   </div>
   <form method="post" action="/resource/upload" id="create-resource">
 
