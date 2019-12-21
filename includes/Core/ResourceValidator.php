@@ -58,21 +58,8 @@ class ResourceValidator
         if (isset($data['security'])) {
             $this->validateDetails($data['security']);
         }
-        if (!empty($data['output'])) {
-            if (!is_array($data['output']) || Core\Utilities::is_assoc($data['output'])) {
-                throw new Core\ApiException('invalid output structure in new resource', 6, -1, 406);
-            }
-            foreach ($data['output'] as $i => $output) {
-                if (is_array($output)) {
-                    if (!$this->helper->isProcessor($output)) {
-                        $message = "bad function declaration in output at index $i in new resource";
-                        throw new Core\ApiException($message, 6, -1, 406);
-                    }
-                    $this->validateDetails($output);
-                } elseif ($output != 'response') {
-                    throw new Core\ApiException("invalid output structure at index: $i, in new resource", 6, -1, 406);
-                }
-            }
+        if (isset($data['output'])) {
+            $this->validateDetails($data['output']);
         }
         if (!empty($data['fragments'])) {
             if (!Core\Utilities::is_assoc($data['fragments'])) {

@@ -2,6 +2,7 @@
 
 namespace Gaterdata\Admin\Controllers;
 
+use mysql_xdevapi\Exception;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Gaterdata\Core\ApiException;
@@ -140,25 +141,29 @@ class CtrlApplication extends CtrlBase
             $this->flash->addMessage('error', 'Cannot create application, no name or account ID defined.');
         } else {
             // Create the new account.
-            $result = $this->apiCall(
-                'post',
-                'application',
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
+            try {
+                $result = $this->apiCall(
+                    'post',
+                    'application',
+                    [
+                        'headers' => [
+                            'Authorization' => "Bearer " . $_SESSION['token'],
+                            'Accept' => 'application/json',
+                        ],
+                        'form_params' => [
+                            'accid' => $accid,
+                            'name' => $appName,
+                        ],
                     ],
-                    'form_params' => [
-                        'accid' => $accid,
-                        'name' => $appName,
-                    ],
-                ],
-                $response
-            );
-            if (json_decode($result->getBody()->getContents()) == 'true') {
-                $this->flash->addMessage('info', "Application $appName created.");
-            } else {
-                $this->flash->addMessage('error', "Application $appName create failed, check the logs for details.");
+                    $response
+                );
+                if (json_decode($result->getBody()->getContents()) == 'true') {
+                    $this->flash->addMessage('info', "Application $appName created.");
+                } else {
+                    $this->flash->addMessage('error', "Application $appName create failed, check the logs for details.");
+                }
+            } catch (\Exception $e) {
+                $this->flash->addMessage('error', $e->getMessage());
             }
         }
 
@@ -196,21 +201,25 @@ class CtrlApplication extends CtrlBase
             empty($name = $allPostVars['edit-app-name'])) {
             $this->flash->addMessage('error', 'Cannot edit application, Account ID, Application ID or name defined.');
         } else {
-            $result = $this->apiCall(
-                'put',
-                "application/$appid/$accid/$name",
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
+            try {
+                $result = $this->apiCall(
+                    'put',
+                    "application/$appid/$accid/$name",
+                    [
+                        'headers' => [
+                            'Authorization' => "Bearer " . $_SESSION['token'],
+                            'Accept' => 'application/json',
+                        ],
                     ],
-                ],
-                $response
-            );
-            if (json_decode($result->getBody()->getContents()) == 'true') {
-                $this->flash->addMessage('info', "Application $appid edited.");
-            } else {
-                $this->flash->addMessage('error', "Application $appid edit failed, check the logs for details.");
+                    $response
+                );
+                if (json_decode($result->getBody()->getContents()) == 'true') {
+                    $this->flash->addMessage('info', "Application $appid edited.");
+                } else {
+                    $this->flash->addMessage('error', "Application $appid edit failed, check the logs for details.");
+                }
+            } catch (\Exception $e) {
+                $this->flash->addMessage('error', $e->getMessage());
             }
         }
 
@@ -246,21 +255,25 @@ class CtrlApplication extends CtrlBase
         if (empty($appid = $allPostVars['delete-app-appid'])) {
             $this->flash->addMessage('error', 'Cannot delete application, application ID not defined.');
         } else {
-            $result = $this->apiCall(
-                'delete',
-                "application/$appid",
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
+            try {
+                $result = $this->apiCall(
+                    'delete',
+                    "application/$appid",
+                    [
+                        'headers' => [
+                            'Authorization' => "Bearer " . $_SESSION['token'],
+                            'Accept' => 'application/json',
+                        ],
                     ],
-                ],
-                $response
-            );
-            if (json_decode($result->getBody()->getContents()) == 'true') {
-                $this->flash->addMessage('info', "Application $appid deleted.");
-            } else {
-                $this->flash->addMessage('error', "Application $appid delete failed, check the logs for details.");
+                    $response
+                );
+                if (json_decode($result->getBody()->getContents()) == 'true') {
+                    $this->flash->addMessage('info', "Application $appid deleted.");
+                } else {
+                    $this->flash->addMessage('error', "Application $appid delete failed, check the logs for details.");
+                }
+            } catch (Exception $e) {
+                $this->flash->addMessage('error', $e->getMessage());
             }
         }
 

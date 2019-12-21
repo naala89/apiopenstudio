@@ -168,42 +168,46 @@ class CtrlResource extends CtrlBase
 
         $menu = $this->getMenus();
 
-        $result = $this->apiCall(
-            'get',
-            'functions/all',
-            [
-                'headers' => [
-                    'Authorization' => "Bearer " . $_SESSION['token'],
-                    'Accept' => 'application/json',
+        try {
+            $result = $this->apiCall(
+                'get',
+                'functions/all',
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
                 ],
-            ],
-            $response
-        );
-        $functions = json_decode($result->getBody()->getContents(), true);
-        $result = $this->apiCall(
-            'get',
-            'account/all',
-            [
-                'headers' => [
-                    'Authorization' => "Bearer " . $_SESSION['token'],
-                    'Accept' => 'application/json',
+                $response
+            );
+            $functions = json_decode($result->getBody()->getContents(), true);
+            $result = $this->apiCall(
+                'get',
+                'account/all',
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
                 ],
-            ],
-            $response
-        );
-        $accounts = json_decode($result->getBody()->getContents(), true);
-        $result = $this->apiCall(
-            'get',
-            'application',
-            [
-                'headers' => [
-                    'Authorization' => "Bearer " . $_SESSION['token'],
-                    'Accept' => 'application/json',
+                $response
+            );
+            $accounts = json_decode($result->getBody()->getContents(), true);
+            $result = $this->apiCall(
+                'get',
+                'application',
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
                 ],
-            ],
-            $response
-        );
-        $applications = json_decode($result->getBody()->getContents(), true);
+                $response
+            );
+            $applications = json_decode($result->getBody()->getContents(), true);
+        } catch (\Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
+        }
 
         $sortedFunctions = [];
         foreach ($functions as $function) {
@@ -252,59 +256,67 @@ class CtrlResource extends CtrlBase
         $resid = $args['resid'];
 
         if (empty($args['resource'])) {
+            try {
+                $result = $this->apiCall(
+                    'get',
+                    'resource',
+                    [
+                        'headers' => [
+                            'Authorization' => "Bearer " . $_SESSION['token'],
+                            'Accept' => 'application/json',
+                        ],
+                        'query' => ['resid' => $resid],
+                    ],
+                    $response
+                );
+                $resource = json_decode($result->getBody()->getContents(), true);
+            } catch (\Exception $e) {
+                $this->flash->addMessageNow('error', $e->getMessage());
+            }
+        } else {
+            $resource = $args['resource'];
+        }
+
+        try {
             $result = $this->apiCall(
                 'get',
-                'resource',
+                'functions/all',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
                         'Accept' => 'application/json',
                     ],
-                    'query' => ['resid' => $resid],
                 ],
                 $response
             );
-            $resource = json_decode($result->getBody()->getContents(), true);
-        } else {
-            $resource = $args['resource'];
+            $functions = json_decode($result->getBody()->getContents(), true);
+            $result = $this->apiCall(
+                'get',
+                'account/all',
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
+                ],
+                $response
+            );
+            $accounts = json_decode($result->getBody()->getContents(), true);
+            $result = $this->apiCall(
+                'get',
+                'application',
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
+                ],
+                $response
+            );
+            $applications = json_decode($result->getBody()->getContents(), true);
+        } catch (\Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
         }
-
-        $result = $this->apiCall(
-            'get',
-            'functions/all',
-            [
-                'headers' => [
-                    'Authorization' => "Bearer " . $_SESSION['token'],
-                    'Accept' => 'application/json',
-                ],
-            ],
-            $response
-        );
-        $functions = json_decode($result->getBody()->getContents(), true);
-        $result = $this->apiCall(
-            'get',
-            'account/all',
-            [
-                'headers' => [
-                    'Authorization' => "Bearer " . $_SESSION['token'],
-                    'Accept' => 'application/json',
-                ],
-            ],
-            $response
-        );
-        $accounts = json_decode($result->getBody()->getContents(), true);
-        $result = $this->apiCall(
-            'get',
-            'application',
-            [
-                'headers' => [
-                    'Authorization' => "Bearer " . $_SESSION['token'],
-                    'Accept' => 'application/json',
-                ],
-            ],
-            $response
-        );
-        $applications = json_decode($result->getBody()->getContents(), true);
 
         $sortedFunctions = [];
         foreach ($functions as $function) {
@@ -392,52 +404,60 @@ class CtrlResource extends CtrlBase
         }
 
         if (!empty($allPostVars['resid'])) {
-            $result = $this->apiCall(
-                'put',
-                'resource',
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
+            try {
+                $result = $this->apiCall(
+                    'put',
+                    'resource',
+                    [
+                        'headers' => [
+                            'Authorization' => "Bearer " . $_SESSION['token'],
+                            'Accept' => 'application/json',
+                        ],
+                        'json' => [
+                            'resid' => $allPostVars['resid'],
+                            'name' => $allPostVars['name'],
+                            'description' => $allPostVars['description'],
+                            'appid' => $allPostVars['appid'],
+                            'method' => $allPostVars['method'],
+                            'uri' => $allPostVars['uri'],
+                            'ttl' => $allPostVars['ttl'],
+                            'format' => $allPostVars['format'],
+                            'meta' => $meta,
+                        ],
                     ],
-                    'json' => [
-                        'resid' => $allPostVars['resid'],
-                        'name' => $allPostVars['name'],
-                        'description' => $allPostVars['description'],
-                        'appid' => $allPostVars['appid'],
-                        'method' => $allPostVars['method'],
-                        'uri' => $allPostVars['uri'],
-                        'ttl' => $allPostVars['ttl'],
-                        'format' => $allPostVars['format'],
-                        'meta' => $meta,
-                    ],
-                ],
-                $response
-            );
-            $this->flash->addMessageNow('info', 'Resource successfully updated.');
+                    $response
+                );
+                $this->flash->addMessageNow('info', 'Resource successfully edited.');
+            } catch (\Exception $e) {
+                $this->flash->addMessageNow('error', $e->getMessage());
+            }
         } else {
-            $result = $this->apiCall(
-                'post',
-                'resource',
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
+            try {
+                $result = $this->apiCall(
+                    'post',
+                    'resource',
+                    [
+                        'headers' => [
+                            'Authorization' => "Bearer " . $_SESSION['token'],
+                            'Accept' => 'application/json',
+                        ],
+                        'json' => [
+                            'name' => $allPostVars['name'],
+                            'description' => $allPostVars['description'],
+                            'appid' => $allPostVars['appid'],
+                            'method' => $allPostVars['method'],
+                            'uri' => $allPostVars['uri'],
+                            'ttl' => $allPostVars['ttl'],
+                            'format' => $allPostVars['format'],
+                            'meta' => $meta,
+                        ],
                     ],
-                    'json' => [
-                        'name' => $allPostVars['name'],
-                        'description' => $allPostVars['description'],
-                        'appid' => $allPostVars['appid'],
-                        'method' => $allPostVars['method'],
-                        'uri' => $allPostVars['uri'],
-                        'ttl' => $allPostVars['ttl'],
-                        'format' => $allPostVars['format'],
-                        'meta' => $meta,
-                    ],
-                ],
-                $response
-            );
-            $this->flash->addMessageNow('info', 'Resource successfully created.');
+                    $response
+                );
+                $this->flash->addMessageNow('info', 'Resource successfully created.');
+            } catch (\Exception $e) {
+                $this->flash->addMessageNow('error', $e->getMessage());
+            }
         }
 
         $resource = $this->getResource($allPostVars);

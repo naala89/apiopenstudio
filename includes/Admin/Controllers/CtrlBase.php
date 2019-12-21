@@ -2,13 +2,12 @@
 
 namespace Gaterdata\Admin\Controllers;
 
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\GuzzleException;
 use Slim\Flash\Messages;
 use Slim\Views\Twig;
 use Slim\Collection;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\RequestException;
 use stdClass;
 use Slim\Http\Response;
 
@@ -93,6 +92,8 @@ class CtrlBase
      *   Slim Response for redirection if needed.
      *
      * @return \Psr\Http\Message\ResponseInterface
+     *
+     * @throws \Exception
      */
     public function apiCall($method, $uri, $requestOptions = [], $response) {
         try {
@@ -101,14 +102,14 @@ class CtrlBase
             $application = $this->settings['api']['core_application'];
             $client = new Client(['base_uri' => "$domain/$account/$application/"]);
             return $client->request($method, $uri, $requestOptions);
-        } catch (ClientException $e) {
+        } catch (BadResponseException $e) {
             $result = $e->getResponse();
-            $this->flash->addMessage('error', $this->getErrorMessage($e));
             switch ($result->getStatusCode()) {
                 case 401:
                     return $response->withStatus(302)->withHeader('Location', '/login');
                     break;
                 default:
+                    throw new \Exception($this->getErrorMessage($e));
                     break;
             }
         }
@@ -125,20 +126,26 @@ class CtrlBase
      * @return stdClass user access rights.
      *
      * @throws GuzzleException
+     *
+     * @throws \Exception
      */
     protected function getAccessRights($response, $uid)
     {
-        $result = $this->apiCall(
-            'get',
-            'user/role', [
+        try {
+            $result = $this->apiCall(
+                'get',
+                'user/role', [
                 'headers' => [
                     'Authorization' => "Bearer " . $_SESSION['token'],
                     'Accept' => 'application/json',
                 ],
                 'query' => ['uid' => $uid],
             ],
-            $response);
-        $result = json_decode($result->getBody()->getContents());
+                $response);
+            $result = json_decode($result->getBody()->getContents());
+        } catch (\Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
+        }
 
         $this->userAccessRights = [];
         foreach ($result as $userRole) {
@@ -184,7 +191,7 @@ class CtrlBase
      * @return array
      *   Array of account names, indexed by accid.
      *
-     * @throws GuzzleException
+     * @throws \Exception
      */
     protected function getAccounts(Response $response, array $params = [])
     {
@@ -197,17 +204,21 @@ class CtrlBase
             foreach ($params as $key => $value) {
                 $query[$key] = $value;
             }
-            $result = $this->apiCall(
-                'get',
-                'account/all', [
+            try {
+                $result = $this->apiCall(
+                    'get',
+                    'account/all', [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
                         'Accept' => 'application/json',
                     ],
                     'query' => $query,
                 ],
-                $response);
-            $result = json_decode($result->getBody()->getContents());
+                    $response);
+                $result = json_decode($result->getBody()->getContents());
+            } catch (\Exception $e) {
+                $this->flash->addMessageNow('error', $e->getMessage());
+            }
 
             foreach ((array) $result as $accid => $name) {
                   $accounts[$accid] = $name;
@@ -234,7 +245,7 @@ class CtrlBase
      *   Array of applications and the account they belong to:
      *     [accid => [appid => name]]
      *
-     * @throws GuzzleException
+     * @throws \Exception
      */
     protected function getApplications(Response $response, array $params = [])
     {
@@ -247,18 +258,22 @@ class CtrlBase
             foreach ($params as $key => $value) {
                 $query[$key] = $value;
             }
-            $result = $this->apiCall(
-                'get',
-                'application',
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
+            try {
+                $result = $this->apiCall(
+                    'get',
+                    'application',
+                    [
+                        'headers' => [
+                            'Authorization' => "Bearer " . $_SESSION['token'],
+                            'Accept' => 'application/json',
+                        ],
+                        'query' => $query,
                     ],
-                    'query' => $query,
-                ],
-                $response);
-            $applications = json_decode($result->getBody()->getContents());
+                    $response);
+                $applications = json_decode($result->getBody()->getContents());
+            } catch (\Exception $e) {
+                $this->flash->addMessageNow('error', $e->getMessage());
+            }
         } else {
             // Not admin, so take accounts from user access rights.
             foreach ((array) $this->userAccessRights as $accid => $accounts) {
