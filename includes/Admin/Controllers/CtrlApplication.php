@@ -16,35 +16,35 @@ use GuzzleHttp\Exception\ClientException;
 class CtrlApplication extends CtrlBase
 {
 
-  /**
-   * Roles allowed to visit the page.
-   *
-   * @var array
-   */
+    /**
+     * Roles allowed to visit the page.
+     *
+     * @var array
+     */
     const PERMITTED_ROLES = [
-    'Administrator',
-    'Account manager',
-    'Application manager',
+        'Administrator',
+        'Account manager',
+        'Application manager',
     ];
 
-  /**
-   * Applications page.
-   *
-   * @param \Slim\Http\Request $request
-   *   Request object.
-   * @param \Slim\Http\Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return \Psr\Http\Message\ResponseInterface
-   *   Response.
-   *
-   * @throws \GuzzleHttp\Exception\GuzzleException
-   */
+    /**
+     * Applications page.
+     *
+     * @param \Slim\Http\Request $request
+     *   Request object.
+     * @param \Slim\Http\Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *   Response.
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function index(Request $request, Response $response, array $args)
     {
-      // Validate access.
+        // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
@@ -52,7 +52,7 @@ class CtrlApplication extends CtrlBase
             return $response->withStatus(302)->withHeader('Location', '/');
         }
 
-      // Filter params and current page.
+        // Filter params and current page.
         $allParams = $request->getParams();
         $appParams = [];
         if (!empty($allParams['keyword'])) {
@@ -64,8 +64,8 @@ class CtrlApplication extends CtrlBase
         $appParams['order_by'] = 'name';
         $appParams['direction'] = isset($allParams['direction']) ? $allParams['direction'] : 'asc';
         $accParams = [
-        'order_by' => 'name',
-        'direction' => isset($allParams['direction']) ? $allParams['direction'] : 'asc',
+            'order_by' => 'name',
+            'direction' => isset($allParams['direction']) ? $allParams['direction'] : 'asc',
         ];
         $page = isset($allParams['page']) ? $allParams['page'] : 1;
     
@@ -73,7 +73,7 @@ class CtrlApplication extends CtrlBase
         $accounts = $this->getAccounts($response, $accParams);
         $applications = (array) $this->getApplications($response, $appParams);
 
-      // Order by account or app name.
+        // Order by account or app name.
         $sortedApps = [];
         if ($allParams['order_by'] == 'account') {
             foreach ($accounts as $accid => $account) {
@@ -91,21 +91,22 @@ class CtrlApplication extends CtrlBase
             }
         }
 
-      // Get total number of pages and current page's applications to display.
+        // Get total number of pages and current page's applications to display.
         $pages = ceil(count($sortedApps) / $this->settings['admin']['paginationStep']);
         $sortedApps = array_slice($sortedApps,
-        ($page - 1) * $this->settings['admin']['paginationStep'],
-        $this->settings['admin']['paginationStep'],
-        true);
+            ($page - 1) * $this->settings['admin']['paginationStep'],
+            $this->settings['admin']['paginationStep'],
+            true
+        );
 
         return $this->view->render($response, 'applications.twig', [
-        'menu' => $menu,
-        'params' => $allParams,
-        'page' => $page,
-        'pages' => $pages,
-        'accounts' => $accounts,
-        'applications' => $sortedApps,
-        'messages' => $this->flash->getMessages(),
+            'menu' => $menu,
+            'params' => $allParams,
+            'page' => $page,
+            'pages' => $pages,
+            'accounts' => $accounts,
+            'applications' => $sortedApps,
+            'messages' => $this->flash->getMessages(),
         ]);
     }
 
@@ -126,7 +127,7 @@ class CtrlApplication extends CtrlBase
      */
     public function create(Request $request, Response $response, array $args)
     {
-      // Validate access.
+        // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
@@ -138,58 +139,50 @@ class CtrlApplication extends CtrlBase
         if (empty($appName = $allPostVars['create-app-name']) || empty($accid = $allPostVars['create-app-accid'])) {
             $this->flash->addMessage('error', 'Cannot create application, no name or account ID defined.');
         } else {
-            try {
-                $domain = $this->settings['api']['url'];
-                $account = $this->settings['api']['core_account'];
-                $application = $this->settings['api']['core_application'];
-                $token = $_SESSION['token'];
-                $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-
-                $result = $client->request('POST', 'application', [
-                'headers' => [
-                'Authorization' => "Bearer $token",
+            // Create the new account.
+            $result = $this->apiCall(
+                'post',
+                'application',
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
+                    'form_params' => [
+                        'accid' => $accid,
+                        'name' => $appName,
+                    ],
                 ],
-                'form_params' => [
-                'accid' => $accid,
-                'name' => $appName,
-                ],
-                ]);
-                $result = json_decode($result->getBody()->getContents());
+                $response
+            );
+            if (json_decode($result->getBody()->getContents()) == 'true') {
                 $this->flash->addMessage('info', "Application $appName created.");
-            } catch (ClientException $e) {
-                $result = $e->getResponse();
-                switch ($result->getStatusCode()) {
-                    case 401:
-                    return $response->withStatus(302)->withHeader('Location', '/login');
-                    break;
-                    default:
-                        $this->flash->addMessage('error', $this->getErrorMessage($e));
-                    break;
-                }
+            } else {
+                $this->flash->addMessage('error', "Application $appName create failed, check the logs for details.");
             }
         }
 
         return $response->withRedirect('/applications');
     }
 
-  /**
-   * Edit an application.
-   *
-   * @param \Slim\Http\Request $request
-   *   Request object.
-   * @param \Slim\Http\Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return \Psr\Http\Message\ResponseInterface
-   *   Response.
-   *
-   * @throws \GuzzleHttp\Exception\GuzzleException
-   */
+    /**
+     * Edit an application.
+     *
+     * @param \Slim\Http\Request $request
+     *   Request object.
+     * @param \Slim\Http\Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *   Response.
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function edit(Request $request, Response $response, array $args)
     {
-      // Validate access.
+        // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
@@ -203,54 +196,45 @@ class CtrlApplication extends CtrlBase
             empty($name = $allPostVars['edit-app-name'])) {
             $this->flash->addMessage('error', 'Cannot edit application, Account ID, Application ID or name defined.');
         } else {
-            try {
-                $domain = $this->settings['api']['url'];
-                $account = $this->settings['api']['core_account'];
-                $application = $this->settings['api']['core_application'];
-                $token = $_SESSION['token'];
-                $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-
-                $result = $client->request('PUT', "application/$appid/$accid/$name", [
-                'headers' => [
-                'Authorization' => "Bearer $token",
+            $result = $this->apiCall(
+                'put',
+                "application/$appid/$accid/$name",
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
                 ],
-                ]);
-                $result = json_decode($result->getBody()->getContents());
+                $response
+            );
+            if (json_decode($result->getBody()->getContents()) == 'true') {
                 $this->flash->addMessage('info', "Application $appid edited.");
-            } catch (ClientException $e) {
-                $result = $e->getResponse();
-                switch ($result->getStatusCode()) {
-                    case 401:
-                    return $response->withStatus(302)->withHeader('Location', '/login');
-                    break;
-                    default:
-                        $this->flash->addMessage('error', $this->getErrorMessage($e));
-                    break;
-                }
+            } else {
+                $this->flash->addMessage('error', "Application $appid edit failed, check the logs for details.");
             }
         }
 
         return $response->withRedirect('/applications');
     }
 
-  /**
-   * Delete an application.
-   *
-   * @param \Slim\Http\Request $request
-   *   Request object.
-   * @param \Slim\Http\Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return \Psr\Http\Message\ResponseInterface
-   *   Response.
-   *
-   * @throws \GuzzleHttp\Exception\GuzzleException
-   */
+    /**
+     * Delete an application.
+     *
+     * @param \Slim\Http\Request $request
+     *   Request object.
+     * @param \Slim\Http\Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *   Response.
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function delete(Request $request, Response $response, array $args)
     {
-      // Validate access.
+        // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
@@ -262,30 +246,21 @@ class CtrlApplication extends CtrlBase
         if (empty($appid = $allPostVars['delete-app-appid'])) {
             $this->flash->addMessage('error', 'Cannot delete application, application ID not defined.');
         } else {
-            try {
-                $domain = $this->settings['api']['url'];
-                $account = $this->settings['api']['core_account'];
-                $application = $this->settings['api']['core_application'];
-                $token = $_SESSION['token'];
-                $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-
-                $result = $client->request('DELETE', "application/$appid", [
-                'headers' => [
-                'Authorization' => "Bearer $token",
+            $result = $this->apiCall(
+                'delete',
+                "application/$appid",
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
                 ],
-                ]);
-                $result = json_decode($result->getBody()->getContents());
+                $response
+            );
+            if (json_decode($result->getBody()->getContents()) == 'true') {
                 $this->flash->addMessage('info', "Application $appid deleted.");
-            } catch (ClientException $e) {
-                $result = $e->getResponse();
-                switch ($result->getStatusCode()) {
-                    case 401:
-                    return $response->withStatus(302)->withHeader('Location', '/login');
-                    break;
-                    default:
-                        $this->flash->addMessage('error', $this->getErrorMessage($e));
-                    break;
-                }
+            } else {
+                $this->flash->addMessage('error', "Application $appid delete failed, check the logs for details.");
             }
         }
 

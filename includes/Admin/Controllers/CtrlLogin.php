@@ -18,19 +18,19 @@ use stdClass;
 class CtrlLogin extends CtrlBase
 {
 
-  /**
-   * Login page.
-   *
-   * @param \Slim\Http\Request $request
-   *   Request object.
-   * @param \Slim\Http\Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return \Psr\Http\Message\ResponseInterface
-   *   Response.
-   */
+    /**
+     * Login page.
+     *
+     * @param \Slim\Http\Request $request
+     *   Request object.
+     * @param \Slim\Http\Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *   Response.
+     */
     public function login(Request $request, Response $response, array $args)
     {
         $menu = $this->getMenus(new stdClass());
@@ -40,19 +40,19 @@ class CtrlLogin extends CtrlBase
         ]);
     }
 
-  /**
-   * Logout page.
-   *
-   * @param \Slim\Http\Request $request
-   *   Request object.
-   * @param \Slim\Http\Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return \Psr\Http\Message\ResponseInterface
-   *   Response.
-   */
+    /**
+     * Logout page.
+     *
+     * @param \Slim\Http\Request $request
+     *   Request object.
+     * @param \Slim\Http\Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *   Response.
+     */
     public function logout(Request $request, Response $response, array $args)
     {
         $menu = $this->getMenus([]);
