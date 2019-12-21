@@ -3,82 +3,94 @@
 {% set title="Resources" %}
 
 {% block content %}
-  <div class="row">
-    <p>Manage your resources here.</p>
-  </div>
-  <div class="row ">
-    <form method="get" action="/resources">
-      <div class="col s1 ">
-        <a class="btn-floating btn-large waves-effect waves-light green hoverable" href="/resource/create" title="Create a resource."><i class="material-icons">add</i></a>
-      </div>
-      <div class="col s6">
-        <div class="input-field">
-          <input type="text" class="validate" name="keyword" value="{{ keyword }}">
-          <label for="keyword">Search for URI</label>
-        </div>
-      </div>
-      <div class="col s2">
-        <div class="input-field">
-          <select class="input-field" name="order_by">
-            <option value="appid" {% if params['order_by'] == "appid" %}selected{% endif %}>Application</option>
-            <option value="method" {% if params['order_by'] == "method" %}selected{% endif %}>Method</option>
-            <option value="uri" {% if params['order_by'] == "uri" %}selected{% endif %}>URI</option>
-          </select>
-          <label for="search">Sort by</label>
-        </div>
-      </div>
-      <div class="col s2">
-        <div class="input-field">
-          <select class="input-field" name="direction">
-            <option value="asc" {% if direction == "asc" %}selected{% endif %}>Ascending</option>
-            <option value="desc" {% if direction == "desc" %}selected{% endif %}>Descending</option>
-          </select>
-          <label for="direction">Direction</label>
-        </div>
-      </div>
-      <div class="col s1">
-        <button class="btn waves-effect waves-light" type="submit">Filter
-          <i class="material-icons right">send</i>
-        </button>
-      </div>
-    </form>
-  </div>
-
-  <div class="row teal lighten-1 white-text">
-    <h6 class="col col-height s2 valign-wrapper">Name</h6>
-    <h6 class="col col-height s2 valign-wrapper">Account</h6>
-    <h6 class="col col-height s2 valign-wrapper">Application</h6>
-    <h6 class="col col-height s2 valign-wrapper">Method</h6>
-    <h6 class="col col-height s2 valign-wrapper">URI</h6>
-    <h6 class="col col-height s2 valign-wrapper">Actions</h6>
-  </div>
-  {% for resource in resources %}
-    <div class="row hoverable">
-      <div class="col col-height s2 valign-wrapper tooltipped" data-position="bottom" data-delay="50" data-tooltip="{{ resource.description }}">{{ resource.name }}</div>
-      <div class="col col-height s2 valign-wrapper">
-        <a href="/accounts?keyword={{ accounts[applications[resource.appid].accid] }}" title="View this account.">{{ accounts[applications[resource.appid].accid] }}</a>
-      </div>
-      <div class="col col-height s2 valign-wrapper">
-        <a href="/applications?keyword={{ applications[resource.appid].name }}" title="View this application.">{{ applications[resource.appid].name }}</a>
-      </div>
-      <div class="col col-height s2 valign-wrapper">{{ resource.method }}</div>
-      <div class="col col-height s2 valign-wrapper">{{ resource.uri }}</div>
-      <div class="col col-height s2 valign-wrapper">
-{#        {% if resource.appid > 2 %}#}
-          <a class="btn-floating btn-small white hoverable" href="/resource/edit/{{ resource.resid }}">
-            <i class="material-icons black-text" title="Edit this resource.">edit</i>
-          </a>
-          <a class="btn-floating btn-small white hoverable" href="#">
-            <i class="material-icons modal-resource-delete-trigger black-text" resid="{{ resource.resid }}" res-name="{{ resource.name }}" title="Delete this resource.">delete</i>
-          </a>
-{#        {% endif %}#}
-      </div>
+    <div class="row">
+        <p>Manage your resources here.</p>
     </div>
-  {% endfor %}
+    <div class="row ">
+        <form method="get" action="/resources">
+            <div class="col s1 ">
+                <a class="btn-floating btn-large waves-effect waves-light green hoverable" href="/resource/create"
+                   title="Create a resource."><i class="material-icons">add</i></a>
+            </div>
+            <div class="col s6">
+                <div class="input-field">
+                    <input type="text" class="validate" name="keyword" value="{{ keyword }}">
+                    <label for="keyword">Search for URI</label>
+                </div>
+            </div>
+            <div class="col s2">
+                <div class="input-field">
+                    <select class="input-field" name="order_by">
+                        <option value="appid" {% if params['order_by'] == "appid" %}selected{% endif %}>Application
+                        </option>
+                        <option value="method" {% if params['order_by'] == "method" %}selected{% endif %}>Method
+                        </option>
+                        <option value="uri" {% if params['order_by'] == "uri" %}selected{% endif %}>URI</option>
+                    </select>
+                    <label for="search">Sort by</label>
+                </div>
+            </div>
+            <div class="col s2">
+                <div class="input-field">
+                    <select class="input-field" name="direction">
+                        <option value="asc" {% if direction == "asc" %}selected{% endif %}>Ascending</option>
+                        <option value="desc" {% if direction == "desc" %}selected{% endif %}>Descending</option>
+                    </select>
+                    <label for="direction">Direction</label>
+                </div>
+            </div>
+            <div class="col s1">
+                <button class="btn waves-effect waves-light" type="submit">Filter
+                    <i class="material-icons right">send</i>
+                </button>
+            </div>
+        </form>
+    </div>
 
-  {% set url = "/resources?keyword=" ~ keyword ~ "&order_by=" ~ order_by ~ "&dir=" ~ dir %}
-  {% include 'partials/pagination.twig' %}
+    <div class="row teal lighten-1 white-text">
+        <h6 class="col col-height s2 valign-wrapper">Name</h6>
+        <h6 class="col col-height s2 valign-wrapper">Account</h6>
+        <h6 class="col col-height s2 valign-wrapper">Application</h6>
+        <h6 class="col col-height s2 valign-wrapper">Method</h6>
+        <h6 class="col col-height s2 valign-wrapper">URI</h6>
+        <h6 class="col col-height s2 valign-wrapper">Actions</h6>
+    </div>
+    {% for resource in resources %}
+        <div class="row hoverable">
+            <div class="col col-height s2 valign-wrapper tooltipped" data-position="bottom" data-delay="50"
+                 data-tooltip="{{ resource.description }}">{{ resource.name }}</div>
+            <div class="col col-height s2 valign-wrapper">
+                <a href="/accounts?keyword={{ accounts[applications[resource.appid].accid] }}"
+                   title="View this account.">{{ accounts[applications[resource.appid].accid] }}</a>
+            </div>
+            <div class="col col-height s2 valign-wrapper">
+                <a href="/applications?keyword={{ applications[resource.appid].name }}"
+                   title="View this application.">{{ applications[resource.appid].name }}</a>
+            </div>
+            <div class="col col-height s2 valign-wrapper">{{ resource.method }}</div>
+            <div class="col col-height s2 valign-wrapper">{{ resource.uri }}</div>
+            <div class="col col-height s2 valign-wrapper">
+                {#        {% if resource.appid > 2 %}#}
+                <a class="btn-floating btn-small white hoverable" href="/resource/edit/{{ resource.resid }}">
+                    <i class="material-icons black-text" title="Edit this resource.">edit</i>
+                </a>
+                <a class="btn-floating btn-small white hoverable" href="#">
+                    <i class="material-icons modal-resource-download-trigger black-text" resid="{{ resource.resid }}"
+                       url="{{ api_url }}"  res-name="{{ resource.name }}" title="Download this resource.">file_download</i>
+                </a>
+                <a class="btn-floating btn-small white hoverable" href="#">
+                    <i class="material-icons modal-resource-delete-trigger red-text" resid="{{ resource.resid }}"
+                       res-name="{{ resource.name }}" title="Delete this resource.">delete</i>
+                </a>
+                {#        {% endif %}#}
+            </div>
+        </div>
+    {% endfor %}
 
-  {% include 'modals/resource_delete.twig' %}
+    {% set url = "/resources?keyword=" ~ keyword ~ "&order_by=" ~ order_by ~ "&dir=" ~ dir %}
+    {% include 'partials/pagination.twig' %}
+
+    {% include 'modals/resource_delete.twig' %}
+    {% include 'modals/resource_download.twig' %}
 
 {% endblock %}
