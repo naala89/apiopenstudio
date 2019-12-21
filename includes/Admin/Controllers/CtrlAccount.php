@@ -113,24 +113,28 @@ class CtrlAccount extends CtrlBase
             return $response->withRedirect('/accounts');
         }
         // Create the new account.
-        $result = $this->apiCall(
-            'post',
-            'account',
-            [
-                'headers' => [
-                    'Authorization' => "Bearer " . $_SESSION['token'],
-                    'Accept' => 'application/json',
+        try {
+            $result = $this->apiCall(
+                'post',
+                'account',
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
+                    'form_params' => [
+                        'name' => $name,
+                    ],
                 ],
-                'form_params' => [
-                    'name' => $name,
-                ],
-            ],
-            $response
-        );
-        if (json_decode($result->getBody()->getContents()) == 'true') {
-            $this->flash->addMessage('info', "Account $name created");
-        } else {
-            $this->flash->addMessage('error', "Account $name creation failed, check the logs for details.");
+                $response
+            );
+            if (json_decode($result->getBody()->getContents()) == 'true') {
+                $this->flash->addMessage('info', "Account $name created");
+            } else {
+                $this->flash->addMessage('error', "Account $name creation failed, check the logs for details.");
+            }
+        } catch (\Exception $e) {
+            $this->flash->addMessage('error', $e->getMessage());
         }
 
         return $response->withStatus(302)->withHeader('Location', '/accounts');
@@ -169,24 +173,28 @@ class CtrlAccount extends CtrlBase
         }
 
         // Edit the account.
-        $result = $this->apiCall(
-            'put',
-            "account/$accid/" . urlencode($name),
-            [
-                'headers' => [
-                    'Authorization' => "Bearer " . $_SESSION['token'],
-                    'Accept' => 'application/json',
+        try {
+            $result = $this->apiCall(
+                'put',
+                "account/$accid/" . urlencode($name),
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
+                    'form_params' => [
+                        'name' => $name,
+                    ],
                 ],
-                'form_params' => [
-                    'name' => $name,
-                ],
-            ],
-            $response
-        );
-        if (json_decode($result->getBody()->getContents()) == 'true') {
-            $this->flash->addMessage('info', "Account '$accid' updated to '$name'.");
-        } else {
-            $this->flash->addMessage('error', "Account '$accid' update to '$name failed, check the log for details.'");
+                $response
+            );
+            if (json_decode($result->getBody()->getContents()) == 'true') {
+                $this->flash->addMessage('info', "Account '$accid' updated to '$name'.");
+            } else {
+                $this->flash->addMessage('error', "Account '$accid' update to '$name failed, check the log for details.'");
+            }
+        } catch (\Exception $e) {
+            $this->flash->addMessage('error', $e->getMessage());
         }
         return $response->withStatus(302)->withHeader('Location', '/accounts');
     }
@@ -223,21 +231,25 @@ class CtrlAccount extends CtrlBase
             return $response->withRedirect('/accounts');
         }
 
-        $result = $this->apiCall(
-            'delete',
-            "account/$accid",
-            [
-                'headers' => [
-                    'Authorization' => "Bearer " . $_SESSION['token'],
-                    'Accept' => 'application/json',
+        try {
+            $result = $this->apiCall(
+                'delete',
+                "account/$accid",
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
                 ],
-            ],
-            $response
-        );
-        if (json_decode($result->getBody()->getContents()) == 'true') {
-            $this->flash->addMessage('info', "Account '$accid' deleted.");
-        } else {
-            $this->flash->addMessage('error', "Account '$accid' delete failed, check the log for details.'");
+                $response
+            );
+            if (json_decode($result->getBody()->getContents()) == 'true') {
+                $this->flash->addMessage('info', "Account '$accid' deleted.");
+            } else {
+                $this->flash->addMessage('error', "Account '$accid' delete failed, check the log for details.'");
+            }
+        } catch (\Exception $e) {
+            $this->flash->addMessage('error', $e->getMessage());
         }
         return $response->withStatus(302)->withHeader('Location', '/accounts');
     }
