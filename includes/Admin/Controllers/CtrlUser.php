@@ -24,32 +24,32 @@ use GuzzleHttp\Client;
 class CtrlUser extends CtrlBase
 {
 
-  /**
-   * Roles allowed to visit the page.
-   *
-   * @var array
-   */
+    /**
+     * Roles allowed to visit the page.
+     *
+     * @var array
+     */
     const PERMITTED_ROLES = [
         'Administrator',
         'Account manager',
         'Application manager',
     ];
 
-  /**
-   * Display the user page.
-   *
-   * @param Request $request
-   *   Request object.
-   * @param Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return ResponseInterface
-   *   Response.
-   *
-   * @throws GuzzleException
-   */
+    /**
+     * Display the user page.
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
     public function index(Request $request, Response $response, array $args)
     {
         // Validate access.
@@ -64,56 +64,44 @@ class CtrlUser extends CtrlBase
         $uid = $args['uid'];
         $mode = strpos($request->getUri()->getPath(), 'edit') !== false ? 'edit' : 'view';
 
-        try {
-            $domain = $this->settings['api']['url'];
-            $account = $this->settings['api']['core_account'];
-            $application = $this->settings['api']['core_application'];
-            $token = $_SESSION['token'];
-            $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-            $result = $client->request('GET', 'user', [
-            'headers' => [
-            'Authorization' => "Bearer $token",
+        $result = $this->apiCall(
+            'get',
+            'user',
+            [
+                'headers' => [
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
+                ],
+                'query' => [
+                    'uid' => $uid,
+                ],
             ],
-            'query' => [
-            'uid' => $uid,
-            ],
-            ]);
-            $user = (array) json_decode($result->getBody()->getContents());
-        } catch (ClientException $e) {
-            $result = $e->getResponse();
-            $this->flash->addMessage('error', $this->getErrorMessage($e));
-            switch ($result->getStatusCode()) {
-                case 401:
-                return $response->withStatus(302)->withHeader('Location', '/login');
-                break;
-                default:
-                    $user = [];
-                break;
-            }
-        }
+            $response
+        );
+        $user = (array) json_decode($result->getBody()->getContents());
 
         return $this->view->render($response, 'user.twig', [
-        'menu' => $menu,
-        'user' => $user,
-        'mode' => $mode,
+            'menu' => $menu,
+            'user' => $user,
+            'mode' => $mode,
         ]);
     }
 
-  /**
-   * Create a new user.
-   *
-   * @param Request $request
-   *   Request object.
-   * @param Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return ResponseInterface
-   *   Response.
-   *
-   * @throws GuzzleException
-   */
+    /**
+     * Create a new user.
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
     public function create(Request $request, Response $response, array $args)
     {
         // Validate access.
@@ -128,7 +116,7 @@ class CtrlUser extends CtrlBase
 
         if (strtolower($request->getMethod()) == 'get') {
             return $this->view->render($response, 'user-create.twig', [
-            'menu' => $menu,
+                'menu' => $menu,
             ]);
         }
 
@@ -167,13 +155,13 @@ class CtrlUser extends CtrlBase
 
         if (empty($user['uid'])) {
             return $this->view->render($response, 'user-create.twig', [
-            'menu' => $menu,
+                'menu' => $menu,
             ]);
         }
         return $this->view->render($response, 'user.twig', [
-        'menu' => $menu,
-        'user' => $user,
-        'mode' => 'edit',
+            'menu' => $menu,
+            'user' => $user,
+            'mode' => 'edit',
         ]);
     }
 

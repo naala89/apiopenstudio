@@ -110,11 +110,12 @@ class CtrlResource extends CtrlBase
         // Pagination.
         $page = isset($allParams['page']) ? $allParams['page'] : 1;
         $pages = ceil(count($resources) / $this->settings['admin']['paginationStep']);
-        $resources = array_slice($resources,
-        ($page - 1) * $this->settings['admin']['paginationStep'],
-        $this->settings['admin']['paginationStep'],
-        true);
-
+        $resources = array_slice(
+            $resources,
+            ($page - 1) * $this->settings['admin']['paginationStep'],
+            $this->settings['admin']['paginationStep'],
+            true
+        );
         return $this->view->render($response, 'resources.twig', [
             'menu' => $menu,
             'params' => $query,
@@ -124,6 +125,7 @@ class CtrlResource extends CtrlBase
             'accounts' => $accounts,
             'applications' => (array) $applications,
             'messages' => $this->flash->getMessages(),
+            'api_url' => $this->settings['api']['url'] . '/' . $this->settings['api']['core_account'] . '/' . $this->settings['api']['core_application'] . '/resource/file/',
         ]);
     }
 
@@ -154,45 +156,42 @@ class CtrlResource extends CtrlBase
 
         $menu = $this->getMenus();
 
-        $domain = $this->settings['api']['url'];
-        $account = $this->settings['api']['core_account'];
-        $application = $this->settings['api']['core_application'];
-        $token = $_SESSION['token'];
-        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-
-        try {
-            $result = $client->request('GET', 'functions/all', [
+        $result = $this->apiCall(
+            'get',
+            'functions/all',
+            [
                 'headers' => [
-                    'Authorization' => "Bearer $token",
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
                 ],
-            ]);
-            $functions = json_decode($result->getBody()->getContents(), true);
-            $result = $client->request('GET', 'account/all', [
+            ],
+            $response
+        );
+        $functions = json_decode($result->getBody()->getContents(), true);
+        $result = $this->apiCall(
+            'get',
+            'account/all',
+            [
                 'headers' => [
-                  'Authorization' => "Bearer $token",
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
                 ],
-            ]);
-            $accounts = json_decode($result->getBody()->getContents(), true);
-            $result = $client->request('GET', 'application', [
+            ],
+            $response
+        );
+        $accounts = json_decode($result->getBody()->getContents(), true);
+        $result = $this->apiCall(
+            'get',
+            'application',
+            [
                 'headers' => [
-                  'Authorization' => "Bearer $token",
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
                 ],
-            ]);
-            $applications = json_decode($result->getBody()->getContents(), true);
-        } catch (ClientException $e) {
-            $result = $e->getResponse();
-            $this->flash->addMessage('error', $this->getErrorMessage($e));
-            switch ($result->getStatusCode()) {
-                case 401:
-                return $response->withStatus(302)->withHeader('Location', '/login');
-                break;
-                default:
-                    $accounts = [];
-                    $applications = [];
-                    $functions = [];
-                break;
-            }
-        }
+            ],
+            $response
+        );
+        $applications = json_decode($result->getBody()->getContents(), true);
 
         $sortedFunctions = [];
         foreach ($functions as $function) {
@@ -240,68 +239,60 @@ class CtrlResource extends CtrlBase
         $menu = $this->getMenus();
         $resid = $args['resid'];
 
-        $domain = $this->settings['api']['url'];
-        $account = $this->settings['api']['core_account'];
-        $application = $this->settings['api']['core_application'];
-        $token = $_SESSION['token'];
-        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-
         if (empty($args['resource'])) {
-            try {
-                $result = $client->request('GET', 'resource', [
+            $result = $this->apiCall(
+                'get',
+                'resource',
+                [
                     'headers' => [
-                        'Authorization' => "Bearer $token",
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
                     ],
                     'query' => ['resid' => $resid],
-                ]);
-                $resource = json_decode($result->getBody()->getContents(), true);
-            } catch (ClientException $e) {
-                $result = $e->getResponse();
-                $this->flash->addMessage('error', $this->getErrorMessage($e));
-                switch ($result->getStatusCode()) {
-                    case 401:
-                        return $response->withStatus(302)->withHeader('Location', '/login');
-                        break;
-                    default:
-                        return $response->withStatus(302)->withHeader('Location', '/resources');
-                        break;
-                }
-            }
+                ],
+                $response
+            );
+            $resource = json_decode($result->getBody()->getContents(), true);
         } else {
             $resource = $args['resource'];
         }
 
-        try {
-            $result = $client->request('GET', 'functions/all', [
+        $result = $this->apiCall(
+            'get',
+            'functions/all',
+            [
                 'headers' => [
-                    'Authorization' => "Bearer $token",
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
                 ],
-            ]);
-            $functions = json_decode($result->getBody()->getContents(), true);
-            $result = $client->request('GET', 'account/all', [
+            ],
+            $response
+        );
+        $functions = json_decode($result->getBody()->getContents(), true);
+        $result = $this->apiCall(
+            'get',
+            'account/all',
+            [
                 'headers' => [
-                    'Authorization' => "Bearer $token",
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
                 ],
-            ]);
-            $accounts = json_decode($result->getBody()->getContents(), true);
-            $result = $client->request('GET', 'application', [
+            ],
+            $response
+        );
+        $accounts = json_decode($result->getBody()->getContents(), true);
+        $result = $this->apiCall(
+            'get',
+            'application',
+            [
                 'headers' => [
-                    'Authorization' => "Bearer $token",
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
                 ],
-            ]);
-            $applications = json_decode($result->getBody()->getContents(), true);
-        } catch (ClientException $e) {
-            $result = $e->getResponse();
-            $this->flash->addMessage('error', $this->getErrorMessage($e));
-            switch ($result->getStatusCode()) {
-                case 401:
-                    return $response->withStatus(302)->withHeader('Location', '/login');
-                    break;
-                default:
-                    return $response->withStatus(302)->withHeader('Location', '/resources');
-                    break;
-            }
-        }
+            ],
+            $response
+        );
+        $applications = json_decode($result->getBody()->getContents(), true);
 
         $sortedFunctions = [];
         foreach ($functions as $function) {
@@ -392,16 +383,14 @@ class CtrlResource extends CtrlBase
                 break;
         }
 
-        $domain = $this->settings['api']['url'];
-        $account = $this->settings['api']['core_account'];
-        $application = $this->settings['api']['core_application'];
-        $token = $_SESSION['token'];
-        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-        try {
-            if (intval($allPostVars['resid']) > 1) {
-                $client->request('PUT', 'resource', [
+        if (intval($allPostVars['resid']) > 1) {
+            $result = $this->apiCall(
+                'put',
+                'resource',
+                [
                     'headers' => [
-                        'Authorization' => "Bearer $token",
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
                     ],
                     'json' => [
                         'resid' => $allPostVars['resid'],
@@ -414,14 +403,20 @@ class CtrlResource extends CtrlBase
                         'format' => $allPostVars['format'],
                         'meta' => $meta,
                     ],
-                ]);
-                $this->flash->addMessageNow('info', 'Resource successfully updated.');
-            } else {
-                $client->request('POST', 'resource', [
+                ],
+                $response
+            );
+            $this->flash->addMessageNow('info', 'Resource successfully updated.');
+        } else {
+            $result = $this->apiCall(
+                'post',
+                'resource',
+                [
                     'headers' => [
-                        'Authorization' => "Bearer $token",
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
                     ],
-                    'form_params' => [
+                    'json' => [
                         'name' => $allPostVars['name'],
                         'description' => $allPostVars['description'],
                         'appid' => $allPostVars['appid'],
@@ -431,29 +426,10 @@ class CtrlResource extends CtrlBase
                         'format' => $allPostVars['format'],
                         'meta' => $meta,
                     ],
-                ]);
-                $this->flash->addMessageNow('info', 'Resource successfully created.');
-            }
-        } catch (ClientException $e) {
-            $result = $e->getResponse();
-            $this->flash->addMessageNow('error', $this->getErrorMessage($e));
-            switch ($result->getStatusCode()) {
-                case 401:
-                    return $response->withStatus(302)->withHeader('Location', '/login');
-                    break;
-                default:
-                    $resource = $this->getResource($allPostVars);
-                    return !empty($allPostVars['resid']) ?
-                        $this->edit($request, $response, [
-                            'format' => $allPostVars['format'],
-                            'resource' => $resource,
-                            'resid' => $allPostVars['resid'],
-                        ]) :
-                        $this->create($request, $response, [
-                            'format' => $allPostVars['format'],
-                            'resource' => $resource,
-                        ]);
-            }
+                ],
+                $response
+            );
+            $this->flash->addMessageNow('info', 'Resource successfully created.');
         }
 
         $resource = $this->getResource($allPostVars);
@@ -497,35 +473,22 @@ class CtrlResource extends CtrlBase
         $allPostVars = $request->getParsedBody();
         $resid = $args['resid'];
 
-        $domain = $this->settings['api']['url'];
-        $account = $this->settings['api']['core_account'];
-        $application = $this->settings['api']['core_application'];
-        $token = $_SESSION['token'];
-        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-
         if (empty($resid)) {
-            try {
-                $result = $client->request('DELETE', 'resource', [
+            $result = $this->apiCall(
+                'delete',
+                'resource',
+                [
                     'headers' => [
-                        'Authorization' => "Bearer $token",
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
                     ],
                     'json' => [
                         'resid' => $allPostVars['resid'],
                     ],
-                ]);
-                $result = json_decode($result->getBody()->getContents(), true);
-            } catch (ClientException $e) {
-                $result = $e->getResponse();
-                $this->flash->addMessage('error', $this->getErrorMessage($e));
-                switch ($result->getStatusCode()) {
-                    case 401:
-                        return $response->withStatus(302)->withHeader('Location', '/login');
-                        break;
-                    default:
-                        return $response->withStatus(302)->withHeader('Location', '/resources');
-                        break;
-                }
-            }
+                ],
+                $response
+            );
+            $result = json_decode($result->getBody()->getContents(), true);
         } else {
             $this->flash->addMessage('error', 'Cannot delete resource, no resid received.');
         }
