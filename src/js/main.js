@@ -305,13 +305,12 @@ $(document).ready(function () {
      */
     $('.modal-resource-download-trigger').click(function () {
         var self = $(this),
-            url = self.attr('url'),
             res_name = self.attr('res-name'),
             resid = self.attr('resid'),
             modal = $('#modal-resource-download');
         modal.find('#resource-name').html(res_name);
-        modal.find('button.resource-download-file.yaml').attr('url', url + 'yaml/' + resid);
-        modal.find('button.resource-download-file.json').attr('url', url + 'json/' + resid);
+        modal.find('button.resource-download-file.yaml').attr('url', '/resource/download/yaml/' + resid);
+        modal.find('button.resource-download-file.json').attr('url', '/resource/download/json/' + resid);
         modal.modal('open');
     });
 
@@ -319,9 +318,10 @@ $(document).ready(function () {
      * Download a resource.
      */
     $('button.resource-download-file').on('click', function() {
-        var url= $(this).attr('url'),
-            link = document.createElement("a");
-        link.href = url;
-        link.click();
+        var iframe = $("<iframe/>").attr({
+            src: $(this).attr('url'),
+            style: "visibility:hidden;display:none"
+        });
+        $(this).append(iframe);
     });
 });

@@ -5,6 +5,10 @@ namespace Gaterdata\Output;
 use Gaterdata\Config;
 use Gaterdata\Core;
 
+/**
+ * Class Email
+ * @package Gaterdata\Output
+ */
 class Email extends Output
 {
     /**
@@ -50,7 +54,7 @@ class Email extends Output
                 'limitFunctions' => [],
                 'limitTypes' => ['string'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => 'GaterData',
             ],
             'format' => [
                 'description' => 'Format for the results to be formatted into.',

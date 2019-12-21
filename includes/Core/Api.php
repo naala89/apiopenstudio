@@ -22,11 +22,34 @@ use Spyc;
 
 class Api
 {
+    /**
+     * @var Cache
+     */
     private $cache;
+
+    /**
+     * @var Request
+     */
     private $request;
+
+    /**
+     * @var ProcessorHelper
+     */
     private $helper;
+
+    /**
+     * @var bool
+     */
     private $test = false; // false or filename in /yaml/test
+
+    /**
+     * @var \ADOConnection
+     */
     private $db;
+
+    /**
+     * @var Config
+     */
     private $settings;
 
     /**
@@ -104,7 +127,7 @@ class Api
         if (is_object($result) && get_class($result) == 'Error') {
             Debug::message('Not caching, result is error object');
         } else {
-            $cacheData = array('data' => $result);
+            $cacheData = ['data' => $result];
             $ttl = empty($this->request->getTtl()) ? 0 : $this->request->getTtl();
             $this->cache->set($this->request->getCacheKey(), $cacheData, $ttl);
         }
@@ -214,7 +237,7 @@ class Api
             throw new ApiException("invalid test yaml: $filepath", 1, -1, 400);
         }
         $yaml = Spyc::YAMLLoad($filepath);
-        $meta = array();
+        $meta = [];
         $meta['process'] = $yaml['process'];
         if (!empty($yaml['security'])) {
             $meta['security'] = $yaml['security'];
@@ -359,41 +382,85 @@ class Api
     private function _getOutput($data)
     {
         $result = true;
-        $resource = $this->request->getResource();
+        $resource = $this->request->getMeta();
+        $output = json_decode(json_encode($resource->output), true);
 
         if (empty($resource->output)) {
             // default to response output if no output defined
             Debug::message('no output section defined - returning the result in the response');
             // translate the output to the correct format as requested in header and return in the response
-            $class = $this->helper->getProcessorString(ucfirst($this->request->getOutFormat()), array('Output'));
-            $obj = new $class($data, 200);
-            $result = $obj->process();
-            $obj->setStatus();
-            $obj->setHeader();
+            $output = ['function' => $this->request->getOutFormat(), 'id' => 'header_defined_output'];
+            $result = $this->processOutputResponse($output, $data);
         } else {
-            foreach ($resource->output as $index => $output) {
-                if (is_string($output) && $output == 'response') {
-                    // translate the output to the correct format as requested in header and return in the response
-                    $outFormat = ucfirst($this->_cleanData($this->request->outFormat));
-                    $outFormat = $outFormat == '**' ? 'Json' : $outFormat;
-                    $class = $this->helper->getProcessor($outFormat, array('Output'));
-                    $obj = new $class($data, 200);
-                    $result = $obj->process();
-                    $obj->setStatus();
-                    $obj->setHeader();
-                } else {
-                    // treat as a multiple output and let the class take care of the output.
-                    foreach ($output as $type => $meta) {
-                        $outFormat = ucfirst($this->_cleanData($this->request->outFormat));
-                        $class = $this->helper->getProcessor($outFormat, array('Output'));
-                        $obj = new $class($data, 200, $meta);
-                        $obj->process();
+            if (Utilities::isAssoc($output)) {
+                // Single output defined, translate the output to the correct format as requested in header and return in the response.
+                $result = $this->processOutputResponse($output, $data);
+            } else {
+                // Multiple outputs defined.
+                foreach ($output as $index => $outputItem) {
+                    if (!isset($outputItem['destination'])) {
+                        // Translate the output to the correct format as requested in header and return in the response.
+                        $result = $this->processOutputResponse($outputItem, $data, $index);
+                    } else {
+                        // Process an output item to a remote server..
+                        $this->processOutputRemote($outputItem, $data, $index);
                     }
                 }
             }
         }
 
         return $result;
+    }
+
+    /**
+     * Process the output and return in the response.
+     *
+     * @param array $meta
+     *   Output metadata.
+     * @param $data
+     *   Response data.
+     * @param int $index
+     *   Index in the output array.
+     *
+     * @return mixed
+     *
+     * @throws ApiException
+     */
+    private function processOutputResponse($meta, $data, $index = null) {
+        if (!isset($meta['function'])) {
+            throw new ApiException("No function found in the output section: $index.", 3, -1, 400);
+        }
+        $outFormat = ucfirst($this->_cleanData($meta['function']));
+        $class = $this->helper->getProcessorString($outFormat, ['Output']);
+        $obj = new $class($data, 200);
+        $result = $obj->process();
+        $obj->setStatus();
+        $obj->setHeader();
+        return $result;
+    }
+
+    /**
+     * Process the output.
+     *
+     * @param array $meta
+     *   Output mnetadata.
+     * @param $data
+     *   Response data.
+     * @param int $index
+     *   Index in the output array.
+     *
+     * @return mixed
+     *
+     * @throws ApiException
+     */
+    private function processOutputRemote($meta, $data, $index = 0) {
+        if (!isset($meta['function'])) {
+            throw new ApiException("No function found in the output section: $index.", 3, -1, 400);
+        }
+        $outFormat = ucfirst($this->_cleanData($meta['function']));
+        $class = $this->helper->getProcessor($outFormat, ['Output']);
+        $obj = new $class($data, 200, $meta);
+        $obj->process();
     }
 
     /**
@@ -437,14 +504,14 @@ class Api
             $values = explode(',', $header);
             foreach ($values as $key => $value) {
                 $tempArr = explode(';q=', $value);
-                $values[$key] = array();
+                $values[$key] = [];
                 $value = $tempArr[0];
                 $values[$key]['weight'] = sizeof($tempArr) == 1 ? 1 : floatval($tempArr[1]);
                 $tempArr = explode('/', $value);
                 $values[$key]['mimeType'] = $tempArr[0];
                 $values[$key]['mimeSubType'] = $tempArr[1];
             }
-            usort($values, array('self', '_sortHeadersWeight'));
+            usort($values, ['self', '_sortHeadersWeight']);
         }
         if (sizeof($values) < 1) {
             return $default;
@@ -455,13 +522,18 @@ class Api
                 return 'image';
             case 'text':
             case 'application':
-                return ($result == '*' || $result == '**') ? $default : $values[0]['mimeSubType'];
+                switch ($values[0]['mimeSubType']) {
+                    case '*':
+                    case '**':
+                        return $default;
+                        break;
+                    default:
+                        $values[0]['mimeSubType'];
+                        break;
+                }
             default:
                 return $default;
         }
-//        return ($values[0]['mimeSubType'] == '*' || $values[0]['mimeSubType'] == '**')
-//            ? $default
-//            : $values[0]['mimeSubType'];
     }
 
     private static function _sortHeadersWeight($a, $b)
@@ -480,7 +552,7 @@ class Api
      */
     private function _cleanData($data)
     {
-        $cleaned = array();
+        $cleaned = [];
         if (is_array($data)) {
             foreach ($data as $k => $v) {
                 $cleaned[$k] = $this->_cleanData($v);

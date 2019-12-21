@@ -19,10 +19,38 @@ class File extends Output
         'menu' => 'Output',
         'input' => [
             'filename' => [
-                'description' => 'The output filename.',
-                'cardinality' => [1, 1],
+                'description' => 'The output suggested filename.',
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => 'gaterdata.txt',
+            ],
+            'destination' => [
+                'description' => 'Destination URLs for the output.',
+                'cardinality' => [0, '*'],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'method' => [
+                'description' => 'HTTP delivery method when sending output. Only used in the output section.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['string'],
+                'limitValues' => ['get', 'post'],
+                'default' => '',
+            ],
+            'options' => [
+                // phpcs:ignore
+                'description' => 'Extra Curl options to be applied when sent to the destination (e.g. cursor: -1, screen_name: foobarapi, skip_status: true, etc).',
+                'cardinality' => [0, '*'],
+                'literalAllowed' => true,
+                'limitFunctions' => ['field'],
                 'limitTypes' => ['string'],
                 'limitValues' => [],
                 'default' => '',
@@ -35,9 +63,9 @@ class File extends Output
      */
     public function setHeader()
     {
+        parent::setHeader();
         $filename = $this->val('filename', true);
         header("Content-Disposition: attachment; filename='$filename'");
-        parent::setHeader();
     }
 
     /**

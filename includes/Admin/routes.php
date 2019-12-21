@@ -74,3 +74,4 @@ $app->get('/resource/create', 'CtrlResource:create')->add(new Authentication($co
 $app->get('/resource/edit/{resid}', 'CtrlResource:edit')->add(new Authentication($container, $settings, '/login'));
 $app->post('/resource/upload', 'CtrlResource:upload')->add(new Authentication($container, $settings, '/login'));
 $app->post('/resource/delete', 'CtrlResource:delete')->add(new Authentication($container, $settings, '/login'));
+$app->get('/resource/download/{format}/{resid}', 'CtrlResource:download')->add(new Authentication($container, $settings, '/login'));

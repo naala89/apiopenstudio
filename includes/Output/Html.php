@@ -20,7 +20,7 @@ class Html extends Xml
         'input' => [
             'destination' => [
                 'description' => 'Destination URLs for the output.',
-                'cardinality' => [1, '*'],
+                'cardinality' => [0, '*'],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
                 'limitTypes' => ['string'],
