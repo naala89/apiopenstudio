@@ -214,7 +214,7 @@ $(document).ready(function () {
             $('#accid').formSelect();
 
             $('ul.tabs').tabs('select', 'yaml');
-            ['security', 'process'].forEach(function (item) {
+            ['security', 'process', 'output'].forEach(function (item) {
                 if (typeof GATERDATA.doc[item] != 'undefined') {
                     $("textarea[name='" + item + "']").val(jsyaml.dump(GATERDATA.doc[item]));
                 } else {
@@ -249,7 +249,7 @@ $(document).ready(function () {
     $("#create-resource a[href='#yaml']").on('click', function () {
         if (!$(this).hasClass('active')) {
             try {
-                ['security', 'process'].forEach(function (item) {
+                ['security', 'process', 'output'].forEach(function (item) {
                     var obj = jsyaml.safeLoad($('textarea[name="' + item + '"]').val());
                     if (typeof obj != 'undefined') {
                         $('textarea[name="' + item + '"]').val(jsyaml.dump(obj));
@@ -272,7 +272,7 @@ $(document).ready(function () {
     $("#create-resource a[href='#json']").on('click', function () {
         if (!$(this).hasClass('active')) {
             try {
-                ['security', 'process'].forEach(function (item) {
+                ['security', 'process', 'output'].forEach(function (item) {
                     var obj = jsyaml.safeLoad($('textarea[name="' + item + '"]').val());
                     if (typeof obj != 'undefined') {
                         $('textarea[name="' + item + '"]').val(JSON.stringify(obj, null, 2));
@@ -298,5 +298,30 @@ $(document).ready(function () {
         modal.find('.name').html(self.attr('res-name'));
         modal.find('input[name="resid"]').val(self.attr('resid'));
         modal.modal('open');
+    });
+
+    /**
+     * Download a resource modal preparation.
+     */
+    $('.modal-resource-download-trigger').click(function () {
+        var self = $(this),
+            url = self.attr('url'),
+            res_name = self.attr('res-name'),
+            resid = self.attr('resid'),
+            modal = $('#modal-resource-download');
+        modal.find('#resource-name').html(res_name);
+        modal.find('button.resource-download-file.yaml').attr('url', url + 'yaml/' + resid);
+        modal.find('button.resource-download-file.json').attr('url', url + 'json/' + resid);
+        modal.modal('open');
+    });
+
+    /**
+     * Download a resource.
+     */
+    $('button.resource-download-file').on('click', function() {
+        var url= $(this).attr('url'),
+            link = document.createElement("a");
+        link.href = url;
+        link.click();
     });
 });
