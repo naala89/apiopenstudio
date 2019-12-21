@@ -4,6 +4,7 @@ namespace Gaterdata\Admin\Controllers;
 
 use GuzzleHttp\Exception\GuzzleException;
 use phpDocumentor\Reflection\Types\Integer;
+use phpDocumentor\Reflection\Types\Self_;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -25,6 +26,17 @@ class CtrlResource extends CtrlBase
      */
     const PERMITTED_ROLES = [
         'Developer',
+    ];
+
+    /**
+     * Sections possible in a neta string.
+     *
+     * @var array
+     */
+    const META_SECTIONS = [
+        'security',
+        'process',
+        'output',
     ];
 
     /**
@@ -301,11 +313,10 @@ class CtrlResource extends CtrlBase
 
         $obj = json_decode($resource['meta'], true);
         $resource['meta'] = [];
-        if (isset($obj['security'])) {
-            $resource['meta']['security'] = Yaml::dump($obj['security'], Yaml::PARSE_OBJECT);
-        }
-        if (isset($obj['process'])) {
-            $resource['meta']['process'] = Yaml::dump($obj['process'], Yaml::PARSE_OBJECT);
+        foreach (self::META_SECTIONS as $item) {
+            if (isset($obj[$item])) {
+                $resource['meta'][$item] = Yaml::dump($obj[$item], Yaml::PARSE_OBJECT);
+            }
         }
         return $this->view->render($response, 'resource.twig', [
             'operation' => 'edit',
@@ -360,22 +371,19 @@ class CtrlResource extends CtrlBase
         }
         switch ($allPostVars['format']) {
             case 'yaml':
-                $meta = '';
-                $meta .= !empty($allPostVars['security']) ?
-                    ("security:\n  " . preg_replace("/([\n\r])/","$1  ", $allPostVars['security']) . "\n") :
-                    '';
-                $meta .= !empty($allPostVars['process']) ?
-                    ("process:\n  " . preg_replace("/([\n\r])/","$1  ", $allPostVars['process']) . "\n") :
-                    '';
+                $arr = [];
+                foreach (self::META_SECTIONS as $item) {
+                    if (!empty($allPostVars[$item])) {
+                        $arr[$item] = Yaml::parse($allPostVars[$item]);
+                    }
+                }
+                $meta = Yaml::dump($arr,50);
                 break;
             case 'json':
                 $meta = [];
-                $meta['security'] = !empty($allPostVars['security']) ?
-                    ("security: {" . json_decode($allPostVars['security']) . "}") :
-                    '';
-                $meta['process'] = !empty($allPostVars['process']) ?
-                    ("process: { " . json_decode($allPostVars['process']) . "}") :
-                    '';
+                foreach (self::META_SECTIONS as $item) {
+                    $meta[$item] = !empty($allPostVars[$item]) ? json_decode($allPostVars[$item], true) : '';
+                }
                 $meta = json_encode($meta);
                 break;
             default:
@@ -383,7 +391,7 @@ class CtrlResource extends CtrlBase
                 break;
         }
 
-        if (intval($allPostVars['resid']) > 1) {
+        if (!empty($allPostVars['resid'])) {
             $result = $this->apiCall(
                 'put',
                 'resource',
@@ -519,6 +527,7 @@ class CtrlResource extends CtrlBase
             'meta' => [
                 'security' =>  $allPostVars['security'],
                 'process' =>  $allPostVars['process'],
+                'output' =>  $allPostVars['output'],
             ]
         ];
         if (isset($allPostVars['resid'])) {

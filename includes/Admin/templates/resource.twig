@@ -115,19 +115,24 @@
         <div class="col s12">
           <div class="row">
             <label>Security</label>
-            <textarea class="materialize-textarea" placeholder="Enter your yaml resource security definition here..." name="security" class="validate">{{ resource.meta.security }}</textarea>
+            <textarea class="materialize-textarea" placeholder="Enter your resource security definition here..." name="security" class="validate">{{ resource.meta.security }}</textarea>
           </div>
 
           <div class="row">
             <label>Process</label>
-            <textarea class="materialize-textarea" placeholder="Enter your yaml resource security process here..." name="process" required class="validate">{{ resource.meta.process }}</textarea>
+            <textarea class="materialize-textarea" placeholder="Enter your resource process definition here..." name="process" required class="validate">{{ resource.meta.process }}</textarea>
+          </div>
+
+          <div class="row">
+            <label>Output</label>
+            <textarea class="materialize-textarea" placeholder="Enter your resource output definition here..." name="output" class="validate">{{ resource.meta.output }}</textarea>
           </div>
         </div>
 
 
         <div class="row">
           <div class="col">
-            <button class="btn waves-effect waves-light" type="submit" name="action">
+            <button class="btn waves-effect waves-light" type="submit">
               Upload<i class="material-icons right">send</i>
             </button>
           </div>
