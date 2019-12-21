@@ -23,6 +23,7 @@ class ProcessorHelper
             throw new ApiException('empty function name', 1, -1, 406);
         }
         $namespaces = empty($namespaces) ? $this->_namespaces : $namespaces;
+        $className = str_replace('-', '_', $className);
         $parts = explode('_', $className);
         foreach ($parts as $key => $part) {
             $parts[$key] = ucfirst($part);

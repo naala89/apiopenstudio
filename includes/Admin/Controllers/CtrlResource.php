@@ -128,6 +128,7 @@ class CtrlResource extends CtrlBase
             $this->settings['admin']['paginationStep'],
             true
         );
+
         return $this->view->render($response, 'resources.twig', [
             'menu' => $menu,
             'params' => $query,
@@ -137,7 +138,6 @@ class CtrlResource extends CtrlBase
             'accounts' => $accounts,
             'applications' => (array) $applications,
             'messages' => $this->flash->getMessages(),
-            'api_url' => $this->settings['api']['url'] . '/' . $this->settings['api']['core_account'] . '/' . $this->settings['api']['core_application'] . '/resource/file/',
         ]);
     }
 
@@ -501,7 +501,7 @@ class CtrlResource extends CtrlBase
         $allPostVars = $request->getParsedBody();
         $resid = $args['resid'];
 
-        if (empty($resid)) {
+        try {
             $result = $this->apiCall(
                 'delete',
                 'resource',
@@ -517,15 +517,68 @@ class CtrlResource extends CtrlBase
                 $response
             );
             $result = json_decode($result->getBody()->getContents(), true);
-        } else {
-            $this->flash->addMessage('error', 'Cannot delete resource, no resid received.');
+        } catch (\Exception $e) {
+            $this->flash->addMessage('error', $e->getMessage());
+            return $response->withStatus(302)->withHeader('Location', '/resources');
         }
+
         if ($result == 'true') {
             $this->flash->addMessage('info', 'Resource successfully deleted.');
         } else {
             $this->flash->addMessage('error', 'Resource failed to delete, please check the logs.');
         }
+
         return $response->withStatus(302)->withHeader('Location', '/resources');
+    }
+
+    /**
+     * Download a resource.
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
+    public function download(Request $request, Response $response, array $args)
+    {
+        // Validate access.
+        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+        $this->getAccessRights($response, $uid);
+        if (!$this->checkAccess()) {
+            $this->flash->addMessage('error', 'Delete a resource: access denied');
+            return $response->withStatus(302)->withHeader('Location', '/');
+        }
+
+        if (empty($args['resid'])) {
+            $this->flash->addMessage('error', 'Missing resource ID argument');
+            return $response->withStatus(302)->withHeader('Location', '/resources');
+        }
+        if (empty($args['format']) || !in_array($args['format'], ['yaml', 'json'])) {
+            $this->flash->addMessage('error', 'Invalid resource format requested.');
+            return $response->withStatus(302)->withHeader('Location', '/resources');
+        }
+
+        try {
+            $result = $this->apiCall('get', "resource/file/{$args['format']}/{$args['resid']}",
+                ['headers' => ['Authorization' => "Bearer " . $_SESSION['token']]],
+                $response
+            );
+        } catch (\Exception $e) {
+            $this->flash->addMessage('error', $e->getMessage());
+            return $response->withStatus(302)->withHeader('Location', '/resources');
+        }
+
+        echo (string) $result->getBody();
+        return $response->withHeader('Content-Description', 'File Transfer')
+            ->withHeader('Content-Type', 'application/octet-stream')
+            ->withHeader('Content-Disposition', 'attachment;filename="gaterdata.' . $args['format'] . '"');
     }
 
     /**
