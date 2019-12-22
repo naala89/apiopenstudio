@@ -11,13 +11,12 @@ appid: 2
 ttl: 0
 
 security:
-  function: token_roles
+  function: token_role
   id: resource_read_security
   token:
     function: bearer_token
     id: resource_read_token
-  roles:
-    - Developer
+  role: Developer
 
 process:
   function: resource_read

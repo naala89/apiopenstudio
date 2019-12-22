@@ -566,7 +566,7 @@ class CtrlResource extends CtrlBase
         }
 
         try {
-            $result = $this->apiCall('get', "resource/file/{$args['format']}/{$args['resid']}",
+            $result = $this->apiCall('get', "resource/export/{$args['format']}/{$args['resid']}",
                 ['headers' => ['Authorization' => "Bearer " . $_SESSION['token']]],
                 $response
             );
@@ -575,7 +575,7 @@ class CtrlResource extends CtrlBase
             return $response->withStatus(302)->withHeader('Location', '/resources');
         }
 
-        echo (string) $result->getBody();
+        echo trim((string) $result->getBody(), '"');
         return $response->withHeader('Content-Description', 'File Transfer')
             ->withHeader('Content-Type', 'application/octet-stream')
             ->withHeader('Content-Disposition', 'attachment;filename="gaterdata.' . $args['format'] . '"');

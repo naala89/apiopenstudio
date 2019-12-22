@@ -1,0 +1,36 @@
+name: Resource export
+
+description: Export a resource as a file.
+
+uri: resource/export
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_role
+  id: resource_export_security
+  token:
+    function: bearer_token
+    id: resource_export_token
+  role: Developer
+
+process:
+  function: resource_export
+  id: resource_export_process
+  format:
+    function: var_uri
+    id: resource_export_format
+    index: 0
+  resid:
+    function: var_uri
+    id: resource_export_resid
+    index: 1
+
+output:
+  function: file
+  id: resource_export_output
+  filename: resource.yaml
