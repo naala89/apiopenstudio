@@ -39,11 +39,6 @@ class ResourceUpdate extends Core\ProcessorEntity
     private $applicationMapper;
 
     /**
-     * @var UserRoleMapper
-     */
-    private $userRoleMapper;
-
-    /**
      * @var ResourceValidator
      */
     private $validator;
@@ -151,7 +146,6 @@ class ResourceUpdate extends Core\ProcessorEntity
         $this->accountMapper = new AccountMapper($this->db);
         $this->applicationMapper = new ApplicationMapper($db);
         $this->resourceMapper = new ResourceMapper($db);
-        $this->userRoleMapper = new UserRoleMapper($db);
         $this->validator = new ResourceValidator($db);
     }
 
@@ -176,30 +170,27 @@ class ResourceUpdate extends Core\ProcessorEntity
         if (empty($resource->getResid())) {
             throw new Core\ApiException("Resource does not exist: $resid", 6, $this->id, 400);
         }
+
         $test = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
         if ($test->getResid() != $resid) {
             throw new Core\ApiException('A resource with this method and uri already exists for the application', 6, $this->id, 400);
         }
+
         $application = $this->applicationMapper->findByAppid($appid);
         if (empty($application)) {
             throw new Core\ApiException("Invalid application: $appid", 6, $this->id, 400);
         }
+
         $account = $this->accountMapper->findByAccid($application->getAccid());
         if (
             $account->getName() == $this->settings->__get(['api', 'core_account'])) {
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
+
         $account = $this->accountMapper->findByAccid($resource->getAccid());
         if (
             $account->getName() == $this->settings->__get(['api', 'core_account'])) {
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
-        }
-        $userRole = $this->userRoleMapper->findByFilter([
-            'appid' => $appid,
-            'rid' => 4,
-        ]);
-        if (empty($userRole)) {
-            throw new Core\ApiException('Permission denied', 6, $this->id, 400);
         }
 
         $meta = $this->translateMetaString($format, $meta);

@@ -97,7 +97,12 @@ class TokenRole extends Core\ProcessorEntity
         $userRoleMapper = new Db\UserRoleMapper($this->db);
         switch ($roleName) {
             case 'Administrator':
-                $userRoles = $userRoleMapper->findByFilter(['col' => ['uid' => $uid, 'rid' => $rid]]);
+                $userRoles = $userRoleMapper->findByFilter([
+                    'col' => [
+                        'uid' => $uid,
+                        'rid' => $rid
+                    ]
+                ]);
                 if (!empty($userRoles)) {
                     return true;
                 }
@@ -105,7 +110,9 @@ class TokenRole extends Core\ProcessorEntity
             case 'Account manager':
                 $userRoles = $userRoleMapper->findByFilter([
                     'col' => [
-                        'uid' => $uid, 'accid' => $this->request->getAccId(), 'rid' => $rid
+                        'uid' => $uid,
+                        'accid' => $this->request->getAccId(),
+                        'rid' => $rid
                     ]
                 ]);
                 if (!empty($userRoles)) {
@@ -115,7 +122,9 @@ class TokenRole extends Core\ProcessorEntity
             default:
                 $userRoles = $userRoleMapper->findByFilter([
                     'col' => [
-                        'uid' => $uid, 'appid' => $this->request->getAppId(), 'rid' => $rid
+                        'uid' => $uid,
+                        'appid' => $this->request->getAppId(),
+                        'rid' => $rid
                     ]
                 ]);
                 if (!empty($userRoles)) {

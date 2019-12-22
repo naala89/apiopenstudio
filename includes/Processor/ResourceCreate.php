@@ -12,7 +12,6 @@ use Gaterdata\Db\AccountMapper;
 use Gaterdata\Db\ApplicationMapper;
 use Gaterdata\Db\Resource;
 use Gaterdata\Db\ResourceMapper;
-use Gaterdata\Db\UserRoleMapper;
 use Gaterdata\Core\ResourceValidator;
 use Spyc;
 
@@ -37,11 +36,6 @@ class ResourceCreate extends Core\ProcessorEntity
      * @var ApplicationMapper
      */
     private $applicationMapper;
-
-    /**
-     * @var UserRoleMapper
-     */
-    private $userRoleMapper;
 
     /**
      * @var ResourceValidator
@@ -141,7 +135,6 @@ class ResourceCreate extends Core\ProcessorEntity
         $this->applicationMapper = new ApplicationMapper($db);
         $this->accountMapper = new AccountMapper($db);
         $this->resourceMapper = new ResourceMapper($db);
-        $this->userRoleMapper = new UserRoleMapper($db);
         $this->validator = new ResourceValidator($db);
         $this->settings = new Config();
     }
@@ -166,6 +159,7 @@ class ResourceCreate extends Core\ProcessorEntity
         if (empty($application)) {
             throw new Core\ApiException("Invalid application: $appid", 6, $this->id, 400);
         }
+
         $account = $this->accountMapper->findByAccid($application->getAccid());
         if (
             $account->getName() == $this->settings->__get(['api', 'core_account'])
@@ -173,13 +167,7 @@ class ResourceCreate extends Core\ProcessorEntity
         ) {
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
-        $userRole = $this->userRoleMapper->findByFilter([
-            'appid' => $appid,
-            'rid' => 4,
-        ]);
-        if (empty($userRole)) {
-            throw new Core\ApiException('Permission denied', 6, $this->id, 400);
-        }
+
         $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
         if (!empty($resource->getresid())) {
             throw new Core\ApiException('Resource already exists', 6, $this->id, 400);
