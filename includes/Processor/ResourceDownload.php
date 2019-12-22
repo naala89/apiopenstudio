@@ -32,11 +32,6 @@ class ResourceDownload extends Core\ProcessorEntity
     private $applicationMapper;
 
     /**
-     * @var UserRoleMapper
-     */
-    private $userRoleMapper;
-
-    /**
      * @var AccountMapper
      */
     private $accountMapper;
@@ -79,7 +74,6 @@ class ResourceDownload extends Core\ProcessorEntity
         parent::__construct($meta, $request, $db);
         $this->accountMapper = new AccountMapper($db);
         $this->applicationMapper = new ApplicationMapper($db);
-        $this->userRoleMapper = new UserRoleMapper($db);
         $this->resourceMapper = new ResourceMapper($db);
         $this->settings = new Core\Config();
     }
@@ -97,14 +91,6 @@ class ResourceDownload extends Core\ProcessorEntity
         $resource = $this->resourceMapper->findId($resid);
         if (empty($resource->getResid())) {
             throw new Core\ApiException('Invalid resource', 6, $this->id, 400);
-        }
-
-        $userRole = $this->userRoleMapper->findByFilter([
-            'appid' => $resource->getAppid(),
-            'rid' => 4,
-        ]);
-        if (empty($userRole)) {
-            throw new Core\ApiException('Permission denied', 6, $this->id, 400);
         }
 
         switch ($format) {
