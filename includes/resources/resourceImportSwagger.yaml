@@ -11,12 +11,12 @@ appid: 2
 ttl: 0
 
 security:
-  function: tokenDeveloper
-  id: 1
+  function: token_role
+  id: resource_import_swagger_security
   token:
-    function: var_post
-    id: 2
-    key: token
+    function: bearer_token
+    id: resource_import_swagger_token
+  role: Developer
 
 process:
   function: resourceSwagger
