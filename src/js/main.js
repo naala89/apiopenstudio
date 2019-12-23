@@ -320,8 +320,12 @@ $(document).ready(function () {
     $('button.resource-download-file').on('click', function() {
         var iframe = $("<iframe/>").attr({
             src: $(this).attr('url'),
-            style: "visibility:hidden;display:none"
+            style: "visibility:hidden; display:none"
         });
         $(this).append(iframe);
+    });
+
+    $('input[name="resource_file"]').change(function() {
+        $(this).closest('form').submit();
     });
 });

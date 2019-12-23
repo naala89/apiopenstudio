@@ -1,0 +1,24 @@
+name: Resource import Swagger
+
+description: Create resource/s from a Swagger document.
+
+uri: resource/swagger
+
+method: post
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_role
+  id: resource_import_swagger_security
+  token:
+    function: bearer_token
+    id: resource_import_swagger_token
+  role: Developer
+
+process:
+  function: resourceSwagger
+  id: 3
+  resource: resource

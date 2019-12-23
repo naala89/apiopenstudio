@@ -134,46 +134,6 @@ abstract class ProcessorEntity extends Entity
     }
 
   /**
-   * Get a file.
-   *
-   * @param $file
-   * @return bool|string
-   * @throws \Gaterdata\Core\ApiException
-   */
-    protected function getFile($file)
-    {
-        if (empty($_FILES[$file])) {
-            return false;
-        }
-
-        // Check for error
-        switch ($_FILES[$file]['error']) {
-            case UPLOAD_ERR_OK:
-            break;
-            case UPLOAD_ERR_NO_FILE:
-            throw new ApiException('No file sent.', 1, $this->id);
-            case UPLOAD_ERR_INI_SIZE:
-            case UPLOAD_ERR_FORM_SIZE:
-            throw new ApiException('Exceeded filesize limit.', 1, $this->id);
-            default:
-            throw new ApiException('Unknown errors.', 1, $this->id);
-        }
-
-        // Check for upload attack.
-        $newFile = $_SERVER['DOCUMENT_ROOT'] . Config::$dirUploads . basename($_FILES[$file]['name']);
-        if (!move_uploaded_file($_FILES[$file]['tmp_name'], $newFile)) {
-            throw new ApiException('Possible file upload attack!', 1, $this->id);
-        }
-
-        $result = file_get_contents($newFile);
-        if (!unlink($newFile)) {
-            throw new ApiException('failed to cleanup and delete uploaded file. Please contact support.', 1, $this->id);
-        }
-
-        return $result;
-    }
-
-  /**
    * Process a variable into a final result for the processor.
    *
    * This method can be used to process a value in it's meta to return a final result that it can use.

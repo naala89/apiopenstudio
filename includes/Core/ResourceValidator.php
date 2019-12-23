@@ -37,7 +37,9 @@ class ResourceValidator
     /**
      * Validate input data is well formed.
      *
-     * @param $data
+     * @param array $data
+     *   Metadata.
+     *
      * @throws \Gaterdata\Core\ApiException
      */
     public function validate($data)

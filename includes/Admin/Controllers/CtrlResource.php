@@ -3,14 +3,13 @@
 namespace Gaterdata\Admin\Controllers;
 
 use GuzzleHttp\Exception\GuzzleException;
-use phpDocumentor\Reflection\Types\Integer;
-use phpDocumentor\Reflection\Types\Self_;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\Yaml\Yaml;
+use Exception;
 
 /**
  * Class CtrlResource.
@@ -582,10 +581,94 @@ class CtrlResource extends CtrlBase
     }
 
     /**
+     * Import a resource.
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
+    public function import(Request $request, Response $response, array $args)
+    {
+        // Validate access.
+        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+        $this->getAccessRights($response, $uid);
+        if (!$this->checkAccess()) {
+            $this->flash->addMessage('error', 'Delete a resource: access denied');
+            return $response->withStatus(302)->withHeader('Location', '/');
+        }
+
+        $directory = $this->settings['api']['base_path'] . $this->settings['api']['dirTmp'];
+        $uploadedFiles = $request->getUploadedFiles();
+        $uploadedFile = $uploadedFiles['resource_file'];
+
+        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+            $filename = $this->moveUploadedFile($directory, $uploadedFile);
+            try {
+                $this->apiCall('post', 'resource/import',
+                    [
+                        'headers' => [
+                            'Authorization' => "Bearer " . $_SESSION['token'],
+                            'Accept' => 'application/json',
+                        ],
+                        'multipart' => [
+                            [
+                                'name' => 'resource_file',
+                                'contents' => fopen($directory . $filename, 'r'),
+                            ],
+                        ],
+                    ],
+                    $response
+                );
+            } catch (\Exception $e) {
+                $this->flash->addMessage('error', $e->getMessage());
+            }
+        } else {
+            $this->flash->addMessage('error', 'Error in uploading file');
+        }
+        unlink($directory . $filename);
+
+        return $response->withStatus(302)->withHeader('Location', '/resources');
+    }
+
+    /**
+     * Moves the uploaded file to the upload directory and assigns it a unique name
+     * to avoid overwriting an existing uploaded file.
+     *
+     * @param string $directory
+     *   directory to which the file is moved
+     * @param $uploadedFile
+     *   uploaded file to move
+     *
+     * @return string
+     *   filename of moved file
+     *
+     * @throws Exception
+     */
+    private function moveUploadedFile($directory, $uploadedFile)
+    {
+        $extension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
+        $basename = bin2hex(random_bytes(8));
+        $filename = sprintf('%s.%0.8s', $basename, $extension);
+
+        $uploadedFile->moveTo($directory . $filename);
+
+        return $filename;
+    }
+
+    /**
      * Generate the array for Twig for the current resource to be created/edited.
      *
      * @param array $allPostVars
      *   Post vars in this request.
+     *
      * @return array
      *   Twig vars.
      */
