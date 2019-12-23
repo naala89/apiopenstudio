@@ -7,12 +7,25 @@
         <p>Manage your resources here.</p>
     </div>
     <div class="row ">
+        <div class="col s1">
+            <a class="btn-floating btn-large waves-effect waves-light green hoverable" href="/resource/create"
+               title="Create a resource."><i class="material-icons">add</i></a>
+        </div>
+        <div class="col s3">
+            <form method="post" action="resource/import" enctype="multipart/form-data">
+                <div class = "file-field input-field">
+                    <div class="btn">
+                        <span>Upload</span>
+                        <input type="file" name="resource_file" />
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text" placeholder="Resource file" />
+                    </div>
+                </div>
+            </form>
+        </div>
         <form method="get" action="/resources">
-            <div class="col s1 ">
-                <a class="btn-floating btn-large waves-effect waves-light green hoverable" href="/resource/create"
-                   title="Create a resource."><i class="material-icons">add</i></a>
-            </div>
-            <div class="col s6">
+            <div class="col s3">
                 <div class="input-field">
                     <input type="text" class="validate" name="keyword" value="{{ keyword }}">
                     <label for="keyword">Search for URI</label>

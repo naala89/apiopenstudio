@@ -1,0 +1,29 @@
+name: Resource import
+
+description: Import a resource from a file.
+
+uri: resource/import
+
+method: post
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_role
+  id: resource_import_security
+  token:
+    function: bearer_token
+    id: resource_import_token
+  role: Developer
+
+process:
+  function: resource_import
+  id: resource_imoport_process
+  resource:
+    function: var_file
+    id: resource_import_file
+    location: _FILES
+    filename: resource_file
+    get_contents: true

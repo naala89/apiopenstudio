@@ -14,6 +14,7 @@ use Gaterdata\Db\Resource;
 use Gaterdata\Db\ResourceMapper;
 use Gaterdata\Db\UserRoleMapper;
 use Gaterdata\Core\ResourceValidator;
+use Symfony\Component\Yaml\Yaml;
 
 class ResourceImport extends Core\ProcessorEntity
 {
@@ -46,13 +47,13 @@ class ResourceImport extends Core\ProcessorEntity
      * {@inheritDoc}
      */
     protected $details = [
-        'name' => 'Resource create file',
-        'machineName' => 'resource_create_file',
-        'description' => 'Create a resource by uploading a file.',
+        'name' => 'Resource import',
+        'machineName' => 'resource_import',
+        'description' => 'Import a resource from a file.',
         'menu' => 'Admin',
         'input' => [
             'resource' => [
-                'description' => 'The resource file file. This can be YAML or JSON',
+                'description' => 'The resource file file. This can be YAML or JSON.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => false,
                 'limitFunctions' => ['var_file'],
@@ -73,7 +74,7 @@ class ResourceImport extends Core\ProcessorEntity
         $this->accountMapper = new AccountMapper($db);
         $this->applicationMapper = new ApplicationMapper($db);
         $this->resourceMapper = new ResourceMapper($db);
-        $this->validator = new ResourceValidator();
+        $this->validator = new ResourceValidator($db);
     }
 
     /**
@@ -83,7 +84,37 @@ class ResourceImport extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-        $resource = $this->val('resource', true);
+        $resource = $this->val('resource');
+        $resource = $resource->getType() == 'file' ? file_get_contents($resource->getData()) : $resource->getData();
+        if ($value = json_decode($resource, true)) {
+            $resource = $value;
+        } else {
+            try {
+                $value = Yaml::parse($resource);
+                $resource = $value;
+            } catch (ParseException $exception) {
+                throw new Core\ApiException('Unable to parse the YAML string: ', $exception->getMessage(), 6, $this->id, 400);
+                printf('Unable to parse the YAML string: %s', $exception->getMessage());
+            }
+        }
+
+        $name = isset($resource['name']) ? $resource['name'] : '';
+        $description = isset($resource['description']) ? $resource['description'] : '';
+        $method = isset($resource['method']) ? $resource['method'] : '';
+        $uri = isset($resource['uri']) ? $resource['uri'] : '';
+        $appid = isset($resource['appid']) ? $resource['appid'] : '';
+        $ttl = isset($resource['ttl']) ? $resource['ttl'] : '';
+        $meta = [];
+        if (isset($resource['security'])) {
+            $meta = array_merge($meta, ['security' => $resource['security']]);
+        }
+        if (isset($resource['process'])) {
+            $meta = array_merge($meta, ['process' => $resource['process']]);
+        }
+        if (isset($resource['output'])) {
+            $meta = array_merge($meta, ['output' => $resource['output']]);
+        }
+
 
         $application = $this->applicationMapper->findByAppid($appid);
         if (empty($application)) {
@@ -103,46 +134,9 @@ class ResourceImport extends Core\ProcessorEntity
             throw new Core\ApiException('Resource already exists', 6, $this->id, 400);
         }
 
-        $array = $this->translateMetaString($format, $meta);
+        $this->validator->validate($meta);
 
-        $this->validator->validate($array);
-
-        return $this->create($name, $description, $appid, $method, $uri, $meta);
-    }
-
-    /**
-     * Covert a string in a format into an associative array.
-     *
-     * @param $format
-     *   The format of the input string.
-     * @param $string
-     *   The metadata string.
-     *
-     * @return array|mixed
-     *   Normalised string format.
-     *
-     * @throws Core\ApiException
-     */
-    private function translateMetaString($format, $string)
-    {
-        $array = [];
-        switch ($format) {
-            case 'yaml':
-                $array = \Spyc::YAMLLoadString($string);
-                if (empty($yaml)) {
-                    throw new Core\ApiException('Invalid or no YAML supplied', 6, $this->id, 417);
-                }
-                break;
-            case 'json':
-                $array = json_decode(json_encode($string), true);
-                if (empty($array)) {
-                    throw new Core\ApiException('Invalid or no JSON supplied', 6, $this->id, 417);
-                }
-                break;
-            default:
-                break;
-        }
-        return $array;
+        return $this->create($name, $description, $method, $uri, $appid, $ttl, json_encode($meta));
     }
 
     /**
