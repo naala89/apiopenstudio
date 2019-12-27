@@ -172,7 +172,6 @@ abstract class ProcessorEntity extends Entity
         $limitValues = $inputDet[$key]['limitValues'];
         $limitTypes = $inputDet[$key]['limitTypes'];
         $default = $inputDet[$key]['default'];
-        $required = $inputDet[$key]['required'];
 
         $count = empty($this->meta->$key) ? 0 : is_array($this->meta->$key) ? sizeof($this->meta->$key) : 1;
         if ($count < $min || ($max != '*' && $count > $max)) {
@@ -195,13 +194,13 @@ abstract class ProcessorEntity extends Entity
         if (is_array($result)) {
             foreach ($result as & $r) {
                 $value = $this->isDataContainer($r) ? $r->getData() : $r;
-                $this->_validateAllowedValues($value, $limitValues, $required);
-                $this->_validateAllowedTypes($value, $limitTypes);
+                $this->_validateAllowedValues($value, $limitValues, $min);
+                $this->_validateAllowedTypes($value, $limitTypes, $min);
             }
         } else {
             $value = $this->isDataContainer($result) ? $result->getData() : $result;
-            $this->_validateAllowedValues($value, $limitValues, $required);
-            $this->_validateAllowedTypes($value, $limitTypes);
+            $this->_validateAllowedValues($value, $limitValues, $min);
+            $this->_validateAllowedTypes($value, $limitTypes, $min);
         }
 
         return $realValue && $this->isDataContainer($result) ? $result->getData() : $result;
@@ -255,16 +254,16 @@ abstract class ProcessorEntity extends Entity
      *   Input value.
      * @param array $limitValues
      *   List of allowed values.
-     * @param boolean $required
-     *   Value is required.
+     * @param integer $min
+     *   Minimum number of values.
      *
      * @return bool
      *
      * @throws ApiException
      */
-    private function _validateAllowedValues($val, array $limitValues, $required)
+    private function _validateAllowedValues($val, array $limitValues, $min)
     {
-        if (empty($limitValues) || (!$required && empty($val))) {
+        if (empty($limitValues) || ($min < 1 && empty($val))) {
             return true;
         }
         if (!in_array($val, $limitValues)) {
@@ -277,26 +276,33 @@ abstract class ProcessorEntity extends Entity
     /**
      * Validate an input for allowed variable types
      *
-     * @param $val
+     * @param mixed $val
+     *   Input value.
      * @param array $limitTypes
-     * @throws \Gaterdata\Core\ApiException
+     *   List of limit on valiable types.
+     * @param integer $min
+     *   Minimum number of values.
+     *
+     * @return bool
+     *
+     * @throws ApiException
      */
-    private function _validateAllowedTypes($val, array $limitTypes)
+    private function _validateAllowedTypes($val, array $limitTypes, $min)
     {
-        if (empty($limitTypes)) {
-            return;
+        if (empty($limitTypes) || ($min < 1 && empty($val))) {
+            return true;
         }
         if (in_array('boolean', $limitTypes) && $this->_checkBool($val)) {
-            return;
+            return true;
         }
         if (in_array('integer', $limitTypes) && $this->_checkInt($val)) {
-            return;
+            return true;
         }
         if (in_array('float', $limitTypes) && $this->_checkFloat($val)) {
-            return;
+            return true;
         }
         if (in_array('array', $limitTypes) && is_array($val)) {
-            return;
+            return true;
         }
         if (!empty($val)) {
             $type = gettype($val);
