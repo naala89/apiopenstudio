@@ -6,103 +6,111 @@ use Gaterdata\Config;
 
 abstract class ProcessorEntity extends Entity
 {
-  /**
-   * Processor ID.
-   * @var integer
-   */
+    /**
+     * Processor ID.
+     * @var integer
+     */
     protected $id = '';
 
-  /**
-   * Meta required for this processor.
-   * @var integer
-   */
+    /**
+     * Meta required for this processor.
+     * @var array
+     */
     protected $meta;
 
-  /**
-   * All of the request details.
-   * @var Request
-   */
+    /**
+     * All of the request details.
+     * @var Request
+     */
     protected $request;
 
-  /**
-   * An array of details of the processor, used to configure the frontend GUI and metadata construction.
-   *
-   * Indexes:
-   *  name: name of the processor.
-   *
-   *  machineName: machine name of the processor.
-   *
-   *  description: description of the processor.
-   *
-   *  account: The account that can use the processor.
-   *
-   *  menu: lists the immediate menu parents.
-   *
-   *    examples:
-   *      'menu' => 'menu1' - belongs to menu1
-   *
-   *  input: list the input nodes for this processor
-   *    This is an array with the following indexes:
-   *    description (string): description of what the processor does
-   *    cardinality: array(int min, mixed max)
-   *      e.g. array(0, 1)
-   *      max can be integer or '*'. '*' = infinite
-   *    type: (array): an array of input type this processor will accept.
-   *      Possible values:
-   *        processor - any processor
-   *        processor <name> - specific processor
-   *        "predefined string"
-   *        file
-   *        literal
-   *        bool
-   *        numeric
-   *        integer
-   *        string
-   *        float
-   *        bool
-   *
-   *    examples:
-   *      input => array(
-   *        'sources' => array('description' => 'desc1', 'cardinality' => array(1, '*'),
-   *            type => array('function', 'literal'))
-   *      )
-   *          This processor has only one input, called sources.
-   *          Sources must contain at least one value.
-   *          The inputs can only be string or another processor.
-   *
-   *      input => array(
-   *        'method' => array('description' => 'desc1', 'cardinality' => array(1, 1),
-   *           'accepts' => array('literal' => array('"get"', '"post"'))),
-   *        'auth' => array('description' => 'desc2', 'cardinality' => array(1, 1), 'accepts' => array('function'),
-   *        'vars' => array('description' => 'desc3', 'cardinality' => array(0, '*'),
-   *            type => array('function', 'integer')),
-   *        't' => array('description' => 'desc4', 'cardinality' => array(0, '*'),
-   *            type => array('processor field', 'string'))
-   *      )
-   *          This Processor has 3 inputs:
-   *          method, which has only one sub-input, of type string, with only 2 possible values ('get' and 'post')
-   *          auth, which has only one value, of type processor
-   *          vars, which can contain an infinite number of values, of type processor or integer, with no limit on value
-   *          t, which can take or or many input of Processor Field or a string.
-   *
-   * @var array
-   */
+    /**
+     * An array of details of the processor, used to configure the frontend GUI and metadata construction.
+     *
+     * Indexes:
+     *  name: name of the processor.
+     *
+     *  machineName: machine name of the processor.
+     *
+     *  description: description of the processor.
+     *
+     *  account: The account that can use the processor.
+     *
+     *  menu: lists the immediate menu parents.
+     *
+     *    examples:
+     *      'menu' => 'menu1' - belongs to menu1
+     *
+     *  input: list the input nodes for this processor
+     *    This is an array with the following indexes:
+     *    description (string): description of what the processor does
+     *    cardinality: (int min, mixed max)
+     *      e.g. [0, 1]
+     *      max can be integer or '*'. '*' = infinite
+     *    type: (array): an array of input type this processor will accept.
+     *      Possible values:
+     *        processor - any processor
+     *        processor <name> - specific processor
+     *        "predefined string"
+     *        file
+     *        literal
+     *        bool
+     *        numeric
+     *        integer
+     *        string
+     *        float
+     *        bool
+     *
+     *    examples:
+     *      input => [
+     *        'sources' => [
+     *            'description' => 'desc1',
+     *            'cardinality' => [1, '*'],
+     *            type => ['function', 'literal']
+     *         ]
+     *      ]
+     *      This processor has only one input, called sources.
+     *      Sources must contain at least one value.
+     *      The inputs can only be string or another processor.
+     *
+     *      input => [
+     *        'method' => [
+     *          'description' => 'desc1',
+     *          'cardinality' => [1, 1],
+     *          'accepts' => [
+     *            'literal' => ['"get"', '"post"']
+     *          ],
+     *        ],
+     *        'auth' => ['description' => 'desc2', 'cardinality' => [1, 1], 'accepts' => ['function'],
+     *        'vars' => ['description' => 'desc3', 'cardinality' => [0, '*'],
+     *            type => ['function', 'integer']],
+     *        't' => ['description' => 'desc4', 'cardinality' => [0, '*'],
+     *            type => ['processor field', 'string']]
+     *      ]
+     *          This Processor has 3 inputs:
+     *          method, which has only one sub-input, of type string, with only 2 possible values ('get' and 'post')
+     *          auth, which has only one value, of type processor
+     *          vars, which can contain an infinite number of values, of type processor or integer, with no limit on value
+     *          t, which can take or or many input of Processor Field or a string.
+     *
+     * @var array
+     */
     protected $details = array();
 
-  /**
-   * @param \ADOConnection $dbLayer
-  */
+    /**
+     * @param \ADOConnection $dbLayer
+     */
     protected $db;
 
-  /**
-   * Constructor. Store processor metadata and request data in object.
-   *
-   * If this method is overridden by any derived classes, don't forget to call parent::__construct()
-   *
-   * @param array $meta
-   * @param Request $request
-   * @param ADODB_mysqli $db
-   */
+    /**
+     * Constructor. Store processor metadata and request data in object.
+     *
+     * If this method is overridden by any derived classes, don't forget to call parent::__construct()
+     *
+     * @param array $meta
+     * @param Request $request
+     * @param ADODB_mysqli $db
+     */
     public function __construct($meta, &$request, $db)
     {
         $this->meta = $meta;
@@ -111,42 +119,46 @@ abstract class ProcessorEntity extends Entity
         $this->db = $db;
     }
 
-  /**
-   * Main processor function.
-   *
-   * This is where the magic happens, and should be overridden by all derived classes.
-   *
-   * Fetches and process the processor described in the metadata.
-   * It is also the 1st stop to recursive processing of processors, so the place validate user credentials.
-   *
-   * @return array|Error
-   */
+    /**
+     * Main processor function.
+     *
+     * This is where the magic happens, and should be overridden by all derived classes.
+     *
+     * Fetches and process the processor described in the metadata.
+     * It is also the 1st stop to recursive processing of processors, so the place validate user credentials.
+     *
+     * @return array|Error
+     */
     abstract public function process();
 
-  /**
-   * Return details for processor.
-   *
-   * @return array
-   */
+    /**
+     * Return details for processor.
+     *
+     * @return array
+     */
     public function details()
     {
         return $this->details;
     }
 
-  /**
-   * Process a variable into a final result for the processor.
-   *
-   * This method can be used to process a value in it's meta to return a final result that it can use.
-   * If the object is a processor, then it will process that down to a final return value,
-   * or if the obj is a simple value, then it will return that. Anything else will return an error object.
-   *
-   * Setting $realValue to true will force the value to be the actual value, rather than a potential dataContainer.
-   *
-   * @param $key
-   * @param bool|FALSE $realValue
-   * @return array
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Process a variable into a final result for the processor.
+     *
+     * This method can be used to process a value in it's meta to return a final result that it can use.
+     * If the object is a processor, then it will process that down to a final return value,
+     * or if the obj is a simple value, then it will return that. Anything else will return an error object.
+     *
+     * Setting $realValue to true will force the value to be the actual value, rather than a potential dataContainer.
+     *
+     * @param string $key
+     *   The key for the input variable in the meta.
+     * @param bool|FALSE $realValue
+     *   Return the real value or a dataContainer
+     *
+     * @return array|DataContainer
+     *
+     * @throws ApiException
+     */
     protected function val($key, $realValue = false)
     {
         $inputDet = $this->details['input'];
@@ -160,6 +172,7 @@ abstract class ProcessorEntity extends Entity
         $limitValues = $inputDet[$key]['limitValues'];
         $limitTypes = $inputDet[$key]['limitTypes'];
         $default = $inputDet[$key]['default'];
+        $required = $inputDet[$key]['required'];
 
         $count = empty($this->meta->$key) ? 0 : is_array($this->meta->$key) ? sizeof($this->meta->$key) : 1;
         if ($count < $min || ($max != '*' && $count > $max)) {
@@ -169,32 +182,36 @@ abstract class ProcessorEntity extends Entity
 
         // return default if empty
         if (!isset($this->meta->$key)
-            || ($this->isDataContainer($this->meta->$key) && $this->meta->$key->getData() === '')) {
-            return $default;
+            || empty($this->meta->$key)
+            || (
+                $this->isDataContainer($this->meta->$key)
+                && empty($this->meta->$key->getData()))
+        ) {
+            $result = $default;
+        } else {
+            $result = $this->meta->$key;
         }
-
-        $result = $this->meta->$key;
 
         if (is_array($result)) {
             foreach ($result as & $r) {
                 $value = $this->isDataContainer($r) ? $r->getData() : $r;
-                $this->_validateAllowedValues($value, $limitValues);
+                $this->_validateAllowedValues($value, $limitValues, $required);
                 $this->_validateAllowedTypes($value, $limitTypes);
             }
         } else {
             $value = $this->isDataContainer($result) ? $result->getData() : $result;
-            $this->_validateAllowedValues($value, $limitValues);
+            $this->_validateAllowedValues($value, $limitValues, $required);
             $this->_validateAllowedTypes($value, $limitTypes);
         }
 
         return $realValue && $this->isDataContainer($result) ? $result->getData() : $result;
     }
 
-  /**
-   * Validate if a set of data is wrapped in a DataContainer object.
-   * @param $data
-   * @return bool
-   */
+    /**
+     * Validate if a set of data is wrapped in a DataContainer object.
+     * @param $data
+     * @return bool
+     */
     protected function isDataContainer($data)
     {
         return is_object($data) && get_class($data) == 'Gaterdata\Core\DataContainer';
@@ -231,17 +248,24 @@ abstract class ProcessorEntity extends Entity
         return $params;
     }
 
-  /**
-   * Validate an input for allowed values
-   *
-   * @param $val
-   * @param array $limitValues
-   * @throws \Gaterdata\Core\ApiException
-   */
-    private function _validateAllowedValues($val, array $limitValues)
+    /**
+     * Validate an input for allowed values.
+     *
+     * @param mixed $val
+     *   Input value.
+     * @param array $limitValues
+     *   List of allowed values.
+     * @param boolean $required
+     *   Value is required.
+     *
+     * @return bool
+     *
+     * @throws ApiException
+     */
+    private function _validateAllowedValues($val, array $limitValues, $required)
     {
-        if (empty($limitValues)) {
-            return;
+        if (empty($limitValues) || (!$required && empty($val))) {
+            return true;
         }
         if (!in_array($val, $limitValues)) {
             throw new ApiException("invalid value ($val). Only '"
@@ -250,13 +274,13 @@ abstract class ProcessorEntity extends Entity
         }
     }
 
-  /**
-   * Validate an input for allowed variable types
-   *
-   * @param $val
-   * @param array $limitTypes
-   * @throws \Gaterdata\Core\ApiException
-   */
+    /**
+     * Validate an input for allowed variable types
+     *
+     * @param $val
+     * @param array $limitTypes
+     * @throws \Gaterdata\Core\ApiException
+     */
     private function _validateAllowedTypes($val, array $limitTypes)
     {
         if (empty($limitTypes)) {
