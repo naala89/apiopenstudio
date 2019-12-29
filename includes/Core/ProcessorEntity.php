@@ -105,8 +105,6 @@ abstract class ProcessorEntity extends Entity
     /**
      * Constructor. Store processor metadata and request data in object.
      *
-     * If this method is overridden by any derived classes, don't forget to call parent::__construct()
-     *
      * @param array $meta
      * @param Request $request
      * @param ADODB_mysqli $db
@@ -159,7 +157,7 @@ abstract class ProcessorEntity extends Entity
      *
      * @throws ApiException
      */
-    protected function val($key, $realValue = false)
+    public function val($key, $realValue = false)
     {
         $inputDet = $this->details['input'];
         if (!isset($inputDet[$key])) {
@@ -176,19 +174,13 @@ abstract class ProcessorEntity extends Entity
         $count = empty($this->meta->$key) ? 0 : is_array($this->meta->$key) ? sizeof($this->meta->$key) : 1;
         if ($count < $min || ($max != '*' && $count > $max)) {
             // invalid cardinality
-            throw new ApiException("invalid number of inputs ($count) in $key, requires $min - $max", 1, $this->id);
+            throw new ApiException("invalid number of inputs ($count) in $key, requires $min - $max", 7, $this->id);
         }
 
-        // return default if empty
-        if (!isset($this->meta->$key)
-            || empty($this->meta->$key)
-            || (
-                $this->isDataContainer($this->meta->$key)
-                && empty($this->meta->$key->getData()))
-        ) {
+        // return default if empty.
+        $result = $this->isDataContainer($this->meta->$key) ? $this->meta->$key->getData() : $this->meta->$key;
+        if ($result === null || $result === '') {
             $result = $default;
-        } else {
-            $result = $this->meta->$key;
         }
 
         if (is_array($result)) {
@@ -203,7 +195,13 @@ abstract class ProcessorEntity extends Entity
             $this->_validateAllowedTypes($value, $limitTypes, $min);
         }
 
-        return $realValue && $this->isDataContainer($result) ? $result->getData() : $result;
+        if (!$realValue) {
+            $result = !$this->isDataContainer($result) ? new DataContainer($result, $this->detectType($result)) : $result;
+        } else {
+            $result = $this->isDataContainer($result) ? $result->getData() : $result;
+        }
+
+        return $result;
     }
 
     /**
@@ -269,7 +267,7 @@ abstract class ProcessorEntity extends Entity
         if (!in_array($val, $limitValues)) {
             throw new ApiException("invalid value ($val). Only '"
                 . implode("', '", $limitValues)
-                . "' allowed", 5, $this->id, 417);
+                . "' allowed", 7, $this->id, 417);
         }
     }
 
@@ -313,7 +311,7 @@ abstract class ProcessorEntity extends Entity
                 }
                 throw new ApiException("invalid value ($text), only '"
                     . implode("', '", $limitTypes)
-                    . "' allowed", 5, $this->id, 417);
+                    . "' allowed", 7, $this->id, 417);
             }
         }
     }
