@@ -326,7 +326,7 @@ class CtrlResource extends CtrlBase
         $resource['meta'] = [];
         foreach (self::META_SECTIONS as $item) {
             if (isset($obj[$item])) {
-                $resource['meta'][$item] = Yaml::dump($obj[$item], Yaml::PARSE_OBJECT);
+                $resource['meta'][$item] = Yaml::dump($obj[$item], 500, 2, Yaml::PARSE_OBJECT);
             }
         }
         return $this->view->render($response, 'resource.twig', [
