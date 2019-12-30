@@ -32,7 +32,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => ['get', 'post', 'delete', 'push'],
                 'default' => '',
             ],
@@ -41,7 +41,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -50,7 +50,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -60,7 +60,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -70,7 +70,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -80,7 +80,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -108,7 +108,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
-    
+
         $accName = $this->val('accName', true);
         $appName = $this->val('appName', true);
 
@@ -123,9 +123,9 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 $string = $this->val('resourceString', true);
                 $resource = $this->_importData($string);
                 $result = $this->create($resource, $accName, $appName);
-            break;
+                break;
             case 'get':
-                $appId = $this->request->appId;
+                $appId = $this->request->getAppId();
                 $method = $this->val('method', true);
                 $uri = $this->val('uri', true);
                 if (empty($method)) {
@@ -135,7 +135,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                     throw new Core\ApiException('Missing uri attribute in new resource', 1, $this->id);
                 }
                 $result = $this->read($appId, $method, $uri);
-            break;
+                break;
             case 'delete':
                 $appId = $this->request->getAppId();
                 $method = $this->val('method', true);
@@ -147,10 +147,10 @@ abstract class ResourceBase extends Core\ProcessorEntity
                     throw new Core\ApiException('Missing uri attribute in new resource', 1, $this->id);
                 }
                 $result = $this->delete($appId, $method, $uri);
-            break;
+                break;
             default:
-            throw new Core\ApiException('unknown method value in new resource', 3, $this->id);
-            break;
+                throw new Core\ApiException('unknown method value in new resource', 3, $this->id);
+                break;
         }
 
         return $result;
@@ -263,13 +263,13 @@ abstract class ResourceBase extends Core\ProcessorEntity
         if (!empty($data['security'])) {
             $meta['security'] = $data['security'];
         }
-        $meta['process'] =  $data['process'];
+        $meta['process'] = $data['process'];
         if (!empty($data['fragments'])) {
             $meta['fragments'] = $data['fragments'];
         }
         $ttl = !empty($data['ttl']) ? $data['ttl'] : 0;
 
-      // Prevent unauthorised editing of admin resources.
+        // Prevent unauthorised editing of admin resources.
         $settings = new Config();
         $coreAccountName = $settings->__get(['api', 'core_account']);
         $coreApplicationName = $settings->__get(['api', 'core_application']);
@@ -510,7 +510,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 && filter_var($element, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) !== null) {
                 $valid = true;
                 break;
-            } elseif ($accept == 'string' && is_string($element)) {
+            } elseif ($accept == 'text' && is_string($element)) {
                 $valid = true;
                 break;
             } elseif ($accept == 'float'

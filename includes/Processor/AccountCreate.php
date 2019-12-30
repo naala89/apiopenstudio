@@ -25,7 +25,7 @@ class AccountCreate extends Core\ProcessorEntity
             'cardinality' => [1, 1],
             'literalAllowed' => true,
             'limitFunctions' => [],
-            'limitTypes' => ['string'],
+            'limitTypes' => ['text'],
             'limitValues' => [],
             'default' => ''
           ],

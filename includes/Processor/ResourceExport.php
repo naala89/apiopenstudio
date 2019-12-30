@@ -58,7 +58,7 @@ class ResourceExport extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => ['yaml', 'json'],
                 'default' => 'yaml',
             ],

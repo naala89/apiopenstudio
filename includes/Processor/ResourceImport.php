@@ -174,9 +174,6 @@ class ResourceImport extends Core\ProcessorEntity
             $meta,
             $ttl
         );
-        return new Core\DataContainer(
-            $this->resourceMapper->save($resource) ? 'true' : 'false',
-            'text'
-        );
+        return new Core\DataContainer($this->resourceMapper->save($resource) ? 'true' : 'false', 'text');
     }
 }

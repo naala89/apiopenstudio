@@ -52,6 +52,6 @@ class GeoPoint extends Core\ProcessorEntity
         $lat = $this->val('lat', true);
         $lon = $this->val('lon', true);
 
-        return new Core\DataContainer(array('lat' => $lat, 'lon' => $lon), 'array');
+        return new Core\DataContainer(['lat' => $lat, 'lon' => $lon], 'array');
     }
 }

@@ -26,7 +26,7 @@ class VarPersistent extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -35,7 +35,7 @@ class VarPersistent extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -44,7 +44,7 @@ class VarPersistent extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => ['save', 'delete', 'fetch'],
                 'default' => '',
             ],
@@ -73,14 +73,14 @@ class VarPersistent extends Core\ProcessorEntity
         $operation = $this->val('operation');
         $db = $this->getDb();
         $mapper = new Db\VarsMapper($db);
-        $vars = $mapper->findByAppIdName($this->request->appId, $name);
+        $vars = $mapper->findByAppIdName($this->request->getAppId(), $name);
 
         switch ($operation) {
             case 'save':
                 $val = $this->val('value');
                 if ($vars->getId() === null) {
                     $vars->setName($name);
-                    $vars->setAppId($this->request->appId);
+                    $vars->setAppId($this->request->getAppId());
                 }
                 $vars->setVal($val);
             return new Core\DataContainer('true', 'text');

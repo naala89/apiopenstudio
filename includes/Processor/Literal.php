@@ -33,7 +33,7 @@ class Literal extends Core\ProcessorEntity
             'cardinality' => [0, 1],
             'literalAllowed' => true,
             'limitFunctions' => [],
-            'limitTypes' => ['string'],
+            'limitTypes' => ['text'],
             'limitValues' => [],
             'default' => 'text'
           ],

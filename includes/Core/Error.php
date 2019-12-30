@@ -8,11 +8,11 @@ class Error
     private $code;
     private $message;
 
-  /**
-   * @param $code
-   * @param $id
-   * @param $message
-   */
+    /**
+     * @param $code
+     * @param $id
+     * @param $message
+     */
     public function __construct($code, $id, $message)
     {
         $this->code = $code;
@@ -20,22 +20,21 @@ class Error
         $this->id = $id;
     }
 
-  /**
-   * Construct and return the output error message
-   *
-   * @return array
-   */
+    /**
+     * Construct and return the output error message
+     *
+     * @return array
+     *
+     * @throws ApiException
+     */
     public function process()
     {
-        return new DataContainer(
-        array(
-        'error' => array(
-          'id' => !empty($this->id) ? $this->id : -1,
-          'code' => $this->code,
-          'message' => (!empty($this->message) ? ucfirst($this->message) . '.' : 'Unidentified error.'),
-        ),
-        ),
-        'array'
-        );
+        return [
+            'error' => [
+                'id' => !empty($this->id) ? $this->id : -1,
+                'code' => $this->code,
+                'message' => (!empty($this->message) ? (ucfirst($this->message) . '.') : 'Unidentified error.'),
+            ],
+        ];
     }
 }

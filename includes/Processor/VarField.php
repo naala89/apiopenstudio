@@ -2,6 +2,11 @@
 
 /**
  * Simple field type.
+ * Inputs:
+ *   * array => returns [key => value]
+ *   * key => [key => '']
+ *   * value => [0 => value]
+ *   * key & value => [key => value]
  */
 
 namespace Gaterdata\Processor;
@@ -24,9 +29,9 @@ class VarField extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string', 'integer'],
+                'limitTypes' => ['text', 'integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => 0,
             ],
             'value' => [
                 'description' => 'The value of the field name/value pair.',
@@ -56,9 +61,9 @@ class VarField extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
+        $array = $this->val('array', true);
         $key = $this->val('key', true);
         $value = $this->val('value', true);
-        $array = $this->val('array', true);
 
         if (!empty($array)) {
             if (sizeof($array) > 1) {
@@ -68,9 +73,6 @@ class VarField extends Core\ProcessorEntity
             return new Core\DataContainer([$keys[0] => $array[$keys[0]]], 'array');
         }
 
-        if (empty($key) || empty($value)) {
-            throw new Core\ApiException('Empty array, and key or value.', 0, $this->id, 417);
-        }
         return new Core\DataContainer([$key => $value], 'array');
     }
 }

@@ -31,7 +31,7 @@ process:
     key: username
   password:
     function: var_post
-    id: user_create_username
+    id: user_create_password
     nullable: true
     key: password
   active:

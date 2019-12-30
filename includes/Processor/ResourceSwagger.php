@@ -22,7 +22,7 @@ class ResourceSwagger extends ResourceBase
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string', 'file'],
+                'limitTypes' => ['text', 'file'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -91,7 +91,7 @@ class ResourceSwagger extends ResourceBase
                 $resources[] = array(
                 'uri' => $resource['uri'],
                 'method' =>$method,
-                'appId' => $this->request->appId
+                'appId' => $this->request->getAppId()
                 );
             }
         }
@@ -122,9 +122,9 @@ class ResourceSwagger extends ResourceBase
         $ttl = !empty($data['ttl']) ? $data['ttl'] : 0;
 
         $mapper = new ResourceMapper($this->db);
-        $resource = $mapper->findByAppIdMethodIdentifier($this->request->appId, $method, $identifier);
+        $resource = $mapper->findByAppIdMethodIdentifier($this->request->getAppId(), $method, $identifier);
         if (empty($resource->getId())) {
-            $resource->setAppId($this->request->appId);
+            $resource->setAppId($this->request->getAppId());
             $resource->setMethod($method);
             $resource->setIdentifier($identifier);
         }
@@ -219,7 +219,7 @@ class ResourceSwagger extends ResourceBase
                     case 'number':
                         $p['processor'] = 'varNum';
                     break;
-                    case 'string':
+                    case 'text':
                         $p['processor'] = 'varStr';
                     break;
                     default:

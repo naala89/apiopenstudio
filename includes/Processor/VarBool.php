@@ -42,18 +42,25 @@ class VarBool extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-        $result = $this->val('value');
-
-
-        if (!$this->isDataContainer($result)) {
-            $result = new Core\DataContainer($result, 'boolean');
+        $value = $this->val('value', true);
+        var_dump($value);die();
+        switch ($value) {
+            case 'yes':
+            case 1:
+            case 'true':
+                $value = true;
+                break;
+            case 'no':
+            case 0:
+            case 'false':
+                $value = false;
+                break;
         }
-        $boolean = filter_var($result->getData(), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        $boolean = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         if (is_null($boolean)) {
-            throw new Core\ApiException($result->getData() . ' is not boolean', 0, $this->id);
+            throw new Core\ApiException("$value is not boolean", 7, $this->id);
         }
-        $result->setData($boolean);
-        $result->setType('boolean');
-        return $result;
+
+        return new Core\DataContainer($boolean, 'boolean');
     }
 }

@@ -6,8 +6,8 @@
 
 namespace Gaterdata\Processor;
 
+use FastRoute\Dispatcher\MarkBased;
 use Gaterdata\Core;
-use Gaterdata\Output\Json;
 use Gaterdata\Output\Output;
 
 class ConvertToArray extends Output
@@ -95,7 +95,7 @@ class ConvertToArray extends Output
      */
     protected function fromHtml(&$data)
     {
-        return $this->_xml2json($data);
+        return $this->fromXml($data);
     }
 
     /**
@@ -103,8 +103,7 @@ class ConvertToArray extends Output
      */
     protected function fromText(&$data)
     {
-        if ($data == '') {
-            // Empty string should be returned as double quotes so that it is not returned as null.
+        if (empty($data)) {
             return [];
         }
         // Wrap in double quotes if not already present.
@@ -114,7 +113,7 @@ class ConvertToArray extends Output
         if (substr($data, -1, 1) != '"' && substr($data, -6, 6) != '&quot;') {
             $data = $data . '"';
         }
-        return $data;
+        return [$data];
     }
 
     /**
@@ -122,7 +121,7 @@ class ConvertToArray extends Output
      */
     protected function fromArray(&$data)
     {
-        return \json_decode($data, true);
+        return $data;
     }
 
     protected function fromImage(&$data)
@@ -135,7 +134,10 @@ class ConvertToArray extends Output
      */
     protected function fromJson(&$data)
     {
-        return is_string($data) ? json_decode($data, true) : $data;
+        if (strpos($data, "\"") !== false) {
+            $data = json_decode($data, true);
+        }
+        return json_decode($data, true);
     }
 
     /**

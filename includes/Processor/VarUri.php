@@ -46,6 +46,6 @@ class VarUri extends Core\ProcessorEntity
             throw new Core\ApiException('URI index "' . $index . '" does not exist', 6, $this->id, 417);
         }
 
-        return new Core\DataContainer(urldecode($args[intval($index)]), 'text');
+        return new Core\DataContainer(urldecode($args[intval($index)]));
     }
 }

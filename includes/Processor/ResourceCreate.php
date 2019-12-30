@@ -56,7 +56,7 @@ class ResourceCreate extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -65,7 +65,7 @@ class ResourceCreate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -83,7 +83,7 @@ class ResourceCreate extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => ['get', 'post', 'put', 'delete'],
                 'default' => '',
             ],
@@ -92,7 +92,7 @@ class ResourceCreate extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -110,7 +110,7 @@ class ResourceCreate extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => ['json', 'yaml'],
                 'default' => '',
             ],
@@ -119,7 +119,7 @@ class ResourceCreate extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -249,9 +249,6 @@ class ResourceCreate extends Core\ProcessorEntity
             $meta,
             $ttl
         );
-        return new Core\DataContainer(
-            $this->resourceMapper->save($resource) ? 'true' : 'false',
-            'text'
-        );
+        return new Core\DataContainer($this->resourceMapper->save($resource) ? 'true' : 'false', 'text');
     }
 }

@@ -44,7 +44,7 @@ class Mapper extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => ['xml', 'json'],
                 'default' => '',
             ],
@@ -114,8 +114,11 @@ class Mapper extends Core\ProcessorEntity
      * @param $source
      * @param $mappings
      * @param $format
+     *
      * @return \Gaterdata\Core\DataContainer
+     *
      * @throws \Gaterdata\Core\ApiException
+     *
      * @see https://github.com/jmespath/jmespath.php
      */
     private function _mapJson(\stdClass &$source, $mappings, $format)
@@ -199,7 +202,9 @@ class Mapper extends Core\ProcessorEntity
      * @param $source
      * @param $mappings
      * @param $format
+     *
      * @return \Gaterdata\Core\DataContainer
+     *
      * @throws \Gaterdata\Core\ApiException
      */
     private function _mapXml(\DOMDocument $source, $mappings, $format)
