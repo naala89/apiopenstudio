@@ -58,15 +58,17 @@ class RoleMapper extends Mapper
     /**
      * Find all roles.
      *
+     * @param array $params
+     *
      * @return array
      *   Array of role objects.
      *
      * @throws \Gaterdata\Core\ApiException
      */
-    public function findAll()
+    public function findAll($params = [])
     {
         $sql = 'SELECT * FROM role';
-        return $this->fetchRows($sql, []);
+        return $this->fetchRows($sql, [], $params);
     }
 
     /**
