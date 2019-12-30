@@ -36,58 +36,6 @@ class CtrlUser extends CtrlBase
     ];
 
     /**
-     * Display the user page.
-     *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
-     *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws GuzzleException
-     */
-    public function index(Request $request, Response $response, array $args)
-    {
-        // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
-        if (!$this->checkAccess()) {
-            $this->flash->addMessage('error', 'Access admin: access denied');
-            return $response->withStatus(302)->withHeader('Location', '/');
-        }
-
-        $menu = $this->getMenus();
-        $uid = $args['uid'];
-        $mode = strpos($request->getUri()->getPath(), 'edit') !== false ? 'edit' : 'view';
-
-        $result = $this->apiCall(
-            'get',
-            'user',
-            [
-                'headers' => [
-                    'Authorization' => "Bearer " . $_SESSION['token'],
-                    'Accept' => 'application/json',
-                ],
-                'query' => [
-                    'uid' => $uid,
-                ],
-            ],
-            $response
-        );
-        $user = (array) json_decode($result->getBody()->getContents());
-
-        return $this->view->render($response, 'user.twig', [
-            'menu' => $menu,
-            'user' => $user,
-            'mode' => $mode,
-        ]);
-    }
-
-    /**
      * Create a new user.
      *
      * @param Request $request
@@ -114,73 +62,82 @@ class CtrlUser extends CtrlBase
 
         $menu = $this->getMenus();
 
-        if (strtolower($request->getMethod()) == 'get') {
-            return $this->view->render($response, 'user-create.twig', [
-                'menu' => $menu,
-            ]);
-        }
-
-        $allPostVars = $request->getParams();
-        // Workaround for Authentication middleware that will think this is a login attempt.
-        $allPostVars['username'] = $allPostVars['create-username'];
-        unset($allPostVars['create-username']);
-        $allPostVars['password'] = $allPostVars['create-password'];
-        unset($allPostVars['create-password']);
-
-        try {
-            $domain = $this->settings['api']['url'];
-            $account = $this->settings['api']['core_account'];
-            $application = $this->settings['api']['core_application'];
-            $token = $_SESSION['token'];
-            $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-            $result = $client->request('POST', 'user', [
-            'headers' => [
-            'Authorization' => "Bearer $token",
-            ],
-            'form_params' => $allPostVars,
-            ]);
-            $user = (array) json_decode($result->getBody()->getContents());
-        } catch (ClientException $e) {
-            $result = $e->getResponse();
-            $this->flash->addMessage('error', $this->getErrorMessage($e));
-            switch ($result->getStatusCode()) {
-                case 401:
-                return $response->withStatus(302)->withHeader('Location', '/login');
-                break;
-                default:
-                    $user = [];
-                break;
-            }
-        }
-
-        if (empty($user['uid'])) {
-            return $this->view->render($response, 'user-create.twig', [
-                'menu' => $menu,
-            ]);
-        }
         return $this->view->render($response, 'user.twig', [
             'menu' => $menu,
-            'user' => $user,
-            'mode' => 'edit',
         ]);
     }
 
-  /**
-   * Update a user.
-   *
-   * @param Request $request
-   *   Request object.
-   * @param Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return ResponseInterface
-   *   Response.
-   *
-   * @throws GuzzleException
-   */
-    public function update(Request $request, Response $response, array $args)
+    /**
+     * Edit a user page.
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
+    public function edit(Request $request, Response $response, array $args)
+    {
+        // Validate access.
+        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+        $this->getAccessRights($response, $uid);
+        if (!$this->checkAccess()) {
+            $this->flash->addMessage('error', 'Access admin: access denied');
+            return $response->withStatus(302)->withHeader('Location', '/');
+        }
+
+        $menu = $this->getMenus();
+        $uid = $args['uid'];
+        $user = [];
+
+        try {
+            $result = $this->apiCall(
+                'get', 'user',
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
+                    'query' => [
+                        'uid' => $uid,
+                    ],
+                ],
+                $response
+            );
+            $user = json_decode($result->getBody()->getContents(), true);
+        } catch (\Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
+        }
+
+        return $this->view->render($response, 'user.twig', [
+            'menu' => $menu,
+            'user' => $user,
+            'messages' => $this->flash->getMessages(),
+        ]);
+    }
+
+    /**
+     * Upload a user.
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
+    public function upload(Request $request, Response $response, array $args)
     {
         // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
@@ -192,84 +149,77 @@ class CtrlUser extends CtrlBase
 
         $menu = $this->getMenus();
         $allPostVars = $request->getParams();
-        $uid = $args['uid'];
+
         // Workaround for Authentication middleware that will think this is a login attempt.
-        $allPostVars['username'] = $allPostVars['edit-username'];
-        unset($allPostVars['edit-username']);
-        $allPostVars['password'] = $allPostVars['edit-password'];
-        unset($allPostVars['edit-password']);
-
-        $domain = $this->settings['api']['url'];
-        $account = $this->settings['api']['core_account'];
-        $application = $this->settings['api']['core_application'];
-        $token = $_SESSION['token'];
-
-        try {
-            $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-            $result = $client->request('PUT', "user/$uid", [
-            'headers' => [
-            'Authorization' => "Bearer $token",
-            ],
-            'body' => json_encode($allPostVars),
-            ]);
-        } catch (ClientException $e) {
-            $result = $e->getResponse();
-            $this->flash->addMessage('error', $this->getErrorMessage($e));
-            switch ($result->getStatusCode()) {
-                case 401:
-                return $response->withStatus(302)->withHeader('Location', '/login');
-                break;
-                default:
-                break;
-            }
+        if (!empty($allPostVars['upload-username'])) {
+            $allPostVars['username'] = $allPostVars['upload-username'];
         }
+        if (!empty($allPostVars['upload-password'])) {
+            $allPostVars['password'] = $allPostVars['upload-password'];
+        }
+        unset($allPostVars['upload-username']);
+        unset($allPostVars['upload-password']);
 
-        try {
-            $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-            $result = $client->request('GET', 'user', [
-            'headers' => [
-            'Authorization' => "Bearer $token",
-            ],
-            'query' => [
-            'uid' => $uid,
-            ],
-            ]);
-            $user = (array) json_decode($result->getBody()->getContents());
-        } catch (ClientException $e) {
-            $result = $e->getResponse();
-            $this->flash->addMessage('error', $this->getErrorMessage($e));
-            switch ($result->getStatusCode()) {
-                case 401:
-                return $response->withStatus(302)->withHeader('Location', '/login');
-                break;
-                default:
-                    $user = [];
-                break;
+        if (!empty($allPostVars['uid'])) {
+            $uid = $allPostVars['uid'];
+            unset($allPostVars['uid']);
+            try {
+                $result = $this->apiCall('put', "user/$uid",
+                    [
+                        'headers' => [
+                            'Authorization' => "Bearer " . $_SESSION['token'],
+                            'Accept' => 'application/json',
+                        ],
+                        'json' => json_encode($allPostVars),
+                    ],
+                    $response
+                );
+                $user = json_decode($result->getBody()->getContents(), true);
+            } catch (\Exception $e) {
+                $this->flash->addMessageNow('error', $e->getMessage());
+                $user = $allPostVars;
+            }
+        } else {
+            try {
+                $result = $this->apiCall('post', 'user',
+                    [
+                        'headers' => [
+                            'Authorization' => "Bearer " . $_SESSION['token'],
+                            'Accept' => 'application/json',
+                        ],
+                        'form_params' => $allPostVars,
+                    ],
+                    $response
+                );
+                $user = json_decode($result->getBody()->getContents(), true);
+            } catch (\Exception $e) {
+                $this->flash->addMessageNow('error', $e->getMessage());
+                $user = $allPostVars;
             }
         }
 
         return $this->view->render($response, 'user.twig', [
-        'menu' => $menu,
-        'user' => $user,
-        'mode' => 'edit',
+            'menu' => $menu,
+            'user' => $user,
+            'messages' => $this->flash->getMessages(),
         ]);
     }
 
-  /**
-   * Delete a user account and its associated roles.
-   *
-   * @param \Slim\Http\Request $request
-   *   Request object.
-   * @param \Slim\Http\Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return ResponseInterface
-   *   Response.
-   *
-   * @throws GuzzleException
-   */
+    /**
+     * Delete a user account and its associated roles.
+     *
+     * @param \Slim\Http\Request $request
+     *   Request object.
+     * @param \Slim\Http\Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
     public function delete(Request $request, Response $response, array $args)
     {
         // Validate access.
@@ -284,49 +234,45 @@ class CtrlUser extends CtrlBase
         $uid = $args['uid'];
 
         try {
-            $domain = $this->settings['api']['url'];
-            $account = $this->settings['api']['core_account'];
-            $application = $this->settings['api']['core_application'];
-            $token = $_SESSION['token'];
-            $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-            $result = $client->request('DELETE', "user/$uid", [
-            'headers' => [
-            'Authorization' => "Bearer $token",
-            ],
-            ]);
-            $this->flash->addMessage('info', 'User successfully deleted.');
-        } catch (ClientException $e) {
-            $result = $e->getResponse();
-            $this->flash->addMessage('error', $this->getErrorMessage($e));
-            switch ($result->getStatusCode()) {
-                case 401:
-                return $response->withStatus(302)->withHeader('Location', '/login');
-                break;
-                default:
-                break;
+            $result = $this->apiCall('delete', "user/$uid",
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
+                ],
+                $response
+            );
+            $result = json_decode($result->getBody()->getContents(), true);
+            if ($result == 'true') {
+                $this->flash->addMessageNow('info', 'User successfully deleted.');
+            } else {
+                $this->flash->addMessageNow('error', 'User deletion failed, please check the logs.');
             }
+        } catch (\Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
         }
 
         return $response->withStatus(302)->withHeader('Location', '/users');
     }
 
-  /**
-   * Send a user an email with a token to register.
-   *
-   * The email templates are in /includes/Admin/templates/invite-user.email.twig.
-   *
-   * @param Request $request
-   *   Slim request object.
-   * @param Response $response
-   *   Slim response object.
-   * @param array $args
-   *   Slim args array
-   *
-   * @return ResponseInterface|Response
-   *
-   * @throws GuzzleException
-   * @throws \PHPMailer\PHPMailer\Exception
-   */
+    /**
+     * Send a user an email with a token to register.
+     *
+     * The email templates are in /includes/Admin/templates/invite-user.email.twig.
+     *
+     * @param Request $request
+     *   Slim request object.
+     * @param Response $response
+     *   Slim response object.
+     * @param array $args
+     *   Slim args array
+     *
+     * @return ResponseInterface|Response
+     *
+     * @throws GuzzleException
+     * @throws \PHPMailer\PHPMailer\Exception
+     */
     public function invite(Request $request, Response $response, array $args)
     {
         // Validate access.
@@ -349,20 +295,20 @@ class CtrlUser extends CtrlBase
             $user = $userHlp->findByEmail($email);
             if (!empty($user['uid'])) {
                 return $this->view->render($response, 'users.twig', [
-                'menu' => $menu,
-                'message' => [
-                'type' => 'error',
-                'text' => 'A user already exists with this email: ' . $email,
-                ]
+                    'menu' => $menu,
+                    'message' => [
+                        'type' => 'error',
+                        'text' => 'A user already exists with this email: ' . $email,
+                    ]
                 ]);
             }
         } catch (ApiException $e) {
             return $this->view->render($response, 'users.twig', [
-            'menu' => $menu,
-            'message' => [
-            $message['type'] = 'error',
-            $message['text'] = $e->getMessage(),
-            ]
+                'menu' => $menu,
+                'message' => [
+                    $message['type'] = 'error',
+                    $message['text'] = $e->getMessage(),
+                ]
             ]);
         }
 
@@ -383,18 +329,18 @@ class CtrlUser extends CtrlBase
             $inviteHlp->create($account['accid'], $email, $token);
         } catch (ApiException $e) {
             return $this->view->render($response, 'users.twig', [
-            'menu' => $menu,
-            'message' => [
-            'type' => 'error',
-            'text' => $e->getMessage(),
-            ]
+                'menu' => $menu,
+                'message' => [
+                    'type' => 'error',
+                    'text' => $e->getMessage(),
+                ]
             ]);
         }
 
         // Send the email.
         $mail = new PHPMailer(true); // Passing `true` enables exceptions
         try {
-          //Server settings
+            //Server settings
             $mail->SMTPDebug = $this->mailSettings['debug'];
             $mail->isSMTP($this->mailSettings['smtp']);
             $mail->Host = $this->mailSettings['host'];
@@ -412,10 +358,10 @@ class CtrlUser extends CtrlBase
             //Content
             $mail->Subject = $this->view->fetchBlock('invite-user.email.twig', 'subject');
             $mail->Body = $this->view->fetchBlock('invite-user.email.twig', 'body_html', [
-            'link' => $link,
+                'link' => $link,
             ]);
             $mail->AltBody = $this->view->fetchBlock('invite-user.email.twig', 'body_text', [
-            'link' => $link,
+                'link' => $link,
             ]);
 
             $mail->send();
@@ -423,33 +369,33 @@ class CtrlUser extends CtrlBase
             $message['text'] = 'Invite has been sent to ' . $email;
             $message['type'] = 'info';
             return $this->view->render($response, 'users.twig', [
-            'menu' => $menu,
-            'message' => $message,
+                'menu' => $menu,
+                'message' => $message,
             ]);
         } catch (phpmailerException $e) {
             return $this->view->render($response, 'users.twig', [
-            'menu' => $menu,
-            'message' => [
-            'type' => 'error',
-            'text' => 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo,
-            ]
+                'menu' => $menu,
+                'message' => [
+                    'type' => 'error',
+                    'text' => 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo,
+                ]
             ]);
         }
     }
 
-  /**
-   * Allow a user with a valid token to register.
-   *
-   * @param \Slim\Http\Request $request
-   *   Request object.
-   * @param \Slim\Http\Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return ResponseInterface
-   *   Response.
-   */
+    /**
+     * Allow a user with a valid token to register.
+     *
+     * @param \Slim\Http\Request $request
+     *   Request object.
+     * @param \Slim\Http\Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     */
     public function register(Request $request, Response $response, array $args)
     {
         $menu = $this->getMenus([]);
@@ -481,16 +427,16 @@ class CtrlUser extends CtrlBase
             $message['text'] = 'Your user already exists: ' . $invite['email'];
             $message['type'] = 'error';
             return $this->view->render($response, 'home.twig', [
-            'menu' => $menu,
-            'message' => $message,
+                'menu' => $menu,
+                'message' => $message,
             ]);
         }
 
         if ($request->isGet()) {
             // Display the register form.
             return $this->view->render($response, 'register.twig', [
-            'menu' => $menu,
-            'token' => $token,
+                'menu' => $menu,
+                'token' => $token,
             ]);
         }
 
@@ -498,20 +444,20 @@ class CtrlUser extends CtrlBase
         return $this->createUser($allVars, $menu, $response);
     }
 
-  /**
-   * Get Local domain name.
-   *
-   * @return string
-   *   Host name.
-   */
+    /**
+     * Get Local domain name.
+     *
+     * @return string
+     *   Host name.
+     */
     private function getHost()
     {
         $possibleHostSources = ['HTTP_X_FORWARDED_HOST', 'HTTP_HOST', 'SERVER_NAME', 'SERVER_ADDR'];
         $sourceTransformations = [
-                "HTTP_X_FORWARDED_HOST" => function ($value) {
-                    $elements = explode(',', $value);
-                    return trim(end($elements));
-                }
+            "HTTP_X_FORWARDED_HOST" => function ($value) {
+                $elements = explode(',', $value);
+                return trim(end($elements));
+            }
         ];
         $host = '';
         foreach ($possibleHostSources as $source) {
