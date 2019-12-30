@@ -19,29 +19,29 @@ use GuzzleHttp\Exception\RequestException;
 class Authentication
 {
 
-  /**
-   * @var Container
-   */
+    /**
+     * @var Container
+     */
     private $settings;
-  /**
-   * @var string
-   */
+    /**
+     * @var string
+     */
     private $loginPath;
-  /**
-   * @var Container
-   */
+    /**
+     * @var Container
+     */
     private $container;
 
-  /**
-   * Authentication constructor.
-   *
-   * @param Container $container
-   *   Container.
-   * @param array $settings
-   *   Application settings.
-   * @param string $loginPath
-   *   Login URI.
-   */
+    /**
+     * Authentication constructor.
+     *
+     * @param Container $container
+     *   Container.
+     * @param array $settings
+     *   Application settings.
+     * @param string $loginPath
+     *   Login URI.
+     */
     public function __construct(Container $container, array $settings, $loginPath)
     {
         $this->container = $container;
@@ -49,21 +49,21 @@ class Authentication
         $this->loginPath = $loginPath;
     }
 
-  /**
-   * Middleware invocation.
-   *
-   * @param ServerRequestInterface $request
-   *   PSR7 request.
-   * @param ResponseInterface $response
-   *   PSR7 Response.
-   * @param callable $next
-   *   Next middleware.
-   *
-   * @return ResponseInterface
-   *   Response Interface.
-   *
-   * @throws GuzzleException
-   */
+    /**
+     * Middleware invocation.
+     *
+     * @param ServerRequestInterface $request
+     *   PSR7 request.
+     * @param ResponseInterface $response
+     *   PSR7 Response.
+     * @param callable $next
+     *   Next middleware.
+     *
+     * @return ResponseInterface
+     *   Response Interface.
+     *
+     * @throws GuzzleException
+     */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         $data = $request->getParsedBody();
@@ -76,85 +76,43 @@ class Authentication
         $client = new Client(['base_uri' => "$domain/$account/$application/"]);
 
         if (!empty($username) || !empty($password)) {
-          // This is a login attempt.
+            // This is a login attempt.
             try {
                 $result = $client->request('POST', "login", [
-                'form_params' => [
-                'username' => $username,
-                'password' => $password,
-                ]
+                    'form_params' => [
+                        'username' => $username,
+                        'password' => $password,
+                    ]
                 ]);
                 $result = json_decode($result->getBody()->getContents());
                 if (!isset($result->token) || !isset($result->uid)) {
-                      return $response->withStatus(302)->withHeader('Location', '/login');
+                    return $response->withStatus(302)->withHeader('Location', '/login');
                 }
                 $_SESSION['token'] = $result->token;
                 $_SESSION['uid'] = $result->uid;
                 $_SESSION['username'] = $username;
-            } catch (ApiException $e) {
-                $message = $this->loginError($e);
-                $this->container['flash']->addMessage('error', $message);
-            } catch (ClientException $e) {
-                $message = $this->loginError($e);
-                $this->container['flash']->addMessage('error', $message);
-            } catch (RequestException $e) {
-                $message = $this->loginError($e);
-                $this->container['flash']->addMessage('error', $message);
+            } catch (BadResponseException $e) {
+                $this->container['flash']->addMessage('error', $e->getMessage());
             }
         } else {
-          // Validate the token and username.
+            // Validate the token and username.
             try {
                 $token = isset($_SESSION['token']) ? $_SESSION['token'] : '';
                 $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
                 $result = $client->request('GET', "user", [
-                'query' => ['username' => $username],
-                'headers' => ['Authorization' => "Bearer $token"],
+                    'query' => ['username' => $username],
+                    'headers' => ['Authorization' => "Bearer $token"],
                 ]);
-            } catch (ApiException $e) {
-                $message = $this->loginError($e);
-                $this->container['flash']->addMessage('error', $message);
-            } catch (ClientException $e) {
-                $message = $this->loginError($e);
-                $this->container['flash']->addMessage('error', $message);
-            } catch (RequestException $e) {
-                $message = $this->loginError($e);
-                $this->container['flash']->addMessage('error', $message);
+            } catch (BadResponseException $e) {
+                $this->container['flash']->addMessage('error', $e->getMessage());
             }
         }
 
-      // Validate token and uid are set (valid login).
+        // Validate token and uid are set (valid login).
         if (!isset($_SESSION['token']) || !isset($_SESSION['uid']) || !isset($_SESSION['username'])) {
             $loginPath = $request->getUri()->withPath($this->loginPath);
             return $response->withStatus(302)->withHeader('Location', $loginPath);
         }
         return $next($request, $response);
-    }
-
-  /**
-   * Process a login or validation exception.
-   *
-   * @param Exception $e
-   *
-   * @return void
-   */
-    private function loginError($e)
-    {
-        unset($_SESSION['token']);
-        unset($_SESSION['uid']);
-        unset($_SESSION['username']);
-
-        if (method_exists($e, 'hasResponse')) {
-            if ($e->hasResponse()) {
-                $result = $e->getResponse();
-                $responseObject = json_decode($result->getBody()->getContents());
-                $message = $responseObject->error->message;
-            } else {
-                $message = 'Unknown response.';
-            }
-        } else {
-            $message = $e->getMessage();
-        }
-
-        return $message;
     }
 }
