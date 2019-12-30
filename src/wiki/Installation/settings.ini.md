@@ -17,7 +17,7 @@ The indexes in the array contain the hostname of the server, and the value conta
 
 The values set in this function apply to all server roles, however, these values can overridden in the role functions (see below) or in the URL if $_allow_override has been set to true (see below).
 
-#### $defaultFormat
+#### $default_format
 
 Sets the default output format for API calls, if no ```Accept``` header value is received
 
@@ -29,7 +29,7 @@ Sets the life of API tokens. Use format used by [strtotime](http://php.net/manua
 
 The directory where composer installs the 3rd party files. You should need to edit this.
 
-#### $dirYaml
+#### $dir_yaml
 
 The directory where you store your yaml files. You should not need to change this.
 

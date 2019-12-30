@@ -184,7 +184,7 @@ class Api
         $request->setPostVars($_POST);
         $request->setFiles($_FILES);
         $request->setIp($_SERVER['REMOTE_ADDR']);
-        $request->setOutFormat($this->getAccept($this->settings->__get(['api', 'defaultFormat'])));
+        $request->setOutFormat($this->getAccept($this->settings->__get(['api', 'default_format'])));
         $request->setArgs($result['args']);
         $request->setResource($result['resource']);
         $meta = json_decode($result['resource']->getMeta());
@@ -232,7 +232,7 @@ class Api
             throw new ApiException('invalid request', 3, -1, 404);
         }
 
-        $filepath = $_SERVER['DOCUMENT_ROOT'] . $this->config->__get('dirYaml') . 'test/' . $this->test;
+        $filepath = $_SERVER['DOCUMENT_ROOT'] . $this->config->__get('dir_yaml') . 'test/' . $this->test;
         if (!file_exists($filepath)) {
             throw new ApiException("invalid test yaml: $filepath", 1, -1, 400);
         }

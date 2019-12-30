@@ -120,11 +120,11 @@ class CtrlResource extends CtrlBase
 
         // Pagination.
         $page = isset($allParams['page']) ? $allParams['page'] : 1;
-        $pages = ceil(count($resources) / $this->settings['admin']['paginationStep']);
+        $pages = ceil(count($resources) / $this->settings['admin']['pagination_step']);
         $resources = array_slice(
             $resources,
-            ($page - 1) * $this->settings['admin']['paginationStep'],
-            $this->settings['admin']['paginationStep'],
+            ($page - 1) * $this->settings['admin']['pagination_step'],
+            $this->settings['admin']['pagination_step'],
             true
         );
 
@@ -599,7 +599,7 @@ class CtrlResource extends CtrlBase
             return $response->withStatus(302)->withHeader('Location', '/');
         }
 
-        $directory = $this->settings['api']['base_path'] . $this->settings['api']['dirTmp'];
+        $directory = $this->settings['api']['base_path'] . $this->settings['api']['dir_tmp'];
         $uploadedFiles = $request->getUploadedFiles();
         $uploadedFile = $uploadedFiles['resource_file'];
 

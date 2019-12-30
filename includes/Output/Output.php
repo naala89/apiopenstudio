@@ -97,7 +97,7 @@ abstract class Output extends Core\ProcessorEntity
             $this->settings->__get(['debug', 'debugInterface']) != 'HTML'
             || (
                 $this->settings->__get(['debug', 'debug']) < 1
-                && $this->settings->__get(['debug', 'debugDb']) < 1
+                && $this->settings->__get(['debug', 'debug_db']) < 1
             )
         ) {
             header($this->header);

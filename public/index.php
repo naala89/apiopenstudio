@@ -21,7 +21,7 @@ try {
   $result = $api->process();
 }
 catch (ApiException $e) {
-  $outputClass = 'Gaterdata\\Output\\' . ucfirst($api->getAccept($config->__get(['api', 'defaultFormat'])));
+  $outputClass = 'Gaterdata\\Output\\' . ucfirst($api->getAccept($config->__get(['api', 'default_format'])));
   if (!class_exists($outputClass)) {
     echo 'Error: no default format defined in the config!';
     exit();

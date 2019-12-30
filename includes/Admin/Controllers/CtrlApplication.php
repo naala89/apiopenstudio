@@ -93,10 +93,10 @@ class CtrlApplication extends CtrlBase
         }
 
         // Get total number of pages and current page's applications to display.
-        $pages = ceil(count($sortedApps) / $this->settings['admin']['paginationStep']);
+        $pages = ceil(count($sortedApps) / $this->settings['admin']['pagination_step']);
         $sortedApps = array_slice($sortedApps,
-            ($page - 1) * $this->settings['admin']['paginationStep'],
-            $this->settings['admin']['paginationStep'],
+            ($page - 1) * $this->settings['admin']['pagination_step'],
+            $this->settings['admin']['pagination_step'],
             true
         );
 
