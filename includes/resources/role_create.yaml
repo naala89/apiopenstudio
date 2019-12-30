@@ -1,0 +1,31 @@
+name: Role create
+
+description: Create a new role.
+
+uri: role
+
+method: post
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_roles
+  id: role_create_security
+  token:
+    function: bearer_token
+    id: role_create_token
+  roles:
+    - Administrator
+    - Account manager
+    - Application manager
+
+process:
+  function: role_create
+  id: role_create_process
+  name:
+    function: var_post
+    id: role_create_name
+    nullable: false
+    key: name

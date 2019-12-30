@@ -23,7 +23,7 @@ class RoleMapper extends Mapper
     public function save(Role $role)
     {
         if ($role->getRid() == null) {
-            $sql = 'INSERT INTO role (name) VALUES (?, ?)';
+            $sql = 'INSERT INTO role (name) VALUES (?)';
             $bindParams = [
             $role->getName(),
             ];
