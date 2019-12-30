@@ -23,7 +23,7 @@ class ConvertToArray extends Output
     protected $details = [
         'name' => 'Convert to array',
         'machineName' => 'convert_to_array',
-        'description' => 'Convert an input data into an array data type (i.e. JSON, XML or object into an array).',
+        'description' => 'Convert an input data into an array data type (i.e. JSON, XML or object) into an array.',
         'menu' => 'Data operation',
         'input' => [
             'source' => [
@@ -134,9 +134,6 @@ class ConvertToArray extends Output
      */
     protected function fromJson(&$data)
     {
-        if (strpos($data, "\"") !== false) {
-            $data = json_decode($data, true);
-        }
         return json_decode($data, true);
     }
 
