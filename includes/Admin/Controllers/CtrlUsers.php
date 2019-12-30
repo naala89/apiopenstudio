@@ -48,7 +48,7 @@ class CtrlUsers extends CtrlBase
    */
     public function index(Request $request, Response $response, array $args)
     {
-      // Validate access.
+        // Validate access.
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
@@ -58,7 +58,7 @@ class CtrlUsers extends CtrlBase
 
         $menu = $this->getMenus();
 
-      // Filter params.
+        // Filter params.
         $query = [];
         $allParams = $request->getParams();
         if (!empty($allParams['keyword'])) {
@@ -72,32 +72,23 @@ class CtrlUsers extends CtrlBase
         }
 
         try {
-            $domain = $this->settings['api']['url'];
-            $account = $this->settings['api']['core_account'];
-            $application = $this->settings['api']['core_application'];
-            $token = $_SESSION['token'];
-            $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-            $result = $client->request('GET', 'user', [
-            'headers' => [
-            'Authorization' => "Bearer $token",
-            ],
-            'query' => $query,
-            ]);
+            $result = $this->apiCall('get','user',
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
+                    'query' => $query
+                ],
+                $response
+            );
             $users = (array) json_decode($result->getBody()->getContents());
-        } catch (ClientException $e) {
-            $result = $e->getResponse();
-            $this->flash->addMessage('error', $this->getErrorMessage($e));
-            switch ($result->getStatusCode()) {
-                case 401:
-                return $response->withStatus(302)->withHeader('Location', '/login');
-                break;
-                default:
-                    $users = [];
-                break;
-            }
+        } catch (\Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
+            $users = [];
         }
 
-      // Pagination.
+        // Pagination.
         $page = isset($params['page']) ? $allParams['page'] : 1;
         $pages = ceil(count($users) / $this->settings['admin']['paginationStep']);
         $users = array_slice($users,
@@ -106,12 +97,12 @@ class CtrlUsers extends CtrlBase
         true);
 
         return $this->view->render($response, 'users.twig', [
-        'menu' => $menu,
-        'users' => $users,
-        'page' => $page,
-        'pages' => $pages,
-        'params' => $allParams,
-        'messages' => $this->flash->getMessages(),
+            'menu' => $menu,
+            'users' => $users,
+            'page' => $page,
+            'pages' => $pages,
+            'params' => $allParams,
+            'messages' => $this->flash->getMessages(),
         ]);
     }
 }
