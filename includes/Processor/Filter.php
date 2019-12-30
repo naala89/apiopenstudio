@@ -97,7 +97,7 @@ class Filter extends Core\ProcessorEntity
 
         // Nothing to filter.
         if (empty($source)) {
-            return $this->val('source');
+            return new Core\DataContainer($source);
         }
 
         // Test for multiple filters if regex (not allowed because it is inefficient).
@@ -114,10 +114,9 @@ class Filter extends Core\ProcessorEntity
         $getCallback = '_callback' . ($inverse ? 'Inverse' : 'Noninverse') . ($regex ? 'Regex' : 'Nonregex');
         $callback = $this->{$getCallback}($filter);
 
-        $source = $this->{$func}($source, $callback);
+        $result = $this->{$func}($source, $callback);
 
-        // TODO: better dynamic container type
-        return new Core\DataContainer($source, is_array($source) ? 'array' : 'text');
+        return new Core\DataContainer($result);
     }
 
     /**
