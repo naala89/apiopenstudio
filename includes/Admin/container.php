@@ -32,7 +32,7 @@ $container['flash'] = function () {
 $container['view'] = function (Container $container) {
     $settings = $container->get('settings');
     $viewDir = $settings['api']['base_path'] . $settings['twig']['template_path'];
-    $publicDir = $settings['api']['base_path'] . $settings['api']['public_path'];
+    $publicDir = $settings['api']['base_path'] . $settings['api']['dir_public'];
 
     $twigSettings = $settings['twig']['options'];
     $twigSettings['debug'] = $settings['debug'];
