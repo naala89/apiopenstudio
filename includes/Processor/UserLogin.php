@@ -26,7 +26,7 @@ class UserLogin extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => false,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -35,7 +35,7 @@ class UserLogin extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => false,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -73,13 +73,14 @@ class UserLogin extends Core\ProcessorEntity
         $config = new Config();
         $tokenLife = $config->__get(['api', 'token_life']);
         if (!empty($user->getToken())
-        && !empty($user->getTokenTtl())
-        && Core\Utilities::dateMysql2php($user->getTokenTtl()) > time()) {
+            && !empty($user->getTokenTtl())
+            && Core\Utilities::dateMysql2php($user->getTokenTtl()) > time()
+        ) {
             $user->setTokenTtl(Core\Utilities::datePhp2mysql(strtotime($tokenLife)));
             $userMapper->save($user);
             return new Core\DataContainer(
-            ['token' => $user->getToken(), 'uid' => $user->getUid()],
-            'array'
+                ['token' => $user->getToken(), 'uid' => $user->getUid()],
+                'array'
             );
         }
 
@@ -90,9 +91,9 @@ class UserLogin extends Core\ProcessorEntity
         $user->setTokenTtl(Core\Utilities::datePhp2mysql(strtotime($tokenLife)));
         $userMapper->save($user);
 
-        return new Core\DataContainer([
-            'token' => $user->getToken(),
-            'uid' => $user->getUid()
-        ], 'array');
+        return new Core\DataContainer(
+            ['token' => $user->getToken(), 'uid' => $user->getUid()],
+            'array'
+        );
     }
 }

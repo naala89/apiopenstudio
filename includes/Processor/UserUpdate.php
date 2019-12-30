@@ -12,6 +12,11 @@ use Gaterdata\Db;
 class UserUpdate extends Core\ProcessorEntity
 {
     /**
+     * @var UserMapper
+     */
+    private $userMapper;
+
+    /**
      * {@inheritDoc}
      */
     protected $details = [
@@ -29,17 +34,170 @@ class UserUpdate extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => '',
             ],
-            'user_details' => [
-                'description' => 'The user details to edit. A json string is expected.',
+            'username' => [
+                'description' => 'The username of the user.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
+            'email' => [
+                'description' => 'The email of the user.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'active' => [
+                'description' => 'The active flag for the user.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => true,
+            ],
+            'password' => [
+                'description' => 'The password of the user.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'honorific' => [
+                'description' => 'The honorific of the user.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => ['Mr', 'Ms', 'Miss', 'Mrs', 'Dr', 'Prof', 'Hon'],
+                'default' => '',
+            ],
+            'name_first' => [
+                'description' => 'The first name of the user.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'name_last' => [
+                'description' => 'The last name of the user.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'company' => [
+                'description' => 'The company of the user.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'website' => [
+                'description' => 'The website of the user.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'address_street' => [
+                'description' => 'The street address of the user.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'address_suburb' => [
+                'description' => 'The suburb of the user.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'address_city' => [
+                'description' => 'The city of the user.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'address_state' => [
+                'description' => 'The state of the user.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'address_country' => [
+                'description' => 'The country of the user.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'address_postcode' => [
+                'description' => 'The postcode of the user.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'phone_mobile' => [
+                'description' => 'The mobile phone of the user.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text', 'integer'],
+                'limitValues' => [],
+                'default' => 0,
+            ],
+            'phone_work' => [
+                'description' => 'The work phone of the user.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text', 'integer'],
+                'limitValues' => [],
+                'default' => 0,
+            ],
         ],
     ];
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct($meta, &$request, $db)
+    {
+        parent::__construct($meta, $request, $db);
+        $this->userMapper = new Db\UserMapper($db);
+    }
 
     /**
      * {@inheritDoc}
@@ -48,67 +206,48 @@ class UserUpdate extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-        $user_details = json_decode($this->val('user_details', true));
-        if ($user_details == null) {
-            throw new Core\ApiException('Invalid user details JSON string', 6, $this->id, 400);
-        }
-
         $uid = $this->val('uid', true);
-        $userMapper = new Db\UserMapper($this->db);
-        $user = $userMapper->findByUid($uid);
-        if (empty($user->getUid())) {
+        $username = $this->val('username', true);
+        $email = $this->val('email', true);
+        $password = $this->val('password', true);
+
+        $user = $this->userMapper->findByUsername($username);
+        if ($user->getUid() != $uid) {
+            throw new Core\ApiException("Username $username already exists", 6, $this->id, 400);
+        }
+        $user = $this->userMapper->findByEmail($email);
+        if (!empty($user->getUid()) && $user->getUid() != $uid) {
+            throw new Core\ApiException("Email $email already exists", 6, $this->id, 400);
+        }
+        $user = $this->userMapper->findByUid($uid);
+        if (!empty($user->getUid()) && $user->getUid() != $uid) {
             throw new Core\ApiException("Invalid UID: $uid", 6, $this->id, 400);
         }
 
-        if (!empty($user_details->username)) {
-            $user->setUsername($user_details->username);
+        $active = $this->val('active', true);
+        $bool = ($active === 'true') ? true : ($active === 'false' ? false : $active);
+        $user->setActive((boolean) $bool ? 1 : 0);
+        $user->setUsername($username);
+        if (!empty($password)) {
+            $user->setPassword($password);
         }
-        if (!empty($user_details->password)) {
-            $user->setPassword($user_details->password);
-        }
-        if (!empty($user_details->email)) {
-            $user->setEmail($user_details->email);
-        }
-        if (!empty($user_details->honorific)) {
-            $user->setHonorific($user_details->honorific);
-        }
-        if (!empty($user_details->name_first)) {
-            $user->setNameFirst($user_details->name_first);
-        }
-        if (!empty($user_details->name_last)) {
-            $user->setNameLast($user_details->name_last);
-        }
-        if (!empty($user_details->company)) {
-            $user->setCompany($user_details->company);
-        }
-        if (!empty($user_details->website)) {
-            $user->setWebsite($user_details->website);
-        }
-        if (!empty($user_details->street_address)) {
-            $user->setAddressStreet($user_details->address_street);
-        }
-        if (!empty($user_details->suburb)) {
-            $user->setAddressSuburb($user_details->address_suburb);
-        }
-        if (!empty($user_details->city)) {
-            $user->setAddressCity($user_details->address_city);
-        }
-        if (!empty($user_details->country)) {
-            $user->setAddressCountry($user_details->address_country);
-        }
-        if (!empty($user_details->postcode)) {
-            $user->setAddressPostcode($user_details->address_postcode);
-        }
-        if (!empty($user_details->phone_mobile)) {
-            $user->setPhoneMobile($user_details->phone_mobile);
-        }
-        if (!empty($user_details->phone_work)) {
-            $user->setPhoneWork($user_details->phone_work);
-        }
-        Core\Debug::variable($user);
-        $userMapper->save($user);
+        $user->setEmail($email);
+        $user->setHonorific($this->val('honorific', true));
+        $user->setNameFirst($this->val('name_first', true));
+        $user->setNameLast($this->val('name_last', true));
+        $user->setCompany($this->val('company', true));
+        $user->setWebsite($this->val('website', true));
+        $user->setAddressStreet($this->val('address_street', true));
+        $user->setAddressSuburb($this->val('address_suburb', true));
+        $user->setAddressCity($this->val('address_city', true));
+        $user->setAddressState($this->val('address_state', true));
+        $user->setAddressCountry($this->val('address_country', true));
+        $user->setAddressPostcode($this->val('address_postcode', true));
+        $user->setPhoneMobile($this->val('phone_mobile', true));
+        $user->setPhoneWork($this->val('phone_work', true));
 
-        $user = $userMapper->findByUid($uid);
-        return $user->dump();
+        $this->userMapper->save($user);
+
+        return new Core\DataContainer($user->dump(), 'array');
     }
 }

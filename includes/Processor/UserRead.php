@@ -12,6 +12,11 @@ use Gaterdata\Db;
 class UserRead extends Core\ProcessorEntity
 {
     /**
+     * @var Db\UserMapper
+     */
+    private $userMapper;
+
+    /**
      * {@inheritDoc}
      */
     protected $details = [
@@ -27,14 +32,14 @@ class UserRead extends Core\ProcessorEntity
                 'limitFunctions' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => -1,
             ],
             'username' => [
                 'description' => 'The username of the user.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -43,7 +48,7 @@ class UserRead extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -53,7 +58,7 @@ class UserRead extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string', 'integer'],
+                'limitTypes' => ['text', 'integer'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -62,21 +67,29 @@ class UserRead extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => ['uid', 'username', 'name_first', 'name_last', 'email'],
-                'default' => '',
+                'default' => 'username',
             ],
             'direction' => [
                 'description' => 'Order by direction.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => ['asc', 'desc'],
-                'default' => '',
+                'default' => 'asc',
             ],
         ],
     ];
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct($meta, &$request, $db) {
+        parent::__construct($meta, $request, $db);
+        $this->userMapper = new Db\UserMapper($db);
+    }
 
     /**
      * {@inheritDoc}
@@ -92,27 +105,28 @@ class UserRead extends Core\ProcessorEntity
         $orderBy = $this->val('orderBy', true);
         $orderBy = empty($orderBy) ? 'uid' : $orderBy;
         $direction = $this->val('direction', true);
-        $direction = empty($direction) ? 'asc' : $direction;
-        $userMapper = new Db\UserMapper($this->db);
 
-        if (!empty($uid)) {
+        if ($uid > 0) {
             // Find by UID.
-            $users = $userMapper->findByUid($uid);
-            if (empty($users->getUid())) {
+            $user = $this->userMapper->findByUid($uid);
+            if (empty($user->getUid())) {
                 throw new Core\ApiException("User does not exist, uid: $uid", 6, $this->id, 400);
             };
+            return $user->dump();
         } elseif (!empty($username)) {
             // Find by username.
-            $users = $userMapper->findByUsername($username);
-            if (empty($users->getUid())) {
+            $user = $this->userMapper->findByUsername($username);
+            if (empty($user->getUid())) {
                 throw new Core\ApiException("User does not exist, username: $username", 6, $this->id, 400);
             }
+            return $user->dump();
         } elseif (!empty($email)) {
             // Find by email.
-            $users = $userMapper->findByEmail($email);
-            if (empty($users->getUid())) {
+            $user = $this->userMapper->findByEmail($email);
+            if (empty($user->getUid())) {
                 throw new Core\ApiException("User does not exist, email: $email", 6, $this->id, 400);
             }
+            return $user->dump();
         } elseif (!empty($keyword)) {
             // Find by keyword.
             $params = [
@@ -125,14 +139,14 @@ class UserRead extends Core\ProcessorEntity
             'order_by' => $orderBy,
             'direction' => $direction,
             ];
-            $users = $userMapper->findAll($params);
+            $users = $this->userMapper->findAll($params);
         } else {
           // Fetch all.
             $params = [
                 'order_by' => $orderBy,
                 'direction' => $direction,
             ];
-            $users = $userMapper->findAll($params);
+            $users = $this->userMapper->findAll($params);
         }
 
         $result = [];

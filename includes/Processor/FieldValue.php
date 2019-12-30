@@ -51,8 +51,7 @@ class FieldValue extends Core\ProcessorEntity
         $keyValue = $this->val('key_value', true);
 
         $keys = array_keys($field);
-        $result = $keyValue == 'value' ? $field[$keys[0]] : $keys[0];
 
-        return new Core\DataContainer($result, $this->detectType($result));
+        return new Core\DataContainer($keyValue == 'value' ? $field[$keys[0]] : $keys[0]);
     }
 }

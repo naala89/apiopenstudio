@@ -15,9 +15,9 @@ use Gaterdata\Db;
  */
 class TokenRole extends Core\ProcessorEntity
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     protected $details = [
         'name' => 'Token (Role)',
         'machineName' => 'token_role',
@@ -29,7 +29,7 @@ class TokenRole extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => false,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -38,27 +38,27 @@ class TokenRole extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
         ],
     ];
 
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Security TokenRole', 4);
 
-      // no token
-        $token = $this->val('token');
+        // no token
+        $token = $this->val('token', true);
         if (empty($token)) {
             throw new Core\ApiException('permission denied', 4, -1, 401);
         }
 
-      // invalid token or user not active
+        // invalid token or user not active
         $userMapper = new Db\UserMapper($this->db);
         $user = $userMapper->findBytoken($token);
         $uid = $user->getUid();
@@ -66,26 +66,26 @@ class TokenRole extends Core\ProcessorEntity
             throw new Core\ApiException('permission denied', 4, -1, 401);
         }
 
-      // Validate user against the role.
-        $roleName = $this->val('role');
+        // Validate user against the role.
+        $roleName = $this->val('role', true);
         if ($this->validateUser($uid, $roleName)) {
             return true;
         }
         throw new Core\ApiException('permission denied', 4, $this->id, 401);
     }
 
-  /**
-   * Validate a user against roles and the account/application of the resource.
-   *
-   * @param $uid
-   *   User ID
-   * @param $roleName
-   *   Role name.
-   *
-   * @return bool
-   *
-   * @throws Core\ApiException
-   */
+    /**
+     * Validate a user against roles and the account/application of the resource.
+     *
+     * @param $uid
+     *   User ID
+     * @param $roleName
+     *   Role name.
+     *
+     * @return bool
+     *
+     * @throws Core\ApiException
+     */
     protected function validateUser($uid, $roleName)
     {
         $roleMapper = new Db\RoleMapper($this->db);
@@ -106,7 +106,7 @@ class TokenRole extends Core\ProcessorEntity
                 if (!empty($userRoles)) {
                     return true;
                 }
-            break;
+                break;
             case 'Account manager':
                 $userRoles = $userRoleMapper->findByFilter([
                     'col' => [
@@ -118,7 +118,7 @@ class TokenRole extends Core\ProcessorEntity
                 if (!empty($userRoles)) {
                     return true;
                 }
-            break;
+                break;
             default:
                 $userRoles = $userRoleMapper->findByFilter([
                     'col' => [

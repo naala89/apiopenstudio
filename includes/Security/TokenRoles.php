@@ -22,22 +22,22 @@ class TokenRoles extends TokenRole
         'menu' => 'Security',
         'input' => [
             'token' => [
-                'description' => 'The consumers token.',
+                'description' => 'The users token.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => false,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text', 'empty'],
                 'limitValues' => [],
                 'default' => '',
             ],
             'roles' => [
-                'description' => 'A collection of user_role.',
+                'description' => 'User roles that are permitted.',
                 'cardinality' => [1, '*'],
                 'literalAllowed' => false,
                 'limitFunctions' => ['collection'],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => [],
             ],
         ],
     ];
@@ -50,7 +50,7 @@ class TokenRoles extends TokenRole
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
         // no token
-        $token = $this->val('token');
+        $token = $this->val('token', true);
         if (empty($token)) {
             throw new Core\ApiException('permission denied', 4, -1, 401);
         }

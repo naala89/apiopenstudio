@@ -22,21 +22,6 @@ process:
   function: resource_delete
   id: resource_delete_process
   resid:
-    function: field_value
+    function: var_uri
     id: resource_delete_resid
-    key_value: value
-    field:
-      function: var_field
-      id: resource_delete_field
-      array:
-        function: filter
-        id: resource_delete_filter
-        filter: resid
-        inverse: true
-        source:
-          function: convert_to_array
-          id: resource_delete_array
-          source:
-            function: var_body
-            id: resource_delete_body
-            nullable: false
+    index: 0

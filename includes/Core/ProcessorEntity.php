@@ -177,31 +177,18 @@ abstract class ProcessorEntity extends Entity
             throw new ApiException("invalid number of inputs ($count) in $key, requires $min - $max", 7, $this->id);
         }
 
-        // return default if empty.
-        $result = $this->isDataContainer($this->meta->$key) ? $this->meta->$key->getData() : $this->meta->$key;
-        if ($result === null || $result === '') {
-            $result = $default;
+        // Set data to default if empty.
+        $test = $this->isDataContainer($this->meta->$key) ? $this->meta->$key->getData() : $this->meta->$key;
+        if ($test === null || $test === '') {
+            $this->meta->$key = new DataContainer($default);
         }
 
-        if (is_array($result)) {
-            foreach ($result as & $r) {
-                $value = $this->isDataContainer($r) ? $r->getData() : $r;
-                $this->_validateAllowedValues($value, $limitValues, $min);
-                $this->_validateAllowedTypes($value, $limitTypes, $min);
-            }
-        } else {
-            $value = $this->isDataContainer($result) ? $result->getData() : $result;
-            $this->_validateAllowedValues($value, $limitValues, $min);
-            $this->_validateAllowedTypes($value, $limitTypes, $min);
-        }
+        $container = $this->isDataContainer($this->meta->$key) ? $this->meta->$key : new DataContainer($this->meta->$key);
 
-        if (!$realValue) {
-            $result = !$this->isDataContainer($result) ? new DataContainer($result, $this->detectType($result)) : $result;
-        } else {
-            $result = $this->isDataContainer($result) ? $result->getData() : $result;
-        }
+        $this->_validateAllowedValues($container->getData(), $limitValues, $min);
+        $this->_validateAllowedTypes($container->getType(), $limitTypes, $min);
 
-        return $result;
+        return $realValue ? $container->getData() : $container;
     }
 
     /**
@@ -274,8 +261,8 @@ abstract class ProcessorEntity extends Entity
     /**
      * Validate an input for allowed variable types
      *
-     * @param mixed $val
-     *   Input value.
+     * @param string $type
+     *   Input value type.
      * @param array $limitTypes
      *   List of limit on valiable types.
      * @param integer $min
@@ -285,142 +272,15 @@ abstract class ProcessorEntity extends Entity
      *
      * @throws ApiException
      */
-    private function _validateAllowedTypes($val, array $limitTypes, $min)
+    private function _validateAllowedTypes($type, array $limitTypes, $min)
     {
-        if (empty($limitTypes) || ($min < 1 && empty($val))) {
+        if (empty($limitTypes) || ($min < 1 && $type == 'empty')) {
             return true;
         }
-        if (in_array('boolean', $limitTypes) && $this->_checkBool($val)) {
-            return true;
+        if (!in_array($type, $limitTypes)) {
+            throw new ApiException("invalid type ($type), only '"
+                . implode("', '", $limitTypes)
+                . "' allowed", 7, $this->id, 417);
         }
-        if (in_array('integer', $limitTypes) && $this->_checkInt($val)) {
-            return true;
-        }
-        if (in_array('float', $limitTypes) && $this->_checkFloat($val)) {
-            return true;
-        }
-        if (in_array('array', $limitTypes) && is_array($val)) {
-            return true;
-        }
-        if (!empty($val)) {
-            $type = gettype($val);
-            if (!in_array($type, $limitTypes)) {
-                $text = $val;
-                if ($type == 'array' || $type == 'object') {
-                    $text = 'compound object';
-                }
-                throw new ApiException("invalid value ($text), only '"
-                    . implode("', '", $limitTypes)
-                    . "' allowed", 7, $this->id, 417);
-            }
-        }
-    }
-
-    /**
-     * Validate a variable is boolean.
-     *
-     * @param $var
-     * @return bool
-     */
-    public function _checkBool($var)
-    {
-        return null !== filter_var($var, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-    }
-
-    /**
-     * Validate a variable is float.
-     *
-     * @param $var
-     * @return bool
-     */
-    public function _checkFloat($var)
-    {
-        return null !== filter_var($var, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
-    }
-
-    /**
-     * Validate a variable is integer.
-     *
-     * @param $var
-     * @return bool
-     */
-    public function _checkInt($var)
-    {
-        return null !== filter_var($var, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-    }
-
-    /**
-     * Validate a variable is JSON.
-     *
-     * @param $var
-     * @return bool
-     */
-    public function _checkJson($var)
-    {
-        json_decode($var);
-        return (json_last_error() == JSON_ERROR_NONE);
-    }
-
-    /**
-     * Validate a variable is HTML.
-     *
-     * @param $var
-     * @return bool
-     */
-    public function _checkHtml($var)
-    {
-        libxml_use_internal_errors(true);
-        $testXml = simplexml_load_string($var);
-        if ($testXml) {
-            if (stripos($var, '<!DOCTYPE html>') !== false) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Validate a variable is XML.
-     *
-     * @param $var
-     * @return bool
-     */
-    public function _checkXml($var)
-    {
-        libxml_use_internal_errors(true);
-        $testXml = simplexml_load_string($var);
-        if ($testXml) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Detect the type of data for the input string.
-     *
-     * @param string $data
-     * @return string
-     *   The data type.
-     */
-    protected function detectType($data) {
-        if ($this->_checkBool($data)) {
-            return 'boolean';
-        }
-        if ($this->_checkInt($data)) {
-            return 'integer';
-        }
-        if ($this->_checkFloat($data)) {
-            return 'float';
-        }
-        if ($this->_checkJson($data)) {
-            return 'json';
-        }
-        if ($this->_checkHtml($data)) {
-            return 'html';
-        }
-        if ($this->_checkXml($data)) {
-            return 'xml';
-        }
-        return 'text';
     }
 }

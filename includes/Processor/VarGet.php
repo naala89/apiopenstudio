@@ -26,7 +26,7 @@ class VarGet extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -35,7 +35,7 @@ class VarGet extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['boolean'],
+                'limitTypes' => ['boolean', 'empty'],
                 'limitValues' => [],
                 'default' => false,
             ],
@@ -59,7 +59,7 @@ class VarGet extends Core\ProcessorEntity
                 }
                 return new Core\DataContainer($vars[$key], 'array');
             }
-            return new Core\DataContainer(urldecode($vars[$key]), 'text');
+            return new Core\DataContainer(urldecode($vars[$key]));
         }
         if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
             return new Core\DataContainer('', 'text');

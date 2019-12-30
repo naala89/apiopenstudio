@@ -24,7 +24,7 @@ class VarPost extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -48,15 +48,15 @@ class VarPost extends Core\ProcessorEntity
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
         $key = $this->val('key', true);
+        $nullable = $this->val('nullable', true);
         $vars = $this->request->getPostVars();
 
         if (isset($vars[$key])) {
-            return new Core\DataContainer($vars[$key], 'text');
-        }
-        if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
+            return new Core\DataContainer($vars[$key]);
+        } elseif ($nullable) {
             return new Core\DataContainer('', 'text');
         }
 
-        throw new Core\ApiException("post variable ($key) not received", 5, $this->id, 417);
+        throw new Core\ApiException("post variable ($key) not received", 7, $this->id, 417);
     }
 }

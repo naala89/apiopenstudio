@@ -34,7 +34,7 @@ class Sort extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => ['asc', 'desc'],
                 'default' => 'asc',
             ],

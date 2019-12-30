@@ -12,6 +12,11 @@ use Gaterdata\Db;
 class UserCreate extends Core\ProcessorEntity
 {
     /**
+     * @var UserMapper
+     */
+    private $userMapper;
+
+    /**
      * {@inheritDoc}
      */
     protected $details = [
@@ -25,7 +30,16 @@ class UserCreate extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'email' => [
+                'description' => 'The email of the user.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -34,7 +48,7 @@ class UserCreate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -52,7 +66,7 @@ class UserCreate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => ['Mr', 'Ms', 'Miss', 'Mrs', 'Dr', 'Prof', 'Hon'],
                 'default' => '',
             ],
@@ -61,7 +75,7 @@ class UserCreate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -70,16 +84,7 @@ class UserCreate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
-                'limitValues' => [],
-                'default' => '',
-            ],
-            'email' => [
-                'description' => 'The email of the user.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -88,7 +93,7 @@ class UserCreate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -97,7 +102,7 @@ class UserCreate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -106,7 +111,7 @@ class UserCreate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -115,7 +120,7 @@ class UserCreate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -124,7 +129,7 @@ class UserCreate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -133,7 +138,7 @@ class UserCreate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -142,7 +147,7 @@ class UserCreate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -151,7 +156,7 @@ class UserCreate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -160,7 +165,7 @@ class UserCreate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text', 'integer'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -169,7 +174,7 @@ class UserCreate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text', 'integer'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -179,60 +184,57 @@ class UserCreate extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      */
+    public function __construct($meta, &$request, $db)
+    {
+        parent::__construct($meta, $request, $db);
+        $this->userMapper = new Db\UserMapper($db);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
         $username = $this->val('username', true);
-        $password = $this->val('password', true);
-        $active = $this->val('active', true);
-        $honorific = $this->val('honorific', true);
-        $nameFirst = $this->val('name_first', true);
-        $nameLast = $this->val('name_last', true);
         $email = $this->val('email', true);
-        $company = $this->val('company', true);
-        $website = $this->val('website', true);
-        $addressStreet = $this->val('address_street', true);
-        $addressSuburb = $this->val('address_suburb', true);
-        $addressCity = $this->val('address_city', true);
-        $addressState = $this->val('address_state', true);
-        $addressCountry = $this->val('address_country', true);
-        $addressPostcode = $this->val('address_postcode', true);
-        $phoneMobile = $this->val('phone_mobile', true);
-        $phoneWork = $this->val('phone_work', true);
+        $password = $this->val('password', true);
 
-        $userMapper = new Db\UserMapper($this->db);
-        $user = $userMapper->findByUsername($username);
+        $user = $this->userMapper->findByUsername($username);
         if (!empty($user->getUid())) {
             throw new Core\ApiException("Username $username already exists", 6, $this->id, 400);
         }
-        $user = $userMapper->findByEmail($email);
+        $user = $this->userMapper->findByEmail($email);
         if (!empty($user->getUid())) {
             throw new Core\ApiException("Email $email already exists", 6, $this->id, 400);
         }
 
         $user->setUsername($username);
+        $user->setEmail($email);
         if (!empty($password)) {
             $user->setPassword($password);
         }
-        $user->setActive($active ? 1 : 0);
-        $user->setHonorific($honorific);
-        $user->setNameFirst($nameFirst);
-        $user->setNameLast($nameLast);
-        $user->setEmail($email);
-        $user->setCompany($company);
-        $user->setWebsite($website);
-        $user->setAddressStreet($addressStreet);
-        $user->setAddressSuburb($addressSuburb);
-        $user->setAddressCity($addressCity);
-        $user->setAddressState($addressState);
-        $user->setAddressCountry($addressCountry);
-        $user->setAddressPostcode($addressPostcode);
-        $user->setPhoneMobile($phoneMobile);
-        $user->setPhoneWork($phoneWork);
+        $active = $this->val('active', true);
+        $bool = ($active === 'true') ? true : ($active === 'false' ? false : $active);
+        $user->setActive((boolean) $bool ? 1 : 0);
+        $user->setHonorific($this->val('honorific', true));
+        $user->setNameFirst($this->val('name_first', true));
+        $user->setNameLast($this->val('name_last', true));
+        $user->setCompany($this->val('company', true));
+        $user->setWebsite($this->val('website', true));
+        $user->setAddressStreet($this->val('address_street', true));
+        $user->setAddressSuburb($this->val('address_suburb', true));
+        $user->setAddressCity($this->val('address_city', true));
+        $user->setAddressState($this->val('address_state', true));
+        $user->setAddressCountry($this->val('address_country', true));
+        $user->setAddressPostcode($this->val('address_postcode', true));
+        $user->setPhoneMobile($this->val('phone_mobile', true));
+        $user->setPhoneWork($this->val('phone_work', true));
 
-        $userMapper->save($user);
-        $user = $userMapper->findByUsername($username);
-        return $user->dump();
+        $this->userMapper->save($user);
+        $user = $this->userMapper->findByUsername($username);
+
+        return new Core\DataContainer($user->dump(), 'array');
     }
 }

@@ -66,7 +66,7 @@ class ResourceUpdate extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -75,7 +75,7 @@ class ResourceUpdate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -93,7 +93,7 @@ class ResourceUpdate extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => ['get', 'post', 'put', 'delete'],
                 'default' => '',
             ],
@@ -102,7 +102,7 @@ class ResourceUpdate extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -120,7 +120,7 @@ class ResourceUpdate extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => ['json', 'yaml'],
                 'default' => '',
             ],
@@ -129,7 +129,7 @@ class ResourceUpdate extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -271,10 +271,7 @@ class ResourceUpdate extends Core\ProcessorEntity
             $meta,
             $ttl
         );
-        echo "<pre>";var_dump($resource->dump());
-        return new Core\DataContainer(
-            $this->resourceMapper->save($resource) ? 'true' : 'false',
-            'text'
-        );
+
+        return new Core\DataContainer($this->resourceMapper->save($resource) ? 'true' : 'false', 'text');
     }
 }

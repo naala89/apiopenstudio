@@ -56,6 +56,7 @@ abstract class Output extends Core\ProcessorEntity
     {
         $this->setStatus();
         $data = $this->getData();
+
         if (!empty($this->meta)) {
             if (empty($this->meta->destination)) {
                 throw new Core\ApiException('no destinations defined for output', 1, $this->id);
@@ -141,12 +142,10 @@ abstract class Output extends Core\ProcessorEntity
      */
     protected function getData()
     {
-
         if (!$this->isDataContainer($this->data)) {
-            $type = $this->calcType();
-        } else {
-            $type = $this->data->getType();
+            $this->data = new Core\DataContainer($this->data);
         }
+        $type = $this->data->getType();
         $this->_dataContainer2value($this->data);
 
         switch ($type) {
@@ -178,14 +177,16 @@ abstract class Output extends Core\ProcessorEntity
                 return $this->fromImage($this->data);
                 break;
             default:
-                throw new Core\ApiException("unknown output type: '$type'. Cannot convert.");
+                throw new Core\ApiException("unknown output type: '$type'. Cannot convert");
                 break;
         }
     }
 
     /**
-     * Convert a data container to a value.
+     * Convert a data containers to a value.
+     *
      * @param $data
+     *
      * @return mixed
      */
     private function _dataContainer2value(&$data)

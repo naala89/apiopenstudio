@@ -28,7 +28,7 @@ class UserRoleRead extends Core\ProcessorEntity
                 'limitFunctions' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => 0,
             ],
             'accid' => [
                 'description' => 'The account ID of user roles.',
@@ -37,7 +37,7 @@ class UserRoleRead extends Core\ProcessorEntity
                 'limitFunctions' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => 0,
             ],
             'appid' => [
                 'description' => 'The application ID of user roles.',
@@ -46,7 +46,7 @@ class UserRoleRead extends Core\ProcessorEntity
                 'limitFunctions' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => 0,
             ],
             'rid' => [
                 'description' => 'The user role ID of user roles.',
@@ -55,23 +55,23 @@ class UserRoleRead extends Core\ProcessorEntity
                 'limitFunctions' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => 0,
             ],
             'order_by' => [
                 'description' => 'The column to order the results by.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => ['uid', 'accid', 'appid', 'rid'],
-                'default' => '',
+                'default' => 'uid',
             ],
             'direction' => [
                 'description' => 'The direction to order the results.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => ['asc', 'desc'],
                 'default' => 'asc',
             ],
@@ -93,16 +93,16 @@ class UserRoleRead extends Core\ProcessorEntity
         $direction = $this->val('direction', true);
 
         $params = [];
-        if (!empty($uid)) {
+        if ($uid > 0) {
             $params['col']['uid'] = $uid;
         }
-        if (!empty($accid)) {
+        if ($accid > 0) {
             $params['col']['accid'] = $accid;
         }
-        if (!empty($appid)) {
+        if ($appid > 0) {
             $params['col']['appid'] = $appid;
         }
-        if (!empty($rid)) {
+        if ($rid > 0) {
             $params['col']['rid'] = $rid;
         }
         if (!empty($order_by)) {

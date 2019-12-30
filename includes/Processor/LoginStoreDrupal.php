@@ -40,7 +40,7 @@ class LoginStoreDrupal extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => false,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -50,7 +50,7 @@ class LoginStoreDrupal extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['string'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => 'drupal',
             ],
@@ -71,7 +71,7 @@ class LoginStoreDrupal extends Core\ProcessorEntity
         }
         $externalEntity = !empty($this->meta->externalEntity) ? $this->val('externalEntity') : $this->defaultEntity;
         $externalId = $source->user->uid;
-        $appid = $this->request->appId;
+        $appid = $this->request->getAppId();
         $db = $this->getDb();
 
         $userMapper = new Db\ExternalUserMapper($db);
