@@ -23,10 +23,7 @@ try {
 catch (ApiException $e) {
   $outputClass = 'Gaterdata\\Output\\' . ucfirst($api->getAccept($config->__get(['api', 'defaultFormat'])));
   if (!class_exists($outputClass)) {
-    $error = new Error(3, -1, 'invalid Accept header');
-    $output = new Json($error->process(), $e->getHtmlCode());
-    ob_end_flush();
-    echo $output->process();
+    echo 'Error: no default format defined in the config!';
     exit();
   }
   $error = new Error($e->getCode(), $e->getProcessor(), $e->getMessage());
