@@ -57,7 +57,7 @@ $app->post('/user/role/delete', 'CtrlUserRole:delete')->add(new Authentication($
 /**
  * Roles.
  */
-//$app->get('/roles', 'CtrRole:index')->add(new Authentication($container, $settings, '/login'));
+$app->get('/roles', 'CtrlRole:index')->add(new Authentication($container, $settings, '/login'));
 
 /**
  * Vars.

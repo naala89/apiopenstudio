@@ -185,8 +185,8 @@ abstract class ProcessorEntity extends Entity
 
         $container = $this->isDataContainer($this->meta->$key) ? $this->meta->$key : new DataContainer($this->meta->$key);
 
-        $this->_validateAllowedValues($container->getData(), $limitValues, $min);
-        $this->_validateAllowedTypes($container->getType(), $limitTypes, $min);
+        $this->_validateAllowedValues($container->getData(), $limitValues, $min, $key);
+        $this->_validateAllowedTypes($container->getType(), $limitTypes, $min, $key);
 
         return $realValue ? $container->getData() : $container;
     }
@@ -241,12 +241,14 @@ abstract class ProcessorEntity extends Entity
      *   List of allowed values.
      * @param integer $min
      *   Minimum number of values.
+     * @param string $key
+     *   The key of the input being validated.
      *
      * @return bool
      *
      * @throws ApiException
      */
-    private function _validateAllowedValues($val, array $limitValues, $min)
+    private function _validateAllowedValues($val, array $limitValues, $min, $key)
     {
         if (empty($limitValues) || ($min < 1 && empty($val))) {
             return true;
@@ -254,7 +256,7 @@ abstract class ProcessorEntity extends Entity
         if (!in_array($val, $limitValues)) {
             throw new ApiException("invalid value ($val). Only '"
                 . implode("', '", $limitValues)
-                . "' allowed", 7, $this->id, 417);
+                . "' allowed in input '$key'", 7, $this->id, 417);
         }
     }
 
@@ -267,12 +269,14 @@ abstract class ProcessorEntity extends Entity
      *   List of limit on valiable types.
      * @param integer $min
      *   Minimum number of values.
+     * @param string $key
+     *   The key of the input being validated.
      *
      * @return bool
      *
      * @throws ApiException
      */
-    private function _validateAllowedTypes($type, array $limitTypes, $min)
+    private function _validateAllowedTypes($type, array $limitTypes, $min, $key)
     {
         if (empty($limitTypes) || ($min < 1 && $type == 'empty')) {
             return true;
@@ -280,7 +284,7 @@ abstract class ProcessorEntity extends Entity
         if (!in_array($type, $limitTypes)) {
             throw new ApiException("invalid type ($type), only '"
                 . implode("', '", $limitTypes)
-                . "' allowed", 7, $this->id, 417);
+                . "' allowed in input '$key'", 7, $this->id, 417);
         }
     }
 }
