@@ -1,0 +1,45 @@
+name: Role read
+
+description: Fetch a single or multiple roles.
+
+uri: role
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_roles
+  id: role_read_security
+  token:
+    function: bearer_token
+    id: role_read_token
+  roles:
+    - Administrator
+    - Account manager
+    - Application manager
+
+process:
+  function: role_read
+  id: role_read_process
+  rid:
+    function: var_uri
+    id: role_read_accid
+    index: 0
+  keyword:
+    function: var_get
+    id: role_read_keyword
+    key: keyword
+    nullable: true
+  order_by:
+    function: var_get
+    id: role_read_order_by
+    key: order_by
+    nullable: true
+  direction:
+    function: var_get
+    id: role_read_direction
+    key: direction
+    nullable: true
