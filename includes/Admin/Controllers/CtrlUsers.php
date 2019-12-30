@@ -90,10 +90,10 @@ class CtrlUsers extends CtrlBase
 
         // Pagination.
         $page = isset($params['page']) ? $allParams['page'] : 1;
-        $pages = ceil(count($users) / $this->settings['admin']['paginationStep']);
+        $pages = ceil(count($users) / $this->settings['admin']['pagination_step']);
         $users = array_slice($users,
-        ($page - 1) * $this->settings['admin']['paginationStep'],
-        $this->settings['admin']['paginationStep'],
+        ($page - 1) * $this->settings['admin']['pagination_step'],
+        $this->settings['admin']['pagination_step'],
         true);
 
         return $this->view->render($response, 'users.twig', [
