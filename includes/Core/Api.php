@@ -316,7 +316,7 @@ class Api
             $processNode = true;
 
             // traverse through each attribute on the node
-            foreach ($node as $key => $value) {
+            foreach ($node as $value) {
                 // $value is a processor and has not been calculated yet, add it to the front of $stack
                 if ($this->helper->isProcessor($value) && !isset($results[$value->id])) {
                     if ($processNode) {
@@ -327,7 +327,7 @@ class Api
                     $processNode = false;
                 } elseif (is_array($value)) {
                     // $value is an array of values, add to $stack
-                    foreach ($value as $index => $item) {
+                    foreach ($value as $item) {
                         if ($this->helper->isProcessor($item) && !isset($results[$item->id])) {
                             if ($processNode) {
                                 array_unshift($stack, $node);
@@ -337,6 +337,8 @@ class Api
                             $processNode = false;
                         }
                     }
+                } else {
+                    // Do nothing, this is a literal.
                 }
             }
 
