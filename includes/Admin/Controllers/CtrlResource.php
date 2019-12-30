@@ -404,9 +404,18 @@ class CtrlResource extends CtrlBase
 
         if (!empty($allPostVars['resid'])) {
             try {
-                $result = $this->apiCall(
-                    'put',
-                    'resource',
+//                var_dump([
+//                    'resid' => $allPostVars['resid'],
+//                    'name' => $allPostVars['name'],
+//                    'description' => $allPostVars['description'],
+//                    'appid' => $allPostVars['appid'],
+//                    'method' => $allPostVars['method'],
+//                    'uri' => $allPostVars['uri'],
+//                    'ttl' => $allPostVars['ttl'],
+//                    'format' => $allPostVars['format'],
+//                    'meta' => $meta,
+//                    ]);die();
+                $result = $this->apiCall('put', 'resource',
                     [
                         'headers' => [
                             'Authorization' => "Bearer " . $_SESSION['token'],
@@ -432,15 +441,13 @@ class CtrlResource extends CtrlBase
             }
         } else {
             try {
-                $result = $this->apiCall(
-                    'post',
-                    'resource',
+                $result = $this->apiCall('post', 'resource',
                     [
                         'headers' => [
                             'Authorization' => "Bearer " . $_SESSION['token'],
                             'Accept' => 'application/json',
                         ],
-                        'json' => [
+                        'form_params' => [
                             'name' => $allPostVars['name'],
                             'description' => $allPostVars['description'],
                             'appid' => $allPostVars['appid'],

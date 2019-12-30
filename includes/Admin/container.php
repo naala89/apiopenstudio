@@ -176,3 +176,19 @@ $container['CtrlResource'] = function (Container $container) {
     $flash = $container->get('flash');
     return new Controllers\CtrlResource($settings, $view, $flash);
 };
+
+/**
+ * Register Role controller.
+ *
+ * @param Container $container
+ *   Slim container.
+ *
+ * @return Controllers\CtrlRole
+ *   CtrlRole object.
+ */
+$container['CtrlRole'] = function (Container $container) {
+    $settings = $container->get('settings');
+    $view = $container->get('view');
+    $flash = $container->get('flash');
+    return new Controllers\CtrlRole($settings, $view, $flash);
+};
