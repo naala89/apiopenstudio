@@ -66,7 +66,7 @@ class ValTest extends \Codeception\Test\Unit
     {
         $this->expectException("Exception");
         $this->expectExceptionCode(7);
-        $this->expectExceptionMessage("invalid value (34), only 'boolean' allowed");
+        $this->expectExceptionMessage("invalid type (integer), only 'boolean' allowed");
 
         $meta = json_decode(json_encode([
             'function' => 'var_bool',
@@ -81,7 +81,7 @@ class ValTest extends \Codeception\Test\Unit
     {
         $this->expectException("Exception");
         $this->expectExceptionCode(7);
-        $this->expectExceptionMessage("invalid value (I will fail), only 'boolean' allowed");
+        $this->expectExceptionMessage("invalid type (text), only 'boolean' allowed");
 
         $meta = json_decode(json_encode([
             'function' => 'var_bool',
@@ -96,7 +96,7 @@ class ValTest extends \Codeception\Test\Unit
     {
         $this->expectException("Exception");
         $this->expectExceptionCode(7);
-        $this->expectExceptionMessage("invalid value (I will fail), only 'boolean' allowed");
+        $this->expectExceptionMessage("invalid type (array), only 'boolean' allowed");
 
         $meta = json_decode(json_encode([
             'function' => 'var_bool',
