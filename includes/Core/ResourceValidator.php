@@ -216,7 +216,7 @@ class ResourceValidator
                 && filter_var($element, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) !== null) {
                 $valid = true;
                 break;
-            } elseif ($accept == 'string' && is_string($element)) {
+            } elseif ($accept == 'text' && is_string($element)) {
                 $valid = true;
                 break;
             } elseif ($accept == 'float'
