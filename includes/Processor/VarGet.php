@@ -35,7 +35,7 @@ class VarGet extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['boolean', 'empty'],
+                'limitTypes' => ['boolean'],
                 'limitValues' => [],
                 'default' => false,
             ],
