@@ -119,7 +119,7 @@ class ResourceCreate extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['text'],
+                'limitTypes' => ['json', 'text'],
                 'limitValues' => [],
                 'default' => '',
             ],
