@@ -498,33 +498,27 @@ class CtrlResource extends CtrlBase
         }
 
         $allPostVars = $request->getParsedBody();
-        $resid = $args['resid'];
+        $resid = $allPostVars['resid'];
 
         try {
-            $result = $this->apiCall(
-                'delete',
-                'resource',
+            $result = $this->apiCall('delete',"resource/$resid",
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
                         'Accept' => 'application/json',
                     ],
-                    'json' => [
-                        'resid' => $allPostVars['resid'],
-                    ],
                 ],
                 $response
             );
             $result = json_decode($result->getBody()->getContents(), true);
+            if ($result == 'true') {
+                $this->flash->addMessage('info', 'Resource successfully deleted.');
+            } else {
+                $this->flash->addMessage('error', 'Resource failed to delete, please check the logs.');
+            }
         } catch (\Exception $e) {
             $this->flash->addMessage('error', $e->getMessage());
             return $response->withStatus(302)->withHeader('Location', '/resources');
-        }
-
-        if ($result == 'true') {
-            $this->flash->addMessage('info', 'Resource successfully deleted.');
-        } else {
-            $this->flash->addMessage('error', 'Resource failed to delete, please check the logs.');
         }
 
         return $response->withStatus(302)->withHeader('Location', '/resources');
