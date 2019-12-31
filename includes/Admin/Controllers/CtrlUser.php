@@ -170,14 +170,16 @@ class CtrlUser extends CtrlBase
                             'Authorization' => "Bearer " . $_SESSION['token'],
                             'Accept' => 'application/json',
                         ],
-                        'json' => json_encode($allPostVars),
+                        'json' => $allPostVars,
                     ],
                     $response
                 );
                 $user = json_decode($result->getBody()->getContents(), true);
+                $this->flash->addMessageNow('into', 'User updated.');
             } catch (\Exception $e) {
                 $this->flash->addMessageNow('error', $e->getMessage());
                 $user = $allPostVars;
+                $user['uid'] = $uid;
             }
         } else {
             try {
