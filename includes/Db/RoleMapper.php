@@ -28,7 +28,7 @@ class RoleMapper extends Mapper
             $role->getName(),
             ];
         } else {
-            $sql = 'UPDATE external_user SET name = ? WHERE rid = ?';
+            $sql = 'UPDATE role SET name = ? WHERE rid = ?';
             $bindParams = [
             $role->getName(),
             $role->getRid(),
