@@ -168,9 +168,7 @@ class CtrlResource extends CtrlBase
         $menu = $this->getMenus();
 
         try {
-            $result = $this->apiCall(
-                'get',
-                'functions/all',
+            $result = $this->apiCall('get', 'functions/all',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -180,9 +178,7 @@ class CtrlResource extends CtrlBase
                 $response
             );
             $functions = json_decode($result->getBody()->getContents(), true);
-            $result = $this->apiCall(
-                'get',
-                'account/all',
+            $result = $this->apiCall('get', 'account/all',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -192,9 +188,7 @@ class CtrlResource extends CtrlBase
                 $response
             );
             $accounts = json_decode($result->getBody()->getContents(), true);
-            $result = $this->apiCall(
-                'get',
-                'application',
+            $result = $this->apiCall('get', 'application',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -256,9 +250,7 @@ class CtrlResource extends CtrlBase
 
         if (empty($args['resource'])) {
             try {
-                $result = $this->apiCall(
-                    'get',
-                    'resource',
+                $result = $this->apiCall('get', 'resource',
                     [
                         'headers' => [
                             'Authorization' => "Bearer " . $_SESSION['token'],
@@ -277,9 +269,7 @@ class CtrlResource extends CtrlBase
         }
 
         try {
-            $result = $this->apiCall(
-                'get',
-                'functions/all',
+            $result = $this->apiCall('get', 'functions/all',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -289,9 +279,7 @@ class CtrlResource extends CtrlBase
                 $response
             );
             $functions = json_decode($result->getBody()->getContents(), true);
-            $result = $this->apiCall(
-                'get',
-                'account/all',
+            $result = $this->apiCall('get', 'account/all',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -301,9 +289,7 @@ class CtrlResource extends CtrlBase
                 $response
             );
             $accounts = json_decode($result->getBody()->getContents(), true);
-            $result = $this->apiCall(
-                'get',
-                'application',
+            $result = $this->apiCall('get', 'application',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -404,17 +390,6 @@ class CtrlResource extends CtrlBase
 
         if (!empty($allPostVars['resid'])) {
             try {
-//                var_dump([
-//                    'resid' => $allPostVars['resid'],
-//                    'name' => $allPostVars['name'],
-//                    'description' => $allPostVars['description'],
-//                    'appid' => $allPostVars['appid'],
-//                    'method' => $allPostVars['method'],
-//                    'uri' => $allPostVars['uri'],
-//                    'ttl' => $allPostVars['ttl'],
-//                    'format' => $allPostVars['format'],
-//                    'meta' => $meta,
-//                    ]);die();
                 $result = $this->apiCall('put', 'resource',
                     [
                         'headers' => [
