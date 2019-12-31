@@ -9,7 +9,7 @@
     <div class="row ">
         <form method="get" action="/roles">
             <div class="col s1 ">
-                <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-acc-create"><i class="material-icons">add</i></a>
+                <a class="btn-floating btn-large waves-effect waves-light green modal-trigger modal-role-create-trigger hoverable" href="#"><i class="material-icons">add</i></a>
             </div>
             <div class="col s6">
                 <div class="input-field">
@@ -44,23 +44,23 @@
             <div class="col col-height s2 valign-wrapper">
                 {% if accid != 1 %}
                     <a class="btn-floating btn-small white hoverable">
-                        <i class="material-icons modal-acc-edit-trigger black-text" rid="{{ role.rid }}" role-name="{{ role.name }}" title="Edit this role.">edit</i>
+                        <i class="material-icons modal-role-edit-trigger black-text" rid="{{ role.rid }}" role-name="{{ role.name }}" title="Edit this role.">edit</i>
                     </a>
                     <a class="btn-floating btn-small white hoverable">
-                        <i class="material-icons modal-acc-delete-trigger black-text" rid="{{ role.rid }}" role-name="{{ role.name }}" title="Delete this role.">delete</i>
+                        <i class="material-icons modal-role-delete-trigger black-text" rid="{{ role.rid }}" role-name="{{ role.name }}" title="Delete this role.">delete</i>
                     </a>
                 {% endif %}
             </div>
         </div>
     {% endfor %}
 
-    {% set url = "/accounts?keyword=" ~ keyword ~ "&order_by=" ~ order_by ~ "&dir=" ~ dir %}
+    {% set url = "/roles?keyword=" ~ keyword ~ "&order_by=" ~ order_by ~ "&dir=" ~ dir %}
     {% include 'partials/pagination.twig' %}
 
-    {% include 'modals/acc_create.twig' %}
+    {% include 'modals/role_create.twig' %}
 
-    {% include 'modals/acc_edit.twig' %}
+    {% include 'modals/role_update.twig' %}
 
-    {% include 'modals/acc_delete.twig' %}
+    {% include 'modals/role_delete.twig' %}
 
 {% endblock %}

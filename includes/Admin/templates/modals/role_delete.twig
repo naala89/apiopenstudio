@@ -1,0 +1,23 @@
+<!-- Delete role modal -->
+<div id="modal-role-delete" class="modal">
+  <form method="post" action="/role/delete" id="role-delete">
+
+    <input type="hidden" name="rid" value="">
+
+    <div class="modal-content">
+      <h4>Delete Role</h4>
+
+      <div class="row">
+        <div class="col s12">Delete Role: <span class="role-name"></span></div>
+      </div>
+
+      <div class="row">
+        <div class="input-field col s4 offset-s8">
+          <a class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+          <button class="btn waves-effect red" type="submit">Delete</button>
+        </div>
+      </div>
+
+    </div>
+  </form>
+</div>
