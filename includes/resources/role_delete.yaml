@@ -1,0 +1,30 @@
+name: Role delete
+
+description: Delete a new role.
+
+uri: role
+
+method: delete
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_roles
+  id: role_delete_security
+  token:
+    function: bearer_token
+    id: role_delete_token
+  roles:
+    - Administrator
+    - Account manager
+    - Application manager
+
+process:
+  function: role_delete
+  id: role_delete_process
+  rid:
+    function: var_uri
+    id: role_delete_rid
+    index: 0

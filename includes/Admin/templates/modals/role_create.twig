@@ -1,0 +1,27 @@
+<!-- Create role modal -->
+<div id="modal-role-create" class="modal">
+  <form method="post" action="/role/create" id="role-create">
+    <div class="modal-content">
+      <h4>Create Role</h4>
+
+      <div class="row">
+
+        <div class="col s6">
+          <div class="input-field">
+            <input type="text" class="validate" name="name" required>
+            <label for="create-role-name">Role Name</label>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="input-field col s4 offset-s8">
+          <a class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+          <button class="btn waves-effect waves-light" type="submit">Create</button>
+        </div>
+      </div>
+
+    </div>
+  </form>
+</div>

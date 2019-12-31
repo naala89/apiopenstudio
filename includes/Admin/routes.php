@@ -58,6 +58,9 @@ $app->post('/user/role/delete', 'CtrlUserRole:delete')->add(new Authentication($
  * Roles.
  */
 $app->get('/roles', 'CtrlRole:index')->add(new Authentication($container, $settings, '/login'));
+$app->post('/role/create', 'CtrlRole:create')->add(new Authentication($container, $settings, '/login'));
+$app->post('/role/update', 'CtrlRole:update')->add(new Authentication($container, $settings, '/login'));
+$app->post('/role/delete', 'CtrlRole:delete')->add(new Authentication($container, $settings, '/login'));
 
 /**
  * Vars.
