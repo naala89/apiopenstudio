@@ -1,6 +1,5 @@
 <!-- Create account modal -->
 <script>
-  // var GATERDATA = GATERDATA || {};
   GATERDATA.accAppMap = [];
   {% for appid, application in applications %}
     GATERDATA.accAppMap[{{ appid }}] = {'accid': {{ application.accid }}, 'name': "{{ application.name }}"};

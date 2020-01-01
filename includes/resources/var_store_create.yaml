@@ -1,0 +1,60 @@
+name: Var store create
+
+description: Create a var store variable.
+
+uri: var_store
+
+method: post
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_roles
+  id: validate_user_has_access_rights
+  token:
+    function: bearer_token
+    id: header_bearer_token
+  roles:
+    - Application manager
+    - Developer
+
+process:
+  function: var_store_create
+  id: create_the_var
+  uid:
+    function: field_value
+    id: get_the_value_of_uid
+    key_value: value
+    field:
+      function: var_field
+      id: convert_output_array_to_field
+      array:
+        function: filter
+        id: get_uid_from_user
+        inverse: true
+        keyOrValue: key
+        filter: uid
+        key_value: value
+        source:
+          function: user_read
+          id: get_user_from_token
+          token:
+            function: bearer_token
+            id: get_token
+  appid:
+    function: var_post
+    id: get_the_appid
+    nullable: false
+    key: appid
+  key:
+    function: var_post
+    id: get_the_var_key
+    nullable: false
+    key: key
+  val:
+    function: var_post
+    id: get_the_var_val
+    nullable: false
+    key: val

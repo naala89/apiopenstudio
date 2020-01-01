@@ -33,6 +33,7 @@ $(document).ready(function () {
 
     /**
      * Update an application selector based on account ID
+     *
      * @param integer accid
      *   Account ID
      * @param string selector

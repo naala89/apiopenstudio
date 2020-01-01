@@ -106,9 +106,9 @@ log:
     type: { type: varchar(64), notnull: true, comment: call type }
     text: { type: varchar(1024), notnull: true, comment: log text }
 
-var:
+var_store:
   columns:
     vid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: var id }
     appid: { type: int(10) unsigned, notnull: true, comment: application id }
-    name: { type: varchar(255), notnull: true, comment: name of the var }
+    key: { type: varchar(255), notnull: true, comment: key of the var }
     val: { type: varchar(255), notnull: true, comment: value of the var }

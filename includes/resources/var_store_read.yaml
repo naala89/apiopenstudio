@@ -1,0 +1,50 @@
+name: Var store read
+
+description: Fetch a single or multiple var store variables where the user has access to the applications vars.
+
+uri: var_store
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_roles
+  id: user_update_security
+  token:
+    function: bearer_token
+    id: user_update_token
+  roles:
+    - Application manager
+    - Developer
+
+process:
+  function: var_store_read
+  id: fetch_the_vars
+  vid:
+    function: var_uri
+    id: get_vid
+    nullable: false
+    index: 0
+  uid:
+    function: field_value
+    id: get_the_value_of_uid
+    key_value: value
+    field:
+      function: var_field
+      id: convert_output_array_to_field
+      array:
+        function: filter
+        id: get_uid_from_user
+        inverse: true
+        keyOrValue: key
+        filter: uid
+        key_value: value
+        source:
+          function: user_read
+          id: get_user_from_token
+          token:
+            function: bearer_token
+            id: get_token
