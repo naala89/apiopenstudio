@@ -80,10 +80,36 @@ class UserRoleMapper extends Mapper
     }
 
     /**
+     * Fetch a user role by uid, appid and rolename.
+     *
+     * @param integer $uid
+     *   User ID.
+     * @param integer $appid
+     *   Application ID.
+     * @param string $rolename
+     *   Rolename.
+     *
+     * @return array
+     *
+     * @throws ApiException
+     */
+    public function findByUidAppidRolename($uid, $appid, $rolename)
+    {
+        $sql = 'SELECT ur.* FROM user_role ur';
+        $sql .= ' INNER JOIN `role` `r` ON `ur`.`rid` = `r`.`rid`';
+        $sql .= ' WHERE `ur`.`uid` = ?';
+        $sql .= ' AND `r`.`name` = ?';
+        $sql .= ' AND `ur`.`appid` = ?';
+        $bindParams = [$uid, $rolename, $appid];
+
+        return $this->fetchRow($sql, $bindParams);
+    }
+
+    /**
      * Find user roles using filter.
      *
      * @param array $params
-     *  Associative array of filter poarams.
+     *  Associative array of filter params.
      * @return array
      *   User roles
      *

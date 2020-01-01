@@ -192,3 +192,19 @@ $container['CtrlRole'] = function (Container $container) {
     $flash = $container->get('flash');
     return new Controllers\CtrlRole($settings, $view, $flash);
 };
+
+/**
+ * Register Vars controller.
+ *
+ * @param Container $container
+ *   Slim container.
+ *
+ * @return Controllers\CtrlVars
+ *   CtrlRole object.
+ */
+$container['CtrlVars'] = function (Container $container) {
+    $settings = $container->get('settings');
+    $view = $container->get('view');
+    $flash = $container->get('flash');
+    return new Controllers\CtrlVars($settings, $view, $flash);
+};

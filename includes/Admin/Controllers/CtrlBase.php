@@ -352,6 +352,7 @@ class CtrlBase
             if (in_array('Developer', $roles)) {
                 $menus += [
                     'Resources' => '/resources',
+                    'Vars' => '/vars',
                 ];
             }
             $menus += [

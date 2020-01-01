@@ -1,0 +1,70 @@
+{% extends "page.twig" %}
+
+{% set title="Vars" %}
+
+{% block content %}
+    <div class="row">
+        <p>Manage your persistent variables here. Variables are specific to applications, so you will only see the variables that you have permissions for.</p>
+    </div>
+    <div class="row ">
+        <form method="get" action="/vars">
+            <div class="col s1 ">
+                <a class="btn-floating btn-large waves-effect waves-light green modal-trigger modal-var-create-trigger hoverable" href="#modal-var-create"><i class="material-icons">add</i></a>
+            </div>
+            <div class="col s6">
+                <div class="input-field">
+                    <input type="text" class="validate" name="keyword" value="{{ keyword }}">
+                    <label for="keyword">Search text</label>
+                </div>
+            </div>
+            <div class="col s4">
+                <div class="input-field">
+                    <select class="input-field" name="direction">
+                        <option value="asc" {% if direction == "asc" %}selected{% endif %}>Ascending</option>
+                        <option value="desc" {% if direction == "desc" %}selected{% endif %}>Descending</option>
+                    </select>
+                    <label for="direction">Direction</label>
+                </div>
+            </div>
+            <div class="col s1">
+                <button class="btn waves-effect waves-light" type="submit">Filter
+                    <i class="material-icons right">send</i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="row teal lighten-1 white-text">
+        <h6 class="col col-height s2 valign-wrapper">Account</h6>
+        <h6 class="col col-height s2 valign-wrapper">Application</h6>
+        <h6 class="col col-height s2 valign-wrapper">Key</h6>
+        <h6 class="col col-height s2 valign-wrapper">Value</h6>
+        <h6 class="col col-height s2 valign-wrapper">Actions</h6>
+    </div>
+    {% for var in vars %}
+        <div class="row hoverable">
+            <div class="col col-height s2 valign-wrapper">{{ accounts[applications[var.appid].accid] }}</div>
+            <div class="col col-height s2 valign-wrapper">{{ applications[var.appid].name }}</div>
+            <div class="col col-height s2 valign-wrapper">{{ var.key }}</div>
+            <div class="col col-height s2 valign-wrapper">{{ var.val }}</div>
+            <div class="col col-height s2 valign-wrapper">
+                <a class="btn-floating btn-small white hoverable">
+                    <i class="material-icons modal-role-edit-trigger black-text" rid="{{ role.rid }}" role-name="{{ role.name }}" title="Edit this role.">edit</i>
+                </a>
+                <a class="btn-floating btn-small white hoverable">
+                    <i class="material-icons modal-role-delete-trigger black-text" rid="{{ role.rid }}" role-name="{{ role.name }}" title="Delete this role.">delete</i>
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+
+    {% set url = "/roles?keyword=" ~ keyword ~ "&order_by=" ~ order_by ~ "&dir=" ~ dir %}
+    {% include 'partials/pagination.twig' %}
+
+    {% include 'modals/var_create.twig' %}
+
+{#    {% include 'modals/role_update.twig' %}#}
+
+{#    {% include 'modals/role_delete.twig' %}#}
+
+{% endblock %}
