@@ -3,6 +3,7 @@
 namespace Gaterdata\Admin\Middleware;
 
 use Exception;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -105,6 +106,14 @@ class Authentication
                 ]);
             } catch (BadResponseException $e) {
                 $this->container['flash']->addMessage('error', $e->getMessage());
+                unset($_SESSION['token']);
+                unset($_SESSION['username']);
+                unset($_SESSION['uid']);
+            } catch (ClientException $e) {
+                $this->container['flash']->addMessage('error', 'Permission denied.');
+                unset($_SESSION['token']);
+                unset($_SESSION['username']);
+                unset($_SESSION['uid']);
             }
         }
 
