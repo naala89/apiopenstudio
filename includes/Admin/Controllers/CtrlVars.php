@@ -138,7 +138,7 @@ class CtrlVars extends CtrlBase
     }
 
     /**
-     * Create vars
+     * Create var
      *
      * @param Request $request
      *   Request object.
@@ -199,7 +199,7 @@ class CtrlVars extends CtrlBase
     }
 
     /**
-     * Create vars
+     * Update var
      *
      * @param Request $request
      *   Request object.
@@ -248,6 +248,62 @@ class CtrlVars extends CtrlBase
                 $this->flash->addMessageNow('info', 'Var successfully updated.');
             } else {
                 $this->flash->addMessageNow('error', 'Var not updated, please check the logs.');
+            }
+        } catch (\Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
+        }
+
+        return $this->index($request, $response, $args);
+    }
+
+    /**
+     * Delete var
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
+    public function delete(Request $request, Response $response, array $args)
+    {
+        // Validate access.
+        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+        $this->getAccessRights($response, $uid);
+        if (!$this->checkAccess()) {
+            $this->flash->addMessage('error', 'Access admin: access denied');
+            return $response->withStatus(302)->withHeader('Location', '/');
+        }
+
+        $menu = $this->getMenus();
+        $allPostVars = $request->getParams();
+        $vid = isset($allPostVars['delete-var-vid']) ? $allPostVars['delete-var-vid'] : '';
+
+        if (empty($vid)) {
+            $this->flash->addMessageNow('error', 'Var not deleted, no vid received.');
+            return $this->index($request, $response, $args);
+        }
+
+        try {
+            $result = $this->apiCall('delete', "var_store/$vid",
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
+                ],
+                $response,
+                );
+            if (json_decode($result->getBody()->getContents() == 'true')) {
+                $this->flash->addMessageNow('info', 'Var successfully deleted.');
+            } else {
+                $this->flash->addMessageNow('error', 'Var not deleted, please check the logs.');
             }
         } catch (\Exception $e) {
             $this->flash->addMessageNow('error', $e->getMessage());
