@@ -1,0 +1,54 @@
+name: Var store update
+
+description: Update a var store variable.
+
+uri: var_store
+
+method: put
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_roles
+  id: validate_user_has_access_rights
+  token:
+    function: bearer_token
+    id: header_bearer_token
+  roles:
+    - Application manager
+    - Developer
+
+process:
+  function: var_store_update
+  id: create_the_var
+  uid:
+    function: field_value
+    id: get_the_value_of_uid
+    key_value: value
+    field:
+      function: var_field
+      id: convert_output_array_to_field
+      array:
+        function: filter
+        id: get_uid_from_user
+        inverse: true
+        keyOrValue: key
+        filter: uid
+        key_value: value
+        source:
+          function: user_read
+          id: get_user_from_token
+          token:
+            function: bearer_token
+            id: get_token
+  vid:
+    function: var_uri
+    id: get_the_vid
+    nullable: false
+    index: 0
+  val:
+    function: var_body
+    id: get_the_body
+    nullable: false

@@ -97,7 +97,7 @@ class CtrlVars extends CtrlBase
                 $response,
                 );
             $accounts = json_decode($result->getBody()->getContents(), true);
-            $result = $this->apiCall('get', 'applications/all',
+            $result = $this->apiCall('get', 'application',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -119,7 +119,7 @@ class CtrlVars extends CtrlBase
         }
         foreach ($userRoles as $userRole) {
             if (isset($permittedRoles[$userRole['rid']]) && !isset($filteredApplications[$userRole['appid']])) {
-                $filteredApplications[$userRole['appid']] = (array) $applications->{$userRole['appid']};
+                $filteredApplications[$userRole['appid']] = $applications[$userRole['appid']];
             }
         }
         foreach ($filteredApplications as $filteredApplication) {
@@ -133,6 +133,7 @@ class CtrlVars extends CtrlBase
             'vars' => $vars,
             'applications' => $filteredApplications,
             'accounts' => $filteredAccounts,
+            'messages' => $this->flash->getMessages(),
         ]);
     }
 
@@ -164,14 +165,14 @@ class CtrlVars extends CtrlBase
         $menu = $this->getMenus();
         $allPostVars = $request->getParams();
         $params = [];
-        if (isset($allPostVars['appid'])) {
-            $params['appid'] = $allPostVars['appid'];
+        if (isset($allPostVars['create-var-appid'])) {
+            $params['appid'] = $allPostVars['create-var-appid'];
         }
         if (isset($allPostVars['key'])) {
-            $params['key'] = $allPostVars['key'];
+            $params['key'] = $allPostVars['create-var-key'];
         }
         if (isset($allPostVars['val'])) {
-            $params['val'] = $allPostVars['val'];
+            $params['val'] = $allPostVars['create-var-val'];
         }
 
         try {
@@ -186,12 +187,70 @@ class CtrlVars extends CtrlBase
                 $response,
                 );
             if (json_decode($result->getBody()->getContents() == 'true')) {
-                $this->flash->addMessage('info', 'Var successfully created.');
+                $this->flash->addMessageNow('info', 'Var successfully created.');
             } else {
-                $this->flash->addMessage('error', 'Some went wrong, please check the logs.');
+                $this->flash->addMessageNow('error', 'Var not created, please check the logs.');
             }
         } catch (\Exception $e) {
-            $this->flash->addMessage('error', $e->getMessage());
+            $this->flash->addMessageNow('error', $e->getMessage());
+        }
+
+        return $this->index($request, $response, $args);
+    }
+
+    /**
+     * Create vars
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws GuzzleException
+     */
+    public function update(Request $request, Response $response, array $args)
+    {
+        // Validate access.
+        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+        $this->getAccessRights($response, $uid);
+        if (!$this->checkAccess()) {
+            $this->flash->addMessage('error', 'Access admin: access denied');
+            return $response->withStatus(302)->withHeader('Location', '/');
+        }
+
+        $menu = $this->getMenus();
+        $allPostVars = $request->getParams();
+        $params = [];
+        if (isset($allPostVars['edit-var-vid'])) {
+            $params['vid'] = $allPostVars['edit-var-vid'];
+        }
+        if (isset($allPostVars['edit-var-val'])) {
+            $params['val'] = $allPostVars['edit-var-val'];
+        }
+
+        try {
+            $result = $this->apiCall('put', 'var_store/' . $params['vid'],
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
+                    'body' => $params['val'],
+                ],
+                $response,
+                );
+            if (json_decode($result->getBody()->getContents() == 'true')) {
+                $this->flash->addMessageNow('info', 'Var successfully updated.');
+            } else {
+                $this->flash->addMessageNow('error', 'Var not updated, please check the logs.');
+            }
+        } catch (\Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
         }
 
         return $this->index($request, $response, $args);
