@@ -18,4 +18,11 @@ $(document).ready(function () {
         modal.find('input[name="edit-var-val"]').val(self.attr('val'));
         M.updateTextFields();
     });
+
+    $('.modal-var-delete-trigger').on('click', function() {
+        var self = $(this),
+            modal = $('#modal-var-delete');
+        modal.find('input[name="delete-var-vid"]').val(self.attr('vid'));
+        modal.find('.delete-var-key').html(self.attr('key'));
+    });
 });

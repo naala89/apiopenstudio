@@ -51,8 +51,8 @@
                 <a class="btn-floating btn-small white hoverable modal-trigger modal-var-edit-trigger" vid="{{ var.vid }}" appid="{{ var.appid }}" key="{{ var.key }}" val="{{ var.val }}" href="#modal-var-edit">
                     <i class="material-icons black-text" title="Edit this var.">edit</i>
                 </a>
-                <a class="btn-floating btn-small white hoverable">
-                    <i class="material-icons modal-role-delete-trigger black-text" rid="{{ role.rid }}" role-name="{{ role.name }}" title="Delete this role.">delete</i>
+                <a class="btn-floating btn-small white hoverable modal-trigger modal-var-delete-trigger" vid="{{ var.vid }}" key="{{ var.key }}" href="#modal-var-delete">
+                    <i class="material-icons black-text" title="Delete this var.">delete</i>
                 </a>
             </div>
         </div>
@@ -65,6 +65,6 @@
 
     {% include 'modals/var_edit.twig' %}
 
-{#    {% include 'modals/role_delete.twig' %}#}
+    {% include 'modals/var_delete.twig' %}
 
 {% endblock %}
