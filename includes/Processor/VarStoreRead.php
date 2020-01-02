@@ -55,14 +55,23 @@ class VarStoreRead extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => 'all',
             ],
+            'keyword' => [
+                'description' => 'Keyword search',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => '',
+            ],
             'order_by' => [
                 'description' => 'order by column',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
                 'limitTypes' => ['text'],
-                'limitValues' => ['rid', 'name'],
-                'default' => '',
+                'limitValues' => ['vid', 'key', 'appid'],
+                'default' => 'vid',
             ],
             'direction' => [
                 'description' => 'Sort direction',
@@ -72,15 +81,6 @@ class VarStoreRead extends Core\ProcessorEntity
                 'limitTypes' => ['text'],
                 'limitValues' => ['asc', 'desc'],
                 'default' => 'asc',
-            ],
-            'keyword' => [
-                'description' => 'Keyword search',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitFunctions' => [],
-                'limitTypes' => [],
-                'limitValues' => [],
-                'default' => '',
             ],
         ],
     ];
@@ -118,8 +118,22 @@ class VarStoreRead extends Core\ProcessorEntity
             return $this->findByUidRolesVid($uid, $vid);
         }
 
+        $params = [];
+        if (!empty($keyword)) {
+            $params['filter'] = [
+                ['keyword' => "%$keyword%", 'column' => 'vs.`key`'],
+                ['keyword' => "%$keyword%", 'column' => 'vs.`val`'],
+            ];
+        }
+        if (!empty($orderBy)) {
+            $params['order_by'] = "vs.`$orderBy`";
+        }
+        if (!empty($direction)) {
+            $params['direction'] = $direction;
+        }
+
         // return vars in the applications where the user has required app/role access.
-        return $this->findByUidRolesAll($uid);
+        return $this->findByUidRolesAll($uid, $params);
     }
 
     /**
@@ -150,15 +164,17 @@ class VarStoreRead extends Core\ProcessorEntity
      *
      * @param integer $uid
      *   User ID.
+     * @param array $params
+     *   keyword, order and direction.
      *
      * @return Core\DataContainer
      *   An array of associative arrays of a roles rows.
      *
      * @throws Core\ApiException
      */
-    private function findByUidRolesAll($uid)
+    private function findByUidRolesAll($uid, $params = [])
     {
-        $vars = $this->varStoreMapper->findByUidRolesAll($uid, $this->roles);
+        $vars = $this->varStoreMapper->findByUidRolesAll($uid, $this->roles, $params);
 
         if (empty($vars)) {
             throw new Core\ApiException("no variables available or access denied", 6, $this->id, 400);

@@ -119,12 +119,14 @@ class VarStoreMapper extends Mapper
      *   User ID.
      * @param array $roles
      *   Role names.
+     * @param array $params
+     *   keyword, order and direction.
      *
      * @return array
      *
      * @throws \Gaterdata\Core\ApiException
      */
-    public function findByUidRolesAll($uid, $roles)
+    public function findByUidRolesAll($uid, $roles, $params)
     {
         $sql = 'SELECT vs.* FROM `var_store` AS vs';
         $sql .= ' INNER JOIN `user_role` AS ur ON vs.`appid` = ur.`appid`';
@@ -138,7 +140,7 @@ class VarStoreMapper extends Mapper
         }
         $sql .= ' AND r.`name` in (' . implode(', ', $placeholders) . ')';
 
-        return $this->fetchRows($sql, $bindParams);
+        return $this->fetchRows($sql, $bindParams, $params);
     }
 
     /**

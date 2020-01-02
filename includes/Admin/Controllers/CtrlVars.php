@@ -52,6 +52,18 @@ class CtrlVars extends CtrlBase
         }
 
         $menu = $this->getMenus();
+        $allParams = $request->getParams();
+        $query = [];
+        if (isset($allParams['keyword'])) {
+            $query['keyword'] = $allParams['keyword'];
+        }
+        if (isset($allParams['order_by'])) {
+            $query['order_by'] = $allParams['order_by'];
+        }
+        if (isset($allParams['direction'])) {
+            $query['direction'] = $allParams['direction'];
+        }
+
         $applications = $this->getApplications($response);
 
         try {
@@ -61,6 +73,7 @@ class CtrlVars extends CtrlBase
                         'Authorization' => "Bearer " . $_SESSION['token'],
                         'Accept' => 'application/json',
                     ],
+                    'query' => $query,
                 ],
                 $response,
                 );
@@ -111,7 +124,7 @@ class CtrlVars extends CtrlBase
             $this->flash->addMessageNow('error', $e->getMessage());
         }
 
-        $filteredAccounts = $filteredApplications = $permittedRoles = [];
+        $filteredAccounts = $filteredApplications = $permittedRoles = $filtereredVars = [];
         foreach ($roles as $role) {
             if (in_array($role['name'], self::PERMITTED_ROLES)) {
                 $permittedRoles[$role['rid']] = $role['name'];
@@ -127,12 +140,42 @@ class CtrlVars extends CtrlBase
                 $filteredAccounts[$filteredApplication['accid']] = $accounts[$filteredApplication['accid']];
             }
         }
+        if (!empty($allParams['filter_by'])) {
+            foreach ($vars as $vid => $var) {
+                if ($var['appid'] == $allParams['filter_by']) {
+                    $filtereredVars[$vid] = $var;
+                }
+            }
+        } else {
+            $filtereredVars = $vars;
+        }
+
+        // Filter by application.
+        $filterBy = [];
+        foreach ($filteredApplications as $appid => $application) {
+            $filterBy[$appid] = $filteredAccounts[$application['accid']] . ' - ' . $application['name'];
+        }
+
+        // Pagination.
+        $page = isset($params['page']) ? $allParams['page'] : 1;
+        $pages = ceil(count($vars) / $this->settings['admin']['pagination_step']);
+        $users = array_slice($vars,
+            ($page - 1) * $this->settings['admin']['pagination_step'],
+            $this->settings['admin']['pagination_step'],
+            true);
 
         return $this->view->render($response, 'vars.twig', [
             'menu' => $menu,
-            'vars' => $vars,
+            'vars' => $filtereredVars,
             'applications' => $filteredApplications,
             'accounts' => $filteredAccounts,
+            'filterBy' => $filterBy,
+            'filter_by' => $allParams['filter_by'],
+            'order_by' => $allParams['order_by'],
+            'direction' => $allParams['direction'],
+            'keyword' => $allParams['keyword'],
+            'page' => $page,
+            'pages' => $pages,
             'messages' => $this->flash->getMessages(),
         ]);
     }

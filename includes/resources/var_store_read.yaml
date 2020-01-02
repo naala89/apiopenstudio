@@ -48,3 +48,18 @@ process:
           token:
             function: bearer_token
             id: get_token
+  keyword:
+    function: var_get
+    id: keyword_search
+    nullable: true
+    key: keyword
+  order_by:
+    function: var_get
+    id: order_by_search
+    nullable: true
+    key: order_by
+  direction:
+    function: var_get
+    id: sirection_search
+    nullable: true
+    key: direction

@@ -11,13 +11,34 @@
             <div class="col s1 ">
                 <a class="btn-floating btn-large waves-effect waves-light green modal-trigger modal-var-create-trigger hoverable" href="#modal-var-create"><i class="material-icons">add</i></a>
             </div>
-            <div class="col s6">
+            <div class="col s3">
                 <div class="input-field">
                     <input type="text" class="validate" name="keyword" value="{{ keyword }}">
                     <label for="keyword">Search text</label>
                 </div>
             </div>
-            <div class="col s4">
+            <div class="col s3">
+                <div class="input-field">
+                    <select class="input-field" name="filter_by">
+                        <option value="" {% if filterBy is empty %}selected{% endif %}>Please select</option>
+                        {% for appid, label in filterBy %}
+                            <option value="{{ appid }}" {% if filter_by == appid %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="order_by">Filter by application</label>
+                </div>
+            </div>
+            <div class="col s2">
+                <div class="input-field">
+                    <select class="input-field" name="order_by">
+                        <option value="vid" {% if order_by == "vid" %}selected{% endif %}>Please select</option>
+                        <option value="key" {% if order_by == "key" %}selected{% endif %}>Key</option>
+                        <option value="appid" {% if order_by == "appid" %}selected{% endif %}>Application</option>
+                    </select>
+                    <label for="order_by">Order by</label>
+                </div>
+            </div>
+            <div class="col s2">
                 <div class="input-field">
                     <select class="input-field" name="direction">
                         <option value="asc" {% if direction == "asc" %}selected{% endif %}>Ascending</option>
