@@ -14,39 +14,39 @@
 
         <div class="col s3">
           <div class="input-field">
-            <select class="input-field" name="accid">
+            <select class="input-field" name="create-var-accid">
               <option value="">None</option>
               {% for accid, account in accounts %}
                 <option value="{{ accid }}">{{ account }}</option>
               {% endfor %}
             </select>
-            <label for="accid">Account</label>
+            <label for="create-var-accid">Account</label>
           </div>
         </div>
 
         <div class="col s3">
           <div class="input-field">
-            <select class="input-field" name="appid">
+            <select class="input-field" name="create-var-appid">
               <option value="">None</option>
               {% for appid, application in applications %}
                 <option value="{{ appid }}" accid="{{ application.accid }}">{{ application.name }}</option>
               {% endfor %}
             </select>
-            <label for="appid">Application</label>
+            <label for="create-var-appid">Application</label>
           </div>
         </div>
 
         <div class="col s3">
           <div class="input-field">
-            <input type="text" class="validate" name="key" required>
-            <label for="key">Var key</label>
+            <input type="text" class="validate" name="create-var-key" required>
+            <label for="create-var-key">Var key</label>
           </div>
         </div>
 
         <div class="col s3">
           <div class="input-field">
-            <input type="text" class="validate" name="val" required>
-            <label for="val">Var value</label>
+            <input type="text" class="validate" name="create-var-val" required>
+            <label for="create-var-val">Var value</label>
           </div>
         </div>
 

@@ -38,7 +38,7 @@
         <h6 class="col col-height s2 valign-wrapper">Account</h6>
         <h6 class="col col-height s2 valign-wrapper">Application</h6>
         <h6 class="col col-height s2 valign-wrapper">Key</h6>
-        <h6 class="col col-height s2 valign-wrapper">Value</h6>
+        <h6 class="col col-height s4 valign-wrapper">Value</h6>
         <h6 class="col col-height s2 valign-wrapper">Actions</h6>
     </div>
     {% for var in vars %}
@@ -46,10 +46,10 @@
             <div class="col col-height s2 valign-wrapper">{{ accounts[applications[var.appid].accid] }}</div>
             <div class="col col-height s2 valign-wrapper">{{ applications[var.appid].name }}</div>
             <div class="col col-height s2 valign-wrapper">{{ var.key }}</div>
-            <div class="col col-height s2 valign-wrapper">{{ var.val }}</div>
+            <div class="col col-height s4 valign-wrapper">{{ var.val }}</div>
             <div class="col col-height s2 valign-wrapper">
-                <a class="btn-floating btn-small white hoverable">
-                    <i class="material-icons modal-role-edit-trigger black-text" rid="{{ role.rid }}" role-name="{{ role.name }}" title="Edit this role.">edit</i>
+                <a class="btn-floating btn-small white hoverable modal-trigger modal-var-edit-trigger" vid="{{ var.vid }}" appid="{{ var.appid }}" key="{{ var.key }}" val="{{ var.val }}" href="#modal-var-edit">
+                    <i class="material-icons black-text" title="Edit this var.">edit</i>
                 </a>
                 <a class="btn-floating btn-small white hoverable">
                     <i class="material-icons modal-role-delete-trigger black-text" rid="{{ role.rid }}" role-name="{{ role.name }}" title="Delete this role.">delete</i>
@@ -63,7 +63,7 @@
 
     {% include 'modals/var_create.twig' %}
 
-{#    {% include 'modals/role_update.twig' %}#}
+    {% include 'modals/var_edit.twig' %}
 
 {#    {% include 'modals/role_delete.twig' %}#}
 
