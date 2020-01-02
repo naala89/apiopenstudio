@@ -42,7 +42,7 @@ class VarStoreCreate extends Core\ProcessorEntity
         'name' => 'Var store create',
         'machineName' => 'var_store_create',
         'description' => 'Create a variable in the var store.',
-        'menu' => 'Admin',
+        'menu' => 'Var store',
         'input' => [
             'uid' => [
                 'description' => 'User ID of the user.',

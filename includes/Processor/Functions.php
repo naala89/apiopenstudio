@@ -66,6 +66,7 @@ class Functions extends Core\ProcessorEntity
                 }
             }
         }
+        sort($details);
 
         if ($machineName == 'all') {
             return $details;

@@ -35,7 +35,7 @@ class VarStoreDelete extends Core\ProcessorEntity
         'name' => 'Var store delete',
         'machineName' => 'var_store_delete',
         'description' => 'Delete a var store variable.',
-        'menu' => 'Admin',
+        'menu' => 'Var store',
         'input' => [
             'uid' => [
                 'description' => 'User ID.',
