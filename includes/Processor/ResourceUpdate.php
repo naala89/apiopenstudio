@@ -172,7 +172,7 @@ class ResourceUpdate extends Core\ProcessorEntity
         }
 
         $test = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
-        if ($test->getResid() != $resid) {
+        if (!empty($test->getResid()) && $test->getResid() != $resid) {
             throw new Core\ApiException('A resource with this method and uri already exists for the application', 6, $this->id, 400);
         }
 
