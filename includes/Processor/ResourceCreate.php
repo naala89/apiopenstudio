@@ -160,13 +160,13 @@ class ResourceCreate extends Core\ProcessorEntity
             throw new Core\ApiException("Invalid application: $appid", 6, $this->id, 400);
         }
 
-//        $account = $this->accountMapper->findByAccid($application->getAccid());
-//        if (
-//            $account->getName() == $this->settings->__get(['api', 'core_account'])
-//            && $application->getName() == $this->settings->__get(['api', 'core_application'])
-//        ) {
-//            throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
-//        }
+        $account = $this->accountMapper->findByAccid($application->getAccid());
+        if (
+            $account->getName() == $this->settings->__get(['api', 'core_account'])
+            && $application->getName() == $this->settings->__get(['api', 'core_application'])
+        ) {
+            throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
+        }
 
         $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
         if (!empty($resource->getresid())) {
