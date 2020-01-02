@@ -35,7 +35,7 @@ class VarStoreRead extends Core\ProcessorEntity
         'name' => 'Var store read',
         'machineName' => 'var_store_read',
         'description' => 'Fetch a single or multiple var store variables. These will be the variables that belong to the application. If the application is core, then all vars are returned.',
-        'menu' => 'Admin',
+        'menu' => 'Var store',
         'input' => [
             'uid' => [
                 'description' => 'User ID of the user.',

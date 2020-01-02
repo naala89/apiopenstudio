@@ -35,7 +35,7 @@ class VarStoreUpdate extends Core\ProcessorEntity
         'name' => 'Var store update',
         'machineName' => 'var_store_update',
         'description' => 'Update a var store variable.',
-        'menu' => 'Admin',
+        'menu' => 'Var store',
         'input' => [
             'uid' => [
                 'description' => 'User ID.',
