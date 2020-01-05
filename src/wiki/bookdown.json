@@ -1,14 +1,13 @@
 {
   "title": "GaterData wiki",
   "content": [
-    "src/wiki/home.md",
-    "src/wiki/developers.md",
-    "src/wiki/installation.md",
-    "src/wiki/running-gaterdata.md",
-    "src/wiki/testing.md"
+    "home.md",
+    "installation/bookdown.json",
+    "running-gaterdata/bookdown.json",
+    "developers/bookdown.json"
   ],
-  "target": "public/wiki",
-  "rootHref": "/",
+  "target": "/wiki",
+  "rootHref": "http://wiki.gaterdata.local/",
   "tocDepth": 2,
   "copyright": "Copyright (c) 2020 <a href=\"http://gaterdata.com/\">GaterData.com</a>",
   "extensions": {

@@ -20,7 +20,7 @@ $ npm install
 Edit and Compile.
 
 ```
-$ gulp {watch,js,css,img}
+$ gulp {all,watch,js,css,img}
 ```
 
 The gulpfile.js includes compilation of sass and minification of js and css
