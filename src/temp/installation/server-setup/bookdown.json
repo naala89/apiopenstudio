@@ -1,0 +1,7 @@
+{
+  "title": "Server setup",
+  "content": [
+    "apache.md",
+    "nginx.md"
+  ]
+}
