@@ -1,0 +1,16 @@
+{
+  "title": "GaterData wiki",
+  "content": [
+    "home.md",
+    "installation/bookdown.json",
+    "running-gaterdata/bookdown.json",
+    "developers/bookdown.json"
+  ],
+  "target": "/wiki",
+  "rootHref": "http://wiki.gaterdata.local/",
+  "tocDepth": 2,
+  "copyright": "Copyright (c) 2020 <a href=\"http://gaterdata.com/\">GaterData.com</a>",
+  "extensions": {
+  },
+  "template": "bookdown/themes"
+}

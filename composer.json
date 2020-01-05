@@ -4,8 +4,7 @@
   "require-dev": {
     "codeception/codeception": "^2.4",
     "components/jquery": "^3.3",
-    "squizlabs/php_codesniffer": "*",
-    "bookdown/bookdown": "^1.1"
+    "squizlabs/php_codesniffer": "*"
   },
   "require": {
     "adodb/adodb-php": "^5.20",

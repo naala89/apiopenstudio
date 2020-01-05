@@ -53,24 +53,32 @@ services:
         aliases:
           - ${ADMIN_DOMAIN}
 
-# Comment out this section if you want to serve the wiki.
-# NGINX wiki server.
-#  wiki:
-#    image: nginx:stable
-#    container_name: "${APP_NAME}-wiki"
-#    hostname: "${WIKI_DOMAIN}"
-#    ports:
-#      - 80
-#    volumes:
-#      - ./docker/nginx/wiki.conf:/etc/nginx/conf.d/default.conf
-#      - ${PWD}/public/wiki:/var/www/html
-#      - ${PWD}/logs/wiki:/var/log/nginx
-#    environment:
-#      - VIRTUAL_HOST=${WIKI_DOMAIN}
-#    networks:
-#      api_network:
-#        aliases:
-#          - ${WIKI_DOMAIN}
+# Uncomment this section if you want to serve the wiki.
+  bookdown:
+    image: sandrokeil/bookdown
+    container_name: "${APP_NAME}-bookdown"
+    volumes:
+      - ./src/wiki:/app
+      - ./public/wiki:/wiki
+    command: ["bookdown.json"]
+    networks:
+      - api_network
+  wiki:
+    image: nginx:stable
+    container_name: "${APP_NAME}-wiki"
+    hostname: "${WIKI_DOMAIN}"
+    ports:
+      - 80
+    volumes:
+      - ./docker/nginx/wiki.conf:/etc/nginx/conf.d/default.conf
+      - ${PWD}/public/wiki:/var/www/html
+      - ${PWD}/logs/wiki:/var/log/nginx
+    environment:
+      - VIRTUAL_HOST=${WIKI_DOMAIN}
+    networks:
+      api_network:
+        aliases:
+          - ${WIKI_DOMAIN}
 
 #  Generic PHP container.
   php:
