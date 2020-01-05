@@ -1,0 +1,9 @@
+{
+  "title": "Installation",
+  "content": [
+    "installation.md",
+    "server-setup/bookdown.json",
+    "docker.md",
+    "settings.ini.md"
+  ]
+}
