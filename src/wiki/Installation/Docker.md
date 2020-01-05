@@ -1,7 +1,8 @@
-[[_TOC_]]
+Docker
+======
 
 Single server
-=============
+-------------
 
 This is suitable for a local dev environment, or a production environment with a low to medium server load, or where latency is not a large actor.
 
@@ -13,8 +14,7 @@ We need the following directory structure added to a project:
 
 Add the following files:
 
-docker/nginx/admin.conf
------------------------
+### docker/nginx/admin.conf
 
 Replace server_name with whatever domain you want to host locally.
 
@@ -51,8 +51,7 @@ server {
 }
 ```
 
-docker/nginx/api.conf
------------------------
+### docker/nginx/api.conf
 
 Replace server_name with whatever domain you want to host locally.
 
@@ -85,8 +84,7 @@ server {
 }
 ```
 
-docker/php/Dockerfile
----------------------
+### docker/php/Dockerfile
 
 ```
 FROM php:fpm
@@ -96,8 +94,7 @@ RUN apt-get update \
     && docker-php-ext-install mysqli && docker-php-ext-enable mysqli
 ```
 
-.env
-----
+### .env
 
 Replace the values with whatever you wish.
 
@@ -113,8 +110,7 @@ ADMIN_DOMAIN=admin.gaterdata.local
 API_DOMAIN=api.gaterdata.local
 ```
 
-docker-compose.yml
-------------------
+### docker-compose.yml
 
 ```
 version: '3.7'

@@ -1,4 +1,5 @@
-[[_TOC_]]
+Core resources
+==============
 
 The details of all resources provide by core.
 
