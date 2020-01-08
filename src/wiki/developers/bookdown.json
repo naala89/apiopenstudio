@@ -6,6 +6,7 @@
     "error-responses.md",
     "resources.md",
     "styling-admin.md",
-    "testing.md"
+    "testing.md",
+    "sys-admin/bookdown.json"
   ]
 }
