@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
 
-# Reverse Proxy.
+  # Reverse Proxy.
   nginx-proxy:
     image: jwilder/nginx-proxy:alpine
     container_name: "${APP_NAME}-proxy"
@@ -13,7 +13,7 @@ services:
     networks:
       - api_network
 
-# NGINX API server.
+  # NGINX API server.
   api:
     image: nginx:stable
     container_name: "${APP_NAME}-api"
@@ -33,7 +33,7 @@ services:
         aliases:
           - ${API_DOMAIN}
 
-# Admin API server.
+  # NGINX Admin server.
   admin:
     image: nginx:stable
     container_name: "${APP_NAME}-admin"
@@ -53,7 +53,7 @@ services:
         aliases:
           - ${ADMIN_DOMAIN}
 
-# Uncomment this section if you want to serve the wiki.
+  # Bookdown container
   bookdown:
     image: sandrokeil/bookdown
     container_name: "${APP_NAME}-bookdown"
@@ -63,6 +63,8 @@ services:
     command: ["bookdown.json"]
     networks:
       - api_network
+
+  # NGINX Wiki server
   wiki:
     image: nginx:stable
     container_name: "${APP_NAME}-wiki"
@@ -80,7 +82,7 @@ services:
         aliases:
           - ${WIKI_DOMAIN}
 
-#  Generic PHP container.
+  #  Generic PHP container.
   php:
     image: php:fpm-stretch
     container_name: "${APP_NAME}-php"
@@ -106,7 +108,7 @@ services:
     networks:
       - api_network
 
-# Node container to install npm requires and run gulp.
+  # Node container to install npm requires and run gulp.
   node:
     image: node:11
     container_name: "${APP_NAME}-node"
@@ -117,7 +119,7 @@ services:
     networks:
       - api_network
 
-# Install composer requires.
+  # Install composer requires.
   composer:
     image: composer:latest
     container_name: "${APP_NAME}-composer"
@@ -129,7 +131,7 @@ services:
     networks:
       - api_network
 
-# Database container.
+  # Database container.
   db:
     image: mariadb:latest
     container_name: "${APP_NAME}-db"
