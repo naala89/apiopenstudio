@@ -8,5 +8,6 @@
     "styling-admin.md",
     "testing.md",
     "sys-admin/bookdown.json"
-  ]
+  ],
+  "tocDepth": 1
 }

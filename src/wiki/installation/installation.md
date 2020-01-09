@@ -1,15 +1,3 @@
-Requirements
-============
-
-* apache/nginx
-* php >= 7.0
-* mysql
-* opcode (Memcache or APC)
-* composer
-* npm
-* mcrpyt
-* zip
-
 Installing the codebase
 ========================
 
@@ -40,24 +28,22 @@ If you are using docker, you can skip the following steps.
 8. Run composer install in the docroot:
     1. ```$ cd /path/to/gaterdata```
     2. ```$ composer install```
-9. Run gulp:
+9. Install npm
+10. Run npm install in the docroot:
+    1. ```npm install```
+11. Run gulp:
     1. ```$ gulp all```
-10. Create the wiki (optional)
+12. Create the wiki (optional)
     1. ```./vendor/bin/bookdown src/wiki/bookdown/josn```
-11. Create an empty database and user. Give the user full permission for the DB.
+13. Create an empty database and user. Give the user full permission for the DB.
     1. ``$ mysql -u root -p``
     2. ``$ CREATE DATABASE <db_name>;``
     3. ``$ GRANT ALL PRIVILEGES ON <db_name>.* TO <username>@localhost IDENTIFIED BY "<password>";``
-12. Update ```php.ini``` (if using non-apache server, see [Hardening your HTTP response headers](https://scotthelme.co.uk/hardening-your-http-response-headers/#removingheaders)):
+14. Update ```php.ini``` (if using non-apache server, see [Hardening your HTTP response headers](https://scotthelme.co.uk/hardening-your-http-response-headers/#removingheaders)):
     1. ```expose_php = Off```
-13. Update ```httpd.conf```
+14. Update ```httpd.conf```
     1. ```ServerSignature Off```
     2. ```ServerTokens Prod```
-
-Composer
---------
-
-This is coming soon.
     
 Production
 ----------

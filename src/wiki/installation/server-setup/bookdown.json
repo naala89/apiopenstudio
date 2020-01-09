@@ -3,5 +3,6 @@
   "content": [
     "apache.md",
     "nginx.md"
-  ]
+  ],
+  "tocDepth": 1
 }

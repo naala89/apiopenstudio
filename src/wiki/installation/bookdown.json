@@ -1,9 +1,11 @@
 {
   "title": "Installation",
   "content": [
-    "installation.md",
+    "requirements.md",
     "server-setup/bookdown.json",
-    "docker.md",
-    "settings.ini.md"
-  ]
+    "installation.md",
+    "settings.ini.md",
+    "docker/bookdown.json"
+  ],
+  "tocDepth": 1
 }

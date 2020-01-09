@@ -3,5 +3,6 @@
   "content": [
     "admin.md",
     "user-roles-and-permissions.md"
-  ]
+  ],
+  "tocDepth": 1
 }
