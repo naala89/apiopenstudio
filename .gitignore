@@ -23,6 +23,8 @@ npm-debug.log
 .env
 \#innodb_temp/
 dbdata/
+docker/
+docker-compose.yml
 
 #wiki
 public/wiki
