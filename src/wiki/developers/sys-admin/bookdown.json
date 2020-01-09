@@ -2,5 +2,6 @@
   "title": "Sys-admin",
   "content": [
     "setting-up-local-gitlab-runner.md"
-  ]
+  ],
+  "tocDepth": 1
 }
