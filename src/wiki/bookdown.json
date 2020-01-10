@@ -6,8 +6,7 @@
     "running-gaterdata/bookdown.json",
     "developers/bookdown.json"
   ],
-  "target": "/wiki",
-  "rootHref": "http://wiki.gaterdata.local/",
+  "target": "../../public/wiki",
   "tocDepth": 1,
   "copyright": "Copyright (c) 2020 <a href=\"http://gaterdata.com/\">GaterData.com</a>",
   "extensions": {

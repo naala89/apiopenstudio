@@ -8,29 +8,18 @@ Mount a config volume
 
 On Mac:
 
-    docker run -d --name gitlab-runner --restart always \
-      -v /Users/Shared/gitlab-runner/config:/etc/gitlab-runner \
-      -v /var/run/docker.sock:/var/run/docker.sock \
-      gitlab/gitlab-runner:latest
-
-Register the runner
--------------------
-
-On Mac:
-
-    docker run --rm -t -i \
-      -v /Users/Shared/gitlab-runner/config:/etc/gitlab-runner \
-      gitlab/gitlab-runner register
-
-Run the Runner
---------------
-
-    docker run -d --name gitlab-runner --restart always \
-        -v /var/run/docker.sock:/var/run/docker.sock \
-        --volumes-from gitlab-runner-config \
-        gitlab/gitlab-runner:latest
+    sudo curl --output /usr/local/bin/gitlab-runner \
+    https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-darwin-amd64
+    
+    sudo chmod +x /usr/local/bin/gitlab-runner
+    
+    cd ~
+    gitlab-runner install
+    gitlab-runner start
 
 Links
 -----
 
 * https://docs.gitlab.com/runner/install/docker.html
+* https://docs.gitlab.com/runner/install/osx.html
+* https://docs.gitlab.com/runner/
