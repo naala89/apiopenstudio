@@ -1,7 +1,8 @@
 {
   "title": "Sys-admin",
   "content": [
-    "setting-up-local-gitlab-runner.md"
+    "setting-up-local-gitlab-runner.md",
+    "running-test-build.md"
   ],
   "tocDepth": 1
 }
