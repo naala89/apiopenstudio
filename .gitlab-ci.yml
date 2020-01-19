@@ -34,7 +34,7 @@ deploy_wiki:
   script:
     - echo "Deploy the wiki"
     - ./vendor/bin/bookdown src/wiki/bookdown.json
-    - rsync -rv --delete ./public/wiki/ "$DEPLOYER"@"$WIKI_URL":"$WIKI_PATH/"
+    - rsync -rvI --delete ./public/wiki/ "$DEPLOYER"@"$WIKI_URL":"$WIKI_PATH/"
     - ssh "$DEPLOYER"@"$WIKI_URL" "sudo chown -R www-data:www-data $WIKI_PATH/*"
   only:
     - master
