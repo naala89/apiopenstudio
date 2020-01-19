@@ -16,8 +16,8 @@ before_script:
   - eval $(ssh-agent -s)
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
-  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - >/dev/null
-  - ssh-keyscan "$WIKI_URL" >> ~/.ssh/known_hosts >/dev/null
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  - ssh-keyscan "$WIKI_URL" >> ~/.ssh/known_hosts
   - chmod 644 ~/.ssh/known_hosts
   - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
   - php composer-setup.php
