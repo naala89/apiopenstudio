@@ -8,7 +8,7 @@
   ],
   "target": "../../public/wiki",
   "tocDepth": 1,
-  "copyright": "Copyright (c) 2020 <a href=\"http://gaterdata.com/\">GaterData.com</a>",
+  "copyright": "Copyright (c) 2020 <a href=\"https://gaterdata.com/\">GaterData.com</a>",
   "extensions": {
   },
   "template": "bookdown/themes"

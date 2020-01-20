@@ -10,7 +10,7 @@
   "require": {
     "adodb/adodb-php": "^5.20",
     "mustangostang/spyc": "^0.6.2",
-    "slim/twig-view": "^2.4",
+    "slim/twig-view": "2.4",
     "facebook/graph-sdk": "^5.6",
     "slim/slim": "~3.0",
     "mtdowling/jmespath.php": "^2.4",
