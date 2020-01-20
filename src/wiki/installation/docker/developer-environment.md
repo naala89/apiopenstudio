@@ -3,6 +3,8 @@ Developer environment setup
 
 This is suitable for a local dev environment.
 
+Replace ```admin.gaterdata.local```, ```api.gaterdata.local``` and ```wiki.gaterdata.local``` with whatever domains you wish.
+
 Directory and files
 -------------------
 
@@ -12,6 +14,8 @@ The following files and directory structure needs to be added to a project:
     │   .env
     │   docker-compose.yml
     │
+    └───certs
+    |
     └───docker
     │   │
     │   └───nginx
@@ -23,23 +27,34 @@ The following files and directory structure needs to be added to a project:
         │   Dockerfile
         │   php.conf
 
+### Setup SSL certificates
+
+#### Mac
+
+    $ brew install mkcert nss
+    $ mkcert -install
+    $ cd <gaterdata>/certs
+    $ mkcert -cert-file gaterdata.local.crt -key-file gaterdata.local.key "*.gaterdata.local"
+    $ cp "$(mkcert -CAROOT)/rootCA.pem" ca.crt
+
 ### .env
 
 Replace the values with whatever you wish.
 
     APP_NAME=gaterdata
     
+    API_DOMAIN=api.gaterdata.local
+    ADMIN_DOMAIN=admin.gaterdata.local
+    WIKI_DOMAIN=wiki.gaterdata.local
+    
     MYSQL_DATABASE=gaterdata
     MYSQL_USER=gaterdata
     MYSQL_PASSWORD=gaterdata
     MYSQL_ROOT_PASSWORD=gaterdata
-    
-    ADMIN_DOMAIN=admin.gaterdata.local
-    API_DOMAIN=api.gaterdata.local
 
 ### config/settings.ini
 
-Update the following keys to take values from .env:
+Update the following keys to take values from .env (this ensures that you have a single source of truth for these values):
 
     [db]
     host = ${MYSQL_HOST}
@@ -183,8 +198,10 @@ Replace server_name with whatever domain you want to host locally.
         container_name: "${APP_NAME}-proxy"
         ports:
           - "80:80"
+          - "443:443"
         volumes:
           - /var/run/docker.sock:/tmp/docker.sock:ro
+          - ${PWD}/certs:/etc/nginx/certs
         networks:
           - api_network
     
@@ -199,6 +216,7 @@ Replace server_name with whatever domain you want to host locally.
           - ./docker/nginx/api.conf:/etc/nginx/conf.d/default.conf
           - ${PWD}:/var/www/html
           - ${PWD}/logs/api:/var/log/nginx
+          - ${PWD}/certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
         environment:
           - VIRTUAL_HOST=${API_DOMAIN}
         depends_on:
@@ -219,6 +237,7 @@ Replace server_name with whatever domain you want to host locally.
           - ./docker/nginx/admin.conf:/etc/nginx/conf.d/default.conf
           - ${PWD}:/var/www/html
           - ${PWD}/logs/admin:/var/log/nginx
+          - ${PWD}/certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
         environment:
           - VIRTUAL_HOST=${ADMIN_DOMAIN}
         depends_on:
@@ -250,6 +269,7 @@ Replace server_name with whatever domain you want to host locally.
           - ./docker/nginx/wiki.conf:/etc/nginx/conf.d/default.conf
           - ${PWD}/public/wiki:/var/www/html
           - ${PWD}/logs/wiki:/var/log/nginx
+          - ${PWD}/certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
         environment:
           - VIRTUAL_HOST=${WIKI_DOMAIN}
         networks:
@@ -326,6 +346,15 @@ Replace server_name with whatever domain you want to host locally.
     networks:
       api_network:
         driver: bridge
+        
+Hosts file
+----------
+
+Update ```/etc/hosts``` to contain:
+
+    127.0.0.1      admin.gaterdata.local
+    127.0.0.1      api.gaterdata.local
+    127.0.0.1      wiki.gaterdata.local
 
 Spinning up docker
 ------------------

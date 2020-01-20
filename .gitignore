@@ -11,6 +11,7 @@ logs/
 public/admin/css/*
 public/admin/js/*
 public/admin/images/*
+certs/
 
 #composer
 /vendor
@@ -19,6 +20,7 @@ composer.lock
 #node
 node_modules
 npm-debug.log
+package-lock.json
 
 #docker
 .env
