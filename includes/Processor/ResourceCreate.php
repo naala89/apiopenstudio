@@ -164,6 +164,7 @@ class ResourceCreate extends Core\ProcessorEntity
         if (
             $account->getName() == $this->settings->__get(['api', 'core_account'])
             && $application->getName() == $this->settings->__get(['api', 'core_application'])
+            && $this->settings->__get(['api', 'core_resource_lock'])
         ) {
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
