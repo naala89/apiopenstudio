@@ -83,10 +83,11 @@ class ResourceDelete extends Core\ProcessorEntity
         $appid = $resource->getAppid();
 
         $application = $this->applicationMapper->findByAppid($appid);
-        $account = $this->accountMapper->findByAccid($appid);
+        $account = $this->accountMapper->findByAccid($application->getAccid());
         if (
             $account->getName() == $this->settings->__get(['api', 'core_account'])
             && $application->getName() == $this->settings->__get(['api', 'core_application'])
+            && $this->settings->__get(['api', 'core_resource_lock'])
         ) {
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }

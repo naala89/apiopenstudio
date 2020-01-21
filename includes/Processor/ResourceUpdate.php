@@ -166,30 +166,37 @@ class ResourceUpdate extends Core\ProcessorEntity
         $format = $this->val('format', true);
         $meta = $this->val('meta', true);
 
+        // Invalid resource.
         $resource = $this->resourceMapper->findId($resid);
         if (empty($resource->getResid())) {
             throw new Core\ApiException("Resource does not exist: $resid", 6, $this->id, 400);
         }
 
+        // Resource is locked.
+        $application = $this->applicationMapper->findByAppid($resource->getAppId());
+        $account = $this->accountMapper->findByAccid($application->getAccid());
+        if (
+            $account->getName() == $this->settings->__get(['api', 'core_account'])
+            && $application->getName() == $this->settings->__get(['api', 'core_application'])
+            && $this->settings->__get(['api', 'core_resource_lock'])
+        ) {
+            throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
+        }
+
+        // Proposed application/method/uri combination already exist.
         $test = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
         if (!empty($test->getResid()) && $test->getResid() != $resid) {
             throw new Core\ApiException('A resource with this method and uri already exists for the application', 6, $this->id, 400);
         }
 
+        // Proposed account/application are locked.
         $application = $this->applicationMapper->findByAppid($appid);
-        if (empty($application)) {
-            throw new Core\ApiException("Invalid application: $appid", 6, $this->id, 400);
-        }
-
         $account = $this->accountMapper->findByAccid($application->getAccid());
         if (
-            $account->getName() == $this->settings->__get(['api', 'core_account'])) {
-            throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
-        }
-
-        $account = $this->accountMapper->findByAccid($resource->getAccid());
-        if (
-            $account->getName() == $this->settings->__get(['api', 'core_account'])) {
+            $account->getName() == $this->settings->__get(['api', 'core_account'])
+            && $application->getName() == $this->settings->__get(['api', 'core_application'])
+            && $this->settings->__get(['api', 'core_resource_lock'])
+        ) {
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
