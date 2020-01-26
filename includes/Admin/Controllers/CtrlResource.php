@@ -2,12 +2,9 @@
 
 namespace Gaterdata\Admin\Controllers;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\Yaml\Yaml;
 use Exception;
 
@@ -23,7 +20,7 @@ class CtrlResource extends CtrlBase
      *
      * @var array
      */
-    const PERMITTED_ROLES = [
+    protected $permittedRoles = [
         'Developer',
     ];
 
@@ -51,21 +48,18 @@ class CtrlResource extends CtrlBase
      * @return ResponseInterface
      *   Response.
      *
-     * @throws GuzzleException
+     * @throws Exception
      */
     public function index(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'View resources: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
         }
 
         $menu = $this->getMenus();
-        $applications = $this->getApplications($response, []);
-        $appids = implode(',', array_keys((array) $applications));
+        $appids = implode(',', array_keys($this->userApplications));
         $allParams = $request->getParams();
 
         $query = [];
@@ -81,41 +75,19 @@ class CtrlResource extends CtrlBase
         if (!empty($appids)) {
             $query['app_id'] = $appids;
         }
+        $query['all'] = 'true';
 
-        $domain = $this->settings['api']['url'];
-        $account = $this->settings['api']['core_account'];
-        $application = $this->settings['api']['core_application'];
-        $token = $_SESSION['token'];
-        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
-
+        $resources = [];
         try {
-            $result = $client->request('GET', 'resource', [
+            $result = $this->apiCall('GET', 'resource', [
                 'headers' => [
-                    'Authorization' => "Bearer $token",
+                    'Authorization' => "Bearer " . $_SESSION['token'],
                 ],
-                'query' => ['all' => 'true'],
+                'query' => $query,
             ]);
-            $resources = (array) json_decode($result->getBody()->getContents());
-
-            $result = $client->request('GET', 'account/all', [
-                'headers' => [
-                  'Authorization' => "Bearer $token",
-                ],
-            ]);
-            $accounts = (array) json_decode($result->getBody()->getContents());
-        } catch (ClientException $e) {
-            $result = $e->getResponse();
-            $this->flash->addMessage('error', $this->getErrorMessage($e));
-            switch ($result->getStatusCode()) {
-                case 401:
-                return $response->withStatus(302)->withHeader('Location', '/login');
-                break;
-                default:
-                    $resources = [];
-                    $accounts = [];
-                    $applications = [];
-                break;
-            }
+            $resources = json_decode($result->getBody()->getContents(), true);
+        } catch (Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
         }
 
         // Pagination.
@@ -134,8 +106,8 @@ class CtrlResource extends CtrlBase
             'resources' => $resources,
             'page' => $page,
             'pages' => $pages,
-            'accounts' => $accounts,
-            'applications' => (array) $applications,
+            'accounts' => $this->userAccounts,
+            'applications' => $this->userApplications,
             'messages' => $this->flash->getMessages(),
         ]);
     }
@@ -153,13 +125,11 @@ class CtrlResource extends CtrlBase
      * @return ResponseInterface
      *   Response.
      *
-     * @throws GuzzleException
+     * @throws Exception
      */
     public function create(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Create a resource: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -174,30 +144,9 @@ class CtrlResource extends CtrlBase
                         'Authorization' => "Bearer " . $_SESSION['token'],
                         'Accept' => 'application/json',
                     ],
-                ],
-                $response
+                ]
             );
             $functions = json_decode($result->getBody()->getContents(), true);
-            $result = $this->apiCall('get', 'account/all',
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
-                    ],
-                ],
-                $response
-            );
-            $accounts = json_decode($result->getBody()->getContents(), true);
-            $result = $this->apiCall('get', 'application',
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
-                    ],
-                ],
-                $response
-            );
-            $applications = json_decode($result->getBody()->getContents(), true);
         } catch (\Exception $e) {
             $this->flash->addMessageNow('error', $e->getMessage());
         }
@@ -210,8 +159,8 @@ class CtrlResource extends CtrlBase
         return $this->view->render($response, 'resource.twig', [
             'operation' => 'create',
             'menu' => $menu,
-            'accounts' => $accounts,
-            'applications' => $applications,
+            'accounts' => $this->userAccounts,
+            'applications' => $this->userApplications,
             'format' => $args['format'],
             'resource' => !empty($args['resource']) ? $args['resource'] : '',
             'resid' => '',
@@ -233,13 +182,11 @@ class CtrlResource extends CtrlBase
      * @return ResponseInterface
      *   Response.
      *
-     * @throws GuzzleException
+     * @throws Exception
      */
     public function edit(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Create a resource: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -257,8 +204,7 @@ class CtrlResource extends CtrlBase
                             'Accept' => 'application/json',
                         ],
                         'query' => ['resid' => $resid],
-                    ],
-                    $response
+                    ]
                 );
                 $resource = json_decode($result->getBody()->getContents(), true);
             } catch (\Exception $e) {
@@ -275,18 +221,17 @@ class CtrlResource extends CtrlBase
                         'Authorization' => "Bearer " . $_SESSION['token'],
                         'Accept' => 'application/json',
                     ],
-                ],
-                $response
+                ]
             );
             $functions = json_decode($result->getBody()->getContents(), true);
+
             $result = $this->apiCall('get', 'account/all',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
                         'Accept' => 'application/json',
                     ],
-                ],
-                $response
+                ]
             );
             $accounts = json_decode($result->getBody()->getContents(), true);
             $result = $this->apiCall('get', 'application',
@@ -295,8 +240,7 @@ class CtrlResource extends CtrlBase
                         'Authorization' => "Bearer " . $_SESSION['token'],
                         'Accept' => 'application/json',
                     ],
-                ],
-                $response
+                ]
             );
             $applications = json_decode($result->getBody()->getContents(), true);
         } catch (\Exception $e) {
@@ -340,13 +284,11 @@ class CtrlResource extends CtrlBase
      * @return ResponseInterface
      *   Response.
      *
-     * @throws GuzzleException
+     * @throws Exception
      */
     public function upload(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Upload a resource: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -407,8 +349,7 @@ class CtrlResource extends CtrlBase
                             'format' => $allPostVars['format'],
                             'meta' => $meta,
                         ],
-                    ],
-                    $response
+                    ]
                 );
                 $this->flash->addMessageNow('info', 'Resource successfully edited.');
             } catch (\Exception $e) {
@@ -432,8 +373,7 @@ class CtrlResource extends CtrlBase
                             'format' => $allPostVars['format'],
                             'meta' => $meta,
                         ],
-                    ],
-                    $response
+                    ]
                 );
                 $this->flash->addMessageNow('info', 'Resource successfully created.');
             } catch (\Exception $e) {
@@ -467,13 +407,11 @@ class CtrlResource extends CtrlBase
      * @return ResponseInterface
      *   Response.
      *
-     * @throws GuzzleException
+     * @throws Exception
      */
     public function delete(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Delete a resource: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -489,8 +427,7 @@ class CtrlResource extends CtrlBase
                         'Authorization' => "Bearer " . $_SESSION['token'],
                         'Accept' => 'application/json',
                     ],
-                ],
-                $response
+                ]
             );
             $result = json_decode($result->getBody()->getContents(), true);
             if ($result == 'true') {
@@ -519,13 +456,11 @@ class CtrlResource extends CtrlBase
      * @return ResponseInterface
      *   Response.
      *
-     * @throws GuzzleException
+     * @throws Exception
      */
     public function download(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Delete a resource: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -541,10 +476,11 @@ class CtrlResource extends CtrlBase
         }
 
         try {
-            $result = $this->apiCall('get', "resource/export/{$args['format']}/{$args['resid']}",
-                ['headers' => ['Authorization' => "Bearer " . $_SESSION['token']]],
-                $response
-            );
+            $result = $this->apiCall('get', "resource/export/{$args['format']}/{$args['resid']}", [
+                'headers' => [
+                    'Authorization' => "Bearer " . $_SESSION['token']
+                ]
+            ]);
         } catch (\Exception $e) {
             $this->flash->addMessage('error', $e->getMessage());
             return $response->withStatus(302)->withHeader('Location', '/resources');
@@ -569,13 +505,11 @@ class CtrlResource extends CtrlBase
      * @return ResponseInterface
      *   Response.
      *
-     * @throws GuzzleException
+     * @throws Exception
      */
     public function import(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Delete a resource: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -600,8 +534,7 @@ class CtrlResource extends CtrlBase
                                 'contents' => fopen($directory . $filename, 'r'),
                             ],
                         ],
-                    ],
-                    $response
+                    ]
                 );
             } catch (\Exception $e) {
                 $this->flash->addMessage('error', $e->getMessage());

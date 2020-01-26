@@ -2,15 +2,9 @@
 
 namespace Gaterdata\Admin\Controllers;
 
-use Slim\Flash\Messages;
-use Slim\Views\Twig;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use PHPMailer\PHPMailer\PHPMailer;
 use phpmailerException;
-use Gaterdata\Core\ApiException;
-use Gaterdata\Core\Hash;
-use GuzzleHttp\Client;
 
 /**
  * Class CtrlUsers.
@@ -25,32 +19,30 @@ class CtrlUsers extends CtrlBase
    *
    * @var array
    */
-    const PERMITTED_ROLES = [
+    protected $permittedRoles = [
     'Administrator',
     'Account manager',
     'Application manager',
     ];
 
-  /**
-   * Display the users page.
-   *
-   * @param Request $request
-   *   Request object.
-   * @param Response $response
-   *   Response object.
-   * @param array $args
-   *   Request args.
-   *
-   * @return \Psr\Http\Message\ResponseInterface
-   *   Response.
-   *
-   * @throws \GuzzleHttp\Exception\GuzzleException
-   */
+    /**
+     * Display the users page.
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *   Response.
+     *
+     * @throws \Exception
+     */
     public function index(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Access admin: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -79,8 +71,7 @@ class CtrlUsers extends CtrlBase
                         'Accept' => 'application/json',
                     ],
                     'query' => $query
-                ],
-                $response
+                ]
             );
             $users = (array) json_decode($result->getBody()->getContents());
         } catch (\Exception $e) {

@@ -16,11 +16,9 @@ class CtrlAccount extends CtrlBase
 {
 
     /**
-     * Roles allowed to visit the page.
-     *
-     * @var array
+     * {@inheritdoc}
      */
-    const PERMITTED_ROLES = [
+    protected $permittedRoles = [
         'Administrator',
     ];
 
@@ -34,16 +32,14 @@ class CtrlAccount extends CtrlBase
      * @param array $args
      *   Request args.
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface|Response
      *   Response.
      *
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     public function index(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'View accounts: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -61,7 +57,7 @@ class CtrlAccount extends CtrlBase
         $params['direction'] = isset($allParams['direction']) ? $allParams['direction'] : 'asc';
         $page = isset($allParams['page']) ? $allParams['page'] : 1;
 
-        $accounts = $this->getAccounts($response, $params);
+        $accounts = $this->apiCallAccountAll($params);
 
         // Get total number of pages and current page's accounts to display.
         $pages = ceil(count($accounts) / $this->settings['admin']['pagination_step']);
@@ -91,16 +87,14 @@ class CtrlAccount extends CtrlBase
      * @param array $args
      *   Request args.
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return Response
      *   Response.
      *
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     public function create(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'View accounts: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -125,8 +119,7 @@ class CtrlAccount extends CtrlBase
                     'form_params' => [
                         'name' => $name,
                     ],
-                ],
-                $response
+                ]
             );
             if (json_decode($result->getBody()->getContents()) == 'true') {
                 $this->flash->addMessage('info', "Account $name created");
@@ -150,16 +143,14 @@ class CtrlAccount extends CtrlBase
      * @param array $args
      *   Request args.
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return Response
      *   Response.
      *
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     public function edit(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'View accounts: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -186,7 +177,6 @@ class CtrlAccount extends CtrlBase
                         'name' => $name,
                     ],
                 ],
-                $response
             );
             if (json_decode($result->getBody()->getContents()) == 'true') {
                 $this->flash->addMessage('info', "Account '$accid' updated to '$name'.");
@@ -209,16 +199,14 @@ class CtrlAccount extends CtrlBase
      * @param array $args
      *   Request args.
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return Response
      *   Response.
      *
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     public function delete(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'View accounts: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -240,8 +228,7 @@ class CtrlAccount extends CtrlBase
                         'Authorization' => "Bearer " . $_SESSION['token'],
                         'Accept' => 'application/json',
                     ],
-                ],
-                $response
+                ]
             );
             if (json_decode($result->getBody()->getContents()) == 'true') {
                 $this->flash->addMessage('info', "Account '$accid' deleted.");

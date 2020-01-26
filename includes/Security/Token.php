@@ -16,6 +16,21 @@ class Token extends Core\ProcessorEntity
      * {@inheritDoc}
      */
 
+    /**
+     * @var Db\UserMapper
+     */
+    protected $userMapper;
+
+    /**
+     * @var Db\RoleMapper
+     */
+    protected $roleMapper;
+
+    /**
+     * @var Db\UserRoleMapper
+     */
+    protected $userRoleMapper;
+
     protected $details = [
         'name' => 'Token',
         'machineName' => 'token',
@@ -34,6 +49,14 @@ class Token extends Core\ProcessorEntity
         ],
     ];
 
+    public function __construct($meta, &$request, $db)
+    {
+        parent::__construct($meta, $request, $db);
+        $this->userMapper = new Db\UserMapper($db);
+        $this->roleMapper = new Db\RoleMapper($db);
+        $this->userRoleMapper = new Db\UserRoleMapper($db);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -48,19 +71,15 @@ class Token extends Core\ProcessorEntity
         }
 
         // invalid token or user not active
-        $db = $this->getDb();
-        $userMapper = new Db\UserMapper($db);
-        $user = $userMapper->findBytoken($token);
+        $user = $this->userMapper->findBytoken($token);
         if (empty($user->getUid()) || $user->getActive() == 0) {
             throw new Core\ApiException('permission denied', 4, -1, 401);
         }
 
         // get role from DB
-        $roleMapper = new Db\RoleMapper($db);
-        $this->role = $roleMapper->findByName($this->role);
+        $this->role = $this->roleMapper->findByName($this->role);
 
         // return list of roles for user for this request app
-        $userRoleMapper = new Db\UserRoleMapper($db);
-        return $userRoleMapper->findByMixed($user->getUid(), $this->request->getAppId());
+        return $this->userRoleMapper->findByMixed($user->getUid(), $this->request->getAppId());
     }
 }

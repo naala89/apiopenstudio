@@ -2,19 +2,14 @@
 
 namespace Gaterdata\Admin\Controllers;
 
-use Gaterdata\Core\Debug;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
-use Slim\Flash\Messages;
-use Slim\Views\Twig;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use PHPMailer\PHPMailer\PHPMailer;
 use phpmailerException;
 use Gaterdata\Core\ApiException;
 use Gaterdata\Core\Hash;
-use GuzzleHttp\Client;
 
 /**
  * Class CtrlUser.
@@ -25,11 +20,9 @@ class CtrlUser extends CtrlBase
 {
 
     /**
-     * Roles allowed to visit the page.
-     *
-     * @var array
+     * {@inheritdoc}
      */
-    const PERMITTED_ROLES = [
+    protected $permittedRoles = [
         'Administrator',
         'Account manager',
         'Application manager',
@@ -48,13 +41,11 @@ class CtrlUser extends CtrlBase
      * @return ResponseInterface
      *   Response.
      *
-     * @throws GuzzleException
+     * @throws \Exception
      */
     public function create(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Access admin: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -80,13 +71,11 @@ class CtrlUser extends CtrlBase
      * @return ResponseInterface
      *   Response.
      *
-     * @throws GuzzleException
+     * @throws \Exception
      */
     public function edit(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Access admin: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -107,8 +96,7 @@ class CtrlUser extends CtrlBase
                     'query' => [
                         'uid' => $uid,
                     ],
-                ],
-                $response
+                ]
             );
             $user = json_decode($result->getBody()->getContents(), true);
         } catch (\Exception $e) {
@@ -135,13 +123,11 @@ class CtrlUser extends CtrlBase
      * @return ResponseInterface
      *   Response.
      *
-     * @throws GuzzleException
+     * @throws \Exception
      */
     public function upload(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Access admin: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -171,11 +157,10 @@ class CtrlUser extends CtrlBase
                             'Accept' => 'application/json',
                         ],
                         'json' => $allPostVars,
-                    ],
-                    $response
+                    ]
                 );
                 $user = json_decode($result->getBody()->getContents(), true);
-                $this->flash->addMessageNow('into', 'User updated.');
+                $this->flash->addMessageNow('info', 'User updated.');
             } catch (\Exception $e) {
                 $this->flash->addMessageNow('error', $e->getMessage());
                 $user = $allPostVars;
@@ -190,8 +175,7 @@ class CtrlUser extends CtrlBase
                             'Accept' => 'application/json',
                         ],
                         'form_params' => $allPostVars,
-                    ],
-                    $response
+                    ]
                 );
                 $user = json_decode($result->getBody()->getContents(), true);
             } catch (\Exception $e) {
@@ -220,13 +204,11 @@ class CtrlUser extends CtrlBase
      * @return ResponseInterface
      *   Response.
      *
-     * @throws GuzzleException
+     * @throws \Exception
      */
     public function delete(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Access admin: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -242,8 +224,7 @@ class CtrlUser extends CtrlBase
                         'Authorization' => "Bearer " . $_SESSION['token'],
                         'Accept' => 'application/json',
                     ],
-                ],
-                $response
+                ]
             );
             $result = json_decode($result->getBody()->getContents(), true);
             if ($result == 'true') {
@@ -278,8 +259,6 @@ class CtrlUser extends CtrlBase
     public function invite(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Access admin: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -397,6 +376,8 @@ class CtrlUser extends CtrlBase
      *
      * @return ResponseInterface
      *   Response.
+     *
+     * @throws \Exception
      */
     public function register(Request $request, Response $response, array $args)
     {

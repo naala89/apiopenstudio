@@ -120,6 +120,6 @@ class UserRoleRead extends Core\ProcessorEntity
             $result[] = $userRole->dump();
         }
 
-        return $result;
+        return new Core\DataContainer($result, 'array');
     }
 }

@@ -27,7 +27,11 @@ $(document).ready(function () {
      */
     GATERDATA.setAccount = function (appid, selector) {
         var selectAcc = $(selector);
-        selectAcc.val(GATERDATA.accAppMap[appid].accid);
+        if (typeof GATERDATA.accAppMap[appid] == 'undefined') {
+            selectAcc.val('');
+        } else {
+            selectAcc.val(GATERDATA.accAppMap[appid].accid);
+        }
         selectAcc.formSelect();
     };
 
@@ -56,7 +60,6 @@ $(document).ready(function () {
      * Close alert panel.
      */
     $('.close-gaterdata-alert').click(function () {
-        $(this).closest('.gaterdata-alert').fadeOut("slow", function () {
-        });
+        $(this).closest('.gaterdata-alert').fadeOut("slow", function () {});
     });
 });

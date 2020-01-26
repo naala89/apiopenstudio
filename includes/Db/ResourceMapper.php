@@ -28,26 +28,26 @@ class ResourceMapper extends Mapper
             $sql = 'INSERT INTO resource (appid, name, description, method, uri, meta, ttl) VALUES ';
             $sql .= '(?, ?, ?, ?, ?, ?, ?)';
             $bindParams = [
-            $resource->getAppId(),
-            $resource->getName(),
-            $resource->getDescription(),
-            $resource->getMethod(),
-            $resource->getUri(),
-            $resource->getMeta(),
-            $resource->getTtl(),
+                $resource->getAppId(),
+                $resource->getName(),
+                $resource->getDescription(),
+                $resource->getMethod(),
+                $resource->getUri(),
+                $resource->getMeta(),
+                $resource->getTtl(),
             ];
         } else {
             $sql = 'UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, uri = ?, meta = ?, ttl = ? ';
             $sql .= 'WHERE resid = ?';
             $bindParams = [
-            $resource->getAppId(),
-            $resource->getName(),
-            $resource->getDescription(),
-            $resource->getMethod(),
-            $resource->getUri(),
-            $resource->getMeta(),
-            $resource->getTtl(),
-            $resource->getResid(),
+                $resource->getAppId(),
+                $resource->getName(),
+                $resource->getDescription(),
+                $resource->getMethod(),
+                $resource->getUri(),
+                $resource->getMeta(),
+                $resource->getTtl(),
+                $resource->getResid(),
             ];
         }
         return $this->saveDelete($sql, $bindParams);

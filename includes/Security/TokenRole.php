@@ -42,6 +42,24 @@ class TokenRole extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => '',
             ],
+            'validate_account' => [
+                'description' => 'Validate The has has the role in the resource account. If false, the result will be if the user has the role in any accounts.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => true,
+            ],
+            'validate_application' => [
+                'description' => 'Validate The has has the role in the resource application. If false, the result will be if the user has the role in any applications.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => true,
+            ],
         ],
     ];
 
@@ -52,8 +70,11 @@ class TokenRole extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Security TokenRole', 4);
 
-        // no token
         $token = $this->val('token', true);
+        $validateAccount = $this->val('validate_account', true);
+        $validateApplication = $this->val('validate_application', true);
+
+        // Empty token.
         if (empty($token)) {
             throw new Core\ApiException('permission denied', 4, -1, 401);
         }
@@ -68,25 +89,30 @@ class TokenRole extends Core\ProcessorEntity
 
         // Validate user against the role.
         $roleName = $this->val('role', true);
-        if ($this->validateUser($uid, $roleName)) {
+        if ($this->validateUser($uid, $roleName, $validateAccount, $validateApplication)) {
             return true;
         }
+
         throw new Core\ApiException('permission denied', 4, $this->id, 401);
     }
 
     /**
      * Validate a user against roles and the account/application of the resource.
      *
-     * @param $uid
+     * @param integer $uid
      *   User ID
-     * @param $roleName
+     * @param string $roleName
      *   Role name.
+     * @param boolean $validateAccount
+     *   Validate the user role in the account.
+     * @param boolean $validateApplication
+     *   Validate the user role in the application.
      *
      * @return bool
      *
      * @throws Core\ApiException
      */
-    protected function validateUser($uid, $roleName)
+    protected function validateUser($uid, $roleName, $validateAccount, $validateApplication)
     {
         $roleMapper = new Db\RoleMapper($this->db);
         $role = $roleMapper->findByName($roleName);
@@ -97,36 +123,43 @@ class TokenRole extends Core\ProcessorEntity
         $userRoleMapper = new Db\UserRoleMapper($this->db);
         switch ($roleName) {
             case 'Administrator':
-                $userRoles = $userRoleMapper->findByFilter([
+                $filters = [
                     'col' => [
                         'uid' => $uid,
                         'rid' => $rid
                     ]
-                ]);
+                ];
+                $userRoles = $userRoleMapper->findByFilter($filters);
                 if (!empty($userRoles)) {
                     return true;
                 }
                 break;
             case 'Account manager':
-                $userRoles = $userRoleMapper->findByFilter([
+                $filters = [
                     'col' => [
                         'uid' => $uid,
-                        'accid' => $this->request->getAccId(),
                         'rid' => $rid
                     ]
-                ]);
+                ];
+                if ($validateAccount) {
+                    $filters['col']['accid'] = $this->request->getAccId();
+                }
+                $userRoles = $userRoleMapper->findByFilter($filters);
                 if (!empty($userRoles)) {
                     return true;
                 }
                 break;
             default:
-                $userRoles = $userRoleMapper->findByFilter([
+                $filters = [
                     'col' => [
                         'uid' => $uid,
-                        'appid' => $this->request->getAppId(),
                         'rid' => $rid
                     ]
-                ]);
+                ];
+                if ($validateApplication) {
+                    $filters['col']['appid'] = $this->request->getAppId();
+                }
+                $userRoles = $userRoleMapper->findByFilter($filters);
                 if (!empty($userRoles)) {
                     return true;
                 }

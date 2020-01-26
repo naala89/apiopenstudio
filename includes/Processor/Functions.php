@@ -25,15 +25,15 @@ class Functions extends Core\ProcessorEntity
         'description' => 'Fetch data on a single or all Functions.',
         'menu' => 'System',
         'input' => [
-          'machine_name' => [
-            'description' => 'The resource machine_name or "all" for all functions.',
-            'cardinality' => [1, 1],
-            'literalAllowed' => true,
-            'limitFunctions' => [],
-            'limitTypes' => ['text'],
-            'limitValues' => [],
-            'default' => '',
-          ],
+            'machine_name' => [
+                'description' => 'The resource machine_name or "all" for all functions.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
         ],
     ];
 
@@ -41,10 +41,10 @@ class Functions extends Core\ProcessorEntity
      * @var array list of namespaces to fetch.
      */
     private $namespaces = [
-    'Endpoint',
-    'Output',
-    'Processor',
-    'Security',
+        'Endpoint',
+        'Output',
+        'Processor',
+        'Security',
     ];
 
     /**

@@ -39,6 +39,24 @@ class TokenRoles extends TokenRole
                 'limitValues' => [],
                 'default' => [],
             ],
+            'validate_account' => [
+                'description' => 'Validate The has has the role in the resource account. If false, the result will be if the user has the role in any accounts.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => true,
+            ],
+            'validate_application' => [
+                'description' => 'Validate The has has the role in the resource application. If false, the result will be if the user has the role in any applications.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => true,
+            ],
         ],
     ];
 
@@ -49,8 +67,11 @@ class TokenRoles extends TokenRole
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-        // no token
         $token = $this->val('token', true);
+        $validateAccount = $this->val('validate_account', true);
+        $validateApplication = $this->val('validate_application', true);
+
+        // no token
         if (empty($token)) {
             throw new Core\ApiException('permission denied', 4, -1, 401);
         }
@@ -66,10 +87,11 @@ class TokenRoles extends TokenRole
         // Get roles and validate the user.
         $roleNames = $this->val('roles', true);
         foreach ($roleNames as $roleName) {
-            if ($this->validateUser($uid, $roleName) == true) {
+            if ($this->validateUser($uid, $roleName, $validateAccount, $validateApplication) == true) {
                 return true;
             }
         }
+
         throw new Core\ApiException('permission denied', 4, $this->id, 401);
     }
 }
