@@ -153,7 +153,7 @@ abstract class ProcessorEntity extends Entity
      * @param bool|FALSE $realValue
      *   Return the real value or a dataContainer
      *
-     * @return array|DataContainer
+     * @return mixed|DataContainer
      *
      * @throws ApiException
      */

@@ -3,13 +3,11 @@
 namespace Gaterdata\Admin\Controllers;
 
 use GuzzleHttp\Exception\BadResponseException;
-use GuzzleHttp\Exception\GuzzleException;
 use Slim\Flash\Messages;
 use Slim\Views\Twig;
 use Slim\Collection;
 use GuzzleHttp\Client;
-use stdClass;
-use Slim\Http\Response;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class CtrlBase.
@@ -24,7 +22,7 @@ class CtrlBase
      *
      * @var array
      */
-    const PERMITTED_ROLES = [];
+    protected $permittedRoles = [];
 
     /**
      * @var Slim\Collection
@@ -47,19 +45,29 @@ class CtrlBase
     protected $menu;
 
     /**
-     * @var stdClass,
+     * @var array
      */
-    protected $userAccessRights;
+    protected $allRoles = [];
 
     /**
      * @var array,
      */
-    protected $allRoles = [
-        1 => 'Administrator',
-        2 => 'Account manager',
-        3 => 'Application manager',
-        4 => 'Developer',
-    ];
+    protected $userAccessRights = [];
+
+    /**
+     * @var array
+     */
+    protected $userRoles = [];
+
+    /**
+     * @var array
+     */
+    protected $userAccounts = [];
+
+    /**
+     * @var array
+     */
+    protected $userApplications = [];
 
     /**
      * Base constructor.
@@ -73,7 +81,6 @@ class CtrlBase
      */
     public function __construct(Collection $settings, Twig $view, Messages $flash)
     {
-        $this->userAccessRights = new stdClass();
         $this->settings = $settings;
         $this->view = $view;
         $this->flash = $flash;
@@ -88,14 +95,12 @@ class CtrlBase
      *   Resource URI. This is the string after <domain>/<account>/<application>/.
      * @param array $requestOptions
      *   Request optionsL query params, header, etc.
-     * @param Response $response
-     *   Slim Response for redirection if needed.
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      *
      * @throws \Exception
      */
-    public function apiCall($method, $uri, $requestOptions = [], $response) {
+    public function apiCall($method, $uri, $requestOptions = []) {
         try {
             $domain = $this->settings['api']['url'];
             $account = $this->settings['api']['core_account'];
@@ -106,7 +111,7 @@ class CtrlBase
             $result = $e->getResponse();
             switch ($result->getStatusCode()) {
                 case 401:
-                    return $response->withStatus(302)->withHeader('Location', '/login');
+                    throw new \Exception('Unauthorised');
                     break;
                 default:
                     throw new \Exception($this->getErrorMessage($e));
@@ -116,62 +121,163 @@ class CtrlBase
     }
 
     /**
-     * Fetch the access rights for a user.
+     * Fetch all user roles for a user.
      *
-     * @param Response
-     *    Response object.
-     *  @param string $uid
-     *  User ID.
+     * @param integer $uid
+     *   User ID.
      *
-     * @return stdClass user access rights.
-     *
-     * @throws GuzzleException
-     *
-     * @throws \Exception
+     * @return array|mixed
      */
-    protected function getAccessRights($response, $uid)
-    {
+    protected function apiCallUserRoles($uid) {
+        $userRoles = [];
         try {
-            $result = $this->apiCall(
-                'get',
-                'user/role', [
+            $result = $this->apiCall('GET', 'user/role', [
+                'headers' => [
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
+                ], 'query' => ['uid' => $uid],
+            ]);
+            $userRoles = json_decode($result->getBody()->getContents(), true);
+        } catch (\Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
+        }
+        return $userRoles;
+    }
+
+    /**
+     * Fetch all roles.
+     *
+     * @return array|mixed
+     */
+    protected function apiCallRolesAll() {
+        $allRoles = [];
+        try {
+            $result = $this->apiCall('GET', 'role/all', [
                 'headers' => [
                     'Authorization' => "Bearer " . $_SESSION['token'],
                     'Accept' => 'application/json',
                 ],
-                'query' => ['uid' => $uid],
-            ],
-                $response);
-            $result = json_decode($result->getBody()->getContents());
+            ]);
+            $result = json_decode($result->getBody()->getContents(), true);
+            foreach ($result as $role) {
+                $allRoles[$role['rid']] = $role['name'];
+            }
+        } catch (\Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
+        }
+        return $allRoles;
+    }
+
+    /**
+     * Fetch all Accounts.
+     *
+     * @param array $params
+     *   Sort params.
+     *
+     * @return array|mixed
+     */
+    protected function apiCallAccountAll(array $params = []) {
+        $allAccounts = $query = [];
+        foreach ($params as $key => $value) {
+            $query[$key] = $value;
+        }
+
+        try {
+            $result = $this->apiCall('GET', 'account/all', [
+                'headers' => [
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
+                ],
+                'query' => $query,
+            ]);
+            $allAccounts = json_decode($result->getBody()->getContents(), true);
         } catch (\Exception $e) {
             $this->flash->addMessageNow('error', $e->getMessage());
         }
 
-        $this->userAccessRights = [];
-        foreach ($result as $userRole) {
-            if ($userRole->accid == null && $userRole->appid == null) {
-                $this->userAccessRights[0][0][] = $userRole->rid;
-            } else {
-                $this->userAccessRights[$userRole->accid][$userRole->appid][] = $userRole->rid;
-            }
-        }
-
-        return $this->userAccessRights;
+        return $allAccounts;
     }
 
     /**
-     * Get available roles for user's roles.
+     * Fetch all applications from the API.
+     *
+     * @param array $params
+     *   Sort params.
+     *
+     * @return array|mixed
+     */
+    protected function apiCallApplicationAll(array $params) {
+        $query = ['application_name' => 'all'];
+        foreach ($params as $key => $value) {
+            $query[$key] = $value;
+        }
+        $allApplications = [];
+        try {
+            $result = $this->apiCall('GET', 'application', [
+                'headers' => [
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
+                ],
+                'query' => $query,
+            ]);
+            $allApplications = json_decode($result->getBody()->getContents(), true);
+        } catch (\Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
+        }
+
+        return $allApplications;
+    }
+
+    /**
+     * Fetch the access rights for a user.
+     *
+     * @param integer $uid
+     *    User ID.
+     *
+     * @return array user access rights.
+     *   [
+     *     <accid>> => [
+     *       <appid> => [
+     *         <rid>,
+     *       ],
+     *     ],
+     *   ]
+     *
+     * @throws \Exception
+     */
+    private function getAccessRights($uid = 0)
+    {
+        if ($uid == 0) {
+            $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
+        }
+        $userRoles = $this->apiCallUserRoles($uid);
+
+        $userAccessRights = [];
+
+        foreach ($userRoles as $userRole) {
+            $accid = $userRole['accid'] == null ? 0 : $userRole['accid'];
+            $appid = $userRole['appid'] == null ? 0 : $userRole['appid'];
+            $userAccessRights[$accid][$appid][] = $userRole['rid'];
+        }
+
+        return $userAccessRights;
+    }
+
+    /**
+     * Get all roles for user.
      *
      * @return array
-     *   Array of role names indexed by role ID.
+     *   [<rid> => <rolename>]
+     *
+     * @throws \Exception
      */
-    protected function getRoles()
+    private function getRoles()
     {
         $roles = [];
 
-        foreach ($this->userAccessRights as $account) {
-            foreach ($account as $application) {
-                foreach ($application as $rid) {
+        foreach ($this->userAccessRights as $accid => $appids) {
+            foreach ($appids as $appid => $rids) {
+                foreach ($rids as $rid) {
                     $roles[$rid] = $this->allRoles[$rid];
                 }
             }
@@ -183,51 +289,27 @@ class CtrlBase
     /**
      * Get accounts for the user.
      *
-     * @param Response $response
-     *   Response object.
      * @param array $params
      *   Sort and filter params.
      *
      * @return array
-     *   Array of account names, indexed by accid.
+     *   Array of account names that the user has permissions for
+     *   [<accid> => <account_name>]
      *
      * @throws \Exception
      */
-    protected function getAccounts(Response $response, array $params = [])
+    private function getAccounts(array $params = [])
     {
-        $roles = $this->getRoles();
+        $allAccounts = $this->apiCallAccountAll($params);
+
+        if (isset($this->userAccessRights[0] )) {
+            // User has access to all accounts.
+            return $allAccounts;
+        }
+
         $accounts = [];
-
-        if (in_array('Administrator', $roles)) {
-            // Fetch all accounts from the API.
-            $query = [];
-            foreach ($params as $key => $value) {
-                $query[$key] = $value;
-            }
-            try {
-                $result = $this->apiCall(
-                    'get',
-                    'account/all', [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
-                    ],
-                    'query' => $query,
-                ],
-                    $response);
-                $result = json_decode($result->getBody()->getContents());
-            } catch (\Exception $e) {
-                $this->flash->addMessageNow('error', $e->getMessage());
-            }
-
-            foreach ((array) $result as $accid => $name) {
-                  $accounts[$accid] = $name;
-            }
-        } else {
-            // Not admin, so take accounts from user access rights.
-            foreach ((array) $this->userAccessRights as $accid => $account) {
-                $accounts[$accid] = $account->account_name;
-            }
+        foreach ($this->userAccessRights as $accid => $appids) {
+            $accounts[$accid] = $allAccounts[$accid];
         }
 
         return $accounts;
@@ -236,49 +318,42 @@ class CtrlBase
     /**
      * Get applications for the user.
      *
-     * @param Response $response
-     *   Response object.
      * @param array $params
      *   Sort and filter params.
      *
      * @return array
      *   Array of applications and the account they belong to:
-     *     [accid => [appid => name]]
+     *     [
+     *       appid => [
+     *         'name' => <app_name>,
+     *         'accid' => <accid>,
+     *       ],
+     *     ]
      *
      * @throws \Exception
      */
-    protected function getApplications(Response $response, array $params = [])
+    protected function getApplications(array $params = [])
     {
-        $roles = $this->getRoles();
-        $applications = [];
+        $allApplications = $this->apiCallApplicationAll($params);
 
-        if (in_array('Administrator', $roles)) {
-            // Fetch all accounts from the API.
-            $query = ['application_name' => 'all'];
-            foreach ($params as $key => $value) {
-                $query[$key] = $value;
-            }
-            try {
-                $result = $this->apiCall(
-                    'get',
-                    'application',
-                    [
-                        'headers' => [
-                            'Authorization' => "Bearer " . $_SESSION['token'],
-                            'Accept' => 'application/json',
-                        ],
-                        'query' => $query,
-                    ],
-                    $response);
-                $applications = json_decode($result->getBody()->getContents());
-            } catch (\Exception $e) {
-                $this->flash->addMessageNow('error', $e->getMessage());
-            }
-        } else {
-            // Not admin, so take accounts from user access rights.
-            foreach ((array) $this->userAccessRights as $accid => $accounts) {
-                var_dump($accounts);
-                die();
+        if (isset($this->userAccessRights[0])) {
+            // User has access to all accounts, so all applications.
+            return $allApplications;
+        }
+
+        $applications = [];
+        foreach ($this->userAccessRights as $accid => $apps) {
+            if (isset($apps[0])) {
+                // User has access to all applications in the account.
+                foreach ($allApplications as $appid => $application) {
+                    if ($accid == $application['accid']) {
+                        $applications[$appid] = $application;
+                    }
+                }
+            } else {
+                foreach ($apps as $appid => $rids) {
+                    $applications[$appid] = $allApplications[$appid];
+                }
             }
         }
 
@@ -290,16 +365,21 @@ class CtrlBase
      *
      * @return bool
      *   Access validated.
+     *
+     * @throws \Exception
      */
     protected function checkAccess()
     {
-        if (empty(self::PERMITTED_ROLES)) {
-            return true;
+        if (empty($this->userAccessRights) || empty($this->allRoles)) {
+            $this->allRoles = $this->apiCallRolesAll();
+            $this->userAccessRights = $this->getAccessRights();
+            $this->userAccounts = $this->getAccounts();
+            $this->userApplications = $this->getApplications();
+            $this->userRoles = $this->getRoles();
         }
 
-        $roles = $this->getRoles();
-        foreach ($roles as $rid => $name) {
-            if (in_array($name, self::PERMITTED_ROLES)) {
+        foreach ($this->userRoles as $rid => $name) {
+            if (in_array($name, $this->permittedRoles)) {
                 return true;
             }
         }
@@ -311,13 +391,14 @@ class CtrlBase
      *
      * @return array
      *   Associative array of menu titles and links.
+     *
+     * @throws \Exception
      */
     protected function getMenus()
     {
         $menus = [];
-        $roles = $this->getRoles();
 
-        if (empty($roles)) {
+        if (empty($this->userRoles)) {
             $menus += [
                 'Login' => '/login',
             ];
@@ -325,7 +406,7 @@ class CtrlBase
             $menus += [
                 'Home' => '/',
             ];
-            if (in_array('Administrator', $roles)) {
+            if (in_array('Administrator', $this->userRoles)) {
                 $menus += [
                     'Accounts' => '/accounts',
                     'Applications' => '/applications',
@@ -334,7 +415,7 @@ class CtrlBase
                     'Roles' => '/roles',
                 ];
             }
-            if (in_array('Account manager', $roles)) {
+            if (in_array('Account manager', $this->userRoles)) {
                 $menus += [
                     'Applications' => '/applications',
                     'Users' => '/users',
@@ -342,14 +423,14 @@ class CtrlBase
                     'Roles' => '/roles',
                 ];
             }
-            if (in_array('Application manager', $roles)) {
+            if (in_array('Application manager', $this->userRoles)) {
                 $menus += [
                     'Applications' => '/applications',
                     'Users' => '/users',
                     'User Roles' => '/user/roles',
                 ];
             }
-            if (in_array('Developer', $roles)) {
+            if (in_array('Developer', $this->userRoles)) {
                 $menus += [
                     'Resources' => '/resources',
                     'Vars' => '/vars',

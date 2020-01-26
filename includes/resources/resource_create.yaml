@@ -17,6 +17,8 @@ security:
     function: bearer_token
     id: resource_create_token
   role: Developer
+  validate_account: false
+  validate_application: false
 
 process:
   function: resource_create

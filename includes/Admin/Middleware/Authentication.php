@@ -93,16 +93,20 @@ class Authentication
                 $_SESSION['uid'] = $result->uid;
                 $_SESSION['username'] = $username;
             } catch (BadResponseException $e) {
-                $this->container['flash']->addMessage('error', $e->getMessage());
+                $json = json_decode($e->getResponse()->getBody()->getContents(), true);
+                $this->container['flash']->addMessage('error', $json['error']['message']);
+            } catch (ClientException $e) {
+                $json = json_decode($e->getResponse()->getBody()->getContents(), true);
+                $this->container['flash']->addMessage('error', $json['error']['message']);
             }
         } else {
             // Validate the token and username.
             try {
                 $token = isset($_SESSION['token']) ? $_SESSION['token'] : '';
                 $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-                $result = $client->request('GET', "user", [
+                $client->request('GET', "user", [
+                    'headers' => ['Authorization' => "Bearer " . $token],
                     'query' => ['username' => $username],
-                    'headers' => ['Authorization' => "Bearer $token"],
                 ]);
             } catch (BadResponseException $e) {
                 $this->container['flash']->addMessage('error', $e->getMessage());

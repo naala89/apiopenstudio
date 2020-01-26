@@ -2,13 +2,8 @@
 
 namespace Gaterdata\Admin\Controllers;
 
-use Gaterdata\Core\Debug;
-use Slim\Flash\Messages;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Slim\Views\Twig;
-use Slim\Collection;
-use stdClass;
 
 /**
  * Class CtrlLogin.
@@ -29,11 +24,12 @@ class CtrlLogin extends CtrlBase
      *   Request args.
      *
      * @return \Psr\Http\Message\ResponseInterface
-     *   Response.
+     *
+     * @throws \Exception
      */
     public function login(Request $request, Response $response, array $args)
     {
-        $menu = $this->getMenus(new stdClass());
+        $menu = $this->getMenus();
         return $this->view->render($response, 'login.twig', [
             'menu' => $menu,
             'messages' => $this->flash->getMessages(),
@@ -52,10 +48,12 @@ class CtrlLogin extends CtrlBase
      *
      * @return \Psr\Http\Message\ResponseInterface
      *   Response.
+     *
+     * @throws \Exception
      */
     public function logout(Request $request, Response $response, array $args)
     {
-        $menu = $this->getMenus([]);
+        $menu = $this->getMenus();
         unset($_SESSION['token']);
         unset($_SESSION['uid']);
         return $this->view->render($response, 'login.twig', [

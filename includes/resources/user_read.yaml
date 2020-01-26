@@ -21,6 +21,8 @@ security:
     - Account manager
     - Application manager
     - Developer
+  validate_account: false
+  validate_application: false
 
 process:
   function: user_read

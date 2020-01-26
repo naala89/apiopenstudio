@@ -158,7 +158,7 @@ class UserRead extends Core\ProcessorEntity
             $result[$u['uid']] = $u;
         }
 
-        return $result;
+        return new Core\DataContainer($result, 'array');
     }
 
     /**

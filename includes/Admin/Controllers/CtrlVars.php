@@ -21,7 +21,7 @@ class CtrlVars extends CtrlBase
      *
      * @var array
      */
-    const PERMITTED_ROLES = [
+    protected $permittedRoles = [
         'Application manager',
         'Developer'
     ];
@@ -39,15 +39,13 @@ class CtrlVars extends CtrlBase
      * @return ResponseInterface
      *   Response.
      *
-     * @throws GuzzleException
+     * @throws \Exception
      */
     public function index(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
-            $this->flash->addMessage('error', 'Access admin: access denied');
+            $this->flash->addMessage('error', 'Access vars: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
         }
 
@@ -64,61 +62,46 @@ class CtrlVars extends CtrlBase
             $query['direction'] = $allParams['direction'];
         }
 
-        $applications = $this->getApplications($response);
+        $applications = $this->getApplications($query);
 
         try {
-            $result = $this->apiCall('get', 'var_store/all',
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
-                    ],
-                    'query' => $query,
+            $result = $this->apiCall('get', 'var_store/all', [
+                'headers' => [
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
                 ],
-                $response,
-                );
+                'query' => $query,
+            ]);
             $vars = json_decode($result->getBody()->getContents(), true);
-            $result = $this->apiCall('get', 'role/all',
-                [
+            $result = $this->apiCall('get', 'role/all', [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
                         'Accept' => 'application/json',
                     ],
                     'query' => ['uid' => $_SESSION['uid']],
-                ],
-                $response,
-                );
+                ]);
             $roles = json_decode($result->getBody()->getContents(), true);
-            $result = $this->apiCall('get', 'user/role',
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
-                    ],
-                    'query' => ['uid' => $_SESSION['uid']],
+            $result = $this->apiCall('get', 'user/role', [
+                'headers' => [
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
                 ],
-                $response,
-                );
+                'query' => ['uid' => $_SESSION['uid']],
+            ]);
             $userRoles = json_decode($result->getBody()->getContents(), true);
-            $result = $this->apiCall('get', 'account/all',
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
-                    ],
+            $result = $this->apiCall('get', 'account/all', [
+                'headers' => [
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
                 ],
-                $response,
-                );
+            ]);
             $accounts = json_decode($result->getBody()->getContents(), true);
-            $result = $this->apiCall('get', 'application',
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
-                    ],
+            $result = $this->apiCall('get', 'application', [
+                'headers' => [
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
                 ],
-                $response,
-                );
+            ]);
             $applications = json_decode($result->getBody()->getContents(), true);
         } catch (\Exception $e) {
             $this->flash->addMessageNow('error', $e->getMessage());
@@ -198,8 +181,6 @@ class CtrlVars extends CtrlBase
     public function create(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Access admin: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -219,16 +200,13 @@ class CtrlVars extends CtrlBase
         }
 
         try {
-            $result = $this->apiCall('post', 'var_store',
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
-                    ],
-                    'form_params' => $params,
+            $result = $this->apiCall('post', 'var_store', [
+                'headers' => [
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
                 ],
-                $response,
-                );
+                'form_params' => $params,
+            ]);
             if (json_decode($result->getBody()->getContents() == 'true')) {
                 $this->flash->addMessageNow('info', 'Var successfully created.');
             } else {
@@ -259,8 +237,6 @@ class CtrlVars extends CtrlBase
     public function update(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Access admin: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -277,16 +253,13 @@ class CtrlVars extends CtrlBase
         }
 
         try {
-            $result = $this->apiCall('put', 'var_store/' . $params['vid'],
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
-                    ],
-                    'body' => $params['val'],
+            $result = $this->apiCall('put', 'var_store/' . $params['vid'], [
+                'headers' => [
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
                 ],
-                $response,
-                );
+                'body' => $params['val'],
+            ]);
             if (json_decode($result->getBody()->getContents() == 'true')) {
                 $this->flash->addMessageNow('info', 'Var successfully updated.');
             } else {
@@ -317,8 +290,6 @@ class CtrlVars extends CtrlBase
     public function delete(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Access admin: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -334,15 +305,12 @@ class CtrlVars extends CtrlBase
         }
 
         try {
-            $result = $this->apiCall('delete', "var_store/$vid",
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
-                    ],
+            $result = $this->apiCall('delete', "var_store/$vid", [
+                'headers' => [
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
                 ],
-                $response,
-                );
+            ]);
             if (json_decode($result->getBody()->getContents() == 'true')) {
                 $this->flash->addMessageNow('info', 'Var successfully deleted.');
             } else {

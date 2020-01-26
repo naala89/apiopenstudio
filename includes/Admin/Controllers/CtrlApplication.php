@@ -18,11 +18,9 @@ class CtrlApplication extends CtrlBase
 {
 
     /**
-     * Roles allowed to visit the page.
-     *
-     * @var array
+     * {@inheritdoc}
      */
-    const PERMITTED_ROLES = [
+    protected $permittedRoles = [
         'Administrator',
         'Account manager',
         'Application manager',
@@ -38,16 +36,14 @@ class CtrlApplication extends CtrlBase
      * @param array $args
      *   Request args.
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface|Response
      *   Response.
      *
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     public function index(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'View applications: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -71,23 +67,23 @@ class CtrlApplication extends CtrlBase
         $page = isset($allParams['page']) ? $allParams['page'] : 1;
     
         $menu = $this->getMenus();
-        $accounts = $this->getAccounts($response, $accParams);
-        $applications = (array) $this->getApplications($response, $appParams);
+        $accounts = $this->apiCallAccountAll($accParams);
+        $applications = $this->apiCallApplicationAll($appParams);
 
         // Order by account or app name.
         $sortedApps = [];
         if ($allParams['order_by'] == 'account') {
             foreach ($accounts as $accid => $account) {
                 foreach ($applications as $appid => $application) {
-                    if ($accid == $application->accid) {
-                        $application->account = $account;
+                    if ($accid == $application['accid']) {
+                        $application['account'] = $accounts[$application['accid']];
                         $sortedApps[$appid] = $application;
                     }
                 }
             }
         } else {
             foreach ($applications as $appid => $application) {
-                $application->account = $accounts[$application->accid];
+                $application['account'] = $accounts[$application['accid']];
                 $sortedApps[$appid] = $application;
             }
         }
@@ -121,16 +117,14 @@ class CtrlApplication extends CtrlBase
      * @param array $args
      *   Request args.
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return Response
      *   Response.
      *
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     public function create(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Create applications: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -154,8 +148,7 @@ class CtrlApplication extends CtrlBase
                             'accid' => $accid,
                             'name' => $appName,
                         ],
-                    ],
-                    $response
+                    ]
                 );
                 if (json_decode($result->getBody()->getContents()) == 'true') {
                     $this->flash->addMessage('info', "Application $appName created.");
@@ -173,6 +166,7 @@ class CtrlApplication extends CtrlBase
     /**
      * Edit an application.
      *
+     * @param Request $request
      * @param \Slim\Http\Request $request
      *   Request object.
      * @param \Slim\Http\Response $response
@@ -180,16 +174,14 @@ class CtrlApplication extends CtrlBase
      * @param array $args
      *   Request args.
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return Response
      *   Response.
      *
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     public function edit(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Update applications: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -210,8 +202,7 @@ class CtrlApplication extends CtrlBase
                             'Authorization' => "Bearer " . $_SESSION['token'],
                             'Accept' => 'application/json',
                         ],
-                    ],
-                    $response
+                    ]
                 );
                 if (json_decode($result->getBody()->getContents()) == 'true') {
                     $this->flash->addMessage('info', "Application $appid edited.");
@@ -236,16 +227,14 @@ class CtrlApplication extends CtrlBase
      * @param array $args
      *   Request args.
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return Response
      *   Response.
      *
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     public function delete(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Update applications: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -264,8 +253,7 @@ class CtrlApplication extends CtrlBase
                             'Authorization' => "Bearer " . $_SESSION['token'],
                             'Accept' => 'application/json',
                         ],
-                    ],
-                    $response
+                    ]
                 );
                 if (json_decode($result->getBody()->getContents()) == 'true') {
                     $this->flash->addMessage('info', "Application $appid deleted.");

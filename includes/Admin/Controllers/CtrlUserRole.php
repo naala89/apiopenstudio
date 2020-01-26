@@ -2,12 +2,9 @@
 
 namespace Gaterdata\Admin\Controllers;
 
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\TransferException;
 use Psr\Http\Message\ResponseInterface;
-use Slim\Views\Twig;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Gaterdata\Admin\Account;
@@ -24,14 +21,12 @@ class CtrlUserRole extends CtrlBase
 {
 
     /**
-     * Roles allowed to visit the page.
-     *
-     * @var array
+     * {@inheritdoc}
      */
-    const PERMITTED_ROLES = [
-    'Administrator',
-    'Account manager',
-    'Application manager',
+    protected $permittedRoles = [
+        'Administrator',
+        'Account manager',
+        'Application manager',
     ];
 
     /**
@@ -47,79 +42,51 @@ class CtrlUserRole extends CtrlBase
      * @return ResponseInterface
      *   Response.
      *
-     * @throws GuzzleException
+     * @throws \Exception
      */
     public function index(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
-            $this->flash->addMessage('error', 'Access admin: access denied');
+            $this->flash->addMessage('error', 'View user roles: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
         }
 
         $menu = $this->getMenus();
         $params = $request->getQueryParams();
-
-        $domain = $this->settings['api']['url'];
-        $account = $this->settings['api']['core_account'];
-        $application = $this->settings['api']['core_application'];
         $token = $_SESSION['token'];
-        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
 
         try {
-            $result = $client->request('GET', 'user/role', [
-            'headers' => [
-            'Authorization' => "Bearer $token",
-            ],
-            'query' => $params,
+            $result = $this->apiCall('GET', 'user/role', [
+                'headers' => [
+                    'Authorization' => "Bearer $token",
+                ],
+                'query' => $params,
             ]);
-            $userRoles = (array) json_decode($result->getBody()->getContents());
-            $result = $client->request('GET', 'account/all', [
-            'headers' => [
-              'Authorization' => "Bearer $token",
-            ],
+            $userRoles = json_decode($result->getBody()->getContents(), true);
+
+            $result = $this->apiCall('GET', 'user', [
+                'headers' => ['Authorization' => "Bearer $token"],
             ]);
-            $accounts = (array) json_decode($result->getBody()->getContents());
-            $result = $client->request('GET', 'application', [
-            'headers' => [
-              'Authorization' => "Bearer $token",
-            ],
-            ]);
-            $applications = (array) json_decode($result->getBody()->getContents());
-            $result = $client->request('GET', 'user', [
-            'headers' => [
-              'Authorization' => "Bearer $token",
-            ],
-            ]);
-            $users = (array) json_decode($result->getBody()->getContents());
-        } catch (ClientException $e) {
-            $result = $e->getResponse();
-            $this->flash->addMessage('error', $this->getErrorMessage($e));
-            switch ($result->getStatusCode()) {
-                case 401:
-                return $response->withStatus(302)->withHeader('Location', '/login');
-                break;
-                default:
-                return $this->view->render($response, 'user-roles.twig', [
+            $users = json_decode($result->getBody()->getContents(), true);
+        } catch (\Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
+            return $this->view->render($response, 'user-roles.twig', [
                 'menu' => $menu,
                 'user_roles' => [],
                 'messages' => $this->flash->getMessages(),
-                ]);
-                break;
-            }
+            ]);
         }
 
         return $this->view->render($response, 'user-roles.twig', [
-        'menu' => $menu,
-        'params' => $params,
-        'user_roles' => $userRoles,
-        'accounts' => $accounts,
-        'applications' => $applications,
-        'users' => $users,
-        'roles'=> $this->allRoles,
-        'messages' => $this->flash->getMessages(),
+            'menu' => $menu,
+            'params' => $params,
+            'user_roles' => $userRoles,
+            'accounts' => $this->userAccounts,
+            'applications' => $this->userApplications,
+            'users' => $users,
+            'roles'=> $this->allRoles,
+            'messages' => $this->flash->getMessages(),
         ]);
     }
 
@@ -136,27 +103,21 @@ class CtrlUserRole extends CtrlBase
      * @return ResponseInterface
      *   Response.
      *
-     * @throws GuzzleException
+     * @throws \Exception
      */
     public function create(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
-            $this->flash->addMessage('error', 'Access admin: access denied');
+            $this->flash->addMessage('error', 'Create user role: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
         }
 
         $allPostVars = $request->getParsedBody();
-        $domain = $this->settings['api']['url'];
-        $account = $this->settings['api']['core_account'];
-        $application = $this->settings['api']['core_application'];
         $token = $_SESSION['token'];
-        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
 
         try {
-            $result = $client->request('POST', 'user/role', [
+            $this->apiCall('POST', 'user/role', [
             'headers' => [
                     'Authorization' => "Bearer $token",
                 ],
@@ -197,13 +158,11 @@ class CtrlUserRole extends CtrlBase
      * @return ResponseInterface
      *   Response.
      *
-     * @throws GuzzleException
+     * @throws \Exception
      */
     public function delete(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Access admin: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
@@ -216,28 +175,24 @@ class CtrlUserRole extends CtrlBase
             return $response->withStatus(302)->withHeader('Location', '/user/roles');
         }
 
-        $domain = $this->settings['api']['url'];
-        $account = $this->settings['api']['core_account'];
-        $application = $this->settings['api']['core_application'];
         $token = $_SESSION['token'];
-        $client = new Client(['base_uri' => "$domain/$account/$application/"]);
 
         try {
-            $result = $client->request('DELETE', 'user/role/' . $urid, [
-            'headers' => [
-            'Authorization' => "Bearer $token",
-            ],
+            $this->apiCall('DELETE', 'user/role/' . $urid, [
+                'headers' => [
+                    'Authorization' => "Bearer $token",
+                ],
             ]);
         } catch (ClientException $e) {
             $result = $e->getResponse();
             $this->flash->addMessage('error', $this->getErrorMessage($e));
             switch ($result->getStatusCode()) {
                 case 401:
-                return $response->withStatus(302)->withHeader('Location', '/login');
-                break;
+                    return $response->withStatus(302)->withHeader('Location', '/login');
+                    break;
                 default:
-                return $response->withStatus(302)->withHeader('Location', '/user/roles');
-                break;
+                    return $response->withStatus(302)->withHeader('Location', '/user/roles');
+                    break;
             }
         }
 

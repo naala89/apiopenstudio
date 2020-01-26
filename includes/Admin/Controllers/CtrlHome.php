@@ -14,15 +14,13 @@ class CtrlHome extends CtrlBase
 {
 
     /**
-     * Roles allowed to visit the page.
-     *
-     * @var array
+     * {@inheritdoc}
      */
-    const PERMITTED_ROLES = [
+    protected $permittedRoles = [
         'Administrator',
         'Account manager',
         'Application manager',
-        'Developer'
+        'Developer',
     ];
 
     /**
@@ -35,29 +33,26 @@ class CtrlHome extends CtrlBase
      * @param array $args
      *   Request args.
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface|Response
+     *   Response.
      *
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     public function index(Request $request, Response $response, array $args)
     {
         // Validate access.
-        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
-        $this->getAccessRights($response, $uid);
         if (!$this->checkAccess()) {
             $this->flash->addMessage('error', 'Access denied');
             return $response->withStatus(302)->withHeader('Location', '/logout');
         }
 
         $menu = $this->getMenus();
-        $accounts = $this->getAccounts($response);
-        $applications = $this->getApplications($response);
 
         return $this->view->render($response, 'home.twig', [
             'menu' => $menu,
-            'accounts' => $accounts,
-            'applications' => $applications,
-            'roles' => $roles,
+            'accounts' => $this->userAccounts,
+            'applications' => $this->userApplications,
+            'roles' => $this->userRoles,
             'flash' => $this->flash,
         ]);
     }

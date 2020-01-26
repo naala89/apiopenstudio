@@ -19,24 +19,24 @@ class Literal extends Core\ProcessorEntity
         'description' => 'A literal string or value.',
         'menu' => 'Primitive',
         'input' => [
-          'value' => [
-            'description' => 'The value of the literal.',
-            'cardinality' => [1, 1],
-            'literalAllowed' => true,
-            'limitFunctions' => [],
-            'limitTypes' => [],
-            'limitValues' => [],
-            'default' => ''
-          ],
-          'type' => [
-            'description' => 'The literal type.',
-            'cardinality' => [0, 1],
-            'literalAllowed' => true,
-            'limitFunctions' => [],
-            'limitTypes' => ['text'],
-            'limitValues' => [],
-            'default' => 'text'
-          ],
+            'value' => [
+                'description' => 'The value of the literal.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'type' => [
+                'description' => 'The literal type.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => 'text',
+            ],
         ],
     ];
 
