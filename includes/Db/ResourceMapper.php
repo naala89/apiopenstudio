@@ -212,6 +212,75 @@ class ResourceMapper extends Mapper
     }
 
     /**
+     * Find resources for a user, based on uid and role, then filter by accid, appid & resid.
+     *
+     * @param $uid
+     *   User ID.
+     * @param $rid
+     *   Role ID.
+     * @param $accid
+     *   Account ID.
+     * @param $appid
+     *   Application ID.
+     * @param $resid
+     *   Resource ID.
+     * @param $params
+     *   Filter params (keyword, order by, direction and limit).
+     *
+     * @return array of Resource objects.
+     *
+     * @throws ApiException
+     */
+    public function findByUidRidAccidAppidResid($uid, $rid, $accid, $appid, $resid, $params)
+    {
+        // Find Applications for the user role.
+        $userRoleMapper = new UserRoleMapper($this->db);
+        $result = $userRoleMapper->findByFilter(['col'=> ['uid' => $uid, 'rid' => $rid]]);
+        $appids = [];
+        foreach ($result as $item) {
+            $app_id = $item->getAppid();
+            if (!in_array($app_id, $appids)) {
+                $appids[] = $app_id;
+            }
+        }
+        // Find all resources for the applications the user has rights for.
+        $result = $this->findByAppId($appids, $params);
+        // No further filters, so return the results.
+        if (empty($accid) && empty($accid) && empty($appid) && empty($resid)) {
+            return $result;
+        }
+        // If accid is filter, find all applications for the accid.
+        $appid = empty($appid) ? [] : [$appid];
+        if (!empty($accid)) {
+            $applicationMapper = new ApplicationMapper($this->db);
+            $applications = $applicationMapper->findByAccid($accid);
+            foreach ($applications as $application) {
+                $appid[] = $application->getAppid();
+            }
+        }
+        // Filter by resid.
+        if (!empty($resid)) {
+            foreach ($result as $item) {
+                if ($resid == $item->getResid()) {
+                    return [$item];
+                }
+            }
+            return [];
+        }
+        // Filter by appid.
+        $resources = [];
+        if (!empty($appid)) {
+            foreach ($result as $item) {
+                if (in_array($item->getAppid(), $appid)) {
+                    $resources[] = $item;
+                }
+            }
+        }
+
+        return $resources;
+    }
+
+    /**
      * Map a DB row to this object.
      *
      * @param array $row

@@ -37,14 +37,14 @@ class ResourceRead extends Core\ProcessorEntity
         'description' => 'List resources. If no appid/s ir resid is defined, all will be returned.',
         'menu' => 'Admin',
         'input' => [
-            'all' => [
-                'description' => 'Fetch all resources.',
-                'cardinality' => [0, 1],
+            'uid' => [
+                'description' => 'User ID of the user making the call. This is used to limit the resources viewable',
+                'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['boolean'],
+                'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => false,
+                'default' => 0,
             ],
             'resid' => [
                 'description' => 'The Resource ID to filter by.',
@@ -60,7 +60,7 @@ class ResourceRead extends Core\ProcessorEntity
                 'cardinality' => [0, '*'],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['integer', 'text'],
+                'limitTypes' => ['integer'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -69,7 +69,7 @@ class ResourceRead extends Core\ProcessorEntity
                 'cardinality' => [0, '*'],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['integer', 'text'],
+                'limitTypes' => ['integer'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -79,8 +79,8 @@ class ResourceRead extends Core\ProcessorEntity
                 'literalAllowed' => true,
                 'limitFunctions' => [],
                 'limitTypes' => ['text'],
-                'limitValues' => ['accid', 'appid', 'method', 'uri'],
-                'default' => '',
+                'limitValues' => ['appid', 'method', 'uri'],
+                'default' => 'appid',
             ],
             'direction' => [
                 'description' => 'Sort direction',
@@ -89,7 +89,7 @@ class ResourceRead extends Core\ProcessorEntity
                 'limitFunctions' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => ['asc', 'desc'],
-                'default' => '',
+                'default' => 'asc',
             ],
             'keyword' => [
                 'description' => 'Keyword search',
@@ -121,70 +121,21 @@ class ResourceRead extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
+        $uid = $this->val('uid', true);
         $resid = $this->val('resid', true);
-        $all = $this->val('all', true);
         $accid = $this->val('accid', true);
         $appid = $this->val('appid', true);
         $keyword = $this->val('keyword', true);
         $orderBy = $this->val('order_by', true);
         $direction = $this->val('direction', true);
 
-        if (!empty($resid)) {
-            return $this->findByResid($resid);
-        }
-
-        $params = $this->generateParams($keyword, ['uri'], $orderBy, $direction);
-
-        if ($all) {
-            return $this->findAll($params);
-        }
-
-        $appids =  $this->generateApplicationFilter($accid, $appid);
-        if (empty($appids)) {
-            throw new Core\ApiException('No resources found', 6, $this->id, 400);
-        }
-        return $this->findByApplication($appids, $params);
-    }
-
-    /**
-     * Fetch a resource by a resid.
-     *
-     * @param integer $resid
-     *   A resource ID.
-     *
-     * @return array
-     *   Associative array of a resource row.
-     *
-     * @throws Core\ApiException
-     */
-    private function findByResid($resid)
-    {
-        $resource = $this->resourceMapper->findId($resid);
-        if (empty($resource->getResid())) {
-            throw new Core\ApiException('Unknown resource', 6, $this->id, 400);
-        }
-        return $resource->dump();
-    }
-
-    /**
-     * Find all resources.
-     *
-     * @param array
-     *   SQL query params.
-     *
-     * @return array
-     *   An array of associative arrays of a resource rows.
-     *
-     * @throws Core\ApiException
-     */
-    private function findAll($params)
-    {
-        $result = $this->resourceMapper->all($params);
+        $result = $this->findResources($uid, 'Developer', $accid, $appid, $resid, $keyword, $orderBy, $direction);
         $resources = [];
         foreach ($result as $item) {
             $resources[] = $item->dump();
         }
-        return $resources;
+
+        return new Core\DataContainer($resources, 'array');
     }
 
     /**
@@ -200,58 +151,18 @@ class ResourceRead extends Core\ProcessorEntity
      *
      * @throws Core\ApiException
      */
-    private function findByApplication($appids, $params)
+    private function findResources($uid, $role, $accid, $appid, $resid, $keyword, $orderBy, $direction)
     {
-        $result = $this->resourceMapper->findByAppId($appids, $params);
-        $resources = [];
-        foreach ($result as $item) {
-            $resources[] = $item->dump();
+        $params = [];
+        $params['order_by'] = $orderBy;
+        $params['direction'] = $direction;
+        if (!empty($keyword)) {
+            $params['filter'][] = [
+                'keyword' => "%$keyword%",
+                'column' => "uri",
+            ];
         }
-        return $resources;
-    }
-
-    /**
-     * Generate the application filter list array.
-     *
-     * @param integer|string $accid
-     *   Account ID or comma separated account IDs.
-     * @param integer|string $appid
-     *   Application ID or comma separated application IDs.
-     *
-     * @return array
-     *   Application IDs.
-     *
-     * @throws Core\ApiException
-     */
-    private function generateApplicationFilter($accid, $appid)
-    {
-        if (empty($appid)) {
-            $appids = [];
-        } elseif (is_numeric($appid)) {
-            $appids = [$appid];
-        } else {
-            $appids = explode(',', $appid);
-        }
-
-        if (empty($accid)) {
-            $accids = [];
-        }
-        if (is_numeric($accid)) {
-            $accids = [$accid];
-        } else {
-            $accids = explode(',', $accid);
-        }
-
-        foreach ($accids as $accid) {
-            $applications = $this->applicationMapper->findByAccid($accid);
-            foreach ($applications as $application) {
-                $appid = $application->getAppId();
-                if (!in_array($appid, $appids)) {
-                    $appids[] = $appid;
-                }
-            }
-        }
-
-        return $appids;
+        $rid = $this->roleMapper->findByName($role)->getRid();
+        return $this->resourceMapper->findByUidRidAccidAppidResid($uid, $rid, $accid, $appid, $resid, $params);
     }
 }
