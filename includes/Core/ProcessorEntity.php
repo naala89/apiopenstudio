@@ -3,6 +3,9 @@
 namespace Gaterdata\Core;
 
 use Gaterdata\Config;
+use Gaterdata\Db\AccountMapper;
+use Gaterdata\Db\ApplicationMapper;
+use Gaterdata\Db\UserRoleMapper;
 
 abstract class ProcessorEntity extends Entity
 {
@@ -230,6 +233,86 @@ abstract class ProcessorEntity extends Entity
             $params['direction'] = $direction;
         }
         return $params;
+    }
+
+    /**
+     * Get the accids for accounts that the user has roles for.
+     *
+     * @param $uid
+     *   User ID.
+     *
+     * @return DataContainer
+     *   Array of accid.
+     *
+     * @throws ApiException
+     */
+    protected function getUserAccids($uid) {
+        $userRoleMapper = new UserRoleMapper($this->db);
+        $accountMapper = new AccountMapper($this->db);
+        $userRoles = $userRoleMapper->findByFilter(['col' => ['uid' => $uid]]);
+        $accids = [];
+        foreach ($userRoles as $userRole) {
+            $accid = $userRole->getAccid();
+            if (empty($accid)) {
+                $accounts = $accountMapper->findAll();
+                $accids = [];
+                foreach ($accounts as $account) {
+                    $accids[] = $account->getAccid();
+                }
+                return $accids;
+            }
+            if (!in_array($accid, $accids)) {
+                $accids[] = $accid;
+            }
+        }
+        return $accids;
+    }
+
+    /**
+     * Get the appids for applications that the user has roles for.
+     *
+     * @param $uid
+     *   User ID.
+     *
+     * @return DataContainer
+     *   Array of appid.
+     *
+     * @throws ApiException
+     */
+    protected function getUserAppids($uid) {
+        $userRoleMapper = new UserRoleMapper($this->db);
+        $applicationMapper = new ApplicationMapper($this->db);
+        $userRoles = $userRoleMapper->findByFilter(['col' => ['uid' => $uid]]);
+        $appids = [];
+
+        foreach ($userRoles as $userRole) {
+            $appid = $userRole->getAppid();
+            $accid = $userRole->getAccid();
+
+            if (empty($accid)) {
+                $applications = $applicationMapper->findAll();
+                $appids = [];
+                foreach ($applications as $application) {
+                    $appids[] = $application->getAppid();
+                }
+                return new DataContainer($appids, 'array');
+            }
+
+            if (empty($appid)) {
+                $applications = $applicationMapper->findByAccid($accid);
+                foreach ($applications as $application) {
+                    if (!in_array($application->getAppid(), $appids)) {
+                        $appids[] = $application->getAppid();
+                    }
+                }
+            } else {
+                if (!in_array($appid, $appids)) {
+                    $appids[] = $appid;
+                }
+            }
+        }
+
+        return new DataContainer($appids, 'array');
     }
 
     /**

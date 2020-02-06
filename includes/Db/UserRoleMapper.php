@@ -106,6 +106,50 @@ class UserRoleMapper extends Mapper
     }
 
     /**
+     * Return whether a user has a specified role.
+     *
+     * @param $uid
+     *   User ID.
+     * @param $rolename
+     *   Role name.
+     *
+     * @return bool
+     *
+     * @throws ApiException
+     */
+    public function hasRole($uid, $rolename) {
+        $sql = 'SELECT * FROM user_role AS ur';
+        $sql .= 'INNER JOIN role as r';
+        $sql .= 'ON ur.rid = r.rid';
+        $sql .= 'WHERE ur.uid=?';
+        $sql .= 'AND r.name=?';
+        $bindParams = [$uid, $rolename];
+        $rows = $this->fetchRows($sql, $bindParams);
+        return !empty($rows);
+    }
+
+    /**
+     * Return whether a user has a specified role in an account.
+     *
+     * @param $uid
+     * @param $accid
+     * @param $rolename
+     * @return bool
+     * @throws ApiException
+     */
+    public function hasAccidRole($uid, $accid, $rolename) {
+        $sql = 'SELECT * FROM user_role AS ur';
+        $sql .= 'INNER JOIN role as r';
+        $sql .= 'ON ur.rid = r.rid';
+        $sql .= 'WHERE (ur.uid=?';
+        $sql .= 'AND accid=?';
+        $sql .= 'AND r.name=?)';
+        $bindParams = [$uid, $accid, $rolename];
+        $rows = $this->fetchRows($sql, $bindParams);
+        return !empty($rows);
+    }
+
+    /**
      * Find user roles using filter.
      *
      * @param array $params

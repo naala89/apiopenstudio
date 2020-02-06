@@ -20,15 +20,15 @@ class AccountCreate extends Core\ProcessorEntity
         'description' => 'Create an account.',
         'menu' => 'Admin',
         'input' => [
-          'name' => [
-            'description' => 'The name of the account.',
-            'cardinality' => [1, 1],
-            'literalAllowed' => true,
-            'limitFunctions' => [],
-            'limitTypes' => ['text'],
-            'limitValues' => [],
-            'default' => ''
-          ],
+            'name' => [
+                'description' => 'The name of the account.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
         ],
     ];
 

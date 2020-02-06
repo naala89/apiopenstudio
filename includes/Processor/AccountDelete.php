@@ -20,15 +20,15 @@ class AccountDelete extends Core\ProcessorEntity
         'description' => 'Delete an account.',
         'menu' => 'Admin',
         'input' => [
-          'accid' => [
-            'description' => 'The account ID.',
-            'cardinality' => [1, 1],
-            'literalAllowed' => true,
-            'limitFunctions' => [],
-            'limitTypes' => ['integer'],
-            'limitValues' => [],
-            'default' => ''
-          ],
+            'accid' => [
+                'description' => 'The account ID.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => ''
+            ],
         ],
     ];
 

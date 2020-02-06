@@ -12,6 +12,15 @@ use Gaterdata\Db;
 class AccountRead extends Core\ProcessorEntity
 {
     /**
+     * @var Db\AccountMapper
+     */
+    private $accountMapper;
+    /**
+     * @var Db\UserRoleMapper
+     */
+    private $userRoleMapper;
+
+    /**
      * {@inheritDoc}
      */
     protected $details = [
@@ -20,14 +29,23 @@ class AccountRead extends Core\ProcessorEntity
         'description' => 'Fetch a single or all accounts.',
         'menu' => 'Admin',
         'input' => [
-            'accid' => [
-                'description' => 'The account ID or "all".',
+            'uid' => [
+                'description' => 'User ID of the user making the call. This is used to limit the accounts viewable whilst and still have access by all admin roles.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['text', 'integer'],
+                'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => 'all',
+                'default' => 0,
+            ],
+            'accid' => [
+                'description' => 'Filter by accid. If empty then all accounts the user has access to will be returned.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => 0,
             ],
             'keyword' => [
                 // phpcs:ignore
@@ -63,24 +81,35 @@ class AccountRead extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      */
+    public function __construct($meta, &$request, $db)
+    {
+        parent::__construct($meta, $request, $db);
+        $this->accountMapper = new Db\AccountMapper($db);
+        $this->userRoleMapper = new Db\UserRoleMapper($db);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
+        $uid = $this->val('uid', true);
         $accid = $this->val('accid', true);
+        $keyword = $this->val('keyword', true);
+        $orderBy = $this->val('order_by', true);
+        $direction = $this->val('direction', true);
 
-        $accountMapper = new Db\AccountMapper($this->db);
+        $accids = $this->getUserAccids($uid);
 
-        if ($accid == 'all') {
-          // Only need to add filters if fetching all.
-            $keyword = $this->val('keyword', true);
-            $orderBy = $this->val('order_by', true);
-            $direction = $this->val('direction', true);
+        if ($accid < 1) {
+            // Only need to add filters if fetching all.
             $params = [];
             if (!empty($keyword)) {
                 $params['filter'][] = [
-                'keyword' => "%$keyword%",
-                'column' => "name",
+                    'keyword' => "%$keyword%",
+                    'column' => "name",
                 ];
             }
             if (!empty($orderBy)) {
@@ -90,18 +119,24 @@ class AccountRead extends Core\ProcessorEntity
                 $params['direction'] = $direction;
             }
 
-            $rows = $accountMapper->findAll($params);
+            $accounts = $this->accountMapper->findAll($params);
             $result = [];
-            foreach ($rows as $row) {
-                $result[$row->getAccid()] = $row->getName();
+            foreach ($accounts as $account) {
+                if (in_array($account->getAccid(), $userAccids)) {
+                    $result[$account->getAccid()] = $account->getName();
+                }
             }
-            return $result;
+            return new Core\DataContainer($result, 'array');
         }
 
-        $account = $accountMapper->findByAccid(intval($accid));
+        if (!in_array($accid, $userAccids)) {
+            throw new Core\ApiException('Account does not exist or you do not have access to this account: ' . $accid, 6, $this->id, 400);
+        }
+
+        $account = $this->accountMapper->findByAccid($accid);
         if (empty($account->getAccid())) {
             throw new Core\ApiException('Account does not exist: ' . intval($accid), 6, $this->id, 400);
         }
-        return $account->dump();
+        return new Core\DataContainer($account->dump(), 'array');
     }
 }

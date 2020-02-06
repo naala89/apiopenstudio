@@ -5,6 +5,7 @@ namespace Gaterdata\Admin\Middleware;
 use Exception;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\ServerException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Container;
@@ -98,6 +99,9 @@ class Authentication
             } catch (ClientException $e) {
                 $json = json_decode($e->getResponse()->getBody()->getContents(), true);
                 $this->container['flash']->addMessage('error', $json['error']['message']);
+            } catch (ServerException $e) {
+                $json = json_decode($e->getResponse()->getBody()->getContents(), true);
+                $this->container['flash']->addMessage('error', $json['error']['message']);
             }
         } else {
             // Validate the token and username.
@@ -115,6 +119,16 @@ class Authentication
                 unset($_SESSION['uid']);
             } catch (ClientException $e) {
                 $this->container['flash']->addMessage('error', 'Permission denied.');
+                unset($_SESSION['token']);
+                unset($_SESSION['username']);
+                unset($_SESSION['uid']);
+            } catch (RequestException $e) {
+                $this->container['flash']->addMessage('error', $e->getMessage());
+                unset($_SESSION['token']);
+                unset($_SESSION['username']);
+                unset($_SESSION['uid']);
+            } catch (ServerException $e) {
+                $this->container['flash']->addMessageNow('error', 'Internal server error');
                 unset($_SESSION['token']);
                 unset($_SESSION['username']);
                 unset($_SESSION['uid']);
