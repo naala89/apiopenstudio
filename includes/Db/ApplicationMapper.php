@@ -90,6 +90,24 @@ class ApplicationMapper extends Mapper
         return $this->fetchRow($sql, $bindParams);
     }
 
+    public function findByUid($uid)
+    {
+        $userRoleMapper = new UserRoleMapper($this->db);
+        if ($userRoleMapper->hasRole($uid, 'Administrator')) {
+            return $this->findAll();
+        }
+        if ($userRoleMapper->hasRole($uid, 'Account manager')) {
+            $userRoles = $userRoleMapper->
+        }
+        $sql = 'SELECT DISTINCT a.*';
+        $sql .= 'FROM application AS a';
+        $sql .= 'INNER JOIN user_role AS ur';
+        $sql .= 'ON ur.appid = a.appid';
+        $sql .= 'WHERE ur.uid = ?';
+        $bindParams = [$uid];
+        $result = $this->fetchRows($sql, $bindParams);
+    }
+
     /**
      * Find application by account ID and application name.
      *

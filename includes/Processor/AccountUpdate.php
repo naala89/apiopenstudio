@@ -20,24 +20,24 @@ class AccountUpdate extends Core\ProcessorEntity
         'description' => 'Rename an account.',
         'menu' => 'Admin',
         'input' => [
-          'accid' => [
-            'description' => 'The account ID.',
-            'cardinality' => [1, 1],
-            'literalAllowed' => true,
-            'limitFunctions' => [],
-            'limitTypes' => ['integer'],
-            'limitValues' => [],
-            'default' => ''
-          ],
-          'name' => [
-            'description' => 'The new name for the account.',
-            'cardinality' => [1, 1],
-            'literalAllowed' => true,
-            'limitFunctions' => [],
-            'limitTypes' => ['text'],
-            'limitValues' => [],
-            'default' => ''
-          ],
+            'accid' => [
+                'description' => 'The account ID.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'name' => [
+                'description' => 'The new name for the account.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
         ],
     ];
 

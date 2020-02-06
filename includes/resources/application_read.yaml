@@ -27,6 +27,24 @@ security:
 process:
   function: application_read
   id: application_read_process
+  uid:
+    function: field_value
+    id: application_read_uid
+    key_value: value
+    field:
+      function: var_field
+      id: application_read_field_uid
+      array:
+        function: filter
+        id: application_read_filter uid
+        filter: uid
+        inverse: true
+        source:
+          function: user_read
+          id: application_read_user
+          token:
+            function: bearer_token
+            id: application_read_uid_token
   accountIds:
     function: var_get
     id: application_read_account_ids

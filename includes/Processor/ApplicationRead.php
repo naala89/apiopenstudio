@@ -12,6 +12,11 @@ use Gaterdata\Db;
 class ApplicationRead extends Core\ProcessorEntity
 {
     /**
+     * @var Db\ApplicationMapper
+     */
+    protected $applicationMapper;
+
+    /**
      * {@inheritDoc}
      */
     protected $details = [
@@ -20,6 +25,15 @@ class ApplicationRead extends Core\ProcessorEntity
         'description' => 'Fetch a single or multiple applications.',
         'menu' => 'Admin',
         'input' => [
+            'uid' => [
+                'description' => 'User ID of the user making the call. This is used to limit the delete applications to account manager with account access and administrators.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => 0,
+            ],
             'accountIds' => [
                 // phpcs:ignore
                 'description' => 'An array of the IDs of the account to fetch applications by. NULL or empty will fetch for all accounts.',
@@ -82,6 +96,16 @@ class ApplicationRead extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      */
+    public function __construct($meta, &$request, $db)
+    {
+        parent::__construct($meta, $request, $db);
+        $this->applicationMapper = new Db\ApplicationMapper($this->db);
+        $this->userRoleMapper = new Db\UserRoleMapper($this->db);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
@@ -90,14 +114,31 @@ class ApplicationRead extends Core\ProcessorEntity
         $accountIds = empty($accountIds) ? [] : $accountIds;
         $applicationNames = $this->val('applicationNames', true);
         $applicationNames = empty($applicationNames) ? [] : $applicationNames;
+        $uid = $this->val('uid', true);
 
-      // Filter params.
+        $applications =
+
+//        $application = $this->applicationMapper->findByAppid($appid);
+//        if (empty($application->getAppid())) {
+//            throw new ApiException("Delete application, no such appid: $appid",
+//                6, $this->id, 417);
+//        }
+//        $accid = $application->getAccid();
+//
+//        if (
+//            !$this->userRoleMapper->hasRole($uid, 'Administrator')
+//            && !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')
+//        ) {
+//            throw new ApiException('Permission denied.', 6, $this->id, 417);
+//        }
+
+        // Filter params.
         $params = [];
         $accountFilter = $this->val('accountFilter', true);
         if (!empty($accountFilter)) {
             $params['filter'] = [
-            'column' => 'accid',
-            'keyword' => $accountFilter,
+                'column' => 'accid',
+                'keyword' => $accountFilter,
             ];
         }
         $keyword = $this->val('keyword', true);
@@ -113,14 +154,12 @@ class ApplicationRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        $applicationMapper = new Db\ApplicationMapper($this->db);
-
-        $applications = $applicationMapper->findByAccidsAppnames($accountIds, $applicationNames, $params);
+        $applications = $this->applicationMapper->findByAccidsAppnames($accountIds, $applicationNames, $params);
         $result = [];
         foreach ($applications as $application) {
             $result[$application->getAppid()] = [
-            'name' => $application->getName(),
-            'accid' =>$application->getAccid(),
+                'name' => $application->getName(),
+                'accid' =>$application->getAccid(),
             ];
         }
 
