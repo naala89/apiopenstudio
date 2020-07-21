@@ -47,6 +47,7 @@ Replace the values with whatever you wish.
     ADMIN_DOMAIN=admin.gaterdata.local
     WIKI_DOMAIN=wiki.gaterdata.local
     
+    MYSQL_HOST=mariadb
     MYSQL_DATABASE=gaterdata
     MYSQL_USER=gaterdata
     MYSQL_PASSWORD=gaterdata

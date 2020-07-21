@@ -105,7 +105,7 @@ switch ($step) {
             if (empty($db->execute($sqlCreate))) {
                 // Stop if table create fails.
 
-                $logger->error($e->gettrace());
+                $messages['error'][] = "$sqlCreate";
                 $messages['error'][] = "CREATE TABLE `$table` fail!";
                 $messages['error'][] = 'Processing halted. Please check the logs and retry';
                 echo $template->render(['messages' => $messages, 'menu' => $menu]);

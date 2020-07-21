@@ -34,7 +34,7 @@ If you are using docker, you can skip the following steps.
 11. Run gulp:
     1. ```$ gulp all```
 12. Create the wiki (optional)
-    1. ```./vendor/bin/bookdown src/wiki/bookdown/josn```
+    1. ```./vendor/bin/bookdown src/wiki/bookdown/json```
 13. Create an empty database and user. Give the user full permission for the DB.
     1. ``$ mysql -u root -p``
     2. ``$ CREATE DATABASE <db_name>;``

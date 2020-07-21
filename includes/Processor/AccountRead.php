@@ -122,14 +122,13 @@ class AccountRead extends Core\ProcessorEntity
             $accounts = $this->accountMapper->findAll($params);
             $result = [];
             foreach ($accounts as $account) {
-                if (in_array($account->getAccid(), $userAccids)) {
-                    $result[$account->getAccid()] = $account->getName();
-                }
+                $result[$account->getAccid()] = $account->getName();
             }
+
             return new Core\DataContainer($result, 'array');
         }
 
-        if (!in_array($accid, $userAccids)) {
+        if (!in_array($accid, $accids)) {
             throw new Core\ApiException('Account does not exist or you do not have access to this account: ' . $accid, 6, $this->id, 400);
         }
 

@@ -90,22 +90,44 @@ class ApplicationMapper extends Mapper
         return $this->fetchRow($sql, $bindParams);
     }
 
-    public function findByUid($uid)
+    /**
+     * Fetch applications for a user.
+     *
+     * @param $uid
+     *   User ID
+     *
+     * @return array
+     *   Array of Application objects.
+     * @param $params
+     *   Filter params.
+     *
+     * @return array
+     *
+     * @throws \Gaterdata\Core\ApiException
+     */
+    public function findByUid($uid, $params)
     {
         $userRoleMapper = new UserRoleMapper($this->db);
         if ($userRoleMapper->hasRole($uid, 'Administrator')) {
             return $this->findAll();
         }
-        if ($userRoleMapper->hasRole($uid, 'Account manager')) {
-            $userRoles = $userRoleMapper->
-        }
-        $sql = 'SELECT DISTINCT a.*';
-        $sql .= 'FROM application AS a';
-        $sql .= 'INNER JOIN user_role AS ur';
-        $sql .= 'ON ur.appid = a.appid';
-        $sql .= 'WHERE ur.uid = ?';
-        $bindParams = [$uid];
-        $result = $this->fetchRows($sql, $bindParams);
+        $sql = 'SELECT app.*';
+        $sql .= ' FROM user_role AS ur';
+        $sql .= ' INNER JOIN application AS app';
+        $sql .= ' ON app.accid = ur.accid';
+        $sql .= ' WHERE ur.uid = ?';
+        $sql .= ' AND ur.accid IS NOT NULL';
+        $sql .= ' UNION';
+        $sql .= ' SELECT app.*';
+        $sql .= ' FROM user_role AS ur';
+        $sql .= ' INNER JOIN application AS app';
+        $sql .= ' ON app.appid = ur.appid';
+        $sql .= ' WHERE ur.uid = ?';
+        $sql .= ' AND ur.accid IS NULL';
+        $sql .= ' AND ur.appid IS NOT NULL';
+        $bindParams = [$uid, $uid];
+
+        return $this->fetchRows($sql, $bindParams, $params);
     }
 
     /**

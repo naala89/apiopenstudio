@@ -211,6 +211,8 @@ class UserUpdate extends Core\ProcessorEntity
         $email = $this->val('email', true);
         $password = $this->val('password', true);
 
+        var_export($uid);exit;
+
         $user = $this->userMapper->findByUsername($username);
         if ($user->getUid() != $uid) {
             throw new Core\ApiException("Username $username already exists", 6, $this->id, 400);

@@ -249,7 +249,7 @@ abstract class ProcessorEntity extends Entity
     protected function getUserAccids($uid) {
         $userRoleMapper = new UserRoleMapper($this->db);
         $accountMapper = new AccountMapper($this->db);
-        $userRoles = $userRoleMapper->findByFilter(['col' => ['uid' => $uid]]);
+        $userRoles = $userRoleMapper->findByUid($uid);
         $accids = [];
         foreach ($userRoles as $userRole) {
             $accid = $userRole->getAccid();
