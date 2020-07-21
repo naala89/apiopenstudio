@@ -75,6 +75,9 @@ class ApplicationCreate extends Core\ProcessorEntity
         $uid = $this->val('uid', true);
         $accid = $this->val('accid', true);
         $name = $this->val('name', true);
+        if (preg_match('/[^a-z_\-0-9]/i', $name)) {
+            throw new Core\ApiException("Invalid application name: $name. Only underscore, hyphen or alhpanumeric characters permitted.", 6, $this->id, 400);
+        }
 
         if (
             !$this->userRoleMapper->hasRole($uid, 'Administrator')

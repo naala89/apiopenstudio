@@ -20,7 +20,7 @@ security:
 
 process:
   function: account_create
-  id: account_craete_process
+  id: account_create_process
   name:
     function: var_post
     id: account_create_name

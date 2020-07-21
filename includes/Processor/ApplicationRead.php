@@ -116,22 +116,6 @@ class ApplicationRead extends Core\ProcessorEntity
         $applicationNames = empty($applicationNames) ? [] : $applicationNames;
         $uid = $this->val('uid', true);
 
-        $applications =
-
-//        $application = $this->applicationMapper->findByAppid($appid);
-//        if (empty($application->getAppid())) {
-//            throw new ApiException("Delete application, no such appid: $appid",
-//                6, $this->id, 417);
-//        }
-//        $accid = $application->getAccid();
-//
-//        if (
-//            !$this->userRoleMapper->hasRole($uid, 'Administrator')
-//            && !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')
-//        ) {
-//            throw new ApiException('Permission denied.', 6, $this->id, 417);
-//        }
-
         // Filter params.
         $params = [];
         $accountFilter = $this->val('accountFilter', true);
@@ -154,7 +138,7 @@ class ApplicationRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        $applications = $this->applicationMapper->findByAccidsAppnames($accountIds, $applicationNames, $params);
+        $applications = $this->applicationMapper->findByUid($uid, $params);
         $result = [];
         foreach ($applications as $application) {
             $result[$application->getAppid()] = [

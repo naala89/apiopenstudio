@@ -108,9 +108,9 @@ class UserRoleMapper extends Mapper
     /**
      * Return whether a user has a specified role.
      *
-     * @param $uid
+     * @param Integer $uid
      *   User ID.
-     * @param $rolename
+     * @param String $rolename
      *   Role name.
      *
      * @return bool
@@ -119,34 +119,79 @@ class UserRoleMapper extends Mapper
      */
     public function hasRole($uid, $rolename) {
         $sql = 'SELECT * FROM user_role AS ur';
-        $sql .= 'INNER JOIN role as r';
-        $sql .= 'ON ur.rid = r.rid';
-        $sql .= 'WHERE ur.uid=?';
-        $sql .= 'AND r.name=?';
+        $sql .= ' INNER JOIN role as r';
+        $sql .= ' ON ur.rid = r.rid';
+        $sql .= ' WHERE ur.uid=?';
+        $sql .= ' AND r.name=?';
         $bindParams = [$uid, $rolename];
         $rows = $this->fetchRows($sql, $bindParams);
         return !empty($rows);
     }
 
     /**
+     * Fetch user roles by UID and role name.
+     *
+     * @param integer $uid
+     *   User ID.
+     * @param string $rolename
+     *   Role name.
+     *
+     * @return array
+     *   Array of UserRole objects.
+     *
+     * @throws ApiException
+     */
+    public function findByUidRolename($uid, $rolename) {
+        $sql = 'SELECT * FROM user_role AS ur';
+        $sql .= ' INNER JOIN role AS r';
+        $sql .= ' ON r.rid = ur.rid';
+        $sql .= ' WHERE ur.uid=?';
+        $sql .= ' AND r.name=?';
+        $bindParams = [$uid, $rolename];
+        return $this->fetchRows($sql, $bindParams);
+    }
+
+    /**
      * Return whether a user has a specified role in an account.
      *
-     * @param $uid
-     * @param $accid
-     * @param $rolename
+     * @param integer $uid
+     *   User ID.
+     * @param integer $accid
+     *   Account ID.
+     * @param string $rolename
+     *   Role name.
+     *
      * @return bool
+     *
      * @throws ApiException
      */
     public function hasAccidRole($uid, $accid, $rolename) {
         $sql = 'SELECT * FROM user_role AS ur';
-        $sql .= 'INNER JOIN role as r';
-        $sql .= 'ON ur.rid = r.rid';
-        $sql .= 'WHERE (ur.uid=?';
-        $sql .= 'AND accid=?';
-        $sql .= 'AND r.name=?)';
+        $sql .= ' INNER JOIN role as r';
+        $sql .= ' ON ur.rid = r.rid';
+        $sql .= ' WHERE ur.uid=?';
+        $sql .= ' AND accid=?';
+        $sql .= ' AND r.name=?';
         $bindParams = [$uid, $accid, $rolename];
         $rows = $this->fetchRows($sql, $bindParams);
         return !empty($rows);
+    }
+
+    /**
+     * Find all user roles for a user ID.
+     *
+     * @param integer $uid
+     *   User ID.
+     *
+     * @return array
+     *   Array of UserRole objects.
+     *
+     * @throws ApiException
+     */
+    public function findByUid($uid) {
+        $sql = 'SELECT * FROM user_role WHERE uid=?';
+        $bindParams = [$uid];
+        return $this->fetchRows($sql, $bindParams);
     }
 
     /**

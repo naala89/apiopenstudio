@@ -70,7 +70,7 @@ resource:
     description : { type: varchar(2048), notnull: true, comment: description of the resource }
     method: { type: text, notnull: true, comment: form delivery method }
     uri: { type: varchar(64), notnull: true, comment: URI of the api call }
-    meta: { type: varchar(16384), notnull: true, comment: all of the actions taken by the call }
+    meta: { type: blob, notnull: true, comment: all of the actions taken by the call }
     ttl: { type: int(10) unsigned, notnull: true, default: 300, comment: time to cache the results (seconds) }
 
 external_user:

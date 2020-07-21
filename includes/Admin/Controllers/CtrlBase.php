@@ -102,6 +102,7 @@ class CtrlBase
      */
     public function apiCall($method, $uri, $requestOptions = []) {
         try {
+            $requestOptions['protocols'] = $this->settings['api']['protocols'];
             $domain = $this->settings['api']['url'];
             $account = $this->settings['api']['core_account'];
             $application = $this->settings['api']['core_application'];
@@ -183,7 +184,7 @@ class CtrlBase
         }
 
         try {
-            $result = $this->apiCall('GET', 'account/all', [
+            $result = $this->apiCall('GET', 'account', [
                 'headers' => [
                     'Authorization' => "Bearer " . $_SESSION['token'],
                     'Accept' => 'application/json',
