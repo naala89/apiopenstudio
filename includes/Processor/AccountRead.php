@@ -15,10 +15,16 @@ class AccountRead extends Core\ProcessorEntity
      * @var Db\AccountMapper
      */
     private $accountMapper;
+
     /**
      * @var Db\UserRoleMapper
      */
     private $userRoleMapper;
+
+    /**
+     * @var Db\RoleMapper
+     */
+    private $roleMapper;
 
     /**
      * {@inheritDoc}
@@ -86,6 +92,7 @@ class AccountRead extends Core\ProcessorEntity
         parent::__construct($meta, $request, $db);
         $this->accountMapper = new Db\AccountMapper($db);
         $this->userRoleMapper = new Db\UserRoleMapper($db);
+        $this->roleMapper = new Db\RoleMapper($db);
     }
 
     /**
@@ -100,42 +107,44 @@ class AccountRead extends Core\ProcessorEntity
         $keyword = $this->val('keyword', true);
         $orderBy = $this->val('order_by', true);
         $direction = $this->val('direction', true);
+        $isAdmin = $this->userRoleMapper->hasRole($uid, 'Administrator');
 
-        $accids = $this->getUserAccids($uid);
+        $params = [];
+        if (!empty($keyword)) {
+            $params['filter'][] = [
+                'keyword' => "%$keyword%",
+                'column' => "a.name",
+            ];
+        }
+        if (!empty($accid)) {
+            $params['filter'][] = [
+                'keyword' => $accid,
+                'column' => 'a.accid',
+            ];
+        }
+        if (!empty($orderBy)) {
+            $params['order_by'] = $orderBy;
+        }
+        if (!empty($direction)) {
+            $params['direction'] = $direction;
+        }
 
-        if ($accid < 1) {
-            // Only need to add filters if fetching all.
-            $params = [];
-            if (!empty($keyword)) {
-                $params['filter'][] = [
-                    'keyword' => "%$keyword%",
-                    'column' => "name",
-                ];
-            }
-            if (!empty($orderBy)) {
-                $params['order_by'] = $orderBy;
-            }
-            if (!empty($direction)) {
-                $params['direction'] = $direction;
-            }
-
+        if ($isAdmin) {
             $accounts = $this->accountMapper->findAll($params);
-            $result = [];
-            foreach ($accounts as $account) {
-                $result[$account->getAccid()] = $account->getName();
-            }
-
-            return new Core\DataContainer($result, 'array');
+        }
+        else {
+            $accounts = $this->accountMapper->findByUid($uid, $params);
         }
 
-        if (!in_array($accid, $accids)) {
-            throw new Core\ApiException('Account does not exist or you do not have access to this account: ' . $accid, 6, $this->id, 400);
+        if (empty($accounts)) {
+            throw new Core\ApiException('No accounts found', 6, $this->id, 400);
         }
 
-        $account = $this->accountMapper->findByAccid($accid);
-        if (empty($account->getAccid())) {
-            throw new Core\ApiException('Account does not exist: ' . intval($accid), 6, $this->id, 400);
+        $result = [];
+        foreach ($accounts as $account) {
+            $result[$account->getAccid()] = $account->getName();
         }
-        return new Core\DataContainer($account->dump(), 'array');
+
+        return new Core\DataContainer($result, 'array');
     }
 }

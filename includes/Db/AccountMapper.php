@@ -153,6 +153,24 @@ class AccountMapper extends Mapper
     }
 
     /**
+     * Find an accounts by a user has roles for.
+     *
+     * @param integer $uid
+     *   User ID.
+     *
+     * @return Array
+     *   Array of Account objects.
+     *
+     * @throws \Gaterdata\Core\ApiException
+     */
+    public function findByUid($uid, $params = [])
+    {
+        $sql = 'SELECT DISTINCT a.* FROM account a INNER JOIN user_role ur ON a.accid = ur.accid WHERE ur.uid = ?';
+        $bindParams = [$uid];
+        return $this->fetchRows($sql, $bindParams, $params);
+    }
+
+    /**
      * Map a DB row into an Account object.
      *
      * @param array $row

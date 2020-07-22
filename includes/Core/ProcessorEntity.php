@@ -247,23 +247,11 @@ abstract class ProcessorEntity extends Entity
      * @throws ApiException
      */
     protected function getUserAccids($uid) {
-        $userRoleMapper = new UserRoleMapper($this->db);
         $accountMapper = new AccountMapper($this->db);
-        $userRoles = $userRoleMapper->findByUid($uid);
+        $accounts = $accountMapper->findByUid($uid);
         $accids = [];
-        foreach ($userRoles as $userRole) {
-            $accid = $userRole->getAccid();
-            if (empty($accid)) {
-                $accounts = $accountMapper->findAll();
-                $accids = [];
-                foreach ($accounts as $account) {
-                    $accids[] = $account->getAccid();
-                }
-                return $accids;
-            }
-            if (!in_array($accid, $accids)) {
-                $accids[] = $accid;
-            }
+        foreach ($accounts as $account) {
+            $accids[] = $account->getAccid();
         }
         return $accids;
     }
