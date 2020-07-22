@@ -109,6 +109,25 @@ class RoleMapper extends Mapper
     }
 
     /**
+     * Find a roles a user has assigned.
+     *
+     * @param int $uid
+     *   User ID.
+     *
+     * @return array
+     *   Array of role objects.
+     *
+     * @throws \Gaterdata\Core\ApiException
+     *
+     */
+    public function findByUid($uid)
+    {
+        $sql = 'SELECT DISTINCT r.* FROM role r INNER JOIN user_role ur ON ur.rid = r.rid WHERE ur.uid = ?';
+        $bindParams = [$uid];
+        return $this->fetchRows($sql, $bindParams);
+    }
+
+    /**
      * Map a DB row to the internal attributes.
      *
      * @param array $row

@@ -7,6 +7,15 @@ To set up dev:
 5. $ gulp all
  */
 
+// Directories
+const vendor_src = 'src/vendor/';
+const js_src = 'src/js/**/*.js';
+const scss_src = 'src/scss/**/*.scss';
+const img_src = 'src/images/*';
+const js_dest = 'public/admin/js/';
+const css_dest = 'public/admin/css/';
+const img_dest = 'public/admin/images/';
+
 // Dependencies.
 const gulp = require('gulp');
 const uglify = require('gulp-uglify');
@@ -19,15 +28,6 @@ const notify = require("gulp-notify");
 const imagemin = require('gulp-imagemin');
 const errorHandler = require('gulp-error-handle');
 const rename = require('gulp-rename');
-
-// Directories
-const vendor_src = 'src/vendor/';
-const js_src = 'src/js/**/*.js';
-const scss_src = 'src/scss/**/*.scss';
-const img_src = 'src/images/*';
-const js_dest = 'public/admin/js/';
-const css_dest = 'public/admin/css/';
-const img_dest = 'public/admin/images/';
 
 // Clean js destination dir.
 gulp.task('clean.js', function() {
