@@ -22,11 +22,6 @@ class AccountRead extends Core\ProcessorEntity
     private $userRoleMapper;
 
     /**
-     * @var Db\RoleMapper
-     */
-    private $roleMapper;
-
-    /**
      * {@inheritDoc}
      */
     protected $details = [
@@ -92,7 +87,6 @@ class AccountRead extends Core\ProcessorEntity
         parent::__construct($meta, $request, $db);
         $this->accountMapper = new Db\AccountMapper($db);
         $this->userRoleMapper = new Db\UserRoleMapper($db);
-        $this->roleMapper = new Db\RoleMapper($db);
     }
 
     /**
