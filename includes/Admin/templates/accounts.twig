@@ -9,7 +9,9 @@
   <div class="row ">
     <form method="get" action="/accounts">
       <div class="col s1 ">
-        <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-acc-create"><i class="material-icons">add</i></a>
+        {% if isAdmin == true %}
+          <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-acc-create"><i class="material-icons">add</i></a>
+        {% endif %}
       </div>
       <div class="col s6">
         <div class="input-field">
@@ -44,7 +46,7 @@
         <a href="/applications?account_filter={{ accid }}" title="View applications under this account.">{{ name }}</a>
       </div>
       <div class="col col-height s2 valign-wrapper">
-        {% if accid != 1 %}
+        {% if isAdmin == true and accid != 1 %}
           <a class="btn-floating btn-small white hoverable">
             <i class="material-icons modal-acc-edit-trigger black-text" accid="{{ accid }}" acc-name="{{ name }}" title="Edit this account.">edit</i>
           </a>
