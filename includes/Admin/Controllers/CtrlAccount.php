@@ -20,6 +20,9 @@ class CtrlAccount extends CtrlBase
      */
     protected $permittedRoles = [
         'Administrator',
+        'Account manager',
+        'Application manager',
+        'Developer',
     ];
 
     /**
@@ -73,6 +76,7 @@ class CtrlAccount extends CtrlBase
             'pages' => $pages,
             'menu' => $menu,
             'accounts' => $accounts,
+            'isAdmin' => in_array('Administrator', $this->userRoles),
             'messages' => $this->flash->getMessages(),
         ]);
     }

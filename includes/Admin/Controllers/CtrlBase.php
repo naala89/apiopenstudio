@@ -418,6 +418,7 @@ class CtrlBase
             }
             if (in_array('Account manager', $this->userRoles)) {
                 $menus += [
+                    'Accounts' => '/accounts',
                     'Applications' => '/applications',
                     'Users' => '/users',
                     'User Roles' => '/user/roles',
@@ -426,6 +427,7 @@ class CtrlBase
             }
             if (in_array('Application manager', $this->userRoles)) {
                 $menus += [
+                    'Accounts' => '/accounts',
                     'Applications' => '/applications',
                     'Users' => '/users',
                     'User Roles' => '/user/roles',
@@ -433,6 +435,7 @@ class CtrlBase
             }
             if (in_array('Developer', $this->userRoles)) {
                 $menus += [
+                    'Accounts' => '/accounts',
                     'Resources' => '/resources',
                     'Vars' => '/vars',
                 ];
