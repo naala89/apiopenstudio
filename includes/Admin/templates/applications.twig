@@ -9,9 +9,11 @@
   <div class="row">
 
     <form method="get" action="/applications">
-      <div class="col s1">
-        <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-app-create"><i class="material-icons">add</i></a>
-      </div>
+      {% if 'Administrator' in roles or 'Account manager' in roles or 'Application manager' in roles %}
+        <div class="col s1">
+          <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-app-create"><i class="material-icons">add</i></a>
+        </div>
+      {% endif %}
       <div class="col s3">
         <div class="input-field">
           <input type="text" class="validate" name="keyword" value="{{ params['keyword'] }}">
@@ -20,11 +22,11 @@
       </div>
       <div class="col s3">
         <div class="input-field">
-          <select name="account_filter">
+          <select name="account_id">
             <option value="" selected>All</option>
             {% for accid, account in accounts %}
               {% set selected = '' %}
-              {% if accid == params['account_filter'] %}
+              {% if accid == params['account_id'] %}
                 {% set selected = 'selected' %}
               {% endif %}
               <option value="{{ accid }}" {{ selected }}>{{ account }}</option>
@@ -36,8 +38,8 @@
       <div class="col s2">
         <div class="input-field">
           <select class="input-field" name="order_by">
-            <option value="account" {% if params['order_by'] == "accid" %}selected{% endif %}>Account</option>
-            <option value="application" {% if params['order_by'] == "name" %}selected{% endif %}>Application</option>
+            <option value="account" {% if params['order_by'] == "account" %}selected{% endif %}>Account</option>
+            <option value="application" {% if params['order_by'] == "application" %}selected{% endif %}>Application</option>
           </select>
           <label for="search">Sort by</label>
         </div>
@@ -62,7 +64,7 @@
   {% if applications is empty %}
     <div class="row">
       <div class="col s12">
-        <p>You do not have any applications yet. Click <a class="modal-trigger" href="#modal-app-create">here</a> to create an application </p>
+        <p>No applications.</p>
       </div>
     </div>
   {% else %}
@@ -80,7 +82,7 @@
             {{ application.name }}
           </div>
           <div class="col col-height s2 valign-wrapper">
-            {% if appid > 2 %}
+            {% if appid > 2 and ('Administrator' in roles or 'Account manager' in roles or 'Application manager' in roles) %}
               <a class="btn-floating btn-small white hoverable">
                 <i class="material-icons modal-app-edit-trigger black-text" accid="{{ application.accid }}" appid="{{ appid }}" name="{{ application.name }}" title="Edit this application.">edit</i>
               </a>

@@ -24,6 +24,7 @@ class CtrlApplication extends CtrlBase
         'Administrator',
         'Account manager',
         'Application manager',
+        'Developer',
     ];
 
     /**
@@ -55,22 +56,24 @@ class CtrlApplication extends CtrlBase
         if (!empty($allParams['keyword'])) {
             $appParams['keyword'] = $allParams['keyword'];
         }
-        if (!empty($allParams['account_filter'])) {
-            $appParams['account_filter'] = $allParams['account_filter'];
+        if (!empty($allParams['account_id'])) {
+            $appParams['account_id'] = $allParams['account_id'];
         }
         $appParams['order_by'] = 'name';
         $appParams['direction'] = isset($allParams['direction']) ? $allParams['direction'] : 'asc';
+
         $accParams = [
             'order_by' => 'name',
             'direction' => isset($allParams['direction']) ? $allParams['direction'] : 'asc',
         ];
+
         $page = isset($allParams['page']) ? $allParams['page'] : 1;
     
         $menu = $this->getMenus();
         $accounts = $this->apiCallAccountAll($accParams);
         $applications = $this->apiCallApplicationAll($appParams);
 
-        // Order by account or app name.
+        // Order by account name or app name.
         $sortedApps = [];
         if ($allParams['order_by'] == 'account') {
             foreach ($accounts as $accid => $account) {
@@ -104,6 +107,7 @@ class CtrlApplication extends CtrlBase
             'accounts' => $accounts,
             'applications' => $sortedApps,
             'messages' => $this->flash->getMessages(),
+            'roles' => $this->userRoles,
         ]);
     }
 

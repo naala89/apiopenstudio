@@ -207,8 +207,7 @@ class CtrlBase
      *
      * @return array|mixed
      */
-    protected function apiCallApplicationAll(array $params) {
-        $query = ['application_name' => 'all'];
+    protected function apiCallApplicationAll(array $params = []) {
         foreach ($params as $key => $value) {
             $query[$key] = $value;
         }
@@ -436,6 +435,7 @@ class CtrlBase
             if (in_array('Developer', $this->userRoles)) {
                 $menus += [
                     'Accounts' => '/accounts',
+                    'Applications' => '/applications',
                     'Resources' => '/resources',
                     'Vars' => '/vars',
                 ];
