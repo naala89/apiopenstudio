@@ -17,6 +17,11 @@ class ApplicationRead extends Core\ProcessorEntity
     protected $applicationMapper;
 
     /**
+     * @var Db\UserRoleMapper
+     */
+    protected $userRoleMapper;
+
+    /**
      * {@inheritDoc}
      */
     protected $details = [
@@ -34,28 +39,19 @@ class ApplicationRead extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => 0,
             ],
-            'accountIds' => [
+            'accountId' => [
                 // phpcs:ignore
-                'description' => 'An array of the IDs of the account to fetch applications by. NULL or empty will fetch for all accounts.',
+                'description' => 'Account ID to fetch to filter by. NULL or empty will not filter by account.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['array'],
+                'limitTypes' => ['integer'],
                 'limitValues' => [],
                 'default' => '',
             ],
-            'applicationNames' => [
+            'applicationId' => [
                 // phpcs:ignore
-                'description' => 'An array of the application names. NULL or empty will fetch all applications for the accounts.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitFunctions' => [],
-                'limitTypes' => ['array'],
-                'limitValues' => [],
-                'default' => '',
-            ],
-            'accountFilter' => [
-                'description' => 'Account ID to filter by.',
+                'description' => 'Application ID to filter by. NULL or empty will not filter by application.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
@@ -110,30 +106,36 @@ class ApplicationRead extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-        $accountIds = $this->val('accountIds', true);
-        $accountIds = empty($accountIds) ? [] : $accountIds;
-        $applicationNames = $this->val('applicationNames', true);
-        $applicationNames = empty($applicationNames) ? [] : $applicationNames;
         $uid = $this->val('uid', true);
+        $accountId = $this->val('accountId', true);
+        $applicationId = $this->val('applicationId', true);
+        $keyword = $this->val('keyword', true);
+        $orderBy = $this->val('orderBy', true);
+        $direction = $this->val('direction', true);
 
         // Filter params.
         $params = [];
-        $accountFilter = $this->val('accountFilter', true);
-        if (!empty($accountFilter)) {
-            $params['filter'] = [
+        if (!empty($accountId)) {
+            $params['filter'][] = [
+                'keyword' => $accountId,
                 'column' => 'accid',
-                'keyword' => $accountFilter,
             ];
         }
-        $keyword = $this->val('keyword', true);
-        if (!empty($keyword)) {
-            $params['keyword'] = "%$keyword%";
+        if (!empty($applicationId)) {
+            $params['filter'][] = [
+                'keyword' => $applicationId,
+                'column' => 'appid',
+            ];
         }
-        $orderBy = $this->val('orderBy', true);
+        if (!empty($keyword)) {
+            $params['filter'][] = [
+                'keyword' => "%$keyword%",
+                'column' => 'name',
+            ];
+        }
         if (!empty($orderBy)) {
             $params['order_by'] = $orderBy;
         }
-        $direction = $this->val('direction', true);
         if (!empty($direction)) {
             $params['direction'] = $direction;
         }
@@ -142,11 +144,12 @@ class ApplicationRead extends Core\ProcessorEntity
         $result = [];
         foreach ($applications as $application) {
             $result[$application->getAppid()] = [
-                'name' => $application->getName(),
                 'accid' =>$application->getAccid(),
+                'appid' => $application->getAppid(),
+                'name' => $application->getName(),
             ];
         }
 
-        return $result;
+        return new Core\DataContainer($result, 'array');
     }
 }
