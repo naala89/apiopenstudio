@@ -128,7 +128,7 @@ abstract class Mapper
             }
             if (!empty($arr)) {
                 if (stripos($sql, ' where ') !== false) {
-                    $sql .= ' AND (' . implode(' OR ', $arr) . ')';
+                    $sql .= ' AND (' . implode(' AND ', $arr) . ')';
                 } else {
                     $sql .= ' WHERE (' . implode(' OR ', $arr) . ')';
                 }
