@@ -60,16 +60,19 @@ class ApplicationMapper extends Mapper
     /**
      * Find applications.
      *
+     * @param $params
+     *   Filter params.
+     *
      * @return array
      *   Array of Application objects.
      *
      * @throws \Gaterdata\Core\ApiException
      */
-    public function findAll()
+    public function findAll($params = [])
     {
         $sql = 'SELECT * FROM application';
         $bindParams = [];
-        return $this->fetchRows($sql, $bindParams);
+        return $this->fetchRows($sql, $bindParams, $params);
     }
 
     /**
@@ -94,7 +97,9 @@ class ApplicationMapper extends Mapper
      * Fetch applications for a user.
      *
      * @param $uid
-     *   User ID
+     *   User ID.
+     * @param $params
+     *   Filter params.
      *
      * @return array
      *   Array of Application objects.
@@ -107,25 +112,36 @@ class ApplicationMapper extends Mapper
      */
     public function findByUid($uid, $params)
     {
-        $userRoleMapper = new UserRoleMapper($this->db);
-        if ($userRoleMapper->hasRole($uid, 'Administrator')) {
-            return $this->findAll();
-        }
-        $sql = 'SELECT app.*';
+        $sql = 'SELECT *';
+        $sql .= ' FROM application';
+        $sql .= ' WHERE appid';
+        $sql .= ' IN (';
+        $sql .= ' SELECT appid';
+        $sql .= ' FROM application';
+        $sql .= ' WHERE EXISTS';
+        $sql .= ' (SELECT *';
         $sql .= ' FROM user_role AS ur';
-        $sql .= ' INNER JOIN application AS app';
-        $sql .= ' ON app.accid = ur.accid';
+        $sql .= ' INNER JOIN role AS r';
+        $sql .= ' ON ur.rid = r.rid';
         $sql .= ' WHERE ur.uid = ?';
-        $sql .= ' AND ur.accid IS NOT NULL';
-        $sql .= ' UNION';
-        $sql .= ' SELECT app.*';
-        $sql .= ' FROM user_role AS ur';
-        $sql .= ' INNER JOIN application AS app';
-        $sql .= ' ON app.appid = ur.appid';
+        $sql .= ' AND r.name = "Administrator")';
+        $sql .= ' UNION DISTINCT';
+        $sql .= ' SELECT app.appid appid';
+        $sql .= ' FROM application AS app';
+        $sql .= ' INNER JOIN user_role as ur';
+        $sql .= ' ON ur.accid = app.accid';
+        $sql .= ' INNER JOIN role AS r';
+        $sql .= ' ON r.rid = ur.rid';
         $sql .= ' WHERE ur.uid = ?';
-        $sql .= ' AND ur.accid IS NULL';
-        $sql .= ' AND ur.appid IS NOT NULL';
-        $bindParams = [$uid, $uid];
+        $sql .= ' AND r.name = "Account manager"';
+        $sql .= ' UNION DISTINCT';
+        $sql .= ' SELECT app.appid appid';
+        $sql .= ' FROM application AS app';
+        $sql .= ' INNER JOIN user_role as ur';
+        $sql .= ' ON ur.appid = app.appid';
+        $sql .= ' WHERE ur.uid = ?';
+        $sql .= ' AND ur.appid IS NOT NULL)';
+        $bindParams = [$uid, $uid, $uid];
 
         return $this->fetchRows($sql, $bindParams, $params);
     }
