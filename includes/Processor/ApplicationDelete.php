@@ -24,6 +24,11 @@ class ApplicationDelete extends Core\ProcessorEntity
     protected $applicationMapper;
 
     /**
+     * @var Db\ResourceMapper
+     */
+    protected $resourceMapper;
+
+    /**
      * {@inheritDoc}
      */
     protected $details = [
@@ -61,6 +66,7 @@ class ApplicationDelete extends Core\ProcessorEntity
         parent::__construct($meta, $request, $db);
         $this->userRoleMapper = new Db\UserRoleMapper($this->db);
         $this->applicationMapper = new Db\ApplicationMapper($this->db);
+        $this->resourceMapper = new Db\ResourceMapper($this->db);
     }
 
     /**
@@ -72,34 +78,28 @@ class ApplicationDelete extends Core\ProcessorEntity
 
         $uid = $this->val('uid', true);
         $appid = $this->val('applicationId', true);
-
         $application = $this->applicationMapper->findByAppid($appid);
+        $accid = $application->getAccid();
+        if (!$this->userRoleMapper->hasRole($uid, 'Administrator')
+            && !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')) {
+            throw new ApiException("Permission denied.", 6, $this->id, 417);
+        }
         if (empty($application->getAppid())) {
-            throw new ApiException("Delete application, no such appid: $appid",
+            throw new ApiException("Delete application, invalid appid: $appid",
                 6, $this->id, 417);
         }
-        $accid = $application->getAccid();
 
-        if (
-            !$this->userRoleMapper->hasRole($uid, 'Administrator')
-            && !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')
-        ) {
-            throw new ApiException('Permission denied.', 6, $this->id, 417);
-        }
-
-        $resourceMapper = new Db\ResourceMapper($this->db);
-
-        $resources = $resourceMapper->findByAppId($appid);
+        $resources = $this->resourceMapper->findByAppId($appid);
         if (!empty($resources)) {
             throw new ApiException("Delete application, resources are assigned to this application: $appid",
                 6, $this->id, 417);
         }
-        $userRoles = $userRoleMapper->findByFilter(['col' => ['appid' => $appid]]);
+        $userRoles = $this->userRoleMapper->findByFilter(['col' => ['appid' => $appid]]);
         if (!empty($userRoles)) {
             throw new ApiException("Delete application, users are assigned to this application: $appid",
                 6, $this->id, 417);
         }
 
-        return $applicationMapper->delete($application);
+        return $this->applicationMapper->delete($application);
     }
 }

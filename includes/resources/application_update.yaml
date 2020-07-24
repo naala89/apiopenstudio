@@ -23,6 +23,24 @@ security:
 process:
   function: application_update
   id: application_update_process
+  uid:
+    function: field_value
+    id: application_update_uid
+    key_value: value
+    field:
+      function: var_field
+      id: application_update_field_uid
+      array:
+        function: filter
+        id: application_update_filter uid
+        filter: uid
+        inverse: true
+        source:
+          function: user_read
+          id: application_update_user
+          token:
+            function: bearer_token
+            id: application_update_uid_token
   appid:
     function: var_uri
     id: application_update_appid
