@@ -73,21 +73,21 @@
       <h6 class="col col-height s5 valign-wrapper">Application</h6>
       <h6 class="col col-height s2 valign-wrapper">Actions</h6>
     </div>
-      {% for appid, application in applications %}
+      {% for application in applications %}
         <div class="row hoverable">
           <div class="col col-height s5 valign-wrapper">
-            <a href="/accounts?keyword={{ application.account }}" title="View this account.">{{ application.account }}</a>
+            <a href="/applications?account_id={{ application.accid }}" title="Filter applications for this account.">{{ accounts[application.accid] }}</a>
           </div>
           <div class="col col-height s5 valign-wrapper">
             {{ application.name }}
           </div>
           <div class="col col-height s2 valign-wrapper">
-            {% if appid > 2 and ('Administrator' in roles or 'Account manager' in roles or 'Application manager' in roles) %}
+            {% if application.appid > 2 and ('Administrator' in roles or 'Account manager' in roles or 'Application manager' in roles) %}
               <a class="btn-floating btn-small white hoverable">
-                <i class="material-icons modal-app-edit-trigger black-text" accid="{{ application.accid }}" appid="{{ appid }}" name="{{ application.name }}" title="Edit this application.">edit</i>
+                <i class="material-icons modal-app-edit-trigger black-text" accid="{{ application.accid }}" appid="{{ application.appid }}" name="{{ application.name }}" title="Edit this application.">edit</i>
               </a>
               <a class="btn-floating btn-small white hoverable">
-                <i class="material-icons modal-app-delete-trigger black-text" appid="{{ appid }}" name="{{ application.name }}" title="Delete this application.">delete</i>
+                <i class="material-icons modal-app-delete-trigger black-text" appid="{{ application.appid }}" name="{{ application.name }}" title="Delete this application.">delete</i>
               </a>
             {% endif %}
           </div>

@@ -22,6 +22,11 @@ class ApplicationRead extends Core\ProcessorEntity
     protected $userRoleMapper;
 
     /**
+     * @var Db\UserMapper
+     */
+    protected $userMapper;
+
+    /**
      * {@inheritDoc}
      */
     protected $details = [
@@ -30,14 +35,14 @@ class ApplicationRead extends Core\ProcessorEntity
         'description' => 'Fetch a single or multiple applications.',
         'menu' => 'Admin',
         'input' => [
-            'uid' => [
-                'description' => 'User ID of the user making the call. This is used to limit the delete applications to account manager with account access and administrators.',
-                'cardinality' => [1, 1],
+            'token' => [
+                'description' => 'Token of the user making the call. This is used to limit access.',
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['integer'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => 0,
+                'default' => '',
             ],
             'accountId' => [
                 // phpcs:ignore
@@ -97,16 +102,19 @@ class ApplicationRead extends Core\ProcessorEntity
         parent::__construct($meta, $request, $db);
         $this->applicationMapper = new Db\ApplicationMapper($this->db);
         $this->userRoleMapper = new Db\UserRoleMapper($this->db);
+        $this->userMapper = new Db\UserMapper($this->db);
     }
 
     /**
      * {@inheritDoc}
+     * @throws Core\ApiException
      */
     public function process()
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-        $uid = $this->val('uid', true);
+        $token = $this->val('token', true);
+        $user = $this->userMapper->findBytoken($token);
         $accountId = $this->val('accountId', true);
         $applicationId = $this->val('applicationId', true);
         $keyword = $this->val('keyword', true);
@@ -140,7 +148,17 @@ class ApplicationRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        $applications = $this->applicationMapper->findByUid($uid, $params);
+        if (!empty($token)) {
+            $u = $this->userMapper->findBytoken($token);
+            if (empty($user->getUid())) {
+                throw new Core\ApiException('Invalid token.', 6, $this->id, 403);
+            }
+            $applications = $this->applicationMapper->findByUid($user->getUid(), $params);
+        }
+        else {
+            $applications = $this->applicationMapper->findAll($params);
+        }
+
         $result = [];
         foreach ($applications as $application) {
             $result[$application->getAppid()] = [

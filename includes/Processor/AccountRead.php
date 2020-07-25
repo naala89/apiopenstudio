@@ -22,6 +22,11 @@ class AccountRead extends Core\ProcessorEntity
     private $userRoleMapper;
 
     /**
+     * @var Db\UserMapper
+     */
+    private $userMapper;
+
+    /**
      * {@inheritDoc}
      */
     protected $details = [
@@ -30,12 +35,12 @@ class AccountRead extends Core\ProcessorEntity
         'description' => 'Fetch a single or all accounts.',
         'menu' => 'Admin',
         'input' => [
-            'uid' => [
-                'description' => 'User ID of the user making the call. This is used to limit the accounts viewable whilst and still have access by all admin roles.',
+            'token' => [
+                'description' => 'Request token of the user making the call. This is used to limit the accounts viewable whilst and still have access by all admin roles.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['integer'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => 0,
             ],
@@ -86,6 +91,7 @@ class AccountRead extends Core\ProcessorEntity
     {
         parent::__construct($meta, $request, $db);
         $this->accountMapper = new Db\AccountMapper($db);
+        $this->userMapper = new Db\UserMapper($db);
         $this->userRoleMapper = new Db\UserRoleMapper($db);
     }
 
@@ -96,12 +102,12 @@ class AccountRead extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-        $uid = $this->val('uid', true);
+        $token = $this->val('token', true);
+        $user = $this->userMapper->findBytoken($token);
         $accid = $this->val('accid', true);
         $keyword = $this->val('keyword', true);
         $orderBy = $this->val('order_by', true);
         $direction = $this->val('direction', true);
-        $isAdmin = $this->userRoleMapper->hasRole($uid, 'Administrator');
 
         $params = [];
         if (!empty($keyword)) {
@@ -123,12 +129,7 @@ class AccountRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        if ($isAdmin) {
-            $accounts = $this->accountMapper->findAll($params);
-        }
-        else {
-            $accounts = $this->accountMapper->findByUid($uid, $params);
-        }
+        $accounts = $this->accountMapper->findAllForUser($user->getUid(), $params);
 
         if (empty($accounts)) {
             throw new Core\ApiException('No accounts found', 6, $this->id, 400);
@@ -136,7 +137,7 @@ class AccountRead extends Core\ProcessorEntity
 
         $result = [];
         foreach ($accounts as $account) {
-            $result[$account->getAccid()] = $account->getName();
+            $result[] = $account->dump();
         }
 
         return new Core\DataContainer($result, 'array');

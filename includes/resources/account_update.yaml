@@ -21,6 +21,9 @@ security:
 process:
   function: account_update
   id: account_update
+  token:
+    function: bearer_token
+    id: account_update_token
   accid:
     function: var_uri
     id: account_update_accid

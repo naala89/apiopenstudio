@@ -15,19 +15,42 @@ security:
   id: user_update_security
   token:
     function: bearer_token
-    id: user_update_token
+    id: user_update_security_token
   roles:
     - Administrator
     - Account manager
     - Application manager
+    - Developer
 
 process:
   function: user_update
   id: user_update_process
+  token:
+    function: bearer_token
+    id: user_update_token
   uid:
     function: var_uri
     id: user_update_uid
     index: 0
+  active:
+    function: field_value
+    id: user_update_active
+    key_value: value
+    field:
+      function: var_field
+      id: user_update_field_active
+      array:
+        function: filter
+        id: user_update_filter_active
+        filter: active
+        inverse: true
+        source:
+          function: convert_to_array
+          id: user_update_array_active
+          source:
+            function: var_body
+            id: user_update_body_active
+            nullable: false
   username:
     function: field_value
     id: user_update_username
@@ -65,25 +88,6 @@ process:
           source:
             function: var_body
             id: user_update_body_password
-            nullable: false
-  active:
-    function: field_value
-    id: user_update_active
-    key_value: value
-    field:
-      function: var_field
-      id: user_update_field_active
-      array:
-        function: filter
-        id: user_update_filter_active
-        filter: active
-        inverse: true
-        source:
-          function: convert_to_array
-          id: user_update_array_active
-          source:
-            function: var_body
-            id: user_update_body_active
             nullable: false
   honorific:
     function: field_value

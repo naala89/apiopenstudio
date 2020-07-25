@@ -163,10 +163,31 @@ class AccountMapper extends Mapper
      *
      * @throws \Gaterdata\Core\ApiException
      */
-    public function findByUid($uid, $params = [])
+    public function findAllForUser($uid, $params = [])
     {
-        $sql = 'SELECT DISTINCT a.* FROM account a INNER JOIN user_role ur ON a.accid = ur.accid WHERE ur.uid = ?';
-        $bindParams = [$uid];
+        $sql = 'SELECT *';
+        $sql .= ' FROM account';
+        $sql .= ' WHERE accid';
+        $sql .= ' IN (';
+        $sql .= ' SELECT accid';
+        $sql .= ' FROM account';
+        $sql .= ' WHERE EXISTS';
+        $sql .= ' (';
+        $sql .= ' SELECT *';
+        $sql .= ' FROM user_role AS ur';
+        $sql .= ' INNER JOIN role AS r';
+        $sql .= ' ON ur.rid = r.rid';
+        $sql .= ' WHERE ur.uid = ?';
+        $sql .= ' AND r.name = "Administrator"';
+        $sql .= ' )';
+        $sql .= ' UNION DISTINCT';
+        $sql .= ' SELECT a.accid';
+        $sql .= ' FROM account AS a';
+        $sql .= ' INNER JOIN user_role AS ur';
+        $sql .= ' ON a.accid = ur.accid';
+        $sql .= ' WHERE ur.uid = ?';
+        $sql .= ' )';
+        $bindParams = [$uid, $uid];
         return $this->fetchRows($sql, $bindParams, $params);
     }
 

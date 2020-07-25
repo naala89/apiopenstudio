@@ -19,6 +19,11 @@ class ApplicationDelete extends Core\ProcessorEntity
     protected $userRoleMapper;
 
     /**
+     * @var Db\UserMapper
+     */
+    protected $userMapper;
+
+    /**
      * @var Db\UserRoleMapper
      */
     protected $applicationMapper;
@@ -37,12 +42,12 @@ class ApplicationDelete extends Core\ProcessorEntity
         'description' => 'Delete an application.',
         'menu' => 'Admin',
         'input' => [
-            'uid' => [
-                'description' => 'User ID of the user making the call. This is used to limit the delete applications to account manager with account access and administrators.',
+            'token' => [
+                'description' => 'Request token of the user making the call.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['integer'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => 0,
             ],
@@ -65,6 +70,7 @@ class ApplicationDelete extends Core\ProcessorEntity
     {
         parent::__construct($meta, $request, $db);
         $this->userRoleMapper = new Db\UserRoleMapper($this->db);
+        $this->userMapper = new Db\UserMapper($this->db);
         $this->applicationMapper = new Db\ApplicationMapper($this->db);
         $this->resourceMapper = new Db\ResourceMapper($this->db);
     }
@@ -76,12 +82,13 @@ class ApplicationDelete extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-        $uid = $this->val('uid', true);
+        $token = $this->val('token', true);
+        $user = $this->userMapper->findBytoken($token);
         $appid = $this->val('applicationId', true);
         $application = $this->applicationMapper->findByAppid($appid);
         $accid = $application->getAccid();
-        if (!$this->userRoleMapper->hasRole($uid, 'Administrator')
-            && !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')) {
+        if (!$this->userRoleMapper->hasRole($user->getUid(), 'Administrator')
+            && !$this->userRoleMapper->hasAccidRole($user->getUid(), $accid, 'Account manager')) {
             throw new ApiException("Permission denied.", 6, $this->id, 417);
         }
         if (empty($application->getAppid())) {

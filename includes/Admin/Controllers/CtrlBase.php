@@ -440,7 +440,9 @@ class CtrlBase
                     'Vars' => '/vars',
                 ];
             }
+            $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
             $menus += [
+                'My account' => "/user/edit/$uid",
                 'Logout' => '/logout',
             ];
         }
@@ -460,7 +462,8 @@ class CtrlBase
         if ($e->hasResponse()) {
             $responseObject = json_decode($e->getResponse()->getBody()->getContents());
             $message = $responseObject->error->message;
-        } else {
+        }
+        if (empty($message)) {
             $message = $e->getMessage();
         }
         return $message;
