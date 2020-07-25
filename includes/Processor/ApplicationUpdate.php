@@ -28,6 +28,11 @@ class ApplicationUpdate extends Core\ProcessorEntity
     protected $userRoleMapper;
 
     /**
+     * @var Db\UserMapper
+     */
+    protected $userMapper;
+
+    /**
      * {@inheritDoc}
      */
     protected $details = [
@@ -36,12 +41,12 @@ class ApplicationUpdate extends Core\ProcessorEntity
         'description' => 'Update an application.',
         'menu' => 'Admin',
         'input' => [
-            'uid' => [
-                'description' => 'User ID of the user making the call. This is used to limit the delete applications to account manager with account access and administrators.',
+            'token' => [
+                'description' => 'Request token of the user making the call.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['integer'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => 0,
             ],
@@ -84,6 +89,7 @@ class ApplicationUpdate extends Core\ProcessorEntity
         $this->accountMapper = new Db\AccountMapper($this->db);
         $this->applicationMapper = new Db\ApplicationMapper($this->db);
         $this->userRoleMapper = new Db\UserRoleMapper($this->db);
+        $this->userMapper = new Db\UserMapper($this->db);
     }
 
     /**
@@ -93,7 +99,8 @@ class ApplicationUpdate extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-        $uid = $this->val('uid', true);
+        $token = $this->val('token', true);
+        $user = $this->userMapper->findBytoken($token);
         $appid = $this->val('appid', true);
         $accid = $this->val('accid', true);
         $name = $this->val('name', true);
@@ -103,12 +110,12 @@ class ApplicationUpdate extends Core\ProcessorEntity
             throw new ApiException("Application ID does not exist: $appid", 6, $this->id, 417);
         }
 
-        if (!$this->userRoleMapper->hasRole($uid, 'Administrator')) {
+        if (!$this->userRoleMapper->hasRole($user->getUid(), 'Administrator')) {
             if ((
                     !empty($accid)
-                    && $this->userRoleMapper->findByUidAppidRolename($uid, $appid, 'Account manager')
+                    && $this->userRoleMapper->findByUidAppidRolename($user->getUid(), $appid, 'Account manager')
                 )
-                && !$this->userRoleMapper->findByUidAppidRolename($uid, $application->getAccid(), 'Account manager')) {
+                && !$this->userRoleMapper->findByUidAppidRolename($user->getUid(), $application->getAccid(), 'Account manager')) {
                 throw new ApiException("Permission denied.", 6, $this->id, 417);
             }
         }

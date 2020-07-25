@@ -35,7 +35,7 @@ class UserRead extends Core\ProcessorEntity
                 'default' => '',
             ],
             'uid' => [
-                'description' => 'The user ID of the user.',
+                'description' => 'Filter the results by user ID.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
@@ -44,7 +44,7 @@ class UserRead extends Core\ProcessorEntity
                 'default' => -1,
             ],
             'username' => [
-                'description' => 'The username of the user.',
+                'description' => 'Filter the results by username.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
@@ -53,7 +53,7 @@ class UserRead extends Core\ProcessorEntity
                 'default' => '',
             ],
             'email' => [
-                'description' => 'The email of the user.',
+                'description' => 'Filter the results by email.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
@@ -63,7 +63,7 @@ class UserRead extends Core\ProcessorEntity
             ],
             'keyword' => [
                 // phpcs:ignore
-                'description' => 'User keyword to filter by, this is applied to username, first name, last name and email.',
+                'description' => 'Filter the results by keyword. This is applied to username.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
@@ -117,45 +117,33 @@ class UserRead extends Core\ProcessorEntity
         $orderBy = empty($orderBy) ? 'uid' : $orderBy;
         $direction = $this->val('direction', true);
 
-        if (!empty($token)) {
-            return $this->userByToken($token);
-        }
+        $currentUser = $this->userMapper->findBytoken($token);
+
+        $params = [];
         if ($uid > 0) {
-            return $this->userByUid($uid);
+            $params['filter'][] = ['keyword' => $uid, 'column' => 'uid'];
         }
         if (!empty($username)) {
-            return $this->userByUsername($username);
+            $params['filter'][] = ['keyword' => $username, 'column' => 'username'];
         }
         if (!empty($email)) {
-            return $this->userByEmail($email);
+            $params['filter'][] = ['keyword' => $email, 'column' => 'email'];
+        }
+        if (!empty($keyword)) {
+            $params['filter'][] = ['keyword' => "%$keyword%", 'column' => 'username'];
+        }
+        if (!empty($orderBy)) {
+            $params['order_by'] = $orderBy;
+        }
+        if (!empty($direction)) {
+            $params['direction'] = $direction;
         }
 
-        if (!empty($keyword)) {
-            // Find by keyword.
-            $params = [
-                'filter' => [
-                    ['keyword' => "%$keyword%", 'column' => 'username'],
-                    ['keyword' => "%$keyword%", 'column' => 'name_first'],
-                    ['keyword' => "%$keyword%", 'column' => 'name_last'],
-                    ['keyword' => "%$keyword%", 'column' => 'email'],
-                ],
-                'order_by' => $orderBy,
-                'direction' => $direction,
-            ];
-            $users = $this->userMapper->findAll($params);
-        } else {
-            // Fetch all.
-            $params = [
-                'order_by' => $orderBy,
-                'direction' => $direction,
-            ];
-            $users = $this->userMapper->findAll($params);
-        }
+        $users = $this->userMapper->findAllByPermissions($currentUser->getUid(), $params);
 
         $result = [];
         foreach ($users as $user) {
-            $u = $user->dump();
-            $result[$u['uid']] = $u;
+            $result[] = $user->dump();
         }
 
         return new Core\DataContainer($result, 'array');

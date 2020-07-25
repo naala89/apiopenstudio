@@ -40,18 +40,18 @@
     <h6 class="col col-height s10 valign-wrapper">Name</h6>
     <h6 class="col col-height s2 valign-wrapper">Actions</h6>
   </div>
-  {% for accid, name in accounts %}
+  {% for account in accounts %}
     <div class="row hoverable">
       <div class="col col-height s10 valign-wrapper">
-        <a href="/applications?account_filter={{ accid }}" title="View applications under this account.">{{ name }}</a>
+        <a href="/applications?account_filter={{ account.accid }}" title="View applications under this account.">{{ account.name }}</a>
       </div>
       <div class="col col-height s2 valign-wrapper">
-        {% if isAdmin == true and accid != 1 %}
+        {% if isAdmin == true and account.accid != 1 %}
           <a class="btn-floating btn-small white hoverable">
-            <i class="material-icons modal-acc-edit-trigger black-text" accid="{{ accid }}" acc-name="{{ name }}" title="Edit this account.">edit</i>
+            <i class="material-icons modal-acc-edit-trigger black-text" accid="{{ account.accid }}" acc-name="{{ account.name }}" title="Edit this account.">edit</i>
           </a>
           <a class="btn-floating btn-small white hoverable">
-            <i class="material-icons modal-acc-delete-trigger black-text" accid="{{ accid }}" acc-name="{{ name }}" title="Delete this account.">delete</i>
+            <i class="material-icons modal-acc-delete-trigger black-text" accid="{{ account.accid }}" acc-name="{{ account.name }}" title="Delete this account.">delete</i>
           </a>
         {% endif %}
       </div>

@@ -103,8 +103,10 @@ class UserMapper extends Mapper
     }
 
     /**
-     * Find all user.
+     * Find all users. If the calling uid does not have elevated access, only return that user.
      *
+     * @param array $uid
+     *   User ID of the current user.
      * @param array $params
      *   @see \Gaterdata\Db\Mapper.
      *
@@ -113,11 +115,42 @@ class UserMapper extends Mapper
      *
      * @throws ApiException
      */
-    public function findAll($params = [])
+    public function findAllByPermissions($uid, $params = [])
+    {
+        $elevatedRoles = ["Administrator", "Account manager", "application manager"];
+        $sql = 'SELECT *';
+        $sql .= ' FROM user';
+        $sql .= ' WHERE uid IN (';
+        $sql .= ' SELECT uid';
+        $sql .= ' FROM user';
+        $sql .= ' WHERE EXISTS (';
+        $sql .= ' SELECT *';
+        $sql .= ' FROM user_role AS ur';
+        $sql .= ' INNER JOIN role AS r';
+        $sql .= ' ON ur.rid = r.rid';
+        $sql .= ' WHERE ur.uid = ?';
+        $sql .= ' AND r.name IN ("' . implode('", "', $elevatedRoles) . '")';
+        $sql .= ' )';
+        $sql .= ' UNION DISTINCT';
+        $sql .= ' SELECT uid';
+        $sql .= ' FROM user';
+        $sql .= ' WHERE uid = ?)';
+        $bindParams = [$uid, $uid];
+        return $this->fetchRows($sql, $bindParams, $params);
+    }
+
+    /**
+     * Find allUsers
+     *
+     * @return array
+     *   User objects.
+     *
+     * @throws ApiException
+     */
+    public function findAll()
     {
         $sql = 'SELECT * FROM user';
-        $bindParams = [];
-        return $this->fetchRows($sql, $bindParams, $params);
+        return $this->fetchRows($sql);
     }
 
     /**
@@ -187,8 +220,8 @@ class UserMapper extends Mapper
      */
     public function findBytoken($token)
     {
-        $sql = 'SELECT * FROM user WHERE token = ? AND token_ttl > ?';
-        $bindParams = [$token, Utilities::mysqlNow()];
+        $sql = 'SELECT * FROM user WHERE token = ? AND token_ttl > now()';
+        $bindParams = [$token];
         return $this->fetchRow($sql, $bindParams);
     }
 

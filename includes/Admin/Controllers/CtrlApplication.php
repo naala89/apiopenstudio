@@ -73,6 +73,11 @@ class CtrlApplication extends CtrlBase
         $accounts = $this->apiCallAccountAll($accParams);
         $applications = $this->apiCallApplicationAll($appParams);
 
+        $sortedAccs = [];
+        foreach ($accounts as $account) {
+            $sortedAccs[$account['accid']] = $account['name'];
+        }
+
         // Order by account name or app name.
         $sortedApps = [];
         if ($allParams['order_by'] == 'account') {
@@ -104,7 +109,7 @@ class CtrlApplication extends CtrlBase
             'params' => $allParams,
             'page' => $page,
             'pages' => $pages,
-            'accounts' => $accounts,
+            'accounts' => $sortedAccs,
             'applications' => $sortedApps,
             'messages' => $this->flash->getMessages(),
             'roles' => $this->userRoles,

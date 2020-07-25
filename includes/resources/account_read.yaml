@@ -15,7 +15,7 @@ security:
   id: account_read_security
   token:
     function: bearer_token
-    id: account_read_token
+    id: account_read_security_token
   roles:
     - Administrator
     - Account manager
@@ -27,24 +27,9 @@ security:
 process:
   function: account_read
   id: account_read_process
-  uid:
-    function: field_value
-    id: resource_read_uid
-    key_value: value
-    field:
-      function: var_field
-      id: resource_read_field_uid
-      array:
-        function: filter
-        id: resource_read_filter uid
-        filter: uid
-        inverse: true
-        source:
-          function: user_read
-          id: resource_read_user
-          token:
-            function: bearer_token
-            id: resource_read_uid_token
+  token:
+    function: bearer_token
+    id: account_read_token
   accid:
     function: var_uri
     id: account_read_accid

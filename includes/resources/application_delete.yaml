@@ -15,7 +15,7 @@ security:
   id: application_delete_security
   token:
     function: bearer_token
-    id: application_delete_token
+    id: application_delete_security_token
   roles:
     - Administrator
     - Account manager
@@ -23,24 +23,9 @@ security:
 process:
   function: application_delete
   id: application_delete_process
-  uid:
-    function: field_value
-    id: application_delete_uid
-    key_value: value
-    field:
-      function: var_field
-      id: application_delete_field_uid
-      array:
-        function: filter
-        id: application_delete_filter uid
-        filter: uid
-        inverse: true
-        source:
-          function: user_read
-          id: application_delete_user
-          token:
-            function: bearer_token
-            id: application_delete_uid_token
+  token:
+    function: bearer_token
+    id: account_delete_token
   applicationId:
     function: var_uri
     id: application_delete_application_id

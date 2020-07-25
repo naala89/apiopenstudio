@@ -21,7 +21,7 @@ class UserDelete extends Core\ProcessorEntity
         'menu' => 'Admin',
         'input' => [
             'uid' => [
-                'description' => 'The user ID of the user.',
+                'description' => 'The user ID of the user to delete.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
@@ -45,13 +45,11 @@ class UserDelete extends Core\ProcessorEntity
 
         $userMapper = new Db\UserMapper($this->db);
 
-        // Find by UID.
         $user = $userMapper->findByUid($uid);
         if (empty($user->getUid())) {
             throw new Core\ApiException("User does not exist, uid: $uid", 6, $this->id, 400);
         }
 
         return $userMapper->delete($user);
-
     }
 }

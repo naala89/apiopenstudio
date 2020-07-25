@@ -25,6 +25,15 @@ class UserUpdate extends Core\ProcessorEntity
         'description' => 'Update a user.',
         'menu' => 'Admin',
         'input' => [
+            'token' => [
+                'description' => 'The current users token.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
             'uid' => [
                 'description' => 'The user ID of the user.',
                 'cardinality' => [1, 1],
@@ -36,7 +45,7 @@ class UserUpdate extends Core\ProcessorEntity
             ],
             'username' => [
                 'description' => 'The username of the user.',
-                'cardinality' => [1, 1],
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
                 'limitTypes' => ['text'],
@@ -45,7 +54,7 @@ class UserUpdate extends Core\ProcessorEntity
             ],
             'email' => [
                 'description' => 'The email of the user.',
-                'cardinality' => [1, 1],
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
                 'limitTypes' => ['text'],
@@ -165,7 +174,7 @@ class UserUpdate extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['text'],
+                'limitTypes' => ['text', 'integer'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -207,46 +216,82 @@ class UserUpdate extends Core\ProcessorEntity
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
         $uid = $this->val('uid', true);
-        $username = $this->val('username', true);
-        $email = $this->val('email', true);
-        $password = $this->val('password', true);
-
-        var_export($uid);exit;
-
-        $user = $this->userMapper->findByUsername($username);
-        if ($user->getUid() != $uid) {
-            throw new Core\ApiException("Username $username already exists", 6, $this->id, 400);
+        if (!empty($token = $this->val('token', true))) {
+            $currentUser = $this->userMapper->findBytoken($this->val('token', true));
+            $user = $this->userMapper->findAllByPermissions($currentUser->getUid(),
+                ['filter' => ['keyword' => $uid, 'column' => 'uid']]
+            );
+            if (empty($user->getUid())) {
+                throw new Core\ApiException("Permission denied.", 6, $this->id, 400);
+            }
         }
-        $user = $this->userMapper->findByEmail($email);
-        if (!empty($user->getUid()) && $user->getUid() != $uid) {
-            throw new Core\ApiException("Email $email already exists", 6, $this->id, 400);
-        }
-        $user = $this->userMapper->findByUid($uid);
-        if (!empty($user->getUid()) && $user->getUid() != $uid) {
-            throw new Core\ApiException("Invalid UID: $uid", 6, $this->id, 400);
+        else {
+            $user = $this->userMapper->findByUid($uid);
+            if (empty($user->getUid())) {
+                throw new Core\ApiException("User does not exist: $uid", 6, $this->id, 400);
+            }
         }
 
-        $active = $this->val('active', true);
-        $bool = ($active === 'true') ? true : ($active === 'false' ? false : $active);
-        $user->setActive((boolean) $bool ? 1 : 0);
-        $user->setUsername($username);
-        if (!empty($password)) {
+        if (!empty($active = $this->val('active', true))) {
+            $active = $active === 'true' ? true : ($active === 'false' ? false : $active);
+            $user->setActive((boolean) $active ? 1 : 0);
+        }
+        if (!empty($username = $this->val('username', true)) && $user->getUsername() != $username) {
+            $userCheck = $this->userMapper->findByUsername($username);
+            if (!empty($userCheck->getUid())) {
+                throw new Core\ApiException("Username $username already exists", 6, $this->id, 400);
+            }
+            $user->setUsername($username);
+        }
+        if (!empty($email = $this->val('email', true)) && $user->getEmail() != $email) {
+            $userCheck = $this->userMapper->findByEmail($email);
+            if (!empty($userCheck->getUid())) {
+                throw new Core\ApiException("Email $email already exists", 6, $this->id, 400);
+            }
+            $user->setEmail($email);
+        }
+        if (!empty($password = $this->val('password', true))) {
             $user->setPassword($password);
         }
-        $user->setEmail($email);
-        $user->setHonorific($this->val('honorific', true));
-        $user->setNameFirst($this->val('name_first', true));
-        $user->setNameLast($this->val('name_last', true));
-        $user->setCompany($this->val('company', true));
-        $user->setWebsite($this->val('website', true));
-        $user->setAddressStreet($this->val('address_street', true));
-        $user->setAddressSuburb($this->val('address_suburb', true));
-        $user->setAddressCity($this->val('address_city', true));
-        $user->setAddressState($this->val('address_state', true));
-        $user->setAddressCountry($this->val('address_country', true));
-        $user->setAddressPostcode($this->val('address_postcode', true));
-        $user->setPhoneMobile($this->val('phone_mobile', true));
-        $user->setPhoneWork($this->val('phone_work', true));
+        if (!empty($honorific = $this->val('honorific', true))) {
+            $user->setHonorific($honorific);
+        }
+        if (!empty($nameFirst = $this->val('name_first', true))) {
+            $user->setNameFirst($nameFirst);
+        }
+        if (!empty($nameLast = $this->val('name_last', true))) {
+            $user->setNameLast($nameLast);
+        }
+        if (!empty($company = $this->val('company', true))) {
+            $user->setCompany($company);
+        }
+        if (!empty($website = $this->val('website', true))) {
+            $user->setWebsite($website);
+        }
+        if (!empty($addressStreet = $this->val('address_street', true))) {
+            $user->setAddressStreet($addressStreet);
+        }
+        if (!empty($addressSuburb = $this->val('address_suburb', true))) {
+            $user->setAddressSuburb($addressSuburb);
+        }
+        if (!empty($addressCity = $this->val('address_city', true))) {
+            $user->setAddressCity($addressCity);
+        }
+        if (!empty($addressState = $this->val('address_state', true))) {
+            $user->setAddressState($addressState);
+        }
+        if (!empty($addressCountry = $this->val('address_country', true))) {
+            $user->setAddressCountry($addressCountry);
+        }
+        if (!empty($addressPostcode = $this->val('address_postcode', true))) {
+            $user->setAddressPostcode($addressPostcode);
+        }
+        if (!empty($phoneMobile = $this->val('phone_mobile', true))) {
+            $user->setPhoneMobile($phoneMobile);
+        }
+        if (!empty($phoneWork = $this->val('phone_work', true))) {
+            $user->setPhoneWork($phoneWork);
+        }
 
         $this->userMapper->save($user);
 

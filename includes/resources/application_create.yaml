@@ -15,7 +15,7 @@ security:
   id: application_create_security
   token:
     function: bearer_token
-    id: application_create_token
+    id: application_create_security_token
   roles:
     - Administrator
     - Account manager
@@ -23,24 +23,9 @@ security:
 process:
   function: application_create
   id: application_create_process
-  uid:
-    function: field_value
-    id: application_read_uid
-    key_value: value
-    field:
-      function: var_field
-      id: application_read_field_uid
-      array:
-        function: filter
-        id: application_read_filter uid
-        filter: uid
-        inverse: true
-        source:
-          function: user_read
-          id: application_read_user
-          token:
-            function: bearer_token
-            id: application_read_uid_token
+  token:
+    function: bearer_token
+    id: account_create_token
   accid:
     function: var_post
     id: application_create_accid

@@ -20,9 +20,9 @@ class CtrlUsers extends CtrlBase
    * @var array
    */
     protected $permittedRoles = [
-    'Administrator',
-    'Account manager',
-    'Application manager',
+        'Administrator',
+        'Account manager',
+        'Application manager',
     ];
 
     /**
