@@ -26,8 +26,8 @@
         <div class="input-field">
           <select class="input-field" name="accid">
             <option value="">All</option>
-            {% for accid, account in accounts %}
-              <option value="{{ accid }}" {% if params.accid == accid %}selected{% endif %}>{{ account }}</option>
+            {% for account in accounts %}
+              <option value="{{ account.accid }}" {% if params.accid == account.accid %}selected{% endif %}>{{ account.name }}</option>
             {% endfor %}
           </select>
           <label for="accid">Account</label>
@@ -74,7 +74,7 @@
     <div class="row hoverable">
       <div class="col col-height s2 valign-wrapper truncate"><a href="/users?keyword={{ users[user_role.uid].username }}">{{ users[user_role.uid].username }}</a></div>
       <div class="col col-height s2 valign-wrapper truncate"><a href="/users?keyword={{ users[user_role.uid].email }}">{{ users[user_role.uid].email }}</a></div>
-      <div class="col col-height s2 valign-wrapper truncate"><a href="/accounts?keyword={{ accounts[user_role.accid] }}">{{ accounts[user_role.accid] }}</a></div>
+      <div class="col col-height s2 valign-wrapper truncate"><a href="/accounts?keyword={{ accounts[user_role.accid] }}">{{ accounts[user_role.accid].name }}</a></div>
       <div class="col col-height s2 valign-wrapper truncate"><a href="/applications?keyword={{ applications[user_role.appid].name }}">{{ applications[user_role.appid].name }}</a> </div>
       <div class="col col-height s2 valign-wrapper truncate">{{ roles[user_role.rid] }}</div>
       <div class="col col-height s2 valign-wrapper">

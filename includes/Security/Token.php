@@ -21,20 +21,10 @@ class Token extends Core\ProcessorEntity
      */
     protected $userMapper;
 
-    /**
-     * @var Db\RoleMapper
-     */
-    protected $roleMapper;
-
-    /**
-     * @var Db\UserRoleMapper
-     */
-    protected $userRoleMapper;
-
     protected $details = [
         'name' => 'Token',
         'machineName' => 'token',
-        'description' => 'Validate that the user has a valid token and roles.',
+        'description' => 'Validate that the user has a valid token.',
         'menu' => 'Security',
         'input' => [
             'token' => [
@@ -53,8 +43,6 @@ class Token extends Core\ProcessorEntity
     {
         parent::__construct($meta, $request, $db);
         $this->userMapper = new Db\UserMapper($db);
-        $this->roleMapper = new Db\RoleMapper($db);
-        $this->userRoleMapper = new Db\UserRoleMapper($db);
     }
 
     /**
@@ -63,6 +51,7 @@ class Token extends Core\ProcessorEntity
     public function process()
     {
         Core\Debug::variable($this->meta, 'Security Token', 4);
+
         $token = $this->val('token', true);
 
         // no token
@@ -76,10 +65,6 @@ class Token extends Core\ProcessorEntity
             throw new Core\ApiException('permission denied', 4, -1, 401);
         }
 
-        // get role from DB
-        $this->role = $this->roleMapper->findByName($this->role);
-
-        // return list of roles for user for this request app
-        return $this->userRoleMapper->findByMixed($user->getUid(), $this->request->getAppId());
+        return TRUE;
     }
 }

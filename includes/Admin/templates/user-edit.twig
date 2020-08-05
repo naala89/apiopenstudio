@@ -22,7 +22,7 @@
         <div class="input-field col s12">
           <select id="active" name="active" class="validate" required>
             <option value="false" {% if user.active is not empty and user.active == 0 %}selected{% endif %}>False</option>
-            <option value="true" {% if user.active == 1 %}selected{% endif %}>True</option>
+            <option value="true" {% if user.active is empty or user.active == 1 %}selected{% endif %}>True</option>
           </select>
           <label for="active">Active <span class="red-text">*</span></label>
         </div>

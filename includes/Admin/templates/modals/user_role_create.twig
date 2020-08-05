@@ -37,8 +37,8 @@
           <div class="input-field">
             <select class="input-field" name="accid">
               <option value="">None</option>
-              {% for accid, account in accounts %}
-                <option value="{{ accid }}">{{ account }}</option>
+              {% for account in accounts %}
+                <option value="{{ account.accid }}">{{ account.name }}</option>
               {% endfor %}
             </select>
             <label for="accid">Account</label>

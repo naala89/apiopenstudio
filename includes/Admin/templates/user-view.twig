@@ -1,0 +1,95 @@
+{% extends "page.twig" %}
+
+{% set title="User view" %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col s6">
+      <table class="highlight">
+        <tbody>
+          <tr>
+            <td><h5>Active</h5></td>
+            <td>{% if user.active is not empty and user.active == 0 %}True{% else %}False{% endif %}</td>
+          </tr>
+          <tr>
+            <td><h5>Username</h5></td>
+            <td>{{ user.username }}</td>
+          </tr>
+          <tr>
+            <td><h5>Email</h5></td>
+            <td>{{ user.email }}</td>
+          </tr>
+          <tr>
+            <td><h5>Monorific</h5></td>
+            <td>{{ user.honorific }}</td>
+          </tr>
+          <tr>
+            <td><h5>First name</h5></td>
+            <td>{{ user.nameFirst }}</td>
+          </tr>
+          <tr>
+            <td><h5>Last name</h5></td>
+            <td>{{ user.nameLast }}</td>
+          </tr>
+          <tr>
+            <td><h5>Company</h5></td>
+            <td>{{ user.company }}</td>
+          </tr>
+          <tr>
+            <td><h5>Website</h5></td>
+            <td>{{ user.website }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col s6">
+      <table class="highlight">
+        <tbody>
+        <tr>
+          <td><h5>Street</h5></td>
+          <td>{{ user.addressStreet }}</td>
+        </tr>
+        <tr>
+          <td><h5>Suburb</h5></td>
+          <td>{{ user.addressSuburb }}</td>
+        </tr>
+        <tr>
+          <td><h5>City</h5></td>
+          <td>{{ user.addressCity }}</td>
+        </tr>
+        <tr>
+          <td><h5>State</h5></td>
+          <td>{{ user.addressState }}</td>
+        </tr>
+        <tr>
+          <td><h5>Country</h5></td>
+          <td>{{ user.addressCountry }}</td>
+        </tr>
+        <tr>
+          <td><h5>Postcode</h5></td>
+          <td>{{ user.addressPostcode }}</td>
+        </tr>
+        <tr>
+          <td><h5>Mobile phone</h5></td>
+          <td>{{ user.phoneMobile }}</td>
+        </tr>
+        <tr>
+          <td><h5>Work phone</h5></td>
+          <td>{{ user.phoneWork }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row">
+    <a class="waves-effect waves-light btn" href="/user/edit/{{ user.uid }}">edit</a>
+  </div>
+
+
+  {% include 'modals/user_invite.twig' %}
+
+  {% include 'modals/user_delete.twig' %}
+
+{% endblock %}
