@@ -22,7 +22,7 @@ class UserRead extends Core\ProcessorEntity
     protected $details = [
         'name' => 'User read',
         'machineName' => 'user_read',
-        'description' => 'Fetch a single or multiple users.',
+        'description' => 'Fetch a single or multiple users. Admin',
         'menu' => 'Admin',
         'input' => [
             'token' => [
@@ -140,6 +140,9 @@ class UserRead extends Core\ProcessorEntity
         }
 
         $users = $this->userMapper->findAllByPermissions($currentUser->getUid(), $params);
+        if (empty($users)) {
+            throw new Core\ApiException("User not found", 6, $this->id, 400);
+        }
 
         $result = [];
         foreach ($users as $user) {
@@ -149,75 +152,4 @@ class UserRead extends Core\ProcessorEntity
         return new Core\DataContainer($result, 'array');
     }
 
-    /**
-     * Find  user by auth token.
-     *
-     * @param string $token
-     *
-     * @return Core\DataContainer
-     *
-     * @throws Core\ApiException
-     */
-    private function userByToken($token)
-    {
-        $user = $this->userMapper->findBytoken($token);
-        if (empty($user->getUid())) {
-            throw new Core\ApiException("User does not exist, token: $token", 6, $this->id, 400);
-        };
-        return new Core\DataContainer($user->dump(), 'array');
-    }
-
-    /**
-     * Find  user by UID.
-     *
-     * @param integer $uid
-     *
-     * @return Core\DataContainer
-     *
-     * @throws Core\ApiException
-     */
-    private function userByUid($uid)
-    {
-        $user = $this->userMapper->findByUid($uid);
-        if (empty($user->getUid())) {
-            throw new Core\ApiException("User does not exist, uid: $uid", 6, $this->id, 400);
-        };
-        return new Core\DataContainer($user->dump(), 'array');
-    }
-
-    /**
-     * Find  user by UID.
-     *
-     * @param string $username
-     *
-     * @return Core\DataContainer
-     *
-     * @throws Core\ApiException
-     */
-    private function userByUsername($username)
-    {
-        $user = $this->userMapper->findByUsername($username);
-        if (empty($user->getUid())) {
-            throw new Core\ApiException("User does not exist, username: $username", 6, $this->id, 400);
-        };
-        return new Core\DataContainer($user->dump(), 'array');
-    }
-
-    /**
-     * Find  user by email.
-     *
-     * @param string $email
-     *
-     * @return Core\DataContainer
-     *
-     * @throws Core\ApiException
-     */
-    private function userByEmail($email)
-    {
-        $user = $this->userMapper->findByEmail($email);
-        if (empty($user->getUid())) {
-            throw new Core\ApiException("User does not exist, email: $email", 6, $this->id, 400);
-        };
-        return new Core\DataContainer($user->dump(), 'array');
-    }
 }

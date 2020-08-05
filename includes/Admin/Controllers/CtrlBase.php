@@ -442,7 +442,7 @@ class CtrlBase
             }
             $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
             $menus += [
-                'My account' => "/user/edit/$uid",
+                'My account' => "/user/view/$uid",
                 'Logout' => '/logout',
             ];
         }

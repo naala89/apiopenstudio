@@ -78,13 +78,22 @@ class CtrlUserRole extends CtrlBase
             ]);
         }
 
+        $sortedUsers = [];
+        foreach ($users as $user) {
+            $sortedUsers[$user['uid']] = $user;
+        }
+        $sortedAccounts = [];
+        foreach ($this->userAccounts as $account) {
+            $sortedAccounts[$account['accid']] = $account;
+        }
+
         return $this->view->render($response, 'user-roles.twig', [
             'menu' => $menu,
             'params' => $params,
             'user_roles' => $userRoles,
-            'accounts' => $this->userAccounts,
+            'accounts' => $sortedAccounts,
             'applications' => $this->userApplications,
-            'users' => $users,
+            'users' => $sortedUsers,
             'roles'=> $this->allRoles,
             'messages' => $this->flash->getMessages(),
         ]);

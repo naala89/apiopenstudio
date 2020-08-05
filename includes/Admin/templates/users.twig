@@ -64,6 +64,9 @@
       <div class="col col-height s3 valign-wrapper truncate">{{ user.email }}</div>
       <div class="col col-height s1 valign-wrapper truncate">{% if user.active == 0 %}False{% else %}True{% endif %}</div>
       <div class="col col-height s2 valign-wrapper">
+        <a class="btn-floating btn-small white hoverable" href="/user/view/{{ user.uid }}">
+          <i class="material-icons black-text" title="View this account.">remove_red_eye</i>
+        </a>
         <a class="btn-floating btn-small white hoverable" href="/user/edit/{{ user.uid }}">
           <i class="material-icons black-text" title="Edit this account.">edit</i>
         </a>

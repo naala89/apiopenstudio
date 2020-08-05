@@ -17,6 +17,11 @@ class UserUpdate extends Core\ProcessorEntity
     private $userMapper;
 
     /**
+     * @var Db\UserRoleMapper
+     */
+    private $userRoleMapper;
+
+    /**
      * {@inheritDoc}
      */
     protected $details = [
@@ -206,6 +211,7 @@ class UserUpdate extends Core\ProcessorEntity
     {
         parent::__construct($meta, $request, $db);
         $this->userMapper = new Db\UserMapper($db);
+        $this->userRoleMapper = new Db\UserRoleMapper($db);
     }
 
     /**
@@ -215,21 +221,23 @@ class UserUpdate extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
+        $token = $this->val('token', true);
         $uid = $this->val('uid', true);
-        if (!empty($token = $this->val('token', true))) {
-            $currentUser = $this->userMapper->findBytoken($this->val('token', true));
-            $user = $this->userMapper->findAllByPermissions($currentUser->getUid(),
-                ['filter' => ['keyword' => $uid, 'column' => 'uid']]
-            );
-            if (empty($user->getUid())) {
-                throw new Core\ApiException("Permission denied.", 6, $this->id, 400);
+        $currentUser = $this->userMapper->findBytoken($token);
+
+        if (!$this->userRoleMapper->hasRole($currentUser->getUid(), 'Administrator')
+            && !$this->userRoleMapper->hasRole($currentUser->getUid(), 'Account manager')
+            && !$this->userRoleMapper->hasRole($currentUser->getUid(), 'Application manager')) {
+            // Non-privileged accounts can only edit their own accounts.
+            if (!empty($uid) && $uid != $currentUser->getUid()) {
+                throw new Core\ApiException("Permission denied", 6, $this->id, 400);
             }
+            $uid = $currentUser->getUid();
         }
-        else {
-            $user = $this->userMapper->findByUid($uid);
-            if (empty($user->getUid())) {
-                throw new Core\ApiException("User does not exist: $uid", 6, $this->id, 400);
-            }
+
+        $user = $this->userMapper->findByUid($uid);
+        if (empty($user->getUid())) {
+            throw new Core\ApiException("User not found: $uid", 6, $this->id, 400);
         }
 
         if (!empty($active = $this->val('active', true))) {

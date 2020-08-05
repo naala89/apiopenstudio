@@ -11,16 +11,11 @@ appid: 2
 ttl: 0
 
 security:
-  function: token_roles
+  function: token
   id: user_update_security
   token:
     function: bearer_token
     id: user_update_security_token
-  roles:
-    - Administrator
-    - Account manager
-    - Application manager
-    - Developer
 
 process:
   function: user_update

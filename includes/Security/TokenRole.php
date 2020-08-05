@@ -73,6 +73,7 @@ class TokenRole extends Core\ProcessorEntity
         $token = $this->val('token', true);
         $validateAccount = $this->val('validate_account', true);
         $validateApplication = $this->val('validate_application', true);
+        $roleName = $this->val('role', true);
 
         // Empty token.
         if (empty($token)) {
@@ -88,7 +89,6 @@ class TokenRole extends Core\ProcessorEntity
         }
 
         // Validate user against the role.
-        $roleName = $this->val('role', true);
         if ($this->validateUser($uid, $roleName, $validateAccount, $validateApplication)) {
             return true;
         }
@@ -116,7 +116,8 @@ class TokenRole extends Core\ProcessorEntity
     {
         $roleMapper = new Db\RoleMapper($this->db);
         $role = $roleMapper->findByName($roleName);
-        if (empty($rid = $role->getRid())) {
+        $rid = $role->getRid();
+        if (empty($rid)) {
             throw new Core\ApiException('Invalid role defined', 4, $this->id, 401);
         }
 
@@ -156,6 +157,9 @@ class TokenRole extends Core\ProcessorEntity
                         'rid' => $rid
                     ]
                 ];
+                if ($validateAccount) {
+                    $filters['col']['accid'] = $this->request->getAccId();
+                }
                 if ($validateApplication) {
                     $filters['col']['appid'] = $this->request->getAppId();
                 }
@@ -163,6 +167,7 @@ class TokenRole extends Core\ProcessorEntity
                 if (!empty($userRoles)) {
                     return true;
                 }
+                break;
         }
 
         return false;

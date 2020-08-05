@@ -40,6 +40,7 @@ $app->post('/application/delete', 'CtrlApplication:delete')->add(new Authenticat
  */
 $app->get('/users', 'CtrlUsers:index')->add(new Authentication($container, $settings, '/login'));
 $app->get('/user/create', 'CtrlUser:create')->add(new Authentication($container, $settings, '/login'));
+$app->get('/user/view/{uid}', 'CtrlUser:view')->add(new Authentication($container, $settings, '/login'));
 $app->get('/user/edit/{uid}', 'CtrlUser:edit')->add(new Authentication($container, $settings, '/login'));
 $app->post('/user/upload', 'CtrlUser:upload')->add(new Authentication($container, $settings, '/login'));
 $app->get('/user/delete/{uid}', 'CtrlUser:delete')->add(new Authentication($container, $settings, '/login'));

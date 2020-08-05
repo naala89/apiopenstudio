@@ -26,6 +26,7 @@ class CtrlUser extends CtrlBase
         'Administrator',
         'Account manager',
         'Application manager',
+        'Developer',
     ];
 
     /**
@@ -55,6 +56,59 @@ class CtrlUser extends CtrlBase
 
         return $this->view->render($response, 'user.twig', [
             'menu' => $menu,
+        ]);
+    }
+
+    /**
+     * View a new user.
+     *
+     * @param Request $request
+     *   Request object.
+     * @param Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws \Exception
+     */
+    public function view(Request $request, Response $response, array $args)
+    {
+        // Validate access.
+        if (!$this->checkAccess()) {
+            $this->flash->addMessage('error', 'Access admin: access denied');
+            return $response->withStatus(302)->withHeader('Location', '/');
+        }
+
+        $menu = $this->getMenus();
+        $uid = $args['uid'];
+        $user = [];
+
+        try {
+            $result = $this->apiCall(
+                'get', 'user',
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
+                    'query' => [
+                        'uid' => $uid,
+                    ],
+                ]
+            );
+            $user = json_decode($result->getBody()->getContents(), true);
+            $user = isset($user[0]) ? $user[0] : [];
+        } catch (\Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
+        }
+
+        return $this->view->render($response, 'user-view.twig', [
+            'user' => $user,
+            'menu' => $menu,
+            'messages' => $this->flash->getMessages(),
         ]);
     }
 
@@ -103,9 +157,9 @@ class CtrlUser extends CtrlBase
             $this->flash->addMessageNow('error', $e->getMessage());
         }
 
-        return $this->view->render($response, 'user.twig', [
+        return $this->view->render($response, 'user-edit.twig', [
             'menu' => $menu,
-            'user' => $user,
+            'user' => $user[0],
             'messages' => $this->flash->getMessages(),
         ]);
     }
@@ -147,6 +201,7 @@ class CtrlUser extends CtrlBase
         unset($allPostVars['upload-password']);
 
         if (!empty($allPostVars['uid'])) {
+            // Edit a user.
             $uid = $allPostVars['uid'];
             unset($allPostVars['uid']);
             try {
@@ -159,14 +214,27 @@ class CtrlUser extends CtrlBase
                         'json' => $allPostVars,
                     ]
                 );
-                $user = json_decode($result->getBody()->getContents(), true);
                 $this->flash->addMessageNow('info', 'User updated.');
+
+                $user = json_decode($result->getBody()->getContents(), true);
+
+                return $this->view->render($response, 'user-view.twig', [
+                    'menu' => $menu,
+                    'user' => $user,
+                    'messages' => $this->flash->getMessages(),
+                ]);
             } catch (\Exception $e) {
                 $this->flash->addMessageNow('error', $e->getMessage());
                 $user = $allPostVars;
                 $user['uid'] = $uid;
+                return $this->view->render($response, 'user-view.twig', [
+                    'menu' => $menu,
+                    'user' => $user,
+                    'messages' => $this->flash->getMessages(),
+                ]);
             }
         } else {
+            // Create a user.
             try {
                 $result = $this->apiCall('post', 'user',
                     [
@@ -177,16 +245,35 @@ class CtrlUser extends CtrlBase
                         'form_params' => $allPostVars,
                     ]
                 );
-                $user = json_decode($result->getBody()->getContents(), true);
+                $this->flash->addMessageNow('info', 'User created.');
             } catch (\Exception $e) {
                 $this->flash->addMessageNow('error', $e->getMessage());
                 $user = $allPostVars;
+                return $this->view->render($response, 'user-edit.twig', [
+                    'menu' => $menu,
+                    'user' => $user,
+                    'messages' => $this->flash->getMessages(),
+                ]);
             }
         }
+        try {
+            $result = $this->apiCall('get','user',
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
+                ]
+            );
+            $users = (array) json_decode($result->getBody()->getContents());
+        } catch (\Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
+            $users = [];
+        }
 
-        return $this->view->render($response, 'user.twig', [
+        return $this->view->render($response, 'users.twig', [
             'menu' => $menu,
-            'user' => $user,
+            'users' => $users,
             'messages' => $this->flash->getMessages(),
         ]);
     }

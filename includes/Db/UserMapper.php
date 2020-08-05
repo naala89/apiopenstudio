@@ -134,7 +134,8 @@ class UserMapper extends Mapper
         $sql .= ' UNION DISTINCT';
         $sql .= ' SELECT uid';
         $sql .= ' FROM user';
-        $sql .= ' WHERE uid = ?)';
+        $sql .= ' WHERE uid = ?';
+        $sql .= ' AND active = 1)';
         $bindParams = [$uid, $uid];
         return $this->fetchRows($sql, $bindParams, $params);
     }
