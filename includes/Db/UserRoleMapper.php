@@ -211,6 +211,75 @@ class UserRoleMapper extends Mapper
      *     'direction' => 'asc'
      *   )
      */
+    public function findForUidWithFilter($uid, $params)
+    {
+        $priviligedRoles = ["Administrator", "Account manager", "Application manager"];
+        $sql = 'SELECT *';
+        $sql .= ' FROM user_role';
+        $sql .= ' WHERE urid';
+        $sql .= ' IN (';
+        $sql .= ' SELECT ur.urid';
+        $sql .= ' FROM user_role AS ur';
+        $sql .= ' WHERE EXISTS (';
+        $sql .= ' SELECT *';
+        $sql .= ' FROM user_role AS ur';
+        $sql .= ' INNER JOIN role AS r';
+        $sql .= ' ON r.rid = ur.rid';
+        $sql .= ' AND r.name IN ("' . implode('", "', $priviligedRoles) . '")';
+        $sql .= ' AND ur.uid = ?)';
+        $sql .= ' UNION DISTINCT';
+        $sql .= ' SELECT ur.urid';
+        $sql .= ' FROM user_role AS ur';
+        $sql .= ' WHERE ur.uid = ?';
+        $sql .= ' AND NOT EXISTS (';
+        $sql .= ' SELECT *';
+        $sql .= ' FROM user_role AS ur';
+        $sql .= ' INNER JOIN role AS r';
+        $sql .= ' ON r.rid = ur.rid';
+        $sql .= ' AND r.name IN ("' . implode('", "', $priviligedRoles) . '")';
+        $sql .= ' AND ur.uid = ?))';
+
+        $bindParams = [$uid, $uid, $uid];
+        $where = $order = [];
+
+        if (!empty($params['col'])) {
+            foreach ($params['col'] as $col => $val) {
+                if (empty($val)) {
+                    $where[] = "isnull($col)";
+                } else {
+                    $where[] = "$col=?";
+                    $bindParams[] = $val;
+                }
+            }
+            $sql .= ' AND ' . implode(' AND ', $where);
+        }
+        if (!empty($params['order_by'])) {
+            $order['order_by'] = $params['order_by'];
+        }
+        if (!empty($params['direction'])) {
+            $order['direction'] = $params['direction'];
+        }
+
+        return $this->fetchRows($sql, $bindParams, $order);
+    }
+
+    /**
+     * Find user roles using filter.
+     *
+     * @param array $params
+     *  Associative array of filter params.
+     * @return array
+     *   User roles
+     *
+     * @throws ApiException
+     *
+     * @example
+     *   findByFilter([
+     *     'col' => ['rid' => 1],
+     *     'order_by' => 'uid',
+     *     'direction' => 'asc'
+     *   )
+     */
     public function findByFilter($params)
     {
         $sql = 'SELECT * FROM user_role';
