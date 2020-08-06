@@ -54,7 +54,7 @@ class CtrlUser extends CtrlBase
 
         $menu = $this->getMenus();
 
-        return $this->view->render($response, 'user.twig', [
+        return $this->view->render($response, 'user-edit.twig', [
             'menu' => $menu,
         ]);
     }

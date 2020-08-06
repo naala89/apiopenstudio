@@ -15,7 +15,7 @@ security:
   id: user_role_read_security
   token:
     function: bearer_token
-    id: user_role_read_token
+    id: user_role_read_security_token
   roles:
     - Administrator
     - Account manager
@@ -27,6 +27,9 @@ security:
 process:
   function: user_role_read
   id: user_role_read_process
+  token:
+    function: bearer_token
+    id: user_role_read_token
   uid:
     function: var_get
     id: user_role_read_uid

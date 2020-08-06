@@ -13,6 +13,16 @@ use Gaterdata\Db;
 class UserRoleRead extends Core\ProcessorEntity
 {
     /**
+     * @var Db\UserMapper
+     */
+    protected $userMapper;
+
+    /**
+     * @var Db\UserRoleMapper
+     */
+    protected $userRoleMapper;
+
+    /**
      * {@inheritDoc}
      */
     protected $details = [
@@ -21,6 +31,15 @@ class UserRoleRead extends Core\ProcessorEntity
         'description' => 'Fetch a single or all user roles.',
         'menu' => 'Admin',
         'input' => [
+            'token' => [
+                'description' => 'The requesting users token.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => false,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
             'uid' => [
                 'description' => 'The user id of the user.',
                 'cardinality' => [0, 1],
@@ -78,6 +97,13 @@ class UserRoleRead extends Core\ProcessorEntity
         ],
     ];
 
+    public function __construct($meta, &$request, $db)
+    {
+        parent::__construct($meta, $request, $db);
+        $this->userMapper = new Db\UserMapper($db);
+        $this->userRoleMapper = new Db\UserRoleMapper($db);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -85,6 +111,8 @@ class UserRoleRead extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
+        $token = $this->val('token', true);
+        $currentUser = $this->userMapper->findBytoken($token);
         $uid = $this->val('uid', true);
         $accid = $this->val('accid', true);
         $appid = $this->val('appid', true);
@@ -112,8 +140,7 @@ class UserRoleRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        $userRoleMapper = new Db\UserRoleMapper($this->db);
-        $userRoles = empty($params) ? $userRoleMapper->findAll() : $userRoleMapper->findByFilter($params);
+        $userRoles = $this->userRoleMapper->findForUidWithFilter($currentUser->getUid(), $params);
 
         $result = [];
         foreach ($userRoles as $userRole) {
