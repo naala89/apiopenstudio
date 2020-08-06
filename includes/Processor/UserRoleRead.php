@@ -28,7 +28,7 @@ class UserRoleRead extends Core\ProcessorEntity
     protected $details = [
         'name' => 'User Role read',
         'machineName' => 'user_role_read',
-        'description' => 'Fetch a single or all user roles.',
+        'description' => 'Fetch a single or all user roles (this is limited by the calling users permissions).',
         'menu' => 'Admin',
         'input' => [
             'token' => [
