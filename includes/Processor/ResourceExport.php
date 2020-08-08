@@ -11,6 +11,9 @@ use Gaterdata\Db\AccountMapper;
 use Gaterdata\Db\ApplicationMapper;
 use Gaterdata\Db\Resource;
 use Gaterdata\Db\ResourceMapper;
+use Gaterdata\Db\UserMapper;
+use Gaterdata\Db\UserRole;
+use Gaterdata\Db\UserRoleMapper;
 use Symfony\Component\Yaml\Yaml;
 
 class ResourceExport extends Core\ProcessorEntity
@@ -19,6 +22,16 @@ class ResourceExport extends Core\ProcessorEntity
      * @var Config
      */
     private $settings;
+
+    /**
+     * @var UserMapper
+     */
+    private $userMapper;
+
+    /**
+     * @var UserRoleMapper
+     */
+    private $userRoleMapper;
 
     /**
      * @var ResourceMapper
@@ -44,6 +57,15 @@ class ResourceExport extends Core\ProcessorEntity
         'description' => 'Export a resource file.',
         'menu' => 'Admin',
         'input' => [
+            'token' => [
+                'description' => 'The token of the user making the call. This is used to validate the user permissions.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => false,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
             'resid' => [
                 'description' => 'The Resource ID.',
                 'cardinality' => [1, 1],
@@ -71,6 +93,8 @@ class ResourceExport extends Core\ProcessorEntity
     public function __construct($meta, &$request, $db)
     {
         parent::__construct($meta, $request, $db);
+        $this->userMapper = new UserMapper($db);
+        $this->userRoleMapper = new UserRoleMapper($db);
         $this->accountMapper = new AccountMapper($db);
         $this->applicationMapper = new ApplicationMapper($db);
         $this->resourceMapper = new ResourceMapper($db);
@@ -84,12 +108,25 @@ class ResourceExport extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
+        $token = $this->val('token', true);
+        $currentUser = $this->userMapper->findBytoken($token);
         $resid = $this->val('resid', true);
         $format = $this->val('format', true);
 
-        $resource = $this->resourceMapper->findId($resid);
+        $resource = $this->resourceMapper->findByResid($resid);
         if (empty($resource->getResid())) {
             throw new Core\ApiException('Invalid resource', 6, $this->id, 400);
+        }
+
+        $role = $this->userRoleMapper->findByUidAppidRolename(
+            $currentUser->getUid(),
+            $resource->getAppid(),
+            'Developer');
+        if (empty($role->getUrid())) {
+            throw new Core\ApiException("Unauthorised: you do not have permissions for this application",
+                6,
+                $this->id,
+                400);
         }
 
         switch ($format) {

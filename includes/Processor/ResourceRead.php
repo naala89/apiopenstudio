@@ -7,9 +7,8 @@
 namespace Gaterdata\Processor;
 
 use Gaterdata\Core;
-use Gaterdata\Db\AccountMapper;
-use Gaterdata\Db\ApplicationMapper;
 use Gaterdata\Db\ResourceMapper;
+use Gaterdata\Db\UserMapper;
 
 class ResourceRead extends Core\ProcessorEntity
 {
@@ -19,14 +18,9 @@ class ResourceRead extends Core\ProcessorEntity
     private $resourceMapper;
 
     /**
-     * @var ApplicationMapper
+     * @var UserMapper
      */
-    private $applicationMapper;
-
-    /**
-     * @var AccountMapper
-     */
-    private $accountMapper;
+    private $userMapper;
 
     /**
      * {@inheritDoc}
@@ -37,14 +31,14 @@ class ResourceRead extends Core\ProcessorEntity
         'description' => 'List resources. If no appid/s ir resid is defined, all will be returned.',
         'menu' => 'Admin',
         'input' => [
-            'uid' => [
-                'description' => 'User ID of the user making the call. This is used to limit the resources viewable',
+            'token' => [
+                'description' => 'The token of the user making the call. This is used to limit the resources viewable',
                 'cardinality' => [1, 1],
-                'literalAllowed' => true,
+                'literalAllowed' => false,
                 'limitFunctions' => [],
-                'limitTypes' => ['integer'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => 0,
+                'default' => '',
             ],
             'resid' => [
                 'description' => 'The Resource ID to filter by.',
@@ -55,17 +49,8 @@ class ResourceRead extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => '',
             ],
-            'accid' => [
-                'description' => 'The account IDs to filter by. Comma separated if Multiple.',
-                'cardinality' => [0, '*'],
-                'literalAllowed' => true,
-                'limitFunctions' => [],
-                'limitTypes' => ['integer'],
-                'limitValues' => [],
-                'default' => '',
-            ],
             'appid' => [
-                'description' => 'The application IDs to filter by. Comma separated if Multiple.',
+                'description' => 'The application IDs to filter by.',
                 'cardinality' => [0, '*'],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
@@ -79,7 +64,7 @@ class ResourceRead extends Core\ProcessorEntity
                 'literalAllowed' => true,
                 'limitFunctions' => [],
                 'limitTypes' => ['text'],
-                'limitValues' => ['appid', 'method', 'uri'],
+                'limitValues' => ['appid', 'method', 'uri', 'name'],
                 'default' => 'appid',
             ],
             'direction' => [
@@ -109,8 +94,7 @@ class ResourceRead extends Core\ProcessorEntity
     public function __construct($meta, &$request, $db)
     {
         parent::__construct($meta, $request, $db);
-        $this->accountMapper = new AccountMapper($db);
-        $this->applicationMapper = new ApplicationMapper($db);
+        $this->userMapper = new UserMapper($db);
         $this->resourceMapper = new ResourceMapper($db);
     }
 
@@ -121,48 +105,50 @@ class ResourceRead extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-        $uid = $this->val('uid', true);
+        $token = $this->val('token', true);
+        $currentUser = $this->userMapper->findBytoken($token);
         $resid = $this->val('resid', true);
-        $accid = $this->val('accid', true);
         $appid = $this->val('appid', true);
         $keyword = $this->val('keyword', true);
         $orderBy = $this->val('order_by', true);
         $direction = $this->val('direction', true);
 
-        $result = $this->findResources($uid, 'Developer', $accid, $appid, $resid, $keyword, $orderBy, $direction);
+        $params = [];
+        if (!empty($resid)) {
+            $params['filter'][] = [
+                'keyword' => $resid,
+                'column' => 'resid',
+            ];
+        }
+        if (!empty($appid)) {
+            $params['filter'][] = [
+                'keyword' => $appid,
+                'column' => 'appid',
+            ];
+        }
+        if (!empty($appid)) {
+            $params['filter'][] = [
+                'keyword' => "%$keyword%",
+                'column' => 'name',
+            ];
+        }
+        if (!empty($orderBy)) {
+            $params['order_by'] = $orderBy;
+        }
+        if (!empty($direction)) {
+            $params['direction'] = $direction;
+        }
+
+        $result = $this->resourceMapper->findByUid($currentUser->getUid(), $params);
+        if (empty($result)) {
+            throw new Core\ApiException('No resources found', 6, $this->id);
+        }
+
         $resources = [];
         foreach ($result as $item) {
             $resources[] = $item->dump();
         }
 
         return new Core\DataContainer($resources, 'array');
-    }
-
-    /**
-     * Find all resources belonging to applications.
-     *
-     * @param array
-     *   Application IDs.
-     * @param array
-     *   SQL query params.
-     *
-     * @return array
-     *   An array of associative arrays of a resource rows.
-     *
-     * @throws Core\ApiException
-     */
-    private function findResources($uid, $role, $accid, $appid, $resid, $keyword, $orderBy, $direction)
-    {
-        $params = [];
-        $params['order_by'] = $orderBy;
-        $params['direction'] = $direction;
-        if (!empty($keyword)) {
-            $params['filter'][] = [
-                'keyword' => "%$keyword%",
-                'column' => "uri",
-            ];
-        }
-        $rid = $this->roleMapper->findByName($role)->getRid();
-        return $this->resourceMapper->findByUidRidAccidAppidResid($uid, $rid, $accid, $appid, $resid, $params);
     }
 }

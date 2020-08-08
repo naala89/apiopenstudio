@@ -61,8 +61,8 @@
           <div class="input-field col s6">
             <select name="accid" id="accid">
               <option value="" disabled selected>Please select</option>
-              {% for accid, account in accounts %}
-                <option value="{{ accid }}" {% if GATERDATA.accAppMap[appid] is not empty %}selected{% endif %}>{{ account }}</option>
+              {% for account in accounts %}
+                <option value="{{ account.accid }}" {% if GATERDATA.accAppMap[appid] is not empty %}selected{% endif %}>{{ account.name }}</option>
               {% endfor %}
             </select>
             <label>Account</label>

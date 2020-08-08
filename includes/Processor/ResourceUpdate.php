@@ -12,6 +12,7 @@ use Gaterdata\Db\AccountMapper;
 use Gaterdata\Db\ApplicationMapper;
 use Gaterdata\Db\Resource;
 use Gaterdata\Db\ResourceMapper;
+use Gaterdata\Db\UserMapper;
 use Gaterdata\Db\UserRoleMapper;
 use Gaterdata\Core\ResourceValidator;
 use Spyc;
@@ -22,6 +23,16 @@ class ResourceUpdate extends Core\ProcessorEntity
      * @var Config
      */
     private $settings;
+
+    /**
+     * @var UserMapper
+     */
+    private $userMapper;
+
+    /**
+     * @var UserRoleMapper
+     */
+    private $userRoleMapper;
 
     /**
      * @var ResourceMapper
@@ -52,6 +63,15 @@ class ResourceUpdate extends Core\ProcessorEntity
         'description' => 'Update a resource.',
         'menu' => 'Admin',
         'input' => [
+            'token' => [
+                'description' => 'The token of the user making the call. This is used to validate the user permissions.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => false,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
             'resid' => [
                 'description' => 'The resource ID.',
                 'cardinality' => [1, 1],
@@ -143,6 +163,8 @@ class ResourceUpdate extends Core\ProcessorEntity
     {
         parent::__construct($meta, $request, $db);
         $this->settings = new Config();
+        $this->userMapper = new UserMapper($db);
+        $this->userRoleMapper = new UserRoleMapper($db);
         $this->accountMapper = new AccountMapper($this->db);
         $this->applicationMapper = new ApplicationMapper($db);
         $this->resourceMapper = new ResourceMapper($db);
@@ -156,6 +178,8 @@ class ResourceUpdate extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
+        $token = $this->val('token', true);
+        $currentUser = $this->userMapper->findBytoken($token);
         $resid = $this->val('resid', true);
         $name = $this->val('name', true);
         $description = $this->val('description', true);
@@ -166,14 +190,31 @@ class ResourceUpdate extends Core\ProcessorEntity
         $format = $this->val('format', true);
         $meta = $this->val('meta', true);
 
+        $resource = $this->resourceMapper->findByResid($resid);
+        $application = $this->applicationMapper->findByAppid($resource->getAppId());
+
         // Invalid resource.
-        $resource = $this->resourceMapper->findId($resid);
         if (empty($resource->getResid())) {
             throw new Core\ApiException("Resource does not exist: $resid", 6, $this->id, 400);
         }
 
+        // Validate user role access to the resource or the proposed resource.
+        $existingResourceRoles = $this->userRoleMapper->findByUidAppidRolename(
+            $currentUser->getUid(),
+            $application->getAppid(),
+            'Developer');
+        $proposedResourceRoles = $this->userRoleMapper->findByUidAppidRolename(
+            $currentUser->getUid(),
+            $appid,
+            'Developer');
+        if (empty($existingResourceRoles) || empty($proposedResourceRoles)) {
+            throw new Core\ApiException("Unauthorised: you do not have permissions for this application",
+                6,
+                $this->id,
+                400);
+        }
+
         // Resource is locked.
-        $application = $this->applicationMapper->findByAppid($resource->getAppId());
         $account = $this->accountMapper->findByAccid($application->getAccid());
         if (
             $account->getName() == $this->settings->__get(['api', 'core_account'])
@@ -186,7 +227,11 @@ class ResourceUpdate extends Core\ProcessorEntity
         // Proposed application/method/uri combination already exist.
         $test = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
         if (!empty($test->getResid()) && $test->getResid() != $resid) {
-            throw new Core\ApiException('A resource with this method and uri already exists for the application', 6, $this->id, 400);
+            throw new Core\ApiException(
+                'A resource with this method and uri already exists for the application',
+                6,
+                $this->id,
+                400);
         }
 
         // Proposed account/application are locked.
@@ -197,7 +242,10 @@ class ResourceUpdate extends Core\ProcessorEntity
             && $application->getName() == $this->settings->__get(['api', 'core_application'])
             && $this->settings->__get(['api', 'core_resource_lock'])
         ) {
-            throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
+            throw new Core\ApiException("Unauthorised: this is a core resource",
+                6,
+                $this->id,
+                400);
         }
 
         $meta = $this->translateMetaString($format, $meta);

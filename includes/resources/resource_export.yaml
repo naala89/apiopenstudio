@@ -15,7 +15,7 @@ security:
   id: resource_export_security
   token:
     function: bearer_token
-    id: resource_export_token
+    id: resource_export_security_token
   role: Developer
   validate_account: false
   validate_application: false
@@ -23,6 +23,9 @@ security:
 process:
   function: resource_export
   id: resource_export_process
+  token:
+    function: bearer_token
+    id: resource_export_token
   format:
     function: var_uri
     id: resource_export_format

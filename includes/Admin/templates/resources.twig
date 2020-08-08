@@ -34,6 +34,7 @@
             <div class="col s2">
                 <div class="input-field">
                     <select class="input-field" name="order_by">
+                        <option value="name" {% if params['order_by'] == "name" %}selected{% endif %}>Name</option>
                         <option value="appid" {% if params['order_by'] == "appid" %}selected{% endif %}>Application
                         </option>
                         <option value="method" {% if params['order_by'] == "method" %}selected{% endif %}>Method

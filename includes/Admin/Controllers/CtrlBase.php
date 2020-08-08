@@ -300,19 +300,25 @@ class CtrlBase
      */
     private function getAccounts(array $params = [])
     {
-        $allAccounts = $this->apiCallAccountAll($params);
-
-        if (isset($this->userAccessRights[0] )) {
-            // User has access to all accounts.
-            return $allAccounts;
+        $allAccounts = $query = [];
+        foreach ($params as $key => $value) {
+            $query[$key] = $value;
         }
 
-        $accounts = [];
-        foreach ($this->userAccessRights as $accid => $appids) {
-            $accounts[$accid] = $allAccounts[$accid];
+        try {
+            $result = $this->apiCall('GET', 'account', [
+                'headers' => [
+                    'Authorization' => "Bearer " . $_SESSION['token'],
+                    'Accept' => 'application/json',
+                ],
+                'query' => $query,
+            ]);
+            $allAccounts = json_decode($result->getBody()->getContents(), true);
+        } catch (\Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
         }
 
-        return $accounts;
+        return $allAccounts;
     }
 
     /**

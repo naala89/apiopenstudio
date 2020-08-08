@@ -15,7 +15,7 @@ security:
   id: resource_delete_security
   token:
     function: bearer_token
-    id: resource_delete_token
+    id: resource_delete_security_token
   role: Developer
   validate_account: false
   validate_application: false
@@ -23,6 +23,9 @@ security:
 process:
   function: resource_delete
   id: resource_delete_process
+  token:
+    function: bearer_token
+    id: resource_delete_token
   resid:
     function: var_uri
     id: resource_delete_resid

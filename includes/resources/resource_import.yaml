@@ -15,7 +15,7 @@ security:
   id: resource_import_security
   token:
     function: bearer_token
-    id: resource_import_token
+    id: resource_import_security_token
   role: Developer
   validate_account: false
   validate_application: false
@@ -23,6 +23,9 @@ security:
 process:
   function: resource_import
   id: resource_imoport_process
+  token:
+    function: bearer_token
+    id: resource_import_token
   resource:
     function: var_file
     id: resource_import_file

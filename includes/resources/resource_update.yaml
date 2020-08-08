@@ -15,7 +15,7 @@ security:
   id: resource_update_security
   token:
     function: bearer_token
-    id: resource_update_token
+    id: resource_update_security_token
   role: Developer
   validate_account: false
   validate_application: false
@@ -23,6 +23,9 @@ security:
 process:
   function: resource_update
   id: resource_update_process
+  token:
+    function: bearer_token
+    id: resource_update_token
   resid:
     function: field_value
     id: resource_update_resid

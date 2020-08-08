@@ -59,7 +59,6 @@ class CtrlResource extends CtrlBase
         }
 
         $menu = $this->getMenus();
-        $appids = implode(',', array_keys($this->userApplications));
         $allParams = $request->getParams();
 
         $query = [];
@@ -75,7 +74,6 @@ class CtrlResource extends CtrlBase
         if (!empty($appids)) {
             $query['app_id'] = $appids;
         }
-        $query['all'] = 'true';
 
         $resources = [];
         try {
@@ -99,6 +97,10 @@ class CtrlResource extends CtrlBase
             $this->settings['admin']['pagination_step'],
             true
         );
+        $sortedAccounts = [];
+        foreach ($this->userAccounts as $userAccount) {
+            $sortedAccounts[$userAccount['accid']] = $userAccount['name'];
+        }
 
         return $this->view->render($response, 'resources.twig', [
             'menu' => $menu,
@@ -106,7 +108,7 @@ class CtrlResource extends CtrlBase
             'resources' => $resources,
             'page' => $page,
             'pages' => $pages,
-            'accounts' => $this->userAccounts,
+            'accounts' => $sortedAccounts,
             'applications' => $this->userApplications,
             'messages' => $this->flash->getMessages(),
         ]);
@@ -207,6 +209,12 @@ class CtrlResource extends CtrlBase
                     ]
                 );
                 $resource = json_decode($result->getBody()->getContents(), true);
+                if (!empty($resource)) {
+                    $resource = $resource[0];
+                }
+                else {
+                    $this->flash->addMessageNow('error', 'resource not found.');
+                }
             } catch (\Exception $e) {
                 $this->flash->addMessageNow('error', $e->getMessage());
             }
@@ -214,6 +222,8 @@ class CtrlResource extends CtrlBase
             $resource = $args['resource'];
         }
 
+        $accounts = $this->userAccounts;
+        $applications = $this->userApplications;
         try {
             $result = $this->apiCall('get', 'functions/all',
                 [
@@ -224,29 +234,9 @@ class CtrlResource extends CtrlBase
                 ]
             );
             $functions = json_decode($result->getBody()->getContents(), true);
-
-            $result = $this->apiCall('get', 'account/all',
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
-                    ],
-                ]
-            );
-            $accounts = json_decode($result->getBody()->getContents(), true);
-            $result = $this->apiCall('get', 'application',
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
-                    ],
-                ]
-            );
-            $applications = json_decode($result->getBody()->getContents(), true);
         } catch (\Exception $e) {
             $this->flash->addMessageNow('error', $e->getMessage());
         }
-
         $sortedFunctions = [];
         foreach ($functions as $function) {
             $sortedFunctions[$function['menu']][] = $function;

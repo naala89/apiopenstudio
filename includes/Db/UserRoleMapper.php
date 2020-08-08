@@ -89,7 +89,8 @@ class UserRoleMapper extends Mapper
      * @param string $rolename
      *   Rolename.
      *
-     * @return array
+     * @return UserRole
+     *   User role object.
      *
      * @throws ApiException
      */
