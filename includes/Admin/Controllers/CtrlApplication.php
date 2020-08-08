@@ -49,51 +49,39 @@ class CtrlApplication extends CtrlBase
             $this->flash->addMessage('error', 'View applications: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
         }
+        $menu = $this->getMenus();
 
         // Filter params and current page.
         $allParams = $request->getParams();
-        $appParams = [];
+        $appParams = $accParams = [];
         if (!empty($allParams['keyword'])) {
             $appParams['keyword'] = $allParams['keyword'];
         }
         if (!empty($allParams['account_id'])) {
             $appParams['account_id'] = $allParams['account_id'];
         }
-        $appParams['order_by'] = 'name';
-        $appParams['direction'] = isset($allParams['direction']) ? $allParams['direction'] : 'asc';
-
-        $accParams = [
-            'order_by' => 'name',
-            'direction' => isset($allParams['direction']) ? $allParams['direction'] : 'asc',
-        ];
-
+        if (!empty($allParams['direction'])) {
+            $accParams['direction'] = $appParams['direction'] = $allParams['direction'];
+        }
+        $accParams['order_by'] = $appParams['order_by'] = 'name';
         $page = isset($allParams['page']) ? $allParams['page'] : 1;
-    
-        $menu = $this->getMenus();
+
         $accounts = $this->apiCallAccountAll($accParams);
         $applications = $this->apiCallApplicationAll($appParams);
-
-        $sortedAccs = [];
-        foreach ($accounts as $account) {
-            $sortedAccs[$account['accid']] = $account['name'];
-        }
 
         // Order by account name or app name.
         $sortedApps = [];
         if ($allParams['order_by'] == 'account') {
-            foreach ($accounts as $accid => $account) {
-                foreach ($applications as $appid => $application) {
-                    if ($accid == $application['accid']) {
-                        $application['account'] = $accounts[$application['accid']];
-                        $sortedApps[$appid] = $application;
+            foreach ($accounts as $account) {
+                foreach ($applications as $index => $application) {
+                    if ($application['accid'] == $account['accid']) {
+                        $sortedApps[] = $application;
+                        unset($applications[$index]);
                     }
                 }
             }
         } else {
-            foreach ($applications as $appid => $application) {
-                $application['account'] = $accounts[$application['accid']];
-                $sortedApps[$appid] = $application;
-            }
+            $sortedApps = $applications;
         }
 
         // Get total number of pages and current page's applications to display.
@@ -109,7 +97,7 @@ class CtrlApplication extends CtrlBase
             'params' => $allParams,
             'page' => $page,
             'pages' => $pages,
-            'accounts' => $sortedAccs,
+            'accounts' => $accounts,
             'applications' => $sortedApps,
             'messages' => $this->flash->getMessages(),
             'roles' => $this->userRoles,

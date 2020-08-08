@@ -1,6 +1,7 @@
 {% extends "page.twig" %}
 
 {% set title="Applications" %}
+{% set account = [] %}
 
 {% block content %}
   <div class="row">
@@ -24,12 +25,12 @@
         <div class="input-field">
           <select name="account_id">
             <option value="" selected>All</option>
-            {% for accid, account in accounts %}
+            {% for account in accounts %}
               {% set selected = '' %}
-              {% if accid == params['account_id'] %}
+              {% if account.accid == params['account_id'] %}
                 {% set selected = 'selected' %}
               {% endif %}
-              <option value="{{ accid }}" {{ selected }}>{{ account }}</option>
+              <option value="{{ account.accid }}" {{ selected }}>{{ account.name }}</option>
             {% endfor %}
           </select>
           <label for="filter">Filter by account.</label>
@@ -74,9 +75,14 @@
       <h6 class="col col-height s2 valign-wrapper">Actions</h6>
     </div>
       {% for application in applications %}
+        {% for acc in accounts %}
+          {% if application.accid == acc.accid %}
+            {% set account = acc %}
+          {% endif %}
+        {% endfor %}
         <div class="row hoverable">
           <div class="col col-height s5 valign-wrapper">
-            <a href="/applications?account_id={{ application.accid }}" title="Filter applications for this account.">{{ accounts[application.accid] }}</a>
+            <a href="/applications?account_id={{ application.accid }}" title="Filter applications for this account.">{{ account.name }}</a>
           </div>
           <div class="col col-height s5 valign-wrapper">
             {{ application.name }}
