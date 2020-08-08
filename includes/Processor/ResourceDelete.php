@@ -11,6 +11,8 @@ use Gaterdata\Core;
 use Gaterdata\Db\AccountMapper;
 use Gaterdata\Db\ApplicationMapper;
 use Gaterdata\Db\ResourceMapper;
+use Gaterdata\Db\UserMapper;
+use Gaterdata\Db\UserRoleMapper;
 
 class ResourceDelete extends Core\ProcessorEntity
 {
@@ -35,6 +37,16 @@ class ResourceDelete extends Core\ProcessorEntity
     private $applicationMapper;
 
     /**
+     * @var UserMapper
+     */
+    private $userMapper;
+
+    /**
+     * @var UserRoleMapper
+     */
+    private $userRoleMapper;
+
+    /**
      * {@inheritDoc}
      */
     protected $details = [
@@ -43,6 +55,15 @@ class ResourceDelete extends Core\ProcessorEntity
         'description' => 'Delete a resource.',
         'menu' => 'Admin',
         'input' => [
+            'token' => [
+                'description' => 'The token of the user making the call. This is used to validate the user permissions.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => false,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
             'resid' => [
                 'description' => 'The resource ID.',
                 'cardinality' => [1, 1],
@@ -62,6 +83,8 @@ class ResourceDelete extends Core\ProcessorEntity
     {
         parent::__construct($meta, $request, $db);
         $this->applicationMapper = new ApplicationMapper($db);
+        $this->userMapper = new UserMapper($db);
+        $this->userRoleMapper = new UserRoleMapper($db);
         $this->accountMapper = new AccountMapper($db);
         $this->resourceMapper = new ResourceMapper($db);
         $this->settings = new Config();
@@ -75,14 +98,26 @@ class ResourceDelete extends Core\ProcessorEntity
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
         $resid = $this->val('resid', true);
+        $token = $this->val('token', true);
+        $currentUser = $this->userMapper->findBytoken($token);
 
-        $resource = $this->resourceMapper->findId($resid);
+        $resource = $this->resourceMapper->findByResid($resid);
         if (empty($resource->getResid())) {
             throw new Core\ApiException("Invalid resource: $resid", 6, $this->id, 400);
         }
-        $appid = $resource->getAppid();
 
-        $application = $this->applicationMapper->findByAppid($appid);
+        $role = $this->userRoleMapper->findByUidAppidRolename(
+            $currentUser->getUid(),
+            $resid,
+            'Developer');
+        if (empty($role->getUrid())) {
+            throw new Core\ApiException("Unauthorised: you do not have permissions for this application",
+                6,
+                $this->id,
+                400);
+        }
+
+        $application = $this->applicationMapper->findByAppid($resource->getAppid());
         $account = $this->accountMapper->findByAccid($application->getAccid());
         if (
             $account->getName() == $this->settings->__get(['api', 'core_account'])

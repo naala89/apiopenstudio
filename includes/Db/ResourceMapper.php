@@ -99,7 +99,7 @@ class ResourceMapper extends Mapper
      *
      * @throws ApiException
      */
-    public function findId($resid)
+    public function findByResid($resid)
     {
         $sql = 'SELECT * FROM resource WHERE resid = ?';
         $bindParams = [$resid];
@@ -207,7 +207,39 @@ class ResourceMapper extends Mapper
             }
             $sql = 'SELECT * FROM resource WHERE appid IN (' . implode(', ', $placeholders) . ')';
         }
-    
+
+        return $this->fetchRows($sql, $bindParams, $params);
+    }
+
+    /**
+     * Find Resources by user ID.
+     *
+     * @param int $uid
+     *   Application ID or an array of appid's.
+     * @param array $params
+     *   Filter and order params.
+     *
+     * @return array
+     *   Array of Resource objects.
+     *
+     * @throws ApiException
+     */
+    public function findByUid($uid, $params = [])
+    {
+        $privilegedRoles = ['Developer'];
+
+        $sql = 'SELECT *';
+        $sql .= ' FROM resource';
+        $sql .= ' WHERE appid IN (';
+        $sql .= ' SELECT ur.appid';
+        $sql .= ' FROM user_role AS ur';
+        $sql .= ' INNER JOIN role AS r';
+        $sql .= ' ON r.rid = ur.rid';
+        $sql .= ' WHERE ur.uid = ?';
+        $sql .= ' AND r.name in ("' . implode('", "', $privilegedRoles) . '"))';
+
+        $bindParams = [$uid];
+
         return $this->fetchRows($sql, $bindParams, $params);
     }
 

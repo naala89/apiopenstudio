@@ -12,6 +12,7 @@ use Gaterdata\Db\AccountMapper;
 use Gaterdata\Db\ApplicationMapper;
 use Gaterdata\Db\Resource;
 use Gaterdata\Db\ResourceMapper;
+use Gaterdata\Db\UserMapper;
 use Gaterdata\Db\UserRoleMapper;
 use Gaterdata\Core\ResourceValidator;
 use Symfony\Component\Yaml\Yaml;
@@ -22,6 +23,16 @@ class ResourceImport extends Core\ProcessorEntity
      * @var Config
      */
     private $settings;
+
+    /**
+     * @var UserMapper
+     */
+    private $userMapper;
+
+    /**
+     * @var UserRoleMapper
+     */
+    private $userRoleMapper;
 
     /**
      * @var ResourceMapper
@@ -52,6 +63,15 @@ class ResourceImport extends Core\ProcessorEntity
         'description' => 'Import a resource from a file.',
         'menu' => 'Admin',
         'input' => [
+            'token' => [
+                'description' => 'The token of the user making the call. This is used to validate the user permissions.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => false,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
             'resource' => [
                 'description' => 'The resource file file. This can be YAML or JSON.',
                 'cardinality' => [1, 1],
@@ -71,6 +91,8 @@ class ResourceImport extends Core\ProcessorEntity
     {
         parent::__construct($meta, $request, $db);
         $this->settings = new Config();
+        $this->userMapper = new UserMapper($db);
+        $this->userRoleMapper = new UserRoleMapper($db);
         $this->accountMapper = new AccountMapper($db);
         $this->applicationMapper = new ApplicationMapper($db);
         $this->resourceMapper = new ResourceMapper($db);
@@ -84,7 +106,10 @@ class ResourceImport extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
+        $token = $this->val('token', true);
+        $currentUser = $this->userMapper->findBytoken($token);
         $resource = $this->val('resource');
+
         $resource = $resource->getType() == 'file' ? file_get_contents($resource->getData()) : $resource->getData();
         if ($value = json_decode($resource, true)) {
             $resource = $value;
@@ -94,8 +119,18 @@ class ResourceImport extends Core\ProcessorEntity
                 $resource = $value;
             } catch (ParseException $exception) {
                 throw new Core\ApiException('Unable to parse the YAML string: ', $exception->getMessage(), 6, $this->id, 400);
-                printf('Unable to parse the YAML string: %s', $exception->getMessage());
             }
+        }
+
+        $role = $this->userRoleMapper->findByUidAppidRolename(
+            $currentUser->getUid(),
+            $resource['appid'],
+            'Developer');
+        if (empty($role->getUrid())) {
+            throw new Core\ApiException("Unauthorised: you do not have permissions for this application",
+                6,
+                $this->id,
+                400);
         }
 
         $name = isset($resource['name']) ? $resource['name'] : '';
@@ -125,7 +160,7 @@ class ResourceImport extends Core\ProcessorEntity
         if (
             $account->getName() == $this->settings->__get(['api', 'core_account'])
             && $application->getName() == $this->settings->__get(['api', 'core_application'])
-            && !($this->settings->__get(['api', 'core_resource_lock'])))
+            && $this->settings->__get(['api', 'core_resource_lock']))
         {
             throw new Core\ApiException("Unauthorised: this is the core application", 6, $this->id, 400);
         }

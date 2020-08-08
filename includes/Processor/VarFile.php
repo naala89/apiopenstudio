@@ -119,7 +119,7 @@ class VarFile extends Core\ProcessorEntity
             move_uploaded_file($_FILES[$filename]['tmp_name'], $dest);
             $fileContent = file_get_contents($dest);
             unlink($dest);
-            return new Core\DataContainer($fileContent, $this->detectType($fileContent));
+            return new Core\DataContainer($fileContent, 'text');
         } else {
             $dir = $this->settings->__get(['api', 'base_path']) . $this->settings->__get(['api', 'dir_tmp']);
             $extension = pathinfo($_FILES[$filename]['name'], PATHINFO_EXTENSION);
