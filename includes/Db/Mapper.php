@@ -125,6 +125,10 @@ abstract class Mapper
                     $arr[] = mysqli_real_escape_string($this->db->_connectionID, $filter['column']) . ' LIKE ?';
                     $bindParams[] = $filter['keyword'];
                 }
+                if (isset($filter['column']) && isset($filter['value'])) {
+                    $arr[] = $filter['column'] . ' = ?';
+                    $bindParams[] = $filter['value'];
+                }
             }
             if (!empty($arr)) {
                 if (stripos($sql, ' where ') !== false) {
