@@ -257,7 +257,7 @@ class CtrlApplication extends CtrlBase
                 } else {
                     $this->flash->addMessage('error', "Application $appid delete failed, check the logs for details.");
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->flash->addMessage('error', $e->getMessage());
             }
         }
