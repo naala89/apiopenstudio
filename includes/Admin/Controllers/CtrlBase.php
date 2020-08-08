@@ -182,6 +182,7 @@ class CtrlBase
         foreach ($params as $key => $value) {
             $query[$key] = $value;
         }
+        $query['order_by'] = empty($query['order_by']) ? 'name' : $query['order_by'];
 
         try {
             $result = $this->apiCall('GET', 'account', [
@@ -211,6 +212,8 @@ class CtrlBase
         foreach ($params as $key => $value) {
             $query[$key] = $value;
         }
+        $query['order_by'] = empty($query['order_by']) ? 'name' : $query['order_by'];
+
         $allApplications = [];
         try {
             $result = $this->apiCall('GET', 'application', [
