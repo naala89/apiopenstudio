@@ -10,8 +10,8 @@
           <div class="input-field">
             <select name="create-app-accid" id="create-app-accid" required>
               <option value="" disabled selected>Choose the account</option>
-              {% for accid, name in accounts %}
-                <option value="{{ accid }}">{{ name }}</option>
+              {% for account in accounts %}
+                <option value="{{ account.accid }}">{{ account.name }}</option>
               {% endfor %}
             </select>
             <label>Account</label>
