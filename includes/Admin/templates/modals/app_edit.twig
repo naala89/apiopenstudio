@@ -10,9 +10,8 @@
         <div class="col s6">
           <div class="input-field">
             <select name="edit-app-accid" id="edit-app-accid" autofocus>
-              <option value="" disabled>Choose the account</option>
-              {% for account_id, account_name in accounts %}
-                <option value="{{ account_id }}" {% if account_id == accid %}selected{% endif %}>{{ account_name }}</option>
+              {% for account in accounts %}
+                <option value="{{ account.accid }}" {% if account.accid == accid %}selected{% endif %}>{{ account.name }}</option>
               {% endfor %}
             </select>
             <label>Account</label>
