@@ -179,6 +179,27 @@ class UserRoleMapper extends Mapper
     }
 
     /**
+     * Return whether a user has access to an application.
+     *
+     * @param integer $uid
+     *   User ID.
+     * @param integer $appid
+     *   Application ID.
+     *
+     * @return bool
+     *
+     * @throws ApiException
+     */
+    public function hasAppidAccess($uid, $appid) {
+        $sql = 'SELECT * FROM user_role';
+        $sql .= ' WHERE uid=?';
+        $sql .= ' AND appid=?';
+        $bindParams = [$uid, $appid];
+        $rows = $this->fetchRows($sql, $bindParams);
+        return !empty($rows);
+    }
+
+    /**
      * Find all user roles for a user ID.
      *
      * @param integer $uid
