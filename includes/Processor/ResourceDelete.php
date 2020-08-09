@@ -108,7 +108,7 @@ class ResourceDelete extends Core\ProcessorEntity
 
         $role = $this->userRoleMapper->findByUidAppidRolename(
             $currentUser->getUid(),
-            $resid,
+            $resource->getAppid(),
             'Developer');
         if (empty($role->getUrid())) {
             throw new Core\ApiException("Unauthorised: you do not have permissions for this application",
