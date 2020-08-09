@@ -60,19 +60,23 @@ class CtrlResource extends CtrlBase
 
         $menu = $this->getMenus();
         $allParams = $request->getParams();
+        if (!empty($allParams['filter_by_application'])) {
+            $allParams['filter_by_account'] = '';
+        }
+        $allParams['order_by'] = empty($allParams['order_by']) ? 'name' : $allParams['order_by'];
 
         $query = [];
+        if (!empty($allParams['filter_by_application'])) {
+            $query['appid'] = $allParams['filter_by_application'];
+        }
         if (!empty($allParams['keyword'])) {
             $query['keyword'] = $allParams['keyword'];
         }
-        if (!empty($allParams['order_by'])) {
+        if (!empty($allParams['order_by']) && $allParams['order_by'] != 'account' && $allParams['order_by'] != 'application') {
             $query['order_by'] = $allParams['order_by'];
         }
         if (!empty($allParams['direction'])) {
             $query['direction'] = $allParams['direction'];
-        }
-        if (!empty($appids)) {
-            $query['app_id'] = $appids;
         }
 
         $resources = [];
@@ -88,27 +92,74 @@ class CtrlResource extends CtrlBase
             $this->flash->addMessageNow('error', $e->getMessage());
         }
 
+        // Filter by account.
+        if (!empty($allParams['filter_by_account'])) {
+            $filterApps = [];
+            foreach ($this->userAccounts as $userAccount) {
+                if ($userAccount['accid'] == $allParams['filter_by_account']) {
+                    foreach ($this->userApplications as $userApplication) {
+                        if ($userApplication['accid'] == $userAccount['accid']) {
+                            $filterApps[] = $userApplication['appid'];
+                        }
+                    }
+                }
+            }
+            foreach ($resources as $index => $resource) {
+                if (!in_array($resource['appid'], $filterApps)) {
+                    unset($resources[$index]);
+                }
+            }
+        }
+
+        $sortedResources = [];
+        if ($allParams['order_by'] == 'account') {
+            // Sort by account name.
+            foreach ($this->userAccounts as $userAccount) {
+                foreach ($this->userApplications as $userApplication) {
+                    foreach ($resources as $index => $resource) {
+                        if ($resource['appid'] = $userApplication['appid'] && $userApplication['accid'] != $userAccount['accid']) {
+                            $sortedResources[] = $resource;
+                            unset($resources[$index]);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Sort by application name.
+        elseif ($allParams['order_by'] == 'application') {
+            foreach ($this->userApplications as $userApplication) {
+                foreach ($resources as $index => $resource) {
+                    if ($resource['appid'] = $userApplication['appid']) {
+                        $sortedResources[] = $resource;
+                        unset($resources[$index]);
+                    }
+                }
+            }
+        }
+
+        else {
+            // All other sorts.
+            $sortedResources = $resources;
+        }
+
         // Pagination.
         $page = isset($allParams['page']) ? $allParams['page'] : 1;
-        $pages = ceil(count($resources) / $this->settings['admin']['pagination_step']);
-        $resources = array_slice(
-            $resources,
+        $pages = ceil(count($sortedResources) / $this->settings['admin']['pagination_step']);
+        $sortedResources = array_slice(
+            $sortedResources,
             ($page - 1) * $this->settings['admin']['pagination_step'],
             $this->settings['admin']['pagination_step'],
             true
         );
-        $sortedAccounts = [];
-        foreach ($this->userAccounts as $userAccount) {
-            $sortedAccounts[$userAccount['accid']] = $userAccount['name'];
-        }
 
         return $this->view->render($response, 'resources.twig', [
             'menu' => $menu,
-            'params' => $query,
-            'resources' => $resources,
+            'params' => $allParams,
+            'resources' => $sortedResources,
             'page' => $page,
             'pages' => $pages,
-            'accounts' => $sortedAccounts,
+            'accounts' => $this->userAccounts,
             'applications' => $this->userApplications,
             'messages' => $this->flash->getMessages(),
         ]);
