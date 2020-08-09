@@ -117,7 +117,7 @@ class CtrlResource extends CtrlBase
             foreach ($this->userAccounts as $userAccount) {
                 foreach ($this->userApplications as $userApplication) {
                     foreach ($resources as $index => $resource) {
-                        if ($resource['appid'] = $userApplication['appid'] && $userApplication['accid'] != $userAccount['accid']) {
+                        if ($userAccount['accid'] == $userApplication['accid'] && $userApplication['appid'] == $resource['appid']) {
                             $sortedResources[] = $resource;
                             unset($resources[$index]);
                         }
@@ -130,7 +130,7 @@ class CtrlResource extends CtrlBase
         elseif ($allParams['order_by'] == 'application') {
             foreach ($this->userApplications as $userApplication) {
                 foreach ($resources as $index => $resource) {
-                    if ($resource['appid'] = $userApplication['appid']) {
+                    if ($userApplication['appid'] == $resource['appid']) {
                         $sortedResources[] = $resource;
                         unset($resources[$index]);
                     }
