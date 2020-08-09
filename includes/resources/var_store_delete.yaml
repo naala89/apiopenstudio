@@ -15,7 +15,7 @@ security:
   id: validate_user_has_access_rights
   token:
     function: bearer_token
-    id: header_bearer_token
+    id: header_bearer_security_token
   roles:
     - Application manager
     - Developer
@@ -23,26 +23,9 @@ security:
 process:
   function: var_store_delete
   id: delete_the_var
-  uid:
-    function: field_value
-    id: get_the_value_of_uid
-    key_value: value
-    field:
-      function: var_field
-      id: convert_output_array_to_field
-      array:
-        function: filter
-        id: get_uid_from_user
-        inverse: true
-        keyOrValue: key
-        filter: uid
-        key_value: value
-        source:
-          function: user_read
-          id: get_user_from_token
-          token:
-            function: bearer_token
-            id: get_token
+  token:
+    function: bearer_token
+    id: header_bearer_token
   vid:
     function: var_uri
     id: get_the_vid

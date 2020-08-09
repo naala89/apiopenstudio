@@ -7,11 +7,17 @@
 namespace Gaterdata\Processor;
 
 use Gaterdata\Core;
+use Gaterdata\Db\UserMapper;
 use Gaterdata\Db\UserRoleMapper;
 use Gaterdata\Db\VarStoreMapper;
 
 class VarStoreDelete extends Core\ProcessorEntity
 {
+    /**
+     * @var UserMapper
+     */
+    private $userMapper;
+
     /**
      * @var VarStoreMapper
      */
@@ -37,14 +43,23 @@ class VarStoreDelete extends Core\ProcessorEntity
         'description' => 'Delete a var store variable.',
         'menu' => 'Var store',
         'input' => [
-            'uid' => [
-                'description' => 'User ID.',
+            'token' => [
+                'description' => 'The token of the user making the call. This is used to validate the user permissions.',
                 'cardinality' => [1, 1],
+                'literalAllowed' => false,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'validate_access' => [
+                'description' => 'If set to true, the calling users roles access will be validated. If set to false, then access is open.',
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['integer'],
+                'limitTypes' => ['boolean'],
                 'limitValues' => [],
-                'default' => -1,
+                'default' => true,
             ],
             'vid' => [
                 'description' => 'Var store ID.',
@@ -65,6 +80,7 @@ class VarStoreDelete extends Core\ProcessorEntity
     {
         parent::__construct($meta, $request, $db);
         $this->varStoreMapper = new VarStoreMapper($db);
+        $this->userMapper = new UserMapper($db);
         $this->userRoleMapper = new UserRoleMapper($db);
     }
 
@@ -75,25 +91,23 @@ class VarStoreDelete extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-        $uid = $this->val('uid', true);
+        $token = $this->val('token', true);
+        $currentUser = $this->userMapper->findBytoken($token);
+        $validateAccess = $this->val('validate_access', true);
         $vid = $this->val('vid', true);
 
-        $varStore = $this->varStoreMapper->findByVId($vid);
-        if (empty($varStore->getVid())) {
+        $var = $this->varStoreMapper->findByVId($vid);
+        if (empty($var->getVid())) {
             throw new Core\ApiException("unknown vid: $vid", 6, $this->id, 400);
         }
 
-        $appid = $varStore->getAppid();
-
-        $permitted = false;
-        foreach ($this->roles as $role) {
-            $result = $this->userRoleMapper->findByUidAppidRolename($uid, $appid, $role);
-            $permitted = !empty($result->getUrid()) ? true : $permitted;
-        }
-        if (!$permitted) {
-            throw new Core\ApiException("permission denied for appid: $appid", 6, $this->id, 400);
+        if ($validateAccess) {
+            if (!$this->userRoleMapper->findByUidAppidRolename($currentUser->getUid(), $var->getAppid(), 'Application manager')
+                && !$this->userRoleMapper->findByUidAppidRolename($currentUser->getUid(), $var->getAppid(), 'Developer')) {
+                throw new Core\ApiException('permission denied (appid: ' . $var->getAppid() . ')', 6, $this->id, 400);
+            }
         }
 
-        return new Core\DataContainer($this->varStoreMapper->delete($varStore));
+        return new Core\DataContainer($this->varStoreMapper->delete($var));
     }
 }
