@@ -23,7 +23,7 @@ class CtrlVars extends CtrlBase
      */
     protected $permittedRoles = [
         'Application manager',
-        'Developer'
+        'Developer',
     ];
 
     /**
@@ -51,21 +51,24 @@ class CtrlVars extends CtrlBase
 
         $menu = $this->getMenus();
         $allParams = $request->getParams();
+        $allParams['filter_by_account'] = !empty($allParams['filter_by_application']) ? '' : $allParams['filter_by_account'];
+
         $query = [];
-        if (isset($allParams['keyword'])) {
+        if (!empty($allParams['filter_by_application'])) {
+            $query['appid'] = $allParams['filter_by_application'];
+        }
+        if (!empty($allParams['keyword'])) {
             $query['keyword'] = $allParams['keyword'];
         }
-        if (isset($allParams['order_by'])) {
+        if (!empty($allParams['order_by']) && $allParams['order_by'] != 'account') {
             $query['order_by'] = $allParams['order_by'];
         }
-        if (isset($allParams['direction'])) {
+        if (!empty($allParams['direction'])) {
             $query['direction'] = $allParams['direction'];
         }
 
-        $applications = $this->getApplications($query);
-
         try {
-            $result = $this->apiCall('get', 'var_store/all', [
+            $result = $this->apiCall('get', 'var_store', [
                 'headers' => [
                     'Authorization' => "Bearer " . $_SESSION['token'],
                     'Accept' => 'application/json',
@@ -73,70 +76,59 @@ class CtrlVars extends CtrlBase
                 'query' => $query,
             ]);
             $vars = json_decode($result->getBody()->getContents(), true);
-            $result = $this->apiCall('get', 'role/all', [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
-                    ],
-                    'query' => ['uid' => $_SESSION['uid']],
-                ]);
-            $roles = json_decode($result->getBody()->getContents(), true);
-            $result = $this->apiCall('get', 'user/role', [
-                'headers' => [
-                    'Authorization' => "Bearer " . $_SESSION['token'],
-                    'Accept' => 'application/json',
-                ],
-                'query' => ['uid' => $_SESSION['uid']],
-            ]);
-            $userRoles = json_decode($result->getBody()->getContents(), true);
-            $result = $this->apiCall('get', 'account/all', [
-                'headers' => [
-                    'Authorization' => "Bearer " . $_SESSION['token'],
-                    'Accept' => 'application/json',
-                ],
-            ]);
-            $accounts = json_decode($result->getBody()->getContents(), true);
-            $result = $this->apiCall('get', 'application', [
-                'headers' => [
-                    'Authorization' => "Bearer " . $_SESSION['token'],
-                    'Accept' => 'application/json',
-                ],
-            ]);
-            $applications = json_decode($result->getBody()->getContents(), true);
         } catch (\Exception $e) {
             $this->flash->addMessageNow('error', $e->getMessage());
         }
 
-        $filteredAccounts = $filteredApplications = $permittedRoles = $filtereredVars = [];
-        foreach ($roles as $role) {
-            if (in_array($role['name'], self::PERMITTED_ROLES)) {
-                $permittedRoles[$role['rid']] = $role['name'];
-            }
-        }
-        foreach ($userRoles as $userRole) {
-            if (isset($permittedRoles[$userRole['rid']]) && !isset($filteredApplications[$userRole['appid']])) {
-                $filteredApplications[$userRole['appid']] = $applications[$userRole['appid']];
-            }
-        }
-        foreach ($filteredApplications as $filteredApplication) {
-            if (!isset($filteredAccounts[$filteredAccount['accid']])) {
-                $filteredAccounts[$filteredApplication['accid']] = $accounts[$filteredApplication['accid']];
-            }
-        }
-        if (!empty($allParams['filter_by'])) {
-            foreach ($vars as $vid => $var) {
-                if ($var['appid'] == $allParams['filter_by']) {
-                    $filtereredVars[$vid] = $var;
+        // Filter by account.
+        if (!empty($allParams['filter_by_account'])) {
+            $filterApps = [];
+            foreach ($this->userAccounts as $userAccount) {
+                if ($userAccount['accid'] == $allParams['filter_by_account']) {
+                    foreach ($this->userApplications as $userApplication) {
+                        if ($userApplication['accid'] == $userAccount['accid']) {
+                            $filterApps[] = $userApplication['appid'];
+                        }
+                    }
                 }
             }
-        } else {
-            $filtereredVars = $vars;
+            foreach ($vars as $index => $var) {
+                if (!in_array($var['appid'], $filterApps)) {
+                    unset($vars[$index]);
+                }
+            }
         }
 
-        // Filter by application.
-        $filterBy = [];
-        foreach ($filteredApplications as $appid => $application) {
-            $filterBy[$appid] = $filteredAccounts[$application['accid']] . ' - ' . $application['name'];
+        $sortedVars = [];
+        if ($allParams['order_by'] == 'account') {
+            // Sort by account name.
+            foreach ($this->userAccounts as $userAccount) {
+                foreach ($this->userApplications as $userApplication) {
+                    foreach ($vars as $index => $var) {
+                        if ($userAccount['accid'] == $userApplication['accid'] && $userApplication['appid'] == $var['appid']) {
+                            $sortedVars[] = $var;
+                            unset($vars[$index]);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Sort by application name.
+        elseif ($allParams['order_by'] == 'application') {
+            foreach ($this->userApplications as $userApplication) {
+                foreach ($vars as $index => $resource) {
+                    if ($userApplication['appid'] == $var['appid']) {
+                        $sortedVars[] = $var;
+                        unset($vars[$index]);
+                    }
+                }
+            }
+        }
+
+        else {
+            // All other sorts.
+            $sortedVars = $vars;
         }
 
         // Pagination.
@@ -149,14 +141,10 @@ class CtrlVars extends CtrlBase
 
         return $this->view->render($response, 'vars.twig', [
             'menu' => $menu,
-            'vars' => $filtereredVars,
-            'applications' => $filteredApplications,
-            'accounts' => $filteredAccounts,
-            'filterBy' => $filterBy,
-            'filter_by' => $allParams['filter_by'],
-            'order_by' => $allParams['order_by'],
-            'direction' => $allParams['direction'],
-            'keyword' => $allParams['keyword'],
+            'vars' => $sortedVars,
+            'applications' => $this->userApplications,
+            'accounts' => $this->userAccounts,
+            'params' => $allParams,
             'page' => $page,
             'pages' => $pages,
             'messages' => $this->flash->getMessages(),
@@ -192,10 +180,10 @@ class CtrlVars extends CtrlBase
         if (isset($allPostVars['create-var-appid'])) {
             $params['appid'] = $allPostVars['create-var-appid'];
         }
-        if (isset($allPostVars['key'])) {
+        if (isset($allPostVars['create-var-key'])) {
             $params['key'] = $allPostVars['create-var-key'];
         }
-        if (isset($allPostVars['val'])) {
+        if (isset($allPostVars['create-var-val'])) {
             $params['val'] = $allPostVars['create-var-val'];
         }
 

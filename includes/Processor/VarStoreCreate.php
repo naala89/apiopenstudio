@@ -44,14 +44,23 @@ class VarStoreCreate extends Core\ProcessorEntity
         'description' => 'Create a variable in the var store.',
         'menu' => 'Var store',
         'input' => [
-            'uid' => [
-                'description' => 'User ID of the user.',
+            'token' => [
+                'description' => 'the calling Users token.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['integer'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => -1,
+                'default' => '',
+            ],
+            'validate_access' => [
+                'description' => 'If set to true, the calling users roles access will be validated. If set to false, then access is open.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => true,
             ],
             'appid' => [
                 'description' => 'Application ID that the var will be assigned to.',
@@ -101,23 +110,18 @@ class VarStoreCreate extends Core\ProcessorEntity
     {
         Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-        $uid = $this->val('uid', true);
+        $token = $this->val('token', true);
+        $currentUser = $this->userMapper->findBytoken($token);
+        $validateAccess = $this->val('validate_access', true);
         $appid = $this->val('appid', true);
         $key = $this->val('key', true);
         $val = $this->val('val', true);
 
-        $user = $this->userMapper->findByUid($uid);
-        if (empty($user->getUid())) {
-            throw new Core\ApiException("Invalid user ID: $uid", 6, $this->id, 400);
-        }
-
-        $permitted = false;
-        foreach ($this->roles as $roleName) {
-            $userRole = $this->userRoleMapper->findByUidAppidRolename($uid, $appid, $roleName);
-            $permitted = !empty($userRole->getUrid()) ? true : $permitted;
-        }
-        if (!$permitted) {
-            throw new Core\ApiException("permission denied (appid: $appid)", 6, $this->id, 400);
+        if ($validateAccess) {
+            if (!$this->userRoleMapper->findByUidAppidRolename($currentUser->getUid(), $appid, 'Application manager')
+                && !$this->userRoleMapper->findByUidAppidRolename($currentUser->getUid(), $appid, 'Developer')) {
+                throw new Core\ApiException("permission denied (appid: $appid)", 6, $this->id, 400);
+            }
         }
 
         $varStore = $this->varStoreMapper->findByAppIdKey($appid, $key);

@@ -81,6 +81,53 @@ class VarStoreMapper extends Mapper
     }
 
     /**
+     * Return all vars.
+     *
+     * @param array $params
+     *   Filter params.
+     *
+     * @return array
+     *   Array of varStore objects.
+     *
+     * @throws \Gaterdata\Core\ApiException
+     */
+    public function findAll($params)
+    {
+        $sql = 'SELECT * FROM var_store';
+
+        return $this->fetchRows($sql, [], $params);
+    }
+
+    /**
+     * Return all vars that a auser has access to.
+     *
+     * @param integer $uid
+     *   User ID.
+     * @param array $params
+     *   Filter params.
+     *
+     * @return array
+     *   Array of varStore objects.
+     *
+     * @throws \Gaterdata\Core\ApiException
+     */
+    public function findByUid($uid, $params)
+    {
+        $sql = 'SELECT *';
+        $sql .= ' FROM var_store';
+        $sql .= ' WHERE appid IN (';
+        $sql .= ' SELECT DISTINCT appid';
+        $sql .= ' FROM user_role AS ur';
+        $sql .= ' INNER JOIN role AS r';
+        $sql .= ' ON ur.rid = r.rid';
+        $sql .= ' WHERE ur.uid = ?';
+        $sql .= ' AND r.name IN ("Application manager", "Developer"))';
+        $bindParams = [$uid];
+
+        return $this->fetchRows($sql, $bindParams, $params);
+    }
+
+    /**
      * Find a var by vid with user/role validation against the var's application.
      *
      * @param integer $uid
