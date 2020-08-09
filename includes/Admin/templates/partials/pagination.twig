@@ -12,22 +12,24 @@
 
 <div class="row">
   <div class="col s12">
-    <ul class="pagination">
-      <li class="{% if page == 1 %}disabled{% endif %}">
-        <a href="{% if page == 1 %}javascript:void(0);{% else %}{{ url }}&page={{ page - 1 }}{% endif %}">
-          <i class="material-icons">chevron_left</i>
-        </a>
-      </li>
-      {% for i in start..end %}
-        <li class="{% if page == i %}active{% else %}waves-effect{% endif %}">
-          <a href="{{ url }}&page={{ i }}">{{ i }}</a>
+    {% if pages > 0 %}
+      <ul class="pagination">
+        <li class="{% if page == 1 %}disabled{% endif %}">
+          <a href="{% if page == 1 %}javascript:void(0);{% else %}{{ url }}&page={{ page - 1 }}{% endif %}">
+            <i class="material-icons">chevron_left</i>
+          </a>
         </li>
-      {% endfor %}
-      <li class="{% if page == pages %}disabled{% endif %}">
-        <a href="{% if page == pages %}javascript:void(0);{% else %}{{ url }}&page={{ page + 1 }}{% endif %}">
-          <i class="material-icons">chevron_right</i>
-        </a>
-      </li>
-    </ul>
+          {% for i in start..end %}
+            <li class="{% if page == i %}active{% else %}waves-effect{% endif %}">
+              <a href="{{ url }}&page={{ i }}">{{ i }}</a>
+            </li>
+          {% endfor %}
+          <li class="{% if page == pages %}disabled{% endif %}">
+            <a href="{% if page == pages %}javascript:void(0);{% else %}{{ url }}&page={{ page + 1 }}{% endif %}">
+              <i class="material-icons">chevron_right</i>
+            </a>
+          </li>
+      </ul>
+    {% endif %}
   </div>
 </div>
