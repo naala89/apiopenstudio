@@ -2,11 +2,14 @@
   "title": "GaterData wiki",
   "content": [
     "home.md",
+    "how-it-works.md",
     "installation/bookdown.json",
     "running-gaterdata/bookdown.json",
-    "developers/bookdown.json"
+    "developers/bookdown.json",
+    "privacy.md",
+    "license.md"
   ],
-  "target": "../../public/wiki",
+  "target": "/wiki",
   "tocDepth": 1,
   "copyright": "Copyright (c) 2020 <a href=\"https://gaterdata.com/\">GaterData.com</a>",
   "extensions": {

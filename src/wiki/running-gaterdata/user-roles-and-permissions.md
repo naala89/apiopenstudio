@@ -14,24 +14,23 @@ Administrator
 
 permissions:
 
-* Create accounts
-* Edit accounts
-* Delete accounts
+* Create, edit, Delete or view all accounts
+* Create, edit, delete or view all applications
+* create, edit, enable/disable, delete or view all users
 * Invite users
-* Enable, disable or delete users
-* Assign user roles
+* Create, edit, Delete or view all user roles
+* Assign user roles to users
 
 Account manager
 ---------------
 
 permissions:
 
-* Create applications
-* Edit applications
-* Delete applications
+* Create, edit, delete or view all applications
 * Invite users
-* Disable or delete users
-* Assign/Revoke user roles to their account
+* Invite users
+* Create, edit, Delete or view all user roles
+* Assign user roles to users
 
 Application manager
 -------------------
@@ -39,21 +38,19 @@ Application manager
 permissions:
 
 * Invite users
-* Disable or delete users
-* Assign/Revoke user roles to their account
+* Create, edit, Delete or view all user roles
+* Assign user roles to users
 
 Developer
 ---------
 
 permissions:
 
-* Create resources for their account/applications
-* Delete resources for their account/applications
-* Edit resources for their account/applications
+* Create, edit, Delete or view all resources for their account/applications
 
 Consumer
 --------
 
 permissions:
 
-* Access all other resources.
+* Use resources associated with applications they have permissions for.
