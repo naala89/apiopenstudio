@@ -9,10 +9,10 @@
   <div class="row">
     <form method="get" action="/users">
       <div class="col s1">
-        <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-user-invite"><i class="material-icons">email</i></a>
+        <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="#modal-user-invite" title="Invite users to GaterData"><i class="material-icons">email</i></a>
       </div>
       <div class="col s1">
-        <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="/user/create"><i class="material-icons">add</i></a>
+        <a class="btn-floating btn-large waves-effect waves-light green modal-trigger hoverable" href="/user/create" title="Add a user to GaterData"><i class="material-icons">add</i></a>
       </div>
       <div class="col s4">
         <div class="input-field">
@@ -27,6 +27,7 @@
             <option value="name_first" {% if params['order_by'] == "name_first" %}selected{% endif %}>First name</option>
             <option value="name_last" {% if params['order_by'] == "name_last" %}selected{% endif %}>Last name</option>
             <option value="email" {% if params['order_by'] == "email" %}selected{% endif %}>Email</option>
+            <option value="active" {% if params['order_by'] == "active" %}selected{% endif %}>Active status</option>
           </select>
           <label for="search">Sort by</label>
         </div>

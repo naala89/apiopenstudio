@@ -77,7 +77,7 @@ class UserRead extends Core\ProcessorEntity
                 'literalAllowed' => true,
                 'limitFunctions' => [],
                 'limitTypes' => ['text'],
-                'limitValues' => ['uid', 'username', 'name_first', 'name_last', 'email'],
+                'limitValues' => ['uid', 'username', 'name_first', 'name_last', 'email', 'active'],
                 'default' => 'username',
             ],
             'direction' => [
