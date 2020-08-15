@@ -4,6 +4,9 @@ namespace Gaterdata\Output;
 
 use Gaterdata\Config;
 use Gaterdata\Core;
+use Swift_Mailer;
+use Swift_Message;
+use Swift_SmtpTransport;
 
 /**
  * Class Email
@@ -25,12 +28,12 @@ class Email extends Output
      */
     protected $details = [
         'name' => 'Email',
-        'machineName' => 'email',
-        'description' => 'Output in the results of the resource into an email.',
+        'machineName' => 'output_email',
+        'description' => 'Output the results of the resource into an email.',
         'menu' => 'Output',
         'input' => [
             'to' => [
-                'description' => 'Destination emails for the output.',
+                'description' => 'The destination emails for the output.',
                 'cardinality' => [1, '*'],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
@@ -38,8 +41,17 @@ class Email extends Output
                 'limitValues' => [],
                 'default' => '',
             ],
-            'from' => [
-                'description' => 'From email address for the email.',
+            'from_email' => [
+                'description' => 'The from email.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'from_name' => [
+                'description' => 'The from name.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
@@ -48,22 +60,31 @@ class Email extends Output
                 'default' => '',
             ],
             'subject' => [
-                'description' => 'Subject for the email.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitFunctions' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => 'GaterData',
-            ],
-            'format' => [
-                'description' => 'Format for the results to be formatted into.',
+                'description' => 'The subject for the email.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
                 'limitTypes' => ['text'],
-                'limitValues' => ['json', 'html', 'xml', 'text'],
-                'default' => 'json'
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'message' => [
+                'description' => 'The body of the email.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'format' => [
+                'description' => 'The format of the body of the email.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['html', 'plain', 'text', 'json', 'xml'],
+                'limitValues' => [],
+                'default' => 'html',
             ],
         ],
     ];
@@ -73,74 +94,35 @@ class Email extends Output
      */
     public function process()
     {
-        Core\Debug::message("Output Email");
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
 
-        $mail = new \PHPMailer();
         $to = $this->val('to', true);
-        $from = !empty($this->meta->from) ? $this->val('from', true) : $this->defaults['from'];
-        $subject = !empty($this->meta->subject) ?
-            $this->val('subject', true) : $this->defaults['subject'];
+        $fromEmail = $this->val('from_email', true);
+        $fromEmail = empty($fromEmail) ? Core\Config::__get(['email', 'from', 'email']) : $fromEmail;
+        $fromName = $this->val('from_name', true);
+        $fromName = empty($fromName) ? Core\Config::__get(['email', 'from', 'name']) : $fromName;
+        $subject = $this->val('subject', true);
+        $message = $this->val('message', true);
         $format = $this->val('format', true);
+
         $class = '\\Gaterdata\\Output\\' . $format;
-        $obj = new $class($this->data, 200, '');
-        $data = $obj->getData();
-        $altData = $data;
-        $html = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" ';
-        $html .= '"http://www.w3.org/TR/html4/loose.dtd">';
-        $html .= '<html><head><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">';
-        $html .= '<title>PHPMailer Test</title></head><body>';
-        $html .= '<div style="width: 640px; font-family: Arial, Helvetica, sans-serif; font-size: 11px;"><p>';
-        switch ($format) {
-            case 'html':
-                $html .= $data . '</p>';
-            break;
-            case 'json':
-            case 'text':
-            default:
-                $html .= $data . '</p></div></body></xml>';
-            break;
-        }
+        $obj = new $class($message, 200, '');
+        $message = $obj->getData();
 
-        // email params
-        switch (Config::$emailService) {
-            case 'smtp':
-                $mail->isSMTP();
-                $mail->Host = Config::$emailHost;
-                $mail->SMTPAuth = Config::$emailAuth;
-                $mail->Username = Config::$emailHost;
-                $mail->Password = Config::$emailPass;
-                $mail->SMTPSecure = Config::$emailSecure;
-                $mail->Port = Config::$emailPort;
-            break;
-            case 'sendmail':
-                $mail->isSendmail();
-            break;
-            case 'qmail':
-                $mail->isQmail();
-            break;
-            case 'mail':
-            default:
-            break;
-        }
+        $transport = (new Swift_SmtpTransport(Core\Config::__get(['email', 'host']), 25))
+            ->setUsername(Core\Config::__get(['email', 'username']))
+            ->setPassword(Core\Config::__get(['email', 'password']));
+        $mailer = new Swift_Mailer($transport);
+        $email = (new Swift_Message($subject))
+            ->setFrom([$fromEmail => $fromName])
+            ->setTo($to)
+            ->setBody($message);
+        $result = $mailer->send($email);
 
-        $mail->setFrom($from);
-        if (!is_array($to)) {
-            $mail->addAddress($to);
-        } else {
-            foreach ($to as $email) {
-                $mail->addAddress($email);
-            }
+        if (!$result) {
+            throw new Core\ApiException('Email message send failed', 1, $this->id, 500);
         }
-        $mail->Subject = $subject;
-        $mail->msgHTML($html);
-        $mail->AltBody = $altData;
-
-        if (!$mail->send()) {
-            $message = 'email could not be sent. Mailer Error: ' . $mail->ErrorInfo;
-            throw new Core\ApiException($message, 1, $this->id, 500);
-        }
-
-        return true;
+        return "$result messages sent.";
     }
 
     /**
