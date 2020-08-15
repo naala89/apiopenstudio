@@ -18,7 +18,7 @@ class Image extends Output
      */
     protected $details = [
         'name' => 'Image',
-        'machineName' => 'image',
+        'machineName' => 'output_image',
         'description' => 'Output in the results of the resource in image format to a remote server.',
         'menu' => 'Output',
         'input' => [
@@ -52,6 +52,15 @@ class Image extends Output
             ],
         ],
     ];
+
+    /**
+     * {@inheritDoc}
+     */
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        return parent::process();
+    }
 
     /**
      * {@inheritDoc}

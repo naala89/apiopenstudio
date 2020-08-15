@@ -16,7 +16,7 @@ class Text extends Output
      */
     protected $details = [
         'name' => 'Text',
-        'machineName' => 'text',
+        'machineName' => 'output_text',
         'description' => 'Output in the results of the resource in text format to a remote server.',
         'menu' => 'Output',
         'input' => [
@@ -50,6 +50,15 @@ class Text extends Output
             ],
         ],
     ];
+
+    /**
+     * {@inheritDoc}
+     */
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        return parent::process();
+    }
 
     /**
      * {@inheritDoc}

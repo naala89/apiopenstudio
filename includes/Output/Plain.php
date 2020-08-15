@@ -14,7 +14,7 @@ class Plain extends Text
      */
     protected $details = [
         'name' => 'Plain',
-        'machineName' => 'plain',
+        'machineName' => 'output_plain',
         'description' => 'Output in the results of the resource in plain-text format to a remote server.',
         'menu' => 'Output',
         'input' => [
@@ -48,6 +48,15 @@ class Plain extends Text
             ],
         ],
     ];
+
+    /**
+     * {@inheritDoc}
+     */
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        return parent::process();
+    }
 
     /**
      * {@inheritDoc}

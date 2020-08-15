@@ -16,7 +16,7 @@ class Json extends Output
      */
     protected $details = [
         'name' => 'Json',
-        'machineName' => 'json',
+        'machineName' => 'output_json',
         'description' => 'Output in the results of the resource in JSON format to a remote server.',
         'menu' => 'Output',
         'input' => [
@@ -50,6 +50,15 @@ class Json extends Output
             ],
         ],
     ];
+
+    /**
+     * {@inheritDoc}
+     */
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        return parent::process();
+    }
 
     /**
      * {@inheritDoc}

@@ -14,7 +14,7 @@ class Html extends Xml
      */
     protected $details = [
         'name' => 'Html',
-        'machineName' => 'html',
+        'machineName' => 'output_html',
         'description' => 'Output in the results of the resource in HTML format to a remote server.',
         'menu' => 'Output',
         'input' => [
@@ -48,6 +48,15 @@ class Html extends Xml
             ],
         ],
     ];
+
+    /**
+     * {@inheritDoc}
+     */
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        return parent::process();
+    }
 
     /**
     * {@inheritDoc}

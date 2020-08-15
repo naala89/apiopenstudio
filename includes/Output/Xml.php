@@ -21,7 +21,7 @@ class Xml extends Output
      */
     protected $details = [
         'name' => 'Xml',
-        'machineName' => 'xml',
+        'machineName' => 'output_xml',
         'description' => 'Output in the results of the resource in XML format to a remote server.',
         'menu' => 'Output',
         'input' => [
@@ -55,6 +55,15 @@ class Xml extends Output
             ],
         ],
     ];
+
+    /**
+     * {@inheritDoc}
+     */
+    public function process()
+    {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        return parent::process();
+    }
 
     /**
      * {@inheritDoc}

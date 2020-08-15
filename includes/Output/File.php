@@ -14,7 +14,7 @@ class File extends Output
      */
     protected $details = [
         'name' => 'File',
-        'machineName' => 'file',
+        'machineName' => 'output_file',
         'description' => 'Output a file.',
         'menu' => 'Output',
         'input' => [
@@ -63,6 +63,7 @@ class File extends Output
      */
     public function setHeader()
     {
+        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
         parent::setHeader();
         $filename = $this->val('filename', true);
         header("Content-Disposition: attachment; filename='$filename'");
