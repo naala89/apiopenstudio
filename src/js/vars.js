@@ -15,7 +15,8 @@ $(document).ready(function () {
             modal = $('#modal-var-edit');
         modal.find('input[name="edit-var-vid"]').val(self.attr('vid'));
         modal.find('.edit-var-key').html(self.attr('key'));
-        modal.find('input[name="edit-var-val"]').val(self.attr('val'));
+        modal.find('textarea[name="edit-var-val"]').val(self.attr('val'));
+        M.textareaAutoResize();
         M.updateTextFields();
     });
 
