@@ -6,10 +6,11 @@ use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use PHPMailer\PHPMailer\PHPMailer;
-use phpmailerException;
 use Gaterdata\Core\ApiException;
 use Gaterdata\Core\Hash;
+use Swift_Mailer;
+use Swift_Message;
+use Swift_SmtpTransport;
 
 /**
  * Class CtrlUser.
@@ -327,9 +328,7 @@ class CtrlUser extends CtrlBase
     }
 
     /**
-     * Send a user an email with a token to register.
-     *
-     * The email templates are in /includes/Admin/templates/invite-user.email.twig.
+     * Invite a single or multiple users to GaterData.
      *
      * @param Request $request
      *   Slim request object.
@@ -341,12 +340,15 @@ class CtrlUser extends CtrlBase
      * @return ResponseInterface|Response
      *
      * @throws GuzzleException
-     * @throws \PHPMailer\PHPMailer\Exception
      */
     public function invite(Request $request, Response $response, array $args)
     {
         // Validate access.
-        if (!$this->checkAccess()) {
+        if (!$this->checkAccess() && !(
+            in_array('Administrator', $this->userRoles)
+            || in_array('Account manager', $this->userRoles)
+            || in_array('Application manager', $this->userRoles)
+            )) {
             $this->flash->addMessage('error', 'Access admin: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
         }
@@ -357,97 +359,91 @@ class CtrlUser extends CtrlBase
             return $response->withRedirect('/users');
         }
 
-        // Check if user already exists.
         try {
-            $userHlp = new User($this->dbSettings);
-            $user = $userHlp->findByEmail($email);
-            if (!empty($user['uid'])) {
-                return $this->view->render($response, 'users.twig', [
-                    'menu' => $menu,
-                    'message' => [
-                        'type' => 'error',
-                        'text' => 'A user already exists with this email: ' . $email,
-                    ]
-                ]);
+            $result = $this->apiCall('post', "user/invite",
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                        'Accept' => 'application/json',
+                    ],
+                    'form_params' => ['email' => $email],
+                ]
+            );
+            $result = json_decode($result->getBody()->getContents(), true);
+
+            $message = '';
+            if (isset($result['resent'])) {
+                $message .= "<p><b>Resent invites:</b><br/>";
+                foreach ($result['resent'] as $email) {
+                    $message .= "$email<br/>";
+                }
+                $message .= "</p>";
             }
-        } catch (ApiException $e) {
-            return $this->view->render($response, 'users.twig', [
-                'menu' => $menu,
-                'message' => [
-                    $message['type'] = 'error',
-                    $message['text'] = $e->getMessage(),
-                ]
-            ]);
+            if (isset($result['success'])) {
+                $message .= "<p><b>Sent invites:</b><br/>";
+                foreach ($result['success'] as $email) {
+                    $message .= "$email<br/>";
+                }
+                $message .= "</p>";
+            }
+            if (isset($result['fail'])) {
+                $message .= "<p><b>Failed invites:</b><br/>";
+                foreach ($result['fail'] as $email) {
+                    $message .= "$email<br/>";
+                }
+                $message .= "</p>";
+            }
+            $this->flash->addMessage('info', $message);
+        } catch (\Exception $e) {
+            $this->flash->addMessage('error', $e->getMessage());
         }
 
-        // Generate vars for the email.
-        $token = Hash::generateToken($email);
-        $host = $this->getHost();
-        $scheme = $request->getUri()->getScheme();
-        $link = "$scheme://$host/user/register/$token";
+        return $response->withStatus(302)->withHeader('Location', '/users');
+    }
 
-        // Add invite to DB.
-        try {
-            $accountHlp = new Account($this->dbSettings);
-            $account = $accountHlp->findByUaid($uaid);
-            $inviteHlp = new Invite($this->dbSettings);
-            // Remove any old invites for this email.
-            $inviteHlp->deleteByEmail($email);
-            // Add new invite.
-            $inviteHlp->create($account['accid'], $email, $token);
-        } catch (ApiException $e) {
-            return $this->view->render($response, 'users.twig', [
-                'menu' => $menu,
-                'message' => [
-                    'type' => 'error',
-                    'text' => $e->getMessage(),
-                ]
-            ]);
+    /**
+     * Accept a user invite with a token.
+     *
+     * @param \Slim\Http\Request $request
+     *   Request object.
+     * @param \Slim\Http\Response $response
+     *   Response object.
+     * @param array $args
+     *   Request args.
+     *
+     * @return ResponseInterface
+     *   Response.
+     *
+     * @throws \Exception
+     */
+    public function inviteAccept(Request $request, Response $response, array $args)
+    {
+        $menu = $this->getMenus([]);
+
+        // Token not received.
+        if (empty($allVars['token'])) {
+            return $response->withRedirect('/login');
         }
 
-        // Send the email.
-        $mail = new PHPMailer(true); // Passing `true` enables exceptions
+        $token = $allVars['token'];
+
         try {
-            //Server settings
-            $mail->SMTPDebug = $this->mailSettings['debug'];
-            $mail->isSMTP($this->mailSettings['smtp']);
-            $mail->Host = $this->mailSettings['host'];
-            $mail->SMTPAuth = $this->mailSettings['auth'];
-            $mail->Username = $this->mailSettings['username'];
-            $mail->Password = $this->mailSettings['password'];
-            $mail->SMTPSecure = $this->mailSettings['smtpSecure'];
-            $mail->Port = $this->mailSettings['port'];
-
-            //Recipients
-            $mail->addAddress($email);
-            $mail->setFrom($this->mailSettings['from']['email'], $this->mailSettings['from']['name']);
-            $mail->addReplyTo($this->mailSettings['from']['email'], $this->mailSettings['from']['name']);
-
-            //Content
-            $mail->Subject = $this->view->fetchBlock('invite-user.email.twig', 'subject');
-            $mail->Body = $this->view->fetchBlock('invite-user.email.twig', 'body_html', [
-                'link' => $link,
-            ]);
-            $mail->AltBody = $this->view->fetchBlock('invite-user.email.twig', 'body_text', [
-                'link' => $link,
-            ]);
-
-            $mail->send();
-
-            $message['text'] = 'Invite has been sent to ' . $email;
-            $message['type'] = 'info';
-            return $this->view->render($response, 'users.twig', [
-                'menu' => $menu,
-                'message' => $message,
-            ]);
-        } catch (phpmailerException $e) {
-            return $this->view->render($response, 'users.twig', [
-                'menu' => $menu,
-                'message' => [
-                    'type' => 'error',
-                    'text' => 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo,
+            $result = $this->apiCall('post', "user/invite/accept",
+                [
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'json' => ['token' => $token],
+                    ],
                 ]
-            ]);
+            );
+            $result = json_decode($result->getBody()->getContents(), true);
+            if ($result == 'true') {
+                $this->flash->addMessageNow('info', 'User successfully deleted.');
+            } else {
+                $this->flash->addMessageNow('error', 'User deletion failed, please check the logs.');
+            }
+        } catch (\Exception $e) {
+            $this->flash->addMessageNow('error', $e->getMessage());
         }
     }
 

@@ -96,7 +96,7 @@
                 {% endfor %}
                 <a href="/vars?filter_by_application={{ appid }}">{{ appname }}</a></div>
             <div class="col col-height s2 valign-wrapper">{{ var.key }}</div>
-            <div class="col col-height s4 valign-wrapper">{{ var.val }}</div>
+            <div class="col col-height s4 valign-wrapper">{{ (var.val|length > 100 ? var.val|slice(0, 100) ~ '…'|escape : var.val) }}</div>
             <div class="col col-height s2 valign-wrapper">
                 <a class="btn-floating btn-small white hoverable modal-trigger modal-var-edit-trigger" vid="{{ var.vid }}" appid="{{ var.appid }}" key="{{ var.key }}" val="{{ var.val }}" href="#modal-var-edit">
                     <i class="material-icons black-text" title="Edit this var.">edit</i>

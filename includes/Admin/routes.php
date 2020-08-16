@@ -44,7 +44,8 @@ $app->get('/user/view/{uid}', 'CtrlUser:view')->add(new Authentication($containe
 $app->get('/user/edit/{uid}', 'CtrlUser:edit')->add(new Authentication($container, $settings, '/login'));
 $app->post('/user/upload', 'CtrlUser:upload')->add(new Authentication($container, $settings, '/login'));
 $app->get('/user/delete/{uid}', 'CtrlUser:delete')->add(new Authentication($container, $settings, '/login'));
-//$app->post('/user/invite', 'CtrlUser:invite')->add(new Authentication($container, $settings, '/login'));
+$app->post('/user/invite', 'CtrlUser:invite')->add(new Authentication($container, $settings, '/login'));
+//$app->get('/user/invite/accept/{token}', 'CtrlUser:inviteAccept');
 //$app->get('/user/register_token/{token}', 'CtrlUser:register')->add(new Authentication($container, $settings, '/login'));
 //$app->post('/user/register', 'CtrlUser:register')->add(new Authentication($container, $settings, '/login'));
 

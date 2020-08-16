@@ -1,6 +1,6 @@
 name: User invite
 
-description: Invite a user.
+description: Invite a user or users.
 
 uri: user/invite
 
@@ -12,10 +12,10 @@ ttl: 0
 
 security:
   function: token_roles
-  id: user_read_security
+  id: user_invite_security
   token:
     function: bearer_token
-    id: user_read_token
+    id: user_invite_token
   roles:
     - Administrator
     - Account manager
@@ -26,5 +26,6 @@ process:
   id: user_invite_process
   email:
     function: var_post
-    id: user_invite_email
+    id: user_invite_var_post_email
     key: email
+    nullable: false

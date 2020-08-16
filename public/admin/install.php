@@ -117,7 +117,7 @@ switch ($step) {
                     $keys = [];
                     $values = [];
                     foreach ($row as $key => $value) {
-                        $keys[] = $key;
+                        $keys[] = "`$key`";
                         $values[] = is_string($value) ? "\"$value\"" : $value;
                     }
                     $sqlRow = "INSERT INTO `$table` (" . implode(', ', $keys) . ') VALUES (' . implode(', ', $values) . ');';

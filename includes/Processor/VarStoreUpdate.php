@@ -120,6 +120,6 @@ class VarStoreUpdate extends Core\ProcessorEntity
 
         $var->setVal($val);
 
-        return new Core\DataContainer($this->varStoreMapper->save($var));
+        return new Core\DataContainer($this->varStoreMapper->save($var), 'text');
     }
 }
