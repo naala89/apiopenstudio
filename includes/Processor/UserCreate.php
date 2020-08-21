@@ -231,6 +231,8 @@ class UserCreate extends Core\ProcessorEntity
         $user->setAddressPostcode($this->val('address_postcode', true));
         $user->setPhoneMobile($this->val('phone_mobile', true));
         $user->setPhoneWork($this->val('phone_work', true));
+        $user->setPasswordReset(null);
+        $user->setPasswordResetTtl(null);
 
         $this->userMapper->save($user);
         $user = $this->userMapper->findByUsername($username);
