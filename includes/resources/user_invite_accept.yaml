@@ -1,0 +1,20 @@
+name: User invite accept
+
+description: User invite accepted using a token.
+
+uri: user/invite/accept
+
+method: post
+
+appid: 2
+
+ttl: 0
+
+process:
+  function: invite_accept
+  id: user_invite_accept_process
+  token:
+    function: var_uri
+    id: user_invite_accpet_token
+    index: 0
+    nullable: false
