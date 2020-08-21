@@ -42,17 +42,17 @@ process:
   honorific:
     function: var_post
     id: user_create_honorific
-    nullable: false
+    nullable: true
     key: honorific
   name_first:
     function: var_post
     id: user_create_name_first
-    nullable: false
+    nullable: true
     key: name_first
   name_last:
     function: var_post
     id: user_create_name_last
-    nullable: false
+    nullable: true
     key: name_last
   email:
     function: var_post
