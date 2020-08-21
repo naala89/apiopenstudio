@@ -11,18 +11,11 @@ appid: 2
 ttl: 0
 
 security:
-  function: token_roles
+  function: token
   id: user_role_read_security
   token:
     function: bearer_token
     id: user_role_read_security_token
-  roles:
-    - Administrator
-    - Account manager
-    - Application manager
-    - Developer
-  validate_account: false
-  validate_application: false
 
 process:
   function: user_role_read
