@@ -164,7 +164,6 @@ class CtrlBase
                 $allRoles[$role['rid']] = $role['name'];
             }
         } catch (\Exception $e) {
-            $this->flash->addMessageNow('error', $e->getMessage());
         }
         return $allRoles;
     }
@@ -225,7 +224,6 @@ class CtrlBase
             ]);
             $allApplications = json_decode($result->getBody()->getContents(), true);
         } catch (\Exception $e) {
-            $this->flash->addMessageNow('error', $e->getMessage());
         }
 
         return $allApplications;
@@ -318,7 +316,6 @@ class CtrlBase
             ]);
             $allAccounts = json_decode($result->getBody()->getContents(), true);
         } catch (\Exception $e) {
-            $this->flash->addMessageNow('error', $e->getMessage());
         }
 
         return $allAccounts;
@@ -386,6 +383,9 @@ class CtrlBase
             $this->userApplications = $this->getApplications();
             $this->userRoles = $this->getRoles();
         }
+        if (empty($this->permittedRoles)) {
+            return true;
+        }
 
         foreach ($this->userRoles as $rid => $name) {
             if (in_array($name, $this->permittedRoles)) {
@@ -407,7 +407,7 @@ class CtrlBase
     {
         $menus = [];
 
-        if (empty($this->userRoles)) {
+        if (empty($_SESSION['uid'])) {
             $menus += [
                 'Login' => '/login',
             ];
