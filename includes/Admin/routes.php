@@ -5,12 +5,17 @@ use Gaterdata\Admin\Middleware\Authentication;
 $container = $app->getContainer();
 
 /**
- * Login/logout.
+ * Login/logout and non-0authenticated calls
  */
 $app->get('/login', 'CtrlLogin:login');
 $app->post('/login', 'CtrlLogin:login')->add(new Authentication($container, $settings, '/login'));
 $app->get('/logout', 'CtrlLogin:logout');
 $app->post('/logout', 'CtrlLogin:logout');
+$app->get('/invite/accept/{token}', 'CtrlLogin:inviteAccept');
+$app->get('/password/reset', 'CtrlLogin:passwordReset');
+$app->post('/password/reset', 'CtrlLogin:passwordReset');
+$app->get('/password/set/{token}', 'CtrlLogin:setPassword');
+$app->post('/password/set', 'CtrlLogin:setPassword');
 
 /**
  * Home.
@@ -45,7 +50,6 @@ $app->get('/user/edit/{uid}', 'CtrlUser:edit')->add(new Authentication($containe
 $app->post('/user/upload', 'CtrlUser:upload')->add(new Authentication($container, $settings, '/login'));
 $app->get('/user/delete/{uid}', 'CtrlUser:delete')->add(new Authentication($container, $settings, '/login'));
 $app->post('/user/invite', 'CtrlUser:invite')->add(new Authentication($container, $settings, '/login'));
-//$app->get('/user/invite/accept/{token}', 'CtrlUser:inviteAccept');
 //$app->get('/user/register_token/{token}', 'CtrlUser:register')->add(new Authentication($container, $settings, '/login'));
 //$app->post('/user/register', 'CtrlUser:register')->add(new Authentication($container, $settings, '/login'));
 
