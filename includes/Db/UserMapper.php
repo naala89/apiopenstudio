@@ -30,55 +30,59 @@ class UserMapper extends Mapper
         if (empty($user->getUid())) {
             $sql = 'INSERT INTO user (active, username, hash, token, token_ttl, email, honorific, name_first, ';
             $sql .= 'name_last, company, website, address_street, address_suburb, address_city, address_state, ';
-            $sql .= 'address_country, address_postcode, phone_mobile, phone_work) VALUES ';
-            $sql .= '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            $sql .= 'address_country, address_postcode, phone_mobile, phone_work, password_reset, password_reset_ttl) VALUES ';
+            $sql .= '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
             $bindParams = [
-            $user->getActive(),
-            $user->getUsername(),
-            $user->getHash(),
-            $user->getToken(),
-            $user->getTokenTtl(),
-            $user->getEmail(),
-            $user->getHonorific(),
-            $user->getNameFirst(),
-            $user->getNameLast(),
-            $user->getCompany(),
-            $user->getWebsite(),
-            $user->getAddressStreet(),
-            $user->getAddressSuburb(),
-            $user->getAddressCity(),
-            $user->getAddressState(),
-            $user->getAddressCountry(),
-            $user->getAddressPostcode(),
-            $user->getPhoneMobile(),
-            $user->getPhoneWork(),
+                $user->getActive(),
+                $user->getUsername(),
+                $user->getHash(),
+                $user->getToken(),
+                $user->getTokenTtl(),
+                $user->getEmail(),
+                $user->getHonorific(),
+                $user->getNameFirst(),
+                $user->getNameLast(),
+                $user->getCompany(),
+                $user->getWebsite(),
+                $user->getAddressStreet(),
+                $user->getAddressSuburb(),
+                $user->getAddressCity(),
+                $user->getAddressState(),
+                $user->getAddressCountry(),
+                $user->getAddressPostcode(),
+                $user->getPhoneMobile(),
+                $user->getPhoneWork(),
+                $user->getPasswordReset(),
+                $user->getPasswordResetTtl(),
             ];
         } else {
             $sql = 'UPDATE user SET active=?, username=?, hash=?, token=?, token_ttl=?, email=?, honorific=?, ';
             $sql .= 'name_first=?, name_last=?, company=?, website=?, address_street=?, address_suburb=?, ';
             $sql .= 'address_city=?, address_state=?, address_country=?, address_postcode=?, phone_mobile=?, ';
-            $sql .= 'phone_work=?  WHERE uid=?';
+            $sql .= 'phone_work=?, password_reset=?, password_reset_ttl=? WHERE uid=?';
             $bindParams = [
-            $user->getActive(),
-            $user->getUsername(),
-            $user->getHash(),
-            $user->getToken(),
-            $user->getTokenTtl(),
-            $user->getEmail(),
-            $user->getHonorific(),
-            $user->getNameFirst(),
-            $user->getNameLast(),
-            $user->getCompany(),
-            $user->getWebsite(),
-            $user->getAddressStreet(),
-            $user->getAddressSuburb(),
-            $user->getAddressCity(),
-            $user->getAddressState(),
-            $user->getAddressCountry(),
-            $user->getAddressPostcode(),
-            $user->getPhoneMobile(),
-            $user->getPhoneWork(),
-            $user->getUid(),
+                $user->getActive(),
+                $user->getUsername(),
+                $user->getHash(),
+                $user->getToken(),
+                $user->getTokenTtl(),
+                $user->getEmail(),
+                $user->getHonorific(),
+                $user->getNameFirst(),
+                $user->getNameLast(),
+                $user->getCompany(),
+                $user->getWebsite(),
+                $user->getAddressStreet(),
+                $user->getAddressSuburb(),
+                $user->getAddressCity(),
+                $user->getAddressState(),
+                $user->getAddressCountry(),
+                $user->getAddressPostcode(),
+                $user->getPhoneMobile(),
+                $user->getPhoneWork(),
+                $user->getPasswordReset(),
+                $user->getPasswordResetTtl(),
+                $user->getUid(),
             ];
         }
         return $this->saveDelete($sql, $bindParams);
@@ -221,7 +225,25 @@ class UserMapper extends Mapper
      */
     public function findBytoken($token)
     {
-        $sql = 'SELECT * FROM user WHERE token = ? AND token_ttl > now()';
+        $sql = 'SELECT * FROM user WHERE token = ?';
+        $bindParams = [$token];
+        return $this->fetchRow($sql, $bindParams);
+    }
+
+    /**
+     * Find a user by their password reset token.
+     *
+     * @param string $token
+     *   User auth token.
+     *
+     * @return User
+     *   User object.
+     *
+     * @throws ApiException
+     */
+    public function findByPasswordToken($token)
+    {
+        $sql = 'SELECT * FROM user WHERE password_reset = ?';
         $bindParams = [$token];
         return $this->fetchRow($sql, $bindParams);
     }
@@ -258,6 +280,8 @@ class UserMapper extends Mapper
         $user->setAddressPostcode(!empty($row['address_postcode']) ? $row['address_postcode'] : null);
         $user->setPhoneMobile(!empty($row['phone_mobile']) ? $row['phone_mobile'] : null);
         $user->setPhoneWork(!empty($row['phone_work']) ? $row['phone_work'] : null);
+        $user->setPasswordReset(!empty($row['password_reset']) ? $row['password_reset'] : null);
+        $user->setPasswordResetTtl(!empty($row['password_reset_ttl']) ? $row['password_reset_ttl'] : null);
         return $user;
     }
 }

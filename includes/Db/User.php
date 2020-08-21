@@ -91,6 +91,14 @@ class User
      * @var string User work number.
      */
     protected $phoneWork;
+    /**
+     * @var string Password reset token.
+     */
+    protected $passwordReset;
+    /**
+     * @var string Password reset TTL.
+     */
+    protected $passwordResetTtl;
 
     /**
      * User constructor.
@@ -135,6 +143,10 @@ class User
      *   Mobile number.
      * @param string $phoneWork
      *   Business number.
+     * @param string $passwordReset
+     *   Password reset token.
+     * @param string $passwordResetTtl
+     *   Password reset token TTL.
      */
     public function __construct(
         $uid = null,
@@ -156,7 +168,9 @@ class User
         $addressCountry = null,
         $addressPostcode = null,
         $phoneMobile = null,
-        $phoneWork = null
+        $phoneWork = null,
+        $passwordReset = null,
+        $passwordResetTtl = null
     ) {
         $this->uid = $uid;
         $this->active = $active;
@@ -178,6 +192,8 @@ class User
         $this->addressPostcode = $addressPostcode;
         $this->phoneMobile = $phoneMobile;
         $this->phoneWork = $phoneWork;
+        $this->passwordReset = $passwordReset;
+        $this->passwordResetTtl = $passwordResetTtl;
     }
 
     /**
@@ -633,6 +649,50 @@ class User
     }
 
     /**
+     * Get the password reset token.
+     *
+     * @return string
+     *   Password reset token.
+     */
+    public function getPasswordReset()
+    {
+        return $this->passwordReset;
+    }
+
+    /**
+     * Set the password reset token.
+     *
+     * @param string $passwordReset
+     *   password reset token.
+     */
+    public function setPasswordReset($passwordReset)
+    {
+        $this->passwordReset = $passwordReset;
+    }
+
+    /**
+     * Get the password reset token TTL.
+     *
+     * @return string
+     *   Password reset token TTL.
+     */
+    public function getPasswordResetTtl()
+    {
+        return $this->passwordResetTtl;
+    }
+
+    /**
+     * Set the password reset token TTL.
+     *
+     * @param string $passwordResetTtl
+     *   password reset token TTL.
+     */
+    public function setPasswordResetTtl($passwordResetTtl)
+    {
+        $this->passwordResetTtl = $passwordResetTtl;
+    }
+
+    /**
      * Return the values as an associative array.
      *
      * @return array
@@ -641,26 +701,28 @@ class User
     public function dump()
     {
         return [
-        'uid' => $this->uid,
-        'active' => $this->active,
-        'username' => $this->username,
-        'hash' => $this->hash,
-        'token' => $this->token,
-        'tokenTtl' => $this->tokenTtl,
-        'email' => $this->email,
-        'honorific' => $this->honorific,
-        'nameFirst' => $this->nameFirst,
-        'nameLast' => $this->nameLast,
-        'company' => $this->company,
-        'website' => $this->website,
-        'addressStreet' => $this->addressStreet,
-        'addressSuburb' => $this->addressSuburb,
-        'addressCity' => $this->addressCity,
-        'addressState' => $this->addressState,
-        'addressCountry' => $this->addressCountry,
-        'addressPostcode' => $this->addressPostcode,
-        'phoneMobile' => $this->phoneMobile,
-        'phoneWork' => $this->phoneWork,
+            'uid' => $this->uid,
+            'active' => $this->active,
+            'username' => $this->username,
+            'hash' => $this->hash,
+            'token' => $this->token,
+            'tokenTtl' => $this->tokenTtl,
+            'email' => $this->email,
+            'honorific' => $this->honorific,
+            'nameFirst' => $this->nameFirst,
+            'nameLast' => $this->nameLast,
+            'company' => $this->company,
+            'website' => $this->website,
+            'addressStreet' => $this->addressStreet,
+            'addressSuburb' => $this->addressSuburb,
+            'addressCity' => $this->addressCity,
+            'addressState' => $this->addressState,
+            'addressCountry' => $this->addressCountry,
+            'addressPostcode' => $this->addressPostcode,
+            'phoneMobile' => $this->phoneMobile,
+            'phoneWork' => $this->phoneWork,
+            'passwordReset' => $this->passwordReset,
+            'passwordResetTtl' => $this->passwordResetTtl,
         ];
     }
 }
