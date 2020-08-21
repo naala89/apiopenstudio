@@ -23,12 +23,7 @@ class CtrlUser extends CtrlBase
     /**
      * {@inheritdoc}
      */
-    protected $permittedRoles = [
-        'Administrator',
-        'Account manager',
-        'Application manager',
-        'Developer',
-    ];
+    protected $permittedRoles = [];
 
     /**
      * Create a new user.
@@ -402,49 +397,38 @@ class CtrlUser extends CtrlBase
     }
 
     /**
-     * Accept a user invite with a token.
+     * Get Local domain name.
      *
-     * @param \Slim\Http\Request $request
-     *   Request object.
-     * @param \Slim\Http\Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
-     *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return string
+     *   Host name.
      */
-    public function inviteAccept(Request $request, Response $response, array $args)
+    private function getHost()
     {
-        $menu = $this->getMenus([]);
-
-        // Token not received.
-        if (empty($allVars['token'])) {
-            return $response->withRedirect('/login');
-        }
-
-        $token = $allVars['token'];
-
-        try {
-            $result = $this->apiCall('post', "user/invite/accept",
-                [
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'json' => ['token' => $token],
-                    ],
-                ]
-            );
-            $result = json_decode($result->getBody()->getContents(), true);
-            if ($result == 'true') {
-                $this->flash->addMessageNow('info', 'User successfully deleted.');
-            } else {
-                $this->flash->addMessageNow('error', 'User deletion failed, please check the logs.');
+        $possibleHostSources = ['HTTP_X_FORWARDED_HOST', 'HTTP_HOST', 'SERVER_NAME', 'SERVER_ADDR'];
+        $sourceTransformations = [
+            "HTTP_X_FORWARDED_HOST" => function ($value) {
+                $elements = explode(',', $value);
+                return trim(end($elements));
             }
-        } catch (\Exception $e) {
-            $this->flash->addMessageNow('error', $e->getMessage());
+        ];
+        $host = '';
+        foreach ($possibleHostSources as $source) {
+            if (!empty($host)) {
+                break;
+            }
+            if (empty($_SERVER[$source])) {
+                continue;
+            }
+            $host = $_SERVER[$source];
+            if (array_key_exists($source, $sourceTransformations)) {
+                $host = $sourceTransformations[$source]($host);
+            }
         }
+
+        // Remove port number from host
+        $host = preg_replace('/:\d+$/', '', $host);
+
+        return trim($host);
     }
 
     /**
@@ -508,40 +492,5 @@ class CtrlUser extends CtrlBase
 
         // Fall through to new user register post form submission.
         return $this->createUser($allVars, $menu, $response);
-    }
-
-    /**
-     * Get Local domain name.
-     *
-     * @return string
-     *   Host name.
-     */
-    private function getHost()
-    {
-        $possibleHostSources = ['HTTP_X_FORWARDED_HOST', 'HTTP_HOST', 'SERVER_NAME', 'SERVER_ADDR'];
-        $sourceTransformations = [
-            "HTTP_X_FORWARDED_HOST" => function ($value) {
-                $elements = explode(',', $value);
-                return trim(end($elements));
-            }
-        ];
-        $host = '';
-        foreach ($possibleHostSources as $source) {
-            if (!empty($host)) {
-                break;
-            }
-            if (empty($_SERVER[$source])) {
-                continue;
-            }
-            $host = $_SERVER[$source];
-            if (array_key_exists($source, $sourceTransformations)) {
-                $host = $sourceTransformations[$source]($host);
-            }
-        }
-
-        // Remove port number from host
-        $host = preg_replace('/:\d+$/', '', $host);
-
-        return trim($host);
     }
 }

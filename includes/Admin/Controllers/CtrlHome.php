@@ -16,12 +16,7 @@ class CtrlHome extends CtrlBase
     /**
      * {@inheritdoc}
      */
-    protected $permittedRoles = [
-        'Administrator',
-        'Account manager',
-        'Application manager',
-        'Developer',
-    ];
+    protected $permittedRoles = [];
 
     /**
      * Home page.
