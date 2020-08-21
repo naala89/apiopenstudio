@@ -224,16 +224,6 @@ class ResourceUpdate extends Core\ProcessorEntity
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
-        // Proposed application/method/uri combination already exist.
-        $test = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
-        if (!empty($test->getResid()) && $test->getResid() != $resid) {
-            throw new Core\ApiException(
-                'A resource with this method and uri already exists for the application',
-                6,
-                $this->id,
-                400);
-        }
-
         // Proposed account/application are locked.
         $application = $this->applicationMapper->findByAppid($appid);
         $account = $this->accountMapper->findByAccid($application->getAccid());
