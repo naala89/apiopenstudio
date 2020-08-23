@@ -36,7 +36,7 @@ class AuthBearerToken extends Core\ProcessorEntity
    */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Auth (bearer token)', 4);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $token = $this->val('token', true);
 

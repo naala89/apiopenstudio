@@ -55,7 +55,7 @@ class Sort extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $values = $this->val('values', true);
 
@@ -66,7 +66,7 @@ class Sort extends Core\ProcessorEntity
         $direction = $this->val('direction', true);
         $sortBy = $this->val('sortBy', true);
 
-        Core\Debug::variable($values, 'values before sort');
+        $this->logger->debug('values before sort: ' . print_r($values, true));
 
         if ($sortBy == 'key') {
             if ($direction == 'asc') {
@@ -98,7 +98,7 @@ class Sort extends Core\ProcessorEntity
             }
         }
 
-        Core\Debug::variable($values, 'values after sort');
+        $this->logger->debug('values after sort: ' . print_r($values, true));
 
         return $values;
     }

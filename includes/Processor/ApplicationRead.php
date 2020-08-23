@@ -97,9 +97,9 @@ class ApplicationRead extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      */
-    public function __construct($meta, &$request, $db)
+    public function __construct($meta, &$request, $db, $logger)
     {
-        parent::__construct($meta, $request, $db);
+        parent::__construct($meta, $request, $db, $logger);
         $this->applicationMapper = new Db\ApplicationMapper($this->db);
         $this->userRoleMapper = new Db\UserRoleMapper($this->db);
         $this->userMapper = new Db\UserMapper($this->db);
@@ -111,7 +111,7 @@ class ApplicationRead extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $token = $this->val('token', true);
         $user = $this->userMapper->findBytoken($token);

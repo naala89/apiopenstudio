@@ -72,7 +72,7 @@ class AuthOAuth extends Core\ProcessorEntity
    */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Auth o-auth(header)', 4);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $headers = array(
         Authorization => OAuth,

@@ -45,7 +45,7 @@ class AuthBasic extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Auth Basic', 4);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $username = $this->val('username', true);
         $password = $this->val('password', true);

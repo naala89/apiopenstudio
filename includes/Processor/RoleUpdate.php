@@ -49,9 +49,9 @@ class RoleUpdate extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      */
-    public function __construct($meta, &$request, $db)
+    public function __construct($meta, &$request, $db, $logger)
     {
-        parent::__construct($meta, $request, $db);
+        parent::__construct($meta, $request, $db, $logger);
         $this->roleMapper = new RoleMapper($db);
     }
 
@@ -60,7 +60,7 @@ class RoleUpdate extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $rid = $this->val('rid', true);
         $name = $this->val('name', true);

@@ -61,7 +61,7 @@ class Xml extends Output
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Output: ' . $this->details()['machineName']);
         return parent::process();
     }
 

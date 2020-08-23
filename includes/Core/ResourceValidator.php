@@ -6,6 +6,7 @@
 
 namespace Gaterdata\Core;
 
+use Cascade\Cascade;
 use Gaterdata\Core;
 use Gaterdata\Db;
 
@@ -22,16 +23,23 @@ class ResourceValidator
     private $db;
 
     /**
+     * @var \Monolog\Logger
+     */
+    private $logger;
+
+    /**
      * Constructor. Store processor metadata and request data in object.
      *
      * If this method is overridden by any derived classes, don't forget to call parent::__construct()
      *
      * @param ADODB_mysqli $db
+     * @param \Monolog\Logger $logger
      */
-    public function __construct($db)
+    public function __construct($db, $logger)
     {
         $this->helper = new ProcessorHelper();
         $this->db = $db;
+        $this->logger = $logger;
     }
 
     /**
@@ -44,7 +52,7 @@ class ResourceValidator
      */
     public function validate($data)
     {
-        Debug::message('Validating the new resource...');
+        $this->logger->notice('Validating the new resource...');
         // check mandatory elements exists in data
         if (empty($data)) {
             throw new Core\ApiException("empty resource uploaded", 6, -1, 406);
@@ -117,7 +125,7 @@ class ResourceValidator
                 $class = new $classStr($meta, new Core\Request(), $this->db);
                 $details = $class->details();
                 $id = $node['id'];
-                Debug::variable($id, 'validating');
+                $this->logger->notice('Validating: ' . $id);
 
                 foreach ($details['input'] as $inputKey => $inputDef) {
                     $min = $inputDef['cardinality'][0];

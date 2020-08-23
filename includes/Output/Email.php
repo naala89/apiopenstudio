@@ -94,7 +94,7 @@ class Email extends Output
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Output: ' . $this->details()['machineName']);
 
         $to = $this->val('to', true);
         $fromEmail = $this->val('from_email', true);

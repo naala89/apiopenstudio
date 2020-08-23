@@ -5,6 +5,7 @@ namespace Gaterdata\Db;
 use Gaterdata\Core\ApiException;
 use Cascade\Cascade;
 use ADODB_mysqli;
+use Gaterdata\Core\Config;
 
 abstract class Mapper
 {
@@ -12,6 +13,11 @@ abstract class Mapper
      * @var ADODB_mysqli DB Instance.
      */
     protected $db;
+
+    /**
+     * @var \Monolog\Logger
+     */
+    protected $logger;
 
     /**
      * Mapper constructor.
@@ -22,6 +28,9 @@ abstract class Mapper
     public function __construct(ADODB_mysqli $dbLayer)
     {
         $this->db = $dbLayer;
+        $config = new Config();
+        Cascade::fileConfig($config->__get(['debug']));
+        $this->logger = Cascade::getLogger('db');
     }
 
     /**
@@ -55,10 +64,11 @@ abstract class Mapper
         }
         if (empty($this->db->ErrorMsg())) {
             $message = 'Affected rows: 0, no error message returned. There was possibly nothing to update';
+            $this->logger->warning($message);
             throw new ApiException($message, 2);
         }
         $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-        // Cascade::getLogger('gaterdata')->error($message);
+        $this->logger->error($message);
         throw new ApiException($message, 2);
     }
 
@@ -80,7 +90,7 @@ abstract class Mapper
         $row = $this->db->GetRow($sql, $bindParams);
         if ($row === false) {
             $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-            Cascade::getLogger('gaterdata')->error($message);
+            $this->logger->error($message);
             throw new ApiException($message, 2);
         }
         return $this->mapArray($row);
@@ -162,7 +172,7 @@ abstract class Mapper
 
         if (!$recordSet) {
             $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-            Cascade::getLogger('gaterdata')->error($message);
+            $this->logger->error('hi');
             throw new ApiException($message, 2);
         }
 

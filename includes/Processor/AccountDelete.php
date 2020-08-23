@@ -37,10 +37,10 @@ class AccountDelete extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $accid = $this->val('accid', true);
-        Core\Debug::variable($accid);
+        $this->logger->debug('Deleting account' . $accid);
 
         $accountMapper = new Db\AccountMapper($this->db);
         $account = $accountMapper->findByAccid($accid);

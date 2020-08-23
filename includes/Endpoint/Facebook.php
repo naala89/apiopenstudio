@@ -93,7 +93,7 @@ class Facebook extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Endpoint Facebook', 4);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $appId = $this->val('appId');
         $appSecret = $this->val('appSecret');

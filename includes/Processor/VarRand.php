@@ -73,7 +73,7 @@ class VarRand extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $length = $this->val('length', true);
         $lower = $this->val('lower', true);

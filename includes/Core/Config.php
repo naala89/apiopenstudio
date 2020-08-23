@@ -2,8 +2,6 @@
 
 namespace Gaterdata\Core;
 
-use Gaterdata\Core\ApiException;
-
 class Config
 {
 
@@ -15,10 +13,6 @@ class Config
     public function __construct()
     {
         $this->conf = parse_ini_file(dirname(dirname(__DIR__)) . '/config/settings.ini', true, INI_SCANNER_TYPED);
-        Debug::setup(
-        $this->__get(['debug', 'debugInterface']) == 'HTML' ? Debug::HTML : Debug::LOG,
-        $this->__get(['debug', 'debug'])
-        );
     }
 
   /**
@@ -30,7 +24,7 @@ class Config
    * @return string|NULL
    *  The value of the config key or NULL.
    *
-   * @throws \Gaterdata\Core\ApiException
+   * @throws ApiException
    */
     public function __get($key)
     {
@@ -55,6 +49,12 @@ class Config
         throw new ApiException('Invalid configuration key');
     }
 
+    /**
+     * Fetch all config values.
+     *
+     * @return array|false
+     *   Config file values.
+     */
     public function all()
     {
         return $this->conf;

@@ -97,9 +97,12 @@ class UserRoleRead extends Core\ProcessorEntity
         ],
     ];
 
-    public function __construct($meta, &$request, $db)
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct($meta, &$request, $db, $logger)
     {
-        parent::__construct($meta, $request, $db);
+        parent::__construct($meta, $request, $db, $logger);
         $this->userMapper = new Db\UserMapper($db);
         $this->userRoleMapper = new Db\UserRoleMapper($db);
     }
@@ -109,7 +112,7 @@ class UserRoleRead extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $token = $this->val('token', true);
         $currentUser = $this->userMapper->findBytoken($token);

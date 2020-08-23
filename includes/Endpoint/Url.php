@@ -102,7 +102,7 @@ class Url extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Endpoint Url', 4);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $method = $this->val('method', true);
         $connectTimeout = $this->val('connectTimeout', true);

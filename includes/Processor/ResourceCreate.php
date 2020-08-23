@@ -129,13 +129,13 @@ class ResourceCreate extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      */
-    public function __construct($meta, &$request, $db)
+    public function __construct($meta, &$request, $db, $logger)
     {
-        parent::__construct($meta, $request, $db);
+        parent::__construct($meta, $request, $db, $logger);
         $this->applicationMapper = new ApplicationMapper($db);
         $this->accountMapper = new AccountMapper($db);
         $this->resourceMapper = new ResourceMapper($db);
-        $this->validator = new ResourceValidator($db);
+        $this->validator = new ResourceValidator($db, $this->logger);
         $this->settings = new Config();
     }
 
@@ -144,7 +144,7 @@ class ResourceCreate extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $name = $this->val('name', true);
         $description = $this->val('description', true);

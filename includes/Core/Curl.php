@@ -92,7 +92,6 @@ class Curl
     private function _exec($url, array $options = array())
     {
         $options = $this->_getCurlOptions($url, $options);
-        Debug::variable($options, 'Curl options', 4);
 
         $ch = curl_init();
         curl_setopt_array($ch, $options);

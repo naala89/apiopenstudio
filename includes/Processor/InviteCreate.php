@@ -68,9 +68,9 @@ class InviteCreate extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      */
-    public function __construct($meta, &$request, $db)
+    public function __construct($meta, &$request, $db, $logger)
     {
-        parent::__construct($meta, $request, $db);
+        parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Core\Config();
         $this->userMapper = new Db\UserMapper($db);
         $this->inviteMapper = new Db\InviteMapper($db);
@@ -84,7 +84,7 @@ class InviteCreate extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $emailString = $this->val('email', true);
 

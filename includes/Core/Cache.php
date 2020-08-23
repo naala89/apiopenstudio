@@ -9,7 +9,13 @@ namespace Gaterdata\Core;
  */
 class Cache
 {
-    private $caches = array('memcache', 'apc');
+
+    /**
+     * @var \Monolog\Logger
+     */
+    private $logger;
+
+    private $caches = ['memcache', 'apc'];
     private $cacheObj;
     private $cacheType;
     private $cacheActive;
@@ -20,41 +26,43 @@ class Cache
   /**
    * Constructor.
    *
+   * @param Monolog\Logger $logger
    * @param bool $cache
    *    False means do not cache
    *    True means select first available caching system
    *    String means select the specified caching system
    * @return bool
    */
-    public function __construct($cache = true)
+    public function __construct($logger, $cache = true)
     {
-        Debug::variable($cache, 'cache setup request', 4);
+        $this->logger = $logger;
+        $this->logger->debug('cache setup request: ' . print_r($cache, false));
         $this->cacheActive = false;
 
         if ($cache === true || $cache == 1) {
             $caches = $this->caches;
             while (!$this->cacheActive && $cache = array_shift($caches)) {
                 $func = 'setup' . ucfirst($cache);
-                Debug::variable($func, 'looking for function', 4);
+                $this->logger->info('looking for function: ' . $func);
                 if (method_exists($this, $func)) {
                     $this->$func();
                 }
             }
         } elseif ($cache === false || $cache == 0) {
-            Debug::message('Cache is off', 4);
+            $this->logger->info('Cache is off');
             return false;
         } else {
             $func = 'setup' . ucfirst(trim($cache));
-            Debug::variable($func, 'looking for function', 4);
+            $this->logger->info('looking for function: ' . $func);
             if (method_exists($this, $func)) {
                 $this->$func();
             } else {
-                Debug::variable($func, 'function not defined');
+                $this->logger->info('function not defined');
             }
         }
 
-        Debug::variable($this->cacheType, 'cache type enbled', 2);
-        Debug::variable($this->cacheActive, 'cache status', 2);
+        $this->logger->info('cache type enbled: ' . $this->cacheType);
+        $this->logger->info('cache status: ' . $this->cacheActive);
 
         return $this->cacheActive;
     }
@@ -73,11 +81,11 @@ class Cache
     public function set($key, $val, $ttl)
     {
         if (!$this->cacheActive || $ttl < 1) {
-            Debug::message('not caching', 4);
+            $this->logger->info('not caching');
             return false;
         }
-        Debug::variable($key, 'setting in cache (key)', 4);
-        Debug::variable($ttl, 'setting in cache (ttl)', 4);
+        $this->logger->debug('setting in cache (key): ' . $key);
+        $this->logger->debug('setting in cache (ttl): ' . $ttl);
 
         $func = 'set' . ucfirst($this->cacheType);
         $success = false;
@@ -109,9 +117,9 @@ class Cache
 
     public function clear()
     {
-        Debug::message('clearing cache');
+        $this->logger->notice('clearing cache');
         if (!$this->cacheActive) {
-            Debug::message('could not clear cache - inactive');
+            $this->logger->warning('could not clear cache - inactive');
             return false;
         }
         $func = 'clear' . ucfirst($this->cacheType);
@@ -141,16 +149,16 @@ class Cache
         $this->cacheActive = false;
 
         if (class_exists('memcache')) {
-            Debug::message('memcache available', 4);
+            $this->logger->info('memcache available');
             $this->cacheObj = new Memcached();
             if ($this->cacheActive = $this->cacheObj->addServer($this->host, $this->port)) {
                 $this->cacheType = 'memcache';
-                Debug::message('memCache enabled', 4);
+                $this->logger->info('memcache enabled');
             } else {
-                Debug::message('Could not connect to Memcache', 4);
+                $this->logger->error('Could not connect to Memcache');
             }
         } else {
-            Debug::message('memcache not available', 2);
+            $this->logger->info('memcache not available');
         }
 
         return $this->cacheActive;
@@ -200,12 +208,12 @@ class Cache
         $this->cacheAvailable = false;
 
         if ($this->cacheAvailable = extension_loaded('apc')) {
-            Debug::message('apc available', 4);
+            $this->logger->info('apc available');
             $this->cacheType = 'apc';
-            Debug::message('apc enabled', 4);
+            $this->logger->info('apc enabled');
             $this->cacheActive = true;
         } else {
-            Debug::message('apc not available', 2);
+            $this->logger->info('apc not available');
         }
 
         return $this->cacheActive;

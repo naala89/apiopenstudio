@@ -67,7 +67,7 @@ class VarBody extends VarMixed
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $type = $this->val('type', true);
         $nullable = $this->val('nullable', true);

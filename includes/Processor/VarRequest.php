@@ -45,7 +45,7 @@ class VarRequest extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $key = $this->val('key', true);
         $vars = array_merge($this->request->getGetVars(), $this->request->getPostVars());

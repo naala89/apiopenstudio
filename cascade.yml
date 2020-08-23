@@ -1,0 +1,35 @@
+formatters:
+  gaterdata:
+    format: "%datetime%-%channel%.%level_name% - %message%\n"
+handlers:
+  console:
+    class: Monolog\Handler\StreamHandler
+    level: DEBUG
+    formatter: gaterdata
+    processors: [memory_processor]
+    bubble: true
+    stream: php://stdout
+  api_file_handler:
+    class: Monolog\Handler\StreamHandler
+    level: DEBUG
+    formatter: gaterdata
+    bubble: true
+    stream: /var/www/html/logs/api/error.log
+  db_file_handler:
+    class: Monolog\Handler\StreamHandler
+    level: DEBUG
+    formatter: gaterdata
+    bubble: true
+    stream: /var/www/html/logs/db/error.log
+processors:
+  web_processor:
+    class: Monolog\Processor\WebProcessor
+  memory_processor:
+    class: Monolog\Processor\MemoryUsageProcessor
+loggers:
+  api:
+    handlers: [api_file_handler]
+    processors: [web_processor]
+  db:
+    handlers: [db_file_handler]
+    processors: [web_processor]

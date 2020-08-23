@@ -40,10 +40,9 @@ class VarBool extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $value = $this->val('value', true);
-        var_dump($value);die();
         switch ($value) {
             case 'yes':
             case 1:

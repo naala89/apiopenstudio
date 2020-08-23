@@ -30,7 +30,7 @@ class BearerToken extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor BearerToken', 4);
+        $this->logger->info('Security: ' . $this->details()['machineName']);
 
         $headers = '';
 

@@ -39,7 +39,7 @@ class VarFloat extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $result = $this->val('value');
         if (!$this->isDataContainer($result)) {

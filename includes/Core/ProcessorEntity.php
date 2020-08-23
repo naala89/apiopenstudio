@@ -28,6 +28,11 @@ abstract class ProcessorEntity extends Entity
     protected $request;
 
     /**
+     * @var \Monolog\Logger
+     */
+    protected $logger;
+
+    /**
      * An array of details of the processor, used to configure the frontend GUI and metadata construction.
      *
      * Indexes:
@@ -111,13 +116,15 @@ abstract class ProcessorEntity extends Entity
      * @param array $meta
      * @param Request $request
      * @param ADODB_mysqli $db
+     * @param \Monolog\Logger $logger
      */
-    public function __construct($meta, &$request, $db)
+    public function __construct($meta, &$request, $db, $logger)
     {
         $this->meta = $meta;
         $this->request = $request;
         $this->id = isset($meta->id) ? $meta->id : -1;
         $this->db = $db;
+        $this->logger = $logger;
     }
 
     /**

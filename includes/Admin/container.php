@@ -19,7 +19,6 @@ $container['flash'] = function () {
     return new Messages();
 };
 
-
 /**
  * Register Twig View container.
  *

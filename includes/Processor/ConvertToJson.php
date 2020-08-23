@@ -40,17 +40,9 @@ class ConvertToJson extends Json
     /**
      * {@inheritDoc}
      */
-    public function __construct($meta, &$request, $db)
-    {
-        Core\ProcessorEntity::__construct($meta, $request, $db);
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
     public function process()
     {
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
         $this->data = $this->val('source');
         return new Core\DataContainer($this->getData(), 'json');
     }

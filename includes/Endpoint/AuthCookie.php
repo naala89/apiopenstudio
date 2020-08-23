@@ -36,7 +36,7 @@ class AuthCookie extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Auth Cookie', 4);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $cookie = $this->val('cookie', true);
 

@@ -165,7 +165,7 @@ class ResourceMapper extends Mapper
         $recordSet = $this->db->Execute($sql, $bindParams);
         if (!$recordSet) {
             $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-            Cascade::getLogger('gaterdata')->error($message);
+            $this->logger->error($message);
             throw new ApiException($message, 2);
         }
 

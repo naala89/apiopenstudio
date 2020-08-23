@@ -56,7 +56,7 @@ class Mapper extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $source = $this->val('source');
         $type = $source->getType();
@@ -217,7 +217,7 @@ class Mapper extends Core\ProcessorEntity
                 throw new Core\ApiException("missing get or set indices a index: $index", 6, $this->id, 417);
             }
             $value = $xpath->query($mapping->get);
-            Core\Debug::variable($value, 'value');
+            $this->logger->debug('value' . print_r($value, true));
             $this->{$resultFunc}($mapping->set, $value);
         }
 

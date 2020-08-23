@@ -34,17 +34,20 @@ abstract class Output extends Core\ProcessorEntity
 
     /**
      * Output constructor.
-     * @param $data
+     * @param mixed $data
      *     Output data.
-     * @param $status
+     * @param integer $status
      *     Output status.
-     * @param null $meta
+     * @param \Monolog\Logger $logger
+     *     Output status.
+     * @param mixed|null $meta
      *     Output meta.
      */
-    public function __construct($data, $status, $meta = null)
+    public function __construct($data, $status, $logger, $meta = null)
     {
         $this->settings = new Core\Config();
         $this->status = $status;
+        $this->logger = $logger;
         $this->data = $data;
         $this->meta = $meta;
     }
@@ -93,15 +96,7 @@ abstract class Output extends Core\ProcessorEntity
      */
     public function setHeader()
     {
-        if (
-            $this->settings->__get(['debug', 'debugInterface']) != 'HTML'
-            || (
-                $this->settings->__get(['debug', 'debug']) < 1
-                && $this->settings->__get(['debug', 'debug_db']) < 1
-            )
-        ) {
-            header($this->header);
-        }
+        header($this->header);
     }
 
     /**

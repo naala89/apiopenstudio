@@ -2,23 +2,16 @@
 
 /**
  * This class processes and routes the rest request.
- * It cleans and stores all arguments, then class the correct class,
+ * It cleans and stores all arguments, calls the correct class,
  * then calls the process() function on that class
  */
 
 namespace Gaterdata\Core;
 
-use Gaterdata\Processor;
 use Gaterdata\Db;
-use Gaterdata\Security;
-use Gaterdata\Output;
 use Gaterdata\Resource;
 use Spyc;
-
-//When I tasted WCC for the first time is 1985 I knew for the first time I was in love.
-//Never before had a drink made me feel so.
-//After my Uncle Bill went to jail in 1986, West Coast Cooler was my friend and got me through a really hard time.
-//And now when I taste West Coast Cooler I remember my life and all the good times.
+use Cascade\Cascade;
 
 class Api
 {
@@ -53,6 +46,11 @@ class Api
     private $settings;
 
     /**
+     * @var \Monolog\Logger
+     */
+    private $logger;
+
+    /**
      * Constructor
      *
      * @param mixed $cache
@@ -61,8 +59,12 @@ class Api
      */
     public function __construct($cache = false)
     {
+
+        $config = new Config();
+        Cascade::fileConfig($config->__get(['debug']));
+        $this->logger = Cascade::getLogger('api');
         $this->settings = new Config();
-        $this->cache = new Cache($cache);
+        $this->cache = new Cache($this->logger, $cache);
         $this->helper = new ProcessorHelper();
     }
 
@@ -88,19 +90,18 @@ class Api
         if (!$this->db) {
             throw new ApiException('DB connection failed', 2, -1, 500);
         }
-        $this->db->debug = $this->settings->__get(['debug', 'debugDb']);
 
         // get the request data for processing.
         $this->request = $this->_getData();
-        Debug::variable($this->request, 'request', 3);
+        $this->logger->debug('request: ' . print_r($this->request, true));
         $resource = $this->request->getResource();
-        Debug::variable($resource, 'resource', 3);
+        $this->logger->debug('resource: ' . print_r($resource, true));
         $meta = json_decode($resource->getMeta());
-        Debug::variable($meta, 'meta', 3);
+        $this->logger->debug('meta: ' . print_r($meta, true));
 
         // validate user access rights for the call.
         if (!empty($meta->security)) {
-            Debug::variable($meta->security, 'Process security', 3);
+            $this->logger->debug('Process security: ' . print_r($meta->security, true));
             $this->_crawlMeta($meta->security);
         }
 
@@ -113,19 +114,19 @@ class Api
         if (isset($meta->fragments)) {
             $fragments = $meta->fragments;
             foreach ($fragments as $fragKey => $fragVal) {
-                Debug::variable($fragVal, 'Process fragment', 3);
+                $this->logger->debug('Process fragment: ' . print_r($fragVal, true));
                 $fragments->$fragKey = $this->_crawlMeta($fragVal);
             }
             $this->request->setFragments($fragments);
         }
 
         // process the call
-        Debug::variable($meta->process, 'Process resource', 3);
+        $this->logger->debug('Process resource: ' . print_r($meta->process, true));
         $result = $this->_crawlMeta($meta->process);
 
         // store the results in cache for next time
         if (is_object($result) && get_class($result) == 'Error') {
-            Debug::message('Not caching, result is error object');
+            $this->logger->notice('Not caching, result is error object');
         } else {
             $cacheData = ['data' => $result];
             $ttl = empty($this->request->getTtl()) ? 0 : $this->request->getTtl();
@@ -265,7 +266,7 @@ class Api
     private function _getCacheKey($uriParts)
     {
         $cacheKey = $this->_cleanData($this->request->getMethod() . '_' . implode('_', $uriParts));
-        Debug::variable($cacheKey, 'cache key', 4);
+        $this->logger->info('cache key: ' . $cacheKey);
         return $cacheKey;
     }
 
@@ -279,18 +280,18 @@ class Api
     private function _getCache($cacheKey)
     {
         if (!$this->cache->cacheActive()) {
-            Debug::message('not searching for cache - inactive', 3);
+            $this->logger->info('not searching for cache - inactive');
             return false;
         }
 
         $data = $this->cache->get($cacheKey);
 
         if (!empty($data)) {
-            Debug::variable($data, 'from cache', 4);
+            $this->logger->debug('from cache: ' . $data);
             return $this->_getOutput($data, new Request());
         }
 
-        Debug::message('no cache entry found', 3);
+        $this->logger->info('no cache entry found');
         return false;
     }
 
@@ -366,7 +367,7 @@ class Api
                 }
 
                 $classStr = $this->helper->getProcessorString($node->function);
-                $class = new $classStr($node, $this->request, $this->db);
+                $class = new $classStr($node, $this->request, $this->db, Cascade::getLogger('api'));
                 $results[$node->id] = $class->process();
             }
         }
@@ -389,7 +390,7 @@ class Api
 
         if (empty($resource->output)) {
             // default to response output if no output defined
-            Debug::message('no output section defined - returning the result in the response');
+            $this->logger->notice('no output section defined - returning the result in the response');
             // translate the output to the correct format as requested in header and return in the response
             $output = ['function' => $this->request->getOutFormat(), 'id' => 'header_defined_output'];
             $result = $this->processOutputResponse($output, $data);
@@ -434,7 +435,7 @@ class Api
         }
         $outFormat = ucfirst($this->_cleanData($meta['function']));
         $class = $this->helper->getProcessorString($outFormat, ['Output']);
-        $obj = new $class($data, 200);
+        $obj = new $class($data, 200, $this->logger);
         $result = $obj->process();
         $obj->setStatus();
         $obj->setHeader();

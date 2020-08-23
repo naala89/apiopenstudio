@@ -45,9 +45,9 @@ class InviteAccept extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      */
-    public function __construct($meta, &$request, $db)
+    public function __construct($meta, &$request, $db, $logger)
     {
-        parent::__construct($meta, $request, $db);
+        parent::__construct($meta, $request, $db, $logger);
         $this->userMapper = new Db\UserMapper($db);
         $this->inviteMapper = new Db\InviteMapper($db);
     }
@@ -57,7 +57,7 @@ class InviteAccept extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $token = $this->val('token', true);
 

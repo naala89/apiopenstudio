@@ -37,7 +37,7 @@ class UserDelete extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         if (empty($uid = $this->val('uid', true))) {
             throw new Core\ApiException("Cannot process - no uid supplied", 6, $this->id, 400);

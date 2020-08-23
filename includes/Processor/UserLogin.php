@@ -47,26 +47,32 @@ class UserLogin extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $username = $this->val('username', true);
         $password = $this->val('password', true);
         $userMapper = new Db\UserMapper($this->db);
 
         // Validate username and active status.
+        $this->logger->debug("login attempt: $username");
         $user = $userMapper->findByUsername($username);
-        Core\Debug::variable($user, 'user');
         if (empty($user->getUid()) || $user->getActive() == 0) {
-            throw new Core\ApiException('invalid username or password', 4, $this->id, 401);
+            $message = 'invalid username or password';
+            throw new Core\ApiException($message, 4, $this->id, 401);
+            $this->logger->warning($message);
         }
 
         // No password hash stored yet.
         if (empty($storedHash = $user->getHash())) {
-            throw new Core\ApiException('invalid username or password', 4, $this->id, 401);
+            $message = 'invalid username or password';
+            throw new Core\ApiException($message, 4, $this->id, 401);
+            $this->logger->warning($message);
         }
         $hash = Core\Hash::generateHash($password);
         if (!Core\Hash::verifPassword($password, $storedHash)) {
-            throw new Core\ApiException('invalid username or password', 4, $this->id, 401);
+            $message = 'invalid username or password';
+            throw new Core\ApiException($message, 4, $this->id, 401);
+            $this->logger->warning($message);
         }
 
         // if token exists and is active, return it

@@ -79,9 +79,9 @@ class ResourceDelete extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      */
-    public function __construct($meta, &$request, $db)
+    public function __construct($meta, &$request, $db, $logger)
     {
-        parent::__construct($meta, $request, $db);
+        parent::__construct($meta, $request, $db, $logger);
         $this->applicationMapper = new ApplicationMapper($db);
         $this->userMapper = new UserMapper($db);
         $this->userRoleMapper = new UserRoleMapper($db);
@@ -95,7 +95,7 @@ class ResourceDelete extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $resid = $this->val('resid', true);
         $token = $this->val('token', true);

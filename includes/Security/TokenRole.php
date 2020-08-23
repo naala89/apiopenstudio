@@ -68,7 +68,7 @@ class TokenRole extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Security TokenRole', 4);
+        $this->logger->info('Security: ' . $this->details()['machineName']);
 
         $token = $this->val('token', true);
         $validateAccount = $this->val('validate_account', true);

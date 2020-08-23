@@ -37,7 +37,7 @@ class AccountCreate extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $name = $this->val('name', true);
         if (preg_match('/[^a-z_\-0-9]/i', $name)) {

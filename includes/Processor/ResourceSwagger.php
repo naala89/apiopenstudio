@@ -36,6 +36,8 @@ class ResourceSwagger extends ResourceBase
      */
     public function process()
     {
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
+
         $this->paramCount = 2;
         $resources = array();
         $swagger = $this->_importData();
@@ -182,9 +184,9 @@ class ResourceSwagger extends ResourceBase
      */
     protected function _extractParameters($parameters, $method)
     {
-        $result = array();
+        $result = [];
         foreach ($parameters as $parameter) {
-            $p = array();
+            $p = [];
             $parameterCount = 1;
             switch ($parameter['in']) {
                 case 'query':
@@ -199,32 +201,32 @@ class ResourceSwagger extends ResourceBase
             }
             // strongly typed
             if (!empty($parameter['items']['type'])) {
-                Core\Debug::variable($parameter['items']['type'], 'strongly typed');
-                $p = array(
-                'meta' => array(
-                'id' => $this->paramCount++,
-                'value' => $p
-                )
-                );
+                $this->logger->info('strongly typed: ' . $parameter['items']['type']);
+                $p = [
+                    'meta' => [
+                        'id' => $this->paramCount++,
+                        'value' => $p,
+                    ],
+                ];
                 switch ($parameter['items']['type']) {
                     case 'boolean':
                         $p['processor'] = 'varBool';
-                    break;
+                        break;
                     case 'float':
                         $p['processor'] = 'varFloat';
-                    break;
+                        break;
                     case 'integer':
                         $p['processor'] = 'varInt';
-                    break;
+                        break;
                     case 'number':
                         $p['processor'] = 'varNum';
-                    break;
+                        break;
                     case 'text':
                         $p['processor'] = 'varStr';
-                    break;
+                        break;
                     default:
-                    throw new Core\ApiException('unknown type: ' . $parameter['items']['type'], 1);
-                    break;
+                        throw new Core\ApiException('unknown type: ' . $parameter['items']['type'], 1);
+                        break;
                 }
             }
             $result[] = $p;

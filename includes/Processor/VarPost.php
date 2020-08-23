@@ -45,7 +45,7 @@ class VarPost extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $key = $this->val('key', true);
         $nullable = $this->val('nullable', true);

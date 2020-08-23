@@ -95,10 +95,11 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * @param array $meta
      * @param object $request
      * @param \ADOConnection $db
+     * @param Monolog\Logger $logger
      */
-    public function __construct($meta, &$request, $db)
+    public function __construct($meta, &$request, $db, $logger)
     {
-        parent::__construct($meta, $request, $db);
+        parent::__construct($meta, $request, $db, $logger);
         $this->helper = new ProcessorHelper();
     }
 
@@ -107,7 +108,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $accName = $this->val('accName', true);
         $appName = $this->val('appName', true);
@@ -252,7 +253,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
      */
     protected function create($data, $accName, $appName)
     {
-        Core\Debug::variable($data, 'New resource', 1);
+        $this->logger->debug('New resource' . print_r($data, true));
         $this->_validateData($data);
 
         $name = $data['name'];
@@ -305,7 +306,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
      */
     protected function _validateData($data)
     {
-        Debug::message('Validating the new resource...');
+        $this->logger->info("Validating the new resource...");
         // check mandatory elements exists in data
         if (empty($data)) {
             throw new Core\ApiException("empty resource uploaded", 6, $this->id, 406);
@@ -411,7 +412,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 $class = new $classStr($meta, new Core\Request(), $this->db);
                 $details = $class->details();
                 $id = $node['id'];
-                Debug::variable($id, 'validating');
+                $this->logger->info("validating: $id");
 
                 foreach ($details['input'] as $inputKey => $inputDef) {
                     $min = $inputDef['cardinality'][0];

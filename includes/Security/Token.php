@@ -39,9 +39,12 @@ class Token extends Core\ProcessorEntity
         ],
     ];
 
-    public function __construct($meta, &$request, $db)
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct($meta, &$request, $db, $logger)
     {
-        parent::__construct($meta, $request, $db);
+        parent::__construct($meta, $request, $db, $logger);
         $this->userMapper = new Db\UserMapper($db);
     }
 
@@ -50,7 +53,7 @@ class Token extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Security Token', 4);
+        $this->logger->info('Security: ' . $this->details()['machineName']);
 
         $token = $this->val('token', true);
 

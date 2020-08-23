@@ -40,10 +40,9 @@ class RoleDelete extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      */
-    public function __construct($meta, &$request, $db)
+    public function __construct($meta, &$request, $db, $logger)
     {
-        parent::__construct($meta, $request, $db);
-        $this->roleMapper = new RoleMapper($db);
+        parent::__construct($meta, $request, $db, $logger);
     }
 
     /**
@@ -51,7 +50,7 @@ class RoleDelete extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $rid = $this->val('rid', true);
 

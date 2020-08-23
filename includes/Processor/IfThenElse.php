@@ -72,7 +72,8 @@ class IfThenElse extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
+
         $lhs = $this->val('lhs', true);
         $rhs = $this->val('rhs', true);
         $operator = $this->val('operator', true);

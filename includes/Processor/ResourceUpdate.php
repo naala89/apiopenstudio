@@ -159,16 +159,16 @@ class ResourceUpdate extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      */
-    public function __construct($meta, &$request, $db)
+    public function __construct($meta, &$request, $db, $logger)
     {
-        parent::__construct($meta, $request, $db);
+        parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Config();
         $this->userMapper = new UserMapper($db);
         $this->userRoleMapper = new UserRoleMapper($db);
         $this->accountMapper = new AccountMapper($this->db);
         $this->applicationMapper = new ApplicationMapper($db);
         $this->resourceMapper = new ResourceMapper($db);
-        $this->validator = new ResourceValidator($db);
+        $this->validator = new ResourceValidator($db, $this->logger);
     }
 
     /**
@@ -176,7 +176,7 @@ class ResourceUpdate extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $token = $this->val('token', true);
         $currentUser = $this->userMapper->findBytoken($token);

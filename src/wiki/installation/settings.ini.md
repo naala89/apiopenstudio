@@ -3,45 +3,7 @@ Settings
 
 - debug
 
-    - debug
-
-        Standard debug level:
-        
-        0. None
-        1. Low
-        2. Medium
-        3. High
-        4. Everything
-
-    - debugDb
-
-        Debug level for any cli scripts:
-        
-        0. None
-        1. Low
-        2. Medium
-        3. High
-        4. Everything
-
-    - debugCLI
-
-        Debug level for Database calls and DB instantiation:
-        
-        0. None
-        1. Low
-        2. Medium
-        3. High
-        4. Everything
-
-    - allow_override
-
-        if true, an api caller can override any of the config settings by assigning values to them in the URL. This should never be true on production servers.
-
-    - debugInterface
-
-        Where the debug data will be output. There are only two possible values:
-        * LOG
-        * HTML
+    - The path to the ```cascade.yml``` file.
 
 - db
 

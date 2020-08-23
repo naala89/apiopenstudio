@@ -76,9 +76,9 @@ class VarStoreDelete extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      */
-    public function __construct($meta, &$request, $db)
+    public function __construct($meta, &$request, $db, $logger)
     {
-        parent::__construct($meta, $request, $db);
+        parent::__construct($meta, $request, $db, $logger);
         $this->varStoreMapper = new VarStoreMapper($db);
         $this->userMapper = new UserMapper($db);
         $this->userRoleMapper = new UserRoleMapper($db);
@@ -89,7 +89,7 @@ class VarStoreDelete extends Core\ProcessorEntity
      */
     public function process()
     {
-        Core\Debug::variable($this->meta, 'Processor ' . $this->details()['machineName'], 2);
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $token = $this->val('token', true);
         $currentUser = $this->userMapper->findBytoken($token);
