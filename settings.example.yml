@@ -5,14 +5,14 @@ debug:
   handlers:
     console:
       class: Monolog\Handler\StreamHandler
-      level: NOTICE
+      level: DEBUG
       formatter: gaterdata
       processors: [memory_processor]
       bubble: true
       stream: php://stdout
     api_file_handler:
       class: Monolog\Handler\StreamHandler
-      level: DEBUG
+      level: NOTICE
       formatter: gaterdata
       bubble: true
       stream: /var/www/html/logs/api/error.log
