@@ -34,6 +34,7 @@ external_user:
 invite:
   columns:
     iid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: invite id }
+    created: { type: timestamp, notnull: true, default: CURRENT_TIMESTAMP, comment: datetime created }
     email: { type: varchar(255), default: true, comment: invite email address }
     token: { type: varchar(255), notnull: true, comment: invite token }
 

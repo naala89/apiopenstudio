@@ -1,0 +1,86 @@
+debug:
+  formatters:
+    gaterdata:
+      format: "%datetime%-%channel%.%level_name% - %message%\n"
+  handlers:
+    console:
+      class: Monolog\Handler\StreamHandler
+      level: NOTICE
+      formatter: gaterdata
+      processors: [memory_processor]
+      bubble: true
+      stream: php://stdout
+    api_file_handler:
+      class: Monolog\Handler\StreamHandler
+      level: DEBUG
+      formatter: gaterdata
+      bubble: true
+      stream: /var/www/html/logs/api/error.log
+    db_file_handler:
+      class: Monolog\Handler\StreamHandler
+      level: NOTICE
+      formatter: gaterdata
+      bubble: true
+      stream: /var/www/html/logs/db/error.log
+  processors:
+    web_processor:
+      class: Monolog\Processor\WebProcessor
+    memory_processor:
+      class: Monolog\Processor\MemoryUsageProcessor
+  loggers:
+    api:
+      handlers: [api_file_handler]
+      processors: [web_processor]
+    db:
+      handlers: [db_file_handler]
+      processors: [web_processor]
+
+db:
+  definition_path: "includes/db/dbDefinition.yaml"
+  driver: mysqli
+  host: gaterdata-db
+  root_password: gaterdata
+  username: gaterdata
+  password: gaterdata
+  database: gaterdata
+  options:
+    debug: false
+  charset: utf8
+  collation: utf8_unicode_ci
+
+api:
+  protocols:
+    - https
+  base_path: "/var/www/html/"
+  url: "api.gaterdata.local"
+  cache: false
+  default_format: json
+  token_life: "+6 hour"
+  core_account: gaterdata
+  core_application: core
+  core_resource_lock: false
+  dir_public: "public/"
+  dir_yaml: "resources/"
+  dir_uploads: "uploads/"
+  dir_tmp: "tmp/"
+
+admin:
+  url: "admin.gaterdata.local"
+  pagination_step: 20
+  admin_templates: "includes/admin/templates/"
+  slim[displayErrorDetails]: true
+  slim[determineRouteBeforeAppMiddleware]: true
+
+twig:
+  options:
+    cache_enabled: false
+    cache_path: "twig_cache/"
+  template_path: "includes/Admin/templates/"
+
+email:
+  host: gaterdata-email
+  username: "admin@gaterdata.com"
+  password: "secret"
+  from:
+    email: "admin@admin.gaterdata.local"
+    name: "GaterData admin"

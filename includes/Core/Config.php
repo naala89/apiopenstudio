@@ -2,6 +2,8 @@
 
 namespace Gaterdata\Core;
 
+use Spyc;
+
 class Config
 {
 
@@ -12,7 +14,7 @@ class Config
   
     public function __construct()
     {
-        $this->conf = parse_ini_file(dirname(dirname(__DIR__)) . '/config/settings.ini', true, INI_SCANNER_TYPED);
+        $this->conf = Spyc::YAMLLoad(dirname(dirname(__DIR__)) . '/settings.yml');
     }
 
   /**

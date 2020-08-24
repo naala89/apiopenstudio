@@ -39,8 +39,10 @@ The following files and directory structure needs to be added to a project:
 
 ### .env
 
-Replace the values with whatever you wish.
+These values are required by docker-compose.
 
+So the values must match those in ```settings.yml```
+    
     APP_NAME=gaterdata
     
     API_DOMAIN=api.gaterdata.local
@@ -52,23 +54,9 @@ Replace the values with whatever you wish.
     MYSQL_USER=gaterdata
     MYSQL_PASSWORD=gaterdata
     MYSQL_ROOT_PASSWORD=gaterdata
-
-### config/settings.ini
-
-Update the following keys to take values from .env (this ensures that you have a single source of truth for these values):
-
-    [db]
-    host = ${MYSQL_HOST}
-    root_password = ${MYSQL_ROOT_PASSWORD}
-    username = ${MYSQL_USER}
-    password = ${MYSQL_PASSWORD}
-    database = ${MYSQL_DATABASE}
     
-    [api]
-    url = ${API_DOMAIN}
-    
-    [admin]
-    url = ${ADMIN_DOMAIN}
+    EMAIL_USERNAME=admin@gaterdata.com
+    EMAIL_PASSWORD=secret
 
 ### docker/nginx/admin.conf
 
@@ -81,11 +69,11 @@ Replace server_name with whatever domain you want to host locally.
         error_log    /var/log/nginx/error.log debug;
         access_log    /var/log/nginx/access.log;
         root         /var/www/html/public/admin;
-            
+        
         location / {
             try_files $uri /index.php$is_args$args;
         }
-    
+        
         location ~ \.php$ {
             try_files $uri =404;
             fastcgi_split_path_info ^(.+\.php)(/.+)$;
@@ -95,7 +83,7 @@ Replace server_name with whatever domain you want to host locally.
             fastcgi_index index.php;
             fastcgi_pass   php:9000;
         }
-    
+        
         location ~* \.(js|jpg|png|svg|css)$ {
             expires 1d;
         }
@@ -104,7 +92,7 @@ Replace server_name with whatever domain you want to host locally.
             deny  all;
         }
     }
-
+    
 ### docker/nginx/api.conf
 
 Replace server_name with whatever domain you want to host locally.
@@ -160,10 +148,21 @@ Replace server_name with whatever domain you want to host locally.
 ### docker/php/Dockerfile
 
     FROM php:fpm
+    
+    ARG WITH_XDEBUG=false
                   
     RUN apt-get update \
         && apt-get install -y iputils-ping \
-        && docker-php-ext-install mysqli && docker-php-ext-enable mysqli
+        && docker-php-ext-install mysqli \
+        && docker-php-ext-enable mysqli
+    RUN if [ $WITH_XDEBUG = "true" ] ; then \
+            pecl install xdebug; \
+            docker-php-ext-enable xdebug; \
+            echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+            echo "display_startup_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+            echo "display_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+            echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+        fi ;
 
 ### docker/php/php.conf
 
@@ -202,7 +201,7 @@ Replace server_name with whatever domain you want to host locally.
           - "443:443"
         volumes:
           - /var/run/docker.sock:/tmp/docker.sock:ro
-          - ${PWD}/certs:/etc/nginx/certs
+          - ./certs:/etc/nginx/certs
         networks:
           - api_network
     
@@ -215,9 +214,9 @@ Replace server_name with whatever domain you want to host locally.
           - 80
         volumes:
           - ./docker/nginx/api.conf:/etc/nginx/conf.d/default.conf
-          - ${PWD}:/var/www/html
-          - ${PWD}/logs/api:/var/log/nginx
-          - ${PWD}/certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
+          - .:/var/www/html
+          - ./logs/api:/var/log/nginx
+          - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
         environment:
           - VIRTUAL_HOST=${API_DOMAIN}
         depends_on:
@@ -236,9 +235,9 @@ Replace server_name with whatever domain you want to host locally.
           - 80
         volumes:
           - ./docker/nginx/admin.conf:/etc/nginx/conf.d/default.conf
-          - ${PWD}:/var/www/html
-          - ${PWD}/logs/admin:/var/log/nginx
-          - ${PWD}/certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
+          - .:/var/www/html
+          - ./logs/admin:/var/log/nginx
+          - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
         environment:
           - VIRTUAL_HOST=${ADMIN_DOMAIN}
         depends_on:
@@ -247,36 +246,6 @@ Replace server_name with whatever domain you want to host locally.
           api_network:
             aliases:
               - ${ADMIN_DOMAIN}
-    
-      # Bookdown container
-      bookdown:
-        image: sandrokeil/bookdown
-        container_name: "${APP_NAME}-bookdown"
-        volumes:
-          - ./src/wiki:/app
-          - ./public/wiki:/wiki
-        command: ["bookdown.json"]
-        networks:
-          - api_network
-    
-      # NGINX Wiki server
-      wiki:
-        image: nginx:stable
-        container_name: "${APP_NAME}-wiki"
-        hostname: "${WIKI_DOMAIN}"
-        ports:
-          - 80
-        volumes:
-          - ./docker/nginx/wiki.conf:/etc/nginx/conf.d/default.conf
-          - ${PWD}/public/wiki:/var/www/html
-          - ${PWD}/logs/wiki:/var/log/nginx
-          - ${PWD}/certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
-        environment:
-          - VIRTUAL_HOST=${WIKI_DOMAIN}
-        networks:
-          api_network:
-            aliases:
-              - ${WIKI_DOMAIN}
     
       #  Generic PHP container.
       php:
@@ -294,7 +263,7 @@ Replace server_name with whatever domain you want to host locally.
           - ./composer:/composer
           - .:/var/www/html
           - ./docker/php/php.conf:/usr/local/etc/php-fpm.d/zzz-phpSettings.conf
-          - ${PWD}/logs/php:/var/log
+          - ./logs/php:/var/log
         environment:
           - MYSQL_HOST=db
           - MYSQL_DATABASE=${MYSQL_DATABASE}
@@ -343,6 +312,72 @@ Replace server_name with whatever domain you want to host locally.
         restart: always
         networks:
           - api_network
+    
+      email:
+        image: namshi/smtp:latest
+        container_name: "${APP_NAME}-email"
+        networks:
+          - api_network
+    #    ports:
+    #      - "25:25"
+        environment:
+    #      # MUST start with : e.g RELAY_NETWORKS=:192.168.0.0/24:10.0.0.0/16
+    #      # if acting as a relay this or RELAY_DOMAINS must be filled out or incoming mail will be rejected
+    #      - RELAY_NETWORKS= :192.168.0.0/24
+    #      # what domains should be accepted to forward to lower distance MX server.
+    #      - RELAY_DOMAINS= <domain1> : <domain2> : <domain3>
+    #      # To act as a Gmail relay
+          - GMAIL_USER=${EMAIL_USERNAME}
+          - GMAIL_PASSWORD=${EMAIL_PASSWORD}
+    #      # For use with Amazon SES relay
+    #      - SES_USER=
+    #      - SES_PASSWORD=
+    #      - SES_REGION=
+    #      # if provided will enable TLS support
+    #      - KEY_PATH=certs/gaterdata.local
+    #      - CERTIFICATE_PATH=certs/gateradta.local.crt
+    #      # the outgoing mail hostname
+    #      - MAILNAME=admin.gaterdata.local
+    #      # set this to any value to disable ipv6
+    #      - DISABLE_IPV6=
+    #      # Generic SMTP Relay
+    #      - SMARTHOST_ADDRESS=
+    #      - SMARTHOST_PORT=
+    #      - SMARTHOST_USER=
+    #      - SMARTHOST_PASSWORD=
+    #      - SMARTHOST_ALIASES=
+    
+    ## Uncomment this for compiling the wiki
+    #  # Bookdown container
+    #  bookdown:
+    #    image: sandrokeil/bookdown
+    #    container_name: "${APP_NAME}-bookdown"
+    #    volumes:
+    #      - ./src/wiki:/app
+    #      - ./public/wiki:/wiki
+    #    command: ["bookdown.json"]
+    #    networks:
+    #      - api_network
+    
+    ## Uncomment this to serve the wiki locally
+    #  # NGINX Wiki server
+    #  wiki:
+    #    image: nginx:stable
+    #    container_name: "${APP_NAME}-wiki"
+    #    hostname: "${WIKI_DOMAIN}"
+    #    ports:
+    #      - 80
+    #    volumes:
+    #      - ./docker/nginx/wiki.conf:/etc/nginx/conf.d/default.conf
+    #      - ./public/wiki:/var/www/html
+    #      - ./logs/wiki:/var/log/nginx
+    #      - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
+    #    environment:
+    #      - VIRTUAL_HOST=${WIKI_DOMAIN}
+    #    networks:
+    #      api_network:
+    #        aliases:
+    #          - ${WIKI_DOMAIN}
     
     networks:
       api_network:

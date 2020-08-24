@@ -7,8 +7,6 @@ use Gaterdata\Core\Api;
 use Gaterdata\Core\Error;
 use Cascade\Cascade;
 
-$config = new Config();
-
 ob_start();
 
 // Requests from the same server don't have a HTTP_ORIGIN header
@@ -17,7 +15,8 @@ if (!array_key_exists('HTTP_ORIGIN', $_SERVER)) {
 }
 
 try {
-    $api = new Api($config->__get(['api', 'cache']));
+    $config = new Config();
+    $api = new Api($config->all());
     $result = $api->process();
 }
 catch (ApiException $e) {

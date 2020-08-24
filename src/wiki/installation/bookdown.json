@@ -4,7 +4,7 @@
     "requirements.md",
     "server-setup/bookdown.json",
     "installation.md",
-    "settings.ini.md",
+    "settings.yml.md",
     "docker/bookdown.json"
   ],
   "tocDepth": 1

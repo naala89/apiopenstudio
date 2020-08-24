@@ -16,6 +16,10 @@ class Invite
     /**
      * @var string Email.
      */
+    protected $created;
+    /**
+     * @var string Created.
+     */
     protected $email;
     /**
      * @var string Invite token.
@@ -27,14 +31,17 @@ class Invite
      *
      * @param int $iid
      *   Invite ID.
+     * @param string $created
+     *   Created date time.
      * @param string $email
      *   Invite email.
      * @param string $token
      *   Invite token.
      */
-    public function __construct($iid = null, $email = null, $token = null)
+    public function __construct($iid = null, $created = null, $email = null, $token = null)
     {
         $this->iid = $iid;
+        $this->created = $created;
         $this->email = $email;
         $this->token = $token;
     }
@@ -59,6 +66,28 @@ class Invite
     public function setIid($iid)
     {
         $this->iid = $iid;
+    }
+
+    /**
+     * Get the created date.
+     *
+     * @return string
+     *   Created date time.
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set the created date time.
+     *
+     * @param string $created
+     *   Created date time.
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
     }
 
     /**
@@ -114,9 +143,10 @@ class Invite
     public function dump()
     {
         return [
-        'iid' => $this->iid,
-        'email' => $this->email,
-        'token' => $this->token,
+            'iid' => $this->iid,
+            'created' => $this->created,
+            'email' => $this->email,
+            'token' => $this->token,
         ];
     }
 }

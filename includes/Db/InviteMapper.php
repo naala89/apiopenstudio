@@ -3,6 +3,7 @@
 namespace Gaterdata\Db;
 
 use Gaterdata\Core\ApiException;
+use Gaterdata\Core\Utilities;
 
 /**
  * Class InviteMapper.
@@ -25,17 +26,19 @@ class InviteMapper extends Mapper
     public function save(Invite $invite)
     {
         if ($invite->getIid() == null) {
-            $sql = 'INSERT INTO invite (email, token) VALUES (?, ?)';
+            $sql = 'INSERT INTO invite (created, email, token) VALUES (?, ?, ?)';
             $bindParams = [
-            $invite->getEmail(),
-            $invite->getToken(),
+                empty($invite->getCreated()) ? "now()" : $invite->getCreated(),
+                $invite->getEmail(),
+                $invite->getToken(),
             ];
         } else {
-            $sql = 'UPDATE invite SET email = ?, token = ? WHERE iid = ?';
+            $sql = 'UPDATE invite SET created = ?, email = ?, token = ? WHERE iid = ?';
             $bindParams = [
-            $invite->getEmail(),
-            $invite->getToken(),
-            $invite->getIid(),
+                empty($invite->getCreated()) ? "now()" : $invite->getCreated(),
+                $invite->getEmail(),
+                $invite->getToken(),
+                $invite->getIid(),
             ];
         }
         return $this->saveDelete($sql, $bindParams);
@@ -146,6 +149,7 @@ class InviteMapper extends Mapper
         $invite = new Invite();
 
         $invite->setIid(!empty($row['iid']) ? $row['iid'] : null);
+        $invite->setCreated(!empty($row['created']) ? $row['created'] : null);
         $invite->setEmail(!empty($row['email']) ? $row['email'] : null);
         $invite->setToken(!empty($row['token']) ? $row['token'] : null);
 

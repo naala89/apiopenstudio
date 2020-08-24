@@ -22,6 +22,7 @@ $twig = new Twig_Environment($loader, $settings->__get(['twig', 'options']));
 if ($settings->__get(['debug', 'debug'])) {
     $twig->addExtension(new \Twig\Extension\DebugExtension());
 }
+var_dump('hi');exit;
 
 // DB link.
 $dsnOptionsArr = [];

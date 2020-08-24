@@ -6,7 +6,7 @@
 #gaterdata
 tests/_output/*
 tmp/*
-config/settings.ini
+settings.yml
 logs/
 public/admin/css/*
 public/admin/js/*

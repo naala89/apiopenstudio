@@ -6,7 +6,6 @@
 
 namespace Gaterdata\Processor;
 
-use FastRoute\Dispatcher\MarkBased;
 use Gaterdata\Core;
 use Gaterdata\Output\Output;
 
@@ -16,6 +15,11 @@ class ConvertToArray extends Output
      * @var mixed The output data.
      */
     protected $data;
+
+    /**
+     * @var \Monolog\Logger
+     */
+    protected $logger;
 
     /**
      * {@inheritDoc}
@@ -37,6 +41,23 @@ class ConvertToArray extends Output
             ],
         ],
     ];
+
+    /**
+     * ConvertToArray constructor.
+     *
+     * @param array $meta
+     *   The processor metadata.
+     * @param Request $request
+     *   Request object.
+     * @param ADODB_mysqli $db
+     *   Database object.
+     * @param \Monolog\Logger $logger
+     *   Logger object.
+     */
+    public function __construct($meta, &$request, $db, $logger)
+    {
+        Core\ProcessorEntity::__construct($meta, $request, $db, $logger);
+    }
 
     /**
      * {@inheritDoc}

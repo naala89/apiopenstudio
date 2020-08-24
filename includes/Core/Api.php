@@ -51,20 +51,19 @@ class Api
     private $logger;
 
     /**
-     * Constructor
+     * Api constructor.
      *
-     * @param mixed $cache
-     *  type of cache to use
-     *  @see Cache->setup($type)
+     * @param array $config
+     *   Config array.
+     *
+     * @throws ApiException
      */
-    public function __construct($cache = false)
+    public function __construct(array $config)
     {
-
-        $config = new Config();
-        Cascade::fileConfig($config->__get(['debug']));
+        $this->settings = $config;
+        Cascade::fileConfig($this->settings['debug']);
         $this->logger = Cascade::getLogger('api');
-        $this->settings = new Config();
-        $this->cache = new Cache($this->logger, $cache);
+        $this->cache = new Cache($this->logger, $this->settings['api']['cache']);
         $this->helper = new ProcessorHelper();
     }
 
@@ -78,14 +77,16 @@ class Api
     {
         // DB link.
         $dsnOptionsArr = [];
-        foreach ($this->settings->__get(['db', 'options']) as $k => $v) {
+        foreach ($this->settings['db']['options'] as $k => $v) {
             $dsnOptionsArr[] = "$k=$v";
         }
         $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
-        $dsn = $this->settings->__get(['db', 'driver']) . '://root:'
-        . $this->settings->__get(['db', 'root_password']) . '@'
-        . $this->settings->__get(['db', 'host']) . '/'
-        . $this->settings->__get(['db', 'database']) . $dsnOptions;
+        $dsn = $this->settings['db']['driver'] . '://'
+            . $this->settings['db']['username'] . ':'
+            . $this->settings['db']['password'] . '@'
+            . $this->settings['db']['host'] . '/'
+            . $this->settings['db']['database']
+            . $dsnOptions;
         $this->db = \ADONewConnection($dsn);
         if (!$this->db) {
             throw new ApiException('DB connection failed', 2, -1, 500);
@@ -185,7 +186,7 @@ class Api
         $request->setPostVars($_POST);
         $request->setFiles($_FILES);
         $request->setIp($_SERVER['REMOTE_ADDR']);
-        $request->setOutFormat($this->getAccept($this->settings->__get(['api', 'default_format'])));
+        $request->setOutFormat($this->getAccept($this->settings['api']['default_format']));
         $request->setArgs($result['args']);
         $request->setResource($result['resource']);
         $meta = json_decode($result['resource']->getMeta());
