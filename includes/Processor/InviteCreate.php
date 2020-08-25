@@ -137,6 +137,7 @@ class InviteCreate extends Core\ProcessorEntity
             if ($mailer->send($emailMessage) > 0) {
                 $invite = new Db\Invite(null, $email, $token);
                 $this->inviteMapper->save($invite);
+
                 $result['success'][] = "$email";
             }
             else {

@@ -63,7 +63,7 @@ class InviteAccept extends Core\ProcessorEntity
 
         $invite = $this->inviteMapper->findByToken($token);
         if (empty($email = $invite->getEmail())) {
-            throw new Core\ApiException("Invalid invite token.", 6, $this->id, 400);
+            throw new Core\ApiException("Invalid invite token", 6, $this->id, 400);
         }
 
         $user = new Db\User(null, 1, $email, null, null, null, $email);

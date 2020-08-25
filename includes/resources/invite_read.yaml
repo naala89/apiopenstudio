@@ -1,0 +1,58 @@
+name: Invite read
+
+description: Fetch user invites
+
+uri: invite
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_roles
+  id: invite_read_security
+  token:
+    function: bearer_token
+    id: invite_read_security_token
+  roles:
+    - Administrator
+    - Account manager
+    - Application manager
+  validate_account: false
+  validate_application: false
+
+process:
+  function: invite_read
+  id: invite_read_process
+  iid:
+    function: var_get
+    id: invite_read_iid
+    key: iid
+    nullable: true
+  email:
+    function: var_get
+    id: invite_read_email
+    key: email
+    nullable: true
+  order_by:
+    function: var_get
+    id: invite_read_order_by
+    key: order_by
+    nullable: true
+  direction:
+    function: var_get
+    id: invite_read_direction
+    key: direction
+    nullable: true
+  offset:
+    function: var_get
+    id: invite_read_offset
+    key: offset
+    nullable: true
+  limit:
+    function: var_get
+    id: invite_read_limit
+    key: limit
+    nullable: true

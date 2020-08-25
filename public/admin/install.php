@@ -19,10 +19,9 @@ $menu = ['Login' => '/'];
 // Twig definition.
 $loader = new Twig_Loader_Filesystem($settings->__get(['api', 'base_path']) . $settings->__get(['twig', 'template_path']));
 $twig = new Twig_Environment($loader, $settings->__get(['twig', 'options']));
-if ($settings->__get(['debug', 'debug'])) {
+if ($settings->__get(['twig', 'debug'])) {
     $twig->addExtension(new \Twig\Extension\DebugExtension());
 }
-var_dump('hi');exit;
 
 // DB link.
 $dsnOptionsArr = [];

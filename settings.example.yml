@@ -68,12 +68,13 @@ admin:
   url: "admin.gaterdata.local"
   pagination_step: 20
   admin_templates: "includes/admin/templates/"
-  slim[displayErrorDetails]: true
-  slim[determineRouteBeforeAppMiddleware]: true
+  slim:
+    displayErrorDetails: true
+    determineRouteBeforeAppMiddleware: true
 
 twig:
   options:
-    cache_enabled: false
+    cache_enabled: true
     cache_path: "twig_cache/"
   template_path: "includes/Admin/templates/"
 

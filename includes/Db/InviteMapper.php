@@ -26,16 +26,14 @@ class InviteMapper extends Mapper
     public function save(Invite $invite)
     {
         if ($invite->getIid() == null) {
-            $sql = 'INSERT INTO invite (created, email, token) VALUES (?, ?, ?)';
+            $sql = 'INSERT INTO invite (created, email, token) VALUES (NOW(), ?, ?)';
             $bindParams = [
-                empty($invite->getCreated()) ? "now()" : $invite->getCreated(),
                 $invite->getEmail(),
                 $invite->getToken(),
             ];
         } else {
-            $sql = 'UPDATE invite SET created = ?, email = ?, token = ? WHERE iid = ?';
+            $sql = 'UPDATE invite SET created = NOW(), email = ?, token = ? WHERE iid = ?';
             $bindParams = [
-                empty($invite->getCreated()) ? "now()" : $invite->getCreated(),
                 $invite->getEmail(),
                 $invite->getToken(),
                 $invite->getIid(),
@@ -65,6 +63,23 @@ class InviteMapper extends Mapper
     /**
      * Find an invite by ID.
      *
+     * @param array $params
+     *   Filter params.
+     *
+     * @return array
+     *   array of invites.
+     *
+     * @throws ApiException
+     */
+    public function findAll($params)
+    {
+        $sql = 'SELECT * FROM invite';
+        return $this->fetchRows($sql, [], $params);
+    }
+
+    /**
+     * Find an invite by ID.
+     *
      * @param int $iid
      *   Invite ID.
      *
@@ -75,7 +90,7 @@ class InviteMapper extends Mapper
      */
     public function findByIid($iid)
     {
-        $sql = 'SELECT * FROM invite WHERE id = ?';
+        $sql = 'SELECT * FROM invite WHERE iid = ?';
         $bindParams = [$iid];
         return $this->fetchRow($sql, $bindParams);
     }

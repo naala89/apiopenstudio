@@ -122,7 +122,7 @@ class ResourceValidator
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
                 $classStr = $this->helper->getProcessorString($node['function']);
-                $class = new $classStr($meta, new Core\Request(), $this->db);
+                $class = new $classStr($meta, new Core\Request(), $this->db, $this->logger);
                 $details = $class->details();
                 $id = $node['id'];
                 $this->logger->notice('Validating: ' . $id);

@@ -38,10 +38,10 @@ class Invite
      * @param string $token
      *   Invite token.
      */
-    public function __construct($iid = null, $created = null, $email = null, $token = null)
+    public function __construct($iid = null, $email = null, $token = null)
     {
         $this->iid = $iid;
-        $this->created = $created;
+        $this->created = null;
         $this->email = $email;
         $this->token = $token;
     }
