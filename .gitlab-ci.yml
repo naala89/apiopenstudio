@@ -33,12 +33,21 @@ before_script:
 deploy_wiki_develop:
   stage: deploy
   script:
-    - echo "Compile the wiki"
+    - echo "Compile the wiki for develop branch."
     - ./vendor/bin/bookdown src/wiki/bookdown.json
-    - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+    - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
   only:
     - develop
+
+#deploy_phpdoc_develop:
+#  stage: deploy
+#  script:
+#    - echo "Deploy the phpdoc fir develop branch.Z"
+#    - rsync -rvI --delete --exclude=".*" "/phpdoc/" "$DEV_DEPLOYER"@"DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
+#    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
+#  only:
+#    - develop
 
 #deploy_wiki_master:
 #  stage: deploy
@@ -55,12 +64,3 @@ deploy_wiki_develop:
 #    - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_PHPDOC_PATH/*"
 #  only:
 #    - master
-
-#deploy_phpdoc_develop:
-#  stage: deploy
-#  script:
-#    - echo "Deploy the phpdoc"
-#    - rsync -rvI --delete --exclude=".*" "/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
-#    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
-#  only:
-#    - develop
