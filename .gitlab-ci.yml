@@ -17,8 +17,8 @@ before_script:
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-  - ssh-keyscan "$WIKI_URL" >> ~/.ssh/known_hosts
-  - ssh-keyscan "$PHPDOC_URL" >> ~/.ssh/known_hosts
+  - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
+#  - ssh-keyscan "$PHPDOC_URL" >> ~/.ssh/known_hosts
   - chmod 644 ~/.ssh/known_hosts
   - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
   - php composer-setup.php
@@ -35,7 +35,7 @@ deploy_wiki_develop:
   script:
     - echo "Compile the wiki for develop branch."
     - ./vendor/bin/bookdown src/wiki/bookdown.json
-    - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+    - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
   only:
     - develop
