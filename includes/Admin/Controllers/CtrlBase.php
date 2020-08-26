@@ -420,6 +420,7 @@ class CtrlBase
                     'Accounts' => '/accounts',
                     'Applications' => '/applications',
                     'Users' => '/users',
+                    'Invites' => '/invites',
                     'User Roles' => '/user/roles',
                     'Roles' => '/roles',
                 ];
@@ -429,6 +430,7 @@ class CtrlBase
                     'Accounts' => '/accounts',
                     'Applications' => '/applications',
                     'Users' => '/users',
+                    'Invites' => '/invites',
                     'User Roles' => '/user/roles',
                     'Roles' => '/roles',
                 ];
@@ -438,6 +440,7 @@ class CtrlBase
                     'Accounts' => '/accounts',
                     'Applications' => '/applications',
                     'Users' => '/users',
+                    'Invites' => '/invites',
                     'User Roles' => '/user/roles',
                 ];
             }

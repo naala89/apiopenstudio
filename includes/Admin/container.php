@@ -49,19 +49,35 @@ $container['view'] = function (Container $container) {
 };
 
 /**
- * Register Login controller.
+ * Register Account controller.
  *
  * @param Container $container
  *   Slim container.
  *
- * @return Gaterdata\Admin\Controllers\CtrlLogin
- *   CtrlLogin object.
+ * @return Gaterdata\Admin\Controllers\CtrlAccount
+ *   CtrlApplication object.
  */
-$container['CtrlLogin'] = function (Container $container) {
+$container['CtrlAccount'] = function (Container $container) {
     $settings = $container->get('settings');
     $view = $container->get('view');
     $flash = $container->get('flash');
-    return new Controllers\CtrlLogin($settings, $view, $flash);
+    return new Controllers\CtrlAccount($settings, $view, $flash);
+};
+
+/**
+ * Register Account controller.
+ *
+ * @param Container $container
+ *   Slim container.
+ *
+ * @return Gaterdata\Admin\Controllers\CtrlAccount
+ *   CtrlApplication object.
+ */
+$container['CtrlApplication'] = function (Container $container) {
+    $settings = $container->get('settings');
+    $view = $container->get('view');
+    $flash = $container->get('flash');
+    return new Controllers\CtrlApplication($settings, $view, $flash);
 };
 
 /**
@@ -81,54 +97,6 @@ $container['CtrlHome'] = function (Container $container) {
 };
 
 /**
- * Register Account controller.
- *
- * @param Container $container
- *   Slim container.
- *
- * @return Gaterdata\Admin\Controllers\CtrlAccount
- *   CtrlApplication object.
- */
-$container['CtrlAccount'] = function (Container $container) {
-    $settings = $container->get('settings');
-    $view = $container->get('view');
-    $flash = $container->get('flash');
-    return new Controllers\CtrlAccount($settings, $view, $flash);
-};
-
-/**
- * Register Application controller.
- *
- * @param Container $container
- *   Slim container.
- *
- * @return Gaterdata\Admin\Controllers\CtrlApplication
- *   CtrlApplication object.
- */
-$container['CtrlApplication'] = function (Container $container) {
-    $settings = $container->get('settings');
-    $view = $container->get('view');
-    $flash = $container->get('flash');
-    return new Controllers\CtrlApplication($settings, $view, $flash);
-};
-
-/**
- * Register Users controller.
- *
- * @param Container $container
- *   Slim container.
- *
- * @return Gaterdata\Admin\Controllers\CtrlUsers
- *   CtrlUser object.
- */
-$container['CtrlUsers'] = function (Container $container) {
-    $settings = $container->get('settings');
-    $view = $container->get('view');
-    $flash = $container->get('flash');
-    return new Controllers\CtrlUsers($settings, $view, $flash);
-};
-
-/**
  * Register User controller.
  *
  * @param Container $container
@@ -137,27 +105,27 @@ $container['CtrlUsers'] = function (Container $container) {
  * @return Gaterdata\Admin\Controllers\CtrlUser
  *   CtrlUser object.
  */
-$container['CtrlUser'] = function (Container $container) {
+$container['CtrlInvite'] = function (Container $container) {
     $settings = $container->get('settings');
     $view = $container->get('view');
     $flash = $container->get('flash');
-    return new Controllers\CtrlUser($settings, $view, $flash);
+    return new Controllers\CtrlInvite($settings, $view, $flash);
 };
 
 /**
- * Register User controller.
+ * Register Login controller.
  *
  * @param Container $container
  *   Slim container.
  *
- * @return Controllers\CtrlUserRole
- *   CtrlUserRole object.
+ * @return Gaterdata\Admin\Controllers\CtrlLogin
+ *   CtrlLogin object.
  */
-$container['CtrlUserRole'] = function (Container $container) {
+$container['CtrlLogin'] = function (Container $container) {
     $settings = $container->get('settings');
     $view = $container->get('view');
     $flash = $container->get('flash');
-    return new Controllers\CtrlUserRole($settings, $view, $flash);
+    return new Controllers\CtrlLogin($settings, $view, $flash);
 };
 
 /**
@@ -190,6 +158,54 @@ $container['CtrlRole'] = function (Container $container) {
     $view = $container->get('view');
     $flash = $container->get('flash');
     return new Controllers\CtrlRole($settings, $view, $flash);
+};
+
+/**
+ * Register User controller.
+ *
+ * @param Container $container
+ *   Slim container.
+ *
+ * @return Gaterdata\Admin\Controllers\CtrlUser
+ *   CtrlUser object.
+ */
+$container['CtrlUser'] = function (Container $container) {
+    $settings = $container->get('settings');
+    $view = $container->get('view');
+    $flash = $container->get('flash');
+    return new Controllers\CtrlUser($settings, $view, $flash);
+};
+
+/**
+ * Register Users controller.
+ *
+ * @param Container $container
+ *   Slim container.
+ *
+ * @return Gaterdata\Admin\Controllers\CtrlUsers
+ *   CtrlUser object.
+ */
+$container['CtrlUsers'] = function (Container $container) {
+    $settings = $container->get('settings');
+    $view = $container->get('view');
+    $flash = $container->get('flash');
+    return new Controllers\CtrlUsers($settings, $view, $flash);
+};
+
+/**
+ * Register User controller.
+ *
+ * @param Container $container
+ *   Slim container.
+ *
+ * @return Controllers\CtrlUserRole
+ *   CtrlUserRole object.
+ */
+$container['CtrlUserRole'] = function (Container $container) {
+    $settings = $container->get('settings');
+    $view = $container->get('view');
+    $flash = $container->get('flash');
+    return new Controllers\CtrlUserRole($settings, $view, $flash);
 };
 
 /**

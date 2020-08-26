@@ -56,7 +56,7 @@ class CtrlUser extends CtrlBase
     }
 
     /**
-     * View a new user.
+     * View a user.
      *
      * @param Request $request
      *   Request object.
@@ -275,7 +275,7 @@ class CtrlUser extends CtrlBase
     }
 
     /**
-     * Delete a user account and its associated roles.
+     * Delete a user account.
      *
      * @param \Slim\Http\Request $request
      *   Request object.
@@ -320,177 +320,5 @@ class CtrlUser extends CtrlBase
         }
 
         return $response->withStatus(302)->withHeader('Location', '/users');
-    }
-
-    /**
-     * Invite a single or multiple users to GaterData.
-     *
-     * @param Request $request
-     *   Slim request object.
-     * @param Response $response
-     *   Slim response object.
-     * @param array $args
-     *   Slim args array
-     *
-     * @return ResponseInterface|Response
-     *
-     * @throws GuzzleException
-     */
-    public function invite(Request $request, Response $response, array $args)
-    {
-        // Validate access.
-        if (!$this->checkAccess() && !(
-            in_array('Administrator', $this->userRoles)
-            || in_array('Account manager', $this->userRoles)
-            || in_array('Application manager', $this->userRoles)
-            )) {
-            $this->flash->addMessage('error', 'Access admin: access denied');
-            return $response->withStatus(302)->withHeader('Location', '/');
-        }
-
-        $allPostVars = $request->getParsedBody();
-        if (empty($email = $allPostVars['invite-email'])) {
-            $this->flash->addMessage('error', 'Invite user: email not specified');
-            return $response->withRedirect('/users');
-        }
-
-        try {
-            $result = $this->apiCall('post', "user/invite",
-                [
-                    'headers' => [
-                        'Authorization' => "Bearer " . $_SESSION['token'],
-                        'Accept' => 'application/json',
-                    ],
-                    'form_params' => ['email' => $email],
-                ]
-            );
-            $result = json_decode($result->getBody()->getContents(), true);
-
-            $message = '';
-            if (isset($result['resent'])) {
-                $message .= "<p><b>Resent invites:</b><br/>";
-                foreach ($result['resent'] as $email) {
-                    $message .= "$email<br/>";
-                }
-                $message .= "</p>";
-            }
-            if (isset($result['success'])) {
-                $message .= "<p><b>Sent invites:</b><br/>";
-                foreach ($result['success'] as $email) {
-                    $message .= "$email<br/>";
-                }
-                $message .= "</p>";
-            }
-            if (isset($result['fail'])) {
-                $message .= "<p><b>Failed invites:</b><br/>";
-                foreach ($result['fail'] as $email) {
-                    $message .= "$email<br/>";
-                }
-                $message .= "</p>";
-            }
-            $this->flash->addMessage('info', $message);
-        } catch (\Exception $e) {
-            $this->flash->addMessage('error', $e->getMessage());
-        }
-
-        return $response->withStatus(302)->withHeader('Location', '/users');
-    }
-
-    /**
-     * Get Local domain name.
-     *
-     * @return string
-     *   Host name.
-     */
-    private function getHost()
-    {
-        $possibleHostSources = ['HTTP_X_FORWARDED_HOST', 'HTTP_HOST', 'SERVER_NAME', 'SERVER_ADDR'];
-        $sourceTransformations = [
-            "HTTP_X_FORWARDED_HOST" => function ($value) {
-                $elements = explode(',', $value);
-                return trim(end($elements));
-            }
-        ];
-        $host = '';
-        foreach ($possibleHostSources as $source) {
-            if (!empty($host)) {
-                break;
-            }
-            if (empty($_SERVER[$source])) {
-                continue;
-            }
-            $host = $_SERVER[$source];
-            if (array_key_exists($source, $sourceTransformations)) {
-                $host = $sourceTransformations[$source]($host);
-            }
-        }
-
-        // Remove port number from host
-        $host = preg_replace('/:\d+$/', '', $host);
-
-        return trim($host);
-    }
-
-    /**
-     * Allow a user with a valid token to register.
-     *
-     * @param \Slim\Http\Request $request
-     *   Request object.
-     * @param \Slim\Http\Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
-     *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
-     */
-    public function register(Request $request, Response $response, array $args)
-    {
-        $menu = $this->getMenus([]);
-        if ($request->isPost()) {
-            $allVars = $request->getParsedBody();
-        } else {
-            $allVars = $args;
-        }
-
-        // Token not received.
-        if (empty($allVars['token'])) {
-            return $response->withRedirect('/login');
-        }
-
-        $token = $allVars['token'];
-
-        // Invalid token.
-        $inviteHlp = new Invite($this->dbSettings);
-        $invite = $inviteHlp->findByToken($token);
-        if (empty($invite['iid'])) {
-            return $response->withRedirect('/login');
-        }
-
-        // Validate User is not already in the system.
-        $userHlp = new User($this->dbSettings);
-        $user = $userHlp->findByEmail($invite['email']);
-        if (!empty($user['uid'])) {
-            $inviteHlp->deleteByEmail($invite['email']);
-            $message['text'] = 'Your user already exists: ' . $invite['email'];
-            $message['type'] = 'error';
-            return $this->view->render($response, 'home.twig', [
-                'menu' => $menu,
-                'message' => $message,
-            ]);
-        }
-
-        if ($request->isGet()) {
-            // Display the register form.
-            return $this->view->render($response, 'register.twig', [
-                'menu' => $menu,
-                'token' => $token,
-            ]);
-        }
-
-        // Fall through to new user register post form submission.
-        return $this->createUser($allVars, $menu, $response);
     }
 }
