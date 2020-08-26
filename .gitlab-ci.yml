@@ -30,18 +30,11 @@ before_script:
 #  script:
 #    - ./vendor/bin/codecept run
 
-compile_bookdown:
+deploy_wiki_develop:
   stage: deploy
   script:
     - echo "Compile the wiki"
     - ./vendor/bin/bookdown src/wiki/bookdown.json
-  only:
-    - develop
-    - master
-
-deploy_wiki_develop:
-  stage: deploy
-  script:
     - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
   only:
