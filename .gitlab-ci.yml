@@ -12,8 +12,6 @@ stages:
 before_script:
   - apt-get update
   - apt-get install -y libzip-dev openssh-client rsync # npm
-  - pear channel-discover pear.phpdoc.org
-  - pear install phpdoc/phpDocumentor
   - docker-php-ext-install zip
   - eval $(ssh-agent -s)
   - mkdir -p ~/.ssh
@@ -46,7 +44,8 @@ deploy_phpdoc:
   stage: deploy
   script:
     - echo "Deploy the phpdoc"
-    - phpdoc -d ./includes -t public/phpdoc
+    - docker pull phpdoc/phpdoc
+    - docker run --rm -v $(pwd):/data phpdoc/phpdoc
     - rsync -rvI --delete --exclude=".*" "/phpdoc/" "$DEPLOYER"@"PHPDOC_URL":"$PHPDOC_PATH/"
     - ssh "$DEPLOYER"@"$PHPDOC_URL" "sudo chown -R $DEPLOYER:www-data $PHPDOC_PATH/*"
   only:
