@@ -7,6 +7,7 @@ image: php:7.3
 
 stages:
   #  - test
+  - compile
   - deploy
 
 before_script:
@@ -30,23 +31,44 @@ before_script:
 #  script:
 #    - ./vendor/bin/codecept run
 
-deploy_wiki:
-  stage: deploy
+compile_bookdown:
+  stage: compile
   script:
-    - echo "Deploy the wiki"
+    - echo "Compile the wiki"
     - ./vendor/bin/bookdown src/wiki/bookdown.json
-    - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEPLOYER"@"$WIKI_URL":"$WIKI_PATH/"
-    - ssh "$DEPLOYER"@"$WIKI_URL" "sudo chown -R $DEPLOYER:www-data $WIKI_PATH/*"
   only:
+    - develop
     - master
 
-deploy_phpdoc:
+deploy_wiki_develop:
   stage: deploy
   script:
-    - echo "Deploy the phpdoc"
-    - docker pull phpdoc/phpdoc
-    - docker run --rm -v $(pwd):/data phpdoc/phpdoc
-    - rsync -rvI --delete --exclude=".*" "/phpdoc/" "$DEPLOYER"@"PHPDOC_URL":"$PHPDOC_PATH/"
-    - ssh "$DEPLOYER"@"$PHPDOC_URL" "sudo chown -R $DEPLOYER:www-data $PHPDOC_PATH/*"
+    - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+    - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
   only:
-    - master
+    - develop
+
+#deploy_wiki_master:
+#  stage: deploy
+#  script:
+#    - rsync -rvI --delete --exclude=".*" "/wiki/" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
+#    - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "sudo chown -R $PROD_DEPLOYER:www-data $WIKI_PATH/*"
+#  only:
+#    - master
+
+#deploy_phpdoc_master:
+#  stage: deploy
+#  script:
+#    - rsync -rvI --delete --exclude=".*" "/phpdoc/" "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL":"$PROD_PHPDOC_PATH/"
+#    - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_PHPDOC_PATH/*"
+#  only:
+#    - master
+
+#deploy_phpdoc_develop:
+#  stage: deploy
+#  script:
+#    - echo "Deploy the phpdoc"
+#    - rsync -rvI --delete --exclude=".*" "/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
+#    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
+#  only:
+#    - develop
