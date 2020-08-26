@@ -31,3 +31,4 @@ docker-compose.yml
 
 #wiki
 public/wiki
+public/phpdoc

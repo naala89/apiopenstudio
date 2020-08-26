@@ -12,12 +12,15 @@ stages:
 before_script:
   - apt-get update
   - apt-get install -y libzip-dev openssh-client rsync # npm
+  - pear channel-discover pear.phpdoc.org
+  - pear install phpdoc/phpDocumentor
   - docker-php-ext-install zip
   - eval $(ssh-agent -s)
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
   - ssh-keyscan "$WIKI_URL" >> ~/.ssh/known_hosts
+  - ssh-keyscan "$PHPDOC_URL" >> ~/.ssh/known_hosts
   - chmod 644 ~/.ssh/known_hosts
   - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
   - php composer-setup.php
@@ -36,5 +39,15 @@ deploy_wiki:
     - ./vendor/bin/bookdown src/wiki/bookdown.json
     - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEPLOYER"@"$WIKI_URL":"$WIKI_PATH/"
     - ssh "$DEPLOYER"@"$WIKI_URL" "sudo chown -R $DEPLOYER:www-data $WIKI_PATH/*"
+  only:
+    - master
+
+deploy_phpdoc:
+  stage: deploy
+  script:
+    - echo "Deploy the phpdoc"
+    - phpdoc -d ./includes -t public/phpdoc
+    - rsync -rvI --delete --exclude=".*" "/phpdoc/" "$DEPLOYER"@"PHPDOC_URL":"$PHPDOC_PATH/"
+    - ssh "$DEPLOYER"@"$PHPDOC_URL" "sudo chown -R $DEPLOYER:www-data $PHPDOC_PATH/*"
   only:
     - master
