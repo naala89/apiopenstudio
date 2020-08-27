@@ -11,18 +11,19 @@ stages:
 
 before_script:
   - apt-get update
-  - apt-get install -y libzip-dev openssh-client rsync # npm
+  - apt-get install -y libzip-dev openssh-client rsync
   - docker-php-ext-install zip
   - eval $(ssh-agent -s)
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
   - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
-#  - ssh-keyscan "$PHPDOC_URL" >> ~/.ssh/known_hosts
+  - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
   - chmod 644 ~/.ssh/known_hosts
   - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
   - php composer-setup.php
   - php -r "unlink('composer-setup.php');"
+  - pear install PhpDocumentor
   - php composer.phar install
 
 #test:
@@ -40,14 +41,12 @@ deploy_wiki_develop:
   only:
     - develop
 
-#deploy_phpdoc_develop:
-#  stage: deploy
-#  script:
-#    - echo "Deploy the phpdoc fir develop branch.Z"
-#    - rsync -rvI --delete --exclude=".*" "/phpdoc/" "$DEV_DEPLOYER"@"DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
-#    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
-#  only:
-#    - develop
+deploy_phpdoc_develop:
+  stage: deploy
+  script:
+    - echo "Deploy the phpdoc for develop branch."
+  only:
+    - develop
 
 #deploy_wiki_master:
 #  stage: deploy
