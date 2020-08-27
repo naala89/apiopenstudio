@@ -1,7 +1,7 @@
 image: php:7.3
 
 include:
-  - template: .code-quality.gitlab-ci.yml
+  - template: code-quality.gitlab-ci.yml
 
 code_quality:
   variables:
