@@ -6,7 +6,7 @@ image: php:7.3
 #    - vendor/
 
 stages:
-  #  - test
+#  - test
   - deploy
 
 before_script:
@@ -17,9 +17,6 @@ before_script:
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-  - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
-  - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
-  - chmod 644 ~/.ssh/known_hosts
   - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
   - php composer-setup.php
   - php -r "unlink('composer-setup.php');"
@@ -34,6 +31,8 @@ deploy_wiki_develop:
   stage: deploy
   script:
     - echo "Compile the wiki for develop branch."
+    - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
     - ./vendor/bin/bookdown src/wiki/bookdown.json
     - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
@@ -44,6 +43,8 @@ deploy_phpdoc_develop:
   stage: deploy
   script:
     - echo "Deploy the phpdoc for develop branch."
+    - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
     - ./vendor/bin/phpdox
     - rsync -rvI --delete --exclude=".*" "public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
