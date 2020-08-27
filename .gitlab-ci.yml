@@ -11,7 +11,7 @@ stages:
 
 before_script:
   - apt-get update
-  - apt-get install -y libzip-dev openssh-client rsync wget
+  - apt-get install -y libzip-dev openssh-client rsync
   - docker-php-ext-install zip
   - eval $(ssh-agent -s)
   - mkdir -p ~/.ssh
@@ -23,9 +23,8 @@ before_script:
   - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
   - php composer-setup.php
   - php -r "unlink('composer-setup.php');"
-  - wget https://pear.phpdoc.org/channel.xml
-  - pear channel-add ./channel.xml
-  - pear install https://pear.phpdoc.org/get/phpDocumentor-2.9.0.tgz
+  - pear channel-update pear.phpdoc.org
+  - pear install phpdoc/phpDocumentor
   - php composer.phar install
 
 #test:
