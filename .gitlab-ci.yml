@@ -11,8 +11,7 @@ stages:
 
 before_script:
   - apt-get update
-  - apt-get upgrade -y
-  - apt-get install -y libzip-dev openssh-client rsync php7.3-common php7.3-cli php7.3-xml libxslt-dev
+  - apt-get install -y libzip-dev openssh-client rsync libxml2-dev
   - docker-php-ext-install zip
   - eval $(ssh-agent -s)
   - mkdir -p ~/.ssh
