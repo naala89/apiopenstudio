@@ -11,7 +11,7 @@ stages:
 
 before_script:
   - apt-get update
-  - apt-get install -y libzip-dev openssh-client rsync
+  - apt-get install -y libzip-dev openssh-client rsync libxslt
   - docker-php-ext-install zip xsl
   - eval $(ssh-agent -s)
   - mkdir -p ~/.ssh
