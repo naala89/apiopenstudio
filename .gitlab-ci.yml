@@ -45,6 +45,9 @@ deploy_phpdoc_develop:
   stage: deploy
   script:
     - echo "Deploy the phpdoc for develop branch."
+    - phpdoc run
+    - rsync -rvI --delete --exclude=".*" "public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
+    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
   only:
     - develop
 
