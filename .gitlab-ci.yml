@@ -1,7 +1,7 @@
 image: php:7.3
 
 include:
-  - template: "/code-quality.gitlab-ci.yml"
+  - template: Code-Quality.gitlab-ci.yml
 
 #cache:
 #  key: ${CI_COMMIT_REF_SLUG}
