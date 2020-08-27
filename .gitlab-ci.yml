@@ -1,5 +1,18 @@
 image: php:7.3
 
+include:
+  - template: .code-quality.gitlab-ci.yml
+
+code_quality:
+  variables:
+    CODE_QUALITY_IMAGE: "registry.example.com/codequality-fork:latest"
+  rules:
+    - if: '$CODE_QUALITY_DISABLED'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_TAG'
+
 #cache:
 #  key: ${CI_COMMIT_REF_SLUG}
 #  paths:
