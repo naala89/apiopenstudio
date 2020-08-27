@@ -23,7 +23,9 @@ before_script:
   - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
   - php composer-setup.php
   - php -r "unlink('composer-setup.php');"
-  - pear install phpdoc/phpDocumentor
+  - wget https://pear.phpdoc.org/channel.xml
+  - pear channel-add ./channel.xml
+  - pear install https://pear.phpdoc.org/get/phpDocumentor-2.9.0.tgz
   - php composer.phar install
 
 #test:
