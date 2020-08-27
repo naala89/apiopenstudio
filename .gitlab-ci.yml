@@ -1,17 +1,7 @@
 image: php:7.3
 
 include:
-  - template: ./code-quality.gitlab-ci.yml
-
-code_quality:
-  variables:
-    CODE_QUALITY_IMAGE: "registry.example.com/codequality-fork:latest"
-  rules:
-    - if: '$CODE_QUALITY_DISABLED'
-      when: never
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-    - if: '$CI_COMMIT_TAG'
+  - template: "/code-quality.gitlab-ci.yml"
 
 #cache:
 #  key: ${CI_COMMIT_REF_SLUG}
@@ -34,6 +24,11 @@ before_script:
   - php composer-setup.php
   - php -r "unlink('composer-setup.php');"
   - php composer.phar install
+
+code_quality:
+  stage: deploy
+  artifacts:
+    paths: [gl-code-quality-report.json]
 
 #test:
 #  stage: test
