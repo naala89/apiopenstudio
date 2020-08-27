@@ -23,8 +23,6 @@ before_script:
   - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
   - php composer-setup.php
   - php -r "unlink('composer-setup.php');"
-  - pear channel-update pear.phpdoc.org
-  - pear install phpdoc/phpDocumentor
   - php composer.phar install
 
 #test:
@@ -46,7 +44,7 @@ deploy_phpdoc_develop:
   stage: deploy
   script:
     - echo "Deploy the phpdoc for develop branch."
-    - phpdoc run
+    - ./vendor/bin/phpdox
     - rsync -rvI --delete --exclude=".*" "public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
   only:

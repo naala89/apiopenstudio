@@ -5,7 +5,8 @@
     "codeception/codeception": "^2.4",
     "components/jquery": "^3.3",
     "squizlabs/php_codesniffer": "*",
-    "bookdown/bookdown": "^1.1"
+    "bookdown/bookdown": "^1.1",
+    "theseer/phpdox": "^0.12.0"
   },
   "require": {
     "adodb/adodb-php": "^5.20",
