@@ -3,7 +3,10 @@
     <project name="GaterData" source="${basedir}/includes" workdir="${basedir}/tmp">
         <collector backend="parser" />
         <generator output="${basedir}/public/phpdoc">
-            <build engine="html" output="html"/>
+            <build engine="html" output="html">
+                <template dir="${phpDox.home}/templates/html" />
+                <file extension="html" />
+            </build>
         </generator>
     </project>
 </phpdox>
