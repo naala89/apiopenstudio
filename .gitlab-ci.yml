@@ -23,7 +23,7 @@ before_script:
   - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
   - php composer-setup.php
   - php -r "unlink('composer-setup.php');"
-  - pear install PhpDocumentor
+  - pear install phpdoc/phpDocumentor
   - php composer.phar install
 
 #test:
