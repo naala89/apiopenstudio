@@ -58,6 +58,7 @@ class ResourceExport extends Core\ProcessorEntity
         'menu' => 'Admin',
         'input' => [
             'token' => [
+                // phpcs:ignore
                 'description' => 'The token of the user making the call. This is used to validate the user permissions.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => false,
@@ -149,7 +150,8 @@ class ResourceExport extends Core\ProcessorEntity
      * @return string
      *   A YAML string.
      */
-    private function getYaml(Resource $resource) {
+    private function getYaml(Resource $resource)
+    {
         $obj = [];
         $obj['name'] = $resource->getName();
         $obj['description'] = $resource->getDescription();
@@ -169,7 +171,8 @@ class ResourceExport extends Core\ProcessorEntity
      * @return string
      *   A YAML string.
      */
-    private function getJson(Resource $resource) {
+    private function getJson(Resource $resource)
+    {
         $obj = [];
         $obj['name'] = $resource->getName();
         $obj['description'] = $resource->getDescription();

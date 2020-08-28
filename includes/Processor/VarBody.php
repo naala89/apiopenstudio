@@ -17,7 +17,6 @@ namespace Gaterdata\Processor;
 use Gaterdata\Core;
 use Gaterdata\Core\ApiException;
 use Gaterdata\Core\Debug;
-use phpDocumentor\Reflection\Types\Integer;
 
 class VarBody extends VarMixed
 {

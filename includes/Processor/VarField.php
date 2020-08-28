@@ -21,6 +21,7 @@ class VarField extends Core\ProcessorEntity
     protected $details = [
         'name' => 'Var (field)',
         'machineName' => 'var_field',
+        // phpcs:ignore
         'description' => 'Create a name value pair. This is primarily for use as a field in object. individual key/values can be input or a whole array. ',
         'menu' => 'Primitive',
         'input' => [

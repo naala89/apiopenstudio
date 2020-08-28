@@ -56,6 +56,7 @@ class ResourceDelete extends Core\ProcessorEntity
         'menu' => 'Admin',
         'input' => [
             'token' => [
+                // phpcs:ignore
                 'description' => 'The token of the user making the call. This is used to validate the user permissions.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => false,

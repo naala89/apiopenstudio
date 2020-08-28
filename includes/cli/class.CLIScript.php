@@ -1,12 +1,13 @@
 #!/usr/bin/php -q
 <?php
-
 /**
  * Class CLIScript
  *
  * This is the base class for an asynchronous solution within PHP.
  *
- * The main code generates a command string in the form of "php script.php -option1 value1 --flag1 --flag2 argument1 argument2"
+ * The main code generates a command string in the form of
+ * "php script.php -option1 value1 --flag1 --flag2 argument1 argument2"
+ *
  * script.php instantiates the child class of CLIScript, and then calls child_class->exec();
  *
  * exec arguments are stored as:
@@ -21,14 +22,14 @@
  * $argMap['options']['permittedValues'] array permitted option values
  * $argMap['options']['default'] default value
  *
- * The use of default value is for params that are not required in the script call, but actually need a value. i.e. default value.
+ * The use of default value is for params that are not required in the script call, but actually need a value.
+ * i.e. default value.
  */
 
-include_once(pathinfo(__FILE__, PATHINFO_DIRNAME) . '/../../config.php');
-include_once(Config::$dirIncludes . 'class.Debug.php');
-if (!class_exists('Debug')) {
-    Debug::setup(Debug::LOG, Config::$debugCLI, Config::$errorLog);
-}
+namespace Gaterdata\Core\Cli;
+
+use Gaterdata\Core\Config;
+use Monolog\Logger;
 
 abstract class CLIScript
 {

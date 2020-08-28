@@ -2,9 +2,7 @@
 
 namespace Gaterdata\Core;
 
-use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use DOMDocument;
-
 
 class DataContainer extends Entity
 {
@@ -99,7 +97,8 @@ class DataContainer extends Entity
      * @return string
      *   The data type.
      */
-    private function detectType($data) {
+    private function detectType($data)
+    {
         if ($this->isEmpty($data)) {
             return 'empty';
         }

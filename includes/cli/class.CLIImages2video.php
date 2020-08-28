@@ -1,9 +1,10 @@
 #!/usr/bin/php -q
 <?php
 
-include_once(pathinfo(__FILE__, PATHINFO_DIRNAME) . '/class.CLIScript.php');
-include_once(Config::$dirIncludes . 'class.Utilities.php');
-include_once(Config::$dirIncludes . 'class.Curl.php');
+namespace Gaterdata\Core\Cli;
+
+use Gaterdata\Core\Utilities;
+use http\Client\Curl;
 
 class CLIImages2video extends CLIScript
 {
@@ -88,7 +89,7 @@ class CLIImages2video extends CLIScript
         }
         if (!file_exists($this->options['i'])) {
             $message = 'Error: input directory does not exist';
-            Debug::variable($this->options['i'],$message, 0, Config::$debugCLI, Debug::LOG);
+            Debug::variable($this->options['i'], $message, 0, Config::$debugCLI, Debug::LOG);
             return;
         }
 

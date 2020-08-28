@@ -96,8 +96,12 @@ class CtrlLogin extends CtrlBase
             $this->apiCall('post', "user/invite/accept/$token", [
                 'headers' => ['Accept' => 'application/json']
             ]);
-            $message = '<p>Success, Please visit the home page and click on "forgot Password" to set your password.</p>';
-            $message .= '<p>If you need any privileged access to applications, please speak to your administrators.</p>';
+            $message = '<p>';
+            $message .= 'Success, Please visit the home page and click on "forgot Password" to set your password.';
+            $message .= '</p>';
+            $message .= '<p>';
+            $message .= 'If you need any privileged access to applications, please speak to your administrators.';
+            $message .= '</p>';
             $this->flash->addMessageNow('info', $message);
         } catch (\Exception $e) {
             $this->flash->addMessageNow('error', $e->getMessage());
@@ -141,7 +145,9 @@ class CtrlLogin extends CtrlBase
                 ]);
             }
             try {
-                $result = $this->apiCall('post','password/reset',
+                $result = $this->apiCall(
+                    'post',
+                    'password/reset',
                     [
                         'headers' => [
                             'Accept' => 'application/json',
@@ -151,7 +157,10 @@ class CtrlLogin extends CtrlBase
                         ],
                     ]
                 );
-                $this->flash->addMessageNow('info', 'Password reset link activated, which will expire in 15 minutes. Please check your emails.');
+                $this->flash->addMessageNow(
+                    'info',
+                    'Password reset link activated, which will expire in 15 minutes. Please check your emails.'
+                );
             } catch (\Exception $e) {
                 $this->flash->addMessageNow('error', $e->getMessage());
             }
@@ -227,7 +236,9 @@ class CtrlLogin extends CtrlBase
         }
 
         try {
-            $result = $this->apiCall('post','password/reset',
+            $result = $this->apiCall(
+                'post',
+                'password/reset',
                 [
                     'headers' => [
                         'Accept' => 'application/json',

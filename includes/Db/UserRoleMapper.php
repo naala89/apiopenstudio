@@ -118,7 +118,8 @@ class UserRoleMapper extends Mapper
      *
      * @throws ApiException
      */
-    public function hasRole($uid, $rolename) {
+    public function hasRole($uid, $rolename)
+    {
         $sql = 'SELECT * FROM user_role AS ur';
         $sql .= ' INNER JOIN role as r';
         $sql .= ' ON ur.rid = r.rid';
@@ -142,7 +143,8 @@ class UserRoleMapper extends Mapper
      *
      * @throws ApiException
      */
-    public function findByUidRolename($uid, $rolename) {
+    public function findByUidRolename($uid, $rolename)
+    {
         $sql = 'SELECT * FROM user_role AS ur';
         $sql .= ' INNER JOIN role AS r';
         $sql .= ' ON r.rid = ur.rid';
@@ -166,7 +168,8 @@ class UserRoleMapper extends Mapper
      *
      * @throws ApiException
      */
-    public function hasAccidRole($uid, $accid, $rolename) {
+    public function hasAccidRole($uid, $accid, $rolename)
+    {
         $sql = 'SELECT * FROM user_role AS ur';
         $sql .= ' INNER JOIN role as r';
         $sql .= ' ON ur.rid = r.rid';
@@ -190,7 +193,8 @@ class UserRoleMapper extends Mapper
      *
      * @throws ApiException
      */
-    public function hasAppidAccess($uid, $appid) {
+    public function hasAppidAccess($uid, $appid)
+    {
         $sql = 'SELECT * FROM user_role';
         $sql .= ' WHERE uid=?';
         $sql .= ' AND appid=?';
@@ -210,7 +214,8 @@ class UserRoleMapper extends Mapper
      *
      * @throws ApiException
      */
-    public function findByUid($uid) {
+    public function findByUid($uid)
+    {
         $sql = 'SELECT * FROM user_role WHERE uid=?';
         $bindParams = [$uid];
         return $this->fetchRows($sql, $bindParams);

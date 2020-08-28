@@ -30,8 +30,9 @@ class UserMapper extends Mapper
         if (empty($user->getUid())) {
             $sql = 'INSERT INTO user (active, username, hash, token, token_ttl, email, honorific, name_first, ';
             $sql .= 'name_last, company, website, address_street, address_suburb, address_city, address_state, ';
-            $sql .= 'address_country, address_postcode, phone_mobile, phone_work, password_reset, password_reset_ttl) VALUES ';
-            $sql .= '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            $sql .= 'address_country, address_postcode, phone_mobile, phone_work, password_reset, password_reset_ttl)';
+            $sql .= ' VALUES';
+            $sql .= ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
             $bindParams = [
                 $user->getActive(),
                 $user->getUsername(),

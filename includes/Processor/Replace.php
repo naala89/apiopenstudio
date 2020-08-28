@@ -75,8 +75,7 @@ class Replace extends Core\ProcessorEntity
 
         if ($ignoreCase) {
             $result = str_ireplace($needle, $value, $haystack);
-        }
-        else {
+        } else {
             $result = str_replace($needle, $value, $haystack);
         }
 

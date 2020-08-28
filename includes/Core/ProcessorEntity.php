@@ -98,7 +98,10 @@ abstract class ProcessorEntity extends Entity
      *          This Processor has 3 inputs:
      *          method, which has only one sub-input, of type string, with only 2 possible values ('get' and 'post')
      *          auth, which has only one value, of type processor
-     *          vars, which can contain an infinite number of values, of type processor or integer, with no limit on value
+     *          vars, which can contain:
+     *              an infinite number of values
+     *              be of type processor or integer
+     *              with no limit on value
      *          t, which can take or or many input of Processor Field or a string.
      *
      * @var array
@@ -197,7 +200,9 @@ abstract class ProcessorEntity extends Entity
             $this->meta->$key = new DataContainer($default);
         }
 
-        $container = $this->isDataContainer($this->meta->$key) ? $this->meta->$key : new DataContainer($this->meta->$key);
+        $container = $this->isDataContainer($this->meta->$key)
+            ? $this->meta->$key
+            : new DataContainer($this->meta->$key);
 
         $this->_validateAllowedValues($container->getData(), $limitValues, $min, $key);
         $this->_validateAllowedTypes($container->getType(), $limitTypes, $min, $key);
@@ -257,7 +262,8 @@ abstract class ProcessorEntity extends Entity
      *
      * @throws ApiException
      */
-    protected function getUserAccids($uid) {
+    protected function getUserAccids($uid)
+    {
         $accountMapper = new AccountMapper($this->db);
         $accounts = $accountMapper->findByUid($uid);
         $accids = [];
@@ -278,7 +284,8 @@ abstract class ProcessorEntity extends Entity
      *
      * @throws ApiException
      */
-    protected function getUserAppids($uid) {
+    protected function getUserAppids($uid)
+    {
         $userRoleMapper = new UserRoleMapper($this->db);
         $applicationMapper = new ApplicationMapper($this->db);
         $userRoles = $userRoleMapper->findByFilter(['col' => ['uid' => $uid]]);

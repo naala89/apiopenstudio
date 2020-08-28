@@ -40,10 +40,12 @@ class VarStoreRead extends Core\ProcessorEntity
     protected $details = [
         'name' => 'Var store read',
         'machineName' => 'var_store_read',
+        // phpcs:ignore
         'description' => 'Fetch a single or multiple var store variables. These will be the variables that belong to the application. If the application is core, then all vars are returned.',
         'menu' => 'Var store',
         'input' => [
             'token' => [
+                // phpcs:ignore
                 'description' => 'The token of the user making the call. This is used to validate the user permissions.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => false,
@@ -53,6 +55,7 @@ class VarStoreRead extends Core\ProcessorEntity
                 'default' => '',
             ],
             'validate_access' => [
+                // phpcs:ignore
                 'description' => 'If set to true, the calling users roles access will be validated. If set to false, then access is open.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
@@ -156,8 +159,7 @@ class VarStoreRead extends Core\ProcessorEntity
         if ($validateAccess) {
             // return vars in the applications where the user has required app/role access.
             $vars = $this->varStoreMapper->findByUid($currentUser->getUid(), $params);
-        }
-        else {
+        } else {
             $vars = $this->varStoreMapper->findAll($params);
         }
         $result = [];

@@ -36,6 +36,7 @@ class AccountRead extends Core\ProcessorEntity
         'menu' => 'Admin',
         'input' => [
             'token' => [
+                // phpcs:ignore
                 'description' => 'Request token of the user making the call. This is used to limit the accounts viewable whilst and still have access by all admin roles.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,

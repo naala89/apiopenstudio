@@ -253,7 +253,9 @@ class CtrlUser extends CtrlBase
             }
         }
         try {
-            $result = $this->apiCall('get','user',
+            $result = $this->apiCall(
+                'get',
+                'user',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],

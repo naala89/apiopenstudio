@@ -43,6 +43,7 @@ class TokenRole extends Core\ProcessorEntity
                 'default' => '',
             ],
             'validate_account' => [
+                // phpcs:ignore
                 'description' => 'Validate The has has the role in the resource account. If false, the result will be if the user has the role in any accounts.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
@@ -52,6 +53,7 @@ class TokenRole extends Core\ProcessorEntity
                 'default' => true,
             ],
             'validate_application' => [
+                // phpcs:ignore
                 'description' => 'Validate The has has the role in the resource application. If false, the result will be if the user has the role in any applications.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,

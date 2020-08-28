@@ -66,8 +66,7 @@ class CtrlInvite extends CtrlBase
                 ]
             );
             $invites = json_decode($result->getBody()->getContents(), true);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             $this->flash->addMessageNow('error', $e->getMessage());
         }
 
@@ -128,8 +127,7 @@ class CtrlInvite extends CtrlBase
             );
             $result = json_decode($result->getBody()->getContents(), true);
             $this->flash->addMessageNow('info', $result);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             $this->flash->addMessageNow('error', $e->getMessage());
         }
 
@@ -144,8 +142,7 @@ class CtrlInvite extends CtrlBase
                 ]
             );
             $invites = json_decode($result->getBody()->getContents(), true);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             $this->flash->addMessageNow('error', $e->getMessage());
         }
 

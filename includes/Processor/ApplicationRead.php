@@ -154,8 +154,7 @@ class ApplicationRead extends Core\ProcessorEntity
                 throw new Core\ApiException('Invalid token.', 6, $this->id, 403);
             }
             $applications = $this->applicationMapper->findByUid($user->getUid(), $params);
-        }
-        else {
+        } else {
             $applications = $this->applicationMapper->findAll($params);
         }
 

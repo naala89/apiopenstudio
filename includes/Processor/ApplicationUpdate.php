@@ -115,7 +115,11 @@ class ApplicationUpdate extends Core\ProcessorEntity
                     !empty($accid)
                     && $this->userRoleMapper->findByUidAppidRolename($user->getUid(), $appid, 'Account manager')
                 )
-                && !$this->userRoleMapper->findByUidAppidRolename($user->getUid(), $application->getAccid(), 'Account manager')) {
+                && !$this->userRoleMapper->findByUidAppidRolename(
+                    $user->getUid(),
+                    $application->getAccid(),
+                    'Account manager'
+                )) {
                 throw new ApiException("Permission denied.", 6, $this->id, 417);
             }
         }
@@ -129,7 +133,12 @@ class ApplicationUpdate extends Core\ProcessorEntity
         }
         if (!empty($name)) {
             if (preg_match('/[^a-z_\-0-9]/i', $name)) {
-                throw new Core\ApiException("Invalid application name: $name. Only underscore, hyphen or alhpanumeric characters permitted.", 6, $this->id, 400);
+                throw new Core\ApiException(
+                    "Invalid application name: $name. Only underscore, hyphen or alhpanumeric characters permitted.",
+                    6,
+                    $this->id,
+                    400
+                );
             }
             $application->setName($name);
         }

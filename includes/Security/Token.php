@@ -68,6 +68,6 @@ class Token extends Core\ProcessorEntity
             throw new Core\ApiException('permission denied', 4, -1, 401);
         }
 
-        return TRUE;
+        return true;
     }
 }

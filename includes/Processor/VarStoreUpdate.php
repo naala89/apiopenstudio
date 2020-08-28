@@ -44,6 +44,7 @@ class VarStoreUpdate extends Core\ProcessorEntity
         'menu' => 'Var store',
         'input' => [
             'token' => [
+                // phpcs:ignore
                 'description' => 'The token of the user making the call. This is used to validate the user permissions.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => false,
@@ -53,6 +54,7 @@ class VarStoreUpdate extends Core\ProcessorEntity
                 'default' => '',
             ],
             'validate_access' => [
+                // phpcs:ignore
                 'description' => 'If set to true, the calling users roles access will be validated. If set to false, then access is open.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
@@ -112,8 +114,14 @@ class VarStoreUpdate extends Core\ProcessorEntity
         }
 
         if ($validateAccess) {
-            if (!$this->userRoleMapper->findByUidAppidRolename($currentUser->getUid(), $var->getAppid(), 'Application manager')
-                && !$this->userRoleMapper->findByUidAppidRolename($currentUser->getUid(), $var->getAppid(), 'Developer')) {
+            if (!$this->userRoleMapper->findByUidAppidRolename(
+                $currentUser->getUid(),
+                $var->getAppid(),
+                'Application manager')
+                    && !$this->userRoleMapper->findByUidAppidRolename(
+                        $currentUser->getUid(),
+                        $var->getAppid(),
+                        'Developer')) {
                 throw new Core\ApiException('permission denied (appid: ' . $var->getAppid() . ')', 6, $this->id, 400);
             }
         }

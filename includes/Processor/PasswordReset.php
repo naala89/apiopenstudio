@@ -159,5 +159,4 @@ class PasswordReset extends Core\ProcessorEntity
 
         return new Core\DataContainer('true', 'text');
     }
-
 }

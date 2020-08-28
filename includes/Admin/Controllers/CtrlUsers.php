@@ -60,10 +60,10 @@ class CtrlUsers extends CtrlBase
         }
         if (!empty($allParams['direction'])) {
             $query['direction'] = $allParams['direction'];
-        }
-
-        try {
-            $result = $this->apiCall('get','user',
+        } try {
+            $result = $this->apiCall(
+                'get',
+                'user',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],

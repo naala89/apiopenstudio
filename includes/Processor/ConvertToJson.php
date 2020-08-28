@@ -22,6 +22,7 @@ class ConvertToJson extends Json
     protected $details = [
         'name' => 'Convert to JSON',
         'machineName' => 'convert_to_json',
+        // phpcs:ignore
         'description' => 'Convert an input data into a different JSON data type (i.e. array, XML or object into a JSON string).',
         'menu' => 'Data operation',
         'input' => [

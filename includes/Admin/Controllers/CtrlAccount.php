@@ -185,7 +185,10 @@ class CtrlAccount extends CtrlBase
             if (json_decode($result->getBody()->getContents()) == 'true') {
                 $this->flash->addMessage('info', "Account '$accid' updated to '$name'.");
             } else {
-                $this->flash->addMessage('error', "Account '$accid' update to '$name failed, check the log for details.'");
+                $this->flash->addMessage(
+                    'error',
+                    "Account '$accid' update to '$name failed, check the log for details.'"
+                );
             }
         } catch (\Exception $e) {
             $this->flash->addMessage('error', $e->getMessage());

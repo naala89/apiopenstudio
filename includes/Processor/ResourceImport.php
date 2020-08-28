@@ -64,6 +64,7 @@ class ResourceImport extends Core\ProcessorEntity
         'menu' => 'Admin',
         'input' => [
             'token' => [
+                // phpcs:ignore
                 'description' => 'The token of the user making the call. This is used to validate the user permissions.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => false,
@@ -118,7 +119,13 @@ class ResourceImport extends Core\ProcessorEntity
                 $value = Yaml::parse($resource);
                 $resource = $value;
             } catch (ParseException $exception) {
-                throw new Core\ApiException('Unable to parse the YAML string: ', $exception->getMessage(), 6, $this->id, 400);
+                throw new Core\ApiException(
+                    'Unable to parse the YAML string: ',
+                    $exception->getMessage(),
+                    6,
+                    $this->id,
+                    400
+                );
             }
         }
 
@@ -157,11 +164,9 @@ class ResourceImport extends Core\ProcessorEntity
         }
 
         $account = $this->accountMapper->findByAccid($application->getAccid());
-        if (
-            $account->getName() == $this->settings->__get(['api', 'core_account'])
-            && $application->getName() == $this->settings->__get(['api', 'core_application'])
-            && $this->settings->__get(['api', 'core_resource_lock']))
-        {
+        if ($account->getName() == $this->settings->__get(['api', 'core_account'])
+                && $application->getName() == $this->settings->__get(['api', 'core_application'])
+                && $this->settings->__get(['api', 'core_resource_lock'])) {
             throw new Core\ApiException("Unauthorised: this is the core application", 6, $this->id, 400);
         }
 

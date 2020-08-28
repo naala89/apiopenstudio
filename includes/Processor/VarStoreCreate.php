@@ -54,6 +54,7 @@ class VarStoreCreate extends Core\ProcessorEntity
                 'default' => '',
             ],
             'validate_access' => [
+                // phpcs:ignore
                 'description' => 'If set to true, the calling users roles access will be validated. If set to false, then access is open.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,

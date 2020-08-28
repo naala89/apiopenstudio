@@ -115,7 +115,6 @@ class InviteCreate extends Core\ProcessorEntity
             ->setUsername($this->settings->__get(['email', 'username']))
             ->setPassword($this->settings->__get(['email', 'password']));
 
-
         $result = [];
 
         foreach ($emails as $email) {
@@ -139,8 +138,7 @@ class InviteCreate extends Core\ProcessorEntity
                 $this->inviteMapper->save($invite);
 
                 $result['success'][] = "$email";
-            }
-            else {
+            } else {
                 $result['fail'][] = "$email";
             }
         }

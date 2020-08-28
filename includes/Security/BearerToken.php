@@ -20,6 +20,7 @@ class BearerToken extends Core\ProcessorEntity
     protected $details = [
         'name' => 'Bearer Token',
         'machineName' => 'bearer_token',
+        // phpcs:ignore
         'description' => 'Fetch a bearer token from the request header. This takes the form of "Authorization: Bearer <token>"',
         'menu' => 'Security',
         'input' => [],

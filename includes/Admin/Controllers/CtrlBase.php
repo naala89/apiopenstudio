@@ -100,7 +100,8 @@ class CtrlBase
      *
      * @throws \Exception
      */
-    public function apiCall($method, $uri, $requestOptions = []) {
+    public function apiCall($method, $uri, $requestOptions = [])
+    {
         try {
             $requestOptions['protocols'] = $this->settings['api']['protocols'];
             $domain = $this->settings['api']['url'];
@@ -129,7 +130,8 @@ class CtrlBase
      *
      * @return array|mixed
      */
-    protected function apiCallUserRoles($uid) {
+    protected function apiCallUserRoles($uid)
+    {
         $userRoles = [];
         try {
             $result = $this->apiCall('GET', 'user/role', [
@@ -150,7 +152,8 @@ class CtrlBase
      *
      * @return array|mixed
      */
-    protected function apiCallRolesAll() {
+    protected function apiCallRolesAll()
+    {
         $allRoles = [];
         try {
             $result = $this->apiCall('GET', 'role/all', [
@@ -176,7 +179,8 @@ class CtrlBase
      *
      * @return array|mixed
      */
-    protected function apiCallAccountAll(array $params = []) {
+    protected function apiCallAccountAll(array $params = [])
+    {
         $allAccounts = $query = [];
         foreach ($params as $key => $value) {
             $query[$key] = $value;
@@ -207,7 +211,8 @@ class CtrlBase
      *
      * @return array|mixed
      */
-    protected function apiCallApplicationAll(array $params = []) {
+    protected function apiCallApplicationAll(array $params = [])
+    {
         foreach ($params as $key => $value) {
             $query[$key] = $value;
         }

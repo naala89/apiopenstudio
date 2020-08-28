@@ -72,7 +72,9 @@ class CtrlResource extends CtrlBase
         if (!empty($allParams['keyword'])) {
             $query['keyword'] = $allParams['keyword'];
         }
-        if (!empty($allParams['order_by']) && $allParams['order_by'] != 'account' && $allParams['order_by'] != 'application') {
+        if (!empty($allParams['order_by'])
+                && $allParams['order_by'] != 'account'
+                && $allParams['order_by'] != 'application') {
             $query['order_by'] = $allParams['order_by'];
         }
         if (!empty($allParams['direction'])) {
@@ -117,17 +119,16 @@ class CtrlResource extends CtrlBase
             foreach ($this->userAccounts as $userAccount) {
                 foreach ($this->userApplications as $userApplication) {
                     foreach ($resources as $index => $resource) {
-                        if ($userAccount['accid'] == $userApplication['accid'] && $userApplication['appid'] == $resource['appid']) {
+                        if ($userAccount['accid'] == $userApplication['accid']
+                                && $userApplication['appid'] == $resource['appid']) {
                             $sortedResources[] = $resource;
                             unset($resources[$index]);
                         }
                     }
                 }
             }
-        }
-
-        // Sort by application name.
-        elseif ($allParams['order_by'] == 'application') {
+        } elseif ($allParams['order_by'] == 'application') {
+            // Sort by application name.
             foreach ($this->userApplications as $userApplication) {
                 foreach ($resources as $index => $resource) {
                     if ($userApplication['appid'] == $resource['appid']) {
@@ -136,9 +137,7 @@ class CtrlResource extends CtrlBase
                     }
                 }
             }
-        }
-
-        else {
+        } else {
             // All other sorts.
             $sortedResources = $resources;
         }
@@ -262,8 +261,7 @@ class CtrlResource extends CtrlBase
                 $resource = json_decode($result->getBody()->getContents(), true);
                 if (!empty($resource)) {
                     $resource = $resource[0];
-                }
-                else {
+                } else {
                     $this->flash->addMessageNow('error', 'resource not found.');
                 }
             } catch (\Exception $e) {
@@ -357,7 +355,7 @@ class CtrlResource extends CtrlBase
                         $arr[$item] = Yaml::parse($allPostVars[$item]);
                     }
                 }
-                $meta = Yaml::dump($arr,50);
+                $meta = Yaml::dump($arr, 50);
                 break;
             case 'json':
                 $meta = [];
@@ -462,7 +460,9 @@ class CtrlResource extends CtrlBase
         $resid = $allPostVars['resid'];
 
         try {
-            $result = $this->apiCall('delete',"resource/$resid",
+            $result = $this->apiCall(
+                'delete',
+                "resource/$resid",
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -622,7 +622,8 @@ class CtrlResource extends CtrlBase
      * @return array
      *   Twig vars.
      */
-    private function getResource($allPostVars) {
+    private function getResource($allPostVars)
+    {
         $arr = [
             'name' => $allPostVars['name'],
             'description' => $allPostVars['description'],

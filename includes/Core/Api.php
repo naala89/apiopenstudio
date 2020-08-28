@@ -397,7 +397,8 @@ class Api
             $result = $this->processOutputResponse($output, $data);
         } else {
             if (Utilities::isAssoc($output)) {
-                // Single output defined, translate the output to the correct format as requested in header and return in the response.
+                // Single output defined,
+                // translate the output to the correct format as requested in header and return in the response.
                 $result = $this->processOutputResponse($output, $data);
             } else {
                 // Multiple outputs defined.
@@ -430,7 +431,8 @@ class Api
      *
      * @throws ApiException
      */
-    private function processOutputResponse($meta, $data, $index = null) {
+    private function processOutputResponse($meta, $data, $index = null)
+    {
         if (!isset($meta['function'])) {
             throw new ApiException("No function found in the output section: $index.", 3, -1, 400);
         }
@@ -457,7 +459,8 @@ class Api
      *
      * @throws ApiException
      */
-    private function processOutputRemote($meta, $data, $index = 0) {
+    private function processOutputRemote($meta, $data, $index = 0)
+    {
         if (!isset($meta['function'])) {
             throw new ApiException("No function found in the output section: $index.", 3, -1, 400);
         }

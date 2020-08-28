@@ -40,6 +40,7 @@ class TokenRoles extends TokenRole
                 'default' => [],
             ],
             'validate_account' => [
+                // phpcs:ignore
                 'description' => 'Validate The has has the role in the resource account. If false, the result will be if the user has the role in any accounts.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
@@ -49,6 +50,7 @@ class TokenRoles extends TokenRole
                 'default' => true,
             ],
             'validate_application' => [
+                // phpcs:ignore
                 'description' => 'Validate The has has the role in the resource application. If false, the result will be if the user has the role in any applications.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,

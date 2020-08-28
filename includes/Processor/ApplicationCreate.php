@@ -101,7 +101,12 @@ class ApplicationCreate extends Core\ProcessorEntity
 
         $name = $this->val('name', true);
         if (preg_match('/[^a-z_\-0-9]/i', $name)) {
-            throw new Core\ApiException("Invalid application name: $name. Only underscore, hyphen or alhpanumeric characters permitted.", 6, $this->id, 400);
+            throw new Core\ApiException(
+                "Invalid application name: $name. Only underscore, hyphen or alhpanumeric characters permitted.",
+                6,
+                $this->id,
+                400
+            );
         }
 
         $account = $this->accountMapper->findByAccid($accid);
@@ -110,7 +115,12 @@ class ApplicationCreate extends Core\ProcessorEntity
         }
         $application = $this->applicationMapper->findByAccidAppname($accid, $name);
         if (!empty($application->getAppid())) {
-            throw new ApiException("Application already exists ($name in account: " . $account->getName() . ")", 6, $this->id, 400);
+            throw new ApiException(
+                "Application already exists ($name in account: " . $account->getName() . ")",
+                6,
+                $this->id,
+                400
+            );
         }
 
 

@@ -150,7 +150,10 @@ class CtrlApplication extends CtrlBase
                 if (json_decode($result->getBody()->getContents()) == 'true') {
                     $this->flash->addMessage('info', "Application $appName created.");
                 } else {
-                    $this->flash->addMessage('error', "Application $appName create failed, check the logs for details.");
+                    $this->flash->addMessage(
+                        'error',
+                        "Application $appName create failed, check the logs for details."
+                    );
                 }
             } catch (\Exception $e) {
                 $this->flash->addMessage('error', $e->getMessage());

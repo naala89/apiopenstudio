@@ -50,7 +50,9 @@ class CtrlVars extends CtrlBase
 
         $menu = $this->getMenus();
         $allParams = $request->getParams();
-        $allParams['filter_by_account'] = !empty($allParams['filter_by_application']) ? '' : $allParams['filter_by_account'];
+        $allParams['filter_by_account'] = !empty($allParams['filter_by_application'])
+            ? ''
+            : $allParams['filter_by_account'];
 
         $query = [];
         if (!empty($allParams['filter_by_application'])) {
@@ -104,17 +106,16 @@ class CtrlVars extends CtrlBase
             foreach ($this->userAccounts as $userAccount) {
                 foreach ($this->userApplications as $userApplication) {
                     foreach ($vars as $index => $var) {
-                        if ($userAccount['accid'] == $userApplication['accid'] && $userApplication['appid'] == $var['appid']) {
+                        if ($userAccount['accid'] == $userApplication['accid']
+                                && $userApplication['appid'] == $var['appid']) {
                             $sortedVars[] = $var;
                             unset($vars[$index]);
                         }
                     }
                 }
             }
-        }
-
-        // Sort by application name.
-        elseif ($allParams['order_by'] == 'application') {
+        } elseif ($allParams['order_by'] == 'application') {
+            // Sort by application name.
             foreach ($this->userApplications as $userApplication) {
                 foreach ($vars as $index => $resource) {
                     if ($userApplication['appid'] == $var['appid']) {
@@ -123,9 +124,7 @@ class CtrlVars extends CtrlBase
                     }
                 }
             }
-        }
-
-        else {
+        } else {
             // All other sorts.
             $sortedVars = $vars;
         }

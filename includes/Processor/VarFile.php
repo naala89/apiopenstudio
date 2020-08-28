@@ -26,6 +26,7 @@ class VarFile extends Core\ProcessorEntity
         'menu' => 'Primitive',
         'input' => [
             'location' => [
+                // phpcs:ignore
                 'description' => 'The location of the file. This can be a remote server address or "_FILES" to receive from a POST.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
@@ -35,6 +36,7 @@ class VarFile extends Core\ProcessorEntity
                 'default' => '',
             ],
             'filename' => [
+                // phpcs:ignore
                 'description' => 'The name of the file. This is the name of the file field in the post or the remote server filename.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
@@ -53,6 +55,7 @@ class VarFile extends Core\ProcessorEntity
                 'default' => false,
             ],
             'get_contents' => [
+                // phpcs:ignore
                 'description' => 'Return the contents of the file. If false, then the file path will be returned, this is used for large files to prevent out of memory errors.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
@@ -147,7 +150,8 @@ class VarFile extends Core\ProcessorEntity
      *
      * @throws Core\ApiException
      */
-    private function getFileRemote($location, $filename, $getContents, $nullable) {
+    private function getFileRemote($location, $filename, $getContents, $nullable)
+    {
         $dir = $this->settings->__get(['api', 'base_path']) . $this->settings->__get(['api', 'dirFileStorage']);
         $name = md5($filename . time());
         $extension = '.' . pathinfo($_FILES[$filename]['tmp_name'], PATHINFO_EXTENSION);
@@ -191,7 +195,8 @@ class VarFile extends Core\ProcessorEntity
      *
      * @see https://www.php.net/manual/en/features.file-upload.php
      */
-    private function validateFilesError($filename, $nullable) {
+    private function validateFilesError($filename, $nullable)
+    {
         if (
             !isset($_FILES[$filename]['error']) || is_array($_FILES[$filename]['error'])) {
             throw new Core\ApiException('Undefined, multiple files or file corrupt', 5, $this->id, 417);

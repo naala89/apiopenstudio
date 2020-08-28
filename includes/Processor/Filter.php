@@ -7,8 +7,6 @@
 namespace Gaterdata\Processor;
 
 use Gaterdata\Core;
-use phpDocumentor\Reflection\Types\Boolean;
-use Symfony\Component\Console\Helper\DebugFormatterHelper;
 
 class Filter extends Core\ProcessorEntity
 {

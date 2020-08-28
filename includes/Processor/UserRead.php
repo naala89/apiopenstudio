@@ -151,5 +151,4 @@ class UserRead extends Core\ProcessorEntity
 
         return new Core\DataContainer($result, 'array');
     }
-
 }
