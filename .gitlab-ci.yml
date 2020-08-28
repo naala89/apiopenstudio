@@ -1,13 +1,12 @@
 image: php:7.3
 
-#cache:
-#  key: ${CI_COMMIT_REF_SLUG}
-#  paths:
-#    - vendor/
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - vendor/
 
 stages:
-  - syntax
-#  - test
+  - test
   - deploy
 
 before_script:
@@ -24,14 +23,17 @@ before_script:
   - php composer.phar install
 
 phpcs:
-  stage: syntax
+  stage: test
   script:
-    - ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/
+    - ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/ src/scss/ src/js/ public/*.php public/admin/*.php
 
-#test:
+#funtional_tests:
 #  stage: test
 #  script:
 #    - ./vendor/bin/codecept run
+
+#unit_tests:
+#  stage: test
 
 deploy_wiki_develop:
   stage: deploy

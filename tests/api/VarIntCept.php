@@ -8,7 +8,11 @@ $I->wantTo('populate a VarInt with text and see the result.');
 $I->callResourceFromYaml(['value' => 'text']);
 $I->seeResponseCodeIs(417);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 5, "message" => "Invalid value (text), only 'integer' allowed.", "id" => 3]]);
+$I->seeResponseContainsJson(["error" => [
+    "code" => 5,
+    "message" => "Invalid value (text), only 'integer' allowed.",
+    "id" => 3
+]]);
 
 $I->wantTo('populate a VarInt with true bool and see the result.');
 $I->callResourceFromYaml(['value' => true]);
@@ -20,13 +24,21 @@ $I->wantTo('populate a VarInt with true string and see the result.');
 $I->callResourceFromYaml(['value' => 'true']);
 $I->seeResponseCodeIs(417);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 5, "message" => "Invalid value (true), only 'integer' allowed.", "id" => 3]]);
+$I->seeResponseContainsJson(["error" => [
+    "code" => 5,
+    "message" => "Invalid value (true), only 'integer' allowed.",
+    "id" => 3
+]]);
 
 $I->wantTo('populate a VarInt with 1.6 and see the result.');
 $I->callResourceFromYaml(['value' => 1.6]);
 $I->seeResponseCodeIs(417);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 5, "message" => "Invalid value (1.6), only 'integer' allowed.", "id" => 3]]);
+$I->seeResponseContainsJson(["error" => [
+    "code" => 5,
+    "message" => "Invalid value (1.6), only 'integer' allowed.",
+    "id" => 3
+]]);
 
 $I->wantTo('populate a VarInt with 1 and see the result.');
 $I->callResourceFromYaml(['value' => 1]);

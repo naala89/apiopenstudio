@@ -18,8 +18,7 @@ try {
     $config = new Config();
     $api = new Api($config->all());
     $result = $api->process();
-}
-catch (ApiException $e) {
+} catch (ApiException $e) {
     $outputClass = 'Gaterdata\\Output\\' . ucfirst($api->getAccept($config->__get(['api', 'default_format'])));
     if (!class_exists($outputClass)) {
         echo 'Error: no default format defined in the config!';
@@ -32,8 +31,7 @@ catch (ApiException $e) {
     ob_end_flush();
     echo $output->process();
     exit();
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     ob_end_flush();
     echo 'Error: ' . $e->getCode() . '. ' . $e->getMessage();
     exit();

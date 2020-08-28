@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 $I = new ApiTester($scenario);
 $I->performLogin();
 $I->setYamlFilename('varFloat.yaml');
@@ -8,13 +9,21 @@ $I->wantTo('populate a VarFloat with text and see the result.');
 $I->callResourceFromYaml(['value' => 'text']);
 $I->seeResponseCodeIs(417);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 5, "message" => "Invalid value (text), only 'float' allowed.", "id" => 3]]);
+$I->seeResponseContainsJson(["error" => [
+    "code" => 5,
+    "message" => "Invalid value (text), only 'float' allowed.",
+    "id" => 3
+]]);
 
 $I->wantTo('populate a VarFloat with true and see the result.');
 $I->callResourceFromYaml(['value' => 'true']);
 $I->seeResponseCodeIs(417);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => ["code" => 5, "message" => "Invalid value (true), only 'float' allowed.", "id" => 3]]);
+$I->seeResponseContainsJson(["error" => [
+    "code" => 5,
+    "message" => "Invalid value (true), only 'float' allowed.",
+    "id" => 3
+]]);
 
 $I->wantTo('populate a VarFloat with 1.6 and see the result.');
 $I->callResourceFromYaml(['value' => '1.6']);

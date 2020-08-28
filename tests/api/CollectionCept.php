@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 $I = new ApiTester($scenario);
 $I->wantTo('create a collection of strings and see result');
 $I->doTestFromYaml('collectionStrings.yaml');

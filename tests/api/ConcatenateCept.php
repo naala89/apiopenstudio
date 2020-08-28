@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 $I = new ApiTester($scenario);
 $I->wantTo('concatenate strings and see result');
 $I->doTestFromYaml('concatenateStrings.yaml');

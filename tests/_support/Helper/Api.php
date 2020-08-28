@@ -1,4 +1,5 @@
 <?php
+
 namespace Helper;
 
 // here you can define custom actions
@@ -6,221 +7,231 @@ namespace Helper;
 
 class Api extends \Codeception\Module
 {
-  private $token = '';
-  private $accountName = 'Datagator';
-  private $applicationName = 'Testing';
-  private $username = 'tester';
-  private $password = 'tester_pass';
+    private $token = '';
+    private $accountName = 'Datagator';
+    private $applicationName = 'Testing';
+    private $username = 'tester';
+    private $password = 'tester_pass';
 
-  private $yamlFilename= '';
+    private $yamlFilename = '';
 
-  /**
-   * @return string
-   */
-  public function getMyUsername()
-  {
-    return $this->username;
-  }
-
-  /**
-   * @return string
-   */
-  public function getMyPassword()
-  {
-    return $this->password;
-  }
-
-  /**
-   * @return string
-   */
-  public function getMyAccountName()
-  {
-    return $this->accountName;
-  }
-
-  /**
-   * @return string
-   */
-  public function getMyApplicationName()
-  {
-    return $this->applicationName;
-  }
-
-  /**
-   * @param $yamlFilename
-   */
-  public function setYamlFilename($yamlFilename)
-  {
-    $this->yamlFilename = $yamlFilename;
-  }
-
-  /**
-   * @return string
-   */
-  public function getYamlFilename()
-  {
-    return $this->yamlFilename;
-  }
-
-  /**
-   * @param $name
-   * @param $value
-   * @throws \Codeception\Exception\ModuleException
-   */
-  public function haveHttpHeader($name, $value)
-  {
-    $this->getModule('REST')->haveHttpHeader($name, $value);
-  }
-
-  /**
-   * @return mixed
-   * @throws \Codeception\Exception\ModuleException
-   */
-  public function getBaseUrl()
-  {
-    $str = $this->getModule('PhpBrowser')->_getUrl();
-    return substr($str, 0, strlen($str) - 4);
-  }
-
-  /**
-   * @throws \Codeception\Exception\ModuleException
-   */
-  public function storeMyToken()
-  {
-    $response = $this->getModule('REST')->response;
-    $arr = \GuzzleHttp\json_decode(\GuzzleHttp\json_encode(\GuzzleHttp\json_decode($response)), true);
-    if (isset($arr['token'])) {
-      $this->token = $arr['token'];
+    /**
+     * @return string
+     */
+    public function getMyUsername()
+    {
+        return $this->username;
     }
-  }
 
-  /**
-   * @return string
-   */
-  public function getMyStoredToken()
-  {
-    return $this->token;
-  }
-
-  /**
-   * @throws \Codeception\Exception\ModuleException
-   */
-  public function performLogin()
-  {
-    $this->getModule('REST')->sendPost('/common/user/login', ['username' => $this->username, 'password' => $this->password]);
-    $this->getModule('REST')->seeResponseCodeIs(200);
-    $this->getModule('REST')->seeResponseIsJson();
-    $this->getModule('REST')->seeResponseMatchesJsonType(array('token' => 'string'));
-    $this->storeMyToken();
-  }
-
-  /**
-   * @throws \Codeception\Exception\ModuleException
-   */
-  public function seeTokenIsSameAsStoredToken()
-  {
-    $response = $this->getModule('REST')->response;
-    $arr = \GuzzleHttp\json_decode(\GuzzleHttp\json_encode(\GuzzleHttp\json_decode($response)), true);
-    \PHPUnit_Framework_Assert::assertEquals($this->token, $arr['token']);
-  }
-
-  /**
-   * @return array
-   */
-  public function getResourceFromYaml()
-  {
-    $yamlArr = file_get_contents(codecept_data_dir($this->yamlFilename));
-    return \Spyc::YAMLLoadString($yamlArr);
-  }
-
-  /**
-   * @throws \Codeception\Exception\ModuleException
-   */
-  public function createResourceFromYaml()
-  {
-    $this->getModule('REST')->sendPost('/' . $this->applicationName . '/resource/yaml', ['token' => $this->token], ['resource' => codecept_data_dir($this->yamlFilename)]);
-    $this->getModule('REST')->seeResponseCodeIs(200);
-    $this->getModule('REST')->seeResponseIsJson();
-    $this->getModule('REST')->seeResponseContains('true');
-  }
-
-  /**
-   * @param array $params
-   * @throws \Codeception\Exception\ModuleException
-   */
-  public function callResourceFromYaml($params=array())
-  {
-    $yamlArr = $this->getResourceFromYaml($this->yamlFilename);
-    $method = strtolower($yamlArr['method']);
-    $params = array_merge($params, array('token' => $this->token, 'debug'=> 4));
-    $uri = '/' . $this->applicationName . '/' . $yamlArr['uri'];
-    if ($method == 'get') {
-      $this->getModule('REST')->sendGet($uri, $params);
-    } else {
-      $this->getModule('REST')->sendPost($uri, $params);
+    /**
+     * @return string
+     */
+    public function getMyPassword()
+    {
+        return $this->password;
     }
-  }
 
-  /**
-   * @throws \Codeception\Exception\ModuleException
-   */
-  public function tearDownTestFromYaml($code=200, $responce='true')
-  {
-    $yamlArr = $this->getResourceFromYaml($this->yamlFilename);
-    $params = array();
-    $params[] = 'token=' . $this->token;
-    $params[] = 'method=' . $yamlArr['method'];
-    $params[] = 'uri=' . urlencode($yamlArr['uri']);
-    $uri = '/' . $this->applicationName . '/resource?' . implode('&', $params);
-    $this->haveHttpHeader('Accept', 'application/json');
-    $this->getModule('REST')->sendDELETE($uri);
-    $this->getModule('REST')->seeResponseIsJson();
-    $this->getModule('REST')->seeResponseCodeIs($code);
-    if (is_array($responce)) {
-      $this->getModule('REST')->seeResponseContainsJson($responce);
-    } else {
-      $this->getModule('REST')->seeResponseContains($responce);
+    /**
+     * @return string
+     */
+    public function getMyAccountName()
+    {
+        return $this->accountName;
     }
-  }
 
-  /**
-   * @param $yamlFilename
-   * @param $params
-   */
-  public function doTestFromYaml($yamlFilename, $params=array())
-  {
-    $this->performLogin();
-    $this->setYamlFilename($yamlFilename);
-    $this->createResourceFromYaml();
-    $this->callResourceFromYaml($params);
-  }
-
-  /**
-   * @param $length
-   * @throws \Codeception\Exception\ModuleException
-   */
-  public function seeReponseHasLength($length)
-  {
-    if (strlen(trim($this->getModule('REST')->response, '"')) != $length) {
-      \PHPUnit_Framework_Assert::assertTrue(false, 'string ' . $this->getModule('REST')->response . " does not have length $length");
+    /**
+     * @return string
+     */
+    public function getMyApplicationName()
+    {
+        return $this->applicationName;
     }
-  }
 
-  /**
-   * @throws \Codeception\Exception\ModuleException
-   */
-  public function seeResult()
-  {
-    var_dump($this->getModule('REST')->response);
-    exit;
-  }
+    /**
+     * @param $yamlFilename
+     */
+    public function setYamlFilename($yamlFilename)
+    {
+        $this->yamlFilename = $yamlFilename;
+    }
 
-  /**
-   * @return mixed
-   * @throws \Codeception\Exception\ModuleException
-   */
-  public function getResponse()
-  {
-    return $this->getModule('REST')->response;
-  }
+    /**
+     * @return string
+     */
+    public function getYamlFilename()
+    {
+        return $this->yamlFilename;
+    }
+
+    /**
+     * @param $name
+     * @param $value
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function haveHttpHeader($name, $value)
+    {
+        $this->getModule('REST')->haveHttpHeader($name, $value);
+    }
+
+    /**
+     * @return mixed
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function getBaseUrl()
+    {
+        $str = $this->getModule('PhpBrowser')->_getUrl();
+        return substr($str, 0, strlen($str) - 4);
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function storeMyToken()
+    {
+        $response = $this->getModule('REST')->response;
+        $arr = \GuzzleHttp\json_decode(\GuzzleHttp\json_encode(\GuzzleHttp\json_decode($response)), true);
+        if (isset($arr['token'])) {
+            $this->token = $arr['token'];
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getMyStoredToken()
+    {
+        return $this->token;
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function performLogin()
+    {
+        $this->getModule('REST')->sendPost(
+            '/common/user/login',
+            ['username' => $this->username, 'password' => $this->password]
+        );
+        $this->getModule('REST')->seeResponseCodeIs(200);
+        $this->getModule('REST')->seeResponseIsJson();
+        $this->getModule('REST')->seeResponseMatchesJsonType(array('token' => 'string'));
+        $this->storeMyToken();
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function seeTokenIsSameAsStoredToken()
+    {
+        $response = $this->getModule('REST')->response;
+        $arr = \GuzzleHttp\json_decode(\GuzzleHttp\json_encode(\GuzzleHttp\json_decode($response)), true);
+        \PHPUnit_Framework_Assert::assertEquals($this->token, $arr['token']);
+    }
+
+    /**
+     * @return array
+     */
+    public function getResourceFromYaml()
+    {
+        $yamlArr = file_get_contents(codecept_data_dir($this->yamlFilename));
+        return \Spyc::YAMLLoadString($yamlArr);
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function createResourceFromYaml()
+    {
+        $this->getModule('REST')->sendPost(
+            '/' . $this->applicationName . '/resource/yaml',
+            ['token' => $this->token],
+            ['resource' => codecept_data_dir($this->yamlFilename)]
+        );
+        $this->getModule('REST')->seeResponseCodeIs(200);
+        $this->getModule('REST')->seeResponseIsJson();
+        $this->getModule('REST')->seeResponseContains('true');
+    }
+
+    /**
+     * @param array $params
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function callResourceFromYaml($params = array())
+    {
+        $yamlArr = $this->getResourceFromYaml($this->yamlFilename);
+        $method = strtolower($yamlArr['method']);
+        $params = array_merge($params, array('token' => $this->token, 'debug' => 4));
+        $uri = '/' . $this->applicationName . '/' . $yamlArr['uri'];
+        if ($method == 'get') {
+            $this->getModule('REST')->sendGet($uri, $params);
+        } else {
+            $this->getModule('REST')->sendPost($uri, $params);
+        }
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function tearDownTestFromYaml($code = 200, $responce = 'true')
+    {
+        $yamlArr = $this->getResourceFromYaml($this->yamlFilename);
+        $params = array();
+        $params[] = 'token=' . $this->token;
+        $params[] = 'method=' . $yamlArr['method'];
+        $params[] = 'uri=' . urlencode($yamlArr['uri']);
+        $uri = '/' . $this->applicationName . '/resource?' . implode('&', $params);
+        $this->haveHttpHeader('Accept', 'application/json');
+        $this->getModule('REST')->sendDELETE($uri);
+        $this->getModule('REST')->seeResponseIsJson();
+        $this->getModule('REST')->seeResponseCodeIs($code);
+        if (is_array($responce)) {
+            $this->getModule('REST')->seeResponseContainsJson($responce);
+        } else {
+            $this->getModule('REST')->seeResponseContains($responce);
+        }
+    }
+
+    /**
+     * @param $yamlFilename
+     * @param $params
+     */
+    public function doTestFromYaml($yamlFilename, $params = array())
+    {
+        $this->performLogin();
+        $this->setYamlFilename($yamlFilename);
+        $this->createResourceFromYaml();
+        $this->callResourceFromYaml($params);
+    }
+
+    /**
+     * @param $length
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function seeReponseHasLength($length)
+    {
+        if (strlen(trim($this->getModule('REST')->response, '"')) != $length) {
+            \PHPUnit_Framework_Assert::assertTrue(
+                false,
+                'string ' . $this->getModule('REST')->response . " does not have length $length"
+            );
+        }
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function seeResult()
+    {
+        var_dump($this->getModule('REST')->response);
+        exit;
+    }
+
+    /**
+     * @return mixed
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function getResponse()
+    {
+        return $this->getModule('REST')->response;
+    }
 }

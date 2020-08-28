@@ -17,6 +17,7 @@ $step = isset($_POST['next_step']) ? intval($_POST['next_step']) : 0;
 $menu = ['Login' => '/'];
 
 // Twig definition.
+// phpcs:ignore
 $loader = new Twig_Loader_Filesystem($settings->__get(['api', 'base_path']) . $settings->__get(['twig', 'template_path']));
 $twig = new Twig_Environment($loader, $settings->__get(['twig', 'options']));
 if ($settings->__get(['twig', 'debug'])) {
@@ -48,6 +49,7 @@ switch ($step) {
     case 0:
         // Check user wants to continue.
         $template = $twig->load("install/install_$from.twig");
+        // phpcs:ignore
         $messages['error'][] = 'Continuing will create a new database and erase the current database, if it exists.<br />';
         echo $template->render(['messages' => $messages, 'menu' => $menu]);
         exit;
@@ -71,9 +73,11 @@ switch ($step) {
         // Create the database, user and permissions.
         $sql = 'CREATE DATABASE ' . $settings->__get(['db', 'database']) . 'IF NOT EXISTS';
         $db->execute($sql);
-        $sql = 'CREATE USER IF NOT EXISTS "' . $settings->__get(['db', 'username']) . '"@"' . $settings->__get(['db', 'host']) . '" IDENTIFIED BY "' . $settings->__get(['db', 'password']) . '"';
+        $sql = 'CREATE USER IF NOT EXISTS "' . $settings->__get(['db', 'username']) . '"@"';
+        $sql .= $settings->__get(['db', 'host']) . '" IDENTIFIED BY "' . $settings->__get(['db', 'password']) . '"';
         $db->execute($sql);
-        $sql = 'GRANT ALL PRIVILEGES ON * . * TO "' . $settings->__get(['db', 'username']) . '"@"' . $settings->__get(['db', 'host']) . '"';
+        $sql = 'GRANT ALL PRIVILEGES ON * . * TO "' . $settings->__get(['db', 'username']);
+        $sql .= '"@"' . $settings->__get(['db', 'host']) . '"';
         $db->execute($sql);
         $sql = 'FLUSH PRIVILEGES';
         $db->execute($sql);
@@ -92,7 +96,7 @@ switch ($step) {
                     exit;
                 }
                 $sqlColumn .= ' ' . $columnData['type'];
-                $sqlColumn .= isset($columnData['notnull']) && $columnData['notnull'] ? ' NOT NULL' : '';
+                $sqlColumn .= isset($columnData['notnull']) && $columnData['notnull'] ? ' NOT null' : '';
                 $sqlColumn .= isset($columnData['default']) ? (' DEFAULT ' . $columnData['default']) : '';
                 $sqlColumn .= isset($columnData['autoincrement']) ? ' AUTO_INCREMENT' : '';
                 $sqlColumn .= isset($columnData['primary']) ? ' PRIMARY KEY' : '';
@@ -120,7 +124,8 @@ switch ($step) {
                         $keys[] = "`$key`";
                         $values[] = is_string($value) ? "\"$value\"" : $value;
                     }
-                    $sqlRow = "INSERT INTO `$table` (" . implode(', ', $keys) . ') VALUES (' . implode(', ', $values) . ');';
+                    $sqlRow = "INSERT INTO `$table` (" . implode(', ', $keys) . ')';
+                    $sqlRow .= 'VALUES (' . implode(', ', $values) . ');';
                     if (empty($db->execute($sqlRow))) {
                         $messages['error'][] = "INSERT into `$table` fail!";
                         $messages['error'][] = 'Processing halted. Please check the logs and retry';
@@ -152,7 +157,8 @@ switch ($step) {
                 $meta[] = '"process": ' . json_encode($yaml['process']);
             }
             $meta = '{' . implode(', ', $meta) . '}';
-            $sqlRow = "INSERT INTO resource (`appid`, `name`, `description`, `method`, `uri`, `meta`, `ttl`) VALUES ($appid, '$name', '$description', '$method', '$uri', '$meta', $ttl)";
+            $sqlRow = 'INSERT INTO resource (`appid`, `name`, `description`, `method`, `uri`, `meta`, `ttl`)';
+            $sqlRow .= "VALUES ($appid, '$name', '$description', '$method', '$uri', '$meta', $ttl)";
             if (empty($db->execute($sqlRow))) {
                 $messages['error'][] = "INSERT $name into `resource` fail!";
                 $messages['error'][] = 'Processing halted. Please check the logs and retry';
@@ -169,20 +175,20 @@ switch ($step) {
         // Create user.
         if ($from == 2) {
             // This is a post from the user create form.
-            $username = !empty($_POST['username']) ? $_POST['username'] : NULL;
-            $password = !empty($_POST['password']) ? $_POST['password'] : NULL;
-            $email = !empty($_POST['email']) ? $_POST['email'] : NULL;
-            $honorific = !empty($_POST['honorific']) ? $_POST['honorific'] : NULL;
-            $nameFirst = !empty($_POST['name_first']) ? $_POST['name_first'] : NULL;
-            $nameLast = !empty($_POST['name_last']) ? $_POST['name_last'] : NULL;
-            $company = !empty($_POST['company']) ? $_POST['company'] : NULL;
-            $website = !empty($_POST['website']) ? $_POST['website'] : NULL;
-            $addressStreet = !empty($_POST['address_street']) ? $_POST['address_street'] : NULL;
-            $addressSuburb = !empty($_POST['address_suburb']) ? $_POST['address_suburb'] : NULL;
-            $addressCity = !empty($_POST['address_city']) ? $_POST['address_city'] : NULL;
-            $addressState = !empty($_POST['address_state']) ? $_POST['address_state'] : NULL;
-            $addressCountry = !empty($_POST['address_country']) ? $_POST['address_country'] : NULL;
-            $addressPostcode = !empty($_POST['address_postcode']) ? $_POST['address_postcode'] : NULL;
+            $username = !empty($_POST['username']) ? $_POST['username'] : null;
+            $password = !empty($_POST['password']) ? $_POST['password'] : null;
+            $email = !empty($_POST['email']) ? $_POST['email'] : null;
+            $honorific = !empty($_POST['honorific']) ? $_POST['honorific'] : null;
+            $nameFirst = !empty($_POST['name_first']) ? $_POST['name_first'] : null;
+            $nameLast = !empty($_POST['name_last']) ? $_POST['name_last'] : null;
+            $company = !empty($_POST['company']) ? $_POST['company'] : null;
+            $website = !empty($_POST['website']) ? $_POST['website'] : null;
+            $addressStreet = !empty($_POST['address_street']) ? $_POST['address_street'] : null;
+            $addressSuburb = !empty($_POST['address_suburb']) ? $_POST['address_suburb'] : null;
+            $addressCity = !empty($_POST['address_city']) ? $_POST['address_city'] : null;
+            $addressState = !empty($_POST['address_state']) ? $_POST['address_state'] : null;
+            $addressCountry = !empty($_POST['address_country']) ? $_POST['address_country'] : null;
+            $addressPostcode = !empty($_POST['address_postcode']) ? $_POST['address_postcode'] : null;
             $phoneMobile = !empty($_POST['phone_mobile']) ? $_POST['phone_mobile'] : 0;
             $phoneWork = !empty($_POST['phone_work']) ? $_POST['phone_work'] : 0;
             if (empty($username) ||
@@ -206,12 +212,12 @@ switch ($step) {
             }
             try {
                 $user = new Db\User(
-                    NULL,
+                    null,
                     1,
                     $username,
-                    NULL,
-                    NULL,
-                    NULL,
+                    null,
+                    null,
+                    null,
                     $email,
                     $honorific,
                     $nameFirst,
@@ -229,7 +235,6 @@ switch ($step) {
                 );
                 $user->setPassword($password);
                 $userMapper->save($user);
-
             } catch (ApiException $e) {
                 $template = $twig->load("install/install_$from.twig");
                 $messages['error'][] = 'An error occurred creating your user: ' . $e->getMessage();
@@ -251,9 +256,9 @@ switch ($step) {
                 $role = $roleMapper->findByName('Administrator');
                 $rid = $role->getRid();
                 $userRole = new Db\UserRole(
-                    NULL,
-                    NULL,
-                    NULL,
+                    null,
+                    null,
+                    null,
                     $uid,
                     $rid
                 );

@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 $I = new ApiTester($scenario);
 $I->performLogin();
 $I->setYamlFilename('merge.yaml');
@@ -15,7 +16,16 @@ $I->wantTo('perform a merge of type union with unique set and see result');
 $I->callResourceFromYaml(['mergeType' => 'union', 'unique' => 'true']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["0" => "val1","1" => "val2","2" => "val3","3" => "val4","5" => "val5","6" => "val6","7" => "val7","8" => "val8"]);
+$I->seeResponseContainsJson([
+    "0" => "val1",
+    "1" => "val2",
+    "2" => "val3",
+    "3" => "val4",
+    "5" => "val5",
+    "6" => "val6",
+    "7" => "val7",
+    "8" => "val8"]
+);
 
 $I->wantTo('perform a merge of type intersect without unique set and see result');
 $I->callResourceFromYaml(['mergeType' => 'intersect', 'unique' => 'true']);

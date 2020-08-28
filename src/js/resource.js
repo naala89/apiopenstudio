@@ -143,7 +143,7 @@ $(document).ready(function () {
     /**
      * Download a resource.
      */
-    $('button.resource-download-file').on('click', function() {
+    $('button.resource-download-file').on('click', function () {
         var iframe = $("<iframe/>").attr({
             src: $(this).attr('url'),
             style: "visibility:hidden; display:none"
@@ -151,7 +151,7 @@ $(document).ready(function () {
         $(this).append(iframe);
     });
 
-    $('input[name="resource_file"]').change(function() {
+    $('input[name="resource_file"]').change(function () {
         $(this).closest('form').submit();
     });
 });
