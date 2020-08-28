@@ -9,7 +9,7 @@ include:
 #    - vendor/
 
 stages:
-#  - test
+  - test
   - deploy
 
 before_script:
