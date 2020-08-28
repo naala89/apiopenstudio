@@ -1,8 +1,5 @@
 image: php:7.3
 
-include:
-  - template: Code-Quality.gitlab-ci.yml
-
 #cache:
 #  key: ${CI_COMMIT_REF_SLUG}
 #  paths:
@@ -25,10 +22,11 @@ before_script:
   - php -r "unlink('composer-setup.php');"
   - php composer.phar install
 
-code_quality:
-  stage: deploy
+phpcs:
+  script: vendor/bin/phpcs --report=emacs --report-\\Micheh\\PhpCodeSniffer\\Report\\Gitlab=phpcs-quality-report.json
   artifacts:
-    paths: [gl-code-quality-report.json]
+    reports:
+      codequality: phpcs-quality-report.json
 
 #test:
 #  stage: test
