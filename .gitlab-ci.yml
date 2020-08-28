@@ -4,6 +4,7 @@ cache:
   key: "$CI_COMMIT_REF_SLUG"
   paths:
     - vendor/
+    - composer.lock
 
 stages:
   - test
