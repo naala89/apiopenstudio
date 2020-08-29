@@ -1,18 +1,28 @@
 <?php
+/**
+ * Class Role.
+ *
+ * @package Gaterdata\Db
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Db;
 
 /**
  * Class Role.
  *
- * @package Gaterdata\Db
+ * DB class for for storing role row data.
  */
 class Role
 {
     /**
-     * @var int Role ID.
+     * @var integer Role ID.
      */
     protected $rid;
+
     /**
      * @var string Role name.
      */
@@ -21,12 +31,10 @@ class Role
     /**
      * Role constructor.
      *
-     * @param int $rid
-     *   Role ID.
-     * @param string $name
-     *   Role name.
+     * @param integer $rid Role ID.
+     * @param string $name Role name.
      */
-    public function __construct($rid = null, $name = null)
+    public function __construct(int $rid = null, string $name = null)
     {
         $this->rid = $rid;
         $this->name = $name;
@@ -35,8 +43,7 @@ class Role
     /**
      * Get the role ID.
      *
-     * @return int
-     *   Role ID.
+     * @return integer Role ID.
      */
     public function getRid()
     {
@@ -46,10 +53,11 @@ class Role
     /**
      * Set the role ID.
      *
-     * @param int $rid
-     *   Role ID.
+     * @param integer $rid Role ID.
+     *
+     * @return void
      */
-    public function setRid($rid)
+    public function setRid(int $rid)
     {
         $this->rid = $rid;
     }
@@ -57,8 +65,7 @@ class Role
     /**
      * Get the role name.
      *
-     * @return int
-     *   Name
+     * @return integer Name
      */
     public function getName()
     {
@@ -68,10 +75,11 @@ class Role
     /**
      * Set the role name.
      *
-     * @param string $name
-     *   Role name.
+     * @param string $name Role name.
+     *
+     * @return void
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -79,8 +87,7 @@ class Role
     /**
      * Return the values as an associative array.
      *
-     * @return array
-     *   Role object.
+     * @return array Role object.
      */
     public function dump()
     {

@@ -221,4 +221,21 @@
          Argument lists and variable lists MAY be split across multiple lines, where each subsequent line is indented once. When doing so, the first item in the list MUST be on the next line, and there MUST be only one argument or variable per line.
          When the ending list (whether or arguments or variables) is split across multiple lines, the closing parenthesis and opening brace MUST be placed together on their own line with one space between them. -->
     <!-- checked in Squiz.Functions.MultiLineFunctionDeclaration -->
+
+    <!-- 7. PHPCS -->
+
+    <rule ref="Squiz.Commenting.FunctionComment">
+        <exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamName" />
+        <exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType" />
+    </rule>
+    <rule ref="Squiz.Commenting.FunctionCommentThrowTag" />
+    <rule ref="Squiz.Commenting.ClassComment" />
+    <rule ref="Squiz.Commenting.FileComment">
+        <exclude name="Squiz.Commenting.FileComment.MissingSubpackageTag" />
+        <exclude name="Squiz.Commenting.FileComment.SubpackageTagOrder" />
+        <exclude name="Squiz.Commenting.FileComment.IncorrectAuthor" />
+        <exclude name="Squiz.Commenting.FileComment.IncorrectCopyright" />
+    </rule>
+    <rule ref="Squiz.Commenting.VariableComment" />
+
 </ruleset>

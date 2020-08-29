@@ -1,4 +1,13 @@
 <?php
+/**
+ * Class RoleMapper.
+ *
+ * @package Gaterdata\Db
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Db;
 
@@ -7,7 +16,7 @@ use Gaterdata\Core\ApiException;
 /**
  * Class UserRoleMapper.
  *
- * @package Gaterdata\Db
+ * Mapper class for DB calls used for the user_role table.
  */
 class UserRoleMapper extends Mapper
 {
@@ -15,13 +24,11 @@ class UserRoleMapper extends Mapper
     /**
      * Save the user role.
      *
-     * @param UserRole $userRole
-     *   UserRole object.
+     * @param UserRole $userRole UserRole object.
      *
-     * @return bool
-     *   Result of the save.
+     * @return boolean Result of the save.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
     public function save(UserRole $userRole)
     {
@@ -49,13 +56,11 @@ class UserRoleMapper extends Mapper
     /**
      * Delete the user role.
      *
-     * @param UserRole $userRole
-     *   UserRole object.
+     * @param UserRole $userRole UserRole object.
      *
-     * @return bool
-     *   Success.
+     * @return boolean Success.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
     public function delete(UserRole $userRole)
     {
@@ -67,10 +72,9 @@ class UserRoleMapper extends Mapper
     /**
      * Find all user roles.
      *
-     * @return array
-     *   Array of mapped UserRole objects.
+     * @return array Array of mapped UserRole objects.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
     public function findAll()
     {
@@ -82,19 +86,15 @@ class UserRoleMapper extends Mapper
     /**
      * Fetch a user role by uid, appid and rolename.
      *
-     * @param integer $uid
-     *   User ID.
-     * @param integer $appid
-     *   Application ID.
-     * @param string $rolename
-     *   Rolename.
+     * @param integer $uid User ID.
+     * @param integer $appid Application ID.
+     * @param string $rolename Rolename.
      *
-     * @return UserRole
-     *   User role object.
+     * @return UserRole User role object.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByUidAppidRolename($uid, $appid, $rolename)
+    public function findByUidAppidRolename(int $uid, int $appid, string $rolename)
     {
         $sql = 'SELECT ur.* FROM user_role ur';
         $sql .= ' INNER JOIN `role` `r` ON `ur`.`rid` = `r`.`rid`';
@@ -109,16 +109,14 @@ class UserRoleMapper extends Mapper
     /**
      * Return whether a user has a specified role.
      *
-     * @param Integer $uid
-     *   User ID.
-     * @param String $rolename
-     *   Role name.
+     * @param integer $uid User ID.
+     * @param string $rolename Role name.
      *
-     * @return bool
+     * @return boolean Success.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function hasRole($uid, $rolename)
+    public function hasRole(int $uid, string $rolename)
     {
         $sql = 'SELECT * FROM user_role AS ur';
         $sql .= ' INNER JOIN role as r';
@@ -133,17 +131,14 @@ class UserRoleMapper extends Mapper
     /**
      * Fetch user roles by UID and role name.
      *
-     * @param integer $uid
-     *   User ID.
-     * @param string $rolename
-     *   Role name.
+     * @param integer $uid User ID.
+     * @param string $rolename Role name.
      *
-     * @return array
-     *   Array of UserRole objects.
+     * @return array Array of UserRole objects.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByUidRolename($uid, $rolename)
+    public function findByUidRolename(int $uid, string $rolename)
     {
         $sql = 'SELECT * FROM user_role AS ur';
         $sql .= ' INNER JOIN role AS r';
@@ -157,18 +152,15 @@ class UserRoleMapper extends Mapper
     /**
      * Return whether a user has a specified role in an account.
      *
-     * @param integer $uid
-     *   User ID.
-     * @param integer $accid
-     *   Account ID.
-     * @param string $rolename
-     *   Role name.
+     * @param integer $uid User ID.
+     * @param integer $accid Account ID.
+     * @param string $rolename Role name.
      *
-     * @return bool
+     * @return boolean Success.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function hasAccidRole($uid, $accid, $rolename)
+    public function hasAccidRole(int $uid, int $accid, string $rolename)
     {
         $sql = 'SELECT * FROM user_role AS ur';
         $sql .= ' INNER JOIN role as r';
@@ -184,16 +176,14 @@ class UserRoleMapper extends Mapper
     /**
      * Return whether a user has access to an application.
      *
-     * @param integer $uid
-     *   User ID.
-     * @param integer $appid
-     *   Application ID.
+     * @param integer $uid User ID.
+     * @param integer $appid Application ID.
      *
-     * @return bool
+     * @return boolean Success.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function hasAppidAccess($uid, $appid)
+    public function hasAppidAccess(int $uid, int $appid)
     {
         $sql = 'SELECT * FROM user_role';
         $sql .= ' WHERE uid=?';
@@ -206,15 +196,13 @@ class UserRoleMapper extends Mapper
     /**
      * Find all user roles for a user ID.
      *
-     * @param integer $uid
-     *   User ID.
+     * @param integer $uid User ID.
      *
-     * @return array
-     *   Array of UserRole objects.
+     * @return array Array of UserRole objects.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByUid($uid)
+    public function findByUid(int $uid)
     {
         $sql = 'SELECT * FROM user_role WHERE uid=?';
         $bindParams = [$uid];
@@ -224,21 +212,21 @@ class UserRoleMapper extends Mapper
     /**
      * Find user roles using filter.
      *
-     * @param array $params
-     *  Associative array of filter params.
-     * @return array
-     *   User roles
-     *
-     * @throws ApiException
-     *
      * @example
      *   findByFilter([
      *     'col' => ['rid' => 1],
      *     'order_by' => 'uid',
      *     'direction' => 'asc'
      *   )
+     *
+     * @param integer $uid User ID.
+     * @param array $params Associative array of filter params.
+     *
+     * @return array User roles
+     *
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findForUidWithFilter($uid, $params)
+    public function findForUidWithFilter(int $uid, array $params)
     {
         $priviligedRoles = ["Administrator", "Account manager", "Application manager"];
         $sql = 'SELECT *';
@@ -293,21 +281,20 @@ class UserRoleMapper extends Mapper
     /**
      * Find user roles using filter.
      *
-     * @param array $params
-     *  Associative array of filter params.
-     * @return array
-     *   User roles
-     *
-     * @throws ApiException
-     *
      * @example
      *   findByFilter([
      *     'col' => ['rid' => 1],
      *     'order_by' => 'uid',
      *     'direction' => 'asc'
      *   )
+     *
+     * @param array $params Associative array of filter params.
+     *
+     * @return array User roles
+     *
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByFilter($params)
+    public function findByFilter(array $params)
     {
         $sql = 'SELECT * FROM user_role';
         $where = $bindParams = $order = [];
@@ -336,11 +323,9 @@ class UserRoleMapper extends Mapper
     /**
      * Map a DB row to a UserRole object.
      *
-     * @param array $row
-     *   DB Row.
+     * @param array $row DB Row.
      *
-     * @return UserRole
-     *   UserRole object.
+     * @return UserRole UserRole object.
      */
     protected function mapArray(array $row)
     {

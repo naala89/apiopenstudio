@@ -1,3 +1,9 @@
+/**
+ * JS for the admin resource page.
+ *
+ * @package Gaterdata
+ */
+
 $(document).ready(function () {
 
     /**

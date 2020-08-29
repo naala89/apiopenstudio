@@ -1,21 +1,30 @@
 <?php
+/**
+ * Class VarStore.
+ *
+ * @package Gaterdata\Db
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Db;
 
 /**
  * Class VarStore.
  *
- * @package Gaterdata\Db
+ * DB class for for storing var row data.
  */
 class VarStore
 {
     /**
-     * @var int Var store ID.
+     * @var integer Var store ID.
      */
     protected $vid;
 
     /**
-     * @var int Application ID.
+     * @var integer Application ID.
      */
     protected $appid;
 
@@ -30,16 +39,12 @@ class VarStore
     protected $val;
 
     /**
-     * @param int $vid
-     *   The var ID.
-     * @param int $appid
-     *   The var application ID.
-     * @param string $key
-     *   The var key.
-     * @param mixed $val
-     *   The var value.
+     * @param integer $vid The var ID.
+     * @param integer $appid The var application ID.
+     * @param string $key The var key.
+     * @param mixed $val The var value.
      */
-    public function __construct($vid = null, $appid = null, $key = null, $val = null)
+    public function __construct(int $vid = null, int $appid = null, string $key = null, $val = null)
     {
         $this->vid = $vid;
         $this->appid = $appid;
@@ -50,8 +55,7 @@ class VarStore
     /**
      * Get the var ID.
      *
-     * @return int
-     *   The var ID.
+     * @return integer The var ID.
      */
     public function getVid()
     {
@@ -61,10 +65,11 @@ class VarStore
     /**
      * Set the var ID.
      *
-     * @param int $vid
-     *   The var ID.
+     * @param integer $vid The var ID.
+     *
+     * @return void
      */
-    public function setVid($vid)
+    public function setVid(int $vid)
     {
         $this->vid = $vid;
     }
@@ -72,8 +77,7 @@ class VarStore
     /**
      * Get the var application ID.
      *
-     * @return int
-     *   The var application ID.
+     * @return integer The var application ID.
      */
     public function getAppid()
     {
@@ -83,10 +87,11 @@ class VarStore
     /**
      * Set the var application ID.
      *
-     * @param int $appid
-     *   The avr application ID.
+     * @param integer $appid The avr application ID.
+     *
+     * @return void
      */
-    public function setAppid($appid)
+    public function setAppid(int $appid)
     {
         $this->appid = $appid;
     }
@@ -105,10 +110,11 @@ class VarStore
     /**
      * Set the var key.
      *
-     * @param string $key
-     *   The var key.
+     * @param string $key The var key.
+     *
+     * @return void
      */
-    public function setKey($key)
+    public function setKey(string $key)
     {
         $this->key = $key;
     }
@@ -127,8 +133,9 @@ class VarStore
     /**
      * Set the var value.
      *
-     * @param mixed $val
-     *   The var value.
+     * @param mixed $val The var value.
+     *
+     * @return void
      */
     public function setVal($val)
     {
@@ -138,8 +145,7 @@ class VarStore
     /**
      * Return the values as an associative array.
      *
-     * @return array
-     *   Associative array of var attributes.
+     * @return array Associative array of var attributes.
      */
     public function dump()
     {

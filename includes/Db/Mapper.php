@@ -1,4 +1,13 @@
 <?php
+/**
+ * Class Mapper.
+ *
+ * @package Gaterdata\Db
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Db;
 
@@ -7,6 +16,11 @@ use Cascade\Cascade;
 use ADODB_mysqli;
 use Gaterdata\Core\Config;
 
+/**
+ * Abstract class Mapper.
+ *
+ * All derived Mapper classes but extend this class.
+ */
 abstract class Mapper
 {
     /**
@@ -22,8 +36,7 @@ abstract class Mapper
     /**
      * Mapper constructor.
      *
-     * @param ADODB_mysqli $dbLayer
-     *   DB connection object.
+     * @param ADODB_mysqli $dbLayer DB connection object.
      */
     public function __construct(ADODB_mysqli $dbLayer)
     {
@@ -36,8 +49,7 @@ abstract class Mapper
     /**
      * Map a DB row into an object.
      *
-     * @param array $row
-     *   DB row.
+     * @param array $row DB row.
      *
      * @return mixed
      */
@@ -46,17 +58,14 @@ abstract class Mapper
     /**
      * Perform a save or delete.
      *
-     * @param string $sql
-     *   Query string.
-     * @param array $bindParams
-     *   Array of bind params.
+     * @param string $sql Query string.
+     * @param array $bindParams Array of bind params.
      *
-     * @return bool
-     *   Success status.
+     * @return boolean Success status.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
-    protected function saveDelete($sql, array $bindParams)
+    protected function saveDelete(string $sql, array $bindParams)
     {
         $this->db->Execute($sql, $bindParams);
         if ($this->db->affected_rows() !== 0) {
@@ -75,17 +84,14 @@ abstract class Mapper
     /**
      * Perform an SQL statement that expects a single row.
      *
-     * @param string $sql
-     *   Query string.
-     * @param array $bindParams
-     *   Array of bind params.
+     * @param string $sql Query string.
+     * @param array $bindParams Array of bind params.
      *
-     * @return array
-     *   Mapped row.
+     * @return array Mapped row.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
-    protected function fetchRow($sql, $bindParams)
+    protected function fetchRow(string $sql, array $bindParams)
     {
         $row = $this->db->GetRow($sql, $bindParams);
         if ($row === false) {
@@ -99,12 +105,10 @@ abstract class Mapper
     /**
      * Perform an SQL statement that expects multiple rows.
      *
-     * @param string $sql
-     *   Query string.
-     * @param array $bindParams
-     *   Array of bind params.
-     * @param array $params
-     *   parameters (optional)
+     * @param string $sql Query string.
+     * @param array $bindParams Array of bind params.
+     * @param array $params Parameters (optional).
+     *   Example:
      *     [
      *       'filter' => [
      *         'keyword' => string,
@@ -123,9 +127,9 @@ abstract class Mapper
      * @return array
      *   Array of mapped rows.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
-    protected function fetchRows($sql, $bindParams = [], array $params = [])
+    protected function fetchRows(string $sql, array $bindParams = [], array $params = [])
     {
         // Add filter by keyword.
         if (!empty($params['filter'])) {

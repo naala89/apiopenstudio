@@ -1,18 +1,28 @@
 <?php
+/**
+ * Class Account.
+ *
+ * @package Gaterdata\Db
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Db;
 
 /**
  * Class Account.
  *
- * @package Gaterdata\Db
+ * DB class for for storing role account data.
  */
 class Account
 {
     /**
-     * @var int Account ID.
+     * @var integer Account ID.
      */
     protected $accid;
+
     /**
      * @var string Account name.
      */
@@ -21,12 +31,10 @@ class Account
     /**
      * Account constructor.
      *
-     * @param int $accid
-     *   Account ID.
-     * @param string $name
-     *   Account name.
+     * @param integer $accid Account ID.
+     * @param string $name Account name.
      */
-    public function __construct($accid = null, $name = null)
+    public function __construct(int $accid = null, string $name = null)
     {
         $this->accid = $accid;
         $this->name = $name;
@@ -35,8 +43,7 @@ class Account
     /**
      * Get the account ID.
      *
-     * @return int
-     *   Account ID.
+     * @return integer Account ID.
      */
     public function getAccid()
     {
@@ -46,10 +53,11 @@ class Account
     /**
      * Set the account ID.
      *
-     * @param int $accid
-     *   Account ID.
+     * @param integer $accid Account ID.
+     *
+     * @return void
      */
-    public function setAccid($accid)
+    public function setAccid(int $accid)
     {
         $this->accid = $accid;
     }
@@ -57,8 +65,7 @@ class Account
     /**
      * Get the account name.
      *
-     * @return string
-     *   Account name.
+     * @return string Account name.
      */
     public function getName()
     {
@@ -68,10 +75,11 @@ class Account
     /**
      * Set the account name.
      *
-     * @param string $name
-     *   Account name.
+     * @param string $name Account name.
+     *
+     * @return void
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -79,8 +87,7 @@ class Account
     /**
      * Return the values as an associative array.
      *
-     * @return array
-     *   Account.
+     * @return array Account.
      */
     public function dump()
     {

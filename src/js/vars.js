@@ -1,6 +1,9 @@
 /**
- * JS for Vars page.
+ * JS for the admin vars page.
+ *
+ * @package Gaterdata
  */
+
 $(document).ready(function () {
     $('#modal-var-create select[name="create-var-accid"]').on('change', function () {
         GATERDATA.setApplicationOptions($(this).val(), '#modal-var-create select[name="create-var-appid"]');

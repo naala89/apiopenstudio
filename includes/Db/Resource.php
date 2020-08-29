@@ -1,42 +1,58 @@
 <?php
+/**
+ * Class Resource.
+ *
+ * @package Gaterdata\Db
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Db;
 
 /**
  * Class Resource.
  *
- * @package Gaterdata\Db
+ * DB class for for storing resource row data.
  */
 class Resource
 {
     /**
-     * @var int Resource ID.
+     * @var integer Resource ID.
      */
     protected $resid;
+
     /**
-     * @var int Application ID.
+     * @var integer Application ID.
      */
     protected $appid;
+
     /**
      * @var string Resource name.
      */
     protected $name;
+
     /**
      * @var string Resource description.
      */
     protected $description;
+
     /**
      * @var string Resource method.
      */
     protected $method;
+
     /**
      * @var string Resource URI.
      */
     protected $uri;
+
     /**
      * @var string Resource metadata.
      */
     protected $meta;
+
     /**
      * @var string Resource time to live.
      */
@@ -45,32 +61,24 @@ class Resource
     /**
      * Resource constructor.
      *
-     * @param int $resid
-     *   The resource ID.
-     * @param int $appid
-     *   The application ID.
-     * @param string $name
-     *   The resource name.
-     * @param string $description
-     *   The resource description.
-     * @param string $method
-     *   The resource method.
-     * @param string $uri
-     *   The resource URI.
-     * @param string $meta
-     *   The resource metadata.
-     * @param string $ttl
-     *   The resource TTL.
+     * @param integer $resid The resource ID.
+     * @param integer $appid The application ID.
+     * @param string $name The resource name.
+     * @param string $description The resource description.
+     * @param string $method The resource method.
+     * @param string $uri The resource URI.
+     * @param string $meta The resource metadata.
+     * @param string $ttl The resource TTL.
      */
     public function __construct(
-        $resid = null,
-        $appid = null,
-        $name = null,
-        $description = null,
-        $method = null,
-        $uri = null,
-        $meta = null,
-        $ttl = null
+        int $resid = null,
+        int $appid = null,
+        string $name = null,
+        string $description = null,
+        string $method = null,
+        string $uri = null,
+        string $meta = null,
+        string $ttl = null
     ) {
         $this->resid = $resid;
         $this->appid = $appid;
@@ -85,8 +93,7 @@ class Resource
     /**
      * Get the resource ID.
      *
-     * @return int
-     *   The resource ID
+     * @return integer The resource ID
      */
     public function getResid()
     {
@@ -96,10 +103,11 @@ class Resource
     /**
      * Set the resource ID.
      *
-     * @param int $resid
-     *   The resource ID.
+     * @param integer $resid The resource ID.
+     *
+     * @return void
      */
-    public function setResid($resid)
+    public function setResid(int $resid)
     {
         $this->resid = $resid;
     }
@@ -107,8 +115,7 @@ class Resource
     /**
      * Get the application ID.
      *
-     * @return int
-     *   The application ID.
+     * @return integer The application ID.
      */
     public function getAppId()
     {
@@ -118,10 +125,11 @@ class Resource
     /**
      * Set the resource application ID.
      *
-     * @param int $appid
-     *   The application ID.
+     * @param integer $appid The application ID.
+     *
+     * @return void
      */
-    public function setAppId($appid)
+    public function setAppId(int $appid)
     {
         $this->appid = $appid;
     }
@@ -129,8 +137,7 @@ class Resource
     /**
      * Get the resource nanme.
      *
-     * @return string
-     *   The resource name.
+     * @return string The resource name.
      */
     public function getName()
     {
@@ -140,10 +147,11 @@ class Resource
     /**
      * Set the resource name.
      *
-     * @param string $name
-     *   The resource name.
+     * @param string $name The resource name.
+     *
+     * @return void
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -151,8 +159,7 @@ class Resource
     /**
      * Get the resource description.
      *
-     * @return string
-     *   The resource description.
+     * @return string The resource description.
      */
     public function getDescription()
     {
@@ -162,10 +169,11 @@ class Resource
     /**
      * Set the resource description.
      *
-     * @param string $description
-     *   The resource description.
+     * @param string $description The resource description.
+     *
+     * @return void
      */
-    public function setDescription($description)
+    public function setDescription(string $description)
     {
         $this->description = $description;
     }
@@ -173,8 +181,7 @@ class Resource
     /**
      * Get the resource method.
      *
-     * @return string
-     *   Resource method.
+     * @return string Resource method.
      */
     public function getMethod()
     {
@@ -184,10 +191,11 @@ class Resource
     /**
      * Set the resource method.
      *
-     * @param string $method
-     *   The resource method.
+     * @param string $method The resource method.
+     *
+     * @return void
      */
-    public function setMethod($method)
+    public function setMethod(string $method)
     {
         $this->method = $method;
     }
@@ -195,8 +203,7 @@ class Resource
     /**
      * Get the resource URI.
      *
-     * @return string
-     *   The  resource URI.
+     * @return string The  resource URI.
      */
     public function getUri()
     {
@@ -206,10 +213,11 @@ class Resource
     /**
      * Set the resource URI.
      *
-     * @param string $uri
-     *   Resource URI.
+     * @param string $uri Resource URI.
+     *
+     * @return void
      */
-    public function setUri($uri)
+    public function setUri(string $uri)
     {
         $this->uri = $uri;
     }
@@ -217,8 +225,7 @@ class Resource
     /**
      * Get the json encoded resource metadata.
      *
-     * @return string
-     *   Json encoded resource metadata.
+     * @return string Json encoded resource metadata.
      */
     public function getMeta()
     {
@@ -228,10 +235,11 @@ class Resource
     /**
      * Set the json encoded resource metadata.
      *
-     * @param string $meta
-     *   The json encoded resource metadata.
+     * @param string $meta The json encoded resource metadata.
+     *
+     * @return void
      */
-    public function setMeta($meta)
+    public function setMeta(string $meta)
     {
         $this->meta = $meta;
     }
@@ -239,8 +247,7 @@ class Resource
     /**
      * Get the resource TTL.
      *
-     * @return int
-     *   Time to live.
+     * @return integer Time to live.
      */
     public function getTtl()
     {
@@ -250,10 +257,11 @@ class Resource
     /**
      * Set the TTL.
      *
-     * @param int $ttl
-     *   Time to live.
+     * @param integer $ttl Time to live.
+     *
+     * @return void
      */
-    public function setTtl($ttl)
+    public function setTtl(int $ttl)
     {
         $this->ttl = $ttl;
     }
@@ -261,8 +269,7 @@ class Resource
     /**
      * Return the values as an associative array.
      *
-     * @return array
-     *   Api resource.
+     * @return array Api resource.
      */
     public function dump()
     {

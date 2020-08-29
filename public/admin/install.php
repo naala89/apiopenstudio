@@ -1,4 +1,9 @@
 <?php
+/**
+ * Install GaterData script.
+ *
+ * @package Gaterdata
+ */
 
 use Gaterdata\Db;
 use Gaterdata\Core\ApiException;

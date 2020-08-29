@@ -1,26 +1,38 @@
 <?php
+/**
+ * Class Invite.
+ *
+ * @package Gaterdata\Db
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Db;
 
 /**
  * Class Invite.
  *
- * @package Gaterdata\Db
+ * DB class for for storing resource row data.
  */
 class Invite
 {
     /**
-     * @var int Inivite ID.
+     * @var integer Inivite ID.
      */
     protected $iid;
+
     /**
      * @var string Email.
      */
     protected $created;
+
     /**
      * @var string Created.
      */
     protected $email;
+
     /**
      * @var string Invite token.
      */
@@ -29,16 +41,11 @@ class Invite
     /**
      * Invite constructor.
      *
-     * @param int $iid
-     *   Invite ID.
-     * @param string $created
-     *   Created date time.
-     * @param string $email
-     *   Invite email.
-     * @param string $token
-     *   Invite token.
+     * @param integer $iid Invite ID.
+     * @param string $email Invite email.
+     * @param string $token Invite token.
      */
-    public function __construct($iid = null, $email = null, $token = null)
+    public function __construct(int $iid = null, string $email = null, string $token = null)
     {
         $this->iid = $iid;
         $this->created = null;
@@ -49,8 +56,7 @@ class Invite
     /**
      * Get the invite ID.
      *
-     * @return int
-     *   Invite ID.
+     * @return integer Invite ID.
      */
     public function getIid()
     {
@@ -60,10 +66,11 @@ class Invite
     /**
      * Set the invite ID.
      *
-     * @param int $iid
-     *   Invite ID.
+     * @param integer $iid Invite ID.
+     *
+     * @return void
      */
-    public function setIid($iid)
+    public function setIid(int $iid)
     {
         $this->iid = $iid;
     }
@@ -71,8 +78,7 @@ class Invite
     /**
      * Get the created date.
      *
-     * @return string
-     *   Created date time.
+     * @return string Created date time.
      */
     public function getCreated()
     {
@@ -82,10 +88,11 @@ class Invite
     /**
      * Set the created date time.
      *
-     * @param string $created
-     *   Created date time.
+     * @param string $created Created date time.
+     *
+     * @return void
      */
-    public function setCreated($created)
+    public function setCreated(string $created)
     {
         $this->created = $created;
     }
@@ -93,8 +100,7 @@ class Invite
     /**
      * Get the invite email.
      *
-     * @return string
-     *   Invite email.
+     * @return string Invite email.
      */
     public function getEmail()
     {
@@ -104,10 +110,11 @@ class Invite
     /**
      * Set the invite email.
      *
-     * @param string $email
-     *   Invite email.
+     * @param string $email Invite email.
+     *
+     * @return void
      */
-    public function setEmail($email)
+    public function setEmail(string $email)
     {
         $this->email = $email;
     }
@@ -115,8 +122,7 @@ class Invite
     /**
      * Get the invite token.
      *
-     * @return string
-     *   Invite token.
+     * @return string Invite token.
      */
     public function getToken()
     {
@@ -126,10 +132,11 @@ class Invite
     /**
      * Set the invite token.
      *
-     * @param string $token
-     *   Invite token.
+     * @param string $token Invite token.
+     *
+     * @return void
      */
-    public function setToken($token)
+    public function setToken(string $token)
     {
         $this->token = $token;
     }
@@ -137,8 +144,7 @@ class Invite
     /**
      * Return the invite as an associative array.
      *
-     * @return array
-     *   Invite.
+     * @return array Invite.
      */
     public function dump()
     {

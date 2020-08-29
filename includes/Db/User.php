@@ -1,176 +1,186 @@
 <?php
-
-namespace Gaterdata\Db;
-
-use Gaterdata\Core\Hash;
-
 /**
  * Class User.
  *
  * @package Gaterdata\Db
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
+
+namespace Gaterdata\Db;
+
+use Gaterdata\Core\Hash;
+use phpDocumentor\Reflection\Types\Integer;
+
+/**
+ * Class User.
+ *
+ * DB class for for storing user row data.
  */
 class User
 {
     /**
-     * @var int User ID.
+     * @var integer User ID.
      */
     protected $uid;
+
     /**
-     * @var bool User active status.
+     * @var boolean User active status.
      */
     protected $active;
+
     /**
      * @var string Username.
      */
     protected $username;
+
     /**
      * @var string  User password hash.
      */
     protected $hash;
+
     /**
      * @var string User auth token.
      */
     protected $token;
+
     /**
      * @var string User auth token TTL.
      */
     protected $tokenTtl;
+
     /**
      * @var string User email.
      */
     protected $email;
+
     /**
      * @var string User honorific.
      */
     protected $honorific;
+
     /**
      * @var string User first name.
      */
     protected $nameFirst;
+
     /**
      * @var string User last name.
      */
     protected $nameLast;
+
     /**
      * @var string User's company.
      */
     protected $company;
+
     /**
      * @var string User's website.
      */
     protected $website;
+
     /**
      * @var string User street address.
      */
     protected $addressStreet;
+
     /**
      * @var string User suburb address.
      */
     protected $addressSuburb;
+
     /**
      * @var string User city address.
      */
     protected $addressCity;
+
     /**
      * @var string User state/county address.
      */
     protected $addressState;
+
     /**
      * @var string User country address.
      */
     protected $addressCountry;
+
     /**
      * @var string User postcode address.
      */
     protected $addressPostcode;
+
     /**
      * @var string User mobile number.
      */
     protected $phoneMobile;
+
     /**
      * @var string User work number.
      */
     protected $phoneWork;
+
     /**
      * @var string Password reset token.
      */
     protected $passwordReset;
+
     /**
      * @var string Password reset TTL.
      */
     protected $passwordResetTtl;
 
+
     /**
      * User constructor.
      *
-     * @param int $uid
-     *   User ID.
-     * @param int $active
-     *   Active status.
-     * @param string $username
-     *   Username.
-     * @param string $hash
-     *   Password hash.
-     * @param string $token
-     *   Access token.
-     * @param string $tokenTtl
-     *   Access token stale date.
-     * @param string $email
-     *   User email.
-     * @param string $honorific
-     *   User honorific.
-     * @param string $nameFirst
-     *   First name.
-     * @param string $nameLast
-     *   Last name.
-     * @param string $company
-     *   Company.
-     * @param string $website
-     *   Website.
-     * @param string $addressStreet
-     *   Street address.
-     * @param string $addressSuburb
-     *   Suburb.
-     * @param string $addressCity
-     *   City.
-     * @param string $addressState
-     *   State.
-     * @param string $addressCountry
-     *   Country.
-     * @param string $addressPostcode
-     *   Postcode.
-     * @param string $phoneMobile
-     *   Mobile number.
-     * @param string $phoneWork
-     *   Business number.
-     * @param string $passwordReset
-     *   Password reset token.
-     * @param string $passwordResetTtl
-     *   Password reset token TTL.
+     * @param integer $uid User ID.
+     * @param integer $active Active status.
+     * @param string $username Username.
+     * @param string $hash Password hash.
+     * @param string $token Access token.
+     * @param string $tokenTtl Access token stale date.
+     * @param string $email User email.
+     * @param string $honorific User honorific.
+     * @param string $nameFirst First name.
+     * @param string $nameLast Last name.
+     * @param string $company Company.
+     * @param string $website Website.
+     * @param string $addressStreet Street address.
+     * @param string $addressSuburb Suburb.
+     * @param string $addressCity City.
+     * @param string $addressState State.
+     * @param string $addressCountry Country.
+     * @param string $addressPostcode Postcode.
+     * @param string $phoneMobile Mobile number.
+     * @param string $phoneWork Business number.
+     * @param string $passwordReset Password reset token.
+     * @param string $passwordResetTtl Password reset token TTL.
      */
     public function __construct(
-        $uid = null,
-        $active = null,
-        $username = null,
-        $hash = null,
-        $token = null,
-        $tokenTtl = null,
-        $email = null,
-        $honorific = null,
-        $nameFirst = null,
-        $nameLast = null,
-        $company = null,
-        $website = null,
-        $addressStreet = null,
-        $addressSuburb = null,
-        $addressCity = null,
-        $addressState = null,
-        $addressCountry = null,
-        $addressPostcode = null,
-        $phoneMobile = null,
-        $phoneWork = null,
-        $passwordReset = null,
-        $passwordResetTtl = null
+        int $uid = null,
+        int $active = null,
+        string $username = null,
+        string $hash = null,
+        string $token = null,
+        string $tokenTtl = null,
+        string $email = null,
+        string $honorific = null,
+        string $nameFirst = null,
+        string $nameLast = null,
+        string $company = null,
+        string $website = null,
+        string $addressStreet = null,
+        string $addressSuburb = null,
+        string $addressCity = null,
+        string $addressState = null,
+        string $addressCountry = null,
+        string $addressPostcode = null,
+        string $phoneMobile = null,
+        string $phoneWork = null,
+        string $passwordReset = null,
+        string $passwordResetTtl = null
     ) {
         $this->uid = $uid;
         $this->active = $active;
@@ -199,8 +209,7 @@ class User
     /**
      * Get user ID.
      *
-     * @return int
-     *   User ID.
+     * @return integer User ID.
      */
     public function getUid()
     {
@@ -210,10 +219,11 @@ class User
     /**
      * Set the user ID.
      *
-     * @param int $uid
-     *   User ID.
+     * @param integer $uid User ID.
+     *
+     * @return void
      */
-    public function setUid($uid)
+    public function setUid(int $uid)
     {
         $this->uid = $uid;
     }
@@ -221,8 +231,7 @@ class User
     /**
      * Get the active status.
      *
-     * @return int
-     *   Active status.
+     * @return integer Active status.
      */
     public function getActive()
     {
@@ -232,10 +241,11 @@ class User
     /**
      * Set the active status.
      *
-     * @param int $active
-     *   Active status.
+     * @param integer $active Active status.
+     *
+     * @return void
      */
-    public function setActive($active)
+    public function setActive(int $active)
     {
         $this->active = $active;
     }
@@ -243,8 +253,7 @@ class User
     /**
      * Get the username.
      *
-     * @return string
-     *   Username.
+     * @return string Username.
      */
     public function getUsername()
     {
@@ -254,10 +263,11 @@ class User
     /**
      * Set the username.
      *
-     * @param string $userName
-     *   Username.
+     * @param string $userName Username.
+     *
+     * @return void
      */
-    public function setUsername($userName)
+    public function setUsername(string $userName)
     {
         $this->username = $userName;
     }
@@ -265,20 +275,20 @@ class User
     /**
      * Set the password. This will also create the hash.
      *
-     * @param string $password
-     *   Password.
+     * @param string $password Password.
+     *
+     * @return void
      */
-    public function setPassword($password)
+    public function setPassword(string $password)
     {
-      // Generate hash.
+        // Generate hash.
         $this->hash = Hash::generateHash($password);
     }
 
     /**
      * Get the hash.
      *
-     * @return string
-     *   Hash.
+     * @return string Hash.
      */
     public function getHash()
     {
@@ -288,10 +298,11 @@ class User
     /**
      * Set the hash.
      *
-     * @param string $hash
-     *   Hash.
+     * @param string $hash Hash.
+     *
+     * @return void
      */
-    public function setHash($hash)
+    public function setHash(string $hash)
     {
         $this->hash = $hash;
     }
@@ -299,8 +310,7 @@ class User
     /**
      * Get the token.
      *
-     * @return string
-     *   Token.
+     * @return string Token.
      */
     public function getToken()
     {
@@ -310,10 +320,11 @@ class User
     /**
      * Set the token.
      *
-     * @param string $token
-     *   Token.
+     * @param string $token Token.
+     *
+     * @return void
      */
-    public function setToken($token)
+    public function setToken(string $token)
     {
         $this->token = $token;
     }
@@ -321,8 +332,7 @@ class User
     /**
      * Get the token stale date.
      *
-     * @return string
-     *   token stale date.
+     * @return string token stale date.
      */
     public function getTokenTtl()
     {
@@ -332,10 +342,11 @@ class User
     /**
      * Set the token stale date.
      *
-     * @param string $tokenTtl
-     *   Token stale date.
+     * @param string $tokenTtl Token stale date.
+     *
+     * @return void
      */
-    public function setTokenTtl($tokenTtl)
+    public function setTokenTtl(string $tokenTtl)
     {
         $this->tokenTtl = $tokenTtl;
     }
@@ -343,8 +354,7 @@ class User
     /**
      * Get the user email.
      *
-     * @return string
-     *   Email.
+     * @return string Email.
      */
     public function getEmail()
     {
@@ -354,10 +364,11 @@ class User
     /**
      * Set the email.
      *
-     * @param string $email
-     *   Email.
+     * @param string $email Email.
+     *
+     * @return void
      */
-    public function setEmail($email)
+    public function setEmail(string $email)
     {
         $this->email = $email;
     }
@@ -365,8 +376,7 @@ class User
     /**
      * Get the honorific.
      *
-     * @return string
-     *   Honorific.
+     * @return string Honorific.
      */
     public function getHonorific()
     {
@@ -376,10 +386,11 @@ class User
     /**
      * Set the honorific.
      *
-     * @param string $honorific
-     *   Honorific.
+     * @param string $honorific Honorific.
+     *
+     * @return void
      */
-    public function setHonorific($honorific)
+    public function setHonorific(string $honorific)
     {
         $this->honorific = $honorific;
     }
@@ -387,8 +398,7 @@ class User
     /**
      * Get the first name.
      *
-     * @return string
-     *   First name.
+     * @return string First name.
      */
     public function getNameFirst()
     {
@@ -398,10 +408,11 @@ class User
     /**
      * Set the first name.
      *
-     * @param string $nameFirst
-     *   First name.
+     * @param string $nameFirst First name.
+     *
+     * @return void
      */
-    public function setNameFirst($nameFirst)
+    public function setNameFirst(string $nameFirst)
     {
         $this->nameFirst = $nameFirst;
     }
@@ -409,8 +420,7 @@ class User
     /**
      * Get the last name.
      *
-     * @return string
-     *   Last name.
+     * @return string Last name.
      */
     public function getNameLast()
     {
@@ -420,10 +430,11 @@ class User
     /**
      * Set the last name.
      *
-     * @param string $nameLast
-     *   Last name.
+     * @param string $nameLast Last name.
+     *
+     * @return void
      */
-    public function setNameLast($nameLast)
+    public function setNameLast(string $nameLast)
     {
         $this->nameLast = $nameLast;
     }
@@ -431,8 +442,7 @@ class User
     /**
      * Get the company.
      *
-     * @return string
-     *   Company.
+     * @return string Company.
      */
     public function getCompany()
     {
@@ -442,10 +452,11 @@ class User
     /**
      * Set the company.
      *
-     * @param string $company
-     *   Company.
+     * @param string $company Company.
+     *
+     * @return void
      */
-    public function setCompany($company)
+    public function setCompany(string $company)
     {
         $this->company = $company;
     }
@@ -453,8 +464,7 @@ class User
     /**
      * Get the website.
      *
-     * @return string
-     *   Website.
+     * @return string Website.
      */
     public function getWebsite()
     {
@@ -464,10 +474,11 @@ class User
     /**
      * Set the website.
      *
-     * @param string $website
-     *   Website.
+     * @param string $website Website.
+     *
+     * @return void
      */
-    public function setWebsite($website)
+    public function setWebsite(string $website)
     {
         $this->website = $website;
     }
@@ -475,8 +486,7 @@ class User
     /**
      * Get the street address.
      *
-     * @return string
-     *   Street address.
+     * @return string Street address.
      */
     public function getAddressStreet()
     {
@@ -486,10 +496,11 @@ class User
     /**
      * Set the street address.
      *
-     * @param string $addressStreet
-     *   Street address.
+     * @param string $addressStreet Street address.
+     *
+     * @return void
      */
-    public function setAddressStreet($addressStreet)
+    public function setAddressStreet(string $addressStreet)
     {
         $this->addressStreet = $addressStreet;
     }
@@ -497,8 +508,7 @@ class User
     /**
      * Get the suburb.
      *
-     * @return string
-     *   Suburb.
+     * @return string Suburb.
      */
     public function getAddressSuburb()
     {
@@ -508,10 +518,11 @@ class User
     /**
      * Set the suburb.
      *
-     * @param string $addressSuburb
-     *   Suburb.
+     * @param string $addressSuburb Suburb.
+     *
+     * @return void
      */
-    public function setAddressSuburb($addressSuburb)
+    public function setAddressSuburb(string $addressSuburb)
     {
         $this->addressSuburb = $addressSuburb;
     }
@@ -519,8 +530,7 @@ class User
     /**
      * Get the city.
      *
-     * @return string
-     *   City.
+     * @return string City.
      */
     public function getAddressCity()
     {
@@ -530,10 +540,11 @@ class User
     /**
      * Set the city.
      *
-     * @param string $addressCity
-     *   City.
+     * @param string $addressCity City.
+     *
+     * @return void
      */
-    public function setAddressCity($addressCity)
+    public function setAddressCity(string $addressCity)
     {
         $this->addressCity = $addressCity;
     }
@@ -541,8 +552,7 @@ class User
     /**
      * Get the state.
      *
-     * @return string
-     *   State.
+     * @return string State.
      */
     public function getAddressState()
     {
@@ -552,10 +562,11 @@ class User
     /**
      * Set the state.
      *
-     * @param string $addressState
-     *   State.
+     * @param string $addressState State.
+     *
+     * @return void
      */
-    public function setAddressState($addressState)
+    public function setAddressState(string $addressState)
     {
         $this->addressState = $addressState;
     }
@@ -563,8 +574,7 @@ class User
     /**
      * Get the country.
      *
-     * @return string
-     *   Country.
+     * @return string Country.
      */
     public function getAddressCountry()
     {
@@ -574,10 +584,11 @@ class User
     /**
      * Set the country.
      *
-     * @param string $addressCountry
-     *   Country.
+     * @param string $addressCountry Country.
+     *
+     * @return void
      */
-    public function setAddressCountry($addressCountry)
+    public function setAddressCountry(string $addressCountry)
     {
         $this->addressCountry = $addressCountry;
     }
@@ -585,8 +596,7 @@ class User
     /**
      * Get the postcode.
      *
-     * @return string
-     *   Postcode.
+     * @return string Postcode.
      */
     public function getAddressPostcode()
     {
@@ -596,10 +606,11 @@ class User
     /**
      * Set the postcode.
      *
-     * @param string $addressPostcode
-     *   Postcode.
+     * @param string $addressPostcode Postcode.
+     *
+     * @return void
      */
-    public function setAddressPostcode($addressPostcode)
+    public function setAddressPostcode(string $addressPostcode)
     {
         $this->addressPostcode = $addressPostcode;
     }
@@ -607,8 +618,7 @@ class User
     /**
      * Get the mobile phone number.
      *
-     * @return string
-     *   Mobile phone number.
+     * @return string Mobile phone number.
      */
     public function getPhoneMobile()
     {
@@ -618,10 +628,11 @@ class User
     /**
      * Set the mobile phone number.
      *
-     * @param string $phoneMobile
-     *   Mobile phone number.
+     * @param string $phoneMobile Mobile phone number.
+     *
+     * @return void
      */
-    public function setPhoneMobile($phoneMobile)
+    public function setPhoneMobile(string $phoneMobile)
     {
         $this->phoneMobile = $phoneMobile;
     }
@@ -629,8 +640,7 @@ class User
     /**
      * Get the work phone number.
      *
-     * @return string
-     *   Work phone number.
+     * @return string Work phone number.
      */
     public function getPhoneWork()
     {
@@ -640,10 +650,11 @@ class User
     /**
      * Set the work phone number.
      *
-     * @param string $phoneWork
-     *   Work phone number.
+     * @param string $phoneWork Work phone number.
+     *
+     * @return void
      */
-    public function setPhoneWork($phoneWork)
+    public function setPhoneWork(string $phoneWork)
     {
         $this->phoneWork = $phoneWork;
     }
@@ -651,8 +662,7 @@ class User
     /**
      * Get the password reset token.
      *
-     * @return string
-     *   Password reset token.
+     * @return string Password reset token.
      */
     public function getPasswordReset()
     {
@@ -662,10 +672,11 @@ class User
     /**
      * Set the password reset token.
      *
-     * @param string $passwordReset
-     *   password reset token.
+     * @param string $passwordReset Password reset token.
+     *
+     * @return void
      */
-    public function setPasswordReset($passwordReset)
+    public function setPasswordReset(string $passwordReset)
     {
         $this->passwordReset = $passwordReset;
     }
@@ -673,8 +684,7 @@ class User
     /**
      * Get the password reset token TTL.
      *
-     * @return string
-     *   Password reset token TTL.
+     * @return string Password reset token TTL.
      */
     public function getPasswordResetTtl()
     {
@@ -684,10 +694,11 @@ class User
     /**
      * Set the password reset token TTL.
      *
-     * @param string $passwordResetTtl
-     *   password reset token TTL.
+     * @param string $passwordResetTtl Password reset token TTL.
+     *
+     * @return void
      */
-    public function setPasswordResetTtl($passwordResetTtl)
+    public function setPasswordResetTtl(string $passwordResetTtl)
     {
         $this->passwordResetTtl = $passwordResetTtl;
     }
@@ -695,8 +706,7 @@ class User
     /**
      * Return the values as an associative array.
      *
-     * @return array
-     *   User.
+     * @return array User.
      */
     public function dump()
     {

@@ -1,11 +1,20 @@
 <?php
+/**
+ * Class ExternalUser.
+ *
+ * @package Gaterdata\Db
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Db;
 
 /**
  * Class ExternalUser.
  *
- * @package Gaterdata\Db
+ * DB class for for storing external_user row data.
  */
 class ExternalUser
 {
@@ -13,26 +22,32 @@ class ExternalUser
      * @var mixed External entity ID.
      */
     protected $id;
+
     /**
-     * @var int Application ID.
+     * @var integer Application ID.
      */
     protected $appId;
+
     /**
      * @var mixed External ID.
      */
     protected $externalId;
+
     /**
      * @var mixed External entity.
      */
     protected $externalEntity;
+
     /**
      * @var mixed Data field 1
      */
     protected $dataField1;
+
     /**
      * @var mixed Data field 2
      */
     protected $dataField2;
+
     /**
      * @var mixed Data field 3
      */
@@ -41,29 +56,22 @@ class ExternalUser
     /**
      * ExternalUser constructor.
      *
-     * @param int $id
-     *   External entity ID.
-     * @param int $appId
-     *   Application ID.
-     * @param int $externalId
-     *   External ID.
-     * @param string $externalEntity
-     *   External entity name.
-     * @param string $dataField1
-     *   Spare data field 1.
-     * @param string $dataField2
-     *   Spare data field 2.
-     * @param string $dataField3
-     *   Spare data field 3.
+     * @param integer $id External entity ID.
+     * @param integer $appId Application ID.
+     * @param integer $externalId External ID.
+     * @param string $externalEntity External entity name.
+     * @param string $dataField1 Spare data field 1.
+     * @param string $dataField2 Spare data field 2.
+     * @param string $dataField3 Spare data field 3.
      */
     public function __construct(
-        $id = null,
-        $appId = null,
-        $externalId = null,
-        $externalEntity = null,
-        $dataField1 = null,
-        $dataField2 = null,
-        $dataField3 = null
+        int $id = null,
+        int $appId = null,
+        int $externalId = null,
+        string $externalEntity = null,
+        string $dataField1 = null,
+        string $dataField2 = null,
+        string $dataField3 = null
     ) {
         $this->id = $id;
         $this->appId = $appId;
@@ -77,8 +85,7 @@ class ExternalUser
     /**
      * Get External user ID.
      *
-     * @return int
-     *   External user ID.
+     * @return integer External user ID.
      */
     public function getId()
     {
@@ -88,10 +95,11 @@ class ExternalUser
     /**
      * Set External user ID.
      *
-     * @param int $id
-     *   External user ID.
+     * @param integer $id External user ID.
+     *
+     * @return void
      */
-    public function setId($id)
+    public function setId(int $id)
     {
         $this->id = $id;
     }
@@ -99,8 +107,7 @@ class ExternalUser
     /**
      * Get Application ID.
      *
-     * @return int
-     *   Application ID.
+     * @return integer Application ID.
      */
     public function getAppId()
     {
@@ -110,10 +117,11 @@ class ExternalUser
     /**
      * Set application ID.
      *
-     * @param int $appId
-     *   Application ID.
+     * @param integer $appId Application ID.
+     *
+     * @return void
      */
-    public function setAppId($appId)
+    public function setAppId(int $appId)
     {
         $this->appId = $appId;
     }
@@ -121,8 +129,7 @@ class ExternalUser
     /**
      * Get External ID.
      *
-     * @return mixed
-     *   External ID.
+     * @return mixed External ID.
      */
     public function getExternalId()
     {
@@ -132,8 +139,9 @@ class ExternalUser
     /**
      * Set External ID.
      *
-     * @param mixed $externalId
-     *   External ID.
+     * @param mixed $externalId External ID.
+     *
+     * @return void
      */
     public function setExternalId($externalId)
     {
@@ -143,8 +151,7 @@ class ExternalUser
     /**
      * Get External entity.
      *
-     * @return mixed
-     *   External entity.
+     * @return mixed External entity.
      */
     public function getExternalEntity()
     {
@@ -154,10 +161,11 @@ class ExternalUser
     /**
      * Set External entity.
      *
-     * @param string $externalEntity
-     *   External entity.
+     * @param string $externalEntity External entity.
+     *
+     * @return void
      */
-    public function setExternalEntity($externalEntity)
+    public function setExternalEntity(string $externalEntity)
     {
         $this->externalEntity = $externalEntity;
     }
@@ -165,8 +173,7 @@ class ExternalUser
     /**
      * Get data field 1.
      *
-     * @return mixed
-     *   Data field 1.
+     * @return mixed Data field 1.
      */
     public function getDataField1()
     {
@@ -176,8 +183,9 @@ class ExternalUser
     /**
      * Set data field 1.
      *
-     * @param mixed $dataField1
-     *   Data field 1.
+     * @param mixed $dataField1 Data field 1.
+     *
+     * @return void
      */
     public function setDataField1($dataField1)
     {
@@ -187,8 +195,7 @@ class ExternalUser
     /**
      * Get data field 2.
      *
-     * @return mixed
-     *   Data field 2.
+     * @return mixed Data field 2.
      */
     public function getDataField2()
     {
@@ -198,8 +205,9 @@ class ExternalUser
     /**
      * Set data field 2.
      *
-     * @param mixed $dataField2
-     *   Data field 2.
+     * @param mixed $dataField2 Data field 2.
+     *
+     * @return void
      */
     public function setDataField2($dataField2)
     {
@@ -209,8 +217,7 @@ class ExternalUser
     /**
      * Get data field 3.
      *
-     * @return mixed
-     *   Data field 3.
+     * @return mixed Data field 3.
      */
     public function getDataField3()
     {
@@ -220,8 +227,9 @@ class ExternalUser
     /**
      * Set data field 3.
      *
-     * @param mixed $dataField3
-     *   Data field 3.
+     * @param mixed $dataField3 Data field 3.
+     *
+     * @return void
      */
     public function setDataField3($dataField3)
     {
@@ -231,19 +239,18 @@ class ExternalUser
     /**
      * Return the values as an associative array.
      *
-     * @return array
-     *   External user.
+     * @return array External user.
      */
     public function dump()
     {
         return [
-        'uid' => $this->uid,
-        'appId' => $this->appId,
-        'externalId' => $this->externalId,
-        'externalEntity' => $this->externalEntity,
-        'dataField1' => $this->dataField1,
-        'dataField2' => $this->dataField2,
-        'dataField3' => $this->dataField3,
+            'uid' => $this->uid,
+            'appId' => $this->appId,
+            'externalId' => $this->externalId,
+            'externalEntity' => $this->externalEntity,
+            'dataField1' => $this->dataField1,
+            'dataField2' => $this->dataField2,
+            'dataField3' => $this->dataField3,
         ];
     }
 }

@@ -1,37 +1,64 @@
 <?php
+/**
+ * Class UserRole.
+ *
+ * @package Gaterdata\Db
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Db;
 
 /**
  * Class UserRole.
  *
- * @package Gaterdata\Db
+ * DB class for for storing user_role row data.
  */
 class UserRole
 {
-
+    /**
+     * @var integer User role ID.
+     */
     protected $urid;
+
+    /**
+     * @var integer Account ID.
+     */
     protected $accid;
+
+    /**
+     * @var integer Application ID.
+     */
     protected $appid;
+
+    /**
+     * @var integer User ID.
+     */
     protected $uid;
+
+    /**
+     * @var integer Role ID.
+     */
     protected $rid;
 
     /**
      * UserRole constructor.
      *
-     * @param int $urid
-     *   User role ID.
-     * @param int $accid
-     *   Account ID
-     * @param int $appid
-     *   Application ID
-     * @param int $uid
-     *   User ID
-     * @param int $rid
-     *   The role ID.
+     * @param integer $urid User role ID.
+     * @param integer $accid Account ID.
+     * @param integer $appid Application ID.
+     * @param integer $uid User ID.
+     * @param integer $rid The role ID.
      */
-    public function __construct($urid = null, $accid = null, $appid = null, $uid = null, $rid = null)
-    {
+    public function __construct(
+        int $urid = null,
+        int $accid = null,
+        int $appid = null,
+        int $uid = null,
+        int $rid = null
+    ) {
         $this->urid = $urid;
         $this->accid = $accid;
         $this->appid = $appid;
@@ -42,8 +69,7 @@ class UserRole
     /**
      * Get the user role ID.
      *
-     * @return int
-     *   user role ID.
+     * @return integer user role ID.
      */
     public function getUrid()
     {
@@ -53,10 +79,11 @@ class UserRole
     /**
      * Set the user role ID.
      *
-     * @param int $urid
-     *   User role ID.
+     * @param integer $urid User role ID.
+     *
+     * @return void
      */
-    public function setUrid($urid)
+    public function setUrid(int $urid)
     {
         $this->urid = $urid;
     }
@@ -64,8 +91,7 @@ class UserRole
     /**
      * Get the account ID.
      *
-     * @return int
-     *   Account ID.
+     * @return integer Account ID.
      */
     public function getAccid()
     {
@@ -75,10 +101,11 @@ class UserRole
     /**
      * Set the account ID.
      *
-     * @param int $accid
-     *   Account ID.
+     * @param integer $accid Account ID.
+     *
+     * @return void
      */
-    public function setAccid($accid)
+    public function setAccid(int $accid)
     {
         $this->accid = $accid;
     }
@@ -86,8 +113,7 @@ class UserRole
     /**
      * Get the application ID.
      *
-     * @return int
-     *   Application ID.
+     * @return integer Application ID.
      */
     public function getAppid()
     {
@@ -97,10 +123,11 @@ class UserRole
     /**
      * Set the application ID.
      *
-     * @param int $appid
-     *   Application ID.
+     * @param integer $appid Application ID.
+     *
+     * @return void
      */
-    public function setAppid($appid)
+    public function setAppid(int $appid)
     {
         $this->appid = $appid;
     }
@@ -108,8 +135,7 @@ class UserRole
     /**
      * Get the user ID.
      *
-     * @return int
-     *   User ID.
+     * @return integer User ID.
      */
     public function getUid()
     {
@@ -119,10 +145,11 @@ class UserRole
     /**
      * Set the user ID.
      *
-     * @param int $uid
-     *   user ID.
+     * @param integer $uid User ID.
+     *
+     * @return void
      */
-    public function setUid($uid)
+    public function setUid(int $uid)
     {
         $this->uid = $uid;
     }
@@ -130,8 +157,7 @@ class UserRole
     /**
      * Get the role ID.
      *
-     * @return int
-     *   The role ID.
+     * @return integer The role ID.
      */
     public function getRid()
     {
@@ -141,10 +167,11 @@ class UserRole
     /**
      * Set the role ID.
      *
-     * @param int $rid
-     *   The role ID.
+     * @param integer $rid The role ID.
+     *
+     * @return void
      */
-    public function setRid($rid)
+    public function setRid(int $rid)
     {
         $this->rid = $rid;
     }
@@ -152,8 +179,7 @@ class UserRole
     /**
      * Return the user account role as an associative array.
      *
-     * @return array
-     *   Associative array.
+     * @return array Associative array.
      */
     public function dump()
     {

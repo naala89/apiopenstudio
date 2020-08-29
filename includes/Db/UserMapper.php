@@ -1,29 +1,33 @@
 <?php
-
-namespace Gaterdata\Db;
-
-use Gaterdata\Core\ApiException;
-use Gaterdata\Core\Debug;
-use Gaterdata\Core\Utilities;
-
 /**
  * Class UserMapper.
  *
  * @package Gaterdata\Db
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
+
+namespace Gaterdata\Db;
+
+use Gaterdata\Core\ApiException;
+
+/**
+ * Class UserMapper.
+ *
+ * Mapper class for DB calls used for the user table.
  */
 class UserMapper extends Mapper
 {
-
     /**
      * Save the user.
      *
-     * @param User $user
-     *   User object.
+     * @param User $user User object.
      *
-     * @return bool
-     *   Success.
+     * @return boolean Success.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
     public function save(User $user)
     {
@@ -92,13 +96,11 @@ class UserMapper extends Mapper
     /**
      * Delete a user.
      *
-     * @param User $user
-     *   The user object.
+     * @param User $user The user object.
      *
-     * @return bool
-     *   Success.
+     * @return boolean Success.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
     public function delete(User $user)
     {
@@ -110,17 +112,15 @@ class UserMapper extends Mapper
     /**
      * Find all users. If the calling uid does not have elevated access, only return that user.
      *
-     * @param array $uid
-     *   User ID of the current user.
-     * @param array $params
-     *   @see \Gaterdata\Db\Mapper.
+     * @param integer $uid User ID of the current user.
+     * @param array $params Filter parameters.
+     * @see \Gaterdata\Db\Mapper.
      *
-     * @return array
-     *   $array of Users.
+     * @return array $array of Users.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findAllByPermissions($uid, $params = [])
+    public function findAllByPermissions(int $uid, array $params = [])
     {
         $elevatedRoles = ["Administrator", "Account manager", "application manager"];
         $sql = 'SELECT *';
@@ -148,10 +148,9 @@ class UserMapper extends Mapper
     /**
      * Find allUsers
      *
-     * @return array
-     *   User objects.
+     * @return array User objects.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
     public function findAll()
     {
@@ -162,15 +161,13 @@ class UserMapper extends Mapper
     /**
      * Find a user by user ID.
      *
-     * @param int $uid
-     *   User ID.
+     * @param integer $uid User ID.
      *
-     * @return User
-     *   User object.
+     * @return User User object.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByUid($uid)
+    public function findByUid(int $uid)
     {
         $sql = 'SELECT * FROM user WHERE uid = ?';
         $bindParams = [$uid];
@@ -180,15 +177,13 @@ class UserMapper extends Mapper
     /**
      * Find a user by email address.
      *
-     * @param string $email
-     *   Users email.
+     * @param string $email Users email.
      *
-     * @return User
-     *   User object.
+     * @return User User object.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByEmail($email)
+    public function findByEmail(string $email)
     {
         $sql = 'SELECT * FROM user WHERE email = ?';
         $bindParams = [$email];
@@ -198,15 +193,13 @@ class UserMapper extends Mapper
     /**
      * Find user bu username.
      *
-     * @param string $username
-     *   Users usdername.
+     * @param string $username Users usdername.
      *
-     * @return User
-     *   User object.
+     * @return User User object.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByUsername($username)
+    public function findByUsername(string $username)
     {
         $sql = 'SELECT * FROM user WHERE username = ?';
         $bindParams = [$username];
@@ -216,15 +209,13 @@ class UserMapper extends Mapper
     /**
      * Find a user by their auth token.
      *
-     * @param string $token
-     *   User auth token.
+     * @param string $token User auth token.
      *
-     * @return User
-     *   User object.
+     * @return User User object.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findBytoken($token)
+    public function findBytoken(string $token)
     {
         $sql = 'SELECT * FROM user WHERE token = ?';
         $bindParams = [$token];
@@ -234,15 +225,13 @@ class UserMapper extends Mapper
     /**
      * Find a user by their password reset token.
      *
-     * @param string $token
-     *   User auth token.
+     * @param string $token User auth token.
      *
-     * @return User
-     *   User object.
+     * @return User User object.
      *
-     * @throws ApiException
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByPasswordToken($token)
+    public function findByPasswordToken(string $token)
     {
         $sql = 'SELECT * FROM user WHERE password_reset = ?';
         $bindParams = [$token];
@@ -252,11 +241,9 @@ class UserMapper extends Mapper
     /**
      * Map a DB row into a User object.
      *
-     * @param array $row
-     *   DB row object.
+     * @param array $row DB row object.
      *
-     * @return User
-     *   Mapped User object.
+     * @return User Mapped User object.
      */
     protected function mapArray(array $row)
     {

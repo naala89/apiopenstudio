@@ -1,4 +1,13 @@
 <?php
+/**
+ * Main GaterData API entrypoint.
+ *
+ * @package Gaterdata
+ */
+
+?>
+<?php
+
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 use Gaterdata\Core\Config;

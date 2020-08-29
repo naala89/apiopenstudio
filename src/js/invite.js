@@ -1,3 +1,9 @@
+/**
+ * JS for the admin invite page.
+ *
+ * @package Gaterdata
+ */
+
 $(document).ready(function () {
 
     /**

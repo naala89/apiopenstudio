@@ -1,3 +1,9 @@
+/**
+ * JS for the admin user page.
+ *
+ * @package Gaterdata
+ */
+
 $(document).ready(function () {
 
     /**

@@ -1,24 +1,31 @@
 <?php
+/**
+ * Class RoleMapper.
+ *
+ * @package Gaterdata\Db
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Db;
 
 /**
  * Class RoleMapper.
  *
- * @package Gaterdata\Db
+ * Mapper class for DB calls used for the role table.
  */
 class RoleMapper extends Mapper
 {
     /**
      * Save a Role object into the DB.
      *
-     * @param \Gaterdata\Db\Role $role
-     *   Role object.
+     * @param \Gaterdata\Db\Role $role Role object.
      *
-     * @return bool
-     *   Success.
+     * @return boolean Success.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
     public function save(Role $role)
     {
@@ -40,13 +47,11 @@ class RoleMapper extends Mapper
     /**
      * Delete a Role.
      *
-     * @param \Gaterdata\Db\Role $role
-     *   Role object.
+     * @param \Gaterdata\Db\Role $role Role object.
      *
-     * @return bool
-     *   Success.
+     * @return boolean Success.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
     public function delete(Role $role)
     {
@@ -58,14 +63,13 @@ class RoleMapper extends Mapper
     /**
      * Find all roles.
      *
-     * @param array $params
+     * @param array $params Filter parameters.
      *
-     * @return array
-     *   Array of role objects.
+     * @return array Array of role objects.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findAll($params = [])
+    public function findAll(array $params = [])
     {
         $sql = 'SELECT * FROM role';
         return $this->fetchRows($sql, [], $params);
@@ -74,16 +78,14 @@ class RoleMapper extends Mapper
     /**
      * Find a role by its ID.
      *
-     * @param int $rid
-     *   role ID.
+     * @param integer $rid Role ID.
      *
-     * @return \Gaterdata\Db\Role
-     *   Role object.
+     * @return \Gaterdata\Db\Role Role object.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      *
      */
-    public function findByRid($rid)
+    public function findByRid(int $rid)
     {
         $sql = 'SELECT * FROM role WHERE rid = ?';
         $bindParams = [$rid];
@@ -93,15 +95,13 @@ class RoleMapper extends Mapper
     /**
      * Find a role by its name.
      *
-     * @param string $name
-     *   Role name.
+     * @param string $name Role name.
      *
-     * @return \Gaterdata\Db\Role
-     *   Role object.
+     * @return \Gaterdata\Db\Role Role object.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findByName($name)
+    public function findByName(string $name)
     {
         $sql = 'SELECT * FROM role WHERE name = ?';
         $bindParams = [$name];
@@ -111,16 +111,13 @@ class RoleMapper extends Mapper
     /**
      * Find a roles a user has assigned.
      *
-     * @param int $uid
-     *   User ID.
+     * @param integer $uid User ID.
      *
-     * @return array
-     *   Array of role objects.
+     * @return array Array of role objects.
      *
-     * @throws \Gaterdata\Core\ApiException
-     *
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findByUid($uid)
+    public function findByUid(int $uid)
     {
         $sql = 'SELECT DISTINCT r.* FROM role r INNER JOIN user_role ur ON ur.rid = r.rid WHERE ur.uid = ?';
         $bindParams = [$uid];
@@ -130,8 +127,7 @@ class RoleMapper extends Mapper
     /**
      * Map a DB row to the internal attributes.
      *
-     * @param array $row
-     *   DB row.
+     * @param array $row DB row.
      *
      * @return \Gaterdata\Db\Role
      *   Role object.

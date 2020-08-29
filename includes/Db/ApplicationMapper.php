@@ -1,24 +1,31 @@
 <?php
+/**
+ * Class ApplicationMapper.
+ *
+ * @package Gaterdata\Db
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Db;
 
 /**
  * Class ApplicationMapper.
  *
- * @package Gaterdata\Db
+ * Mapper class for DB calls used for the application table.
  */
 class ApplicationMapper extends Mapper
 {
     /**
      * Save an Application object.
      *
-     * @param \Gaterdata\Db\Application $application
-     *   The Applicationm object.
+     * @param \Gaterdata\Db\Application $application The Applicationm object.
      *
-     * @return bool
-     *   Success.
+     * @return boolean Success.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
     public function save(Application $application)
     {
@@ -42,13 +49,11 @@ class ApplicationMapper extends Mapper
     /**
      * Delete an application.
      *
-     * @param \Gaterdata\Db\Application $application
-     *   Application object.
+     * @param \Gaterdata\Db\Application $application Application object.
      *
-     * @return bool
-     *   Success.
+     * @return boolean Success.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
     public function delete(Application $application)
     {
@@ -60,15 +65,13 @@ class ApplicationMapper extends Mapper
     /**
      * Find applications.
      *
-     * @param $params
-     *   Filter params.
+     * @param array $params Filter params.
      *
-     * @return array
-     *   Array of Application objects.
+     * @return array Array of Application objects.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findAll($params = [])
+    public function findAll(array $params = [])
     {
         $sql = 'SELECT * FROM application';
         $bindParams = [];
@@ -78,15 +81,13 @@ class ApplicationMapper extends Mapper
     /**
      * Find application by application ID.
      *
-     * @param int $appid
-     *   Application ID.
+     * @param integer $appid Application ID.
      *
-     * @return \Gaterdata\Db\Application
-     *   Application object.
+     * @return \Gaterdata\Db\Application Application object.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findByAppid($appid)
+    public function findByAppid(int $appid)
     {
         $sql = 'SELECT * FROM application WHERE appid = ?';
         $bindParams = [$appid];
@@ -96,21 +97,14 @@ class ApplicationMapper extends Mapper
     /**
      * Fetch applications for a user.
      *
-     * @param $uid
-     *   User ID.
-     * @param $params
-     *   Filter params.
+     * @param integer $uid User ID.
+     * @param array $params Filter params.
      *
-     * @return array
-     *   Array of Application objects.
-     * @param $params
-     *   Filter params.
+     * @return array Array of Application objects.
      *
-     * @return array
-     *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findByUid($uid, $params)
+    public function findByUid(int $uid, array $params = [])
     {
         $sql = 'SELECT *';
         $sql .= ' FROM application';
@@ -149,17 +143,14 @@ class ApplicationMapper extends Mapper
     /**
      * Find application by account ID and application name.
      *
-     * @param int $accid
-     *   Account ID.
-     * @param string $name
-     *   Application name.
+     * @param integer $accid Account ID.
+     * @param string $name Application name.
      *
-     * @return \Gaterdata\Db\Application
-     *   Application object.
+     * @return \Gaterdata\Db\Application Application object.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findByAccidAppname($accid, $name)
+    public function findByAccidAppname(int $accid, string $name)
     {
         $sql = 'SELECT * FROM application WHERE accid = ? AND name = ?';
         $bindParams = [
@@ -172,15 +163,13 @@ class ApplicationMapper extends Mapper
     /**
      * Find applications by account ID.
      *
-     * @param int $accid
-     *   Account ID.
+     * @param integer $accid Account ID.
      *
-     * @return array
-     *   array of mapped Application objects.
+     * @return array array of mapped Application objects.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findByAccid($accid)
+    public function findByAccid(int $accid)
     {
         $sql = 'SELECT * FROM application WHERE accid = ?';
         $bindParams = [$accid];
@@ -190,24 +179,13 @@ class ApplicationMapper extends Mapper
     /**
      * Find applications by multiple account IDs and/or application names.
      *
-     * @param array $accids
-     *   Array of account IDs.
-     * @param array $accids
-     *   Array of account IDs.
-     * @param array $params
-     *   parameters (optional)
-     *     [
-     *       'keyword' => string,
-     *       'sort_by' => string,
-     *       'direction' => string "ASC"|"DESC",
-     *       'start' => int,
-     *       'limit' => int,
-     *     ]
+     * @param array $accids Array of account IDs.
+     * @param array $appNames Array of account IDs.
+     * @param array $params Parameters (optional).
      *
-     * @return array
-     *   array of mapped Application objects.
+     * @return array array of mapped Application objects.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
     public function findByAccidsAppnames(array $accids = [], array $appNames = [], array $params = [])
     {
@@ -260,11 +238,9 @@ class ApplicationMapper extends Mapper
     /**
      * Map a DB row into an Application object.
      *
-     * @param array $row
-     *   DB row object.
+     * @param array $row DB row object.
      *
-     * @return \Gaterdata\Db\Application
-     *   Application object
+     * @return \Gaterdata\Db\Application Application object
      */
     protected function mapArray(array $row)
     {

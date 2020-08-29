@@ -1,24 +1,31 @@
 <?php
+/**
+ * Class AccountMapper.
+ *
+ * @package Gaterdata\Db
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Db;
 
 /**
  * Class AccountMapper.
  *
- * @package Gaterdata\Db
+ * Mapper class for DB calls used for the account table.
  */
 class AccountMapper extends Mapper
 {
     /**
      * Save an Account.
      *
-     * @param \Gaterdata\Db\Account $account
-     *   Account object.
+     * @param \Gaterdata\Db\Account $account Account object.
      *
-     * @return bool
-     *   Success.
+     * @return boolean Success.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
     public function save(Account $account)
     {
@@ -38,13 +45,11 @@ class AccountMapper extends Mapper
     /**
      * Delete an account.
      *
-     * @param \Gaterdata\Db\Account $account
-     *   Account object.
+     * @param \Gaterdata\Db\Account $account Account object.
      *
-     * @return bool
-     *   Success.
+     * @return boolean Success.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
     public function delete(Account $account)
     {
@@ -56,15 +61,13 @@ class AccountMapper extends Mapper
     /**
      * Find an accounts.
      *
-     * @param array|NULL $params
-     *   @see Gaterdata\Db\Mapper.
+     * @param array $params Filter parameters.
      *
-     * @return array
-     *   array Account objects.
+     * @return array array Account objects.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findAll($params = [])
+    public function findAll(array $params = [])
     {
         $sql = 'SELECT * FROM account';
         return $this->fetchRows($sql, [], $params);
@@ -73,15 +76,13 @@ class AccountMapper extends Mapper
     /**
      * Find an account by ID.
      *
-     * @param int $accid
-     *   Account Id.
+     * @param integer $accid Account Id.
      *
-     * @return \Gaterdata\Db\Account
-     *   Account object.
+     * @return \Gaterdata\Db\Account Account object.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findByAccid($accid)
+    public function findByAccid(int $accid)
     {
         $sql = 'SELECT * FROM account WHERE accid = ?';
         $bindParams = [$accid];
@@ -91,13 +92,11 @@ class AccountMapper extends Mapper
     /**
      * Find accounts by IDs.
      *
-     * @param Array $accids
-     *   Account Ids.
+     * @param array $accids Account Ids.
      *
-     * @return Array
-     *   Array of Account objects.
+     * @return array Array of Account objects.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
     public function findByAccids(array $accids)
     {
@@ -115,15 +114,13 @@ class AccountMapper extends Mapper
     /**
      * Find an account by name.
      *
-     * @param string $name
-     *   Account name.
+     * @param string $name Account name.
      *
-     * @return \Gaterdata\Db\Account
-     *   Account object.
+     * @return \Gaterdata\Db\Account Account object.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findByName($name)
+    public function findByName(string $name)
     {
         $sql = 'SELECT * FROM account WHERE name = ?';
         $bindParams = [$name];
@@ -133,13 +130,11 @@ class AccountMapper extends Mapper
     /**
      * Find an accounts by names.
      *
-     * @param array $names
-     *   Account names.
+     * @param array $names Account names.
      *
-     * @return \Gaterdata\Db\Account
-     *   Account object.
+     * @return \Gaterdata\Db\Account Account object.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
     public function findByNames(array $names = [])
     {
@@ -155,15 +150,14 @@ class AccountMapper extends Mapper
     /**
      * Find an accounts by a user has roles for.
      *
-     * @param integer $uid
-     *   User ID.
+     * @param integer $uid User ID.
+     * @param array $params Filter parameters.
      *
-     * @return Array
-     *   Array of Account objects.
+     * @return array Array of Account objects.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findAllForUser($uid, $params = [])
+    public function findAllForUser(int $uid, array $params = [])
     {
         $sql = 'SELECT *';
         $sql .= ' FROM account';
@@ -194,11 +188,9 @@ class AccountMapper extends Mapper
     /**
      * Map a DB row into an Account object.
      *
-     * @param array $row
-     *   DB row object.
+     * @param array $row DB row object.
      *
-     * @return \Gaterdata\Db\Account
-     *   Account object.
+     * @return \Gaterdata\Db\Account Account object.
      */
     protected function mapArray(array $row)
     {

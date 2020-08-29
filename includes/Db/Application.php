@@ -1,38 +1,46 @@
 <?php
+/**
+ * Class Account.
+ *
+ * @package Gaterdata\Db
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Db;
 
 /**
- * Class Application.
+ * Class Account.
  *
- * @package Gaterdata\Db
+ * DB class for for storing account row data.
  */
 class Application
 {
     /**
-     * @var int Application ID.
+     * @var integer Application ID.
      */
     protected $appid;
+
     /**
-     * @var int Account ID.
+     * @var integer Account ID.
      */
     protected $accid;
+
     /**
-     * @var int Application name.
+     * @var string Application name.
      */
     protected $name;
 
     /**
      * Application constructor.
      *
-     * @param int $appid
-     *   Application ID.
-     * @param int $accid
-     *   Account ID.
-     * @param string $name
-     *   Application name.
+     * @param integer $appid Application ID.
+     * @param integer $accid Account ID.
+     * @param string $name Application name.
      */
-    public function __construct($appid = null, $accid = null, $name = null)
+    public function __construct(int $appid = null, int $accid = null, string $name = null)
     {
         $this->appid = $appid;
         $this->accid = $accid;
@@ -42,8 +50,7 @@ class Application
     /**
      * Get application IOD.
      *
-     * @return int
-     *   Application ID.
+     * @return integer Application ID.
      */
     public function getAppid()
     {
@@ -53,10 +60,11 @@ class Application
     /**
      * Set the application ID.
      *
-     * @param int $appid
-     *   Application ID.
+     * @param integer $appid Application ID.
+     *
+     * @return void
      */
-    public function setAppid($appid)
+    public function setAppid(int $appid)
     {
         $this->appid = $appid;
     }
@@ -64,8 +72,7 @@ class Application
     /**
      * Get the account ID.
      *
-     * @return int
-     *   Account ID.
+     * @return integer Account ID.
      */
     public function getAccid()
     {
@@ -75,10 +82,11 @@ class Application
     /**
      * Set the account ID.
      *
-     * @param int $accid
-     *   Account ID.
+     * @param integer $accid Account ID.
+     *
+     * @return void
      */
-    public function setAccid($accid)
+    public function setAccid(int $accid)
     {
         $this->accid = $accid;
     }
@@ -86,8 +94,7 @@ class Application
     /**
      * Get the application name.
      *
-     * @return int
-     *   Application name.
+     * @return string Application name.
      */
     public function getName()
     {
@@ -97,10 +104,11 @@ class Application
     /**
      * Set the application name.
      *
-     * @param string $name
-     *   Application name.
+     * @param string $name Application name.
+     *
+     * @return void
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -108,15 +116,14 @@ class Application
     /**
      * Return the values as an associative array.
      *
-     * @return array
-     *   Application.
+     * @return array Application.
      */
     public function dump()
     {
         return [
-        'appid' => $this->appid,
-        'accid' => $this->accid,
-        'name' => $this->name,
+            'appid' => $this->appid,
+            'accid' => $this->accid,
+            'name' => $this->name,
         ];
     }
 }

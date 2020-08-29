@@ -4,9 +4,21 @@ Coding standards
 Codesniffer
 -----------
 
-Phpcs is declared in the composer file, so after running `composer install`, you can run:
+The GitLab pipelines runner will run phpcs against any commit or merge resquest.
+Any Merge request or commit that fails the phpcs test will not be accepted.
+So it is worth running phpcs locally before any commit.
 
-`$ ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/`
+`php_codesniffer` will be installed by composer,
+and a custom phpcs ruleset is pre-defined in `./gaterdata_phpcs_rulesset.xml`.
+
+After `composer install` has run, the following command will test your code locally:
+
+    $ ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/ src/scss/ src/js/
+
+Line length
+-----------
+
+A line of code should not exceed 120 characters.
 
 Variables
 ---------
@@ -19,12 +31,12 @@ Processors
 ----------
 
 * machine names should be snake case.
-* names should be uppper case first.
+* names should be upper case first.
 
 Database
 --------
 
-* Table names should be sname case.
+* Table names should be snake case.
 * Column names should be snake case.
 
 Arrays
@@ -35,9 +47,68 @@ Arrays
 Constants
 --------
 
-* all constants and reserved constants (like TRUE, NULL) should be in caps.
+* all constants and reserved constants (e.g. true, false, null) should be in lower case.
 
 Get and Post parameters
 -----------------------
 
-* get and post params should be in camel case. 
+* get and post params should be in snake case. 
+
+Try/catch and if/else
+---------------------
+
+The following curly brackets should not be on a new line. e.g.:
+
+    if (a == b) {
+        // Do something.
+    } else {
+        // Do something else.
+    }
+    
+    try {
+        // Do something.
+    } catch(Excption $e) {
+        // Handle the expection.
+    }
+
+PHPDOC
+------
+
+Standard PHPDOC rules apply.
+
+### file comment
+
+Should be in the following format:
+
+    /**
+     * File description.
+     *
+     * @package ...
+     */
+
+### Function comments
+
+Should be in the following format:
+
+    /**
+     * Short description.
+     * 
+     * Long description(optional).
+     *
+     * @param type $var Parameter comment.
+     *
+     * @return type Comment.
+     * 
+     * @throws \Gaterdata\Core\ApiException Exception comment.
+     */
+
+### Function declarations
+
+Type hints are not required (to accommodate mixed types), but are recommended.
+The curly brackets must be on a new line.
+
+e.g.:
+
+    public function functionName(string $a, int $b, $c)
+    {
+    }

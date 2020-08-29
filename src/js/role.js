@@ -1,6 +1,9 @@
 /**
- * JS for Roles page.
+ * JS for the admin role page.
+ *
+ * @package Gaterdata
  */
+
 $(document).ready(function () {
     $('.modal-role-create-trigger').click(function () {
         var modal = $('#modal-role-create');

@@ -1,3 +1,9 @@
+/**
+ * Generic JS for the admin pages.
+ *
+ * @package Gaterdata
+ */
+
 $(document).ready(function () {
 
     M.AutoInit();

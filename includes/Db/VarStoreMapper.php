@@ -1,24 +1,31 @@
 <?php
+/**
+ * Class VarStoreMapper.
+ *
+ * @package Gaterdata\Db
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Db;
 
 /**
  * Class VarStoreMapper.
  *
- * @package Gaterdata\Db
+ * Mapper class for DB calls used for the var_store table.
  */
 class VarStoreMapper extends Mapper
 {
     /**
      * Save the var.
      *
-     * @param \Gaterdata\Db\VarStore $varStore
-     *   VarStore object.
+     * @param \Gaterdata\Db\VarStore $varStore VarStore object.
      *
-     * @return bool
-     *   Success.
+     * @return boolean Success.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
     public function save(VarStore $varStore)
     {
@@ -45,13 +52,11 @@ class VarStoreMapper extends Mapper
     /**
      * Delete the vars.
      *
-     * @param \Gaterdata\Db\VarStore $varStore
-     *   VarStore object.
+     * @param \Gaterdata\Db\VarStore $varStore VarStore object.
      *
-     * @return bool
-     *   Success.
+     * @return boolean Success.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
     public function delete(VarStore $varStore)
     {
@@ -66,14 +71,13 @@ class VarStoreMapper extends Mapper
     /**
      * Find a var by its ID.
      *
-     * @param int $vid
-     *   Var ID.
+     * @param integer $vid Var ID.
      *
-     * @return array
+     * @return array Array of varStore objects.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findByVId($vid)
+    public function findByVId(int $vid)
     {
         $sql = 'SELECT * FROM `var_store` WHERE `vid` = ?';
         $bindParams = [$vid];
@@ -83,15 +87,13 @@ class VarStoreMapper extends Mapper
     /**
      * Return all vars.
      *
-     * @param array $params
-     *   Filter params.
+     * @param array $params Filter params.
      *
-     * @return array
-     *   Array of varStore objects.
+     * @return array Array of varStore objects.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findAll($params)
+    public function findAll(array $params = [])
     {
         $sql = 'SELECT * FROM var_store';
 
@@ -99,19 +101,16 @@ class VarStoreMapper extends Mapper
     }
 
     /**
-     * Return all vars that a auser has access to.
+     * Return all vars that a a user has access to.
      *
-     * @param integer $uid
-     *   User ID.
-     * @param array $params
-     *   Filter params.
+     * @param integer $uid User ID.
+     * @param array $params Filter params.
      *
-     * @return array
-     *   Array of varStore objects.
+     * @return array Array of varStore objects.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findByUid($uid, $params)
+    public function findByUid(int $uid, array $params = [])
     {
         $sql = 'SELECT *';
         $sql .= ' FROM var_store';
@@ -130,18 +129,15 @@ class VarStoreMapper extends Mapper
     /**
      * Find a var by vid with user/role validation against the var's application.
      *
-     * @param integer $uid
-     *   User ID.
-     * @param string $roles
-     *   Role IDs
-     * @param $vid
-     *   Var ID.
+     * @param integer $uid User ID.
+     * @param array $roles Role IDs.
+     * @param integer $vid Var ID.
      *
-     * @return array
+     * @return array Array of varStore objects.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findByUidRolesVid($uid, $roles, $vid)
+    public function findByUidRolesVid(int $uid, array $roles, int $vid)
     {
         $sql = 'SELECT vs.* FROM `var_store` AS vs';
         $sql .= ' INNER JOIN `user_role` AS ur ON vs.`appid` = ur.`appid`';
@@ -162,18 +158,15 @@ class VarStoreMapper extends Mapper
     /**
      * Find all vars with user/role validation against the vars's application.
      *
-     * @param integer $uid
-     *   User ID.
-     * @param array $roles
-     *   Role names.
-     * @param array $params
-     *   keyword, order and direction.
+     * @param integer $uid User ID.
+     * @param array $roles Role names.
+     * @param array $params Keyword, order and direction.
      *
      * @return array
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findByUidRolesAll($uid, $roles, $params)
+    public function findByUidRolesAll(int $uid, array $roles, array $params)
     {
         $sql = 'SELECT vs.* FROM `var_store` AS vs';
         $sql .= ' INNER JOIN `user_role` AS ur ON vs.`appid` = ur.`appid`';
@@ -193,17 +186,14 @@ class VarStoreMapper extends Mapper
     /**
      * Find a var by application ID and var key.
      *
-     * @param int $appId
-     *   Application ID.
-     * @param string $key
-     *   Var key.
+     * @param integer $appId Application ID.
+     * @param string $key Var key.
      *
-     * @return Mixed
-     *   VarStore object.
+     * @return VarStore VarStore object.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findByAppIdKey($appId, $key)
+    public function findByAppIdKey(int $appId, string $key)
     {
         $sql = 'SELECT * FROM `var_store` WHERE `appid` = ? AND `key` = ?';
         $bindParams = [$appId, $key];
@@ -213,15 +203,13 @@ class VarStoreMapper extends Mapper
     /**
      * Find the vars belonging to an application.
      *
-     * @param int $appId
-     *   Application ID.
+     * @param integer $appId Application ID.
      *
-     * @return array
-     *   Array of VarStore objects.
+     * @return array Array of VarStore objects.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
      */
-    public function findByAppId($appId)
+    public function findByAppId(int $appId)
     {
         $sql = 'SELECT * FROM `var_store` WHERE `appid` = ?';
         $bindParams = [$appId];
@@ -231,11 +219,9 @@ class VarStoreMapper extends Mapper
     /**
      * Map a results row to attributes.
      *
-     * @param array $row
-     *   DB results row.
+     * @param array $row DB results row.
      *
-     * @return VarStore
-     *   Mapped row.
+     * @return VarStore Mapped row.
      */
     protected function mapArray(array $row)
     {
