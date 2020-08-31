@@ -1,16 +1,29 @@
 <?php
-
 /**
- * Post variable
+ * Class VarPost.
+ *
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
 
 use Gaterdata\Core;
 
+/**
+ * Class VarPost
+ *
+ * Processor class to return the post variables in a request.
+ */
 class VarPost extends Core\ProcessorEntity
 {
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -42,6 +55,10 @@ class VarPost extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {

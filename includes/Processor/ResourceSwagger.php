@@ -1,7 +1,13 @@
 <?php
-
 /**
- * Import resources in Swagger YAML format.
+ * Class ResourceSwagger.
+ *
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
@@ -9,8 +15,18 @@ namespace Gaterdata\Processor;
 use Gaterdata\Core;
 use Gaterdata\Db\ResourceMapper;
 
+/**
+ * Class ResourceSwagger
+ *
+ * Processor class to create resource stubs from a swagger file.
+ */
 class ResourceSwagger extends ResourceBase
 {
+    /**
+     * @var array Details of the processor.
+     *
+     * {@inheritDoc}
+     */
     protected $details = [
     'name' => 'Import Swagger',
         'machineName' => 'resourceSwagger',
@@ -29,10 +45,17 @@ class ResourceSwagger extends ResourceBase
         ],
     ];
 
+    /**
+     * @var integer
+     */
     private $paramCount;
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {
@@ -106,9 +129,11 @@ class ResourceSwagger extends ResourceBase
      * The Yaml is either post string 'yaml', or file 'yaml'.
      * File takes precedence over the string if both present.
      *
-     * @param null $data
-     * @return bool
-     * @throws \Gaterdata\Core\ApiException
+     * @param mixed $data String or filename of YAML.
+     *
+     * @return boolean
+     *
+     * @throws Core\ApiException Error.
      */
     protected function save($data)
     {
@@ -138,8 +163,11 @@ class ResourceSwagger extends ResourceBase
     }
 
     /**
+     * Extract YAML data.
+     *
+     * @param mixed $data YAML string.
+     *
      * @return array|string
-     * @throws \Gaterdata\Core\ApiException
      */
     protected function _importData($data)
     {
@@ -148,18 +176,25 @@ class ResourceSwagger extends ResourceBase
 
     /**
      * {@inheritDoc}
+     *
+     * @param mixed $data Input data.
+     *
+     * @return mixed
      */
-    protected function _exportData($data)
+    protected function _exportData()
     {
-
     }
 
     /**
-     * @param $uriParams
+     * Extract URI parameters.
+     *
+     * @param array $uriParams Array of URI parameters.
+     *
      * @return array
-     * @throws \Gaterdata\Core\ApiException
+     *
+     * @throws \Gaterdata\Core\ApiException Error.
      */
-    protected function _extractUriParams($uriParams)
+    protected function _extractUriParams(array $uriParams)
     {
         $result = array();
         foreach ($uriParams as $key => $val) {
@@ -177,12 +212,16 @@ class ResourceSwagger extends ResourceBase
     }
 
     /**
-     * @param $parameters
-     * @param $method
+     * Extract parameters.
+     *
+     * @param array $parameters Array of parameters.
+     * @param string $method Resource method.
+     *
      * @return array
-     * @throws \Gaterdata\Core\ApiException
+     *
+     * @throws Core\ApiException Error.
      */
-    protected function _extractParameters($parameters, $method)
+    protected function _extractParameters(array $parameters, string $method)
     {
         $result = [];
         foreach ($parameters as $parameter) {

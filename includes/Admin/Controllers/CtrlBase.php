@@ -1,8 +1,19 @@
 <?php
+/**
+ * Class CtrlBase.
+ *
+ * @package Gaterdata
+ * @subpackage Admin\Controllers
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Admin\Controllers;
 
 use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\GuzzleException;
 use Slim\Flash\Messages;
 use Slim\Views\Twig;
 use Slim\Collection;
@@ -12,7 +23,7 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * Class CtrlBase.
  *
- * @package Gaterdata\Admin\Controllers
+ * Base controller for the all GaterData PHP Slim pages..
  */
 class CtrlBase
 {
@@ -72,12 +83,9 @@ class CtrlBase
     /**
      * Base constructor.
      *
-     * @param Collection $settings
-     *   Settings array.
-     * @param Twig $view
-     *   View container.
-     * @param Messages $flash
-     *   Flash messages container.
+     * @param Collection $settings Settings array.
+     * @param Twig $view View container.
+     * @param Messages $flash Flash messages container.
      */
     public function __construct(Collection $settings, Twig $view, Messages $flash)
     {
@@ -89,18 +97,15 @@ class CtrlBase
     /**
      * Make an API call.
      *
-     * @param string $method
-     *   Resource method.
-     * @param string $uri
-     *   Resource URI. This is the string after <domain>/<account>/<application>/.
-     * @param array $requestOptions
-     *   Request optionsL query params, header, etc.
+     * @param string $method Resource method.
+     * @param string $uri Resource URI. This is the string after <domain>/<account>/<application>/.
+     * @param array $requestOptions Request optionsL query params, header, etc.
      *
      * @return ResponseInterface
      *
-     * @throws \Exception
+     * @throws \Exception API call returned an exception, unify into a single Exception type.
      */
-    public function apiCall($method, $uri, $requestOptions = [])
+    public function apiCall(string $method, string $uri, array $requestOptions = [])
     {
         try {
             $requestOptions['protocols'] = $this->settings['api']['protocols'];
@@ -119,18 +124,27 @@ class CtrlBase
                     throw new \Exception($this->getErrorMessage($e));
                     break;
             }
+        } catch (GuzzleException $e) {
+            $result = $e->getResponse();
+            switch ($result->getStatusCode()) {
+                case 401:
+                    throw new \Exception('Unauthorised');
+                    break;
+                default:
+                    throw new \Exception($this->getErrorMessage($e));
+                    break;
+            }
         }
     }
 
     /**
      * Fetch all user roles for a user.
      *
-     * @param integer $uid
-     *   User ID.
+     * @param integer $uid User ID.
      *
      * @return array|mixed
      */
-    protected function apiCallUserRoles($uid)
+    protected function apiCallUserRoles(int $uid)
     {
         $userRoles = [];
         try {
@@ -174,8 +188,7 @@ class CtrlBase
     /**
      * Fetch all Accounts.
      *
-     * @param array $params
-     *   Sort params.
+     * @param array $params Sort params.
      *
      * @return array|mixed
      */
@@ -206,10 +219,9 @@ class CtrlBase
     /**
      * Fetch all applications from the API.
      *
-     * @param array $params
-     *   Sort params.
+     * @param array $params Sort params.
      *
-     * @return array|mixed
+     * @return array
      */
     protected function apiCallApplicationAll(array $params = [])
     {
@@ -237,8 +249,7 @@ class CtrlBase
     /**
      * Fetch the access rights for a user.
      *
-     * @param integer $uid
-     *    User ID.
+     * @param integer $uid User ID.
      *
      * @return array user access rights.
      *   [
@@ -248,12 +259,10 @@ class CtrlBase
      *       ],
      *     ],
      *   ]
-     *
-     * @throws \Exception
      */
-    private function getAccessRights($uid = 0)
+    private function getAccessRights(int $uid = null)
     {
-        if ($uid == 0) {
+        if (empty($uid)) {
             $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
         }
         $userRoles = $this->apiCallUserRoles($uid);
@@ -274,8 +283,6 @@ class CtrlBase
      *
      * @return array
      *   [<rid> => <rolename>]
-     *
-     * @throws \Exception
      */
     private function getRoles()
     {
@@ -295,14 +302,11 @@ class CtrlBase
     /**
      * Get accounts for the user.
      *
-     * @param array $params
-     *   Sort and filter params.
+     * @param array $params Sort and filter params.
      *
-     * @return array
-     *   Array of account names that the user has permissions for
+     * @return array Array of account names that the user has permissions for.
+     * Example:
      *   [<accid> => <account_name>]
-     *
-     * @throws \Exception
      */
     private function getAccounts(array $params = [])
     {
@@ -329,19 +333,16 @@ class CtrlBase
     /**
      * Get applications for the user.
      *
-     * @param array $params
-     *   Sort and filter params.
+     * @param array $params Sort and filter params.
      *
-     * @return array
-     *   Array of applications and the account they belong to:
+     * @return array Array of applications the user has rights to.
+     * Example:
      *     [
      *       appid => [
      *         'name' => <app_name>,
      *         'accid' => <accid>,
      *       ],
      *     ]
-     *
-     * @throws \Exception
      */
     protected function getApplications(array $params = [])
     {
@@ -374,10 +375,7 @@ class CtrlBase
     /**
      * Validate user access by role.
      *
-     * @return bool
-     *   Access validated.
-     *
-     * @throws \Exception
+     * @return boolean Access validated.
      */
     protected function checkAccess()
     {
@@ -403,10 +401,7 @@ class CtrlBase
     /**
      * Get available menu items for user's roles.
      *
-     * @return array
-     *   Associative array of menu titles and links.
-     *
-     * @throws \Exception
+     * @return array Associative array of menu titles and links.
      */
     protected function getMenus()
     {
@@ -466,11 +461,11 @@ class CtrlBase
 
         return $menus;
     }
-  
+
     /**
      * Get an error message from a API call exception.
      *
-     * @param  mixed $e
+     * @param mixed $e Exception.
      *
      * @return string
      */

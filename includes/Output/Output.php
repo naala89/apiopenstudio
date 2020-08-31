@@ -1,10 +1,27 @@
 <?php
+/**
+ * Class Output.
+ *
+ * @package Gaterdata
+ * @subpackage Output
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Output;
 
 use Gaterdata\Core;
 use Gaterdata\Config;
+use Monolog\Logger;
+use phpDocumentor\Reflection\Types\Boolean;
 
+/**
+ * Class Output
+ *
+ * Outputs base class.
+ */
 abstract class Output extends Core\ProcessorEntity
 {
     /**
@@ -34,16 +51,13 @@ abstract class Output extends Core\ProcessorEntity
 
     /**
      * Output constructor.
-     * @param mixed $data
-     *     Output data.
-     * @param integer $status
-     *     Output status.
-     * @param \Monolog\Logger $logger
-     *     Output status.
-     * @param mixed|null $meta
-     *     Output meta.
+     *
+     * @param mixed $data Output data.
+     * @param integer $status Output status.
+     * @param \Monolog\Logger $logger Output status.
+     * @param mixed|null $meta Output meta.
      */
-    public function __construct($data, $status, $logger, $meta = null)
+    public function __construct($data, int $status, Logger $logger, $meta = null)
     {
         $this->settings = new Core\Config();
         $this->status = $status;
@@ -54,6 +68,10 @@ abstract class Output extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Throw an exception if unable to precess the output.
      */
     public function process()
     {
@@ -92,7 +110,9 @@ abstract class Output extends Core\ProcessorEntity
     }
 
     /**
-     * Set the Content-Type header .
+     * Set the Content-Type header.
+     *
+     * @return void
      */
     public function setHeader()
     {
@@ -101,6 +121,8 @@ abstract class Output extends Core\ProcessorEntity
 
     /**
      * Set the response status code.
+     *
+     * @return void
      */
     public function setStatus()
     {
@@ -109,7 +131,8 @@ abstract class Output extends Core\ProcessorEntity
 
     /**
      * Calculate the Content-Type.
-     * @return string
+     *
+     * @return string The data type.
      */
     protected function calcType()
     {
@@ -132,8 +155,10 @@ abstract class Output extends Core\ProcessorEntity
 
     /**
      * Get the data.
+     *
      * @return mixed
-     * @throws Core\ApiException
+     *
+     * @throws Core\ApiException Throw an exception if unable to convert the data.
      */
     protected function getData()
     {
@@ -178,11 +203,13 @@ abstract class Output extends Core\ProcessorEntity
     }
 
     /**
-     * Convert a data containers to a value.
+     * Convert incoming to a final value.
      *
-     * @param $data
+     * This includes a DataContainer and array of DataContainer.
      *
-     * @return mixed
+     * @param mixed $data Incoming data.
+     *
+     * @return mixed outgoing data.
      */
     private function _dataContainer2value(&$data)
     {
@@ -207,71 +234,89 @@ abstract class Output extends Core\ProcessorEntity
     /**
      * Convert a data item to boolean.
      * This is specific to each output processor.
-     * @param $data
+     *
+     * @param boolean $data The data to convert.
+     *
      * @return mixed
      */
-    abstract protected function fromBoolean(&$data);
+    abstract protected function fromBoolean(bool &$data);
 
     /**
      * Convert a data item to integer.
      * This is specific to each output processor.
-     * @param $data
+     *
+     * @param integer $data The data to convert.
+     *
      * @return mixed
      */
-    abstract protected function fromInteger(&$data);
+    abstract protected function fromInteger(int &$data);
 
     /**
      * Convert a data item to float.
      * This is specific to each output processor.
-     * @param $data
+     *
+     * @param float $data The data to convert.
+     *
      * @return mixed
      */
-    abstract protected function fromFloat(&$data);
+    abstract protected function fromFloat(float &$data);
 
     /**
      * Convert a data item to text.
      * This is specific to each output processor.
-     * @param $data
+     *
+     * @param string $data The data to convert.
+     *
      * @return mixed
      */
-    abstract protected function fromText(&$data);
+    abstract protected function fromText(string &$data);
 
     /**
      * Convert a data item to array.
      * This is specific to each output processor.
-     * @param $data
+     *
+     * @param array $data The data to convert.
+     *
      * @return mixed
      */
-    abstract protected function fromArray(&$data);
+    abstract protected function fromArray(array &$data);
 
     /**
      * Convert a data item to json.
      * This is specific to each output processor.
-     * @param $data
+     *
+     * @param string $data The data to convert.
+     *
      * @return mixed
      */
-    abstract protected function fromJson(&$data);
+    abstract protected function fromJson(string &$data);
 
     /**
      * Convert a data item to xml.
      * This is specific to each output processor.
-     * @param $data
+     *
+     * @param string $data The data to convert.
+     *
      * @return mixed
      */
-    abstract protected function fromXml(&$data);
+    abstract protected function fromXml(string &$data);
 
     /**
      * Convert a data item to html.
      * This is specific to each output processor.
-     * @param $data
+     *
+     * @param string $data The data to convert.
+     *
      * @return mixed
      */
-    abstract protected function fromHtml(&$data);
+    abstract protected function fromHtml(string &$data);
 
     /**
      * Convert a data item to image.
      * This is specific to each output processor.
-     * @param $data
+     *
+     * @param mixed $data The data to convert.
+     *
      * @return mixed
      */
     abstract protected function fromImage(&$data);

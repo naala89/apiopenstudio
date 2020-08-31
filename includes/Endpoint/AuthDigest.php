@@ -1,16 +1,29 @@
 <?php
-
 /**
- * Provide Digest username/ Password authentication
+ * Class AuthDigest.
+ *
+ * @package Gaterdata
+ * @subpackage Endpoint
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Endpoint;
 
 use Gaterdata\Core;
 
+/**
+ * Class AuthDigest
+ *
+ * Provide Digest authentication to a resource.
+ */
 class AuthDigest extends Core\ProcessorEntity
 {
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -42,6 +55,8 @@ class AuthDigest extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
      */
     public function process()
     {

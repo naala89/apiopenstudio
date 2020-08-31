@@ -1,57 +1,68 @@
 #!/usr/bin/php -q
 <?php
 /**
- * Class CLIScript
+ * Class CLIScript.
  *
- * This is the base class for an asynchronous solution within PHP.
- *
- * The main code generates a command string in the form of
- * "php script.php -option1 value1 --flag1 --flag2 argument1 argument2"
- *
- * script.php instantiates the child class of CLIScript, and then calls child_class->exec();
- *
- * exec arguments are stored as:
- * $this->exec script being called
- * $this->options argv -options as an associated array of $this->options => val
- * $this->flags argv --flag
- * $this->arguments argv argument
- *
- * $argmap defines the options, flags and arguments
- * $argMap['options']['required'] bool option required y/n
- * $argMap['options']['multiple'] bool option can have more than 1 value y/n
- * $argMap['options']['permittedValues'] array permitted option values
- * $argMap['options']['default'] default value
- *
- * The use of default value is for params that are not required in the script call, but actually need a value.
- * i.e. default value.
+ * @package Gaterdata
+ * @subpackage Core\Cli
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Core\Cli;
 
 use Gaterdata\Core\Config;
-use Monolog\Logger;
 
+/**
+ * Class CLIScript
+ *
+ * Run a PHP class as a bash command.
+ * This prevents PHP or browser timeout.
+ */
 abstract class CLIScript
 {
+    /**
+     * @var array Current executed arg.
+     */
     protected $exec;
+
+    /**
+     * @var array Command options.
+     */
     protected $options;
+
+    /**
+     * @var array Command flags.
+     */
     protected $flags;
+
+    /**
+     * @var array Command args.
+     */
     protected $arguments;
+
+    /**
+     * @var array Command argument map.
+     */
     protected $argMap;
 
     /**
-     * constructor
+     * CLIScript constructor.
      */
     public function __construct()
     {
     }
 
     /**
-     * load arguments for the function
-     * @param $argv
+     * Load arguments for the function.
+     *
+     * @param array $argv CLI args.
+     *
      * @return void
      */
-    public function load($argv)
+    public function load(array $argv)
     {
         if (isset($argv[1]) && ($argv[1] == '--help' || $argv[1] == '-h')) {
             $this->help();
@@ -63,11 +74,13 @@ abstract class CLIScript
     }
 
     /**
-     * execute the function
-     * @param void
+     * Execute the function.
+     *
+     * @param array $argv CLI args.
+     *
      * @return void
      */
-    public function exec($argv = null)
+    public function exec(array $argv = null)
     {
         if (!empty($argv)) {
             $this->load($argv);
@@ -75,8 +88,8 @@ abstract class CLIScript
     }
 
     /**
-     * abstract function help
-     * @param void
+     * Abstract function help.
+     *
      * @return void
      */
     protected function help()
@@ -85,11 +98,13 @@ abstract class CLIScript
     }
 
     /**
-     * helper function to die
-     * @param string $msg log message
+     * Helper function to die.
+     *
+     * @param string $msg Log message.
+     *
      * @return void
      */
-    protected function timeToDie($msg)
+    protected function timeToDie(string $msg)
     {
         if (is_array($msg)) {
             foreach ($msg as $m) {
@@ -102,8 +117,8 @@ abstract class CLIScript
     }
 
     /**
-     * validate supplied options
-     * @param void
+     * Validate supplied options.
+     *
      * @return void
      */
     private function _validateOptions()
@@ -119,8 +134,8 @@ abstract class CLIScript
     }
 
     /**
-     * validate supplied flags
-     * @param void
+     * Validate supplied flags.
+     *
      * @return void
      */
     private function _validateFlags()
@@ -133,12 +148,14 @@ abstract class CLIScript
     }
 
     /**
-     * validate all required options are present
-     * @param $opt
-     * @param $index
+     * Validate all required options are present.
+     *
+     * @param string $opt Option name.
+     * @param mixed $index Option index.
+     *
      * @return void
      */
-    private function _validateRequired($opt, $index)
+    private function _validateRequired(string $opt, $index)
     {
         $error = false;
         $messages = array();
@@ -154,12 +171,14 @@ abstract class CLIScript
     }
 
     /**
-     * validate all supplied arguments are allowed
-     * @param $name
-     * @param $index
+     * Validate all supplied arguments are allowed.
+     *
+     * @param string $name Arg name.
+     * @param mixed $index Arg index.
+     *
      * @return void
      */
-    private function _validateAllowed($name, $index)
+    private function _validateAllowed(string $name, $index)
     {
         $error = false;
         $messages = array();
@@ -173,13 +192,15 @@ abstract class CLIScript
     }
 
     /**
-     * validate any supplied arguments with multiple values are allowed
-     * @param $name
-     * @param $value
-     * @param $index
+     * Validate any supplied arguments with multiple values are allowed.
+     *
+     * @param string $name Arg name.
+     * @param mixed $value Arg value.
+     * @param mixed $index Arg index.
+     *
      * @return void
      */
-    private function _validateMultiple($name, $value, $index)
+    private function _validateMultiple(string $name, $value, $index)
     {
         $error = false;
         $messages = array();
@@ -193,13 +214,15 @@ abstract class CLIScript
     }
 
     /**
-     * validate against any permitted value restrictions
-     * @param $name
-     * @param $value
-     * @param $index
+     * Validate against any permitted value restrictions.
+     *
+     * @param string $name Arg name.
+     * @param mixed $value Arg value.
+     * @param mixed $index Arg index.
+     *
      * @return void
      */
-    private function _validatePermitted($name, $value, $index)
+    private function _validatePermitted(string $name, $value, $index)
     {
         $error = false;
         $messages = array();
@@ -220,11 +243,13 @@ abstract class CLIScript
     }
 
     /**
-     * parse and store arguments
-     * @param $args
+     * Parse and store arguments.
+     *
+     * @param array $args Cli arguments.
+     *
      * @return void
      */
-    private function _getArgs($args)
+    private function _getArgs(array $args)
     {
         $arguments = $args;
         $this->exec = array_shift($arguments);
@@ -279,9 +304,11 @@ abstract class CLIScript
     }
 
     /**
-     * either store value as single value or array of values
-     * @param $index
-     * @param $value
+     * Either store value as single value or array of values
+     *
+     * @param mixed $index Option index.
+     * @param mixed $value Option value.
+     *
      * @return void
      */
     private function getValues($index, $value)

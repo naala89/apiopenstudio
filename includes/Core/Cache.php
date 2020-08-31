@@ -1,40 +1,79 @@
 <?php
+/**
+ * Class Cache.
+ *
+ * @package Gaterdata
+ * @subpackage Core
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Core;
+
+use Monolog\Logger;
 
 /**
  * Class Cache
  *
- * allow storing values in the cache.
+ * Allow storing values in the cache.
  */
 class Cache
 {
-
     /**
      * @var \Monolog\Logger
      */
     private $logger;
 
+    /**
+     * @var string[] Liust of supported caches.
+     */
     private $caches = ['memcache', 'apc'];
+
+    /**
+     * @var mixed Cache object.
+     */
     private $cacheObj;
+
+    /**
+     * @var string Caching to use.
+     */
     private $cacheType;
+
+    /**
+     * @var boolean Active status of cache.
+     */
     private $cacheActive;
 
-    public $host = '127.0.0.1';
-    public $port = '11211';
+    /**
+     * @var string Cache host.
+     */
+    public $host;
+
+    /**
+     * @var string Cache port.
+     */
+    public $port;
 
   /**
    * Constructor.
    *
-   * @param Monolog\Logger $logger
-   * @param bool $cache
-   *    False means do not cache
-   *    True means select first available caching system
-   *    String means select the specified caching system
-   * @return bool
+   * @param array $config Config array.
+   * @param Monolog\Logger $logger Logging object.
+   * @param boolean $cache Set cache on or off.
+   *
+   *    False means do not cache.
+   *    True means select first available caching system.
+   *    String means select the specified caching system.
+   *
+   * @return boolean
    */
-    public function __construct($logger, $cache = true)
+    public function __construct(array $config, Logger $logger, bool $cache = null)
     {
+        $cache = empty($cache) ? false : $cache;
+        $this->host = $config['api']['cache_host'];
+        $this->port = $config['api']['cache_port'];
         $this->logger = $logger;
         $this->logger->debug('cache setup request: ' . print_r($cache, false));
         $this->cacheActive = false;
@@ -70,15 +109,12 @@ class Cache
   /**
    * Store a value in the cache
    *
-   * @param $key
-   * @param $val
-   * @param $ttl
-   *    time to live (in seconds)
-   *    0|-1 = no cache
-   * @return bool
-   *    success
+   * @param string $key Cache key.
+   * @param mixed $val Value to store.
+   * @param integer $ttl Cache TTL. Time to live (in seconds). 0|-1 = no cache.
+   * @return boolean
    */
-    public function set($key, $val, $ttl)
+    public function set(string $key, $val, int $ttl)
     {
         if (!$this->cacheActive || $ttl < 1) {
             $this->logger->info('not caching');
@@ -99,11 +135,10 @@ class Cache
   /**
    * Fetch a value from the cache
    *
-   * @param $key
-   * @return mixed
-   *    results on success, false on failure
+   * @param string $key Get value for a cache key.
+   * @return mixed results on success, false on failure
    */
-    public function get($key)
+    public function get(string $key)
     {
         if (!$this->cacheActive) {
             return null;
@@ -115,6 +150,11 @@ class Cache
         return null;
     }
 
+    /**
+     * Clear cache.
+     *
+     * @return false|null
+     */
     public function clear()
     {
         $this->logger->notice('clearing cache');
@@ -132,7 +172,7 @@ class Cache
   /**
    * Return the status of cache (active or inactive).
    *
-   * @return mixed
+   * @return boolean
    */
     public function cacheActive()
     {
@@ -142,7 +182,7 @@ class Cache
   /**
    * Setup MemCache, based on params passed in setup()
    *
-   * @return bool
+   * @return boolean
    */
     private function setupMemcache()
     {
@@ -167,12 +207,13 @@ class Cache
   /**
    * Store a value in MemCache
    *
-   * @param $key
-   * @param $val
-   * @param $ttl
-   * @return bool
+   * @param string $key Memcache cache key.
+   * @param mixed $val Value to store in Memcache.
+   * @param integer $ttl Cache TTL.
+   *
+   * @return boolean
    */
-    private function setMemcache($key, $val, $ttl)
+    private function setMemcache(string $key, $val, int $ttl)
     {
         return $this->cacheObj->set($key, $val, $ttl);
     }
@@ -180,10 +221,11 @@ class Cache
   /**
    * Fetch a value from MemCache
    *
-   * @param $key
+   * @param string $key Memcache cache key.
+   *
    * @return mixed
    */
-    private function getMemcache($key)
+    private function getMemcache(string $key)
     {
         return $this->cacheObj->get($key);
     }
@@ -191,7 +233,7 @@ class Cache
   /**
    * Clear the MmeCache cache.
    *
-   * @return bool
+   * @return boolean
    */
     private function clearMemcache()
     {
@@ -201,7 +243,7 @@ class Cache
   /**
    * Setup APC, based on params passed in setup()
    *
-   * @return mixed
+   * @return boolean
    */
     private function setupApc()
     {
@@ -222,12 +264,13 @@ class Cache
   /**
    * Store a value in APC
    *
-   * @param $key
-   * @param $val
-   * @param $ttl
-   * @return bool
+   * @param string $key APC cache key.
+   * @param mixed $val Value to cache.
+   * @param integer $ttl TTL.
+   *
+   * @return boolean
    */
-    private function setApc($key, $val, $ttl)
+    private function setApc(string $key, $val, int $ttl)
     {
         return apc_store($key, $val, $ttl);
     }
@@ -235,10 +278,11 @@ class Cache
   /**
    * Fetch a value from APC
    *
-   * @param $key
+   * @param string $key APC cache key.
+   *
    * @return mixed
    */
-    private function getApc($key)
+    private function getApc(string $key)
     {
         return apc_fetch($key);
     }
@@ -246,7 +290,7 @@ class Cache
   /**
    * Clear the APC cache.
    *
-   * @return bool
+   * @return boolean
    */
     private function clearApc()
     {

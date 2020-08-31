@@ -22,10 +22,10 @@ before_script:
   - php -r "unlink('composer-setup.php');"
   - php composer.phar install
 
-#phpcs:
-#  stage: test
-#  script:
-#    - ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/ src/scss/ src/js/
+phpcs:
+  stage: test
+  script:
+    - ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/ src/scss/ src/js/
 
 #funtional_tests:
 #  stage: test

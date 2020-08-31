@@ -1,26 +1,43 @@
 <?php
-
 /**
- * Provide token authentication based on token.
+ * Class Token.
+ *
+ * @package Gaterdata
+ * @subpackage Security
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Security;
 
 use Gaterdata\Core;
 use Gaterdata\Db;
+use Monolog\Logger;
 
+/**
+ * Class Token
+ *
+ * Provide valid token authentication.
+ */
 class Token extends Core\ProcessorEntity
 {
-    protected $role = false;
     /**
-     * {@inheritDoc}
+     * @var mixed
      */
+    protected $role = false;
 
     /**
      * @var Db\UserMapper
      */
     protected $userMapper;
 
+    /**
+     * @var array Details of the processor.
+     *
+     * {@inheritDoc}
+     */
     protected $details = [
         'name' => 'Token',
         'machineName' => 'token',
@@ -40,9 +57,14 @@ class Token extends Core\ProcessorEntity
     ];
 
     /**
-     * {@inheritDoc}
+     * Token constructor.
+     *
+     * @param mixed $meta The processor metadata.
+     * @param mixed $request Request object.
+     * @param \ADODB_mysqli $db Database object.
+     * @param \Monolog\Logger $logger Logger object.
      */
-    public function __construct($meta, &$request, $db, $logger)
+    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->userMapper = new Db\UserMapper($db);
@@ -50,6 +72,10 @@ class Token extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {

@@ -2,10 +2,11 @@
 /**
  * Class UserMapper.
  *
- * @package Gaterdata\Db
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @package Gaterdata
+ * @subpackage Db
  * @author john89
  * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
  * @link https://gaterdata.com
  */
 
@@ -248,28 +249,28 @@ class UserMapper extends Mapper
     protected function mapArray(array $row)
     {
         $user = new User();
-        $user->setUid(!empty($row['uid']) ? $row['uid'] : null);
-        $user->setActive(!empty($row['active']) ? $row['active'] : null);
-        $user->setUsername(!empty($row['username']) ? $row['username'] : null);
-        $user->setHash(!empty($row['hash']) ? $row['hash'] : null);
-        $user->setToken(!empty($row['token']) ? $row['token'] : null);
-        $user->setTokenTtl(!empty($row['token_ttl']) ? $row['token_ttl'] : null);
-        $user->setEmail(!empty($row['email']) ? $row['email'] : null);
-        $user->setHonorific(!empty($row['honorific']) ? $row['honorific'] : null);
-        $user->setNameFirst(!empty($row['name_first']) ? $row['name_first'] : null);
-        $user->setNameLast(!empty($row['name_last']) ? $row['name_last'] : null);
-        $user->setCompany(!empty($row['company']) ? $row['company'] : null);
-        $user->setWebsite(!empty($row['website']) ? $row['website'] : null);
-        $user->setAddressStreet(!empty($row['address_street']) ? $row['address_street'] : null);
-        $user->setAddressSuburb(!empty($row['address_suburb']) ? $row['address_suburb'] : null);
-        $user->setAddressCity(!empty($row['address_city']) ? $row['address_city'] : null);
-        $user->setAddressState(!empty($row['address_state']) ? $row['address_state'] : null);
-        $user->setAddressCountry(!empty($row['address_country']) ? $row['address_country'] : null);
-        $user->setAddressPostcode(!empty($row['address_postcode']) ? $row['address_postcode'] : null);
-        $user->setPhoneMobile(!empty($row['phone_mobile']) ? $row['phone_mobile'] : null);
-        $user->setPhoneWork(!empty($row['phone_work']) ? $row['phone_work'] : null);
-        $user->setPasswordReset(!empty($row['password_reset']) ? $row['password_reset'] : null);
-        $user->setPasswordResetTtl(!empty($row['password_reset_ttl']) ? $row['password_reset_ttl'] : null);
+        $user->setUid(!empty($row['uid']) ? $row['uid'] : 0);
+        $user->setActive(!empty($row['active']) ? $row['active'] : 0);
+        $user->setUsername(!empty($row['username']) ? $row['username'] : '');
+        $user->setHash(!empty($row['hash']) ? $row['hash'] : '');
+        $user->setToken(!empty($row['token']) ? $row['token'] : '');
+        $user->setTokenTtl(!empty($row['token_ttl']) ? $row['token_ttl'] : '');
+        $user->setEmail(!empty($row['email']) ? $row['email'] : '');
+        $user->setHonorific(!empty($row['honorific']) ? $row['honorific'] : '');
+        $user->setNameFirst(!empty($row['name_first']) ? $row['name_first'] : '');
+        $user->setNameLast(!empty($row['name_last']) ? $row['name_last'] : '');
+        $user->setCompany(!empty($row['company']) ? $row['company'] : '');
+        $user->setWebsite(!empty($row['website']) ? $row['website'] : '');
+        $user->setAddressStreet(!empty($row['address_street']) ? $row['address_street'] : '');
+        $user->setAddressSuburb(!empty($row['address_suburb']) ? $row['address_suburb'] : '');
+        $user->setAddressCity(!empty($row['address_city']) ? $row['address_city'] : '');
+        $user->setAddressState(!empty($row['address_state']) ? $row['address_state'] : '');
+        $user->setAddressCountry(!empty($row['address_country']) ? $row['address_country'] : '');
+        $user->setAddressPostcode(!empty($row['address_postcode']) ? $row['address_postcode'] : '');
+        $user->setPhoneMobile(!empty($row['phone_mobile']) ? $row['phone_mobile'] : '');
+        $user->setPhoneWork(!empty($row['phone_work']) ? $row['phone_work'] : '');
+        $user->setPasswordReset(!empty($row['password_reset']) ? $row['password_reset'] : '');
+        $user->setPasswordResetTtl(!empty($row['password_reset_ttl']) ? $row['password_reset_ttl'] : '');
         return $user;
     }
 }

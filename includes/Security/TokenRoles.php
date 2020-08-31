@@ -1,20 +1,37 @@
 <?php
+/**
+ * Class TokenRoles.
+ *
+ * @package Gaterdata
+ * @subpackage Security
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Security;
 
 use Gaterdata\Core;
-use Gaterdata\Core\Debug;
 use Gaterdata\Db;
 
 /**
- * Provide token authentication based on token and the multiple user roles.
+ * Class TokenRoles
+ *
+ * Provide token authentication based and the user's role.
+ *
+ * Validation:
+ *   * If user is Administrator then only against role.
+ *   * If user is Account manager then against role and account.
+ *   * All others against role and application.
  */
-
 class TokenRoles extends TokenRole
 {
-  /**
-   * {@inheritDoc}
-   */
+    /**
+     * @var array Details of the processor.
+     *
+     * {@inheritDoc}
+     */
     protected $details = [
         'name' => 'Token (Roles)',
         'machineName' => 'token_roles',
@@ -64,6 +81,10 @@ class TokenRoles extends TokenRole
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {
@@ -90,7 +111,7 @@ class TokenRoles extends TokenRole
         $roleNames = $this->val('roles', true);
         foreach ($roleNames as $roleName) {
             if ($this->validateUser($uid, $roleName, $validateAccount, $validateApplication) == true) {
-                return true;
+                return new Core\DataContainer(true, 'boolean');
             }
         }
 

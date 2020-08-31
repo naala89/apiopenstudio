@@ -1,15 +1,32 @@
 <?php
+/**
+ * Class Plain.
+ *
+ * @package Gaterdata
+ * @subpackage Output
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Output;
 
+/**
+ * Class Plain
+ *
+ * Outputs the results as plain text.
+ */
 class Plain extends Text
 {
     /**
-     * {@inheritDoc}
+     * @var string The string to contain the content type header value.
      */
     protected $header = 'Content-Type:text/plain';
 
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -51,82 +68,12 @@ class Plain extends Text
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
      */
     public function process()
     {
         $this->logger->info('Output: ' . $this->details()['machineName']);
         return parent::process();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function fromBoolean(&$data)
-    {
-        return $data ? 'true' : 'false';
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function fromInteger(&$data)
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function fromFloat(&$data)
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function fromXml(&$data)
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function fromHtml(&$data)
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function fromText(&$data)
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function fromArray(&$data)
-    {
-        return json_encode($data);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function fromJson(&$data)
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function fromImage(&$data)
-    {
-        return $data;
     }
 }

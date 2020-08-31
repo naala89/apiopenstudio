@@ -1,4 +1,14 @@
 <?php
+/**
+ * Class Email.
+ *
+ * @package Gaterdata
+ * @subpackage Output
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Output;
 
@@ -10,7 +20,8 @@ use Swift_SmtpTransport;
 
 /**
  * Class Email
- * @package Gaterdata\Output
+ *
+ * Outputs the results as an email.
  */
 class Email extends Output
 {
@@ -24,6 +35,8 @@ class Email extends Output
     );
 
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -91,6 +104,10 @@ class Email extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if email send failed.
      */
     public function process()
     {
@@ -127,69 +144,98 @@ class Email extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data Incoming data.
+     *
+     * @return void
      */
-    protected function getData()
+    protected function fromXml(string &$data)
     {
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param integer $data Incoming data.
+     *
+     * @return void
      */
-    protected function fromXml(&$data)
+    protected function fromInteger(int &$data)
     {
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param boolean $data Incoming data.
+     *
+     * @return void
      */
-    protected function fromInteger(&$data)
+    protected function fromBoolean(bool &$data)
     {
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param float $data Incoming data.
+     *
+     * @return void
      */
-    protected function fromBoolean(&$data)
+    protected function fromFloat(float &$data)
     {
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data Incoming data.
+     *
+     * @return void
      */
-    protected function fromFloat(&$data)
+    protected function fromJson(string &$data)
     {
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data Incoming data.
+     *
+     * @return void
      */
-    protected function fromJson(&$data)
+    protected function fromHtml(string &$data)
     {
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data Incoming data.
+     *
+     * @return void
      */
-    protected function fromHtml(&$data)
+    protected function fromText(string &$data)
     {
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param array $data Incoming data.
+     *
+     * @return void
      */
-    protected function fromText(&$data)
+    protected function fromArray(array &$data)
     {
     }
 
     /**
      * {@inheritDoc}
-     */
-    protected function fromArray(&$data)
-    {
-    }
-
-    /**
-     * {@inheritDoc}
+     *
+     * @param mixed $data Incoming data.
+     *
+     * @return void
      */
     protected function fromImage(&$data)
     {

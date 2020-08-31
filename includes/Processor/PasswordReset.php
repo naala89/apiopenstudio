@@ -1,7 +1,13 @@
 <?php
-
 /**
- * Password reset.
+ * Class PasswordReset.
+ *
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
@@ -11,7 +17,13 @@ use Gaterdata\Db;
 use Swift_SmtpTransport;
 use Swift_Mailer;
 use Swift_Message;
+use Monolog\Logger;
 
+/**
+ * Class PasswordReset
+ *
+ * Processor class te reset a user's password.
+ */
 class PasswordReset extends Core\ProcessorEntity
 {
     /**
@@ -40,6 +52,8 @@ class PasswordReset extends Core\ProcessorEntity
     private $applicationMapper;
 
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -79,9 +93,14 @@ class PasswordReset extends Core\ProcessorEntity
     ];
 
     /**
-     * {@inheritDoc}
+     * PasswordReset constructor.
+     *
+     * @param mixed $meta Output meta.
+     * @param mixed $request Request object.
+     * @param \ADODB_mysqli $db DB object.
+     * @param \Monolog\Logger $logger Logget object.
      */
-    public function __construct($meta, &$request, $db, $logger)
+    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->userMapper = new Db\UserMapper($db);
@@ -93,6 +112,10 @@ class PasswordReset extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {

@@ -1,9 +1,24 @@
 <?php
+/**
+ * Class DataContainer.
+ *
+ * @package Gaterdata
+ * @subpackage Core
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Core;
 
 use DOMDocument;
 
+/**
+ * Class DataContainer
+ *
+ * Provide s container for data to be passed between processors in a clean manner.
+ */
 class DataContainer extends Entity
 {
     /**
@@ -23,7 +38,7 @@ class DataContainer extends Entity
     ];
 
     /**
-     * @var string Data type
+     * @var string Default data type
      */
     private $type = 'empty';
 
@@ -35,14 +50,10 @@ class DataContainer extends Entity
     /**
      * DataContainer constructor.
      *
-     * @param mixed $data
-     *   Data stored in the container.
-     * @param string $dataType
-     *   Data type.
-     *
-     * @throws ApiException
+     * @param mixed $data Data stored in the container.
+     * @param string $dataType Data type.
      */
-    public function __construct($data, $dataType = null)
+    public function __construct($data, string $dataType = null)
     {
         $dataType = empty($dataType) ? $this->detectType($data) : $dataType;
         $this->setType($dataType);
@@ -50,6 +61,8 @@ class DataContainer extends Entity
     }
 
     /**
+     * Get the data.
+     *
      * @return mixed
      */
     public function getData()
@@ -58,7 +71,11 @@ class DataContainer extends Entity
     }
 
     /**
-     * @param $val
+     * Set the data.
+     *
+     * @param mixed $val Data.
+     *
+     * @return void
      */
     public function setData($val)
     {
@@ -66,6 +83,8 @@ class DataContainer extends Entity
     }
 
     /**
+     * Get the data type.
+     *
      * @return string
      */
     public function getType()
@@ -74,15 +93,20 @@ class DataContainer extends Entity
     }
 
     /**
-     * @param $val
-     * @throws ApiException
+     * Set the data type.
+     *
+     * @param string $val Data type.
+     *
+     * @return void
      */
-    public function setType($val)
+    public function setType(string $val)
     {
         $this->type = $val;
     }
 
     /**
+     * Fetch all possible data types.
+     *
      * @return array
      */
     public function getTypes()
@@ -93,9 +117,9 @@ class DataContainer extends Entity
     /**
      * Detect the type of data for the input string.
      *
-     * @param string $data
-     * @return string
-     *   The data type.
+     * @param mixed $data Data to test.
+     *
+     * @return string The data type.
      */
     private function detectType($data)
     {
@@ -129,8 +153,9 @@ class DataContainer extends Entity
     /**
      * Validate a variable is empty.
      *
-     * @param $var
-     * @return bool
+     * @param mixed $var Variable to test.
+     *
+     * @return boolean
      */
     private function isEmpty($var)
     {
@@ -140,8 +165,9 @@ class DataContainer extends Entity
     /**
      * Validate a variable is boolean.
      *
-     * @param $var
-     * @return bool
+     * @param mixed $var Variable to test.
+     *
+     * @return boolean
      */
     private function isBool($var)
     {
@@ -151,8 +177,9 @@ class DataContainer extends Entity
     /**
      * Validate a variable is integer.
      *
-     * @param $var
-     * @return bool
+     * @param mixed $var Variable to test.
+     *
+     * @return boolean
      */
     private function isInt($var)
     {
@@ -171,8 +198,9 @@ class DataContainer extends Entity
     /**
      * Validate a variable is float.
      *
-     * @param $var
-     * @return bool
+     * @param mixed $var Variable to test.
+     *
+     * @return boolean
      */
     private function isFloat($var)
     {
@@ -182,8 +210,9 @@ class DataContainer extends Entity
     /**
      * Validate a variable is an array.
      *
-     * @param $var
-     * @return bool
+     * @param mixed $var Variable to test.
+     *
+     * @return boolean
      */
     private function isArray($var)
     {
@@ -193,8 +222,9 @@ class DataContainer extends Entity
     /**
      * Validate a variable is JSON.
      *
-     * @param $var
-     * @return bool
+     * @param mixed $var Variable to test.
+     *
+     * @return boolean
      */
     private function isJson($var)
     {
@@ -205,8 +235,8 @@ class DataContainer extends Entity
     /**
      * Validate a variable is HTML.
      *
-     * @param $var
-     * @return bool
+     * @param mixed $var Variable to test.
+     * @return boolean
      */
     private function isHtml($var)
     {
@@ -232,8 +262,9 @@ class DataContainer extends Entity
     /**
      * Validate a variable is XML.
      *
-     * @param $var
-     * @return bool
+     * @param mixed $var Variable to test.
+     *
+     * @return boolean
      */
     private function isXml($var)
     {

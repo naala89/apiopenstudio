@@ -1,15 +1,32 @@
 <?php
+/**
+ * Class File.
+ *
+ * @package Gaterdata
+ * @subpackage Output
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Output;
 
+/**
+ * Class File
+ *
+ * Outputs the results as a file.
+ */
 class File extends Output
 {
     /**
-     * {@inheritDoc}
+     * @var string The string to contain the content type header value.
      */
     protected $header = 'Content-Type: application/octet-stream';
 
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -59,7 +76,9 @@ class File extends Output
     ];
 
     /**
-     * Set the Content-Type header .
+     * Set the Content-Type header.
+     *
+     * @return void
      */
     public function setHeader()
     {
@@ -71,70 +90,109 @@ class File extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @param boolean $data Boolean data.
+     *
+     * @return string Boolean as a string.
      */
-    protected function fromBoolean(&$data)
+    protected function fromBoolean(bool &$data)
     {
         return $data ? 'true' : 'false';
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param integer $data Integer data.
+     *
+     * @return string Integer as a string.
      */
-    protected function fromInteger(&$data)
+    protected function fromInteger(int &$data)
+    {
+        return (string) $data;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param float $data Float data.
+     *
+     * @return string Float as a string.
+     */
+    protected function fromFloat(float &$data)
     {
         return $data;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data XML data.
+     *
+     * @return string XML string.
      */
-    protected function fromFloat(&$data)
+    protected function fromXml(string &$data)
     {
         return $data;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data HTML data.
+     *
+     * @return string HTML string.
      */
-    protected function fromXml(&$data)
+    protected function fromHtml(string &$data)
     {
         return $data;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data Text data.
+     *
+     * @return string Text string.
      */
-    protected function fromHtml(&$data)
+    protected function fromText(string &$data)
     {
         return $data;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param array $data Array data.
+     *
+     * @return string JSON encoded array string.
      */
-    protected function fromText(&$data)
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function fromArray(&$data)
+    protected function fromArray(array &$data)
     {
         return \json_encode($data);
     }
 
-    protected function fromImage(&$data)
+    /**
+     * {@inheritDoc}
+     *
+     * @param string $data Json data.
+     *
+     * @return string JSON string.
+     */
+    protected function fromJson(string &$data)
     {
-        return $data;
+        return is_string($data) ? $data : \json_encode($data);
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param mixed $data Image data.
+     *
+     * @return string Image string.
      */
-    protected function fromJson(&$data)
+    protected function fromImage(&$data)
     {
-        return is_string($data) ? $data : \json_encode($data);
+        return $data;
     }
 }

@@ -2,10 +2,11 @@
 /**
  * Class InviteMapper.
  *
- * @package Gaterdata\Db
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @package Gaterdata
+ * @subpackage Db
  * @author john89
  * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
  * @link https://gaterdata.com
  */
 
@@ -155,10 +156,10 @@ class InviteMapper extends Mapper
     {
         $invite = new Invite();
 
-        $invite->setIid(!empty($row['iid']) ? $row['iid'] : null);
-        $invite->setCreated(!empty($row['created']) ? $row['created'] : null);
-        $invite->setEmail(!empty($row['email']) ? $row['email'] : null);
-        $invite->setToken(!empty($row['token']) ? $row['token'] : null);
+        $invite->setIid(!empty($row['iid']) ? $row['iid'] : 0);
+        $invite->setCreated(!empty($row['created']) ? $row['created'] : '');
+        $invite->setEmail(!empty($row['email']) ? $row['email'] : '');
+        $invite->setToken(!empty($row['token']) ? $row['token'] : '');
 
         return $invite;
     }

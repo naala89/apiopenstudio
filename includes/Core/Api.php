@@ -1,9 +1,13 @@
 <?php
-
 /**
- * This class processes and routes the rest request.
- * It cleans and stores all arguments, calls the correct class,
- * then calls the process() function on that class
+ * Class Api.
+ *
+ * @package Gaterdata
+ * @subpackage Core
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Core;
@@ -13,6 +17,11 @@ use Gaterdata\Resource;
 use Spyc;
 use Cascade\Cascade;
 
+/**
+ * Class Api
+ *
+ * Process REST requests.
+ */
 class Api
 {
     /**
@@ -31,7 +40,7 @@ class Api
     private $helper;
 
     /**
-     * @var bool
+     * @var boolean
      */
     private $test = false; // false or filename in /yaml/test
 
@@ -53,17 +62,16 @@ class Api
     /**
      * Api constructor.
      *
-     * @param array $config
-     *   Config array.
+     * @param array $config Config array.
      *
-     * @throws ApiException
+     * @throws ApiException Exception flowing though.
      */
     public function __construct(array $config)
     {
         $this->settings = $config;
         Cascade::fileConfig($this->settings['debug']);
         $this->logger = Cascade::getLogger('api');
-        $this->cache = new Cache($this->logger, $this->settings['api']['cache']);
+        $this->cache = new Cache($this->settings, $this->logger, $this->settings['api']['cache']);
         $this->helper = new ProcessorHelper();
     }
 
@@ -71,7 +79,8 @@ class Api
      * Process the rest request.
      *
      * @return mixed
-     * @throws \Gaterdata\Core\ApiException
+     *
+     * @throws ApiException Exception flowing though.
      */
     public function process()
     {
@@ -140,7 +149,9 @@ class Api
     /**
      * Process the request and request header into a meaningful array object.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @return Request
+     *
+     * @throws ApiException Invalid request or exception flowing though.
      */
     private function _getData()
     {
@@ -205,16 +216,15 @@ class Api
     /**
      * Get the requested resource from the DB.
      *
-     * @param int $appId
-     *   Request application ID.
-     * @param string $method
-     *   Request HTTP method.
-     * @param array $uriParts
-     *   Request URI parts.
+     * @param integer $appId Request application ID.
+     * @param string $method Request HTTP method.
+     * @param array $uriParts Request URI parts.
+     *
      * @return array|Db\ApiResource
-     * @throws ApiException
+     *
+     * @throws ApiException Exception flowing throuigh, ot invalid test YAML.
      */
-    private function _getResource($appId, $method, $uriParts)
+    private function _getResource(int $appId, string $method, array $uriParts)
     {
         if (!$this->test) {
             $resourceMapper = new Db\ResourceMapper($this->db);
@@ -261,10 +271,11 @@ class Api
     /**
      * Get the cache key for a request.
      *
-     * @param $uriParts
+     * @param array $uriParts Array of UTI fragments.
+     *
      * @return string
      */
-    private function _getCacheKey($uriParts)
+    private function _getCacheKey(array $uriParts)
     {
         $cacheKey = $this->_cleanData($this->request->getMethod() . '_' . implode('_', $uriParts));
         $this->logger->info('cache key: ' . $cacheKey);
@@ -274,11 +285,13 @@ class Api
     /**
      * Check cache for any results.
      *
-     * @param $cacheKey
-     * @return bool
-     * @throws ApiException
+     * @param string $cacheKey Cache key.
+     *
+     * @return boolean
+     *
+     * @throws ApiException Allow any exceptions to flow through.
      */
-    private function _getCache($cacheKey)
+    private function _getCache(string $cacheKey)
     {
         if (!$this->cache->cacheActive()) {
             $this->logger->info('not searching for cache - inactive');
@@ -299,9 +312,11 @@ class Api
     /**
      * Process the meta data, using depth first iteration.
      *
-     * @param $meta
+     * @param mixed $meta The resource metadata.
+     *
      * @return mixed
-     * @throws ApiException
+     *
+     * @throws ApiException Let any exceptions flow through.
      */
     private function _crawlMeta($meta)
     {
@@ -379,9 +394,10 @@ class Api
     /**
      * Get the formatted output.
      *
-     * @param $data
-     * @return bool
-     * @throws \Gaterdata\Core\ApiException
+     * @param mixed $data Data to format.
+     * @return mixed
+     *
+     * @throws ApiException Let any exceptions flow through.
      */
     private function _getOutput($data)
     {
@@ -420,18 +436,15 @@ class Api
     /**
      * Process the output and return in the response.
      *
-     * @param array $meta
-     *   Output metadata.
-     * @param $data
-     *   Response data.
-     * @param int $index
-     *   Index in the output array.
+     * @param array $meta Output metadata.
+     * @param mixed $data Response data.
+     * @param integer $index Index in the output array.
      *
      * @return mixed
      *
-     * @throws ApiException
+     * @throws ApiException Invalid output processor.
      */
-    private function processOutputResponse($meta, $data, $index = null)
+    private function processOutputResponse(array $meta, $data, int $index = null)
     {
         if (!isset($meta['function'])) {
             throw new ApiException("No function found in the output section: $index.", 3, -1, 400);
@@ -448,18 +461,15 @@ class Api
     /**
      * Process the output.
      *
-     * @param array $meta
-     *   Output mnetadata.
-     * @param $data
-     *   Response data.
-     * @param int $index
-     *   Index in the output array.
+     * @param array $meta Output mnetadata.
+     * @param mixed $data Response data.
+     * @param integer $index Index in the output array.
      *
      * @return mixed
      *
-     * @throws ApiException
+     * @throws ApiException Invalid output processor.
      */
-    private function processOutputRemote($meta, $data, $index = 0)
+    private function processOutputRemote(array $meta, $data, int $index = null)
     {
         if (!isset($meta['function'])) {
             throw new ApiException("No function found in the output section: $index.", 3, -1, 400);
@@ -474,7 +484,8 @@ class Api
      * Utility function to get the REST method from the $_SERVER var.
      *
      * @return string
-     * @throws \Gaterdata\Core\ApiException
+     *
+     * @throws ApiException Thow exception for unexpected headers.
      */
     private function _getMethod()
     {
@@ -494,9 +505,9 @@ class Api
     /**
      * Calculate a format from string of header Content-Type or Accept.
      *
-     * @param $key
-     * @param bool|FALSE $default
-     * @return bool|string
+     * @param mixed $default Default value.
+     *
+     * @return boolean|string
      */
     public function getAccept($default = null)
     {
@@ -543,6 +554,15 @@ class Api
         }
     }
 
+    /**
+     * Custom sort function
+     * Sort headers by weight.
+     *
+     * @param mixed $a Variable a.
+     * @param mixed $b Variable b.
+     *
+     * @return integer
+     */
     private static function _sortHeadersWeight($a, $b)
     {
         if ($a['weight'] == $b['weight']) {
@@ -554,7 +574,8 @@ class Api
     /**
      * Utility recursive function to clean vars for processing.
      *
-     * @param $data
+     * @param mixed $data Variables.
+     *
      * @return array|string
      */
     private function _cleanData($data)

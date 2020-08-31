@@ -1,34 +1,43 @@
 <?php
+/**
+ * Class Authentication.
+ *
+ * @package Gaterdata
+ * @subpackage Admin\Middleware
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Admin\Middleware;
 
-use Exception;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\ServerException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Container;
-use Gaterdata\Core\ApiException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
 /**
  * Class Authentication.
  *
- * @package Gaterdata\Admin\Middleware
+ * A Slim PHP middle class to validate a user's logged in status and redirect if unauthenticated.
  */
 class Authentication
 {
-
     /**
      * @var Container
      */
     private $settings;
+
     /**
      * @var string
      */
     private $loginPath;
+
     /**
      * @var Container
      */
@@ -37,14 +46,11 @@ class Authentication
     /**
      * Authentication constructor.
      *
-     * @param Container $container
-     *   Container.
-     * @param array $settings
-     *   Application settings.
-     * @param string $loginPath
-     *   Login URI.
+     * @param Container $container Container.
+     * @param array $settings Application settings.
+     * @param string $loginPath Login URI.
      */
-    public function __construct(Container $container, array $settings, $loginPath)
+    public function __construct(Container $container, array $settings, string $loginPath)
     {
         $this->container = $container;
         $this->settings = $settings;
@@ -54,17 +60,11 @@ class Authentication
     /**
      * Middleware invocation.
      *
-     * @param ServerRequestInterface $request
-     *   PSR7 request.
-     * @param ResponseInterface $response
-     *   PSR7 Response.
-     * @param callable $next
-     *   Next middleware.
+     * @param ServerRequestInterface $request PSR7 request.
+     * @param ResponseInterface $response PSR7 Response.
+     * @param callable $next Next middleware.
      *
-     * @return ResponseInterface
-     *   Response Interface.
-     *
-     * @throws GuzzleException
+     * @return ResponseInterface Response Interface.
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
@@ -102,6 +102,9 @@ class Authentication
             } catch (ServerException $e) {
                 $json = json_decode($e->getResponse()->getBody()->getContents(), true);
                 $this->container['flash']->addMessage('error', $json['error']['message']);
+            } catch (GuzzleException $e) {
+                $json = json_decode($e->getResponse()->getBody()->getContents(), true);
+                $this->container['flash']->addMessage('error', $json['error']['message']);
             }
         } else {
             // Validate the token and username.
@@ -128,6 +131,11 @@ class Authentication
                 unset($_SESSION['username']);
                 unset($_SESSION['uid']);
             } catch (ServerException $e) {
+                $this->container['flash']->addMessageNow('error', 'Internal server error');
+                unset($_SESSION['token']);
+                unset($_SESSION['username']);
+                unset($_SESSION['uid']);
+            } catch (GuzzleException $e) {
                 $this->container['flash']->addMessageNow('error', 'Internal server error');
                 unset($_SESSION['token']);
                 unset($_SESSION['username']);

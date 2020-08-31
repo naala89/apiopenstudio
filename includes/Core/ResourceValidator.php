@@ -1,15 +1,24 @@
 <?php
-
 /**
- * Validate a resource.
+ * Class ResourceValidator.
+ *
+ * @package Gaterdata
+ * @subpackage Core
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Core;
 
-use Cascade\Cascade;
-use Gaterdata\Core;
-use Gaterdata\Db;
+use Monolog\Logger;
 
+/**
+ * Class ResourceValidator
+ *
+ * Validate a resource definition.
+ */
 class ResourceValidator
 {
     /**
@@ -18,7 +27,7 @@ class ResourceValidator
     protected $helper;
 
     /**
-     * @var ADODB_mysqli
+     * @var \ADODB_mysqli
      */
     private $db;
 
@@ -32,10 +41,10 @@ class ResourceValidator
      *
      * If this method is overridden by any derived classes, don't forget to call parent::__construct()
      *
-     * @param ADODB_mysqli $db
-     * @param \Monolog\Logger $logger
+     * @param \ADODB_mysqli $db Database.
+     * @param \Monolog\Logger $logger Logger.
      */
-    public function __construct($db, $logger)
+    public function __construct(\ADODB_mysqli $db, Logger $logger)
     {
         $this->helper = new ProcessorHelper();
         $this->db = $db;
@@ -45,12 +54,13 @@ class ResourceValidator
     /**
      * Validate input data is well formed.
      *
-     * @param array $data
-     *   Metadata.
+     * @param array $data Resource metadata array.
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @return void
+     *
+     * @throws Core\ApiException Input data not well formnd.
      */
-    public function validate($data)
+    public function validate(array $data)
     {
         $this->logger->notice('Validating the new resource...');
         // check mandatory elements exists in data
@@ -84,10 +94,14 @@ class ResourceValidator
 
     /**
      * Search for identical IDs.
-     * @param $meta
-     * @throws \Gaterdata\Core\ApiException
+     *
+     * @param array $meta Resource metadata array.
+     *
+     * @return boolean
+     *
+     * @throws Core\ApiException Identical ID found.
      */
-    private function validateIdenticalIds($meta)
+    private function validateIdenticalIds(array $meta)
     {
         $id = [];
         $stack = [$meta];
@@ -106,23 +120,26 @@ class ResourceValidator
             }
         }
 
-        return;
+        return true;
     }
 
     /**
-     * Validate a resource section
+     * Validate a resource section.
      *
-     * @param $meta
-     * @throws \Gaterdata\Core\ApiException
+     * @param array $meta Resource metadata array.
+     *
+     * @return void
+     *
+     * @throws Core\ApiException Error found in validating the resource.
      */
-    private function validateDetails($meta)
+    private function validateDetails(array $meta)
     {
         $stack = array($meta);
 
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
                 $classStr = $this->helper->getProcessorString($node['function']);
-                $class = new $classStr($meta, new Core\Request(), $this->db, $this->logger);
+                $class = new $classStr($meta, new Request(), $this->db, $this->logger);
                 $details = $class->details();
                 $id = $node['id'];
                 $this->logger->notice('Validating: ' . $id);
@@ -188,7 +205,6 @@ class ResourceValidator
                 }
             }
         }
-
     }
 
     /**
@@ -196,13 +212,15 @@ class ResourceValidator
      * Processor it refers to. If the element type is processor, recursively iterate through, using the calling
      * function _validateProcessor().
      *
-     * @param $element
-     * @param $accepts
-     * @param $id
-     * @return bool
-     * @throws \Gaterdata\Core\ApiException
+     * @param mixed $element Literal value in a resource to validate against $accepts.
+     * @param array $accepts Array of types the processor can accept.
+     * @param string|integer $id Processor ID.
+     *
+     * @return boolean
+     *
+     * @throws Core\ApiException Invalid $element.
      */
-    private function validateTypeValue($element, $accepts, $id)
+    private function validateTypeValue($element, array $accepts, $id)
     {
         if (empty($accepts)) {
             return true;

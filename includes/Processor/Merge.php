@@ -1,16 +1,29 @@
 <?php
-
 /**
- * Perform merge of multiple sources.
+ * Class Merge.
+ *
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
 
 use Gaterdata\Core;
 
+/**
+ * Class Mapper
+ *
+ * Processor class te merge multiple data sets.
+ */
 class Merge extends Core\ProcessorEntity
 {
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -51,6 +64,10 @@ class Merge extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {
@@ -72,10 +89,13 @@ class Merge extends Core\ProcessorEntity
     }
 
     /**
-     * @param $values
+     * Union of arrays.
+     *
+     * @param array $values Data sets to merge.
+     *
      * @return array|mixed
      */
-    private function _union($values)
+    private function _union(array $values)
     {
         $result = array_shift($values);
         $result = is_array($result) ? $result : array($result);
@@ -87,10 +107,13 @@ class Merge extends Core\ProcessorEntity
     }
 
     /**
-     * @param $values
+     * Union of arrays.
+     *
+     * @param array $values Data sets to intersect.
+     *
      * @return array|mixed
      */
-    private function _intersect($values)
+    private function _intersect(array $values)
     {
         $result = array_shift($values);
         $result = is_array($result) ? $result : array($result);
@@ -102,10 +125,13 @@ class Merge extends Core\ProcessorEntity
     }
 
     /**
-     * @param $values
+     * Outer join of arrays.
+     *
+     * @param array $values Data sets to outer join.
+     *
      * @return array|mixed
      */
-    private function _difference($values)
+    private function _difference(array $values)
     {
         $result = array_shift($values);
         $result = is_array($result) ? $result : array($result);

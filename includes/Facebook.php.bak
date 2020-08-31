@@ -1,16 +1,25 @@
 <?php
-
 /**
- * Get data form the Facebook API.
+ * Class Facebook.
+ *
+ * @package Gaterdata
+ * @subpackage Endpoint
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Endpoint;
 
-use Gaterdata\Processor;
 use Gaterdata\Core;
-use Facebook\Authentication;
 use Facebook\Exceptions;
 
+/**
+ * Class Facebook
+ *
+ * Provide access to Facebook Graph.
+ */
 class Facebook extends Core\ProcessorEntity
 {
     /**
@@ -188,7 +197,7 @@ class Facebook extends Core\ProcessorEntity
 
     /**
      * Post data to FB.
-     * @param $fb
+     * @param \Facebook\Facebook $fb Facebook module.
      * @param $node
      * @param $accessToken
      * @return mixed
@@ -200,7 +209,7 @@ class Facebook extends Core\ProcessorEntity
         $data = $this->val('data');
 
         try {
-            $response = $fb->get("/$node?fields=" . implode(',', $fields), $accessToken);
+//            $response = $fb->get("/$node?fields=" . implode(',', $fields), $accessToken);
         } catch (Exceptions\FacebookResponseException $e) {
             throw new Core\ApiException('graph returned an error: ' . $e->getMessage(), 5, $this->id);
         } catch (Exceptions\FacebookSDKException $e) {

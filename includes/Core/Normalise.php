@@ -1,23 +1,48 @@
 <?php
-
 /**
+ * Class Normalise.
  *
+ * @package Gaterdata
+ * @subpackage Core
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Core;
 
+/**
+ * Class Normalise
+ *
+ * Normalize data - this is not used ATM.
+ */
 class Normalise
 {
+    /**
+     * @var mixed
+     */
     private $data;
+
+    /**
+     * @var string
+     */
     private $format;
+
+    /**
+     * @var string
+     */
     public $defaultNormalise = 'array';
 
     /**
      * Set the data to be processed.
-     * @param $data
-     * @param null $format
+     *
+     * @param mixed $data Data to normalize.
+     * @param string $format Format to normalise into.
+     *
+     * @return void.
      */
-    public function set($data, $format = null)
+    public function set($data, string $format)
     {
         $this->data = $data;
         $this->format = $format;
@@ -25,11 +50,14 @@ class Normalise
 
     /**
      * Call the default normalise function
-     * @param null $into
+     *
+     * @param string $into Format to normalize to.
+     *
      * @return mixed
-     * @throws \Gaterdata\Core\ApiException
+     *
+     * @throws ApiException Exception.
      */
-    public function normalise($into = null)
+    public function normalise(string $into = null)
     {
         $into = empty($into) ? $this->defaultNormalise : $into;
         $normaliseFunc = 'to' . ucfirst($into);
@@ -42,8 +70,10 @@ class Normalise
 
     /**
      * Convert data to an array.
+     *
      * @return array
-     * @throws ApiException
+     *
+     * @throws ApiException Exception.
      */
     public function toArray()
     {
@@ -74,8 +104,10 @@ class Normalise
 
     /**
      * Convert constructs and text to stdClass.
+     *
      * @return \stdClass
-     * @throws ApiException
+     *
+     * @throws ApiException Exception.
      */
     public function toStdClass()
     {
@@ -102,8 +134,10 @@ class Normalise
 
     /**
      * We can pass in the full header array or header[CURLINFO_CONTENT_TYPE].
+     *
      * @return string|string[]|null
-     * @throws ApiException
+     *
+     * @throws ApiException Exception.
      */
     private function _getFormat()
     {
@@ -119,11 +153,14 @@ class Normalise
 
     /**
      * Validate content types.
-     * @param $str
+     *
+     * @param string $str Header string.
+     *
      * @return string|string[]|null
-     * @throws ApiException
+     *
+     * @throws ApiException Invalid header value.
      */
-    private function _parseContentType($str)
+    private function _parseContentType(string $str)
     {
         $result = '';
         if (preg_match('/text\/|application\//', $str) == 1) {
@@ -149,6 +186,7 @@ class Normalise
 
     /**
      * Calculate the format type of a string.
+     *
      * @return string
      */
     private function _calcFormat()
@@ -173,6 +211,7 @@ class Normalise
     /**
      * Convert XML string into an array, maintaining attributes and cdata.
      * @see https://github.com/gaarf/XML-string-to-PHP-array
+     *
      * @return array
      */
     private function _xmlToArray()
@@ -187,10 +226,12 @@ class Normalise
 
     /**
      * Convert an XML node into an array attribute.
-     * @param $node
+     *
+     * @param object $node Dom Node.
+     *
      * @return array
      */
-    private function domNodeToArray($node)
+    private function domNodeToArray(object $node)
     {
         $output = array();
         switch ($node->nodeType) {
@@ -236,6 +277,8 @@ class Normalise
     }
 
     /**
+     * Convert JSON to array.
+     *
      * @return array
      */
     private function _jsonToArray()
@@ -244,6 +287,8 @@ class Normalise
     }
 
     /**
+     * Convert XML to stdClass.
+     *
      * @return \stdClass
      */
     private function _xmlToStdClass()
@@ -254,6 +299,8 @@ class Normalise
 
 
     /**
+     * Convert JSON to stdClass.
+     *
      * @return \stdClass
      */
     private function _jsonToStdClass()

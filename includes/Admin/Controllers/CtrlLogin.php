@@ -1,4 +1,14 @@
 <?php
+/**
+ * Class CtrlLogin.
+ *
+ * @package Gaterdata
+ * @subpackage Admin\Controllers
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Admin\Controllers;
 
@@ -9,24 +19,18 @@ use Slim\Http\Response;
 /**
  * Class CtrlLogin.
  *
- * @package Gaterdata\Admin\Controllers
+ * Controller for the login page.
  */
 class CtrlLogin extends CtrlBase
 {
-
     /**
      * Login page.
      *
-     * @param \Slim\Http\Request $request
-     *   Request object.
-     * @param \Slim\Http\Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param \Slim\Http\Request $request Request object.
+     * @param \Slim\Http\Response $response Response object.
+     * @param array $args Request args.
      *
      * @return \Psr\Http\Message\ResponseInterface
-     *
-     * @throws \Exception
      */
     public function login(Request $request, Response $response, array $args)
     {
@@ -40,17 +44,11 @@ class CtrlLogin extends CtrlBase
     /**
      * Logout page.
      *
-     * @param \Slim\Http\Request $request
-     *   Request object.
-     * @param \Slim\Http\Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param \Slim\Http\Request $request Request object.
+     * @param \Slim\Http\Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return \Psr\Http\Message\ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return \Psr\Http\Message\ResponseInterface Response.
      */
     public function logout(Request $request, Response $response, array $args)
     {
@@ -64,17 +62,11 @@ class CtrlLogin extends CtrlBase
     /**
      * Accept an invite token.
      *
-     * @param \Slim\Http\Request $request
-     *   Request object.
-     * @param \Slim\Http\Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param \Slim\Http\Request $request Request object.
+     * @param \Slim\Http\Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return ResponseInterface Response.
      */
     public function inviteAccept(Request $request, Response $response, array $args)
     {
@@ -116,17 +108,11 @@ class CtrlLogin extends CtrlBase
     /**
      * Request a user password reset.
      *
-     * @param \Slim\Http\Request $request
-     *   Request object.
-     * @param \Slim\Http\Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param \Slim\Http\Request $request Request object.
+     * @param \Slim\Http\Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return ResponseInterface Response.
      */
     public function passwordReset(Request $request, Response $response, array $args)
     {
@@ -179,17 +165,11 @@ class CtrlLogin extends CtrlBase
     /**
      * Reset a user password.
      *
-     * @param \Slim\Http\Request $request
-     *   Request object.
-     * @param \Slim\Http\Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param \Slim\Http\Request $request Request object.
+     * @param \Slim\Http\Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return ResponseInterface Response.
      */
     public function setPassword(Request $request, Response $response, array $args)
     {

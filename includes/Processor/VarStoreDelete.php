@@ -1,7 +1,13 @@
 <?php
-
 /**
- * Delete variable in var store.
+ * Class VarStoreDelete.
+ *
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
@@ -10,7 +16,13 @@ use Gaterdata\Core;
 use Gaterdata\Db\UserMapper;
 use Gaterdata\Db\UserRoleMapper;
 use Gaterdata\Db\VarStoreMapper;
+use Monolog\Logger;
 
+/**
+ * Class VarStoreDelete
+ *
+ * Processor class to delete a var-store variable.
+ */
 class VarStoreDelete extends Core\ProcessorEntity
 {
     /**
@@ -35,6 +47,8 @@ class VarStoreDelete extends Core\ProcessorEntity
     private $roles = ['Developer', 'Application manager'];
 
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -76,9 +90,14 @@ class VarStoreDelete extends Core\ProcessorEntity
     ];
 
     /**
-     * {@inheritDoc}
+     * VarStoreDelete constructor.
+     *
+     * @param mixed $meta Output meta.
+     * @param mixed $request Request object.
+     * @param \ADODB_mysqli $db DB object.
+     * @param \Monolog\Logger $logger Logget object.
      */
-    public function __construct($meta, &$request, $db, $logger)
+    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->varStoreMapper = new VarStoreMapper($db);
@@ -88,6 +107,10 @@ class VarStoreDelete extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {

@@ -1,14 +1,26 @@
 <?php
-
 /**
- * Convert any data container data type to an array data container.
+ * Class ConvertToArray.
+ *
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
 
 use Gaterdata\Core;
 use Gaterdata\Output\Output;
+use Monolog\Logger;
 
+/**
+ * Class ConvertToArray
+ *
+ * Processor class to convert data to array.
+ */
 class ConvertToArray extends Output
 {
     /**
@@ -22,6 +34,8 @@ class ConvertToArray extends Output
     protected $logger;
 
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -45,22 +59,22 @@ class ConvertToArray extends Output
     /**
      * ConvertToArray constructor.
      *
-     * @param array $meta
-     *   The processor metadata.
-     * @param Request $request
-     *   Request object.
-     * @param ADODB_mysqli $db
-     *   Database object.
-     * @param \Monolog\Logger $logger
-     *   Logger object.
+     * @param mixed $meta Output meta.
+     * @param mixed $request Request object.
+     * @param \ADODB_mysqli $db DB object.
+     * @param \Monolog\Logger $logger Logget object.
      */
-    public function __construct($meta, &$request, $db, $logger)
+    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
     {
         Core\ProcessorEntity::__construct($meta, $request, $db, $logger);
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {
@@ -71,32 +85,48 @@ class ConvertToArray extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @param boolean $data The data to convert.
+     *
+     * @return mixed
      */
-    protected function fromBoolean(&$data)
+    protected function fromBoolean(bool &$data)
     {
         return [$data ? true : false];
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param integer $data The data to convert.
+     *
+     * @return mixed
      */
-    protected function fromInteger(&$data)
+    protected function fromInteger(int &$data)
     {
         return [$data];
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param float $data The data to convert.
+     *
+     * @return mixed
      */
-    protected function fromFloat(&$data)
+    protected function fromFloat(float &$data)
     {
         return [$data];
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data The data to convert.
+     *
+     * @return mixed
      */
-    protected function fromXml(&$data)
+    protected function fromXml(string &$data)
     {
         $xml = simplexml_load_string($data);
         $json = $this->_xml2json($xml);
@@ -105,16 +135,24 @@ class ConvertToArray extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data The data to convert.
+     *
+     * @return mixed
      */
-    protected function fromHtml(&$data)
+    protected function fromHtml(string &$data)
     {
         return $this->fromXml($data);
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data The data to convert.
+     *
+     * @return mixed
      */
-    protected function fromText(&$data)
+    protected function fromText(string &$data)
     {
         if (empty($data)) {
             return [];
@@ -131,12 +169,23 @@ class ConvertToArray extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @param array $data The data to convert.
+     *
+     * @return mixed
      */
-    protected function fromArray(&$data)
+    protected function fromArray(array &$data)
     {
         return $data;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param mixed $data The data to convert.
+     *
+     * @return mixed
+     */
     protected function fromImage(&$data)
     {
         return $this->fromText($data);
@@ -144,8 +193,12 @@ class ConvertToArray extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data The data to convert.
+     *
+     * @return mixed
      */
-    protected function fromJson(&$data)
+    protected function fromJson(string&$data)
     {
         return json_decode($data, true);
     }
@@ -153,7 +206,8 @@ class ConvertToArray extends Output
     /**
      * Convert an XML doc to json string.
      *
-     * @param SimpleXMLElement $xml
+     * @param \SimpleXMLElement $xml XML element.
+     *
      * @return array|false|string
      */
     private function _xml2json(SimpleXMLElement &$xml)

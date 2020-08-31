@@ -2,10 +2,11 @@
 /**
  * Class RoleMapper.
  *
- * @package Gaterdata\Db
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @package Gaterdata
+ * @subpackage Db
  * @author john89
  * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
  * @link https://gaterdata.com
  */
 
@@ -331,11 +332,11 @@ class UserRoleMapper extends Mapper
     {
         $userRole = new UserRole();
 
-        $userRole->setUrid(!empty($row['urid']) ? $row['urid'] : null);
-        $userRole->setAccid(!empty($row['accid']) ? $row['accid'] : null);
-        $userRole->setAppid(!empty($row['appid']) ? $row['appid'] : null);
-        $userRole->setUid(!empty($row['uid']) ? $row['uid'] : null);
-        $userRole->setRid(!empty($row['rid']) ? $row['rid'] : null);
+        $userRole->setUrid(!empty($row['urid']) ? $row['urid'] : 0);
+        $userRole->setAccid(!empty($row['accid']) ? $row['accid'] : 0);
+        $userRole->setAppid(!empty($row['appid']) ? $row['appid'] : 0);
+        $userRole->setUid(!empty($row['uid']) ? $row['uid'] : 0);
+        $userRole->setRid(!empty($row['rid']) ? $row['rid'] : 0);
 
         return $userRole;
     }

@@ -1,16 +1,29 @@
 <?php
-
 /**
- * Variable type random.
+ * Class VarRand.
+ *
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
 
 use Gaterdata\Core;
 
+/**
+ * Class VarRand
+ *
+ * Processor class to generate a random value.
+ */
 class VarRand extends Core\ProcessorEntity
 {
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -70,6 +83,10 @@ class VarRand extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {

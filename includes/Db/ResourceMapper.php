@@ -2,10 +2,11 @@
 /**
  * Class ResourceMapper.
  *
- * @package Gaterdata\Db
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @package Gaterdata
+ * @subpackage Db
  * @author john89
  * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
  * @link https://gaterdata.com
  */
 
@@ -23,13 +24,13 @@ class ResourceMapper extends Mapper
     /**
      * Save an API Resource.
      *
-     * @param Resource $resource The API Resource.
+     * @param resource $resource The API Resource.
      *
      * @return boolean Success.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function save(Resource $resource)
+    public function save($resource)
     {
         if ($resource->getResid() == null) {
             $sql = 'INSERT INTO resource (appid, name, description, method, uri, meta, ttl) VALUES ';
@@ -63,13 +64,13 @@ class ResourceMapper extends Mapper
     /**
      * Delete an API resource.
      *
-     * @param Resource $resource Resource object.
+     * @param resource $resource Resource object.
      *
      * @return boolean Success.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function delete(Resource $resource)
+    public function delete($resource)
     {
         $sql = 'DELETE FROM resource WHERE resid = ?';
         $bindParams = [$resource->getResid()];
@@ -81,7 +82,7 @@ class ResourceMapper extends Mapper
      *
      * @param array $params Filter and order params.
      *
-     * @return Resource Resource object.
+     * @return resource Resource object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
@@ -96,7 +97,7 @@ class ResourceMapper extends Mapper
      *
      * @param integer $resid Resource ID.
      *
-     * @return Resource Resource object.
+     * @return resource Resource object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
@@ -114,7 +115,7 @@ class ResourceMapper extends Mapper
      * @param string $method API resource method.
      * @param string $uri API resource URI.
      *
-     * @return Resource Resource object.
+     * @return resource Resource object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
@@ -298,20 +299,20 @@ class ResourceMapper extends Mapper
      *
      * @param array $row DB row object.
      *
-     * @return resource Resource object.
+     * @return mixed Resource object.
      */
     protected function mapArray(array $row)
     {
         $resource = new Resource();
 
-        $resource->setResid(!empty($row['resid']) ? $row['resid'] : null);
-        $resource->setAppId(!empty($row['appid']) ? $row['appid'] : null);
-        $resource->setName(!empty($row['name']) ? $row['name'] : null);
-        $resource->setDescription(!empty($row['description']) ? $row['description'] : null);
-        $resource->setMethod(!empty($row['method']) ? $row['method'] : null);
-        $resource->setUri(!empty($row['uri']) ? $row['uri'] : null);
-        $resource->setMeta(!empty($row['meta']) ? $row['meta'] : null);
-        $resource->setTtl(!empty($row['ttl']) ? $row['ttl'] : 0);
+        $resource->setResid(!empty($row['resid']) ? $row['resid'] : 0);
+        $resource->setAppId(!empty($row['appid']) ? $row['appid'] : 0);
+        $resource->setName(!empty($row['name']) ? $row['name'] : '');
+        $resource->setDescription(!empty($row['description']) ? $row['description'] : '');
+        $resource->setMethod(!empty($row['method']) ? $row['method'] : '');
+        $resource->setUri(!empty($row['uri']) ? $row['uri'] : '');
+        $resource->setMeta(!empty($row['meta']) ? $row['meta'] : '');
+        $resource->setTtl(!empty($row['ttl']) ? $row['ttl'] : '');
 
         return $resource;
     }

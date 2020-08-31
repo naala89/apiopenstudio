@@ -1,16 +1,29 @@
 <?php
-
 /**
- * Perform filter
+ * Class Filter.
+ *
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
 
 use Gaterdata\Core;
 
+/**
+ * Class Filter
+ *
+ * Processor class to perform a filter operation.
+ */
 class Filter extends Core\ProcessorEntity
 {
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -81,6 +94,10 @@ class Filter extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {
@@ -120,8 +137,9 @@ class Filter extends Core\ProcessorEntity
     /**
      * Perform non-recursive filter on $data, based on key value.
      *
-     * @param $data
-     * @param $callback
+     * @param mixed $data Data to filter.
+     * @param mixed $callback Callback function.
+     *
      * @return array
      *
      * @see https://wpscholar.com/blog/filter-multidimensional-array-php/
@@ -139,8 +157,9 @@ class Filter extends Core\ProcessorEntity
     /**
      * Perform recursive filter on $data, based on key value.
      *
-     * @param $data
-     * @param $callback
+     * @param mixed $data Data to filter.
+     * @param mixed $callback Callback function.
+     *
      * @return array
      */
     private function _filterByKeyRecursive($data, $callback)
@@ -163,8 +182,9 @@ class Filter extends Core\ProcessorEntity
     /**
      * Perform non-recursive filter on $data, based on value.
      *
-     * @param $data
-     * @param $callback
+     * @param mixed $data Data to filter.
+     * @param mixed $callback Callback function.
+     *
      * @return array
      */
     private function _filterByValueNonrecursive($data, $callback)
@@ -186,8 +206,9 @@ class Filter extends Core\ProcessorEntity
     /**
      * Perform non-recursive filter on $data, based on value.
      *
-     * @param $data
-     * @param $callback
+     * @param mixed $data Data to filter.
+     * @param mixed $callback Callback function.
+     *
      * @return array
      */
     private function _filterByValueRecursive($data, $callback)
@@ -212,10 +233,11 @@ class Filter extends Core\ProcessorEntity
     /**
      * Filter callback for non-inverse, non-regex.
      *
-     * @param $filter
+     * @param array $filter Filter regex.
+     *
      * @return \Closure
      */
-    private function _callbackNoninverseNonregex($filter)
+    private function _callbackNoninverseNonregex(array $filter)
     {
         return function ($item) use ($filter) {
             return !in_array($item, $filter);
@@ -225,10 +247,11 @@ class Filter extends Core\ProcessorEntity
     /**
      * Filter callback for inverse, non-regex.
      *
-     * @param $filter
+     * @param array $filter Filter regex.
+     *
      * @return \Closure
      */
-    private function _callbackInverseNonregex($filter)
+    private function _callbackInverseNonregex(array $filter)
     {
         return function ($item) use ($filter) {
             return in_array($item, $filter);
@@ -238,10 +261,11 @@ class Filter extends Core\ProcessorEntity
     /**
      * Filter callback for non-inverse, regex.
      *
-     * @param $filter
+     * @param array $filter Filter regex.
+     *
      * @return \Closure
      */
-    private function _callbackNoninverseRegex($filter)
+    private function _callbackNoninverseRegex(array $filter)
     {
         return function ($item) use ($filter) {
             return preg_match($filter, $item) == 0;
@@ -251,10 +275,11 @@ class Filter extends Core\ProcessorEntity
     /**
      * Filter callback for inverse, regex.
      *
-     * @param $filter
+     * @param array $filter Filter regex.
+     *
      * @return \Closure
      */
-    private function _callbackInverseRegex($filter)
+    private function _callbackInverseRegex(array $filter)
     {
         return function ($item) use ($filter) {
             return preg_match($filter, $item) > 0;

@@ -1,17 +1,32 @@
 <?php
+/**
+ * Class Json.
+ *
+ * @package Gaterdata
+ * @subpackage Output
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Output;
 
-use Gaterdata\Core;
-
+/**
+ * Class Json
+ *
+ * Outputs the results as a JSON.
+ */
 class Json extends Output
 {
     /**
-     * {@inheritDoc}
+     * @var string The string to contain the content type header value.
      */
     protected $header = 'Content-Type: application/json';
 
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -53,6 +68,8 @@ class Json extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
      */
     public function process()
     {
@@ -62,32 +79,48 @@ class Json extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @param boolean $data Boolean data.
+     *
+     * @return string JSON string.
      */
-    protected function fromBoolean(&$data)
+    protected function fromBoolean(bool &$data)
     {
         return $data ? 'true' : 'false';
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param integer $data Integer data.
+     *
+     * @return string JSON string.
      */
-    protected function fromInteger(&$data)
+    protected function fromInteger(int &$data)
     {
         return $data;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param float $data Float data.
+     *
+     * @return string JSON string.
      */
-    protected function fromFloat(&$data)
+    protected function fromFloat(float &$data)
     {
         return $data;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data XML data.
+     *
+     * @return string JSON string.
      */
-    protected function fromXml(&$data)
+    protected function fromXml(string &$data)
     {
         $xml = simplexml_load_string($data);
         return $this->_xml2json($xml);
@@ -95,16 +128,24 @@ class Json extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data HTML data.
+     *
+     * @return string JSON string.
      */
-    protected function fromHtml(&$data)
+    protected function fromHtml(string &$data)
     {
-        return $this->_xml2json($data);
+        return $this->fromXml($data);
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data Text data.
+     *
+     * @return string JSON string.
      */
-    protected function fromText(&$data)
+    protected function fromText(string &$data)
     {
         if ($data == '') {
             // Empty string should be returned as double quotes so that it is not returned as null.
@@ -122,26 +163,48 @@ class Json extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @param array $data Array data.
+     *
+     * @return string JSON string.
      */
-    protected function fromArray(&$data)
+    protected function fromArray(array &$data)
     {
         return \json_encode($data);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param string $data Json data.
+     *
+     * @return string JSON string.
+     */
+    protected function fromJson(string &$data)
+    {
+        return is_string($data) ? $data : \json_encode($data);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param mixed $data Image data.
+     *
+     * @return string JSON string.
+     */
     protected function fromImage(&$data)
     {
         return $this->fromText($data);
     }
 
     /**
-     * {@inheritDoc}
+     * Convert XML data to JSON format.
+     *
+     * @param \SimpleXMLElement $xml XML element.
+     *
+     * @return array|false|string
      */
-    protected function fromJson(&$data)
-    {
-        return is_string($data) ? $data : \json_encode($data);
-    }
-
-    private function _xml2json(&$xml)
+    private function _xml2json(\SimpleXMLElement &$xml)
     {
         $root = (func_num_args() > 1 ? false : true);
         $jsnode = array();

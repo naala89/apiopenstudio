@@ -1,22 +1,32 @@
 <?php
-
 /**
- * Fetch a list of all processors
+ * Class Functions.
+ *
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
 
 use Gaterdata\Core;
-use Gaterdata\Endpoint;
-use Gaterdata\Output;
-use Gaterdata\Security;
 use RecursiveIteratorIterator;
 use ReflectionClass;
 use RegexIterator;
 
+/**
+ * Class Functions
+ *
+ * Processor class to list all processor/functions.
+ */
 class Functions extends Core\ProcessorEntity
 {
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -49,6 +59,10 @@ class Functions extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {
@@ -81,13 +95,11 @@ class Functions extends Core\ProcessorEntity
     /**
      * Get a list of classes from a directory.
      *
-     * @param string $namespace
-     *   The subdirectory/namespace.
+     * @param string $namespace The subdirectory/namespace.
      *
-     * @return array
-     *   The list of class names.
+     * @return array The list of class names.
      */
-    private function _getClassList($namespace)
+    private function _getClassList(string $namespace)
     {
         $iterator = new RecursiveIteratorIterator(new \RecursiveDirectoryIterator(__DIR__ . '/../' . $namespace));
         $objects = new RegexIterator($iterator, '/[a-z0-9]+\.php/i', \RecursiveRegexIterator::GET_MATCH);
@@ -102,17 +114,14 @@ class Functions extends Core\ProcessorEntity
     /**
      * Return the default details attributed from a class.
      *
-     * @param string $namespace
-     *   The namespace that the class belongs to.
-     * @param string $className
-     *   The classname.
+     * @param string $namespace The namespace that the class belongs to.
+     * @param string $className The classname.
      *
-     * @return array
-     *   The details array.
+     * @return array The details array.
      *
-     * @throws \ReflectionException
+     * @throws \ReflectionException Error.
      */
-    private function _getDetails($namespace, $className)
+    private function _getDetails(string $namespace, string $className)
     {
         $reflector = new ReflectionClass("\\Gaterdata\\$namespace\\$className");
         if (!$reflector->isAbstract()) {

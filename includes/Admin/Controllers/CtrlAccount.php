@@ -1,22 +1,31 @@
 <?php
+/**
+ * Class CtrlAccount.
+ *
+ * @package Gaterdata
+ * @subpackage Admin\Controllers
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Admin\Controllers;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 
 /**
- * Class CtrlAccount.
+ * Class CtrlUsers.
  *
- * @package Gaterdata\Admin\Controllers
+ * Controller for the account page.
  */
 class CtrlAccount extends CtrlBase
 {
-
     /**
-     * {@inheritdoc}
+     * Roles allowed to visit the page.
+     *
+     * @var array
      */
     protected $permittedRoles = [
         'Administrator',
@@ -28,17 +37,11 @@ class CtrlAccount extends CtrlBase
     /**
      * Accounts page.
      *
-     * @param \Slim\Http\Request $request
-     *   Request object.
-     * @param \Slim\Http\Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param \Slim\Http\Request $request Request object.
+     * @param \Slim\Http\Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return \Psr\Http\Message\ResponseInterface|Response
-     *   Response.
-     *
-     * @throws \Exception
+     * @return \Psr\Http\Message\ResponseInterface|Response Response.
      */
     public function index(Request $request, Response $response, array $args)
     {
@@ -84,17 +87,11 @@ class CtrlAccount extends CtrlBase
     /**
      * Create an account.
      *
-     * @param \Slim\Http\Request $request
-     *   Request object.
-     * @param \Slim\Http\Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param \Slim\Http\Request $request Request object.
+     * @param \Slim\Http\Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return Response
-     *   Response.
-     *
-     * @throws \Exception
+     * @return Response Response.
      */
     public function create(Request $request, Response $response, array $args)
     {
@@ -140,17 +137,11 @@ class CtrlAccount extends CtrlBase
     /**
      * Edit an account.
      *
-     * @param \Slim\Http\Request $request
-     *   Request object.
-     * @param \Slim\Http\Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param \Slim\Http\Request $request Request object.
+     * @param \Slim\Http\Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return Response
-     *   Response.
-     *
-     * @throws \Exception
+     * @return Response Response.
      */
     public function edit(Request $request, Response $response, array $args)
     {
@@ -199,17 +190,11 @@ class CtrlAccount extends CtrlBase
     /**
      * Delete an account.
      *
-     * @param \Slim\Http\Request $request
-     *   Request object.
-     * @param \Slim\Http\Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param \Slim\Http\Request $request Request object.
+     * @param \Slim\Http\Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return Response
-     *   Response.
-     *
-     * @throws \Exception
+     * @return Response Response.
      */
     public function delete(Request $request, Response $response, array $args)
     {

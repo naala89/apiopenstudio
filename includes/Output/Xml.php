@@ -1,22 +1,34 @@
 <?php
-
 /**
- * @see http://stackoverflow.com/a/5965940/1113356
- * @see http://pastebin.com/pYuXQWee
+ * Class Xml.
+ *
+ * @package Gaterdata
+ * @subpackage Output
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Output;
 
 use Gaterdata\Core;
 
+/**
+ * Class Xml
+ *
+ * Outputs the results as XML.
+ */
 class Xml extends Output
 {
     /**
-     * {@inheritDoc}
+     * @var string The string to contain the content type header value.
      */
     protected $header = 'Content-Type:application/xml';
 
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -58,6 +70,8 @@ class Xml extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
      */
     public function process()
     {
@@ -67,32 +81,48 @@ class Xml extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @param boolean $data Boolean data.
+     *
+     * @return string XML string.
      */
-    protected function fromBoolean(&$data)
+    protected function fromBoolean(bool &$data)
     {
         return '<?xml version="1.0"?><datagatorWrapper>' . $data ? 'true' : 'false' . '</datagatorWrapper>';
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param integer $data Integer data.
+     *
+     * @return string XML string.
      */
-    protected function fromInteger(&$data)
+    protected function fromInteger(int &$data)
     {
         return '<?xml version="1.0"?><datagatorWrapper>' . $data . '</datagatorWrapper>';
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param float $data Float data.
+     *
+     * @return string XML string.
      */
-    protected function fromFloat(&$data)
+    protected function fromFloat(float &$data)
     {
         return '<?xml version="1.0"?><datagatorWrapper>' . $data . '</datagatorWrapper>';
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data XML data.
+     *
+     * @return string XML string.
      */
-    protected function fromXml(&$data)
+    protected function fromXml(string &$data)
     {
         libxml_use_internal_errors(true);
         $doc = simplexml_load_string($data);
@@ -106,24 +136,36 @@ class Xml extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data HTML data.
+     *
+     * @return string XML string.
      */
-    protected function fromHtml(&$data)
+    protected function fromHtml(string &$data)
     {
         return $data;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data Text data.
+     *
+     * @return string XML string.
      */
-    protected function fromText(&$data)
+    protected function fromText(string &$data)
     {
         return '<?xml version="1.0"?><datagatorWrapper>' . $data . '</datagatorWrapper>';
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param array $data Array data.
+     *
+     * @return string XML string.
      */
-    protected function fromArray(&$data)
+    protected function fromArray(array &$data)
     {
         $xml_data = new \SimpleXMLElement('<?xml version="1.0"?><datagatorWrapper></datagatorWrapper>');
         $this->_array2xml($data, $xml_data);
@@ -132,8 +174,12 @@ class Xml extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data Json data.
+     *
+     * @return string XML string.
      */
-    protected function fromJson(&$data)
+    protected function fromJson(string &$data)
     {
         $data = json_decode($data, true);
         return $this->fromArray($data);
@@ -141,19 +187,25 @@ class Xml extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @param mixed $data Image data.
+     *
+     * @return string XML string.
      */
     protected function fromImage(&$data)
     {
-        return this.$this->fromText($data);
+        return $this->fromText($data);
     }
 
     /**
      * Recursive method to convert an array into XML format.
-     * @param $array
-     * @param $xml
-     * @return mixed
+     *
+     * @param array $array Input array.
+     * @param \SimpleXMLElement $xml A SimpleXMLElement element.
+     *
+     * @return \SimpleXMLElement A populated SimpleXMLElement.
      */
-    private function _array2xml($array, $xml)
+    private function _array2xml(array $array, \SimpleXMLElement $xml)
     {
         foreach ($array as $key => $value) {
             if (is_numeric($key)) {

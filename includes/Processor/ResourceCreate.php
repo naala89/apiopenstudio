@@ -1,7 +1,13 @@
 <?php
-
 /**
- * Create a resource.
+ * Class ResourceCreate.
+ *
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
@@ -14,7 +20,13 @@ use Gaterdata\Db\Resource;
 use Gaterdata\Db\ResourceMapper;
 use Gaterdata\Core\ResourceValidator;
 use Spyc;
+use Monolog\Logger;
 
+/**
+ * Class ResourceCreate
+ *
+ * Processor class to create a resource.
+ */
 class ResourceCreate extends Core\ProcessorEntity
 {
     /**
@@ -43,6 +55,8 @@ class ResourceCreate extends Core\ProcessorEntity
     private $validator;
 
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -127,9 +141,14 @@ class ResourceCreate extends Core\ProcessorEntity
     ];
 
     /**
-     * {@inheritDoc}
+     * ResourceCreate constructor.
+     *
+     * @param mixed $meta Output meta.
+     * @param mixed $request Request object.
+     * @param \ADODB_mysqli $db DB object.
+     * @param \Monolog\Logger $logger Logget object.
      */
-    public function __construct($meta, &$request, $db, $logger)
+    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->applicationMapper = new ApplicationMapper($db);
@@ -141,6 +160,10 @@ class ResourceCreate extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {
@@ -183,17 +206,14 @@ class ResourceCreate extends Core\ProcessorEntity
     /**
      * Covert a string in a format into an associative array.
      *
-     * @param $format
-     *   The format of the input string.
-     * @param $string
-     *   The metadata string.
+     * @param string $format The format of the input string.
+     * @param string $string The metadata string.
      *
-     * @return array|mixed
-     *   Normalised string format.
+     * @return array|mixed Normalised string format.
      *
-     * @throws Core\ApiException
+     * @throws Core\ApiException Error.
      */
-    private function translateMetaString($format, $string)
+    private function translateMetaString(string $format, string $string)
     {
         $array = [];
         switch ($format) {
@@ -218,28 +238,28 @@ class ResourceCreate extends Core\ProcessorEntity
     /**
      * Create the resource in the DB.
      *
-     * @param string $name
-     *   The resource name.
-     * @param string $description
-     *   The resource description.
-     * @param string $method
-     *   The resource method.
-     * @param string $uri
-     *   The resource URI.
-     * @param integer $appid
-     *   The resource application ID.
-     * @param integer $ttl
-     *   The resource application TTL.
-     * @param string $meta
-     *   The resource metadata json encoded string.
+     * @param string $name The resource name.
+     * @param string $description The resource description.
+     * @param string $method The resource method.
+     * @param string $uri The resource URI.
+     * @param integer $appid The resource application ID.
+     * @param integer $ttl The resource application TTL.
+     * @param string $meta The resource metadata json encoded string.
      *
      * @return Core\DataContainer
      *   Create resource result.
      *
-     * @throws Core\ApiException
+     * @throws Core\ApiException Error.
      */
-    private function create($name, $description, $method, $uri, $appid, $ttl, $meta)
-    {
+    private function create(
+        string $name,
+        string $description,
+        string $method,
+        string $uri,
+        int $appid,
+        int $ttl,
+        string $meta
+    ) {
         $resource = new Resource(
             null,
             $appid,

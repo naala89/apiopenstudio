@@ -2,10 +2,11 @@
 /**
  * Class ExternalUser.
  *
- * @package Gaterdata\Db
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @package Gaterdata
+ * @subpackage Db
  * @author john89
  * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
  * @link https://gaterdata.com
  */
 
@@ -19,7 +20,7 @@ namespace Gaterdata\Db;
 class ExternalUser
 {
     /**
-     * @var mixed External entity ID.
+     * @var integer External entity ID.
      */
     protected $id;
 

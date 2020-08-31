@@ -1,16 +1,29 @@
 <?php
-
 /**
- * Perform input from external source
+ * Class Url.
+ *
+ * @package Gaterdata
+ * @subpackage Endpoint
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Endpoint;
 
 use Gaterdata\Core;
 
+/**
+ * Class Url
+ *
+ * Provide the results from a remote endpoint.
+ */
 class Url extends Core\ProcessorEntity
 {
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -99,6 +112,10 @@ class Url extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {
@@ -173,10 +190,11 @@ class Url extends Core\ProcessorEntity
     /**
      * Convert a CURL string constant to it's numerical equivalent.
      *
-     * @param $str
-     * @return mixed|string
+     * @param string $str Curl option constant.
+     *
+     * @return mixed Curl opt value.
      */
-    protected function getCurloptFromString($str)
+    protected function getCurloptFromString(string $str)
     {
         $str = strtoupper($str);
         if (preg_match('/^CURLOPT_/', $str) && defined($str)) {

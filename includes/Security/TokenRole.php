@@ -1,4 +1,14 @@
 <?php
+/**
+ * Class TokenRole.
+ *
+ * @package Gaterdata
+ * @subpackage Security
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Security;
 
@@ -6,6 +16,8 @@ use Gaterdata\Core;
 use Gaterdata\Db;
 
 /**
+ * Class TokenRole
+ *
  * Provide token authentication based and the user's role.
  *
  * Validation:
@@ -16,6 +28,8 @@ use Gaterdata\Db;
 class TokenRole extends Core\ProcessorEntity
 {
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -67,6 +81,10 @@ class TokenRole extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {
@@ -101,20 +119,16 @@ class TokenRole extends Core\ProcessorEntity
     /**
      * Validate a user against roles and the account/application of the resource.
      *
-     * @param integer $uid
-     *   User ID
-     * @param string $roleName
-     *   Role name.
-     * @param boolean $validateAccount
-     *   Validate the user role in the account.
-     * @param boolean $validateApplication
-     *   Validate the user role in the application.
+     * @param integer $uid User ID.
+     * @param string $roleName Role name.
+     * @param boolean $validateAccount Validate the user role in the account.
+     * @param boolean $validateApplication Validate the user role in the application.
      *
-     * @return bool
+     * @return boolean
      *
-     * @throws Core\ApiException
+     * @throws Core\ApiException Error.
      */
-    protected function validateUser($uid, $roleName, $validateAccount, $validateApplication)
+    protected function validateUser(int $uid, string $roleName, bool $validateAccount, bool $validateApplication)
     {
         $roleMapper = new Db\RoleMapper($this->db);
         $role = $roleMapper->findByName($roleName);

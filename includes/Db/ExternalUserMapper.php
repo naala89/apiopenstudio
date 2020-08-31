@@ -2,10 +2,11 @@
 /**
  * Class ExternalUserMapper.
  *
- * @package Gaterdata\Db
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @package Gaterdata
+ * @subpackage Db
  * @author john89
  * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
  * @link https://gaterdata.com
  */
 
@@ -140,8 +141,8 @@ class ExternalUserMapper extends Mapper
     {
         $user = new ExternalUser();
 
-        $user->setId(!empty($row['id']) ? $row['id'] : null);
-        $user->setAppId(!empty($row['appid']) ? $row['appid'] : null);
+        $user->setId(!empty($row['id']) ? $row['id'] : 0);
+        $user->setAppId(!empty($row['appid']) ? $row['appid'] : 0);
         $user->setExternalId(!empty($row['external_id']) ? $row['external_id'] : null);
         $user->setExternalEntity(!empty($row['external_entity']) ? $row['external_entity'] : null);
         $user->setDataField1(!empty($row['data_field_1']) ? $row['data_field_1'] : null);

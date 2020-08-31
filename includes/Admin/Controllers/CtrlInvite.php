@@ -1,27 +1,32 @@
 <?php
+/**
+ * Class CtrlInvite.
+ *
+ * @package Gaterdata
+ * @subpackage Admin\Controllers
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Admin\Controllers;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Gaterdata\Core\ApiException;
-use Gaterdata\Core\Hash;
-use Swift_Mailer;
-use Swift_Message;
-use Swift_SmtpTransport;
 
 /**
  * Class CtrlInvite.
  *
- * @package Gaterdata\Admin\Controllers
+ * Controller for the invite pages.
  */
 class CtrlInvite extends CtrlBase
 {
-
     /**
      * {@inheritdoc}
+     *
+     * @var array Roles permitted to view these pages.
      */
     protected $permittedRoles = [
         'Administrator',
@@ -32,16 +37,11 @@ class CtrlInvite extends CtrlBase
     /**
      * View all current invites.
      *
-     * @param Request $request
-     *   Slim request object.
-     * @param Response $response
-     *   Slim response object.
-     * @param array $args
-     *   Slim args array
+     * @param Request $request Slim request object.
+     * @param Response $response Slim response object.
+     * @param array $args Slim args array.
      *
      * @return ResponseInterface|Response
-     *
-     * @throws GuzzleException
      */
     public function index(Request $request, Response $response, array $args)
     {
@@ -91,16 +91,11 @@ class CtrlInvite extends CtrlBase
     /**
      * Delete an invite.
      *
-     * @param Request $request
-     *   Slim request object.
-     * @param Response $response
-     *   Slim response object.
-     * @param array $args
-     *   Slim args array
+     * @param Request $request Slim request object.
+     * @param Response $response Slim response object.
+     * @param array $args Slim args array.
      *
      * @return ResponseInterface|Response
-     *
-     * @throws GuzzleException
      */
     public function delete(Request $request, Response $response, array $args)
     {
@@ -167,16 +162,11 @@ class CtrlInvite extends CtrlBase
     /**
      * Invite a single or multiple users to GaterData.
      *
-     * @param Request $request
-     *   Slim request object.
-     * @param Response $response
-     *   Slim response object.
-     * @param array $args
-     *   Slim args array
+     * @param Request $request Slim request object.
+     * @param Response $response Slim response object.
+     * @param array $args Slim args array.
      *
      * @return ResponseInterface|Response
-     *
-     * @throws GuzzleException
      */
     public function invite(Request $request, Response $response, array $args)
     {

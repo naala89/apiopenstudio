@@ -1,19 +1,30 @@
 <?php
-
 /**
- * Output processor for images.
+ * Class Image.
  *
- * Accepts filepath, or remote URL.
- * This will return the actual image, not the URL.
+ * @package Gaterdata
+ * @subpackage Output
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Output;
 
 use Gaterdata\Core;
+use phpDocumentor\Reflection\Types\Boolean;
 
+/**
+ * Class Image
+ *
+ * Outputs the results as an image.
+ */
 class Image extends Output
 {
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -55,6 +66,8 @@ class Image extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
      */
     public function process()
     {
@@ -64,67 +77,120 @@ class Image extends Output
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data Image data.
+     *
+     * @return mixed
+     *
+     * @throws Core\ApiException Throw an exception if invalid input.
      */
-    protected function fromXml(&$data)
+    protected function fromXml(string &$data)
     {
-        return 'data is not an image';
+        throw new Core\ApiException('Cannot convert XML to image format');
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param float $data Image data.
+     *
+     * @return mixed
+     *
+     * @throws Core\ApiException Throw an exception if invalid input.
      */
-    protected function fromFloat(&$data)
+    protected function fromFloat(float &$data)
     {
-        return 'data is not an image';
+        throw new Core\ApiException('Cannot convert a float to image format');
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param boolean $data Image data.
+     *
+     * @return mixed
+     *
+     * @throws Core\ApiException Throw an exception if invalid input.
      */
-    protected function fromBoolean(&$data)
+    protected function fromBoolean(bool &$data)
     {
-        return 'data is not an image';
-    }
-
-    protected function fromInteger(&$data)
-    {
-        return 'data is not an image';
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function fromJson(&$data)
-    {
-        return 'data is not an image';
+        throw new Core\ApiException('Cannot convert a boolean to image format');
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param integer $data Image data.
+     *
+     * @return mixed
+     *
+     * @throws Core\ApiException Throw an exception if invalid input.
      */
-    protected function fromHtml(&$data)
+    protected function fromInteger(int &$data)
     {
-        return 'data is not an image';
+        throw new Core\ApiException('Cannot convert an integer to image format');
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $data Image data.
+     *
+     * @return mixed
+     *
+     * @throws Core\ApiException Throw an exception if invalid input.
      */
-    protected function fromText(&$data)
+    protected function fromJson(string &$data)
+    {
+        throw new Core\ApiException('Cannot convert JSON to image format');
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param string $data Image data.
+     *
+     * @return mixed
+     *
+     * @throws Core\ApiException Throw an exception if invalid input.
+     */
+    protected function fromHtml(string &$data)
+    {
+        throw new Core\ApiException('Cannot convert HTML to image format');
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param string $data Image data.
+     *
+     * @return mixed
+     */
+    protected function fromText(string &$data)
     {
         return $data;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param array $data Image data.
+     *
+     * @return mixed
+     *
+     * @throws Core\ApiException Throw an exception if invalid input.
      */
-    protected function fromArray(&$data)
+    protected function fromArray(array &$data)
     {
-        return 'data is not an image';
+        throw new Core\ApiException('Cannot convert an array to image format');
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param mixed $data Image data.
+     *
+     * @return mixed
      */
     protected function fromImage(&$data)
     {

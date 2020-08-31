@@ -1,8 +1,17 @@
 <?php
+/**
+ * Class CtrlVars.
+ *
+ * @package Gaterdata
+ * @subpackage Admin\Controllers
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Admin\Controllers;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -10,7 +19,7 @@ use Slim\Http\Response;
 /**
  * Class CtrlVars.
  *
- * @package Gaterdata\Admin\Controllers
+ * Controller for the vars pages.
  */
 class CtrlVars extends CtrlBase
 {
@@ -28,17 +37,11 @@ class CtrlVars extends CtrlBase
     /**
      * List vars
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return ResponseInterface Response.
      */
     public function index(Request $request, Response $response, array $args)
     {
@@ -152,17 +155,11 @@ class CtrlVars extends CtrlBase
     /**
      * Create var
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws GuzzleException
+     * @return ResponseInterface Response.
      */
     public function create(Request $request, Response $response, array $args)
     {
@@ -208,17 +205,11 @@ class CtrlVars extends CtrlBase
     /**
      * Update var
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws GuzzleException
+     * @return ResponseInterface Response.
      */
     public function update(Request $request, Response $response, array $args)
     {
@@ -261,17 +252,11 @@ class CtrlVars extends CtrlBase
     /**
      * Delete var
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws GuzzleException
+     * @return ResponseInterface Response.
      */
     public function delete(Request $request, Response $response, array $args)
     {

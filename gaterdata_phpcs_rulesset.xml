@@ -225,8 +225,12 @@
     <!-- 7. PHPCS -->
 
     <rule ref="Squiz.Commenting.FunctionComment">
+        <properties>
+            <property name="skipIfInheritdoc" value="true"/>
+        </properties>
         <exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamName" />
         <exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType" />
+        <exclude name="Squiz.Commenting.FunctionCommentThrowTag.WrongNumber" />
     </rule>
     <rule ref="Squiz.Commenting.FunctionCommentThrowTag" />
     <rule ref="Squiz.Commenting.ClassComment" />

@@ -1,14 +1,26 @@
 <?php
-
 /**
- * Update a role.
+ * Class RoleUpdate.
+ *
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
 
 use Gaterdata\Core;
 use Gaterdata\Db\RoleMapper;
+use Monolog\Logger;
 
+/**
+ * Class RoleUpdate
+ *
+ * Processor class to update a role.
+ */
 class RoleUpdate extends Core\ProcessorEntity
 {
     /**
@@ -17,6 +29,8 @@ class RoleUpdate extends Core\ProcessorEntity
     private $roleMapper;
 
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -47,9 +61,14 @@ class RoleUpdate extends Core\ProcessorEntity
     ];
 
     /**
-     * {@inheritDoc}
+     * RoleUpdate constructor.
+     *
+     * @param mixed $meta Output meta.
+     * @param mixed $request Request object.
+     * @param \ADODB_mysqli $db DB object.
+     * @param \Monolog\Logger $logger Logget object.
      */
-    public function __construct($meta, &$request, $db, $logger)
+    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->roleMapper = new RoleMapper($db);
@@ -57,6 +76,10 @@ class RoleUpdate extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {

@@ -1,14 +1,26 @@
 <?php
-
 /**
- * Fetch list of roles.
+ * Class RoleRead.
+ *
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
 
 use Gaterdata\Core;
 use Gaterdata\Db\RoleMapper;
+use Monolog\Logger;
 
+/**
+ * Class RoleRead
+ *
+ * Processor class to fetch a role.
+ */
 class RoleRead extends Core\ProcessorEntity
 {
     /**
@@ -17,6 +29,8 @@ class RoleRead extends Core\ProcessorEntity
     private $roleMapper;
 
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -65,9 +79,14 @@ class RoleRead extends Core\ProcessorEntity
     ];
 
     /**
-     * {@inheritDoc}
+     * RoleRead constructor.
+     *
+     * @param mixed $meta Output meta.
+     * @param mixed $request Request object.
+     * @param \ADODB_mysqli $db DB object.
+     * @param \Monolog\Logger $logger Logget object.
      */
-    public function __construct($meta, &$request, $db, $logger)
+    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->roleMapper = new RoleMapper($db);
@@ -75,6 +94,10 @@ class RoleRead extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {
@@ -96,14 +119,13 @@ class RoleRead extends Core\ProcessorEntity
     /**
      * Fetch a role by a rid.
      *
-     * @param integer $rid
-     *   A role ID.
+     * @param integer $rid A role ID.
      *
      * @return Core\DataContainer
      *
-     * @throws Core\ApiException
+     * @throws Core\ApiException Error.
      */
-    private function findByRid($rid)
+    private function findByRid(int $rid)
     {
         $role = $this->roleMapper->findByRid($rid);
         if (empty($role->getRid())) {
@@ -115,15 +137,13 @@ class RoleRead extends Core\ProcessorEntity
     /**
      * Find all roles.
      *
-     * @param array
-     *   SQL query params.
+     * @param array $params SQL query params.
      *
-     * @return array
-     *   An array of associative arrays of a roles rows.
+     * @return array An array of associative arrays of a roles rows.
      *
-     * @throws Core\ApiException
+     * @throws Core\ApiException Error.
      */
-    private function findAll($params)
+    private function findAll(array $params)
     {
         $result = $this->roleMapper->findAll($params);
         $roles = [];

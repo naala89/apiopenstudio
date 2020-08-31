@@ -1,95 +1,119 @@
 <?php
-
 /**
- * Wrapper of the Curl function.
+ * Class Curl.
+ *
+ * @package Gaterdata
+ * @subpackage Core
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Core;
 
+/**
+ * Class Curl
+ *
+ * Wrapper for the PHP Curl class.
+ *
+ * Curl constants
+ *
+ * 13     CURLOPT_TIMEOUT
+ * 47     CURLOPT_POST
+ * 52     CURLOPT_FOLLOWLOCATION
+ * 64     CURLOPT_SSL_VERIFYPEER
+ * 78     CURLOPT_CONNECTTIMEOUT
+ * 80     CURLOPT_HTTPGET
+ * 10001  CURLOPT_FILE
+ * 10002  CURLOPT_URL
+ * 10005  CURLOPT_USERPWD
+ * 10015  CURLOPT_POSTFIELDS
+ * 10022  CURLOPT_COOKIE
+ * 19913  CURLOPT_RETURNTRANSFER
+ */
 class Curl
 {
+    /**
+     * @var integer Curl result HTTP status code.
+     */
     public $httpStatus;
-    public $curlStatus;
-    public $errorMsg;
-    public $type;
-    public $options = array(CURLOPT_RETURNTRANSFER => true);
-    public $url;
-  /**
-   * Curl constants
-   *
-   * 13     CURLOPT_TIMEOUT
-   * 47     CURLOPT_POST
-   * 52     CURLOPT_FOLLOWLOCATION
-   * 64     CURLOPT_SSL_VERIFYPEER
-   * 78     CURLOPT_CONNECTTIMEOUT
-   * 80     CURLOPT_HTTPGET
-   * 10001  CURLOPT_FILE
-   * 10002  CURLOPT_URL
-   * 10005  CURLOPT_USERPWD
-   * 10015  CURLOPT_POSTFIELDS
-   * 10022  CURLOPT_COOKIE
-   * 19913  CURLOPT_RETURNTRANSFER
-   */
 
-  /**
-   * Send a GET request using cURL.
-   *
-   * @param string $url
-   *  url for the curl call
-   * @param array $options
-   *  additional options
-   *
-   * @return string
-   */
-    public function get($url, array $options = array())
+    /**
+     * @var integer Curl result status code.
+     */
+    public $curlStatus;
+
+    /**
+     * @var string Curl result error message.
+     */
+    public $errorMsg;
+
+    /**
+     * @var string Curl result content-type.
+     */
+    public $type;
+
+    /**
+     * @var array Request options.
+     */
+    public $options = [CURLOPT_RETURNTRANSFER => true];
+
+    /**
+     * @var string Requerst URL.
+     */
+    public $url;
+
+    /**
+     * Send a GET request using cURL.
+     *
+     * @param string $url Url for the curl call.
+     * @param array $options Additional options.
+     *
+     * @return string
+     */
+    public function get(string $url, array $options = [])
     {
         $options[CURLOPT_HTTPGET] = true;
         return $this->_exec($url, $options);
     }
 
-  /**
-   * Send a POST request using cURL.
-   *
-   * @param $url
-   *  url for the curl call
-   * @param array $options
-   *  additional options. This includes the post vars.
-   *
-   * @return string
-   */
-    public function post($url, array $options = array())
+    /**
+     * Send a POST request using cURL.
+     *
+     * @param string $url Url for the curl call.
+     * @param array $options Additional options. This includes the post vars.
+     *
+     * @return string
+     */
+    public function post(string $url, array $options = array())
     {
         $options[CURLOPT_POST] = true;
         return $this->_exec($url, $options);
     }
 
-  /**
-   * Utility function to get options after adding them to the default curl options.
-   *
-   * @param string $url
-   *  url for the curl call
-   * @param array $options
-   *  additional options
-   *
-   * @return array
-   *  array of options
-   */
-    private function _getCurlOptions($url, array $options = array())
+    /**
+     * Utility function to get options after adding them to the default curl options.
+     *
+     * @param string $url Url for the curl call.
+     * @param array $options Additional options.
+     *
+     * @return array Array of options
+     */
+    private function _getCurlOptions(string $url, array $options = [])
     {
         return $this->options + array(CURLOPT_URL => $url) + $options;
     }
 
-  /**
-   * Perform a cURL request.
-   *
-   * @param string $url
-   *  url for the curl call
-   * @param array $options
-   *  additional options
-   *
-   * @return string
-   */
-    private function _exec($url, array $options = array())
+    /**
+     * Perform a cURL request.
+     *
+     * @param string $url Url for the curl call.
+     * @param array $options Additional options.
+     *
+     * @return string
+     */
+    private function _exec(string $url, array $options = [])
     {
         $options = $this->_getCurlOptions($url, $options);
 

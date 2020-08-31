@@ -1,47 +1,75 @@
 <?php
+/**
+ * Class Utilities.
+ *
+ * @package Gaterdata
+ * @subpackage Core
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Core;
 
+/**
+ * Class Utilities
+ *
+ * Global utilities.
+ */
 class Utilities
 {
-
+    /**
+     * @var string Lower case characters.
+     */
     public static $lower_case = 'abcdefghijklmnopqrstuvwxyz';
+
+    /**
+     * @var string Upper case characters.
+     */
     public static $upper_case = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    /**
+     * @var string Real numbers.
+     */
     public static $number = '0123456789';
+
+    /**
+     * @var string Special characters.
+     */
     public static $special = '!@#$%^&*()';
 
-  /**
-   * Returns system time in micro secs.\
-   *
-   * @return float
-   **/
+    /**
+     * Returns system time in micro secs.
+     *
+     * @return float
+     **/
     public static function getMicrotime()
     {
         list($usec, $sec) = explode(" ", microtime());
         return ((float)$usec + (float)$sec);
     }
 
-  /**
-   * Creates a random string, of a specified length.
-   *
-   * Contents of string specified by $lower, $upper, $number and $non_alphanum.
-   *
-   * @param integer $length
-   *  length of the string
-   * @param boolean $lower
-   *  include lower case alpha
-   * @param boolean $upper
-   *  include upper case alpha
-   * @param boolean $number
-   *  include integers
-   * @param boolean $special
-   *  include special characters
-   *
-   * @return string
-   *  random string
-   **/
-    public static function randomString($length = 8, $lower = true, $upper = true, $number = true, $special = false)
-    {
+    /**
+     * Creates a random string, of a specified length.
+     *
+     * Contents of string specified by $lower, $upper, $number and $non_alphanum.
+     *
+     * @param integer $length Length of the string.
+     * @param boolean $lower Include lower case alpha.
+     * @param boolean $upper Include upper case alpha.
+     * @param boolean $number Include integers.
+     * @param boolean $special Include special characters.
+     *
+     * @return string
+     **/
+    public static function randomString(
+        int $length = null,
+        bool $lower = null,
+        bool $upper = null,
+        bool $number = null,
+        bool $special = null
+    ) {
         $length = empty($length) ? 8 : $length;
         $lower = empty($lower) ? true : $lower;
         $upper = empty($upper) ? true : $upper;
@@ -71,54 +99,47 @@ class Utilities
         return $str;
     }
 
-  /**
-   * Converts php date to standard mysql date
-   *
-   * @param date $phpdate
-   *  date time stamp
-   *
-   * @return date
-   *  mysql formatted datetime
-   **/
-    public static function datePhp2mysql($phpdate)
+    /**
+     * Converts php date to standard mysql date.
+     *
+     * @param integer $phpdate Unix time stamp.
+     *
+     * @return string
+     **/
+    public static function datePhp2mysql(int $phpdate)
     {
         return date('Y-m-d H:i:s', $phpdate);
     }
 
-  /**
-   * Converts mysql date to standard php date.
-   *
-   * @param date $mysqldate
-   *  mysql formatted datetime
-   *
-   * @return date
-   *  php timestamp
-   **/
-    public static function dateMysql2php($mysqldate)
+    /**
+     * Converts mysql date to standard php date.
+     *
+     * @param integer $mysqldate Unix time stamp.
+     *
+     * @return string
+     **/
+    public static function dateMysql2php(int $mysqldate)
     {
         return strtotime($mysqldate);
     }
 
-  /**
-   * create current standard mysql date
-   *
-   * @return date
-   *  mysql formatted datetime
-   */
+    /**
+     * Create current standard mysql date
+     *
+     * @return string
+     */
     public static function mysqlNow()
     {
         return self::datePhp2mysql(time());
     }
 
-  /**
-   * Check to see if $m_array is an associative array.
-   *
-   * @param mixed $m_array
-   *  mixed array
-   *
-   * @return boolean
-   *  is the array associative
-   **/
+    /**
+     * Check to see if $m_array is an associative array.
+     *
+     * @param mixed $m_array Mixed array.
+     *
+     * @return boolean
+     **/
     public static function isAssoc($m_array)
     {
         if (!is_array($m_array)) {
@@ -127,12 +148,12 @@ class Utilities
         return array_keys($m_array) !== range(0, count($m_array) - 1);
     }
 
-  /**
-   * Obtain user IP even if they're under a proxy.
-   *
-   * @return string ip address
-   *  IP address of the user
-   */
+    /**
+     * Obtain user IP even if they're under a proxy.
+     *
+     * @return string ip address
+     *  IP address of the user
+     */
     public static function getUserIP()
     {
         $ip = $_SERVER["REMOTE_ADDR"];
@@ -143,16 +164,14 @@ class Utilities
         return $ip;
     }
 
-  /**
-   * Get the current URL
-   *
-   * @param bool $array
-   *  return in array format
-   *
-   * @return array|string
-   *  current URL
-   */
-    public static function selfURL($array = false)
+    /**
+     * Get the current URL.
+     *
+     * @param boolean $returnArray Return in array format.
+     *
+     * @return array|string
+     */
+    public static function selfURL(bool $returnArray = null)
     {
         $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
         $protocol = self::strleft(strtolower($_SERVER["SERVER_PROTOCOL"]), "/") . $s;
@@ -160,32 +179,31 @@ class Utilities
         $address = $_SERVER['SERVER_NAME'];
         $uri = $_SERVER['REQUEST_URI'];
 
-        if (!$array) {
+        if (!$returnArray) {
             return $protocol . '://' . $address . (($port == 80) ? '' : ":$port") . $uri;
         }
         $ret_array = array('protocol' => $protocol, 'port' => $port, 'address' => $address, 'uri' => $uri);
         return $ret_array;
     }
 
-  /**
-   * Return the character left of a substring win a string.
-   *
-   * @param string $s1
-   *  string
-   * @param string $s2
-   *  substring
-   *
-   * @return string
-   *  substring left of $s2
-   */
-    public static function strleft($s1, $s2)
+    /**
+     * Return the character left of a substring win a string.
+     *
+     * @param string $s1 String.
+     * @param string $s2 Substring.
+     *
+     * @return string substring left of $s2
+     */
+    public static function strleft(string $s1, string $s2)
     {
         return substr($s1, 0, strpos($s1, $s2));
     }
 
-  /**
-   * Redirect to current url under https, if under http.
-   */
+    /**
+     * Redirect to current url under https, if under http.
+     *
+     * @return void
+     */
     public static function makeUrlSecure()
     {
         $a_selfURL = self::selfURL(true);
@@ -196,9 +214,11 @@ class Utilities
         }
     }
 
-  /**
-   * Redirect to current url under http, if under https.
-   */
+    /**
+     * Redirect to current url under http, if under https.
+     *
+     * @return void
+     */
     public static function makeUrlInsecure()
     {
         $a_selfURL = self::selfURL(true);
@@ -208,16 +228,14 @@ class Utilities
         }
     }
 
-  /**
-   * Check if a url exists.
-   *
-   * @param $url
-   *  the URL
-   *
-   * @return bool
-   *  does it exist
-   */
-    public static function doesUrlExist($url)
+    /**
+     * Check if a url exists.
+     *
+     * @param string $url The URL.
+     *
+     * @return boolean
+     */
+    public static function doesUrlExist(string $url)
     {
         $headers = @get_headers($url);
         if (strpos($headers[0], '200') === false) {
@@ -226,11 +244,11 @@ class Utilities
         return true;
     }
 
-  /**
-   * Check if current url is https.
-   *
-   * @return bool
-   */
+    /**
+     * Check if current url is https.
+     *
+     * @return boolean
+     */
     public static function isSecure()
     {
         $isSecure = false;
@@ -245,19 +263,27 @@ class Utilities
         return $isSecure;
     }
 
-  /**
-   * Recursively set access rights on a directory.
-   *
-   * @param $dir
-   * @param int $dirAccess
-   * @param int $fileAccess
-   * @param array $nomask
-   */
-    public static function setAccessRights($dir, $dirAccess = 0777, $fileAccess = 0666, $nomask = array('.', '..'))
-    {
-      //error_log("Make writable: $dir");
+    /**
+     * Recursively set access rights on a directory.
+     *
+     * @param string $dir Directory string.
+     * @param integer $dirAccess Directory permission to set.
+     * @param integer $fileAccess File permission to set.
+     * @param array $nomask Nomask permission to set.
+     *
+     * @return void
+     */
+    public static function setAccessRights(
+        string $dir,
+        int $dirAccess = null,
+        int $fileAccess = null,
+        array $nomask = array('.', '..')
+    ) {
+        $dirAccess = empty($dirAccess) ? 0777 : $dirAccess;
+        $fileAccess = empty($dirAccess) ? 0666 : $dirAccess;
+        //error_log("Make writable: $dir");
         if (is_dir($dir)) {
-          // Try to make each directory world writable.
+            // Try to make each directory world writable.
             if (@chmod($dir, $dirAccess)) {
                 error_log("Make writable: $dir");
             }
@@ -266,11 +292,11 @@ class Utilities
             while (false !== ($file = readdir($handle))) {
                 if (!in_array($file, $nomask) && $file[0] != '.') {
                     if (is_dir("$dir/$file")) {
-                    // Recurse into subdirectories
+                        // Recurse into subdirectories
                         self::setAccessRights("$dir/$file", $dirAccess, $fileAccess, $nomask);
                     } else {
                         $filename = "$dir/$file";
-                  // Try to make each file world writable.
+                        // Try to make each file world writable.
                         if (@chmod($filename, $fileAccess)) {
                             error_log("Make writable: $filename");
                         }

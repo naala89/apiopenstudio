@@ -1,19 +1,13 @@
 <?php
-
 /**
- * Store the Drupal login token
+ * Class LoginStoreDrupal.
  *
- * Takes the input of a login event and stores the token if successful
- *
- *
- * METADATA
- * {
- *  "type":"tokenStoreDrupal",
- *  "meta": {
- *    "id":<integer>,
- *    "source":<processor>
- *  }
- * }
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
@@ -21,11 +15,26 @@ namespace Gaterdata\Processor;
 use Gaterdata\Core;
 use Gaterdata\Db;
 
+/**
+ * Class LoginStoreDrupal
+ *
+ * Processor class te login with auth from drupal.
+ */
 class LoginStoreDrupal extends Core\ProcessorEntity
 {
-    private $user;
-    private $defaultEntity = 'drupal';
     /**
+     * @var array
+     */
+    private $user;
+
+    /**
+     * @var string
+     */
+    private $defaultEntity = 'drupal';
+
+    /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -59,6 +68,10 @@ class LoginStoreDrupal extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {

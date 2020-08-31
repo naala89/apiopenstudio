@@ -1,13 +1,32 @@
 #!/usr/bin/php -q
 <?php
+/**
+ * Class CLIImages2video.
+ *
+ * @package Gaterdata
+ * @subpackage Core\Cli
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Core\Cli;
 
+use Gaterdata\Core\ApiException;
 use Gaterdata\Core\Utilities;
-use http\Client\Curl;
 
+/**
+ * Class CLIImages2video
+ *
+ * Script to convert images into a video.
+ */
 class CLIImages2video extends CLIScript
 {
+
+    /**
+     * CLIImages2video constructor.
+     */
     public function __construct()
     {
         $this->argMap = [
@@ -53,12 +72,22 @@ class CLIImages2video extends CLIScript
         parent::__construct();
     }
 
-    public function exec($argv = null)
+    /**
+     * @param array $argv Bash arguments.
+     *
+     * @return void
+     */
+    public function exec(array $argv = null)
     {
         parent::exec($argv);
         $this->process();
     }
 
+    /**
+     * Help text for the CLI.
+     *
+     * @return void
+     */
     protected function help()
     {
         $help = "CLIImages2video\n\n";
@@ -81,16 +110,20 @@ class CLIImages2video extends CLIScript
         echo $help;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return void
+     *
+     * @throws ApiException Throw an exception on error.
+     */
     private function process()
     {
         if (!extension_loaded('Imagick')) {
-            Debug::message('Error: please install ImageMagick on the server', 0, Config::$debugCLI, Debug::LOG);
-            return;
+            throw new ApiException('Error: please install ImageMagick on the server');
         }
         if (!file_exists($this->options['i'])) {
-            $message = 'Error: input directory does not exist';
-            Debug::variable($this->options['i'], $message, 0, Config::$debugCLI, Debug::LOG);
-            return;
+            throw new ApiException('Error: input directory does not exist');
         }
 
         $inputFile = $this->options['i'];
@@ -100,7 +133,7 @@ class CLIImages2video extends CLIScript
         Debug::variable($inputFile, '$inputFile', 1, Config::$debugCLI, Debug::LOG);
         Debug::variable($imagePath, '$imagePath', 1, Config::$debugCLI, Debug::LOG);
 
-      //get images
+        //get images
         $curl = new Curl();
         $urlFile = fopen($inputFile, 'r');
         $count = 0;
@@ -121,7 +154,7 @@ class CLIImages2video extends CLIScript
 
         Utilities::setAccessRights($imagePath);
 
-      //resize the images & reformat if needed
+        //resize the images & reformat if needed
         $nomask = ['.', '..', '.DS_Store'];
         if ($handle = opendir($imagePath)) {
             while (($file = readdir($handle)) !== false) {
@@ -139,7 +172,7 @@ class CLIImages2video extends CLIScript
             }
         }
 
-      //Tweening
+        //Tweening
         $cmd = Config::$convert . " $imagePath/*." . Config::$swellnetWamsStandardImageFormat;
         $cmd .= isset($this->options['delay']) ? ' -delay ' . $this->options['delay'] : '';
         $cmd .= isset($this->options['morph']) ? ' -morph ' . $this->options['morph'] : '';
@@ -148,7 +181,7 @@ class CLIImages2video extends CLIScript
         $output = shell_exec($cmd);
         Debug::message($output, 1, Config::$debugCLI, Debug::LOG);
 
-      //make video
+        //make video
         $cmd = Config::$ffmpeg . " -i $imagePath/%05d.final." . $this->options['transitionFormat'];
         $cmd .= !empty($this->options['qscale']) ? ' -qscale ' . $this->options['qscale'] : '';
         $cmd .= !empty($this->options['framerate']) ? ' -r ' . $this->options['framerate'] : '';
@@ -157,7 +190,7 @@ class CLIImages2video extends CLIScript
         $output = shell_exec($cmd);
         Debug::message($output, 1, Config::$debugCLI, Debug::LOG);
 
-      //delete images directory
+        //delete images directory
         if (!empty($this->flags['del'])) {
             Debug::variable($imagePath, 'del', 1, Config::$debugCLI, Debug::LOG);
             $it = new RecursiveDirectoryIterator($imagePath, RecursiveDirectoryIterator::SKIP_DOTS);

@@ -2,10 +2,11 @@
 /**
  * Class UserRole.
  *
- * @package Gaterdata\Db
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @package Gaterdata
+ * @subpackage Db
  * @author john89
  * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
  * @link https://gaterdata.com
  */
 
@@ -184,11 +185,11 @@ class UserRole
     public function dump()
     {
         return [
-        'urid' => $this->urid,
-        'accid' => $this->accid,
-        'appid' => $this->appid,
-        'uid' => $this->uid,
-        'rid' => $this->rid,
+            'urid' => $this->urid,
+            'accid' => $this->accid,
+            'appid' => $this->appid,
+            'uid' => $this->uid,
+            'rid' => $this->rid,
         ];
     }
 }

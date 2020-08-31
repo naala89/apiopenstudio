@@ -1,4 +1,14 @@
 <?php
+/**
+ * Class CtrlUsers.
+ *
+ * @package Gaterdata
+ * @subpackage Admin\Controllers
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Admin\Controllers;
 
@@ -8,11 +18,10 @@ use Slim\Http\Response;
 /**
  * Class CtrlUsers.
  *
- * @package Gaterdata\Admin\Controllers
+ * Controller for the users page.
  */
 class CtrlUsers extends CtrlBase
 {
-
   /**
    * Roles allowed to visit the page.
    *
@@ -27,17 +36,11 @@ class CtrlUsers extends CtrlBase
     /**
      * Display the users page.
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return \Psr\Http\Message\ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return \Psr\Http\Message\ResponseInterface Response.
      */
     public function index(Request $request, Response $response, array $args)
     {

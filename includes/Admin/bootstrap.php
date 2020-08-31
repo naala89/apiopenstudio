@@ -1,8 +1,19 @@
 <?php
+/**
+ * Bootstrap file for GaterData admin.
+ *
+ * @package Gaterdata
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
+
+?>
+<?php
 
 require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
-use Cascade\Cascade;
 use Gaterdata\Core\Config;
 
 session_start();
@@ -14,8 +25,6 @@ $settings = $config->all();
 foreach ($settings['admin']['slim'] as $key => $value) {
     $settings[$key] = $value;
 }
-
-// Cascade::fileConfig($settings->__get(['log', 'settings']));
 
 // Instantiate the app
 $app = new \Slim\App(['settings' => $settings]);

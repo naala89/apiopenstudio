@@ -2,10 +2,11 @@
 /**
  * Class AccountMapper.
  *
- * @package Gaterdata\Db
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @package Gaterdata
+ * @subpackage Db
  * @author john89
  * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
  * @link https://gaterdata.com
  */
 
@@ -196,8 +197,8 @@ class AccountMapper extends Mapper
     {
         $account = new Account();
 
-        $account->setAccid(!empty($row['accid']) ? $row['accid'] : null);
-        $account->setName(!empty($row['name']) ? $row['name'] : null);
+        $account->setAccid(!empty($row['accid']) ? $row['accid'] : 0);
+        $account->setName(!empty($row['name']) ? $row['name'] : '');
 
         return $account;
     }

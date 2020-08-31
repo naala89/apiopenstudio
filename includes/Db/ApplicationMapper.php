@@ -2,10 +2,11 @@
 /**
  * Class ApplicationMapper.
  *
- * @package Gaterdata\Db
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @package Gaterdata
+ * @subpackage Db
  * @author john89
  * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
  * @link https://gaterdata.com
  */
 
@@ -246,9 +247,9 @@ class ApplicationMapper extends Mapper
     {
         $application = new Application();
 
-        $application->setAppid(!empty($row['appid']) ? $row['appid'] : null);
-        $application->setAccid(!empty($row['accid']) ? $row['accid'] : null);
-        $application->setName(!empty($row['name']) ? $row['name'] : null);
+        $application->setAppid(!empty($row['appid']) ? $row['appid'] : 0);
+        $application->setAccid(!empty($row['accid']) ? $row['accid'] : 0);
+        $application->setName(!empty($row['name']) ? $row['name'] : '');
 
         return $application;
     }

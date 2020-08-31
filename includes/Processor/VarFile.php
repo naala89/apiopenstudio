@@ -1,14 +1,26 @@
 <?php
-
 /**
- * Post variable
+ * Class VarFile.
+ *
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
 
 use Gaterdata\Core;
 use GuzzleHttp\Client;
+use Monolog\Logger;
 
+/**
+ * Class VarFile
+ *
+ * Processor class to hold a file variable.
+ */
 class VarFile extends Core\ProcessorEntity
 {
     /**
@@ -17,10 +29,12 @@ class VarFile extends Core\ProcessorEntity
     private $settings;
 
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
-    'name' => 'Var (File)',
+        'name' => 'Var (File)',
         'machineName' => 'var_file',
         'description' => 'Return the contents of a file or the file path.',
         'menu' => 'Primitive',
@@ -68,9 +82,14 @@ class VarFile extends Core\ProcessorEntity
     ];
 
     /**
-     * {@inheritDoc}
+     * VarFile constructor.
+     *
+     * @param mixed $meta Output meta.
+     * @param mixed $request Request object.
+     * @param \ADODB_mysqli $db DB object.
+     * @param \Monolog\Logger $logger Logget object.
      */
-    public function __construct($meta, &$request, $db, $logger)
+    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Core\Config();
@@ -78,6 +97,10 @@ class VarFile extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {
@@ -100,18 +123,15 @@ class VarFile extends Core\ProcessorEntity
     /**
      * Get a file from $_FILES.
      *
-     * @param string $filename
-     *   The filename in the post.
-     * @param bool $getContents
-     *   Return the contents or the filepath.
-     * @param $nullable
-     *   Thrown an error if empty.
+     * @param string $filename The filename in the post.
+     * @param boolean $getContents Return the contents or the filepath.
+     * @param boolean $nullable Thrown an error if empty.
      *
      * @return Core\DataContainer
      *
-     * @throws Core\ApiException
+     * @throws Core\ApiException Exception.
      */
-    private function getFileFiles($filename, $getContents, $nullable)
+    private function getFileFiles(string $filename, bool $getContents, bool $nullable)
     {
         $this->validateFilesError($filename, $nullable);
         if ($getContents) {
@@ -137,20 +157,17 @@ class VarFile extends Core\ProcessorEntity
 
     /**
      * Get a file from a remote location.
-     * @param string $location
-     *   Remote server URL and directory structure.
-     * @param string $filename
-     *   The file to fetch.
-     * @param $getContents
-     *   Return file contents of path to locally stored file.
-     * @param $nullable
-     *   Thrown an exceoption if the file contents are empty.
+     *
+     * @param string $location Remote server URL and directory structure.
+     * @param string $filename The file to fetch.
+     * @param boolean $getContents Return file contents of path to locally stored file.
+     * @param boolean $nullable Thrown an exceoption if the file contents are empty.
      *
      * @return Core\DataContainer
      *
-     * @throws Core\ApiException
+     * @throws Core\ApiException Exception.
      */
-    private function getFileRemote($location, $filename, $getContents, $nullable)
+    private function getFileRemote(string $location, string $filename, bool $getContents, bool $nullable)
     {
         $dir = $this->settings->__get(['api', 'base_path']) . $this->settings->__get(['api', 'dirFileStorage']);
         $name = md5($filename . time());
@@ -183,19 +200,16 @@ class VarFile extends Core\ProcessorEntity
     /**
      * Validate file in $_FILES.
      *
-     * @param $filename
-     *   The filename
-     * @param $nullable
-     *   Empty file allowed.
+     * @param string $filename The filename.
+     * @param boolean $nullable Empty file allowed.
      *
-     * @return bool
-     *   Valid file received.
+     * @return boolean Valid file received.
      *
-     * @throws Core\ApiException
+     * @throws Core\ApiException Exception.
      *
      * @see https://www.php.net/manual/en/features.file-upload.php
      */
-    private function validateFilesError($filename, $nullable)
+    private function validateFilesError(string $filename, bool $nullable)
     {
         if (
             !isset($_FILES[$filename]['error']) || is_array($_FILES[$filename]['error'])) {

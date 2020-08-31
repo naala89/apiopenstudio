@@ -1,4 +1,14 @@
 <?php
+/**
+ * Class ProcessorEntity.
+ *
+ * @package Gaterdata
+ * @subpackage Core
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Core;
 
@@ -6,7 +16,14 @@ use Gaterdata\Config;
 use Gaterdata\Db\AccountMapper;
 use Gaterdata\Db\ApplicationMapper;
 use Gaterdata\Db\UserRoleMapper;
+use Monolog\Logger;
+use phpDocumentor\Reflection\Types\Boolean;
 
+/**
+ * Class ProcessorEntity
+ *
+ * Base class for all entities.
+ */
 abstract class ProcessorEntity extends Entity
 {
     /**
@@ -17,7 +34,7 @@ abstract class ProcessorEntity extends Entity
 
     /**
      * Meta required for this processor.
-     * @var array
+     * @var mixed
      */
     protected $meta;
 
@@ -33,6 +50,8 @@ abstract class ProcessorEntity extends Entity
     protected $logger;
 
     /**
+     * @var array Details of the processor.
+     *
      * An array of details of the processor, used to configure the frontend GUI and metadata construction.
      *
      * Indexes:
@@ -103,29 +122,23 @@ abstract class ProcessorEntity extends Entity
      *              be of type processor or integer
      *              with no limit on value
      *          t, which can take or or many input of Processor Field or a string.
-     *
-     * @var array
      */
     protected $details = array();
 
     /**
-     * @param \ADOConnection $dbLayer
+     * @var \ADOConnection $dbLayer
      */
     protected $db;
 
     /**
      * Constructor. Store processor metadata and request data in object.
      *
-     * @param array $meta
-     *   The processor metadata.
-     * @param Request $request
-     *   Request object.
-     * @param ADODB_mysqli $db
-     *   Database object.
-     * @param \Monolog\Logger $logger
-     *   Logger object.
+     * @param mixed $meta The processor metadata.
+     * @param Request $request Request object.
+     * @param \ADODB_mysqli $db Database object.
+     * @param \Monolog\Logger $logger Logger object.
      */
-    public function __construct($meta, &$request, $db, $logger)
+    public function __construct($meta, Request &$request, \ADODB_mysqli $db, Logger $logger)
     {
         $this->meta = $meta;
         $this->request = $request;
@@ -165,16 +178,14 @@ abstract class ProcessorEntity extends Entity
      *
      * Setting $realValue to true will force the value to be the actual value, rather than a potential dataContainer.
      *
-     * @param string $key
-     *   The key for the input variable in the meta.
-     * @param bool|FALSE $realValue
-     *   Return the real value or a dataContainer
+     * @param string $key The key for the input variable in the meta.
+     * @param boolean $realValue Return the real value or a dataContainer.
      *
      * @return mixed|DataContainer
      *
-     * @throws ApiException
+     * @throws ApiException Invalid key or data.
      */
-    public function val($key, $realValue = false)
+    public function val(string $key, bool $realValue = null)
     {
         $inputDet = $this->details['input'];
         if (!isset($inputDet[$key])) {
@@ -212,8 +223,10 @@ abstract class ProcessorEntity extends Entity
 
     /**
      * Validate if a set of data is wrapped in a DataContainer object.
-     * @param $data
-     * @return bool
+     *
+     * @param mixed $data DataContainer or raw data.
+     *
+     * @return boolean
      */
     protected function isDataContainer($data)
     {
@@ -223,18 +236,14 @@ abstract class ProcessorEntity extends Entity
     /**
      * Generate the params array for the sql search.
      *
-     * @param string $keyword
-     *   Search keyword
-     * @param array $keywordCols
-     *   Columns to search for the keyword.
-     * @param string $orderBy
-     *   Order by column.
-     * @param string $direction
-     *   Order direction.
+     * @param string $keyword Search keyword.
+     * @param array $keywordCols Columns to search for the keyword.
+     * @param string $orderBy Order by column.
+     * @param string $direction Order direction.
      *
      * @return array
      */
-    protected function generateParams($keyword, $keywordCols, $orderBy, $direction)
+    protected function generateParams(string $keyword, array $keywordCols, string $orderBy, string $direction)
     {
         $params = [];
         if (!empty($keyword) && !empty($keywordCols)) {
@@ -254,15 +263,11 @@ abstract class ProcessorEntity extends Entity
     /**
      * Get the accids for accounts that the user has roles for.
      *
-     * @param $uid
-     *   User ID.
+     * @param integer $uid User ID.
      *
      * @return DataContainer
-     *   Array of accid.
-     *
-     * @throws ApiException
      */
-    protected function getUserAccids($uid)
+    protected function getUserAccids(int $uid)
     {
         $accountMapper = new AccountMapper($this->db);
         $accounts = $accountMapper->findByUid($uid);
@@ -276,15 +281,13 @@ abstract class ProcessorEntity extends Entity
     /**
      * Get the appids for applications that the user has roles for.
      *
-     * @param $uid
-     *   User ID.
+     * @param integer$uid User ID.
      *
-     * @return DataContainer
-     *   Array of appid.
+     * @return DataContainer Array of appid.
      *
-     * @throws ApiException
+     * @throws ApiException Exception flowing though.
      */
-    protected function getUserAppids($uid)
+    protected function getUserAppids(int $uid)
     {
         $userRoleMapper = new UserRoleMapper($this->db);
         $applicationMapper = new ApplicationMapper($this->db);
@@ -324,20 +327,16 @@ abstract class ProcessorEntity extends Entity
     /**
      * Validate an input for allowed values.
      *
-     * @param mixed $val
-     *   Input value.
-     * @param array $limitValues
-     *   List of allowed values.
-     * @param integer $min
-     *   Minimum number of values.
-     * @param string $key
-     *   The key of the input being validated.
+     * @param mixed $val Input value.
+     * @param array $limitValues List of allowed values.
+     * @param integer $min Minimum number of values.
+     * @param string $key The key of the input being validated.
      *
-     * @return bool
+     * @return boolean
      *
-     * @throws ApiException
+     * @throws ApiException Invalid value.
      */
-    private function _validateAllowedValues($val, array $limitValues, $min, $key)
+    private function _validateAllowedValues($val, array $limitValues, int $min, string $key)
     {
         if (empty($limitValues) || ($min < 1 && empty($val))) {
             return true;
@@ -352,20 +351,16 @@ abstract class ProcessorEntity extends Entity
     /**
      * Validate an input for allowed variable types
      *
-     * @param string $type
-     *   Input value type.
-     * @param array $limitTypes
-     *   List of limit on valiable types.
-     * @param integer $min
-     *   Minimum number of values.
-     * @param string $key
-     *   The key of the input being validated.
+     * @param string $type Input value type.
+     * @param array $limitTypes List of limit on valiable types.
+     * @param integer $min Minimum number of values.
+     * @param string $key The key of the input being validated.
      *
-     * @return bool
+     * @return boolean
      *
-     * @throws ApiException
+     * @throws ApiException Invalid data type.
      */
-    private function _validateAllowedTypes($type, array $limitTypes, $min, $key)
+    private function _validateAllowedTypes(string $type, array $limitTypes, int $min, string $key)
     {
         if (empty($limitTypes) || ($min < 1 && $type == 'empty')) {
             return true;

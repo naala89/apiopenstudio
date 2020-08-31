@@ -1,23 +1,38 @@
 <?php
-
 /**
- * Base class for processors to import, export and delete resources.
+ * Class ResourceBase.
+ *
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
 
 use Gaterdata\Core\Config;
 use Gaterdata\Core;
-use Gaterdata\Core\ApiException;
-use Gaterdata\Core\Debug;
 use Gaterdata\Core\ProcessorHelper;
 use Gaterdata\Db;
+use Monolog\Logger;
 
+/**
+ * Class ResourceBase
+ *
+ * Base class for all resource processors.
+ */
 abstract class ResourceBase extends Core\ProcessorEntity
 {
+    /**
+     * @var ProcessorHelper
+     */
     protected $helper;
 
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -88,16 +103,14 @@ abstract class ResourceBase extends Core\ProcessorEntity
     ];
 
     /**
-     * Constructor. Store processor metadata and request data in object.
+     * ResourceBase constructor.
      *
-     * If this method is overridden by any derived classes, don't forget to call parent::__construct()
-     *
-     * @param array $meta
-     * @param object $request
-     * @param \ADOConnection $db
-     * @param Monolog\Logger $logger
+     * @param mixed $meta Output meta.
+     * @param mixed $request Request object.
+     * @param \ADODB_mysqli $db DB object.
+     * @param \Monolog\Logger $logger Logget object.
      */
-    public function __construct($meta, &$request, $db, $logger)
+    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->helper = new ProcessorHelper();
@@ -105,6 +118,10 @@ abstract class ResourceBase extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {
@@ -161,7 +178,8 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * Abstract class used to fetch input resource into the correct array format.
      * This has to be declared in each derived class, so that we can cater for many input formats.
      *
-     * @param $data
+     * @param mixed $data Input data.
+     *
      * @return mixed
      */
     abstract protected function _importData($data);
@@ -170,7 +188,8 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * Abstract class used to fetch input resource into the correct array format.
      * This has to be declared in each derived class, so that we can cater for many output formats.
      *
-     * @param array $data
+     * @param mixed $data Input data.
+     *
      * @return mixed
      */
     abstract protected function _exportData($data);
@@ -178,13 +197,15 @@ abstract class ResourceBase extends Core\ProcessorEntity
     /**
      * Fetch a resource.
      *
-     * @param $appId
-     * @param $method
-     * @param $uri
+     * @param integer $appId Application ID.
+     * @param string $method Resource method.
+     * @param string $uri Resource URI.
+     *
      * @return mixed
-     * @throws \Gaterdata\Core\ApiException
+     *
+     * @throws Core\ApiException Error.
      */
-    protected function read($appId, $method, $uri)
+    protected function read(int $appId, string $method, string $uri)
     {
         if (empty($appId)) {
             throw new Core\ApiException('missing application ID, cannot find resource', 3, $this->id, 400);
@@ -216,13 +237,15 @@ abstract class ResourceBase extends Core\ProcessorEntity
     /**
      * Delete a resource.
      *
-     * @param $appId
-     * @param $method
-     * @param $uri
-     * @return bool
-     * @throws \Gaterdata\Core\ApiException
+     * @param integer $appId Application ID.
+     * @param string $method Resource method.
+     * @param string $uri Resource URI.
+     *
+     * @return Core\DataContainer
+     *
+     * @throws Core\ApiException Error.
      */
-    protected function delete($appId, $method, $uri)
+    protected function delete(int $appId, string $method, string $uri)
     {
         if (empty($appId)) {
             throw new Core\ApiException('missing application ID, cannot find resource', 3, $this->id, 400);
@@ -244,14 +267,15 @@ abstract class ResourceBase extends Core\ProcessorEntity
     /**
      * Create or update a resource from input data into the caller's app and acc.
      *
-     * @param $data
-     * @param $accName
-     * @param $appName
+     * @param array $data Metadata.
+     * @param string $accName Account name.
+     * @param string $appName Application name.
      *
-     * @return bool
-     * @throws \Gaterdata\Core\ApiException
+     * @return Core\DataContainer
+     *
+     * @throws Core\ApiException Error.
      */
-    protected function create($data, $accName, $appName)
+    protected function create(array $data, string $accName, string $appName)
     {
         $this->logger->debug('New resource' . print_r($data, true));
         $this->_validateData($data);
@@ -301,8 +325,11 @@ abstract class ResourceBase extends Core\ProcessorEntity
     /**
      * Validate input data is well formed.
      *
-     * @param $data
-     * @throws \Gaterdata\Core\ApiException
+     * @param mixed $data Data to validate.
+     *
+     * @return void
+     *
+     * @throws Core\ApiException Error.
      */
     protected function _validateData($data)
     {
@@ -371,10 +398,14 @@ abstract class ResourceBase extends Core\ProcessorEntity
 
     /**
      * Search for identical IDs.
-     * @param $meta
-     * @throws \Gaterdata\Core\ApiException
+     *
+     * @param array $meta Metadata.
+     *
+     * @return void
+     *
+     * @throws \Gaterdata\Core\ApiException Error.
      */
-    private function _identicalIds($meta)
+    private function _identicalIds(array $meta)
     {
         $id = [];
         $stack = [$meta];
@@ -392,17 +423,18 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 }
             }
         }
-
-        return;
     }
 
     /**
      * Validate a resource section
      *
-     * @param $meta
-     * @throws \Gaterdata\Core\ApiException
+     * @param array $meta Metadata.
+     *
+     * @return void
+     *
+     * @throws Core\ApiException Error.
      */
-    private function _validateDetails($meta)
+    private function _validateDetails(array $meta)
     {
         $stack = array($meta);
 
@@ -475,7 +507,6 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 }
             }
         }
-
     }
 
     /**
@@ -483,13 +514,15 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * Processor it refers to. If the element type is processor, recursively iterate through, using the calling
      * function _validateProcessor().
      *
-     * @param $element
-     * @param $accepts
-     * @param $id
-     * @return bool
-     * @throws \Gaterdata\Core\ApiException
+     * @param mixed $element Value to validate.
+     * @param array $accepts Array of accepted data types.
+     * @param integer $id Processor ID.
+     *
+     * @return boolean
+     *
+     * @throws Core\ApiException Error.
      */
-    private function _validateTypeValue($element, $accepts, $id)
+    private function _validateTypeValue($element, array $accepts, int $id)
     {
         if (empty($accepts)) {
             return true;

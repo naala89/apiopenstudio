@@ -1,17 +1,34 @@
 <?php
+/**
+ * Class Config.
+ *
+ * @package Gaterdata
+ * @subpackage Core
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Core;
 
 use Spyc;
 
+/**
+ * Class Config
+ *
+ * GaterData config.
+ */
 class Config
 {
-
-  /**
-   * @var array
-   */
+    /**
+     * @var array
+     */
     private $conf;
-  
+
+    /**
+     * Config constructor.
+     */
     public function __construct()
     {
         $this->conf = Spyc::YAMLLoad(dirname(dirname(__DIR__)) . '/settings.yml');
@@ -20,13 +37,11 @@ class Config
   /**
    * Get a config value.
    *
-   * @param array|string $key
-   *  The key of the config value.
+   * @param array|string $key The key of the config value.
    *
-   * @return string|NULL
-   *  The value of the config key or NULL.
+   * @return string|NULL The value of the config key or NULL.
    *
-   * @throws ApiException
+   * @throws ApiException Invalid config defined.
    */
     public function __get($key)
     {
@@ -54,8 +69,7 @@ class Config
     /**
      * Fetch all config values.
      *
-     * @return array|false
-     *   Config file values.
+     * @return array|false Config file values.
      */
     public function all()
     {

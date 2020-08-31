@@ -1,25 +1,32 @@
 <?php
+/**
+ * Class CtrlRole.
+ *
+ * @package Gaterdata
+ * @subpackage Admin\Controllers
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Admin\Controllers;
 
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Gaterdata\Admin\Account;
-use Gaterdata\Admin\Application;
-use Gaterdata\Admin\UserAccount;
-use Gaterdata\Admin\UserRole;
 
 /**
  * Class CtrlRole.
  *
- * @package Gaterdata\Admin\Controllers
+ * Controller for the roles page.
  */
 class CtrlRole extends CtrlBase
 {
-
     /**
-     * {@inheritdoc}
+     * Roles allowed to visit the page.
+     *
+     * @var array
      */
     protected $permittedRoles = [
         'Administrator',
@@ -30,17 +37,11 @@ class CtrlRole extends CtrlBase
     /**
      * List user roles.
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return ResponseInterface Response.
      */
     public function index(Request $request, Response $response, array $args)
     {
@@ -100,17 +101,11 @@ class CtrlRole extends CtrlBase
     /**
      * Create a role
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return ResponseInterface Response.
      */
     public function create(Request $request, Response $response, array $args)
     {
@@ -150,17 +145,11 @@ class CtrlRole extends CtrlBase
     /**
      * Update a role
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return ResponseInterface Response.
      */
     public function update(Request $request, Response $response, array $args)
     {
@@ -201,17 +190,11 @@ class CtrlRole extends CtrlBase
     /**
      * Delete a role
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return ResponseInterface Response.
      */
     public function delete(Request $request, Response $response, array $args)
     {

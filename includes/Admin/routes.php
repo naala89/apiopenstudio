@@ -1,4 +1,13 @@
 <?php
+/**
+ * Slim PHP routes file for GaterData admin.
+ *
+ * @package Gaterdata
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @link https://gaterdata.com
+ */
 
 use Gaterdata\Admin\Middleware\Authentication;
 

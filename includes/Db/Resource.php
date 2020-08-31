@@ -2,10 +2,11 @@
 /**
  * Class Resource.
  *
- * @package Gaterdata\Db
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @package Gaterdata
+ * @subpackage Db
  * @author john89
  * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
  * @link https://gaterdata.com
  */
 
@@ -247,7 +248,7 @@ class Resource
     /**
      * Get the resource TTL.
      *
-     * @return integer Time to live.
+     * @return string Time to live.
      */
     public function getTtl()
     {
@@ -257,11 +258,11 @@ class Resource
     /**
      * Set the TTL.
      *
-     * @param integer $ttl Time to live.
+     * @param string $ttl Time to live.
      *
      * @return void
      */
-    public function setTtl(int $ttl)
+    public function setTtl(string $ttl)
     {
         $this->ttl = $ttl;
     }
@@ -274,14 +275,14 @@ class Resource
     public function dump()
     {
         return [
-        'resid' => $this->resid,
-        'name' => $this->name,
-        'description' => $this->description,
-        'appid' => $this->appid,
-        'method' => $this->method,
-        'uri' => $this->uri,
-        'ttl' => $this->ttl,
-        'meta' => $this->meta,
+            'resid' => $this->resid,
+            'name' => $this->name,
+            'description' => $this->description,
+            'appid' => $this->appid,
+            'method' => $this->method,
+            'uri' => $this->uri,
+            'ttl' => $this->ttl,
+            'meta' => $this->meta,
         ];
     }
 }

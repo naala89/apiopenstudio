@@ -1,4 +1,14 @@
 <?php
+/**
+ * Class CtrlResource.
+ *
+ * @package Gaterdata
+ * @subpackage Admin\Controllers
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Admin\Controllers;
 
@@ -9,25 +19,23 @@ use Symfony\Component\Yaml\Yaml;
 use Exception;
 
 /**
- * Class CtrlResource.
+ * Class CtrlUserRole.
  *
- * @package Gaterdata\Admin\Controllers
+ * Controller for the resource pages.
  */
 class CtrlResource extends CtrlBase
 {
     /**
-     * Roles allowed to visit the page.
+     * {@inheritdoc}
      *
-     * @var array
+     * @var array Roles permitted to view these pages.
      */
     protected $permittedRoles = [
         'Developer',
     ];
 
     /**
-     * Sections possible in a neta string.
-     *
-     * @var array
+     * @var array Array of sections in a metadata string.
      */
     const META_SECTIONS = [
         'security',
@@ -38,17 +46,11 @@ class CtrlResource extends CtrlBase
     /**
      * Resources page.
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws Exception
+     * @return ResponseInterface Response.
      */
     public function index(Request $request, Response $response, array $args)
     {
@@ -167,17 +169,11 @@ class CtrlResource extends CtrlBase
     /**
      * Create a resource page.
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws Exception
+     * @return ResponseInterface Response.
      */
     public function create(Request $request, Response $response, array $args)
     {
@@ -224,17 +220,11 @@ class CtrlResource extends CtrlBase
     /**
      * Edit a resource.
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws Exception
+     * @return ResponseInterface Response.
      */
     public function edit(Request $request, Response $response, array $args)
     {
@@ -313,17 +303,11 @@ class CtrlResource extends CtrlBase
     /**
      * Upload a resource.
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws Exception
+     * @return ResponseInterface Response.
      */
     public function upload(Request $request, Response $response, array $args)
     {
@@ -436,17 +420,11 @@ class CtrlResource extends CtrlBase
     /**
      * Delete a resource.
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws Exception
+     * @return ResponseInterface Response.
      */
     public function delete(Request $request, Response $response, array $args)
     {
@@ -487,17 +465,11 @@ class CtrlResource extends CtrlBase
     /**
      * Download a resource.
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws Exception
+     * @return ResponseInterface Response.
      */
     public function download(Request $request, Response $response, array $args)
     {
@@ -536,17 +508,11 @@ class CtrlResource extends CtrlBase
     /**
      * Import a resource.
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws Exception
+     * @return ResponseInterface Response.
      */
     public function import(Request $request, Response $response, array $args)
     {
@@ -561,8 +527,8 @@ class CtrlResource extends CtrlBase
         $uploadedFile = $uploadedFiles['resource_file'];
 
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
-            $filename = $this->moveUploadedFile($directory, $uploadedFile);
             try {
+                $filename = $this->moveUploadedFile($directory, $uploadedFile);
                 $this->apiCall('post', 'resource/import',
                     [
                         'headers' => [
@@ -592,20 +558,19 @@ class CtrlResource extends CtrlBase
      * Moves the uploaded file to the upload directory and assigns it a unique name
      * to avoid overwriting an existing uploaded file.
      *
-     * @param string $directory
-     *   directory to which the file is moved
-     * @param $uploadedFile
-     *   uploaded file to move
+     * @param string $directory Directory to which the file is moved.
+     * @param mixed $uploadedFile Uploaded file to move.
      *
-     * @return string
-     *   filename of moved file
-     *
-     * @throws Exception
+     * @return string filename of moved file.
      */
-    private function moveUploadedFile($directory, $uploadedFile)
+    private function moveUploadedFile(string $directory, $uploadedFile)
     {
         $extension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
-        $basename = bin2hex(random_bytes(8));
+        try {
+            $basename = bin2hex(random_bytes(8));
+        } catch (Exception $e) {
+            $this->flash->addMessageNow($e->getMessage());
+        }
         $filename = sprintf('%s.%0.8s', $basename, $extension);
 
         $uploadedFile->moveTo($directory . $filename);
@@ -616,13 +581,11 @@ class CtrlResource extends CtrlBase
     /**
      * Generate the array for Twig for the current resource to be created/edited.
      *
-     * @param array $allPostVars
-     *   Post vars in this request.
+     * @param array $allPostVars Post vars in this request.
      *
-     * @return array
-     *   Twig vars.
+     * @return array Twig vars.
      */
-    private function getResource($allPostVars)
+    private function getResource(array $allPostVars)
     {
         $arr = [
             'name' => $allPostVars['name'],

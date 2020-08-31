@@ -1,44 +1,43 @@
 <?php
+/**
+ * Class CtrlUser.
+ *
+ * @package Gaterdata
+ * @subpackage Admin\Controllers
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Admin\Controllers;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Gaterdata\Core\ApiException;
-use Gaterdata\Core\Hash;
-use Swift_Mailer;
-use Swift_Message;
-use Swift_SmtpTransport;
 
 /**
  * Class CtrlUser.
  *
- * @package Gaterdata\Admin\Controllers
+ * Controller for the user view/edit pages.
  */
 class CtrlUser extends CtrlBase
 {
-
     /**
-     * {@inheritdoc}
+     * Roles allowed to visit the page.
+     *
+     * @var array
      */
     protected $permittedRoles = [];
 
     /**
      * Create a new user.
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return ResponseInterface Response.
      */
     public function create(Request $request, Response $response, array $args)
     {
@@ -58,17 +57,11 @@ class CtrlUser extends CtrlBase
     /**
      * View a user.
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return ResponseInterface Response.
      */
     public function view(Request $request, Response $response, array $args)
     {
@@ -111,17 +104,11 @@ class CtrlUser extends CtrlBase
     /**
      * Edit a user page.
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return ResponseInterface Response.
      */
     public function edit(Request $request, Response $response, array $args)
     {
@@ -163,17 +150,11 @@ class CtrlUser extends CtrlBase
     /**
      * Upload a user.
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return ResponseInterface Response.
      */
     public function upload(Request $request, Response $response, array $args)
     {
@@ -279,17 +260,11 @@ class CtrlUser extends CtrlBase
     /**
      * Delete a user account.
      *
-     * @param \Slim\Http\Request $request
-     *   Request object.
-     * @param \Slim\Http\Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param \Slim\Http\Request $request Request object.
+     * @param \Slim\Http\Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return ResponseInterface Response.
      */
     public function delete(Request $request, Response $response, array $args)
     {

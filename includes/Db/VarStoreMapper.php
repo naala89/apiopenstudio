@@ -2,10 +2,11 @@
 /**
  * Class VarStoreMapper.
  *
- * @package Gaterdata\Db
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @package Gaterdata
+ * @subpackage Db
  * @author john89
  * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
  * @link https://gaterdata.com
  */
 
@@ -227,10 +228,10 @@ class VarStoreMapper extends Mapper
     {
         $varStore = new VarStore();
 
-        $varStore->setVid(!empty($row['vid']) ? $row['vid'] : null);
-        $varStore->setAppid(!empty($row['appid']) ? $row['appid'] : null);
-        $varStore->setKey(!empty($row['key']) ? $row['key'] : null);
-        $varStore->setVal(!empty($row['val']) ? $row['val'] : null);
+        $varStore->setVid(!empty($row['vid']) ? $row['vid'] : 0);
+        $varStore->setAppid(!empty($row['appid']) ? $row['appid'] : 0);
+        $varStore->setKey(!empty($row['key']) ? $row['key'] : '');
+        $varStore->setVal(!empty($row['val']) ? $row['val'] : '');
 
         return $varStore;
     }

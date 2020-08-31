@@ -1,19 +1,29 @@
 <?php
-
 /**
- * variable type integer
+ * Class VarInt.
  *
- * This is a special case, we cannot use val(), because it validates type before it can be cast.
- * thus get vars, etc will always fail.
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
 
 use Gaterdata\Core;
 
+/**
+ * Class VarInt
+ *
+ * Processor class to define an integer variable.
+ */
 class VarInt extends Core\ProcessorEntity
 {
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -36,6 +46,10 @@ class VarInt extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {

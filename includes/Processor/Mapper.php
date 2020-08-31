@@ -1,7 +1,13 @@
 <?php
-
 /**
+ * Class Mapper.
  *
+ * @package Gaterdata
+ * @subpackage Processor
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
@@ -9,9 +15,16 @@ namespace Gaterdata\Processor;
 use Gaterdata\Core;
 use JmesPath;
 
+/**
+ * Class Mapper
+ *
+ * Processor class te map elements from one data source to another.
+ */
 class Mapper extends Core\ProcessorEntity
 {
     /**
+     * @var array Details of the processor.
+     *
      * {@inheritDoc}
      */
     protected $details = [
@@ -53,6 +66,10 @@ class Mapper extends Core\ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException Exception if invalid result.
      */
     public function process()
     {
@@ -111,17 +128,17 @@ class Mapper extends Core\ProcessorEntity
     /**
      * Perform mappings to JSON source.
      *
-     * @param $source
-     * @param $mappings
-     * @param $format
+     * @param \DOMDocument $source Source data.
+     * @param array $mappings Array of DOMDocument mapping strings.
+     * @param string $format Output format for the DataContainer result.
      *
-     * @return \Gaterdata\Core\DataContainer
+     * @return void
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Gaterdata\Core\ApiException Error.
      *
      * @see https://github.com/jmespath/jmespath.php
      */
-    private function _mapJson(\stdClass &$source, $mappings, $format)
+    private function _mapJson(DOMDocument &$source, array $mappings, string $format)
     {
         $resultFunc = '_addResult' . ucfirst($format);
 
@@ -136,20 +153,21 @@ class Mapper extends Core\ProcessorEntity
             }
             $this->{$resultFunc}($mapping->set, $value);
         }
-
-        return;
     }
 
     /**
      * Add to result object.
-     *  parents separated by '/'
-     *  foobar[] - add to array foobar
-     *  foo[fbar] = add to object foo as index bar
      *
-     * @param $regex
-     * @param $value
+     * parents separated by '/'
+     * foobar[] - add to array foobar
+     * foo[fbar] = add to object foo as index bar
+     *
+     * @param string $regex The regex.
+     * @param \DOMNodeList $value Data.
+     *
+     * @return void
      */
-    private function _addResultJson($regex, $value)
+    private function _addResultJson(string $regex, DOMNodeList $value)
     {
         $nodes = explode('/', $regex);
         while (empty($nodes[0])) {
@@ -199,15 +217,15 @@ class Mapper extends Core\ProcessorEntity
     /**
      * Perform mappings to XML source.
      *
-     * @param $source
-     * @param $mappings
-     * @param $format
+     * @param \DOMDocument $source Source data.
+     * @param array $mappings Array of DOMDocument mapping strings.
+     * @param string $format Output format for the DataContainer result.
      *
      * @return \Gaterdata\Core\DataContainer
      *
-     * @throws \Gaterdata\Core\ApiException
+     * @throws Core\ApiException Error.
      */
-    private function _mapXml(\DOMDocument $source, $mappings, $format)
+    private function _mapXml(DOMDocument $source, array $mappings, string $format)
     {
         $resultFunc = '_addResult' . ucfirst($format);
         $xpath = new \DOMXPath($source);
@@ -226,14 +244,19 @@ class Mapper extends Core\ProcessorEntity
 
     /**
      * Add to result object.
-     *  parents separated by '/'
-     *  foo/bar - add the node bar as the child of foo
-     *  foo[@bar] = add to node as an attribute <foo bar="value"></foo>
-     * @param $regex
-     * @param \DOMNodeList $values
-     * @throws \Gaterdata\Core\ApiException
+     *
+     * parents separated by '/'
+     * foo/bar - add the node bar as the child of foo
+     * foo[@bar] = add to node as an attribute <foo bar="value"></foo>
+     *
+     * @param string $regex The regex.
+     * @param \DOMNodeList $values Data.
+     *
+     * @return void
+     *
+     * @throws Core\ApiException Error.
      */
-    private function _addResultXml($regex, \DOMNodeList $values)
+    private function _addResultXml(string $regex, DOMNodeList $values)
     {
         $queryNodes = explode('/', trim($regex, '/'));
         // $xpath = new \DOMXPath($this->result);

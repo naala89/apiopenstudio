@@ -1,9 +1,17 @@
 <?php
+/**
+ * Class CtrlUserRole.
+ *
+ * @package Gaterdata
+ * @subpackage Admin\Controllers
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @link https://gaterdata.com
+ */
 
 namespace Gaterdata\Admin\Controllers;
 
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -15,13 +23,14 @@ use Gaterdata\Admin\UserRole;
 /**
  * Class CtrlUserRole.
  *
- * @package Gaterdata\Admin\Controllers
+ * Controller for the user role pages.
  */
 class CtrlUserRole extends CtrlBase
 {
-
     /**
      * {@inheritdoc}
+     *
+     * @var array Roles permitted to view these pages.
      */
     protected $permittedRoles = [
         'Administrator',
@@ -32,17 +41,11 @@ class CtrlUserRole extends CtrlBase
     /**
      * List user roles.
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return ResponseInterface Response.
      */
     public function index(Request $request, Response $response, array $args)
     {
@@ -102,17 +105,11 @@ class CtrlUserRole extends CtrlBase
     /**
      * Create a user role.
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return ResponseInterface Response.
      */
     public function create(Request $request, Response $response, array $args)
     {
@@ -137,7 +134,7 @@ class CtrlUserRole extends CtrlBase
                     'rid' => $allPostVars['rid'],
                 ],
             ]);
-        } catch (ClientException $e) {
+        } catch (\Exception $e) {
             $result = $e->getResponse();
             $this->flash->addMessage('error', $this->getErrorMessage($e));
             switch ($result->getStatusCode()) {
@@ -157,17 +154,11 @@ class CtrlUserRole extends CtrlBase
     /**
      * Delete a user role.
      *
-     * @param Request $request
-     *   Request object.
-     * @param Response $response
-     *   Response object.
-     * @param array $args
-     *   Request args.
+     * @param Request $request Request object.
+     * @param Response $response Response object.
+     * @param array $args Request args.
      *
-     * @return ResponseInterface
-     *   Response.
-     *
-     * @throws \Exception
+     * @return ResponseInterface Response.
      */
     public function delete(Request $request, Response $response, array $args)
     {
@@ -192,7 +183,7 @@ class CtrlUserRole extends CtrlBase
                     'Authorization' => "Bearer $token",
                 ],
             ]);
-        } catch (ClientException $e) {
+        } catch (\Exception $e) {
             $result = $e->getResponse();
             $this->flash->addMessage('error', $this->getErrorMessage($e));
             switch ($result->getStatusCode()) {
