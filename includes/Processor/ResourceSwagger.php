@@ -175,13 +175,11 @@ class ResourceSwagger extends ResourceBase
     }
 
     /**
-     * {@inheritDoc}
-     *
      * @param mixed $data Input data.
      *
      * @return mixed
      */
-    protected function _exportData()
+    protected function _exportData($data)
     {
     }
 
