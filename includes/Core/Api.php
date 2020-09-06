@@ -534,24 +534,26 @@ class Api
         if (sizeof($values) < 1) {
             return $default;
         }
-        $result = '';
+
+        $result = $default;
         switch ($values[0]['mimeType']) {
             case 'image' :
-                return 'image';
+                $result = 'image';
             case 'text':
             case 'application':
                 switch ($values[0]['mimeSubType']) {
                     case '*':
                     case '**':
-                        return $default;
                         break;
                     default:
-                        $values[0]['mimeSubType'];
+                        $result = $values[0]['mimeSubType'];
                         break;
                 }
             default:
-                return $default;
+                break;
         }
+
+        return $result;
     }
 
     /**

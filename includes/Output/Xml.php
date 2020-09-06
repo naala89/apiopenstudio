@@ -88,7 +88,7 @@ class Xml extends Output
      */
     protected function fromBoolean(bool &$data)
     {
-        return '<?xml version="1.0"?><datagatorWrapper>' . $data ? 'true' : 'false' . '</datagatorWrapper>';
+        return '<?xml version="1.0"?><gaterDataWrapper>' . $data ? 'true' : 'false' . '</gaterdataWrapper>';
     }
 
     /**
@@ -100,7 +100,7 @@ class Xml extends Output
      */
     protected function fromInteger(int &$data)
     {
-        return '<?xml version="1.0"?><datagatorWrapper>' . $data . '</datagatorWrapper>';
+        return '<?xml version="1.0"?><gaterdataWrapper>' . $data . '</gaterdataWrapper>';
     }
 
     /**
@@ -112,7 +112,7 @@ class Xml extends Output
      */
     protected function fromFloat(float &$data)
     {
-        return '<?xml version="1.0"?><datagatorWrapper>' . $data . '</datagatorWrapper>';
+        return '<?xml version="1.0"?><gaterdataWrapper>' . $data . '</gaterdataWrapper>';
     }
 
     /**
@@ -128,7 +128,7 @@ class Xml extends Output
         $doc = simplexml_load_string($data);
         if (!$doc) {
             libxml_clear_errors();
-            return '<?xml version="1.0"?><datagatorWrapper>' . $data . '</datagatorWrapper>';
+            return '<?xml version="1.0"?><gaterdataWrapper>' . $data . '</gaterdataWrapper>';
         } else {
             return $data;
         }
@@ -155,7 +155,7 @@ class Xml extends Output
      */
     protected function fromText(string &$data)
     {
-        return '<?xml version="1.0"?><datagatorWrapper>' . $data . '</datagatorWrapper>';
+        return '<?xml version="1.0"?><gaterdataWrapper>' . $data . '</gaterdataWrapper>';
     }
 
     /**
@@ -167,7 +167,7 @@ class Xml extends Output
      */
     protected function fromArray(array &$data)
     {
-        $xml_data = new \SimpleXMLElement('<?xml version="1.0"?><datagatorWrapper></datagatorWrapper>');
+        $xml_data = new \SimpleXMLElement('<?xml version="1.0"?><gaterdataWrapper></gaterdataWrapper>');
         $this->_array2xml($data, $xml_data);
         return $xml_data->asXML();
     }
