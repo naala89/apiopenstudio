@@ -539,6 +539,7 @@ class Api
         switch ($values[0]['mimeType']) {
             case 'image' :
                 $result = 'image';
+                break;
             case 'text':
             case 'application':
                 switch ($values[0]['mimeSubType']) {
@@ -549,6 +550,7 @@ class Api
                         $result = $values[0]['mimeSubType'];
                         break;
                 }
+                break;
             default:
                 break;
         }
