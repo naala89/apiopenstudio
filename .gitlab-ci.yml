@@ -23,9 +23,9 @@ before_script:
   - php composer.phar install
 
 #phpcs:
-#  stage: test
-#  script:
-#    - ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/ src/scss/ src/js/
+  stage: test
+  script:
+    - ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/ src/scss/ src/js/
 
 #funtional_tests:
 #  stage: test
@@ -49,16 +49,16 @@ deploy_wiki_develop:
     - develop
 
 #deploy_phpdoc_develop:
-#  stage: deploy
-#  script:
-#    - echo "Deploy the phpdoc for develop branch."
-#    - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
-#    - chmod 644 ~/.ssh/known_hosts
-#    - ./vendor/bin/phpdox
-#    - rsync -rvI --delete --exclude=".*" "public/phpdoc/html/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
-#    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
-#  only:
-#    - develop
+  stage: deploy
+  script:
+    - echo "Deploy the phpdoc for develop branch."
+    - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - ./vendor/bin/phpdox
+    - rsync -rvI --delete --exclude=".*" "public/phpdoc/html/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
+    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
+  only:
+    - develop
 
 #deploy_wiki_master:
 #  stage: deploy
