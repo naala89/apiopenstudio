@@ -22,7 +22,7 @@ before_script:
   - php -r "unlink('composer-setup.php');"
   - php composer.phar install
 
-#phpcs:
+phpcs:
   stage: test
   script:
     - ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/ src/scss/ src/js/
@@ -48,7 +48,7 @@ deploy_wiki_develop:
   only:
     - develop
 
-#deploy_phpdoc_develop:
+deploy_phpdoc_develop:
   stage: deploy
   script:
     - echo "Deploy the phpdoc for develop branch."
