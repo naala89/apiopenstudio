@@ -1,12 +1,10 @@
-Developer environment setup
-===========================
+# Developer environment setup
 
 This is suitable for a local dev environment.
 
 Replace ```admin.gaterdata.local```, ```api.gaterdata.local``` and ```wiki.gaterdata.local``` with whatever domains you wish.
 
-Directory and files
--------------------
+## Directory and files
 
 The following files and directory structure needs to be added to a project:
 
