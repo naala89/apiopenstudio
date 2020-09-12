@@ -11,11 +11,27 @@ For this tutorial, you will need:
 
 Click on "Accounts" in the menu or navigate to [admin.gaterdata.local/accounts](https://admin.gaterdata.locall/accounts).
 
-Click on the Plus icon to create a new account. Call it "tutorial".
+Click on the Plus icon:
+
+![Add account](../images/quick-start/account_add_button.png)
+
+Name new account: "tutorial"
+
+![Create tutorial account](../images/quick-start/create_account.png)
+
+You have now created a new top level account:
+
+![Tutorial account created](../images/quick-start/new_account.png)
 
 Click on "Applications" in the menu or navigate to [admin.gaterdata.local/applications](https://admin.gaterdata.locall/applications).
 
 Click on the Plus icon to create a new application. Assign the application to the "tutorial" account and call it "quick_start".
+
+![Create application](../images/quick-start/create_application.png)
+
+You have now created the "quick-start" application that our resource will belong to:
+
+![Application created](../images/quick-start/new_application.png)
 
 # Configure users and roles
 
@@ -25,7 +41,7 @@ Click on "User Roles" in the menu or navigate to [admin.gaterdata.local/user/rol
 
 Click on the plus icon and assign yourself the developer role for Account: tutorial and application: quick_start.
 
-![Add account button](../images/quick-start/account_add_button.png)
+![Create developer role](../images/quick-start/create_user_role.png)
 
 You now have permission to create a resource for the newly created quick_start application.
 
@@ -51,6 +67,10 @@ Fill out the following fields in the interface:
     * This declares the HTTP method. 
 * URI: ```hello/world```
     * This defines the URI fragment for the request that comes after /<account>/<application>/.
+8 TTL: 30
+    * This gives the resource a cache time of 30 seconds.
+
+![Resource definition](../images/quick-start/resource_definition_1.png)
 
 So far, we have defined a resource that can be called from (GET) [api.gaterdata.local/tutorial/quick_start/hello/world](https://api.gaterdata.local/tutorial/quick_start/hello/world).
 
@@ -82,6 +102,8 @@ We will assign this an ID name of "security_token".
 ```role``` will not require processing from another processor, because this does not need to be dynamic.
 So we're using a static string: "Developer".
 
+![Resource security](../images/quick-start/resource_definition_2.png)
+
 ## Define the process
 
 Add the following snippet to the Process section:
@@ -95,6 +117,8 @@ This processor returns the value of a strictly typed string.
 
 It's input value does not need to be dynamic here, so we're giving it a static string value.
 
+![Resource process](../images/quick-start/resource_definition_3.png)
+
 ## Save
 
 Click on the ```Upload``` button.
@@ -103,6 +127,8 @@ The resource will be parsed and checked for any error, and saved to the database
 
 If you navigate back to [admin.gaterdata.local/resources](https://admin.gaterdata.locall/resources),
 you should see your new resource.
+
+![Resource created](../images/quick-start/resource_created.png)
 
 If you click on the download button in the listing for ```Hello world``` and select YAML format,
 it should look like this:
@@ -143,6 +169,10 @@ Open up your REST client
         * username: <username>
         * password: <password>
 
+![User login request header](../images/quick-start/user_login_header.png)
+
+![User login request body](../images/quick-start/user_login_body.png)
+
 The result should be something similar to:
 
     {
@@ -163,6 +193,8 @@ Copy the value for the token.
 The result should be something similar to:
 
     "Hello world!"
+
+![Hello world result](../images/quick-start/hello_world_result.png)
 
 If we change the Accept value in the header to ```application/xml```,
 we will get something similar to:
