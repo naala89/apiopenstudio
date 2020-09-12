@@ -22,10 +22,10 @@ before_script:
   - php -r "unlink('composer-setup.php');"
   - php composer.phar install
 
-phpcs:
-  stage: test
-  script:
-    - ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/ src/scss/ src/js/
+#phpcs:
+#  stage: test
+#  script:
+#    - ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/ src/scss/ src/js/
 
 #funtional_tests:
 #  stage: test
@@ -43,22 +43,22 @@ deploy_wiki_develop:
     - chmod 644 ~/.ssh/known_hosts
     - ./vendor/bin/bookdown src/wiki/bookdown.json
     - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
-    - rsync -rvI --delete --exclude=".*" "src/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+    - rsync -rv "src/wiki/images/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
   only:
     - develop
 
-deploy_phpdoc_develop:
-  stage: deploy
-  script:
-    - echo "Deploy the phpdoc for develop branch."
-    - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-    - ./vendor/bin/phpdox
-    - rsync -rvI --delete --exclude=".*" "public/phpdoc/html/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
-    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
-  only:
-    - develop
+#deploy_phpdoc_develop:
+#  stage: deploy
+#  script:
+#    - echo "Deploy the phpdoc for develop branch."
+#    - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
+#    - chmod 644 ~/.ssh/known_hosts
+#    - ./vendor/bin/phpdox
+#    - rsync -rvI --delete --exclude=".*" "public/phpdoc/html/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
+#    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
+#  only:
+#    - develop
 
 #deploy_wiki_master:
 #  stage: deploy
