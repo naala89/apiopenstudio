@@ -43,7 +43,7 @@ deploy_wiki_develop:
     - chmod 644 ~/.ssh/known_hosts
     - ./vendor/bin/bookdown src/wiki/bookdown.json
     - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
-    - rsync -rv "src/wiki/images/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+    - rsync -rv "$CI_PROJECT_DIR/src/wiki/images/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
   only:
     - develop
