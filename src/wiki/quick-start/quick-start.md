@@ -25,7 +25,7 @@ Click on "User Roles" in the menu or navigate to [admin.gaterdata.local/user/rol
 
 Click on the plus icon and assign yourself the developer role for Account: tutorial and application: quick_start.
 
-knitr::include_graphics(rep('images/account_add_button.png', 3))
+![Add account button](../images/quick-start/account_add_button.png)
 
 You now have permission to create a resource for the newly created quick_start application.
 
