@@ -1,5 +1,11 @@
 {
   "title": "Developers",
+  "template": "bookdown/themes",
+  "theme": {
+    "toc": {
+      "collapsibleFromLevel": 1
+    }
+  },
   "content": [
     "coding-standards.md",
     "creating-processors.md",
