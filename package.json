@@ -1,6 +1,6 @@
 {
   "name": "gaterdata",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha1",
   "description": "Compile and minify GaterData styles, scripts and images.",
   "main": "gulpfile.js",
   "scripts": {

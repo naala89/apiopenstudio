@@ -6,7 +6,8 @@
  * @subpackage Processor
  * @author john89
  * @copyright 2020-2030 GaterData
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL-3.0-or-later
+ * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
  * @link https://gaterdata.com
  */
 

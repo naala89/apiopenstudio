@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="PSR2" xsi:noNamespaceSchemaLocation="../../../phpcs.xsd">
-    <description>The PSR-2 coding standard.</description>
+    <description>The PSR-2 coding standard, adapted for GaterData.</description>
     <arg name="tab-width" value="2"/>
 
     <!-- 2. General -->

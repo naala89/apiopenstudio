@@ -1,11 +1,21 @@
-/*
-To set up dev:
-1. install npm and gulp globally.
-2. $ npm install
-3. $ gulp
-4. make changes.
-5. $ gulp all
+/**
+ * Class CtrlApplication.
+ *
+ * @author john89
+ * @copyright 2020-2030 GaterData
+ * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link https://gaterdata.com
  */
+
+/**
+ * To set up dev:
+ * 1. install npm and gulp globally.
+ * 2. $ npm install
+ * 3. $ gulp
+ * 4. make changes.
+ * 5. $ gulp all
+ **/
 
 // Directories
 const vendor_src = 'src/vendor/';

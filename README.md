@@ -13,7 +13,7 @@ However, there is also an admin site that you can use to manage your resources.
 
 GaterData has a heirarchical approach to API resources.
 
-* `account` - this defines a tope level entity, like a client.
+* `account` - this defines a top-level entity, like a client.
 * `application` - these belong to an account,
    and are used to group API resources, like a department, project or product.
 * `resource` - These are individual API definitions that belong to an application.
@@ -331,3 +331,5 @@ If the processor is really popular, we may ask you for your permission to includ
 If you want to contribute to the GaterData code base, all project development occurs on Gitlab, so you will need to create a GitLab account.
 Then create a fork of the project, and submit your changes in a PR.
 See [wiki.gaterdata.com](https://wiki.gaterdata.com) for more details.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

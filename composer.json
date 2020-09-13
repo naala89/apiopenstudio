@@ -1,6 +1,22 @@
 {
   "name": "gaterdata/gaterdata",
   "description": "Build APIs faster & at less cost",
+  "license": "MIT",
+  "version": "1.0.0-alpha1",
+  "keywords": [
+    "api"
+  ],
+  "readme": "./README.md",
+  "authors": [
+    {
+      "name": "John Avery",
+      "homepage": "https://gitlab.com/john89",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "issue tracker": "https://gitlab.com/john89/gaterdata/-/issues"
+  },
   "require-dev": {
     "codeception/codeception": "^2.4",
     "components/jquery": "^3.3",
