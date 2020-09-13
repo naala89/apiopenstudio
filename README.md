@@ -320,13 +320,6 @@ we will get something similar to:
     <?xml version="1.0"?>
     <gaterdataWrapper>Hello world!</gaterdataWrapper>
 
-# Exercises
-
-1. Fetch a get variable and assign this to the var_str.
-1. Set up a var in the admin interface, hello_world_string: "Hello world!"
-    1. adapt the process section so that it fetches the var ```hello_world_string```
-    and assigns the value to the var_str.
-
 # Developers and contributors
 
 GaterData is hosted on both GitHub and Gitlab.
