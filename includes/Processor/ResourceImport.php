@@ -109,7 +109,7 @@ class ResourceImport extends Core\ProcessorEntity
      * @param \ADODB_mysqli $db DB object.
      * @param \Monolog\Logger $logger Logget object.
      */
-    public function __construct($meta, Request &$request, ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Config();

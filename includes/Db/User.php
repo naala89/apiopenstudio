@@ -675,11 +675,11 @@ class User
     /**
      * Set the password reset token.
      *
-     * @param string $passwordReset Password reset token.
+     * @param string|null $passwordReset Password reset token.
      *
      * @return void
      */
-    public function setPasswordReset(string $passwordReset)
+    public function setPasswordReset($passwordReset = null)
     {
         $this->passwordReset = $passwordReset;
     }
@@ -697,11 +697,11 @@ class User
     /**
      * Set the password reset token TTL.
      *
-     * @param string $passwordResetTtl Password reset token TTL.
+     * @param string|null $passwordResetTtl Password reset token TTL.
      *
      * @return void
      */
-    public function setPasswordResetTtl(string $passwordResetTtl)
+    public function setPasswordResetTtl($passwordResetTtl = null)
     {
         $this->passwordResetTtl = $passwordResetTtl;
     }
