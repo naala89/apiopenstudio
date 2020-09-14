@@ -105,7 +105,7 @@ class ResourceImport extends Core\ProcessorEntity
      * ResourceImport constructor.
      *
      * @param mixed $meta Output meta.
-     * @param Core\Request $request Request object.
+     * @param mixed $request Request object.
      * @param \ADODB_mysqli $db DB object.
      * @param \Monolog\Logger $logger Logget object.
      */
