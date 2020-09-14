@@ -1,5 +1,7 @@
 # GaterData
 
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
+
 GaterData is an open source product, and contributions are welcome.
 
 At heart, GaterData is a complete en d to end REST API solution.
@@ -331,5 +333,3 @@ If the processor is really popular, we may ask you for your permission to includ
 If you want to contribute to the GaterData code base, all project development occurs on Gitlab, so you will need to create a GitLab account.
 Then create a fork of the project, and submit your changes in a PR.
 See [wiki.gaterdata.com](https://wiki.gaterdata.com) for more details.
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
