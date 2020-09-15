@@ -37,11 +37,15 @@ The following files and directory structure needs to be added to a project:
 
 ### .env
 
-These values are required by docker-compose.
+Copy ```example.env``` to ```.env```.
 
-So the values must match those in ```settings.yml```
+Edit the values so the values must match those in ```settings.yml```
     
     APP_NAME=gaterdata
+    
+    WITH_XDEBUG=true
+    PHP_IDE_CONFIG=serverName=gaterdata
+    XDEBUG_CONFIG=remote_host=docker.for.mac.localhost remote_port=9001
     
     API_DOMAIN=api.gaterdata.local
     ADMIN_DOMAIN=admin.gaterdata.local
@@ -53,7 +57,7 @@ So the values must match those in ```settings.yml```
     MYSQL_PASSWORD=gaterdata
     MYSQL_ROOT_PASSWORD=gaterdata
     
-    EMAIL_USERNAME=admin@gaterdata.com
+    EMAIL_USERNAME=foo@bar.com.au
     EMAIL_PASSWORD=secret
 
 ### docker/nginx/admin.conf
@@ -240,6 +244,7 @@ Replace server_name with whatever domain you want to host locally.
           - VIRTUAL_HOST=${ADMIN_DOMAIN}
         depends_on:
           - php
+          - composer
         networks:
           api_network:
             aliases:
@@ -252,7 +257,7 @@ Replace server_name with whatever domain you want to host locally.
         build:
           context: ./docker/php
           args:
-            - WITH_XDEBUG=true
+            - WITH_XDEBUG=${WITH_XDEBUG}
         env_file:
           .env
         ports:
@@ -262,12 +267,6 @@ Replace server_name with whatever domain you want to host locally.
           - .:/var/www/html
           - ./docker/php/php.conf:/usr/local/etc/php-fpm.d/zzz-phpSettings.conf
           - ./logs/php:/var/log
-        environment:
-          - MYSQL_HOST=db
-          - MYSQL_DATABASE=${MYSQL_DATABASE}
-          - MYSQL_USER=${MYSQL_USER}
-          - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-          - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
         networks:
           - api_network
     
@@ -302,11 +301,8 @@ Replace server_name with whatever domain you want to host locally.
           - "3306:3306"
         volumes:
           - ./dbdata:/var/lib/mysql
-        environment:
-          - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-          - MYSQL_DATABASE=${MYSQL_DATABASE}
-          - MYSQL_USER=${MYSQL_USER}
-          - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        env_file:
+          .env
         restart: always
         networks:
           - api_network
@@ -345,37 +341,47 @@ Replace server_name with whatever domain you want to host locally.
     #      - SMARTHOST_PASSWORD=
     #      - SMARTHOST_ALIASES=
     
-    ## Uncomment this for compiling the wiki
-    #  # Bookdown container
-    #  bookdown:
-    #    image: sandrokeil/bookdown
-    #    container_name: "${APP_NAME}-bookdown"
-    #    volumes:
-    #      - ./src/wiki:/app
-    #      - ./public/wiki:/wiki
-    #    command: ["bookdown.json"]
-    #    networks:
-    #      - api_network
+      # Uncomment this for compiling the wiki
+      # Bookdown container
+      # bookdown:
+      #     image: sandrokeil/bookdown
+      #     container_name: "${APP_NAME}-bookdown"
+      #     volumes:
+      #         - ./src/wiki:/app
+      #         - ./public/wiki:/wiki
+      #     command: ["bookdown.json"]
+      #     networks:
+      #         - api_network
     
-    ## Uncomment this to serve the wiki locally
-    #  # NGINX Wiki server
-    #  wiki:
-    #    image: nginx:stable
-    #    container_name: "${APP_NAME}-wiki"
-    #    hostname: "${WIKI_DOMAIN}"
-    #    ports:
-    #      - 80
-    #    volumes:
-    #      - ./docker/nginx/wiki.conf:/etc/nginx/conf.d/default.conf
-    #      - ./public/wiki:/var/www/html
-    #      - ./logs/wiki:/var/log/nginx
-    #      - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
-    #    environment:
-    #      - VIRTUAL_HOST=${WIKI_DOMAIN}
-    #    networks:
-    #      api_network:
-    #        aliases:
-    #          - ${WIKI_DOMAIN}
+      # Uncomment this to serve the wiki locally
+      # NGINX Wiki server
+      # wiki:
+      #     image: nginx:stable
+      #     container_name: "${APP_NAME}-wiki"
+      #     hostname: "${WIKI_DOMAIN}"
+      #     ports:
+      #         - 80
+      #     volumes:
+      #         - ./docker/nginx/wiki.conf:/etc/nginx/conf.d/default.conf
+      #         - ./public/wiki:/var/www/html
+      #         - ./logs/wiki:/var/log/nginx
+      #         - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
+      #     environment:
+      #         - VIRTUAL_HOST=${WIKI_DOMAIN}
+      #     networks:
+      #         api_network:
+      #             aliases:
+      #                 - ${WIKI_DOMAIN}
+    
+      # Uncomment this for compiling the phpdocs
+      # PHP Documentor container
+      # phpdocumentor:
+      #     image: phpdoc/phpdoc:latest
+      #     container_name: "${APP_NAME}-phpdocumentor"
+      #     volumes:
+      #         - .:/data
+      #     networks:
+      #         - api_network
     
     networks:
       api_network:
