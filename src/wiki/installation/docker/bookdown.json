@@ -1,7 +1,8 @@
 {
   "title": "Docker",
   "content": [
-    "developer-environment.md"
+    "developer-environment.md",
+    "xdebug.md"
   ],
   "tocDepth": 1
 }
