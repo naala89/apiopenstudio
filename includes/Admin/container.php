@@ -13,7 +13,6 @@
 use Slim\Container;
 use Slim\Views\TwigExtension;
 use Twig\Extension\DebugExtension;
-use Slim\Http\Uri;
 use Slim\Views\Twig;
 use Slim\Flash\Messages;
 use Gaterdata\Admin\Controllers;
@@ -40,22 +39,18 @@ $container['flash'] = function () {
  */
 $container['view'] = function (Container $container) {
     $settings = $container->get('settings');
-    $viewDir = $settings['api']['base_path'] . $settings['twig']['template_path'];
-    $publicDir = $settings['api']['base_path'] . $settings['api']['dir_public'];
 
-    $twigSettings = $settings['twig']['options'];
-    $twigSettings['debug'] = $settings['debug'];
-    $twig = new Twig($viewDir, $twigSettings);
-    $loader = $twig->getLoader();
-    $loader->addPath($publicDir, 'public');
+    $view = new Twig(
+        $settings['api']['base_path'] . $settings['twig']['template_path'],
+        $settings['twig']['options']
+    );
+    $view->addExtension(new TwigExtension(
+        $container['router'],
+        $container['request']->getUri()
+    ));
+    $view->addExtension(new DebugExtension());
 
-    // Instantiate and add twig extension/s.
-    $router = $container->get('router');
-    $uri = Uri::createFromEnvironment($container->get('environment'));
-    $twig->addExtension(new TwigExtension($router, $uri));
-    $twig->addExtension(new DebugExtension());
-
-    return $twig;
+    return $view;
 };
 
 /**
