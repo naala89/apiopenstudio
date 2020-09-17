@@ -5,7 +5,8 @@
 #     If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # @link https://gaterdata.com
 
-image: php:7.3
+default:
+  image: php:7.3
 
 cache:
   key: "$CI_COMMIT_REF_SLUG"
@@ -18,7 +19,7 @@ stages:
 
 before_script:
   - apt-get update
-  - apt-get install -y libzip-dev openssh-client rsync libxslt-dev docker.io
+  - apt-get install -y libzip-dev openssh-client rsync libxslt-dev
   - docker-php-ext-install zip xsl
   - eval $(ssh-agent -s)
   - mkdir -p ~/.ssh
@@ -44,6 +45,8 @@ phpcs:
 
 deploy_wiki_develop:
   stage: deploy
+  only:
+    - develop
   script:
     - echo "Compile the wiki for develop branch."
     - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
@@ -52,20 +55,25 @@ deploy_wiki_develop:
     - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
-  only:
-    - develop
 
 deploy_phpdoc_develop:
   stage: deploy
+  only:
+    - develop
   image: phpdoc/phpdoc
   script:
     - echo "Deploy the phpdoc for develop branch."
+    - apt-get update
+    - apt-get install -y libzip-dev openssh-client rsync libxslt-dev
+    - docker-php-ext-install zip xsl
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
-  only:
-    - develop
 
 #deploy_wiki_master:
 #  stage: deploy
