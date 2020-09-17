@@ -65,9 +65,9 @@ build_phpdoc:
   artifacts:
     paths:
       - public/phpdoc
-  script:
-#    - echo "Compile the phpdoc."
-    - bundle run
+#  script:
+##    - echo "Compile the phpdoc."
+#    - bundle run
 
 #build_bookdown:
 #  image: phpdoc/phpdoc
