@@ -18,7 +18,7 @@ stages:
 
 before_script:
   - apt-get update
-  - apt-get install -y libzip-dev openssh-client rsync libxslt-dev
+  - apt-get install -y libzip-dev openssh-client rsync libxslt-dev docker.io
   - docker-php-ext-install zip xsl
   - eval $(ssh-agent -s)
   - mkdir -p ~/.ssh
@@ -57,10 +57,9 @@ deploy_wiki_develop:
 
 deploy_phpdoc_develop:
   stage: deploy
-  services:
-    - phpdoc/phpdoc:latest
   script:
     - echo "Deploy the phpdoc for develop branch."
+    - docker run --rm -v $(pwd):/data phpdoc/phpdoc
     - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
 #    - ./vendor/bin/phpdox
