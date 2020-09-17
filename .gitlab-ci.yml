@@ -30,7 +30,6 @@ stages:
   - build
   - deploy
 
-
 #phpcs:
 #  stage: test
 #  script:
@@ -65,14 +64,12 @@ compile_phpdoc:
   script: bundle exec run
   artifacts:
     paths:
-      - "$CI_PROJECT_DIR/public/phpdoc/"
+      - "public/phpdoc/"
 
 deploy_phpdoc_develop:
   stage: deploy
   only:
     - develop
-  dependencies:
-    - build
   script:
     - echo "Deploy the phpdoc for develop branch."
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
