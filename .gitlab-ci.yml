@@ -15,6 +15,7 @@ cache:
 
 stages:
   - test
+  - build
   - deploy
 
 before_script:
@@ -57,7 +58,7 @@ before_script:
 #    - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
 
 compile_phpdoc:
-  stage: deploy
+  stage: build
   only:
     - develop
   image: phpdoc/phpdoc
@@ -70,8 +71,6 @@ deploy_phpdoc_develop:
   stage: deploy
   only:
     - develop
-  dependencies:
-    - compile_phpdoc
   script:
     - echo "Deploy the phpdoc for develop branch."
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
