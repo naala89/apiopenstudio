@@ -61,6 +61,7 @@ compile_phpdoc:
   only:
     - develop
   image: phpdoc/phpdoc
+  script: bundle exec run
   artifacts:
     paths:
       - "$CI_PROJECT_DIR/public/phpdoc/"
