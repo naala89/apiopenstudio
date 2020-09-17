@@ -67,6 +67,8 @@ build_phpdoc:
       - build/
   script:
     - echo "Compile the phpdoc."
+    - pwd
+    - ls -la
 
 #build_bookdown:
 #  image: phpdoc/phpdoc
