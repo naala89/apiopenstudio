@@ -12,6 +12,12 @@ cache:
   paths:
     - vendor/
 
+services:
+  -
+    name: phpdoc/phpdoc:latest
+    alias: phpdoc
+    command: run
+
 stages:
   - test
   - deploy
@@ -61,7 +67,7 @@ deploy_phpdoc_develop:
     - echo "Deploy the phpdoc for develop branch."
     - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - ./vendor/bin/phpdox
+#    - ./vendor/bin/phpdox
     - rsync -rvI --delete --exclude=".*" "public/phpdoc/html/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
   only:
