@@ -64,11 +64,10 @@ build_phpdoc:
     - develop
   artifacts:
     paths:
-      - build/
+      - public/phpdoc
   script:
     - echo "Compile the phpdoc."
-    - pwd
-    - ls -la
+    - bundle run
 
 #build_bookdown:
 #  image: phpdoc/phpdoc
