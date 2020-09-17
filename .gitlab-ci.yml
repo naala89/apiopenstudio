@@ -12,12 +12,6 @@ cache:
   paths:
     - vendor/
 
-services:
-  -
-    name: phpdoc/phpdoc:latest
-    alias: phpdoc
-    command: run
-
 stages:
   - test
   - deploy
@@ -63,6 +57,8 @@ deploy_wiki_develop:
 
 deploy_phpdoc_develop:
   stage: deploy
+  services:
+    - phpdoc/phpdoc:latest
   script:
     - echo "Deploy the phpdoc for develop branch."
     - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
