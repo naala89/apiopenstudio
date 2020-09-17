@@ -7,6 +7,18 @@
 
 default:
   image: php:7.3
+  script:
+    - apt-get update
+    - apt-get install -y libzip-dev openssh-client rsync libxslt-dev
+    - docker-php-ext-install zip xsl
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php
+    - php -r "unlink('composer-setup.php');"
+    - php composer.phar install
 
 cache:
   key: "$CI_COMMIT_REF_SLUG"
@@ -18,18 +30,6 @@ stages:
   - build
   - deploy
 
-before_script:
-  - apt-get update
-  - apt-get install -y libzip-dev openssh-client rsync libxslt-dev
-  - docker-php-ext-install zip xsl
-  - eval $(ssh-agent -s)
-  - mkdir -p ~/.ssh
-  - chmod 700 ~/.ssh
-  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-  - php composer-setup.php
-  - php -r "unlink('composer-setup.php');"
-  - php composer.phar install
 
 #phpcs:
 #  stage: test
@@ -71,6 +71,8 @@ deploy_phpdoc_develop:
   stage: deploy
   only:
     - develop
+  dependencies:
+    - build
   script:
     - echo "Deploy the phpdoc for develop branch."
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
