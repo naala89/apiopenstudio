@@ -5,7 +5,7 @@
 #     If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # @link https://gaterdata.com
 
-image: php:7.3
+#image: php:7.3
 
 #before_script:
 #  - apt-get update
@@ -65,9 +65,9 @@ build_phpdoc:
   artifacts:
     paths:
       - public/phpdoc
-#  script:
-##    - echo "Compile the phpdoc."
-#    - bundle run
+  script:
+#    - echo "Compile the phpdoc."
+    - bundle run
 
 #build_bookdown:
 #  image: phpdoc/phpdoc
