@@ -65,7 +65,6 @@ build_phpdoc:
     paths:
       - public/phpdoc
   script:
-    - bundle run
     - echo "Compile the phpdoc."
     - ./vendor/bin/phpdox
 
