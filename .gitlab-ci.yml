@@ -7,6 +7,11 @@
 
 image: php:7.3
 
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - vendor/
+
 before_script:
   - apt-get update
   - apt-get install -y libzip-dev openssh-client rsync libxslt-dev
@@ -15,11 +20,10 @@ before_script:
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-
-cache:
-  key: "$CI_COMMIT_REF_SLUG"
-  paths:
-    - vendor/
+  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+  - php composer-setup.php
+  - php -r "unlink('composer-setup.php');"
+  - php composer.phar install
 
 stages:
   - lint
@@ -27,14 +31,10 @@ stages:
   - build
   - deploy
 
-#phpcs:
-#  stage: lint
-#  script:
-#    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-#    - php composer-setup.php
-#    - php -r "unlink('composer-setup.php');"
-#    - php composer.phar install
-#    - ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/ src/scss/ src/js/
+phpcs:
+  stage: lint
+  script:
+    - ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/ src/scss/ src/js/
 
 #funtional_tests:
 #  stage: test
@@ -50,10 +50,6 @@ deploy_wiki_develop:
     - develop
   script:
     - echo "Compile and deploy the wiki to dev."
-    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    - php composer-setup.php
-    - php -r "unlink('composer-setup.php');"
-    - php composer.phar install
     - ./vendor/bin/bookdown src/wiki/bookdown.json
     - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
@@ -67,10 +63,6 @@ deploy_phpdoc_develop:
     - develop
   script:
     - echo "Compile and deploy the phpdoc to dev."
-    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    - php composer-setup.php
-    - php -r "unlink('composer-setup.php');"
-    - php composer.phar install
     - ./vendor/bin/phpdox
     - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
