@@ -15,10 +15,6 @@ before_script:
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-  - php composer-setup.php
-  - php -r "unlink('composer-setup.php');"
-  - php composer.phar install
 
 cache:
   key: "$CI_COMMIT_REF_SLUG"
@@ -34,6 +30,10 @@ stages:
 phpcs:
   stage: lint
   script:
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php
+    - php -r "unlink('composer-setup.php');"
+    - php composer.phar install
     - ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/ src/scss/ src/js/
 
 #funtional_tests:
@@ -48,48 +48,30 @@ build_wiki:
   stage: build
   only:
     - develop
-    - master
-  artifacts:
-    paths:
-      - public/wiki/
   script:
-    - echo "Compile the wiki."
+    - echo "Compile and deploy the wiki to dev."
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php
+    - php -r "unlink('composer-setup.php');"
+    - php composer.phar install
     - ./vendor/bin/bookdown src/wiki/bookdown.json
-
-build_phpdoc:
-  stage: build
-  only:
-    - develop
-    - master
-  artifacts:
-    paths:
-      - public/phpdoc
-  script:
-    - echo "Compile the phpdoc."
-    - ./vendor/bin/phpdox
-
-deploy_wiki_develop:
-  stage: deploy
-  only:
-    - develop
-  dependencies:
-    - build_wiki
-  script:
-    - echo "Compile the wiki for develop branch."
     - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - rsync -rvI --delete --exclude=".*" "public/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
 
-deploy_phpdoc_develop:
-  stage: deploy
+build_phpdoc:
+  stage: build
   only:
     - develop
-  dependencies:
-    - build_phpdoc
   script:
-    - echo "Deploy the phpdoc for develop branch."
+    - echo "Compile and deploy the phpdoc to dev."
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php
+    - php -r "unlink('composer-setup.php');"
+    - php composer.phar install
+    - ./vendor/bin/phpdox
     - rsync -rvI --delete --exclude=".*" "public/phpdoc/html/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
 
