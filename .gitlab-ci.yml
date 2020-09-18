@@ -78,7 +78,7 @@ deploy_wiki_develop:
     - echo "Compile the wiki for develop branch."
     - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+    - rsync -rvI --delete --exclude=".*" "public/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
 
@@ -90,7 +90,7 @@ deploy_phpdoc_develop:
     - build_phpdoc
   script:
     - echo "Deploy the phpdoc for develop branch."
-    - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
+    - rsync -rvI --delete --exclude=".*" "public/phpdoc/html/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
 
 #deploy_wiki_master:
