@@ -27,14 +27,14 @@ stages:
   - build
   - deploy
 
-phpcs:
-  stage: lint
-  script:
-    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    - php composer-setup.php
-    - php -r "unlink('composer-setup.php');"
-    - php composer.phar install
-    - ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/ src/scss/ src/js/
+#phpcs:
+#  stage: lint
+#  script:
+#    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+#    - php composer-setup.php
+#    - php -r "unlink('composer-setup.php');"
+#    - php composer.phar install
+#    - ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/ src/scss/ src/js/
 
 #funtional_tests:
 #  stage: test
@@ -44,7 +44,7 @@ phpcs:
 #unit_tests:
 #  stage: test
 
-build_wiki:
+deploy_wiki_develop:
   stage: build
   only:
     - develop
@@ -57,11 +57,11 @@ build_wiki:
     - ./vendor/bin/bookdown src/wiki/bookdown.json
     - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - rsync -rvI --delete --exclude=".*" "public/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+    - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
 
-build_phpdoc:
+deploy_phpdoc_develop:
   stage: build
   only:
     - develop
@@ -72,6 +72,8 @@ build_phpdoc:
     - php -r "unlink('composer-setup.php');"
     - php composer.phar install
     - ./vendor/bin/phpdox
+    - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
     - rsync -rvI --delete --exclude=".*" "public/phpdoc/html/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
 
