@@ -2,13 +2,14 @@
 /**
  * Class VarStoreRead.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Processor
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
@@ -27,30 +28,37 @@ use Monolog\Logger;
 class VarStoreRead extends Core\ProcessorEntity
 {
     /**
+     * Var store mapper class.
+     *
      * @var VarStoreMapper
      */
     private $varStoreMapper;
 
     /**
+     * User role mapper class.
+     *
      * @var UserRoleMapper
      */
     private $userRoleMapper;
 
     /**
+     * User mapper class.
+     *
      * @var UserMapper
      */
     private $userMapper;
 
     /**
-     * @var array
-     *   Roles that can access var store.
+     * Array of roles that can access the var store.
+     *
+     * @var array Roles that can access var store.
      */
     private $roles = ['Developer', 'Application manager'];
 
     /**
-     * @var array Details of the processor.
-     *
      * {@inheritDoc}
+     *
+     * @var array Details of the processor.
      */
     protected $details = [
         'name' => 'Var store read',

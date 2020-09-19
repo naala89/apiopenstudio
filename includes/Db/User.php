@@ -2,13 +2,14 @@
 /**
  * Class User.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Db
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Db;
@@ -24,111 +25,155 @@ use phpDocumentor\Reflection\Types\Integer;
 class User
 {
     /**
+     * User ID.
+     *
      * @var integer User ID.
      */
     protected $uid;
 
     /**
+     * User active status.
+     *
      * @var boolean User active status.
      */
     protected $active;
 
     /**
+     * User username.
+     *
      * @var string Username.
      */
     protected $username;
 
     /**
+     * User hashed password.
+     *
      * @var string  User password hash.
      */
     protected $hash;
 
     /**
+     * User auth token.
+     *
      * @var string User auth token.
      */
     protected $token;
 
     /**
+     * User token TTL.
+     *
      * @var string User auth token TTL.
      */
     protected $tokenTtl;
 
     /**
+     * User email.
+     *
      * @var string User email.
      */
     protected $email;
 
     /**
+     * User honorific.
+     *
      * @var string User honorific.
      */
     protected $honorific;
 
     /**
+     * User first name.
+     *
      * @var string User first name.
      */
     protected $nameFirst;
 
     /**
+     * User last name.
+     *
      * @var string User last name.
      */
     protected $nameLast;
 
     /**
+     * User company.
+     *
      * @var string User's company.
      */
     protected $company;
 
     /**
+     * User website.
+     *
      * @var string User's website.
      */
     protected $website;
 
     /**
+     * User street.
+     *
      * @var string User street address.
      */
     protected $addressStreet;
 
     /**
+     * User suburb.
+     *
      * @var string User suburb address.
      */
     protected $addressSuburb;
 
     /**
+     * User city.
+     *
      * @var string User city address.
      */
     protected $addressCity;
 
     /**
+     * User county/state.
+     *
      * @var string User state/county address.
      */
     protected $addressState;
 
     /**
+     * User country.
+     *
      * @var string User country address.
      */
     protected $addressCountry;
 
     /**
+     * User postcode.
+     *
      * @var string User postcode address.
      */
     protected $addressPostcode;
 
     /**
+     * User mobile phone.
+     *
      * @var string User mobile number.
      */
     protected $phoneMobile;
 
     /**
+     * User work phone.
+     *
      * @var string User work number.
      */
     protected $phoneWork;
 
     /**
+     * User reset token.
+     *
      * @var string Password reset token.
      */
     protected $passwordReset;
 
     /**
+     * User reset token TTL.
+     *
      * @var string Password reset TTL.
      */
     protected $passwordResetTtl;

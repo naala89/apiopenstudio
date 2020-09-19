@@ -2,13 +2,14 @@
 /**
  * Class ProcessorEntity.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Core
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Core;
@@ -29,31 +30,36 @@ abstract class ProcessorEntity extends Entity
 {
     /**
      * Processor ID.
-     * @var integer
+     *
+     * @var integer Processor ID.
      */
     protected $id = '';
 
     /**
      * Meta required for this processor.
-     * @var mixed
+     *
+     * @var mixed Processor metadata.
      */
     protected $meta;
 
     /**
      * All of the request details.
-     * @var Request
+     *
+     * @var Request Request.
      */
     protected $request;
 
     /**
+     * Logget object.
+     *
      * @var \Monolog\Logger
      */
     protected $logger;
 
     /**
-     * @var array Details of the processor.
-     *
      * An array of details of the processor, used to configure the frontend GUI and metadata construction.
+     *
+     * @var array Details of the processor.
      *
      * Indexes:
      *  name: name of the processor.
@@ -127,6 +133,8 @@ abstract class ProcessorEntity extends Entity
     protected $details = array();
 
     /**
+     * DB connections.
+     *
      * @var \ADOConnection $dbLayer
      */
     protected $db;

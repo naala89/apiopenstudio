@@ -2,13 +2,14 @@
 /**
  * Class PasswordReset.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Processor
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
@@ -28,34 +29,44 @@ use Monolog\Logger;
 class PasswordReset extends Core\ProcessorEntity
 {
     /**
+     * User mapper class.
+     *
      * @var Db\UserMapper
      */
     private $userMapper;
 
     /**
+     * Config class.
+     *
      * @var Core\Config
      */
     private $settings;
 
     /**
+     * Var store mapper class.
+     *
      * @var Db\VarStoreMapper
      */
     private $varStoreMapper;
 
     /**
+     * Account mapper class.
+     *
      * @var Db\AccountMapper
      */
     private $accountMapper;
 
     /**
+     * Application mapper class.
+     *
      * @var Db\ApplicationMapper
      */
     private $applicationMapper;
 
     /**
-     * @var array Details of the processor.
-     *
      * {@inheritDoc}
+     *
+     * @var array Details of the processor.
      */
     protected $details = [
         'name' => 'Password reset',

@@ -2,13 +2,14 @@
 /**
  * Class DataContainer.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Core
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Core;
@@ -23,6 +24,8 @@ use DOMDocument;
 class DataContainer extends Entity
 {
     /**
+     * All data types.
+     *
      * @var array Data types.
      */
     private $types = [
@@ -39,11 +42,15 @@ class DataContainer extends Entity
     ];
 
     /**
+     * Data type.
+     *
      * @var string Default data type
      */
     private $type = 'empty';
 
     /**
+     * Data.
+     *
      * @var mixed Data
      */
     private $data;
@@ -237,6 +244,7 @@ class DataContainer extends Entity
      * Validate a variable is HTML.
      *
      * @param mixed $var Variable to test.
+     *
      * @return boolean
      */
     private function isHtml($var)

@@ -2,13 +2,14 @@
 /**
  * Class Normalise.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Core
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Core;
@@ -21,16 +22,22 @@ namespace Gaterdata\Core;
 class Normalise
 {
     /**
+     * Input data.
+     *
      * @var mixed
      */
     private $data;
 
     /**
+     * Input data format.
+     *
      * @var string
      */
     private $format;
 
     /**
+     * Default result format for normalise.
+     *
      * @var string
      */
     public $defaultNormalise = 'array';
@@ -211,9 +218,10 @@ class Normalise
 
     /**
      * Convert XML string into an array, maintaining attributes and cdata.
-     * @see https://github.com/gaarf/XML-string-to-PHP-array
      *
      * @return array
+     *
+     * @see https://github.com/gaarf/XML-string-to-PHP-array
      */
     private function _xmlToArray()
     {

@@ -2,13 +2,14 @@
 /**
  * Class RoleMapper.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Db
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Db;
@@ -214,19 +215,19 @@ class UserRoleMapper extends Mapper
     /**
      * Find user roles using filter.
      *
-     * @example
-     *   findByFilter([
-     *     'col' => ['rid' => 1],
-     *     'order_by' => 'uid',
-     *     'direction' => 'asc'
-     *   )
-     *
      * @param integer $uid User ID.
      * @param array $params Associative array of filter params.
      *
      * @return array User roles
      *
      * @throws ApiException Return an ApiException on DB error.
+     *
+     * @example
+     *   findByFilter([
+     *     'col' => ['rid' => 1],
+     *     'order_by' => 'uid',
+     *     'direction' => 'asc'
+     *   )
      */
     public function findForUidWithFilter(int $uid, array $params)
     {
@@ -283,18 +284,18 @@ class UserRoleMapper extends Mapper
     /**
      * Find user roles using filter.
      *
+     * @param array $params Associative array of filter params.
+     *
+     * @return array User roles
+     *
+     * @throws ApiException Return an ApiException on DB error.
+     *
      * @example
      *   findByFilter([
      *     'col' => ['rid' => 1],
      *     'order_by' => 'uid',
      *     'direction' => 'asc'
      *   )
-     *
-     * @param array $params Associative array of filter params.
-     *
-     * @return array User roles
-     *
-     * @throws ApiException Return an ApiException on DB error.
      */
     public function findByFilter(array $params)
     {

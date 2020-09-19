@@ -1,12 +1,13 @@
 /**
  * JS for the admin resource page.
  *
- * @package Gaterdata
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @author john89 (https://gitlab.com/john89)
+ * @package   Gaterdata
+ * @license   This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *            If a copy of the MPL was not distributed with this file,
+ *            You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @author    john89 (https://gitlab.com/john89)
  * @copyright 2020-2030 GaterData
- * @link https://gaterdata.com
+ * @link      https://gaterdata.com
  */
 
 $(document).ready(function () {
@@ -67,21 +68,21 @@ $(document).ready(function () {
     });
 
     /**
-     * resource create - account select.
+     * Resource create - account select.
      */
     $("#create-resource select[name='accid']").on('change', function () {
         GATERDATA.setApplicationOptions($(this).val(), '#appid')
     });
 
     /**
-     * resource create - application select.
+     * Resource create - application select.
      */
     $("#create-resource select[name='appid']").on('change', function () {
         GATERDATA.setAccount($(this).val(), '#accid')
     });
 
     /**
-     * resource create - YAML view.
+     * Resource create - YAML view.
      */
     $("#create-resource a[href='#yaml']").on('click', function () {
         if (!$(this).hasClass('active')) {
@@ -104,7 +105,7 @@ $(document).ready(function () {
     });
 
     /**
-     * resource create - JSON view.
+     * Resource create - JSON view.
      */
     $("#create-resource a[href='#json']").on('click', function () {
         if (!$(this).hasClass('active')) {

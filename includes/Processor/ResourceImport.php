@@ -2,13 +2,14 @@
 /**
  * Class ResourceImport.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Processor
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
@@ -33,44 +34,58 @@ use Monolog\Logger;
 class ResourceImport extends Core\ProcessorEntity
 {
     /**
+     * Config object.
+     *
      * @var Config
      */
     private $settings;
 
     /**
+     * User mapper class.
+     *
      * @var UserMapper
      */
     private $userMapper;
 
     /**
+     * User role mapper class.
+     *
      * @var UserRoleMapper
      */
     private $userRoleMapper;
 
     /**
+     * Resource mapper class.
+     *
      * @var ResourceMapper
      */
     private $resourceMapper;
 
     /**
+     * Account mapper class.
+     *
      * @var AccountMapper
      */
     private $accountMapper;
 
     /**
+     * Application mapper class.
+     *
      * @var ApplicationMapper
      */
     private $applicationMapper;
 
     /**
+     * Resource validator class.
+     *
      * @var ResourceValidator
      */
     private $validator;
 
     /**
-     * @var array Details of the processor.
-     *
      * {@inheritDoc}
+     *
+     * @var array Details of the processor.
      */
     protected $details = [
         'name' => 'Resource import',

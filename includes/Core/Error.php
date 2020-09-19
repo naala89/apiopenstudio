@@ -2,13 +2,14 @@
 /**
  * Class Error.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Core
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Core;
@@ -21,21 +22,29 @@ namespace Gaterdata\Core;
 class Error
 {
     /**
+     * Processor ID.
+     *
      * @var string|integer Processor ID.
      */
     private $id;
 
     /**
+     * Internal error code.
+     *
      * @var integer Error code.
      */
     private $code;
 
     /**
+     * Error message.
+     *
      * @var string Error message.
      */
     private $message;
 
     /**
+     * Error constructor.
+     *
      * @param integer $code Error code.
      * @param string|integer $id Processor ID.
      * @param string $message Error message.

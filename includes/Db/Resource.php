@@ -2,13 +2,14 @@
 /**
  * Class Resource.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Db
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Db;
@@ -21,41 +22,57 @@ namespace Gaterdata\Db;
 class Resource
 {
     /**
+     * Resource ID.
+     *
      * @var integer Resource ID.
      */
     protected $resid;
 
     /**
+     * Resource application ID.
+     *
      * @var integer Application ID.
      */
     protected $appid;
 
     /**
+     * Resource name.
+     *
      * @var string Resource name.
      */
     protected $name;
 
     /**
+     * Resource description.
+     *
      * @var string Resource description.
      */
     protected $description;
 
     /**
+     * Resource request method.
+     *
      * @var string Resource method.
      */
     protected $method;
 
     /**
+     * Resource URI.
+     *
      * @var string Resource URI.
      */
     protected $uri;
 
     /**
+     * Resource Metadata.
+     *
      * @var string Resource metadata.
      */
     protected $meta;
 
     /**
+     * Resource TTL.
+     *
      * @var string Resource time to live.
      */
     protected $ttl;

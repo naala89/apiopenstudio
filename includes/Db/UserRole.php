@@ -2,13 +2,14 @@
 /**
  * Class UserRole.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Db
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Db;
@@ -21,26 +22,36 @@ namespace Gaterdata\Db;
 class UserRole
 {
     /**
+     * User role ID.
+     *
      * @var integer User role ID.
      */
     protected $urid;
 
     /**
+     * User role account ID.
+     *
      * @var integer Account ID.
      */
     protected $accid;
 
     /**
+     * User role application ID.
+     *
      * @var integer Application ID.
      */
     protected $appid;
 
     /**
+     * User role user ID.
+     *
      * @var integer User ID.
      */
     protected $uid;
 
     /**
+     * User role role ID.
+     *
      * @var integer Role ID.
      */
     protected $rid;

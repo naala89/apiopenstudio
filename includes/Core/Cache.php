@@ -2,13 +2,14 @@
 /**
  * Class Cache.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Core
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Core;
@@ -23,36 +24,50 @@ use Monolog\Logger;
 class Cache
 {
     /**
+     * Logging class.
+     *
      * @var \Monolog\Logger
      */
     private $logger;
 
     /**
+     * Current supported caches.
+     *
      * @var string[] Liust of supported caches.
      */
     private $caches = ['memcache', 'apc'];
 
     /**
+     * Cache object.
+     *
      * @var mixed Cache object.
      */
     private $cacheObj;
 
     /**
+     * Cache type.
+     *
      * @var string Caching to use.
      */
     private $cacheType;
 
     /**
+     * Cache active/inactive.
+     *
      * @var boolean Active status of cache.
      */
     private $cacheActive;
 
     /**
+     * Cache host.
+     *
      * @var string Cache host.
      */
     public $host;
 
     /**
+     * Cache port.
+     *
      * @var string Cache port.
      */
     public $port;
@@ -113,6 +128,7 @@ class Cache
    * @param string $key Cache key.
    * @param mixed $val Value to store.
    * @param integer $ttl Cache TTL. Time to live (in seconds). 0|-1 = no cache.
+   *
    * @return boolean
    */
     public function set(string $key, $val, int $ttl)
@@ -134,9 +150,10 @@ class Cache
     }
 
   /**
-   * Fetch a value from the cache
+   * Fetch a value from the cache.
    *
    * @param string $key Get value for a cache key.
+   *
    * @return mixed results on success, false on failure
    */
     public function get(string $key)

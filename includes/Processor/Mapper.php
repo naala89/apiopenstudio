@@ -2,13 +2,14 @@
 /**
  * Class Mapper.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Processor
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
@@ -24,9 +25,9 @@ use JmesPath;
 class Mapper extends Core\ProcessorEntity
 {
     /**
-     * @var array Details of the processor.
-     *
      * {@inheritDoc}
+     *
+     * @var array Details of the processor.
      */
     protected $details = [
         'name' => 'Mapper',
@@ -159,7 +160,7 @@ class Mapper extends Core\ProcessorEntity
     /**
      * Add to result object.
      *
-     * parents separated by '/'
+     * Parents separated by '/'
      * foobar[] - add to array foobar
      * foo[fbar] = add to object foo as index bar
      *
@@ -246,7 +247,7 @@ class Mapper extends Core\ProcessorEntity
     /**
      * Add to result object.
      *
-     * parents separated by '/'
+     * Parents separated by '/'
      * foo/bar - add the node bar as the child of foo
      * foo[@bar] = add to node as an attribute <foo bar="value"></foo>
      *

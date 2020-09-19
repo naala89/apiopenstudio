@@ -1,12 +1,13 @@
 /**
  * Generic JS for the admin pages.
  *
- * @package Gaterdata
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @author john89 (https://gitlab.com/john89)
+ * @package   Gaterdata
+ * @license   This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *            If a copy of the MPL was not distributed with this file,
+ *            You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @author    john89 (https://gitlab.com/john89)
  * @copyright 2020-2030 GaterData
- * @link https://gaterdata.com
+ * @link      https://gaterdata.com
  */
 
 $(document).ready(function () {
@@ -15,6 +16,7 @@ $(document).ready(function () {
 
     /**
      * Reset options in applications to all.
+     *
      * @param string selector
      *   Applications element selector.
      */
@@ -31,6 +33,7 @@ $(document).ready(function () {
 
     /**
      * Update an account selector based on application ID
+     *
      * @param integer appid
      *   Application ID.
      * @param string selector

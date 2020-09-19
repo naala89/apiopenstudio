@@ -2,13 +2,14 @@
 /**
  * Class Api.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Core
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Core;
@@ -26,36 +27,50 @@ use Cascade\Cascade;
 class Api
 {
     /**
+     * Cache class.
+     *
      * @var Cache
      */
     private $cache;
 
     /**
+     * Request object class.
+     *
      * @var Request
      */
     private $request;
 
     /**
+     * Processor helper class.
+     *
      * @var ProcessorHelper
      */
     private $helper;
 
     /**
+     * Test for resource direct from file.
+     *
      * @var boolean
      */
     private $test = false; // false or filename in /yaml/test
 
     /**
+     * DB connection object.
+     *
      * @var \ADOConnection
      */
     private $db;
 
     /**
+     * Config class.
+     *
      * @var Config
      */
     private $settings;
 
     /**
+     * Logging class.
+     *
      * @var \Monolog\Logger
      */
     private $logger;
@@ -396,6 +411,7 @@ class Api
      * Get the formatted output.
      *
      * @param mixed $data Data to format.
+     *
      * @return mixed
      *
      * @throws ApiException Let any exceptions flow through.

@@ -2,13 +2,14 @@
 /**
  * Class UserMapper.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Db
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Db;
@@ -116,11 +117,12 @@ class UserMapper extends Mapper
      *
      * @param integer $uid User ID of the current user.
      * @param array $params Filter parameters.
-     * @see \Gaterdata\Db\Mapper.
      *
      * @return array $array of Users.
      *
      * @throws ApiException Return an ApiException on DB error.
+     *
+     * @see \Gaterdata\Db\Mapper.
      */
     public function findAllByPermissions(int $uid, array $params = [])
     {

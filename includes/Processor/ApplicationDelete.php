@@ -2,13 +2,14 @@
 /**
  * Class ApplicationDelete.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Processor
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Processor;
@@ -26,29 +27,37 @@ use Monolog\Logger;
 class ApplicationDelete extends Core\ProcessorEntity
 {
     /**
+     * User role mapper class.
+     *
      * @var Db\UserRoleMapper
      */
     protected $userRoleMapper;
 
     /**
+     * User mapper class.
+     *
      * @var Db\UserMapper
      */
     protected $userMapper;
 
     /**
+     * Application mapper class.
+     *
      * @var Db\UserRoleMapper
      */
     protected $applicationMapper;
 
     /**
+     * Resource mapper class.
+     *
      * @var Db\ResourceMapper
      */
     protected $resourceMapper;
 
     /**
-     * @var array Details of the processor.
-     *
      * {@inheritDoc}
+     *
+     * @var array Details of the processor.
      */
     protected $details = [
         'name' => 'Application delete',

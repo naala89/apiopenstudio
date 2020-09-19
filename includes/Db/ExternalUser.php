@@ -2,13 +2,14 @@
 /**
  * Class ExternalUser.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Db
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Db;
@@ -21,36 +22,50 @@ namespace Gaterdata\Db;
 class ExternalUser
 {
     /**
+     * External user ID.
+     *
      * @var integer External entity ID.
      */
     protected $id;
 
     /**
+     * External application ID.
+     *
      * @var integer Application ID.
      */
     protected $appId;
 
     /**
+     * External user external ID.
+     *
      * @var mixed External ID.
      */
     protected $externalId;
 
     /**
+     * External user external entity type.
+     *
      * @var mixed External entity.
      */
     protected $externalEntity;
 
     /**
+     * External user data field 1.
+     *
      * @var mixed Data field 1
      */
     protected $dataField1;
 
     /**
+     * External user data field 2.
+     *
      * @var mixed Data field 2
      */
     protected $dataField2;
 
     /**
+     * External user data field 3.
+     *
      * @var mixed Data field 3
      */
     protected $dataField3;

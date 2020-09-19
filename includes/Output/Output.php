@@ -2,13 +2,14 @@
 /**
  * Class Output.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Output
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Output;
@@ -26,26 +27,36 @@ use phpDocumentor\Reflection\Types\Boolean;
 abstract class Output extends Core\ProcessorEntity
 {
     /**
+     * Config object.
+     *
      * @var Core\Config
      */
     protected $settings;
 
     /**
+     * The output data.
+     *
      * @var mixed The output data.
      */
     protected $data;
 
     /**
+     * The output metadata.
+     *
      * @var mixed the output meta.
      */
     protected $meta;
 
     /**
+     * Content-type header value.
+     *
      * @var string The string to contain the content type header value.
      */
     protected $header = '';
 
     /**
+     * The HTTP output status.
+     *
      * @var mixed The output status.
      */
     public $status;

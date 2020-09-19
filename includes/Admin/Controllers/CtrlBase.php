@@ -2,13 +2,14 @@
 /**
  * Class CtrlBase.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Admin\Controllers
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Admin\Controllers;
@@ -37,46 +38,72 @@ class CtrlBase
     protected $permittedRoles = [];
 
     /**
+     * Setting class.
+     *
      * @var Slim\Collection
      */
     protected $settings;
 
     /**
+     * Twig class.
+     *
      * @var Twig
      */
     protected $view;
 
     /**
+     * Flash messages object.
+     *
      * @var Messages.
      */
     protected $flash;
 
     /**
+     * Menu items available to the user.
+     *
      * @var array.
      */
     protected $menu;
 
     /**
+     * Array of all roles the user has.
+     *
      * @var array
      */
     protected $allRoles = [];
 
     /**
+     * Array of the user access rights.
+     *
      * @var array,
+     *
+     * [
+     *      accid => [
+     *          appid => [
+     *              rid
+     *          ]
+     *      ]
+     * ]
      */
     protected $userAccessRights = [];
 
     /**
+     * Array of oles the user has.
+     *
      * @var array
      */
     protected $userRoles = [];
 
     /**
+     * Array of accounts the user has access to.
+     *
      * @var array
      */
     protected $userAccounts = [];
 
     /**
+     * Array of applications the user has access to.
+     *
      * @var array
      */
     protected $userApplications = [];

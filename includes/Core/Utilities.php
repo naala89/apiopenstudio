@@ -2,13 +2,14 @@
 /**
  * Class Utilities.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Core
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Core;
@@ -21,21 +22,29 @@ namespace Gaterdata\Core;
 class Utilities
 {
     /**
+     * String of lower case letters for random().
+     *
      * @var string Lower case characters.
      */
     public static $lower_case = 'abcdefghijklmnopqrstuvwxyz';
 
     /**
+     * String of capital letters for random().
+     *
      * @var string Upper case characters.
      */
     public static $upper_case = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
     /**
+     * String of numbers for random().
+     *
      * @var string Real numbers.
      */
     public static $number = '0123456789';
 
     /**
+     * String of special characters for random().
+     *
      * @var string Special characters.
      */
     public static $special = '!@#$%^&*()';
@@ -155,7 +164,7 @@ class Utilities
      * @return string ip address
      *  IP address of the user
      */
-    public static function getUserIP()
+    public static function getUserIp()
     {
         $ip = $_SERVER["REMOTE_ADDR"];
         $proxy = $_SERVER["HTTP_X_FORWARDED_FOR"];
@@ -172,7 +181,7 @@ class Utilities
      *
      * @return array|string
      */
-    public static function selfURL(bool $returnArray = null)
+    public static function selfUrl(bool $returnArray = null)
     {
         $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
         $protocol = self::strleft(strtolower($_SERVER["SERVER_PROTOCOL"]), "/") . $s;
@@ -207,10 +216,10 @@ class Utilities
      */
     public static function makeUrlSecure()
     {
-        $a_selfURL = self::selfURL(true);
-        if ($a_selfURL['protocol'] == 'http') {
-            header('Location: ' . $a_selfURL['protocol']. 's://'
-                . $a_selfURL['address'] . $a_selfURL['port'] . $a_selfURL['uri']);
+        $a_selfUrl = self::selfUrl(true);
+        if ($a_selfUrl['protocol'] == 'http') {
+            header('Location: ' . $a_selfUrl['protocol']. 's://'
+                . $a_selfUrl['address'] . $a_selfUrl['port'] . $a_selfUrl['uri']);
             exit();
         }
     }
@@ -222,9 +231,9 @@ class Utilities
      */
     public static function makeUrlInsecure()
     {
-        $a_selfURL = self::selfURL(true);
-        if ($a_selfURL['protocol'] == 'https') {
-            header('Location: http://' . $a_selfURL['address'] . $a_selfURL['uri']);
+        $a_selfUrl = self::selfUrl(true);
+        if ($a_selfUrl['protocol'] == 'https') {
+            header('Location: http://' . $a_selfUrl['address'] . $a_selfUrl['uri']);
             exit();
         }
     }

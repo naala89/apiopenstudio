@@ -3,13 +3,14 @@
 /**
  * Class CLIScript.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Core\Cli
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Core\Cli;
@@ -25,26 +26,36 @@ use Gaterdata\Core\Config;
 abstract class CLIScript
 {
     /**
+     * The current executed argument.
+     *
      * @var array Current executed arg.
      */
     protected $exec;
 
     /**
+     * The command options array.
+     *
      * @var array Command options.
      */
     protected $options;
 
     /**
+     * The command flags array.
+     *
      * @var array Command flags.
      */
     protected $flags;
 
     /**
+     * The command arguments array.
+     *
      * @var array Command args.
      */
     protected $arguments;
 
     /**
+     * The command argument map array.
+     *
      * @var array Command argument map.
      */
     protected $argMap;

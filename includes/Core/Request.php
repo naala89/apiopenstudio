@@ -2,13 +2,14 @@
 /**
  * Class Request.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Core
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Core;
@@ -21,91 +22,127 @@ namespace Gaterdata\Core;
 class Request
 {
     /**
+     * Account ID.
+     *
      * @var integer Account ID.
      */
     private $accId;
 
     /**
+     * Account name.
+     *
      * @var string Account name.
      */
     private $accName;
 
     /**
+     * Application ID.
+     *
      * @var integer Application ID.
      */
     private $appId;
 
     /**
+     * Application name.
+     *
      * @var string Application name.
      */
     private $appName;
 
     /**
+     * Request arguments.
+     *
      * @var array Request arguments.
      */
     private $args;
 
     /**
+     * Cache key.
+     *
      * @var string Cache key.
      */
     private $cacheKey;
 
     /**
+     * Contents of $_FILES.
+     *
      * @var array Server $_FILES.
      */
     private $files;
 
     /**
+     * Fragments array.
+     *
      * @var array Fragments metadata and results.
      */
     private $fragments = [];
 
     /**
+     * Contents of $_GET.
+     *
      * @var array GET variables.
      */
     private $getVars;
 
     /**
+     * The requesting IP.
+     *
      * @var string Request IP.
      */
     private $ip;
 
     /**
+     * The request metadata.
+     *
      * @var \stdClass Request metadata.
      */
     private $meta;
 
     /**
+     * The request method.
+     *
      * @var string Request method.
      */
     private $method;
 
     /**
+     * Request output format.
+     *
      * @var string Value of the accept header, translated into readable string.
      */
     private $outFormat;
 
     /**
+     * Contents of $_POST.
+     *
      * @var array POST variables.
      */
     private $postVars;
 
     /**
+     * Resource metadata string.
+     *
      * @var string Resource JSON string.
      */
     private $resource;
 
     /**
+     * Resource cache TTL.
+     *
      * @var integer Cache TTL.
      */
     private $ttl = 0;
 
     /**
+     * Request URI.
+     *
      * @var string Requesting URI.
      */
     private $uri;
 
     /**
+     * Set the account ID.
+     *
      * @param integer $var Account ID.
      *
      * @return void
@@ -116,6 +153,8 @@ class Request
     }
 
     /**
+     * Get the account ID.
+     *
      * @return integer
     */
     public function getAccId()
@@ -124,6 +163,8 @@ class Request
     }
 
     /**
+     * Set the account name.
+     *
      * @param string $var Account name.
      *
      * @return void
@@ -134,6 +175,8 @@ class Request
     }
 
     /**
+     * Get the account name.
+     *
      * @return string
      */
     public function getAccName()
@@ -142,6 +185,8 @@ class Request
     }
 
     /**
+     * Set the application ID.
+     *
      * @param integer $var Application ID.
      *
      * @return void
@@ -152,6 +197,8 @@ class Request
     }
 
     /**
+     * Get the application ID.
+     *
      * @return integer
      */
     public function getAppId()
@@ -160,6 +207,8 @@ class Request
     }
 
     /**
+     * Set the application name
+     *
      * @param string $var Application name.
      *
      * @return void
@@ -170,6 +219,8 @@ class Request
     }
 
     /**
+     * Get the application name.
+     *
      * @return string
      */
     public function getAppName()
@@ -178,6 +229,8 @@ class Request
     }
 
     /**
+     * Set the URI.
+     *
      * @param string $var Request URI.
      *
      * @return void
@@ -188,6 +241,8 @@ class Request
     }
 
     /**
+     * Get the request URI.
+     *
      * @return string
      */
     public function getUri()
@@ -196,6 +251,8 @@ class Request
     }
 
     /**
+     * Set the method.
+     *
      * @param string $var Request method.
      *
      * @return void
@@ -206,6 +263,8 @@ class Request
     }
 
     /**
+     * Get the request method.
+     *
      * @return string
      */
     public function getMethod()
@@ -214,6 +273,8 @@ class Request
     }
 
     /**
+     * Set the request args.
+     *
      * @param array $var Request URI args.
      *
      * @return void
@@ -224,6 +285,8 @@ class Request
     }
 
     /**
+     * Get the request args.
+     *
      * @return array
      */
     public function getArgs()
@@ -232,6 +295,8 @@ class Request
     }
 
     /**
+     * Set the GET vars.
+     *
      * @param array $var Copy of request $_GET.
      *
      * @return void
@@ -242,6 +307,8 @@ class Request
     }
 
     /**
+     * Get the GET vars.
+     *
      * @return array
      */
     public function getGetVars()
@@ -250,6 +317,8 @@ class Request
     }
 
     /**
+     * Set the POST vars.
+     *
      * @param array $var Copy of request $_POST.
      *
      * @return void
@@ -260,6 +329,8 @@ class Request
     }
 
     /**
+     * Get the POST vars.
+     *
      * @return array
      */
     public function getPostVars()
@@ -268,6 +339,8 @@ class Request
     }
 
     /**
+     * Set the FILES.
+     *
      * @param array $var Copy of request $_FILES.
      *
      * @return void
@@ -278,6 +351,8 @@ class Request
     }
 
     /**
+     * Get the FILES.
+     *
      * @return array
      */
     public function getFiles()
@@ -286,6 +361,8 @@ class Request
     }
 
     /**
+     * Set the request IP.
+     *
      * @param string $var Request IP address.
      *
      * @return void
@@ -296,6 +373,8 @@ class Request
     }
 
     /**
+     * Get the request IP.
+     *
      * @return string
      */
     public function getIp()
@@ -304,6 +383,8 @@ class Request
     }
 
     /**
+     * Set the output format.
+     *
      * @param string $var Output format.
      *
      * @return void
@@ -314,6 +395,8 @@ class Request
     }
 
     /**
+     * Get the output format.
+     *
      * @return string
      */
     public function getOutFormat()
@@ -322,6 +405,8 @@ class Request
     }
 
     /**
+     * Set the resource JSON.
+     *
      * @param object $var Resource JSON.
      *
      * @return void
@@ -332,6 +417,8 @@ class Request
     }
 
     /**
+     * Get the resource.
+     *
      * @return string
      */
     public function getResource()
@@ -340,6 +427,8 @@ class Request
     }
 
     /**
+     * Set the metadata.
+     *
      * @param \stdClass $var Resource metadata.
      *
      * @return void
@@ -350,6 +439,8 @@ class Request
     }
 
     /**
+     * Get the metadata,
+     *
      * @return \stdClass
      */
     public function getMeta()
@@ -358,6 +449,8 @@ class Request
     }
 
     /**
+     * Set the cache TTL.
+     *
      * @param integer $var Cache TTL.
      *
      * @return void
@@ -368,6 +461,8 @@ class Request
     }
 
     /**
+     * Get the cache TTL.
+     *
      * @return integer
      */
     public function getTtl()
@@ -376,6 +471,8 @@ class Request
     }
 
     /**
+     * Set the fragments.
+     *
      * @param array $var Fragments.
      *
      * @return void
@@ -386,6 +483,8 @@ class Request
     }
 
     /**
+     * Get the fragments.
+     *
      * @return array
      */
     public function getFragments()
@@ -394,6 +493,8 @@ class Request
     }
 
     /**
+     * Set the cache key.
+     *
      * @param string $var Cache key.
      *
      * @return void
@@ -404,6 +505,8 @@ class Request
     }
 
     /**
+     * Get the cache key.
+     *
      * @return string
      */
     public function getCacheKey()

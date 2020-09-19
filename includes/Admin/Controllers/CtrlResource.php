@@ -2,13 +2,14 @@
 /**
  * Class CtrlResource.
  *
- * @package Gaterdata
+ * @package    Gaterdata
  * @subpackage Admin\Controllers
- * @author john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @author     john89 (https://gitlab.com/john89)
+ * @copyright  2020-2030 GaterData
+ * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *             If a copy of the MPL was not distributed with this file,
+ *             You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @link       https://gaterdata.com
  */
 
 namespace Gaterdata\Admin\Controllers;
@@ -36,6 +37,8 @@ class CtrlResource extends CtrlBase
     ];
 
     /**
+     * Array of sections within a resource file.
+     *
      * @var array Array of sections in a metadata string.
      */
     const META_SECTIONS = [

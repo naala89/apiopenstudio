@@ -1,11 +1,13 @@
 /**
  * Class CtrlApplication.
  *
- * @author john89 (https://gitlab.com/john89)
+ * @package   Gaterdata
+ * @license   This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ *            If a copy of the MPL was not distributed with this file,
+ *            You can obtain one at https://mozilla.org/MPL/2.0/.
+ * @author    john89 (https://gitlab.com/john89)
  * @copyright 2020-2030 GaterData
- * @license This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- *      If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link https://gaterdata.com
+ * @link      https://gaterdata.com
  */
 
 /**
@@ -40,72 +42,72 @@ const errorHandler = require('gulp-error-handle');
 const rename = require('gulp-rename');
 
 // Clean js destination dir.
-gulp.task('clean.js', function() {
-  return gulp.src([js_dest + '*.js'], {read: false})
-    .pipe(errorHandler())
-    .pipe(clean());
+gulp.task('clean.js', function () {
+    return gulp.src([js_dest + '*.js'], {read: false})
+        .pipe(errorHandler())
+        .pipe(clean());
 });
 
 // Clean css destination dir.
-gulp.task('clean.css', function() {
-  return gulp.src([css_dest + '*.css'], {read: false})
-    .pipe(errorHandler())
-    .pipe(clean());
+gulp.task('clean.css', function () {
+    return gulp.src([css_dest + '*.css'], {read: false})
+        .pipe(errorHandler())
+        .pipe(clean());
 });
 
 // Clean img destination dir.
-gulp.task('clean.img', function() {
-  return gulp.src([img_dest + '*'], {read: false})
-    .pipe(errorHandler())
-    .pipe(clean());
+gulp.task('clean.img', function () {
+    return gulp.src([img_dest + '*'], {read: false})
+        .pipe(errorHandler())
+        .pipe(clean());
 });
 
 // Scripts.
-gulp.task('js', ['clean.js'], function() {
-  // Copy minified vendor js.
-  gulp.src([vendor_src + '**/*.min.js'])
-    .pipe(rename({dirname: ''}))
-    .pipe(gulp.dest(js_dest));
-  // Minify Gaterdata js and copy.
-  gulp.src([js_src])
-    .pipe(errorHandler())
-    .pipe(concat('gaterdata.min.js'))
-    .pipe(striplog())
-    .pipe(uglify())
-    .pipe(gulp.dest(js_dest))
+gulp.task('js', ['clean.js'], function () {
+    // Copy minified vendor js.
+    gulp.src([vendor_src + '**/*.min.js'])
+        .pipe(rename({dirname: ''}))
+        .pipe(gulp.dest(js_dest));
+    // Minify Gaterdata js and copy.
+    gulp.src([js_src])
+        .pipe(errorHandler())
+        .pipe(concat('gaterdata.min.js'))
+        .pipe(striplog())
+        .pipe(uglify())
+        .pipe(gulp.dest(js_dest))
 });
 
 // Styles.
-gulp.task('css', ['clean.css'], function() {
-  // Copy minified vendor css.
-  gulp.src([vendor_src + '**/*.min.css'])
-    .pipe(rename({dirname: ''}))
-    .pipe(gulp.dest(css_dest));
-  // Minify Gaterdata sass, minify and copy.
-  gulp.src([scss_src])
-    .pipe(errorHandler())
-    .pipe(sass({style: 'compressed', errLogToConsole: true}))
-    .pipe(concat('gaterdata.min.css'))
-    .pipe(cleancss())
-    .pipe(gulp.dest(css_dest))
+gulp.task('css', ['clean.css'], function () {
+    // Copy minified vendor css.
+    gulp.src([vendor_src + '**/*.min.css'])
+        .pipe(rename({dirname: ''}))
+        .pipe(gulp.dest(css_dest));
+    // Minify Gaterdata sass, minify and copy.
+    gulp.src([scss_src])
+        .pipe(errorHandler())
+        .pipe(sass({style: 'compressed', errLogToConsole: true}))
+        .pipe(concat('gaterdata.min.css'))
+        .pipe(cleancss())
+        .pipe(gulp.dest(css_dest))
 });
 
 // Images.
-gulp.task('img', ['clean.img'], function() {
-  // Minify images and copy.
-  gulp.src(img_src)
-      .pipe(errorHandler())
-      .pipe(imagemin())
-      .pipe(gulp.dest(img_dest))
+gulp.task('img', ['clean.img'], function () {
+    // Minify images and copy.
+    gulp.src(img_src)
+        .pipe(errorHandler())
+        .pipe(imagemin())
+        .pipe(gulp.dest(img_dest))
 });
 
 // Default task, setup watch.
-gulp.task('watch', function(){
-  gulp.watch(vendor_src, ['css', 'js']);
-  gulp.watch(scss_src, ['css']);
-  gulp.watch(js_src, ['js']);
-  gulp.watch(img_src, ['img']);
-  gulp.src('src/*').pipe(notify('An asset has changed'));
+gulp.task('watch', function () {
+    gulp.watch(vendor_src, ['css', 'js']);
+    gulp.watch(scss_src, ['css']);
+    gulp.watch(js_src, ['js']);
+    gulp.watch(img_src, ['img']);
+    gulp.src('src/*').pipe(notify('An asset has changed'));
 });
 
 gulp.task('all', ['css', 'js', 'img']);
