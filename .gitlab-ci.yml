@@ -34,7 +34,7 @@ stages:
 phpcs:
   stage: lint
   script:
-    - ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/ src/scss/ src/js/
+    - ./vendor/bin/phpcs includes/ src/scss/ src/js/
 
 #funtional_tests:
 #  stage: test
