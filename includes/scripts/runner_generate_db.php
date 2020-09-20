@@ -11,9 +11,9 @@
  * @link      https://gaterdata.com
  */
 
-use Spyc;
+require_once dirname(dirname(__DIR__)) . 'vendor/autoload.php';
 
-require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
+use Spyc;
 
 // Create connection
 $conn = new mysqli(
