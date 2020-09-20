@@ -15,6 +15,7 @@ cache:
   paths:
     - vendor/
     - .composer/
+    - composer.lock
 
 variables:
   MYSQL_HOST: ${MYSQL_TEST_HOST}

@@ -32,7 +32,7 @@ if ($conn->connect_error) {
 echo "Connected successfully\n";
 
 // Create the database, user and permissions.
-$sql = 'CREATE DATABASE ' . getenv('MYSQL_DATABASE') . ' IF NOT EXISTS';
+$sql = 'CREATE DATABASE IF NOT EXISTS `' . getenv('MYSQL_DATABASE') . '`';
 echo "$sql\n";
 if ($conn->query($sql)) {
     echo "Create database success\n";
