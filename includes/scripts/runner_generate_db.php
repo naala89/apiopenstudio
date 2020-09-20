@@ -17,6 +17,8 @@
  * @file Populate test DB for gitlab pipelines functional tests.
  */
 
+require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
+
 // Create connection
 $conn = new mysqli(
     getenv('MYSQL_HOST'),
