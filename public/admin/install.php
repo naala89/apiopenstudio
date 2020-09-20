@@ -31,7 +31,7 @@ $menu = ['Login' => '/'];
 // phpcs:ignore
 $loader = new Twig_Loader_Filesystem($settings->__get(['api', 'base_path']) . $settings->__get(['twig', 'template_path']));
 $twig = new Twig_Environment($loader, $settings->__get(['twig', 'options']));
-if ($settings->__get(['twig', 'debug'])) {
+if ($settings->__get(['twig', 'options', 'debug'])) {
     $twig->addExtension(new \Twig\Extension\DebugExtension());
 }
 
@@ -77,6 +77,7 @@ switch ($step) {
         if (isset($_SESSION['token'])) {
             unset ($_SESSION['token']);
         }
+        $include_test = isset($_POST['include_test']) && $_POST['include_test'] == 1;
         $yaml = file_get_contents($settings->__get(['api', 'base_path']) . $settings->__get(['db', 'definition_path']));
         $definition = \Spyc::YAMLLoadString($yaml);
         $template = $twig->load('install/install_1.twig');
@@ -129,6 +130,14 @@ switch ($step) {
             // Add data if required.
             if (isset($tableData['data'])) {
                 foreach ($tableData['data'] as $row) {
+                    if ($table == 'application' && $row['name'] == 'testing' && !$include_test) {
+                        // Do not create the testing application.
+                        continue;
+                    }
+                    if (($table == 'user' || $table == 'user_role') && !$include_test) {
+                        // Do not create the tester user and associated roles.
+                        continue;
+                    }
                     $keys = [];
                     $values = [];
                     foreach ($row as $key => $value) {

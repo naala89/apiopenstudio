@@ -10,8 +10,14 @@
       <input type="hidden" name="next_step" value="1">
       <fieldset>
         <legend>Continue?</legend>
-        <div>
+        <div class="input-field col s6">
           <button class="btn red lighten-2" type="submit">Next</button>
+        </div>
+        <div class="input-field col s6">
+          <label>
+            <input name="include_test" type="checkbox" class="filled-in" value="1" />
+            <span>Generate test application and user (only for running automated tests)</span>
+          </label>
         </div>
       </fieldset>
     </form>

@@ -103,6 +103,11 @@ user:
     phone_work: { type: varchar(32), default: NULL, comment: user work number }
     password_reset: { type: varchar(32), default: NULL, comment: password reset token }
     password_reset_ttl: { type: timestamp, default: NULL, comment: end of life for passowrd reset token }
+  data:
+    -
+      username: tester
+      email: tester@testerton.com
+      hash: $2y$12$YIgdjM6Vb4szSyHB0psGTu4GEhoimX.bKPjdIbWD2i/FgwOi9iiay
 
 user_role:
   columns:
@@ -111,6 +116,17 @@ user_role:
     appid: { type: int(10) unsigned, notnull: false, comment: "application id, we allow null for owner role" }
     uid: { type: int(10) unsigned, notnull: true, comment: user id }
     rid: { type: int(10) unsigned, notnull: true, comment: role id }
+  data:
+    -
+      accid: 1
+      appid: 1
+      uid: 1
+      rid: 1
+    -
+      accid: 1
+      appid: 1
+      uid: 1
+      rid: 4
 
 var_store:
   columns:
