@@ -322,11 +322,11 @@ class User
     /**
      * Set the password. This will also create the hash.
      *
-     * @param string $password Password.
+     * @param string|null $password Password.
      *
      * @return void
      */
-    public function setPassword(string $password)
+    public function setPassword(string $password = null)
     {
         // Generate hash.
         $this->hash = Hash::generateHash($password);
@@ -345,11 +345,11 @@ class User
     /**
      * Set the hash.
      *
-     * @param string $hash Hash.
+     * @param string|null $hash Hash.
      *
      * @return void
      */
-    public function setHash(string $hash)
+    public function setHash(string $hash = null)
     {
         $this->hash = $hash;
     }
@@ -367,11 +367,11 @@ class User
     /**
      * Set the token.
      *
-     * @param string $token Token.
+     * @param string|null $token Token.
      *
      * @return void
      */
-    public function setToken(string $token)
+    public function setToken($token = null)
     {
         $this->token = $token;
     }
@@ -389,11 +389,11 @@ class User
     /**
      * Set the token stale date.
      *
-     * @param string $tokenTtl Token stale date.
+     * @param string|null $tokenTtl Token stale date.
      *
      * @return void
      */
-    public function setTokenTtl(string $tokenTtl)
+    public function setTokenTtl(string $tokenTtl = null)
     {
         $this->tokenTtl = $tokenTtl;
     }
