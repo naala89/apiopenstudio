@@ -14,10 +14,17 @@ cache:
   key: "$CI_COMMIT_REF_SLUG"
   paths:
     - vendor/
+    - .composer/
+
+variables:
+  MYSQL_HOST: ${MYSQL_TEST_HOST}
+  MYSQL_DATABASE: ${MYSQL_TEST_DATABASE}
+  MYSQL_ROOT_USERNAME: ${MYSQL_TEST_ROOT_USERNAME}
+  MYSQL_ROOT_PASSWORD: ${MYSQL_TEST_ROOT_PASSWORD}
 
 before_script:
   - apt-get update
-  - apt-get install -y libzip-dev openssh-client rsync libxslt-dev
+  - apt-get install -y libzip-dev openssh-client rsync libxslt-dev unzip
   - docker-php-ext-install zip xsl
   - eval $(ssh-agent -s)
   - mkdir -p ~/.ssh
@@ -26,33 +33,42 @@ before_script:
   - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
   - php composer-setup.php
   - php -r "unlink('composer-setup.php');"
-  - php composer.phar install
 
 stages:
   - lint
   - test
-  - build
   - deploy
 
 phpcs:
   stage: lint
   script:
+    - php composer.phar install
     - ./vendor/bin/phpcs includes/ src/scss/ src/js/
 
-#funtional_tests:
-#  stage: test
-#  script:
-#    - ./vendor/bin/codecept run
+functional_tests:
+  stage: test
+  services:
+    - mariadb:latest
+  script:
+    - echo "Running functional tests."
+    - php composer.phar install
+    - echo "Setup the DB."
+    - apt-get install -y mariadb-client
+    - docker-php-ext-install mysqli
+    - mysql --version
+    - php ./includes/scripts/runner_generate_db.php
+
 
 #unit_tests:
 #  stage: test
 
 deploy_wiki_develop:
-  stage: build
+  stage: deploy
   only:
     - develop
   script:
     - echo "Compile and deploy the wiki to dev."
+    - php composer.phar install
     - ./vendor/bin/bookdown src/wiki/bookdown.json
     - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
@@ -61,11 +77,12 @@ deploy_wiki_develop:
     - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
 
 deploy_phpdoc_develop:
-  stage: build
+  stage: deploy
   only:
     - develop
   script:
     - echo "Compile and deploy the phpdoc to dev."
+    - php composer.phar install
     - ./vendor/bin/phpdox
     - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
