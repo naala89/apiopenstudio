@@ -17,8 +17,6 @@
  * @file Populate test DB for gitlab pipelines functional tests.
  */
 
-require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
-
 // Create connection
 $conn = new mysqli(
     getenv('MYSQL_HOST'),
@@ -28,21 +26,34 @@ $conn = new mysqli(
 
 // Check connection
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    echo "Connection failed: " . $conn->connect_error;
+    exit(1);
 }
-echo "Connected successfully";
+echo "Connected successfully\n";
 
 // Create the database, user and permissions.
 $sql = 'CREATE DATABASE ' . getenv('MYSQL_DATABASE') . 'IF NOT EXISTS';
-$conn->query($sql);
+if (!executeQuery($conn, $sql, 'Create database')) {
+    exit(1);
+}
 $sql = 'CREATE USER IF NOT EXISTS "' . getenv('MYSQL_USERNAME') . '"@"';
 $sql .= getenv('MYSQL_HOST') . '" IDENTIFIED BY "' . getenv('MYSQL_PASSWORD') . '"';
-$conn->query($sql);
+if (!executeQuery($conn, $sql, 'Create user')) {
+    exit(1);
+}
 $sql = 'GRANT ALL PRIVILEGES ON * . * TO "' . getenv('MYSQL_USERNAME');
 $sql .= '"@"' . getenv('MYSQL_HOST') . '"';
-$conn->query($sql);
+if (!executeQuery($conn, $sql, 'Grant privileges')) {
+    exit(1);
+}
 $sql = 'FLUSH PRIVILEGES';
-$conn->query($sql);
+if (!executeQuery($conn, $sql, 'Flush privileges')) {
+    exit(1);
+}
+$sql = 'USE ' . getenv('MYSQL_DATABASE');
+if (!executeQuery($conn, $sql, 'Use database')) {
+    exit(1);
+}
 
 $yaml = file_get_contents(dirname(dirname(__DIR__)) . '/includes/Db/dbDefinition.yaml');
 $definition = \Spyc::YAMLLoadString($yaml);
@@ -57,7 +68,7 @@ foreach ($definition as $table => $tableData) {
         if (!isset($columnData['type'])) {
             echo "CREATE TABLE `$table` fail!";
             echo 'Type missing in the metadata.';
-            exit;
+            exit (1);
         }
         $sqlColumn .= ' ' . $columnData['type'];
         $sqlColumn .= isset($columnData['notnull']) && $columnData['notnull'] ? ' NOT null' : '';
@@ -67,13 +78,10 @@ foreach ($definition as $table => $tableData) {
         $sqlColumn .= isset($columnData['comment']) ? (" COMMENT '" . $columnData['comment'] . "'") : '';
         $sqlColumns[] = $sqlColumn;
     }
-    $sqlCreate = "CREATE TABLE IF NOT EXISTS `$table` (" . implode(', ', $sqlColumns) . ');';
-    echo "$sqlCreate\n";
-    if ($conn->query($sqlCreate)) {
-        echo "Success\n";
-    } else {
-        echo "Fail\n";
-        exit;
+    $sql = "CREATE TABLE IF NOT EXISTS `$table` (" . implode(', ', $sqlColumns) . ');';
+    echo "$sql\n";
+    if (!executeQuery($conn, $sql, 'Create table')) {
+        exit(1);
     }
 
     // Add data if required.
@@ -85,14 +93,11 @@ foreach ($definition as $table => $tableData) {
                 $keys[] = "`$key`";
                 $values[] = is_string($value) ? "\"$value\"" : $value;
             }
-            $sqlRow = "INSERT INTO `$table` (" . implode(', ', $keys) . ')';
-            $sqlRow .= 'VALUES (' . implode(', ', $values) . ');';
-            echo "$sqlRow\n";
-            if ($conn->query($sqlRow)) {
-                echo "Success\n";
-            } else {
-                echo "Fail\n";
-                exit;
+            $sql = "INSERT INTO `$table` (" . implode(', ', $keys) . ')';
+            $sql .= 'VALUES (' . implode(', ', $values) . ');';
+            echo "$sql\n";
+            if (!executeQuery($conn, $sql, 'Table insert')) {
+                exit(1);
             }
         }
     }
@@ -120,13 +125,30 @@ foreach ($filenames as $filename) {
         $meta[] = '"process": ' . json_encode($yaml['process']);
     }
     $meta = '{' . implode(', ', $meta) . '}';
-    $sqlRow = 'INSERT INTO resource (`appid`, `name`, `description`, `method`, `uri`, `meta`, `ttl`)';
-    $sqlRow .= "VALUES ($appid, '$name', '$description', '$method', '$uri', '$meta', $ttl)";
-    echo "$sqlRow\n";
-    if ($conn->query($sqlRow)) {
-        echo "Success\n";
-    } else {
-        echo "Fail\n";
-        exit;
+    $sql = 'INSERT INTO resource (`appid`, `name`, `description`, `method`, `uri`, `meta`, `ttl`)';
+    $sql .= "VALUES ($appid, '$name', '$description', '$method', '$uri', '$meta', $ttl)";
+    echo "$sql\n";
+    if (!executeQuery($conn, $sql, 'Insert resource')) {
+        exit(1);
     }
+}
+
+/**
+ * Execute Mysqli query and return exit code if fail.
+ *
+ * @param mysqli $conn Mysqli connection.
+ * @param string $sql SQL statement.
+ * @param string $message Message statement partial.
+ *
+ * @return boolean
+ */
+function executeQuery(mysqli $conn, string $sql, string $message)
+{
+    $success = $conn->query($sql);
+    if ($success) {
+        echo "$message success\n";
+    } else {
+        echo "$message fail\n";
+    }
+    return $success;
 }
