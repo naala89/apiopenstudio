@@ -68,11 +68,11 @@ foreach ($definition as $table => $tableData) {
         $sqlColumns[] = $sqlColumn;
     }
     $sqlCreate = "CREATE TABLE IF NOT EXISTS `$table` (" . implode(', ', $sqlColumns) . ');';
-    if (empty($conn->query($sqlCreate))) {
-        // Stop if table create fails.
-
-        echo "$sqlCreate";
-        echo "CREATE TABLE `$table` fail!";
+    echo "$sqlCreate\n";
+    if ($conn->query($sqlCreate)) {
+        echo "Success\n";
+    } else {
+        echo "Fail\n";
         exit;
     }
 
@@ -87,8 +87,11 @@ foreach ($definition as $table => $tableData) {
             }
             $sqlRow = "INSERT INTO `$table` (" . implode(', ', $keys) . ')';
             $sqlRow .= 'VALUES (' . implode(', ', $values) . ');';
-            if (empty($conn->query($sqlRow))) {
-                echo "INSERT into `$table` fail!";
+            echo "$sqlRow\n";
+            if ($conn->query($sqlRow)) {
+                echo "Success\n";
+            } else {
+                echo "Fail\n";
                 exit;
             }
         }
@@ -119,8 +122,11 @@ foreach ($filenames as $filename) {
     $meta = '{' . implode(', ', $meta) . '}';
     $sqlRow = 'INSERT INTO resource (`appid`, `name`, `description`, `method`, `uri`, `meta`, `ttl`)';
     $sqlRow .= "VALUES ($appid, '$name', '$description', '$method', '$uri', '$meta', $ttl)";
-    if (empty($conn->query($sqlRow))) {
-        echo "INSERT $name into `resource` fail!";
+    echo "$sqlRow\n";
+    if ($conn->query($sqlRow)) {
+        echo "Success\n";
+    } else {
+        echo "Fail\n";
         exit;
     }
 }
