@@ -22,7 +22,7 @@ require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 // Create connection
 $conn = new mysqli(
     getenv('MYSQL_HOST'),
-    getenv('MYSQL_ROOT_USERNAME'),
+    'root',
     getenv('MYSQL_ROOT_PASSWORD')
 );
 
