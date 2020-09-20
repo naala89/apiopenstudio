@@ -52,11 +52,11 @@ functional_tests:
     - mariadb:latest
   script:
     - echo "Running functional tests."
-    - php composer.phar install
-    - echo "Setup the DB."
     - apt-get install -y mariadb-client
     - docker-php-ext-install mysqli
     - mysql --version
+    - php composer.phar install
+    - echo "Setup the DB."
     - php ./includes/scripts/runner_generate_db.php
 
 #unit_tests:
