@@ -40,11 +40,11 @@ stages:
   - test
   - deploy
 
-phpcs:
-  stage: lint
-  script:
-    - php composer.phar install
-    - ./vendor/bin/phpcs includes/ src/scss/ src/js/
+#phpcs:
+#  stage: lint
+#  script:
+#    - php composer.phar install
+#    - ./vendor/bin/phpcs includes/ src/scss/ src/js/
 
 functional_tests:
   stage: test

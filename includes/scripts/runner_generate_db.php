@@ -27,15 +27,16 @@ $conn = new mysqli(
 // Check connection
 if ($conn->connect_error) {
     echo "Connection failed: " . $conn->connect_error;
+    exit(1);
 }
 echo "Connected successfully\n";
 
 // Create the database, user and permissions.
-$sql = 'CREATE DATABASE ' . getenv('MYSQL_DATABASE') . 'IF NOT EXISTS';
+$sql = 'CREATE DATABASE ' . getenv('MYSQL_DATABASE') . ' IF NOT EXISTS';
 if ($conn->query($sql)) {
-    echo "Create database\n";
+    echo "Create database success\n";
 } else {
-    echo "Create database\n";
+    echo "Create database fail\n";
     exit(1);
 }
 $sql = 'CREATE USER IF NOT EXISTS "' . getenv('MYSQL_USERNAME') . '"@"';
