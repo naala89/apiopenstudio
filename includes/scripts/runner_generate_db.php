@@ -27,31 +27,45 @@ $conn = new mysqli(
 // Check connection
 if ($conn->connect_error) {
     echo "Connection failed: " . $conn->connect_error;
-    exit(1);
 }
 echo "Connected successfully\n";
 
 // Create the database, user and permissions.
 $sql = 'CREATE DATABASE ' . getenv('MYSQL_DATABASE') . 'IF NOT EXISTS';
-if (!executeQuery($conn, $sql, 'Create database')) {
+if ($conn->query($sql)) {
+    echo "Create database\n";
+} else {
+    echo "Create database\n";
     exit(1);
 }
 $sql = 'CREATE USER IF NOT EXISTS "' . getenv('MYSQL_USERNAME') . '"@"';
 $sql .= getenv('MYSQL_HOST') . '" IDENTIFIED BY "' . getenv('MYSQL_PASSWORD') . '"';
-if (!executeQuery($conn, $sql, 'Create user')) {
+if ($conn->query($sql)) {
+    echo "Create user success\n";
+} else {
+    echo "Create user fail\n";
     exit(1);
 }
 $sql = 'GRANT ALL PRIVILEGES ON * . * TO "' . getenv('MYSQL_USERNAME');
 $sql .= '"@"' . getenv('MYSQL_HOST') . '"';
-if (!executeQuery($conn, $sql, 'Grant privileges')) {
+if ($conn->query($sql)) {
+    echo "Grant privileges success\n";
+} else {
+    echo "Grant privileges fail\n";
     exit(1);
 }
 $sql = 'FLUSH PRIVILEGES';
-if (!executeQuery($conn, $sql, 'Flush privileges')) {
+if ($conn->query($sql)) {
+    echo "Flush privileges success\n";
+} else {
+    echo "Flush privileges fail\n";
     exit(1);
 }
 $sql = 'USE ' . getenv('MYSQL_DATABASE');
-if (!executeQuery($conn, $sql, 'Use database')) {
+if ($conn->query($sql)) {
+    echo "Use database success\n";
+} else {
+    echo "Use database fail\n";
     exit(1);
 }
 
@@ -68,7 +82,7 @@ foreach ($definition as $table => $tableData) {
         if (!isset($columnData['type'])) {
             echo "CREATE TABLE `$table` fail!";
             echo 'Type missing in the metadata.';
-            exit (1);
+            exit(1);
         }
         $sqlColumn .= ' ' . $columnData['type'];
         $sqlColumn .= isset($columnData['notnull']) && $columnData['notnull'] ? ' NOT null' : '';
@@ -80,7 +94,10 @@ foreach ($definition as $table => $tableData) {
     }
     $sql = "CREATE TABLE IF NOT EXISTS `$table` (" . implode(', ', $sqlColumns) . ');';
     echo "$sql\n";
-    if (!executeQuery($conn, $sql, 'Create table')) {
+    if ($conn->query($sql)) {
+        echo "Create table success\n";
+    } else {
+        echo "Create table fail\n";
         exit(1);
     }
 
@@ -96,7 +113,10 @@ foreach ($definition as $table => $tableData) {
             $sql = "INSERT INTO `$table` (" . implode(', ', $keys) . ')';
             $sql .= 'VALUES (' . implode(', ', $values) . ');';
             echo "$sql\n";
-            if (!executeQuery($conn, $sql, 'Table insert')) {
+            if ($conn->query($sql)) {
+                echo "Table insert success\n";
+            } else {
+                echo "Table insert fail\n";
                 exit(1);
             }
         }
@@ -128,27 +148,10 @@ foreach ($filenames as $filename) {
     $sql = 'INSERT INTO resource (`appid`, `name`, `description`, `method`, `uri`, `meta`, `ttl`)';
     $sql .= "VALUES ($appid, '$name', '$description', '$method', '$uri', '$meta', $ttl)";
     echo "$sql\n";
-    if (!executeQuery($conn, $sql, 'Insert resource')) {
+    if ($conn->query($sql)) {
+        echo "Insert resource success\n";
+    } else {
+        echo "Insert resource fail\n";
         exit(1);
     }
-}
-
-/**
- * Execute Mysqli query and return exit code if fail.
- *
- * @param mysqli $conn Mysqli connection.
- * @param string $sql SQL statement.
- * @param string $message Message statement partial.
- *
- * @return boolean
- */
-function executeQuery(mysqli $conn, string $sql, string $message)
-{
-    $success = $conn->query($sql);
-    if ($success) {
-        echo "$message success\n";
-    } else {
-        echo "$message fail\n";
-    }
-    return $success;
 }
