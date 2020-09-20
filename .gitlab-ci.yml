@@ -18,8 +18,10 @@ cache:
 
 variables:
   MYSQL_HOST: ${MYSQL_TEST_HOST}
-  MYSQL_DATABASE: ${MYSQL_TEST_DATABASE}
   MYSQL_ROOT_PASSWORD: ${MYSQL_TEST_ROOT_PASSWORD}
+  MYSQL_DATABASE: ${MYSQL_TEST_DATABASE}
+  MYSQL_USERNAME: ${MYSQL_TEST_USERNAME}
+  MYSQL_PASSWORD: ${MYSQL_TEST_PASSWORD}
 
 before_script:
   - apt-get update
@@ -56,7 +58,6 @@ functional_tests:
     - docker-php-ext-install mysqli
     - mysql --version
     - php ./includes/scripts/runner_generate_db.php
-
 
 #unit_tests:
 #  stage: test
