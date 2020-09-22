@@ -3,9 +3,12 @@
 .idea
 .DS_Store
 
+#tests
+tests/_output/
+tests/_support/_generated/
+
 #gaterdata
-tests/_output/*
-tmp/*
+tmp/
 settings.yml
 logs/
 public/admin/css/*
