@@ -48,7 +48,7 @@ class VarPost extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['boolean'],
+                'limitTypes' => ['boolean', 'integer'],
                 'limitValues' => [],
                 'default' => true,
             ],
@@ -76,6 +76,6 @@ class VarPost extends Core\ProcessorEntity
             return new Core\DataContainer('', 'text');
         }
 
-        throw new Core\ApiException("post variable ($key) not received", 7, $this->id, 417);
+        throw new Core\ApiException("post variable ($key) not received", 6, $this->id, 400);
     }
 }
