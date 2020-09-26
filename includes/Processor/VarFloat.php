@@ -39,9 +39,9 @@ class VarFloat extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['float'],
+                'limitTypes' => ['float', 'integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => 0,
             ],
         ],
     ];
@@ -57,16 +57,11 @@ class VarFloat extends Core\ProcessorEntity
     {
         $this->logger->info('Processor: ' . $this->details()['machineName']);
 
-        $result = $this->val('value');
-        if (!$this->isDataContainer($result)) {
-            $result = new Core\DataContainer($result, 'float');
+        $value = $this->val('value');
+        if (!is_numeric($value->getData())) {
+            throw new Core\ApiException($value->getData() . ' is not float', 6, $this->id, 400);
         }
-        $float = filter_var($result->getData(), FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
-        if (is_null($float)) {
-            throw new Core\ApiException($result->getData() . ' is not float', 0, $this->id);
-        }
-        $result->setData($float);
-        $result->setType('float');
-        return $result;
+        $value->setType('float');
+        return $value;
     }
 }
