@@ -16,7 +16,7 @@ uri: resource/import
 
 method: post
 
-appid: 2
+appid: 1
 
 ttl: 0
 
@@ -27,6 +27,9 @@ security:
     function: bearer_token
     id: resource_import_security_token
   role: Developer
+  # Validate account and application is turned off.
+  # Otherwise all developers need to be assigned developer role in gaterdata/core.
+  # The processor ensures correct access rights.
   validate_account: false
   validate_application: false
 

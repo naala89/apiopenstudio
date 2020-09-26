@@ -16,7 +16,7 @@ uri: user/invite/accept
 
 method: post
 
-appid: 2
+appid: 1
 
 ttl: 0
 
