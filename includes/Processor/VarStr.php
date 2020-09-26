@@ -39,7 +39,7 @@ class VarStr extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['text'],
+                'limitTypes' => [],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -57,15 +57,10 @@ class VarStr extends Core\ProcessorEntity
     {
         $this->logger->info('Processor: ' . $this->details()['machineName']);
 
-        $result = $this->val('value');
-        if (!$this->isDataContainer($result)) {
-            $result = new Core\DataContainer($result, 'text');
-        }
-        $string = $result->getData();
+        $string = $this->val('value', true);
         if (!is_string($string)) {
-            throw new Core\ApiException($result->getData() . ' is not text', 0, $this->id);
+            throw new Core\ApiException($string . ' is not text', 6, $this->id, 400);
         }
-        $result->setType('text');
-        return $result;
+        return new Core\DataContainer($string, 'text');
     }
 }
