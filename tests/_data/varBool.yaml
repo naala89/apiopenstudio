@@ -1,25 +1,28 @@
-name: Testing varBool
+name: Testing var_bool
 
-description: Test VarBool processor
+description: Test var_bool processor
 
 uri: varbool
 
 method: get
 
+appid: 2
+
 ttl: 0
 
 security:
-  function: TokenConsumer
-  id: 1
+  function: token_role
+  id: test var_bool security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test var_bool token
+    key: token
+  role: Consumer
 
 process:
-  function: varBool
-  id: 3
+  function: var_bool
+  id: test var_bool process
   value:
-    function: varGet
-    id: 4
-    name: value
+    function: var_get
+    id: test var_bool value
+    key: value

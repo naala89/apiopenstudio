@@ -1,25 +1,28 @@
-name: Testing varFloat
+name: Testing var_float
 
-description: Test varFloat processor
+description: Test var_float processor
 
 uri: varfloat
 
 method: get
 
+appid: 2
+
 ttl: 0
 
 security:
-  function: TokenConsumer
-  id: 1
+  function: token_role
+  id: test var_float security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test var_float token
+    key: token
+  role: Consumer
 
 process:
-  function: varFloat
-  id: 3
+  function: var_float
+  id: test var_float process
   value:
-    function: varGet
-    id: 4
-    name: value
+    function: var_get
+    id: test var_float value
+    key: value

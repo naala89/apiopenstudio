@@ -1,25 +1,28 @@
-name: Testing varInt
+name: Testing var_int
 
-description: Test varInt processor
+description: Test var_int processor
 
 uri: varint
 
 method: get
 
+appid: 2
+
 ttl: 0
 
 security:
-  function: TokenConsumer
-  id: 1
+  function: token_role
+  id: test var_int security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test var_int token
+    key: token
+  role: Consumer
 
 process:
-  function: varInt
-  id: 3
+  function: var_int
+  id: test var_int process
   value:
-    function: varGet
-    id: 4
-    name: value
+    function: var_get
+    id: test var_int value
+    key: value

@@ -1,25 +1,28 @@
 name: Testing varUri
 
-description: Test varUri processor
+description: Test var_uri processor
 
 uri: varuri
 
 method: get
 
+appid: 2
+
 ttl: 0
 
 security:
-  function: TokenConsumer
-  id: 1
+  function: token_role
+  id: test varuri processor security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test varuri processor security token
+    key: token
+  role: Consumer
 
 process:
-  function: varUri
-  id: 3
+  function: var_uri
+  id: test varuri processor process
   index:
-    function: varGet
-    id: 4
-    name: index
+    function: var_get
+    id: test varuri processor process varget
+    key: index

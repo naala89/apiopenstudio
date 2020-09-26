@@ -1,25 +1,28 @@
 name: Testing varStr
 
-description: Test varStr processor
+description: Test var_str processor
 
 uri: varstr
 
 method: get
 
+appid: 2
+
 ttl: 0
 
 security:
-  function: TokenConsumer
-  id: 1
+  function: token_role
+  id: test var_uri security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test var_uri token
+    key: token
+  role: Consumer
 
 process:
-  function: varStr
-  id: 3
+  function: var_str
+  id: test var_uri process
   value:
-    function: varGet
-    id: 4
-    name: value
+    function: var_get
+    id: test var_uri string value
+    key: value

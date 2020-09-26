@@ -1,46 +1,49 @@
-name: Testing varRand
+name: Testing var_rand
 
-description: Test varRand processor
+description: Test var_rand processor
 
 uri: varrand
 
 method: get
 
+appid: 2
+
 ttl: 0
 
 security:
-  function: TokenConsumer
-  id: 1
+  function: token_role
+  id: test var_rand security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test var_rand token
+    key: token
+  role: Consumer
 
 process:
-  function: varRand
-  id: 3
+  function: var_rand
+  id: test var_rand process
   length:
-    function: varGet
-    id: 4
-    name: length
+    function: var_get
+    id: test var_rand length
+    key: length
     nullable: true
   lower:
-    function: varGet
-    id: 5
-    name: lower
+    function: var_get
+    id: test var_rand lower
+    key: lower
     nullable: true
   upper:
-    function: varGet
-    id: 6
-    name: upper
+    function: var_get
+    id: test var_rand upper
+    key: upper
     nullable: true
   numeric:
-    function: varGet
-    id: 7
-    name: numeric
+    function: var_get
+    id: test var_rand numeric
+    key: numeric
     nullable: true
   special:
-    function: varGet
-    id: 8
-    name: special
+    function: var_get
+    id: test var_rand special
+    key: special
     nullable: true

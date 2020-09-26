@@ -1,0 +1,28 @@
+name: Testing var_loosely_typed
+
+description: Test var_loosely_typed processor
+
+uri: varlooselytyped
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_role
+  id: test var_loosely_typed security
+  token:
+    function: var_get
+    id: test var_loosely_typed token
+    key: token
+  role: Consumer
+
+process:
+  function: var_loosely_typed
+  id: test var_loosely_typed process
+  value:
+    function: var_get
+    id: test var_loosely_typed value
+    key: value

@@ -1,27 +1,30 @@
-name: Testing varGet
+name: Testing var_get
 
-description: Test varGet processor
+description: Test var_get processor
 
 uri: varget
 
 method: get
 
+appid: 2
+
 ttl: 0
 
 security:
-  function: TokenConsumer
-  id: 1
+  function: token_role
+  id: test var_get security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test var_get token
+    key: token
+  role: Consumer
 
 process:
-  function: varGet
-  id: 3
-  name: value
+  function: var_get
+  id: test var_get process
+  key: value
   nullable:
-    function: varGet
-    id: 4
-    name: nullable
+    function: var_get
+    id: test var_get nullable
+    key: nullable
     nullable: true

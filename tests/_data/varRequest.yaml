@@ -6,17 +6,20 @@ uri: varrequest
 
 method: get
 
+appid: 2
+
 ttl: 0
 
 security:
-  function: TokenConsumer
-  id: 1
+  function: token_role
+  id: test var_request security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test var_request token
+    key: token
+  role: Consumer
 
 process:
-  function: varRequest
-  id: 3
-  name: value
+  function: var_request
+  id: test var_request process
+  key: value
