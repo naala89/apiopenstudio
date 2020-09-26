@@ -40,7 +40,7 @@ class VarBool extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['boolean'],
+                'limitTypes' => ['boolean', 'integer', 'text'],
                 'limitValues' => [],
                 'default' => false,
             ],
@@ -61,19 +61,17 @@ class VarBool extends Core\ProcessorEntity
         $value = $this->val('value', true);
         switch ($value) {
             case 'yes':
-            case 1:
             case 'true':
                 $value = true;
                 break;
             case 'no':
-            case 0:
             case 'false':
                 $value = false;
                 break;
         }
         $boolean = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         if (is_null($boolean)) {
-            throw new Core\ApiException("$value is not boolean", 7, $this->id);
+            throw new Core\ApiException("$value is not boolean", 6, $this->id, 400);
         }
 
         return new Core\DataContainer($boolean, 'boolean');
