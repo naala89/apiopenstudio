@@ -48,7 +48,7 @@ class VarRequest extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['boolean'],
+                'limitTypes' => ['boolean', 'integer'],
                 'limitValues' => [],
                 'default' => true,
             ],
@@ -75,6 +75,6 @@ class VarRequest extends Core\ProcessorEntity
         if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
             return new Core\DataContainer('', 'text');
         }
-        throw new Core\ApiException("request var $key not available", 1, $this->id);
+        throw new Core\ApiException("request var $key not available", 6, $this->id, 400);
     }
 }
