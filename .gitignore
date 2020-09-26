@@ -4,7 +4,6 @@
 .DS_Store
 
 #tests
-tests/_output/
 tests/_support/_generated/
 
 #gaterdata
