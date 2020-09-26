@@ -71,7 +71,7 @@ class Normalise
         $normaliseFunc = 'to' . ucfirst($into);
         if (!method_exists($this, $normaliseFunc)) {
             throw new ApiException("cannot normalise input into $into, this functionality does not exist",
-                6, $this->id, 417);
+                6, $this->id, 400);
         }
         return $this->{$normaliseFunc}();
     }

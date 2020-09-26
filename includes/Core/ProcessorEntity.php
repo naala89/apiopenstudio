@@ -353,7 +353,7 @@ abstract class ProcessorEntity extends Entity
         if (!in_array($val, $limitValues)) {
             throw new ApiException("invalid value ($val). Only '"
                 . implode("', '", $limitValues)
-                . "' allowed in input '$key'", 7, $this->id, 417);
+                . "' allowed in input '$key'", 6, $this->id, 400);
         }
     }
 
@@ -377,7 +377,7 @@ abstract class ProcessorEntity extends Entity
         if (!in_array($type, $limitTypes)) {
             throw new ApiException("invalid type ($type), only '"
                 . implode("', '", $limitTypes)
-                . "' allowed in input '$key'", 7, $this->id, 417);
+                . "' allowed in input '$key'", 6, $this->id, 400);
         }
     }
 }

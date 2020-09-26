@@ -66,17 +66,17 @@ class ResourceValidator
      *
      * @return void
      *
-     * @throws Core\ApiException Input data not well formnd.
+     * @throws ApiException Input data not well formnd.
      */
     public function validate(array $data)
     {
         $this->logger->notice('Validating the new resource...');
         // check mandatory elements exists in data
         if (empty($data)) {
-            throw new Core\ApiException("empty resource uploaded", 6, -1, 406);
+            throw new ApiException("empty resource uploaded", 6, -1, 400);
         }
         if (!isset($data['process'])) {
-            throw new Core\ApiException("missing process in new resource", 6, -1, 406);
+            throw new ApiException("missing process in new resource", 6, -1, 400);
         }
 
         // validate for identical IDs
@@ -91,7 +91,7 @@ class ResourceValidator
         }
         if (!empty($data['fragments'])) {
             if (!Core\Utilities::is_assoc($data['fragments'])) {
-                throw new Core\ApiException("invalid fragments structure in new resource", 6, -1, 406);
+                throw new ApiException("invalid fragments structure in new resource", 6, -1, 400);
             }
             foreach ($data['fragments'] as $fragKey => $fragVal) {
                 $this->validateDetails($fragVal);
@@ -107,7 +107,7 @@ class ResourceValidator
      *
      * @return boolean
      *
-     * @throws Core\ApiException Identical ID found.
+     * @throws ApiException Identical ID found.
      */
     private function validateIdenticalIds(array $meta)
     {
@@ -117,7 +117,7 @@ class ResourceValidator
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
                 if (in_array($node['id'], $id)) {
-                    throw new Core\ApiException('identical ID in new resource: ' . $node['id'], 6, -1, 406);
+                    throw new ApiException('identical ID in new resource: ' . $node['id'], 6, -1, 400);
                 }
                 $id[] = $node['id'];
             }
@@ -138,7 +138,7 @@ class ResourceValidator
      *
      * @return void
      *
-     * @throws Core\ApiException Error found in validating the resource.
+     * @throws ApiException Error found in validating the resource.
      */
     private function validateDetails(array $meta)
     {
@@ -168,7 +168,7 @@ class ResourceValidator
                             if (!empty($limitFunctions) && !in_array($input['function'], $limitFunctions)) {
                                 $message = 'processor ' . $input['id'] . ' is an invalid function type (only "'
                                     . implode('", ', $limitFunctions) . '" allowed)';
-                                throw new Core\ApiException($message, 6, $id, 406);
+                                throw new ApiException($message, 6, $id, 400);
                             }
                             array_unshift($stack, $input);
                             $count = 1;
@@ -183,11 +183,11 @@ class ResourceValidator
                             $count = sizeof($input);
                         } elseif (!$literalAllowed) {
                             $message = "literals not allowed as input for '$inputKey' in function: $id";
-                            throw new Core\ApiException($message, 6, $id, 406);
+                            throw new ApiException($message, 6, $id, 400);
                         } else {
                             if (!empty($limitValues) && !in_array($input, $limitValues)) {
                                 $message = "invalid value type for '$inputKey' in function: $id";
-                                throw new Core\ApiException($message, 6, $id, 406);
+                                throw new ApiException($message, 6, $id, 400);
                             }
                             if (!empty($limitTypes)) {
                                 $this->validateTypeValue($input, $limitTypes, $id);
@@ -200,11 +200,11 @@ class ResourceValidator
                     if ($count < $min) {
                         // check for nothing to validate and if that is ok.
                         $message = "input '$inputKey' in function '" . $node['id'] . "' requires min $min";
-                        throw new Core\ApiException($message, 6, $id, 406);
+                        throw new ApiException($message, 6, $id, 400);
                     }
                     if ($max != '*' && $count > $max) {
                         $message = "input '$inputKey' in function '" . $node['id'] . "' requires max $max";
-                        throw new Core\ApiException($message, 6, $id, 406);
+                        throw new ApiException($message, 6, $id, 400);
                     }
                 }
             } elseif (is_array($node)) {
@@ -226,7 +226,7 @@ class ResourceValidator
      *
      * @return boolean
      *
-     * @throws Core\ApiException Invalid $element.
+     * @throws ApiException Invalid $element.
      */
     private function validateTypeValue($element, array $accepts, $id)
     {
@@ -265,7 +265,7 @@ class ResourceValidator
         if (!$valid) {
             $message = 'invalid literal in new resource (' . print_r($element) . '. only "' .
                 implode("', '", $accepts) . '" accepted';
-            throw new Core\ApiException($message, 6, $id, 406);
+            throw new ApiException($message, 6, $id, 400);
         }
         return $valid;
     }
