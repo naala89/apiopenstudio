@@ -44,6 +44,15 @@ class VarUri extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => 0,
             ],
+            'nullable' => [
+                'description' => 'Allow the processing to continue if the URI index does not exist (returns "").',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitFunctions' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => false,
+            ],
         ],
     ];
 
@@ -59,10 +68,15 @@ class VarUri extends Core\ProcessorEntity
         $this->logger->info('Processor: ' . $this->details()['machineName']);
         
         $index = intval($this->val('index', true));
+        $nullable = $this->val('nullable', true);
         $args = $this->request->getArgs();
 
         if (!isset($args[$index])) {
-            return new Core\DataContainer('', 'string');
+            if ($nullable) {
+                return new Core\DataContainer('', 'text');
+            } else {
+                throw new Core\ApiException("URI index $index does not exist", 6, $this->id, 400);
+            }
         }
 
         return new Core\DataContainer(urldecode($args[$index]));
