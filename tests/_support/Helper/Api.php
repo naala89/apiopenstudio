@@ -8,11 +8,12 @@ namespace Helper;
 class Api extends \Codeception\Module
 {
     private $token = '';
-    private $accountName = 'Datagator';
-    private $applicationName = 'Testing';
+    private $accountName = 'gaterdata';
+    private $accountId = 1;
+    private $applicationName = 'testing';
+    private $applicationId = 2;
     private $username = 'tester';
     private $password = 'tester_pass';
-
     private $yamlFilename = '';
 
     /**
@@ -45,6 +46,22 @@ class Api extends \Codeception\Module
     public function getMyApplicationName()
     {
         return $this->applicationName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCoreBaseUri()
+    {
+        return '/gaterdata/core';
+    }
+
+    /**
+     * @return string
+     */
+    public function getMyBaseUri()
+    {
+        return '/' . $this->getMyAccountName() . '/' . $this->getMyApplicationName();
     }
 
     /**
@@ -109,7 +126,7 @@ class Api extends \Codeception\Module
     public function performLogin()
     {
         $this->getModule('REST')->sendPost(
-            '/common/user/login',
+            $this->getCoreBaseUri() . '/login',
             ['username' => $this->username, 'password' => $this->password]
         );
         $this->getModule('REST')->seeResponseCodeIs(200);
@@ -131,21 +148,31 @@ class Api extends \Codeception\Module
     /**
      * @return array
      */
-    public function getResourceFromYaml()
+    public function getResourceFromYaml($yamlFilename = null)
     {
-        $yamlArr = file_get_contents(codecept_data_dir($this->yamlFilename));
+        $yamlFilename = empty($yamlFilename) ? $this->yamlFilename : $yamlFilename;
+        $yamlArr = file_get_contents(codecept_data_dir($yamlFilename));
         return \Spyc::YAMLLoadString($yamlArr);
     }
 
     /**
      * @throws \Codeception\Exception\ModuleException
      */
-    public function createResourceFromYaml()
+    public function createResourceFromYaml($yamlFilename = null)
     {
+        $yamlFilename = empty($yamlFilename) ? $this->yamlFilename : $yamlFilename;
         $this->getModule('REST')->sendPost(
-            '/' . $this->applicationName . '/resource/yaml',
-            ['token' => $this->token],
-            ['resource' => codecept_data_dir($this->yamlFilename)]
+            $this->getCoreBaseUri() . '/resource/import',
+            [],
+            [
+                'resource_file' => [
+                    'name' => $yamlFilename,
+                    'type' => 'file',
+                    'error' => UPLOAD_ERR_OK,
+                    'size' => filesize(codecept_data_dir($yamlFilename)),
+                    'tmp_name' => codecept_data_dir($yamlFilename),
+                ],
+            ]
         );
         $this->getModule('REST')->seeResponseCodeIs(200);
         $this->getModule('REST')->seeResponseIsJson();
@@ -172,23 +199,25 @@ class Api extends \Codeception\Module
     /**
      * @throws \Codeception\Exception\ModuleException
      */
-    public function tearDownTestFromYaml($code = 200, $responce = 'true')
+    public function tearDownTestFromYaml($yamlFilename = null)
     {
-        $yamlArr = $this->getResourceFromYaml($this->yamlFilename);
-        $params = array();
-        $params[] = 'token=' . $this->token;
-        $params[] = 'method=' . $yamlArr['method'];
-        $params[] = 'uri=' . urlencode($yamlArr['uri']);
-        $uri = '/' . $this->applicationName . '/resource?' . implode('&', $params);
+        $yamlFilename = empty($yamlFilename) ? $this->yamlFilename : $yamlFilename;
+        $yamlArr = $this->getResourceFromYaml($yamlFilename);
         $this->haveHttpHeader('Accept', 'application/json');
-        $this->getModule('REST')->sendDELETE($uri);
-        $this->getModule('REST')->seeResponseIsJson();
-        $this->getModule('REST')->seeResponseCodeIs($code);
-        if (is_array($responce)) {
-            $this->getModule('REST')->seeResponseContainsJson($responce);
-        } else {
-            $this->getModule('REST')->seeResponseContains($responce);
+        $this->getModule('REST')->sendGET(
+            $this->getCoreBaseUri() . '/resource',
+            ['appid' => $yamlArr['appid']]
+        );
+        $resources = json_decode($this->getModule('REST')->response, true);
+        $resid = 0;
+        foreach ($resources as $resource) {
+            if (strtolower($resource['method']) == strtolower($yamlArr['method']) && $resource['uri'] == $yamlArr['uri']) {
+                $resid = $resource['resid'];
+            }
         }
+        $this->getModule('REST')->sendDELETE(
+            $this->getCoreBaseUri() . '/resource/' . $resid
+        );
     }
 
     /**
