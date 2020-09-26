@@ -48,7 +48,7 @@ class VarGet extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['boolean'],
+                'limitTypes' => ['boolean', 'integer'],
                 'limitValues' => [],
                 'default' => false,
             ],
@@ -82,6 +82,6 @@ class VarGet extends Core\ProcessorEntity
             return new Core\DataContainer('', 'text');
         }
 
-        throw new Core\ApiException("GET variable ($key) not received", 5, $this->id, 417);
+        throw new Core\ApiException("GET variable ($key) not received", 6, $this->id, 400);
     }
 }
