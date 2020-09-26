@@ -63,7 +63,7 @@ class VarInt extends Core\ProcessorEntity
         }
         $integer = filter_var($result->getData(), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
         if (is_null($integer)) {
-            throw new Core\ApiException($result->getData() . ' is not integer', 0, $this->id);
+            throw new Core\ApiException($result->getData() . ' is not integer', 6, $this->id, 400);
         }
         $result->setData($integer);
         $result->setType('integer');
