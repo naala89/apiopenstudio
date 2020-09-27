@@ -6,44 +6,47 @@ uri: url
 
 method: get
 
+appid: 2
+
 ttl: 0
 
 security:
-  function: TokenConsumer
-  id: 1
+  function: token_role
+  id: test url security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test url token
+    key: token
+  role: Consumer
 
 process:
   function: url
-  id: 3
+  id: test url processor
   method:
-    function: varGet
-    id: 4
-    name: method
+    function: var_get
+    id: test url method
+    key: method
   url:
-    function: varGet
-    id: 5
-    name: url
+    function: var_get
+    id: test url url
+    key: url
   sourceType:
-    function: varGet
-    id: 6
-    name: sourceType
+    function: var_get
+    id: test url source_type
+    key: source_type
     nullable: true
   reportError:
-    function: varGet
-    id: 7
-    name: reportError
+    function: var_get
+    id: test url report_error
+    key: repor_error
     nullable: true
   connectTimeout:
-    function: varGet
-    id: 8
-    name: connectTimeout
+    function: var_get
+    id: test url connect_timeout
+    key: connect_timeout
     nullable: true
   timeout:
-    function: varGet
-    id: 9
-    name: timeout
+    function: var_get
+    id: test url timeout
+    key: timeout
     nullable: true
