@@ -1,4 +1,6 @@
 actor: Tester
+params:
+    - .env
 paths:
     tests: tests
     log: tests/_output

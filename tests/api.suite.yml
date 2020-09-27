@@ -3,7 +3,7 @@ modules:
     enabled:
         - \Helper\Api
         - REST:
-            url: https://api.gaterdata.local
+            url: 'https://%API_DOMAIN%'
             depends: PhpBrowser
         - Filesystem
 env:
@@ -11,20 +11,20 @@ env:
         modules:
             config:
                 PhpBrowser:
-                    url: https://admin.gaterdata.local
+                    url: 'https://%ADMIN_DOMAIN%'
                 REST:
-                    url: https://api.gaterdata.local
+                    url: 'https://%API_DOMAIN%'
     staging:
         modules:
             config:
                 PhpBrowser:
-                    url: https://admin.gaterdata.local
+                    url: 'https://%ADMIN_DOMAIN%'
                 REST:
-                    url: https://api.gaterdata.local
+                    url: 'https://%API_DOMAIN%'
     production:
         modules:
             config:
                 PhpBrowser:
-                    url: https://admin.gaterdata.local
+                    url: 'https://%ADMIN_DOMAIN%'
                 REST:
-                    url: https://api.gaterdata.local
+                    url: 'https://%API_DOMAIN%'
