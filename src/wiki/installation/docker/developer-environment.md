@@ -9,18 +9,15 @@ Replace ```admin.gaterdata.local```, ```api.gaterdata.local``` and ```wiki.gater
 The following files and directory structure needs to be added to a project:
 
     gaterdata
-    │   .env
-    │   docker-compose.yml
-    │
+    |   .env
+    |   docker-compose.yml
     └───certs
-    |
     └───docker
-    │   │
     │   └───nginx
     │       │   admin.conf
     │       │   api.conf
     │       │   wiki.conf
-    │   
+    │       │   phpdoc.conf
     └───php
         │   Dockerfile
         │   php.conf
@@ -119,6 +116,27 @@ Replace server_name with whatever domain you want to host locally.
             fastcgi_param SCRIPT_NAME $fastcgi_script_name;
             fastcgi_index index.php;
             fastcgi_pass php:9000;
+        }
+        
+        location ~ /\.ht {
+            deny all;
+        }
+    }
+
+### docker/nging/phpdoc.conf
+
+Replace server_name with whatever domain you want to host locally.
+
+    server {
+        listen 80;
+        server_name phpdoc.gaterdata.local;
+        index index.html;
+        error_log /var/log/nginx/error.log debug;
+        access_log /var/log/nginx/access.log;
+        root /var/www/html;
+    
+        location ~* \.(js|jpg|png|svg|css)$ {
+            expires 1d;
         }
         
         location ~ /\.ht {
@@ -307,34 +325,35 @@ Replace server_name with whatever domain you want to host locally.
         networks:
           - api_network
     
+      # Email container
       email:
         image: namshi/smtp:latest
         container_name: "${APP_NAME}-email"
         networks:
           - api_network
-    #    ports:
-    #      - "25:25"
+        #    ports:
+        #      - "25:25"
         environment:
-    #      # MUST start with : e.g RELAY_NETWORKS=:192.168.0.0/24:10.0.0.0/16
-    #      # if acting as a relay this or RELAY_DOMAINS must be filled out or incoming mail will be rejected
+          # MUST start with : e.g RELAY_NETWORKS=:192.168.0.0/24:10.0.0.0/16
+          # if acting as a relay this or RELAY_DOMAINS must be filled out or incoming mail will be rejected
     #      - RELAY_NETWORKS= :192.168.0.0/24
-    #      # what domains should be accepted to forward to lower distance MX server.
+          # what domains should be accepted to forward to lower distance MX server.
     #      - RELAY_DOMAINS= <domain1> : <domain2> : <domain3>
-    #      # To act as a Gmail relay
+          # To act as a Gmail relay
           - GMAIL_USER=${EMAIL_USERNAME}
           - GMAIL_PASSWORD=${EMAIL_PASSWORD}
-    #      # For use with Amazon SES relay
+          # For use with Amazon SES relay
     #      - SES_USER=
     #      - SES_PASSWORD=
     #      - SES_REGION=
-    #      # if provided will enable TLS support
+          # if provided will enable TLS support
     #      - KEY_PATH=certs/gaterdata.local
     #      - CERTIFICATE_PATH=certs/gateradta.local.crt
-    #      # the outgoing mail hostname
+          # the outgoing mail hostname
     #      - MAILNAME=admin.gaterdata.local
-    #      # set this to any value to disable ipv6
+          # set this to any value to disable ipv6
     #      - DISABLE_IPV6=
-    #      # Generic SMTP Relay
+          # Generic SMTP Relay
     #      - SMARTHOST_ADDRESS=
     #      - SMARTHOST_PORT=
     #      - SMARTHOST_USER=
@@ -343,45 +362,65 @@ Replace server_name with whatever domain you want to host locally.
     
       # Uncomment this for compiling the wiki
       # Bookdown container
-      # bookdown:
-      #     image: sandrokeil/bookdown
-      #     container_name: "${APP_NAME}-bookdown"
-      #     volumes:
-      #         - ./src/wiki:/app
-      #         - ./public/wiki:/wiki
-      #     command: ["bookdown.json"]
-      #     networks:
-      #         - api_network
+      bookdown:
+        image: sandrokeil/bookdown
+        container_name: "${APP_NAME}-bookdown"
+        volumes:
+          - ./src/wiki:/app
+          - ./public/wiki:/wiki
+        command: ["bookdown.json"]
+        networks:
+          - api_network
     
       # Uncomment this to serve the wiki locally
       # NGINX Wiki server
-      # wiki:
-      #     image: nginx:stable
-      #     container_name: "${APP_NAME}-wiki"
-      #     hostname: "${WIKI_DOMAIN}"
-      #     ports:
-      #         - 80
-      #     volumes:
-      #         - ./docker/nginx/wiki.conf:/etc/nginx/conf.d/default.conf
-      #         - ./public/wiki:/var/www/html
-      #         - ./logs/wiki:/var/log/nginx
-      #         - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
-      #     environment:
-      #         - VIRTUAL_HOST=${WIKI_DOMAIN}
-      #     networks:
-      #         api_network:
-      #             aliases:
-      #                 - ${WIKI_DOMAIN}
+      wiki:
+        image: nginx:stable
+        container_name: "${APP_NAME}-wiki"
+        hostname: "${WIKI_DOMAIN}"
+        ports:
+          - 80
+        volumes:
+          - ./docker/nginx/wiki.conf:/etc/nginx/conf.d/default.conf
+          - ./public/wiki:/var/www/html
+          - ./logs/wiki:/var/log/nginx
+          - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
+        environment:
+          - VIRTUAL_HOST=${WIKI_DOMAIN}
+        networks:
+          api_network:
+            aliases:
+              - ${WIKI_DOMAIN}
     
       # Uncomment this for compiling the phpdocs
       # PHP Documentor container
-      # phpdocumentor:
-      #     image: phpdoc/phpdoc:latest
-      #     container_name: "${APP_NAME}-phpdocumentor"
-      #     volumes:
-      #         - .:/data
-      #     networks:
-      #         - api_network
+      phpdocumentor:
+        image: phpdoc/phpdoc:latest
+        container_name: "${APP_NAME}-phpdocumentor"
+        volumes:
+          - .:/data
+        networks:
+          - api_network
+    
+      # Uncomment this to serve the phpdoc locally
+      # NGINX Wiki server
+      phpdoc:
+        image: nginx:stable
+        container_name: "${APP_NAME}-phpdoc"
+        hostname: "${PHPDOC_DOMAIN}"
+        ports:
+          - 80
+        volumes:
+          - ./docker/nginx/phpdoc.conf:/etc/nginx/conf.d/default.conf
+          - ./public/phpdoc/html:/var/www/html
+          - ./logs/phpdoc:/var/log/nginx
+          - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
+        environment:
+          - VIRTUAL_HOST=${PHPDOC_DOMAIN}
+        networks:
+          api_network:
+            aliases:
+              - ${PHPDOC_DOMAIN}
     
     networks:
       api_network:
