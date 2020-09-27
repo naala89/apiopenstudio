@@ -10,9 +10,9 @@ tests/_support/_generated/
 tmp/
 settings.yml
 logs/
-public/admin/css/*
-public/admin/js/*
-public/admin/images/*
+public/admin/css/
+public/admin/js/
+public/admin/images/
 certs/
 
 #composer
