@@ -39,8 +39,8 @@ class VarObject extends Core\ProcessorEntity
                 'description' => 'The value of an attribute or a complex object.',
                 'cardinality' => [0, '*'],
                 'literalAllowed' => true,
-                'limitFunctions' => ['varField'],
-                'limitTypes' => [],
+                'limitFunctions' => ['var_field'],
+                'limitTypes' => ['array'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -57,7 +57,7 @@ class VarObject extends Core\ProcessorEntity
     public function process()
     {
         $this->logger->info('Processor: ' . $this->details()['machineName']);
-        $attributes = $this->val('attributes', false);
+        $attributes = $this->val('attributes', true);
         $result = [];
 
         foreach ($attributes as $attribute) {

@@ -53,7 +53,7 @@ class Sort extends Core\ProcessorEntity
                 'limitValues' => ['asc', 'desc'],
                 'default' => 'asc',
             ],
-            'sortBy' => [
+            'sort_by' => [
                 'description' => 'Perform the sort on key or value.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
@@ -83,9 +83,7 @@ class Sort extends Core\ProcessorEntity
         }
 
         $direction = $this->val('direction', true);
-        $sortBy = $this->val('sortBy', true);
-
-        $this->logger->debug('values before sort: ' . print_r($values, true));
+        $sortBy = $this->val('sort_by', true);
 
         if ($sortBy == 'key') {
             if ($direction == 'asc') {

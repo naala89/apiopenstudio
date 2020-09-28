@@ -49,7 +49,7 @@ class Equation extends Core\ProcessorEntity
                 'description' => 'The variables. These are an associative array',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => ['varObject'],
+                'limitFunctions' => ['var_object'],
                 'limitTypes' => [],
                 'limitValues' => [],
                 'default' => '',

@@ -1,0 +1,29 @@
+name: Test var_field
+
+description: Test creating a var_field from vars and constants.
+
+uri: field
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_role
+  id: test var_field security
+  token:
+    function: var_get
+    id: test var_field token
+    key: token
+  role: Consumer
+
+process:
+  function: var_field
+  id: test var_field process
+  key: my_test_var
+  value:
+    function: var_loosely_typed
+    id: test var_field value
+    value: my_test_val

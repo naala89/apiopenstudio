@@ -6,48 +6,51 @@ uri: sort/object
 
 method: get
 
+appid: 2
+
 ttl: 0
 
 security:
-  function: TokenConsumer
-  id: 1
+  function: token_role
+  id: test sort processor security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test sort processor security token
+    key: token
+  role: Consumer
 
 process:
   function: sort
-  id: 3
+  id: test sort processor process
   values:
-    function: object
-    id: 4
+    function: var_object
+    id: test sort processor object
     attributes:
-      - function: field
-        id: 5
+      - function: var_field
+        id: test sort processor field 1
         key: key3
         value: val3
-      - function: field
-        id: 6
+      - function: var_field
+        id: test sort processor field 2
         key: key2
         value: val5
-      - function: field
-        id: 7
+      - function: var_field
+        id: test sort processor field 3
         key: key4
         value: val2
-      - function: field
-        id: 8
+      - function: var_field
+        id: test sort processor field 4
         key: key1
         value: val99
-      - function: field
-        id: 9
+      - function: var_field
+        id: test sort processor field 5
         key: key999
         value: val1
   direction:
-    function: varGet
-    id: 10
-    name: direction
-  sortBy:
-    function: varGet
-    id: 11
-    name: sortby
+    function: var_get
+    id: test sort processor direction
+    key: direction
+  sort_by:
+    function: var_get
+    id: test sort processor sort_by
+    key: sort_by
