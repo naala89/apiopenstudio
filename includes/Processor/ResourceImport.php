@@ -34,6 +34,20 @@ use Monolog\Logger;
 class ResourceImport extends Core\ProcessorEntity
 {
     /**
+     * Required keys in a resource yaml file.
+     *
+     * @var string[]
+     */
+    private $requiredKeys = [
+        'name',
+        'description',
+        'uri',
+        'method',
+        'appid',
+        'ttl',
+    ];
+
+    /**
      * Config object.
      *
      * @var Config
@@ -179,12 +193,11 @@ class ResourceImport extends Core\ProcessorEntity
                 400);
         }
 
-        $name = isset($resource['name']) ? $resource['name'] : '';
-        $description = isset($resource['description']) ? $resource['description'] : '';
-        $method = isset($resource['method']) ? $resource['method'] : '';
-        $uri = isset($resource['uri']) ? $resource['uri'] : '';
-        $appid = isset($resource['appid']) ? $resource['appid'] : '';
-        $ttl = isset($resource['ttl']) ? $resource['ttl'] : '';
+        foreach ($this->requiredKeys as $requiredKey) {
+            if (!isset($resource[$requiredKey])) {
+                throw new Core\ApiException("Missing $requiredKey in new resource", 6, $this->id, 400);
+            }
+        }
         $meta = [];
         if (isset($resource['security'])) {
             $meta = array_merge($meta, ['security' => $resource['security']]);
@@ -197,26 +210,48 @@ class ResourceImport extends Core\ProcessorEntity
         }
 
 
-        $application = $this->applicationMapper->findByAppid($appid);
+        $application = $this->applicationMapper->findByAppid($resource['appid']);
         if (empty($application)) {
-            throw new Core\ApiException("Invalid application: $appid", 6, $this->id, 400);
+            throw new Core\ApiException(
+                'Invalid application: ' . $resource['appid'],
+                6,
+                $this->id,
+                400
+            );
         }
 
         $account = $this->accountMapper->findByAccid($application->getAccid());
         if ($account->getName() == $this->settings->__get(['api', 'core_account'])
                 && $application->getName() == $this->settings->__get(['api', 'core_application'])
                 && $this->settings->__get(['api', 'core_resource_lock'])) {
-            throw new Core\ApiException("Unauthorised: this is the core application", 6, $this->id, 400);
+            throw new Core\ApiException(
+                'Unauthorised: this is the core application',
+                6,
+                $this->id,
+                400
+            );
         }
 
-        $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
-        if (!empty($resource->getresid())) {
+        $resourceExists = $this->resourceMapper->findByAppIdMethodUri(
+            $resource['appid'],
+            $resource['method'],
+            $resource['uri']
+        );
+        if (!empty($resourceExists->getresid())) {
             throw new Core\ApiException('Resource already exists', 6, $this->id, 400);
         }
 
         $this->validator->validate($meta);
 
-        return $this->create($name, $description, $method, $uri, $appid, $ttl, json_encode($meta));
+        return $this->create(
+            $resource['name'],
+            $resource['description'],
+            $resource['method'],
+            $resource['uri'],
+            $resource['appid'],
+            $resource['ttl'],
+            json_encode($meta)
+        );
     }
 
     /**
