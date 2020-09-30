@@ -4,27 +4,33 @@ description: test resource with no name
 
 method: get
 
-ttl: 3600
+appid: 2
+
+ttl: 0
 
 security:
-  function: tokenDeveloper
-  id: 1
+  function: token_role
+  id: test resource with no name security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test resource with no name token
+    key: token
+  role: Consumer
 
 process:
-  function: ProcessorsAll
-  id: 3
+  function: functions
+  id: test resource with no name process
+  machine_name: all
 
 output:
-  - response
-  - function: email
+  -
+    response
+  -
+    function: email
     to: john@naala.com.au
     subject: "test email"
     format: html
-  - function: xml
+  -
+    function: xml
     destination: www.foo.bar
     method: post
-

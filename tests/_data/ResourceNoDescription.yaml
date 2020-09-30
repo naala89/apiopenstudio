@@ -4,19 +4,23 @@ name: resource missing description
 
 method: get
 
-ttl: 3600
+appid: 2
+
+ttl: 0
 
 security:
-  function: tokenDeveloper
-  id: 1
+  function: token_role
+  id: test bad resource no description security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test bad resource no description token
+    key: token
+  role: Consumer
 
 process:
-  function: ProcessorsAll
-  id: 3
+  function: functions
+  id: test bad resource no description process
+  machine_name: all
 
 output:
   - response
@@ -27,4 +31,3 @@ output:
   - function: xml
     destination: www.foo.bar
     method: post
-

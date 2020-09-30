@@ -1,22 +1,26 @@
 name: resource no uri
 
-description: test bew resource with missing uri
+description: test new resource with missing uri
 
 method: get
 
-ttl: 3600
+appid: 2
+
+ttl: 0
 
 security:
-  function: tokenDeveloper
-  id: 1
+  function: token_role
+  id: test bad resource no uri security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test bad resource no uri token
+    key: token
+  role: Consumer
 
 process:
-  function: ProcessorsAll
-  id: 3
+  function: functions
+  id: test bad resource no uri process
+  machine_name: all
 
 output:
   - response
@@ -27,4 +31,3 @@ output:
   - function: xml
     destination: www.foo.bar
     method: post
-
