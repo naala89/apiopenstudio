@@ -204,20 +204,26 @@ class Api extends \Codeception\Module
         $yamlFilename = empty($yamlFilename) ? $this->yamlFilename : $yamlFilename;
         $yamlArr = $this->getResourceFromYaml($yamlFilename);
         $this->haveHttpHeader('Accept', 'application/json');
+        $this->haveHttpHeader('Authorization', 'Bearer ' . $this->getMyStoredToken());
         $this->getModule('REST')->sendGET(
             $this->getCoreBaseUri() . '/resource',
             ['appid' => $yamlArr['appid']]
         );
         $resources = json_decode($this->getModule('REST')->response, true);
         $resid = 0;
-        foreach ($resources as $resource) {
-            if (strtolower($resource['method']) == strtolower($yamlArr['method']) && $resource['uri'] == $yamlArr['uri']) {
-                $resid = $resource['resid'];
+        if (!isset($resources['error'])) {
+            foreach ($resources as $resource) {
+                if (strtolower($resource['method']) == strtolower($yamlArr['method']) && $resource['uri'] == $yamlArr['uri']) {
+                    $resid = $resource['resid'];
+                }
             }
+            $this->getModule('REST')->sendDELETE(
+                $this->getCoreBaseUri() . '/resource/' . $resid,
+                [
+
+                ]
+            );
         }
-        $this->getModule('REST')->sendDELETE(
-            $this->getCoreBaseUri() . '/resource/' . $resid
-        );
     }
 
     /**
