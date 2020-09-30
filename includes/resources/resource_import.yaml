@@ -35,7 +35,7 @@ security:
 
 process:
   function: resource_import
-  id: resource_imoport_process
+  id: resource_import_process
   token:
     function: bearer_token
     id: resource_import_token
