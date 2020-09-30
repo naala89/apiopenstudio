@@ -15,6 +15,7 @@
 namespace Gaterdata\Core;
 
 use Monolog\Logger;
+use \ADODB_mysqli;
 
 /**
  * Class ResourceValidator
@@ -33,14 +34,14 @@ class ResourceValidator
     /**
      * DB connection class.
      *
-     * @var \ADODB_mysqli
+     * @var ADODB_mysqli
      */
     private $db;
 
     /**
      * Logging class.
      *
-     * @var \Monolog\Logger
+     * @var Logger
      */
     private $logger;
 
@@ -49,10 +50,10 @@ class ResourceValidator
      *
      * If this method is overridden by any derived classes, don't forget to call parent::__construct()
      *
-     * @param \ADODB_mysqli $db Database.
-     * @param \Monolog\Logger $logger Logger.
+     * @param ADODB_mysqli $db Database.
+     * @param Logger $logger Logger.
      */
-    public function __construct(\ADODB_mysqli $db, Logger $logger)
+    public function __construct(ADODB_mysqli $db, Logger $logger)
     {
         $this->helper = new ProcessorHelper();
         $this->db = $db;
@@ -66,12 +67,12 @@ class ResourceValidator
      *
      * @return void
      *
-     * @throws ApiException Input data not well formnd.
+     * @throws ApiException Input data not well formed.
      */
     public function validate(array $data)
     {
         $this->logger->notice('Validating the new resource...');
-        // check mandatory elements exists in data
+        // Check mandatory elements exists in data.
         if (empty($data)) {
             throw new ApiException("empty resource uploaded", 6, -1, 400);
         }
@@ -79,18 +80,29 @@ class ResourceValidator
             throw new ApiException("missing process in new resource", 6, -1, 400);
         }
 
-        // validate for identical IDs
+        // Validate for identical IDs.
         $this->validateIdenticalIds($data);
 
-        // validate dictionaries
+        // Validate dictionaries.
         if (isset($data['security'])) {
             $this->validateDetails($data['security']);
         }
         if (isset($data['output'])) {
-            $this->validateDetails($data['output']);
+            if (!$this->helper->isProcessor($data['output'])) {
+                foreach ($data['output'] as $output) {
+                    if ($output != 'response') {
+                        $this->validateDetails($output);
+                    }
+                }
+            }
+            else {
+                if ($data['output'] != 'response') {
+                    $this->validateDetails($data['output']);
+                }
+            }
         }
         if (!empty($data['fragments'])) {
-            if (!Core\Utilities::is_assoc($data['fragments'])) {
+            if (!Utilities::isAssoc($data['fragments'])) {
                 throw new ApiException("invalid fragments structure in new resource", 6, -1, 400);
             }
             foreach ($data['fragments'] as $fragKey => $fragVal) {
@@ -132,7 +144,7 @@ class ResourceValidator
     }
 
     /**
-     * Validate a resource section.
+     * Validate the details of a security or process function.
      *
      * @param array $meta Resource metadata array.
      *
@@ -147,7 +159,17 @@ class ResourceValidator
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
                 $classStr = $this->helper->getProcessorString($node['function']);
-                $class = new $classStr($meta, new Request(), $this->db, $this->logger);
+                $class = new \ReflectionClass($classStr);
+                $parents = [];
+                while ($parent = $class->getParentClass()) {
+                    $parents[] = $parent->getName();
+                    $class = $parent;
+                }
+                if (in_array('Gaterdata\Output\Output', $parents)) {
+                    $class = new $classStr([], 0, $this->logger, []);
+                } else {
+                    $class = new $classStr($meta, new Request(), $this->db, $this->logger);
+                }
                 $details = $class->details();
                 $id = $node['id'];
                 $this->logger->notice('Validating: ' . $id);
@@ -267,6 +289,6 @@ class ResourceValidator
                 implode("', '", $accepts) . '" accepted';
             throw new ApiException($message, 6, $id, 400);
         }
-        return $valid;
+        return true;
     }
 }
