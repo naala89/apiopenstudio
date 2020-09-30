@@ -6,27 +6,35 @@ uri: resource/good
 
 method: get
 
-ttl: 3600
+appid: 2
+
+ttl: 0
 
 security:
-  function: tokenDeveloper
-  id: 1
+  function: token_role
+  id: test good resource security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test good resource token
+    key: token
+  role: Consumer
 
 process:
-  function: ProcessorsAll
-  id: 3
+  function: functions
+  id: test good resource process
+  machine_name: all
 
 output:
-  - function: email
-    id: 4
+  -
+    function: email
+    id: test good resource output email
     to: john@naala.com.au
     subject: "test email"
     format: html
-  - function: xml
-    id: 5
+  -
+    function: xml
+    id: test good resource output post xml
     destination: www.foo.bar
     method: post
+  -
+    response
