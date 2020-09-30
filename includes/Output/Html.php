@@ -35,7 +35,7 @@ class Html extends Xml
      */
     protected $details = [
         'name' => 'Html',
-        'machineName' => 'output_html',
+        'machineName' => 'html',
         'description' => 'Output in the results of the resource in HTML format to a remote server.',
         'menu' => 'Output',
         'input' => [

@@ -45,7 +45,7 @@ class Email extends Output
      */
     protected $details = [
         'name' => 'Email',
-        'machineName' => 'output_email',
+        'machineName' => 'email',
         'description' => 'Output the results of the resource into an email.',
         'menu' => 'Output',
         'input' => [
@@ -99,8 +99,8 @@ class Email extends Output
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
-                'limitTypes' => ['html', 'plain', 'text', 'json', 'xml'],
-                'limitValues' => [],
+                'limitTypes' => [],
+                'limitValues' => ['html', 'plain', 'text', 'json', 'xml'],
                 'default' => 'html',
             ],
         ],

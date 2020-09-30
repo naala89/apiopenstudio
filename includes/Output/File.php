@@ -35,7 +35,7 @@ class File extends Output
      */
     protected $details = [
         'name' => 'File',
-        'machineName' => 'output_file',
+        'machineName' => 'file',
         'description' => 'Output a file.',
         'menu' => 'Output',
         'input' => [

@@ -31,7 +31,7 @@ class Image extends Output
      */
     protected $details = [
         'name' => 'Image',
-        'machineName' => 'output_image',
+        'machineName' => 'image',
         'description' => 'Output in the results of the resource in image format to a remote server.',
         'menu' => 'Output',
         'input' => [

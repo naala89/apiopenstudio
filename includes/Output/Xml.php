@@ -37,7 +37,7 @@ class Xml extends Output
      */
     protected $details = [
         'name' => 'Xml',
-        'machineName' => 'output_xml',
+        'machineName' => 'xml',
         'description' => 'Output in the results of the resource in XML format to a remote server.',
         'menu' => 'Output',
         'input' => [

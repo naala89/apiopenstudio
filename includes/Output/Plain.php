@@ -35,7 +35,7 @@ class Plain extends Text
      */
     protected $details = [
         'name' => 'Plain',
-        'machineName' => 'output_plain',
+        'machineName' => 'plain',
         'description' => 'Output in the results of the resource in plain-text format to a remote server.',
         'menu' => 'Output',
         'input' => [
