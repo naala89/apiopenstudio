@@ -50,7 +50,7 @@ class Image extends Output
                 'literalAllowed' => true,
                 'limitFunctions' => [],
                 'limitTypes' => ['text'],
-                'limitValues' => ['get', 'post'],
+                'limitValues' => ['get', 'post', 'push', 'delete', 'put'],
                 'default' => '',
             ],
             'options' => [

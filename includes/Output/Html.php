@@ -54,7 +54,7 @@ class Html extends Xml
                 'literalAllowed' => true,
                 'limitFunctions' => [],
                 'limitTypes' => ['text'],
-                'limitValues' => ['get', 'post'],
+                'limitValues' => ['get', 'post', 'push', 'delete', 'put'],
                 'default' => '',
             ],
             'options' => [
