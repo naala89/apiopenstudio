@@ -99,7 +99,7 @@ class UserLogin extends Core\ProcessorEntity
         $tokenLife = $config->__get(['api', 'token_life']);
         if (!empty($user->getToken())
             && !empty($user->getTokenTtl())
-            && Core\Utilities::dateMysql2php($user->getTokenTtl()) > time()
+            && $user->getTokenTtl() > Core\Utilities::mysqlNow()
         ) {
             $user->setTokenTtl(Core\Utilities::datePhp2mysql(strtotime($tokenLife)));
             $userMapper->save($user);
