@@ -420,30 +420,31 @@ class Api
     {
         $result = true;
         $resource = $this->request->getMeta();
-        $output = json_decode(json_encode($resource->output), true);
+        $outputs = $data->output;
 
-        if (empty($resource->output)) {
-            // default to response output if no output defined
+        if (empty($outputs)) {
+            // Default response output if no output defined.
             $this->logger->notice('no output section defined - returning the result in the response');
-            // translate the output to the correct format as requested in header and return in the response
-            $output = ['function' => $this->request->getOutFormat(), 'id' => 'header_defined_output'];
-            $result = $this->processOutputResponse($output, $data);
-        } else {
-            if (Utilities::isAssoc($output)) {
-                // Single output defined,
-                // translate the output to the correct format as requested in header and return in the response.
-                $result = $this->processOutputResponse($output, $data);
+            $outputs = ['response'];
+        } elseif (Utilities::isAssoc($outputs)) {
+            // Single output defined.
+            $outputs = [$outputs];
+        }
+
+        foreach ($outputs as $index => $output) {
+            if ($output == 'response') {
+                // Output format is response, so set the output format from the request header.
+                $output = [
+                    'function' => $this->request->getOutFormat(),
+                    'id' => 'header defined output',
+                ];
+            }
+            if (!isset($output['destination'])) {
+                // Return the output to the correct format and return in the response.
+                $result = $this->processOutputResponse($output, $data, $index);
             } else {
-                // Multiple outputs defined.
-                foreach ($output as $index => $outputItem) {
-                    if (!isset($outputItem['destination'])) {
-                        // Translate the output to the correct format as requested in header and return in the response.
-                        $result = $this->processOutputResponse($outputItem, $data, $index);
-                    } else {
-                        // Process an output item to a remote server..
-                        $this->processOutputRemote($outputItem, $data, $index);
-                    }
-                }
+                // Process an output item to a remote server.
+                $this->processOutputRemote($output, $data, $index);
             }
         }
 
