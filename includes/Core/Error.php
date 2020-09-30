@@ -17,7 +17,7 @@ namespace Gaterdata\Core;
 /**
  * Class Error
  *
- * Handle errors in a srandard way, so that they are returned through the API.
+ * Handle errors in a standard way, so that they are returned through the API.
  */
 class Error
 {
@@ -59,7 +59,7 @@ class Error
     /**
      * Construct and return the output error message
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      */
     public function process()
     {
