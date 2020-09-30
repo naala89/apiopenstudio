@@ -23,7 +23,7 @@ use Gaterdata\Core\Debug;
  *
  * Processor class to return the contents of the body as a variable.
  */
-class VarBody extends VarMixed
+class VarBody extends VarLooselyTyped
 {
     /**
      * {@inheritDoc}
