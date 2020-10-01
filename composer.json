@@ -17,6 +17,11 @@
   "support": {
     "issue tracker": "https://gitlab.com/john89/gaterdata/-/issues"
   },
+  "config": {
+    "platform": {
+      "ext-xsl": "2.9.4"
+    }
+  },
   "require-dev": {
     "codeception/codeception": "^2.4",
     "components/jquery": "^3.3",
