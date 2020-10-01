@@ -18,6 +18,7 @@ certs/
 #composer
 /vendor
 composer.lock
+/composer
 
 #node
 node_modules
@@ -32,5 +33,5 @@ docker/
 docker-compose.yml
 
 #wiki
-public/wiki
-public/phpdoc
+public/wiki/
+public/phpdoc/
