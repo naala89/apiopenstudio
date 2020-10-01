@@ -172,9 +172,10 @@ Replace server_name with whatever domain you want to host locally.
     ARG WITH_XDEBUG=false
                   
     RUN apt-get update \
-        && apt-get install -y iputils-ping \
-        && docker-php-ext-install mysqli \
-        && docker-php-ext-enable mysqli
+        && apt-get install -y iputils-ping libxslt1-dev
+    RUN docker-php-ext-install mysqli \
+        && docker-php-ext-enable mysqli \
+        && docker-php-ext-install xsl
     RUN if [ $WITH_XDEBUG = "true" ] ; then \
             pecl install xdebug; \
             docker-php-ext-enable xdebug; \
