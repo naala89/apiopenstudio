@@ -213,219 +213,214 @@ Replace server_name with whatever domain you want to host locally.
     
     services:
     
-      # Reverse Proxy.
-      nginx-proxy:
-        image: jwilder/nginx-proxy:alpine
-        container_name: "${APP_NAME}-proxy"
-        ports:
-          - "80:80"
-          - "443:443"
-        volumes:
-          - /var/run/docker.sock:/tmp/docker.sock:ro
-          - ./certs:/etc/nginx/certs
-        networks:
-          - api_network
-    
-      # NGINX API server.
-      api:
-        image: nginx:stable
-        container_name: "${APP_NAME}-api"
-        hostname: "${API_DOMAIN}"
-        ports:
-          - 80
-        volumes:
-          - ./docker/nginx/api.conf:/etc/nginx/conf.d/default.conf
-          - .:/var/www/html
-          - ./logs/api:/var/log/nginx
-          - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
-        environment:
-          - VIRTUAL_HOST=${API_DOMAIN}
-        depends_on:
-          - php
-        networks:
-          api_network:
-            aliases:
-              - ${API_DOMAIN}
-    
-      # NGINX Admin server.
-      admin:
-        image: nginx:stable
-        container_name: "${APP_NAME}-admin"
-        hostname: "${ADMIN_DOMAIN}"
-        ports:
-          - 80
-        volumes:
-          - ./docker/nginx/admin.conf:/etc/nginx/conf.d/default.conf
-          - .:/var/www/html
-          - ./logs/admin:/var/log/nginx
-          - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
-        environment:
-          - VIRTUAL_HOST=${ADMIN_DOMAIN}
-        depends_on:
-          - php
-          - composer
-        networks:
-          api_network:
-            aliases:
-              - ${ADMIN_DOMAIN}
-    
-      #  Generic PHP container.
-      php:
-        image: php:fpm-stretch
-        container_name: "${APP_NAME}-php"
-        build:
-          context: ./docker/php
-          args:
-            - WITH_XDEBUG=${WITH_XDEBUG}
-        env_file:
-          .env
-        ports:
-          - "9000:9000"
-        volumes:
-          - ./composer:/composer
-          - .:/var/www/html
-          - ./docker/php/php.conf:/usr/local/etc/php-fpm.d/zzz-phpSettings.conf
-          - ./logs/php:/var/log
-        networks:
-          - api_network
-    
-      # Node container to install npm requires and run gulp.
-      node:
-        image: node:11
-        container_name: "${APP_NAME}-node"
-        volumes:
-          - .:/usr/src/service
-        working_dir: /usr/src/service
-        command: bash -c "npm install && npm install -g gulp && gulp all"
-        networks:
-          - api_network
-    
-      # Install composer requires.
-      composer:
-        image: composer:latest
-        container_name: "${APP_NAME}-composer"
-        ports:
-          - "9001:9000"
-        volumes:
-          - .:/app
-        command: install
-        networks:
-          - api_network
-    
-      # Database container.
-      db:
-        image: mariadb:latest
-        container_name: "${APP_NAME}-db"
-        ports:
-          - "3306:3306"
-        volumes:
-          - ./dbdata:/var/lib/mysql
-        env_file:
-          .env
-        restart: always
-        networks:
-          - api_network
-    
-      # Email container
-      email:
-        image: namshi/smtp:latest
-        container_name: "${APP_NAME}-email"
-        networks:
-          - api_network
-        #    ports:
-        #      - "25:25"
-        environment:
-          # MUST start with : e.g RELAY_NETWORKS=:192.168.0.0/24:10.0.0.0/16
-          # if acting as a relay this or RELAY_DOMAINS must be filled out or incoming mail will be rejected
-    #      - RELAY_NETWORKS= :192.168.0.0/24
-          # what domains should be accepted to forward to lower distance MX server.
-    #      - RELAY_DOMAINS= <domain1> : <domain2> : <domain3>
-          # To act as a Gmail relay
-          - GMAIL_USER=${EMAIL_USERNAME}
-          - GMAIL_PASSWORD=${EMAIL_PASSWORD}
-          # For use with Amazon SES relay
-    #      - SES_USER=
-    #      - SES_PASSWORD=
-    #      - SES_REGION=
-          # if provided will enable TLS support
-    #      - KEY_PATH=certs/gaterdata.local
-    #      - CERTIFICATE_PATH=certs/gateradta.local.crt
-          # the outgoing mail hostname
-    #      - MAILNAME=admin.gaterdata.local
-          # set this to any value to disable ipv6
-    #      - DISABLE_IPV6=
-          # Generic SMTP Relay
-    #      - SMARTHOST_ADDRESS=
-    #      - SMARTHOST_PORT=
-    #      - SMARTHOST_USER=
-    #      - SMARTHOST_PASSWORD=
-    #      - SMARTHOST_ALIASES=
-    
-      # Uncomment this for compiling the wiki
-      # Bookdown container
-      bookdown:
-        image: sandrokeil/bookdown
-        container_name: "${APP_NAME}-bookdown"
-        volumes:
-          - ./src/wiki:/app
-          - ./public/wiki:/wiki
-        command: ["bookdown.json"]
-        networks:
-          - api_network
-    
-      # Uncomment this to serve the wiki locally
-      # NGINX Wiki server
-      wiki:
-        image: nginx:stable
-        container_name: "${APP_NAME}-wiki"
-        hostname: "${WIKI_DOMAIN}"
-        ports:
-          - 80
-        volumes:
-          - ./docker/nginx/wiki.conf:/etc/nginx/conf.d/default.conf
-          - ./public/wiki:/var/www/html
-          - ./logs/wiki:/var/log/nginx
-          - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
-        environment:
-          - VIRTUAL_HOST=${WIKI_DOMAIN}
-        networks:
-          api_network:
-            aliases:
-              - ${WIKI_DOMAIN}
-    
-      # Uncomment this for compiling the phpdocs
-      # PHP Documentor container
-      phpdocumentor:
-        image: phpdoc/phpdoc:latest
-        container_name: "${APP_NAME}-phpdocumentor"
-        volumes:
-          - .:/data
-        networks:
-          - api_network
-    
-      # Uncomment this to serve the phpdoc locally
-      # NGINX Wiki server
-      phpdoc:
-        image: nginx:stable
-        container_name: "${APP_NAME}-phpdoc"
-        hostname: "${PHPDOC_DOMAIN}"
-        ports:
-          - 80
-        volumes:
-          - ./docker/nginx/phpdoc.conf:/etc/nginx/conf.d/default.conf
-          - ./public/phpdoc/html:/var/www/html
-          - ./logs/phpdoc:/var/log/nginx
-          - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
-        environment:
-          - VIRTUAL_HOST=${PHPDOC_DOMAIN}
-        networks:
-          api_network:
-            aliases:
-              - ${PHPDOC_DOMAIN}
-    
+        # Reverse Proxy.
+        nginx-proxy:
+            image: jwilder/nginx-proxy:alpine
+            container_name: "${APP_NAME}-proxy"
+            ports:
+                - "80:80"
+                - "443:443"
+            volumes:
+                - /var/run/docker.sock:/tmp/docker.sock:ro
+                - ./certs:/etc/nginx/certs
+            networks:
+                - api_network
+        
+        # NGINX API server.
+        api:
+            image: nginx:stable
+            container_name: "${APP_NAME}-api"
+            hostname: "${API_DOMAIN}"
+            ports:
+                - 80
+            volumes:
+                - ./docker/nginx/api.conf:/etc/nginx/conf.d/default.conf
+                - .:/var/www/html
+                - ./logs/api:/var/log/nginx
+                - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
+            env_file:
+                .env
+            environment:
+                - VIRTUAL_HOST=${API_DOMAIN}
+            depends_on:
+                - php
+            networks:
+                api_network:
+                    aliases:
+                        - ${API_DOMAIN}
+                   
+        # NGINX Admin server.
+        admin:
+            image: nginx:stable
+            container_name: "${APP_NAME}-admin"
+            hostname: "${ADMIN_DOMAIN}"
+            ports:
+                - 80
+            volumes:
+                - ./docker/nginx/admin.conf:/etc/nginx/conf.d/default.conf
+                - .:/var/www/html
+                - ./logs/admin:/var/log/nginx
+                - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
+            env_file:
+                .env
+            environment:
+                - VIRTUAL_HOST=${ADMIN_DOMAIN}
+            depends_on:
+                - php
+                - composer
+            networks:
+                api_network:
+                    aliases:
+                        - ${ADMIN_DOMAIN}
+                   
+        # Generic PHP container.
+        php:
+            image: php:fpm-stretch
+            container_name: "${APP_NAME}-php"
+            build:
+                 context: ./docker/php
+            args:
+                - WITH_XDEBUG=${WITH_XDEBUG}
+            env_file:
+                .env
+            ports:
+                - "9000:9000"
+            volumes:
+                - ./composer:/composer
+                - .:/var/www/html
+                - ./docker/php/php.conf:/usr/local/etc/php-fpm.d/zzz-phpSettings.conf
+                - ./logs/php:/var/log
+            networks:
+                - api_network
+                   
+            # Node container to install npm requires and run gulp.
+            node:
+                image: node:11
+                container_name: "${APP_NAME}-node"
+                volumes:
+                    - .:/usr/src/service
+                working_dir: /usr/src/service
+                command: bash -c "npm install && npm install -g gulp && gulp all"
+                networks:
+                    - api_network
+                   
+        # Install composer requires.
+        composer:
+            image: composer:latest
+            container_name: "${APP_NAME}-composer"
+            ports:
+                - "9001:9000"
+            volumes:
+                - .:/app
+            command: install
+            networks:
+                - api_network
+                   
+        # Database container.
+        db:
+            image: mariadb:latest
+            container_name: "${APP_NAME}-db"
+            ports:
+                - "3306:3306"
+            volumes:
+                - ./dbdata:/var/lib/mysql
+            env_file:
+                .env
+            restart: always
+            networks:
+                - api_network
+                   
+        # Email container.
+        email:
+            image: namshi/smtp:latest
+            container_name: "${APP_NAME}-email"
+            networks:
+                - api_network
+            # ports:
+            #   - "25:25"
+            environment:
+                # MUST start with : e.g RELAY_NETWORKS=:192.168.0.0/24:10.0.0.0/16
+                # if acting as a relay this or RELAY_DOMAINS must be filled out or incoming mail will be rejected
+            #   - RELAY_NETWORKS= :192.168.0.0/24
+                # what domains should be accepted to forward to lower distance MX server.
+            #   - RELAY_DOMAINS= <domain1> : <domain2> : <domain3>
+                # To act as a Gmail relay
+                - GMAIL_USER=${EMAIL_USERNAME}
+                - GMAIL_PASSWORD=${EMAIL_PASSWORD}
+                # For use with Amazon SES relay
+            #   - SES_USER=
+            #   - SES_PASSWORD=
+            #   - SES_REGION=
+                # if provided will enable TLS support
+            #   - KEY_PATH=certs/gaterdata.local
+            #   - CERTIFICATE_PATH=certs/gateradta.local.crt
+                # the outgoing mail hostname
+            #   - MAILNAME=admin.gaterdata.local
+                # set this to any value to disable ipv6
+            #   - DISABLE_IPV6=
+                # Generic SMTP Relay
+            #   - SMARTHOST_ADDRESS=
+            #   - SMARTHOST_PORT=
+            #   - SMARTHOST_USER=
+            #   - SMARTHOST_PASSWORD=
+            #   - SMARTHOST_ALIASES=
+                   
+        # Uncomment this for compiling the wiki.
+        # Bookdown container.
+        bookdown:
+            image: sandrokeil/bookdown
+            container_name: "${APP_NAME}-bookdown"
+            volumes:
+                - ./src/wiki:/app
+                - ./public/wiki:/wiki
+            command: ["bookdown.json"]
+            networks:
+                - api_network
+                   
+        # Uncomment this to serve the wiki locally.
+        # NGINX Wiki server.
+        wiki:
+            image: nginx:stable
+            container_name: "${APP_NAME}-wiki"
+            hostname: "${WIKI_DOMAIN}"
+            ports:
+                - 80
+            volumes:
+                - ./docker/nginx/wiki.conf:/etc/nginx/conf.d/default.conf
+                - ./public/wiki:/var/www/html
+                - ./logs/wiki:/var/log/nginx
+                - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
+            environment:
+                - VIRTUAL_HOST=${WIKI_DOMAIN}
+            networks:
+                api_network:
+                    aliases:
+                        - ${WIKI_DOMAIN}
+                   
+        # Uncomment this to serve the phpdoc locally.
+        # To generate the phpdoc, run ./vendor/bin/phpdox
+        # NGINX Wiki server.
+        phpdoc:
+            image: nginx:stable
+            container_name: "${APP_NAME}-phpdoc"
+            hostname: "${PHPDOC_DOMAIN}"
+            ports:
+                - 80
+            volumes:
+                - ./docker/nginx/phpdoc.conf:/etc/nginx/conf.d/default.conf
+                - ./public/phpdoc/html:/var/www/html
+                - ./logs/phpdoc:/var/log/nginx
+                - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
+            environment:
+                - VIRTUAL_HOST=${PHPDOC_DOMAIN}
+            networks:
+                api_network:
+                    aliases:
+                        - ${PHPDOC_DOMAIN}
+               
     networks:
-      api_network:
-        driver: bridge
+        api_network:
+            driver: bridge
         
 Hosts file
 ----------
