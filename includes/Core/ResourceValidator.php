@@ -102,7 +102,9 @@ class ResourceValidator
         $this->validateDetails($data['process']);
 
         if (isset($data['output'])) {
-            if (!$this->helper->isProcessor($data['output'])) {
+            if ($this->helper->isProcessor($data['output'])) {
+                $this->validateDetails($data['output']);
+            } elseif (is_array($data['output'])) {
                 foreach ($data['output'] as $key => $output) {
                     if ($output != 'response') {
                         $this->validateDetails($output);
@@ -111,7 +113,7 @@ class ResourceValidator
             }
             else {
                 if ($data['output'] != 'response') {
-                    throw new ApiException('Invalid output declaration', 6, -1, 400);
+                    throw new ApiException('Invalid output declaration, only functions or array of functions or "response" allowed', 6, -1, 400);
                 }
             }
         }
