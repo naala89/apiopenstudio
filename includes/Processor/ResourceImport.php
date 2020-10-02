@@ -182,6 +182,15 @@ class ResourceImport extends Core\ProcessorEntity
             }
         }
 
+        foreach ($this->requiredKeys as $requiredKey) {
+            if (!isset($resource[$requiredKey])) {
+                throw new Core\ApiException("Missing $requiredKey in new resource", 6, $this->id, 400);
+            }
+        }
+        if ($resource['ttl'] < 0) {
+            throw new Core\ApiException("Negative ttl in new resource", 6, $this->id, 400);
+        }
+
         $role = $this->userRoleMapper->findByUidAppidRolename(
             $currentUser->getUid(),
             $resource['appid'],
@@ -193,11 +202,6 @@ class ResourceImport extends Core\ProcessorEntity
                 400);
         }
 
-        foreach ($this->requiredKeys as $requiredKey) {
-            if (!isset($resource[$requiredKey])) {
-                throw new Core\ApiException("Missing $requiredKey in new resource", 6, $this->id, 400);
-            }
-        }
         $meta = [];
         if (isset($resource['security'])) {
             $meta = array_merge($meta, ['security' => $resource['security']]);
