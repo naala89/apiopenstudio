@@ -87,20 +87,6 @@ class ResourceValidator
         if (isset($data['security'])) {
             $this->validateDetails($data['security']);
         }
-        if (isset($data['output'])) {
-            if (!$this->helper->isProcessor($data['output'])) {
-                foreach ($data['output'] as $output) {
-                    if ($output != 'response') {
-                        $this->validateDetails($output);
-                    }
-                }
-            }
-            else {
-                if ($data['output'] != 'response') {
-                    $this->validateDetails($data['output']);
-                }
-            }
-        }
         if (!empty($data['fragments'])) {
             if (!Utilities::isAssoc($data['fragments'])) {
                 throw new ApiException("invalid fragments structure in new resource", 6, -1, 400);
@@ -109,7 +95,26 @@ class ResourceValidator
                 $this->validateDetails($fragVal);
             }
         }
+
+        if (!$this->helper->isProcessor($data['process'])) {
+            throw new ApiException('Invalid process declaration, only functions allowed', 6, -1, 400);
+        }
         $this->validateDetails($data['process']);
+
+        if (isset($data['output'])) {
+            if (!$this->helper->isProcessor($data['output'])) {
+                foreach ($data['output'] as $key => $output) {
+                    if ($output != 'response') {
+                        $this->validateDetails($output);
+                    }
+                }
+            }
+            else {
+                if ($data['output'] != 'response') {
+                    throw new ApiException('Invalid output declaration', 6, -1, 400);
+                }
+            }
+        }
     }
 
     /**
@@ -230,6 +235,9 @@ class ResourceValidator
                     }
                 }
             } elseif (is_array($node)) {
+                if (isset($node['function']) && empty($node['id'])) {
+                    throw new ApiException('Invalid function, id attribute missing', 6, -1, 400);
+                }
                 foreach ($node as $key => $value) {
                     array_unshift($stack, $value);
                 }
