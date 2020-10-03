@@ -106,8 +106,10 @@ class ResourceValidator
                 $this->validateDetails($data['output']);
             } elseif (is_array($data['output'])) {
                 foreach ($data['output'] as $key => $output) {
-                    if ($output != 'response') {
+                    if ($this->helper->isProcessor($output)) {
                         $this->validateDetails($output);
+                    } elseif ($output != 'response') {
+                        throw new ApiException('Invalid output declaration, only functions or array of functions or "response" allowed', 6, -1, 400);
                     }
                 }
             }
@@ -136,7 +138,11 @@ class ResourceValidator
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
                 if (in_array($node['id'], $id)) {
-                    throw new ApiException('identical ID in new resource: ' . $node['id'], 6, -1, 400);
+                    throw new ApiException('identical IDs in new resource: ' . $node['id'],
+                        6,
+                        -1,
+                        400,
+                    );
                 }
                 $id[] = $node['id'];
             }
