@@ -1,0 +1,29 @@
+name: Testing object array
+
+description: Test creating an object with array.
+
+uri: object/array
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_role
+  id: test object array security
+  token:
+    function: var_get
+    id: test object array token
+    key: token
+  role: Consumer
+
+process:
+  function: var_object
+  id: test object array process
+  attributes:
+    - key1: field1
+    - key2: field2
+    - key3: field3
+    - key4: field4

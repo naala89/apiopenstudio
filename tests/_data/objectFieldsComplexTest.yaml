@@ -1,8 +1,8 @@
-name: Testing object fields
+name: Testing object fields (complex)
 
-description: Test creating an object with fields and literals.
+description: Test creating an object with fields (complex) and literals.
 
-uri: object/fields
+uri: object/fields/complex
 
 method: get
 
@@ -27,7 +27,11 @@ process:
       function: var_field
       id: test object fields field 1
       key: key1
-      value: field1
+      value:
+        function: var_field
+        id: test object fields field 1 1
+        key: key1_1
+        value: value1_1
     -
       function: var_field
       id: test object fields field 2
