@@ -61,8 +61,11 @@ class VarObject extends Core\ProcessorEntity
         $result = [];
 
         foreach ($attributes as $attribute) {
-            $field = $attribute->getData();
-            $keys = array_keys($field);
+            $field = $this->isDataContainer($attribute) ? $attribute->getData() : $attribute;
+            if (is_object($field)) {
+                $field = (array) $field;
+            }
+            $keys = is_object($field) ? get_object_vars($field) : array_keys($field);
             $result[$keys[0]] = $field[$keys[0]];
         }
 
