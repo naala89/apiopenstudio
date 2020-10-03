@@ -1,24 +1,28 @@
 name: resource no security
 
-description: test bew resource with missing security
+description: test new resource with missing security
 
 uri: resource/missing/security
 
 method: get
 
-ttl: 3600
+appid: 2
+
+ttl: 0
 
 process:
-  function: ProcessorsAll
-  id: 3
+  function: functions
+  id: test bad resource no security process
+  machine_name: all
 
 output:
   - function: email
-    id: 4
+    id: test bad resource no security output email
     to: john@naala.com.au
     subject: "test email"
     format: html
+    message: "test email"
   - function: xml
-    id: 5
+    id: output xml
     destination: www.foo.bar
     method: post

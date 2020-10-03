@@ -6,30 +6,38 @@ uri: resource/output/assoc
 
 method: get
 
-ttl: 3600
+appid: 2
+
+ttl: 0
 
 security:
-  function: tokenDeveloper
-  id: 1
+  function: token_role
+  id: test resource required func type security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test resource required func type token
+    key: token
+  role: Consumer
 
 process:
-  function: ProcessorsAll
-  id: 3
+  function: functions
+  id: test resource required func type process
+  machine_name: all
 
 output:
-  - function: email
-    id: 4
+  -
+    function: email
+    id: test resource required func type output email
     to: john@naala.com.au
     subject: "test email"
     format: html
-  - function: xml
-    id: 5
+    message: test message
+  -
+    function: xml
+    id: test resource required func type xml
     destination: www.foo.bar
     method: post
     options:
-      function: ProcessorsAll
-      id: 6
+      function: fucntions
+      id: test resource required func type xml options bad
+      machine_name: all

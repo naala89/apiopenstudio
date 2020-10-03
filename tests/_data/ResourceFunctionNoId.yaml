@@ -6,18 +6,23 @@ uri: resource/function/noid
 
 method: get
 
-ttl: 3600
+appid: 2
+
+ttl: 0
 
 security:
-  function: tokenDeveloper
+  function: token_role
+  id: test bad resource with function without id security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test bad resource with function without id token
+    key: token
+  role: Consumer
 
 process:
-  function: ProcessorsAll
-  id: 3
+  function: functions
+  id: test bad resource with function without id process
+  machine_name: all
 
 output:
   - response
@@ -25,7 +30,7 @@ output:
     to: john@naala.com.au
     subject: "test email"
     format: html
+    message: "test email"
   - function: xml
     destination: www.foo.bar
     method: post
-

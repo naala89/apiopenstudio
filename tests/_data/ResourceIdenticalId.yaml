@@ -1,32 +1,36 @@
-name: test good resource
+name: test resource identical IDs
 
-description: test good resource
+description: test resource identical IDs
 
-uri: resource/good
+uri: resource/identical/ids
 
 method: get
 
-ttl: 3600
+appid: 2
+
+ttl: 0
 
 security:
-  function: tokenDeveloper
-  id: 1
+  function: token_role
+  id: resource identical ids security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: resource identical ids token
+    key: token
+  role: Consumer
 
 process:
-  function: ProcessorsAll
-  id: 3
+  function: functions
+  id: resource identical ids
 
 output:
   - function: email
-    id: 3
+    id: resource identical ids
     to: john@naala.com.au
     subject: "test email"
     format: html
+    message: test message
   - function: xml
-    id: 5
+    id: resource identical ids xml
     destination: www.foo.bar
     method: post

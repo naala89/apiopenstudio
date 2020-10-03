@@ -6,28 +6,32 @@ uri: resource/output/empty
 
 method: get
 
-ttl: 3600
+appid: 2
+
+ttl: 0
 
 security:
-  function: tokenDeveloper
-  id: 1
+  function: token_role
+  id: test resource with empty function as output security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test resource with empty function as output token
+    key: token
+  role: Consumer
 
 process:
-  function: ProcessorsAll
-  id: 3
+  function: functions
+  id: test resource with empty function as output process
+  machine_name: all
 
 output:
   - function:
-    id: 4
+    id: test resource with empty function as output output 0
     to: john@naala.com.au
     subject: "test email"
     format: html
   - function: xml
-    id: 5
+    id: test resource with empty function as output output 1
     destination: www.foo.bar
     method: post
 

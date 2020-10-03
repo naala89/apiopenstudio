@@ -1,21 +1,25 @@
 name: resource no output
 
-description: test bew resource with missing output
+description: test new resource with missing output
 
 uri: resource/missing/output
 
 method: get
 
-ttl: 3600
+appid: 2
+
+ttl: 0
 
 security:
-  function: tokenDeveloper
-  id: 1
+  function: token_role
+  id: test good resource no output security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test good resource no output token
+    key: token
+  role: Consumer
 
 process:
-  function: ProcessorsAll
-  id: 3
+  function: functions
+  id: test good resource no output process
+  machine_name: all

@@ -1,22 +1,26 @@
 name: resource no ttl
 
-description: test bew resource with missing ttl
+description: test new resource with missing ttl
 
 uri: resource/missing/ttl
+
+appid: 2
 
 method: get
 
 security:
-  function: tokenDeveloper
-  id: 1
+  function: token_role
+  id: test bad resource no ttl security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test bad resource no ttl token
+    key: token
+  role: Consumer
 
 process:
-  function: ProcessorsAll
-  id: 3
+  function: functions
+  id: test bad resource no ttl process
+  machine_name: all
 
 output:
   - response
