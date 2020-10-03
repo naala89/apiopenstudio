@@ -44,5 +44,5 @@ Error codes
 HTML status codes
 -----------------
 
-Where possible, HTML status codes will also match the above error codes
+Where possible, HTML status codes will also match the above error codes, which will usually be a 200 (Success) or 400 (Bad Request)
 
