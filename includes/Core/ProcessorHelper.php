@@ -59,7 +59,7 @@ class ProcessorHelper
             }
         }
 
-        throw new ApiException("unknown function: $className", 1, -1, 406);
+        throw new ApiException("unknown function: $className", 1, -1, 400);
     }
 
     /**
