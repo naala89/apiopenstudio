@@ -4,19 +4,23 @@ description: test resource with missing method
 
 uri: resource/missing/method
 
-ttl: 3600
+appid: 2
+
+ttl: 0
 
 security:
-  function: tokenDeveloper
-  id: 1
+  function: token_role
+  id: test bad resource no method security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test bad resource no method token
+    key: token
+  role: Consumer
 
 process:
-  function: ProcessorsAll
-  id: 3
+  function: functions
+  id: test bad resource no method process
+  machine_name: all
 
 output:
   - response

@@ -6,30 +6,33 @@ uri: resource/badmin
 
 method: get
 
-ttl: 3600
+appid: 2
+
+ttl: 0
 
 security:
-  function: tokenDeveloper
-  id: 1
+  function: token_role
+  id: test resource with bad min security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test resource with bad min token
+    key: token
+  role: Consumer
 
 process:
   function: concatenate
-  id: 3
+  id: test resource with bad min process
   sources:
     - zsdkfjh
 
 output:
   - function: email
-    id: 4
+    id: test resource with bad min email
     to: john@naala.com.au
     subject: "test email"
     format: html
   - function: xml
-    id: 5
+    id: test resource with bad min xml
     destination:
       - www.foo.bar
       - www.foo.bar

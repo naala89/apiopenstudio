@@ -6,19 +6,22 @@ uri: resource/badmax
 
 method: get
 
-ttl: 3600
+appid: 2
+
+ttl: 0
 
 security:
-  function: tokenDeveloper
-  id: 1
+  function: token_role
+  id: test resource with bad max security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test resource with bad max token
+    key: token
+  role: Consumer
 
 process:
-  function: field
-  id: 3
+  function: var_field
+  id: test resource with bad max process
   key: zsdkfjh
   value:
     - zsdkfjh
@@ -26,12 +29,12 @@ process:
 
 output:
   - function: email
-    id: 4
+    id: test resource with bad max email
     to: john@naala.com.au
     subject: "test email"
     format: html
   - function: xml
-    id: 5
+    id: test resource with bad max xml
     destination:
       - www.foo.bar
       - www.foo.bar

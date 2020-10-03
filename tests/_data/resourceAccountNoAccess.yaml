@@ -1,0 +1,25 @@
+name: resource application no developer role
+
+description: test create resource with no developer role for application
+
+uri: functions
+
+method: get
+
+appid: 1
+
+ttl: 0
+
+security:
+  function: token_role
+  id: resource application no developer role security
+  token:
+    function: var_get
+    id: resource application no developer role token
+    key: token
+  role: Consumer
+
+process:
+  function: functions
+  id: resource application no developer role process
+  machine_name: all

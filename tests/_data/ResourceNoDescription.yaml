@@ -1,6 +1,6 @@
-uri: resource/missing/description
+name: test resource missiung description
 
-name: resource missing description
+uri: resource/missing/description
 
 method: get
 

@@ -6,7 +6,9 @@ uri: resource/static/object
 
 method: get
 
-ttl: 3600
+appid: 2
+
+ttl: 0
 
 process:
   key1: val1

@@ -1,20 +1,23 @@
 name: resource no process
 
-description: test bew resource with missing process
+description: test new resource with missing process
 
 uri: resource/missing/process
 
 method: get
 
+appid: 2
+
 ttl: 0
 
 security:
-  function: tokenDeveloper
-  id: 1
+  function: token_role
+  id: test bad resource no process security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test bad resource no process token
+    key: token
+  role: Consumer
 
 output:
   - response
@@ -22,7 +25,7 @@ output:
     to: john@naala.com.au
     subject: "test email"
     format: html
+    message: "test email"
   - function: xml
     destination: www.foo.bar
     method: post
-

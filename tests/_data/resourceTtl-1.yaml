@@ -1,22 +1,28 @@
-uri: test
-
-name: test/resource/ttlmissing
+name: test/resource/ttlnegative
 
 description: test
 
+uri: test/resource/ttlnegative
+
 method: get
 
+appid: 2
+
+ttl: -1
+
 security:
-  function: tokenDeveloper
-  id: 1
+  function: token_role
+  id: test bad resource negative ttl security
   token:
-    function: varGet
-    id: 2
-    name: token
+    function: var_get
+    id: test bad resource negative ttl token
+    key: token
+  role: Consumer
 
 process:
-  function: ProcessorsAll
-  id: 3
+  function: functions
+  id: test bad resource negative ttl process
+  machine_name: all
 
 output:
   - response

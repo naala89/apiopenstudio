@@ -27,6 +27,7 @@ process:
 output:
   -
     function: email
+    message: This is a test
     id: test good resource output email
     to: john@naala.com.au
     subject: "test email"

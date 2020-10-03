@@ -6,11 +6,14 @@ uri: resource/output/string
 
 method: get
 
-ttl: 3600
+appid: 2
+
+ttl: 0
 
 process:
-  function: ProcessorsAll
-  id: 1
+  function: functions
+  id: test resource with static string output process
+  machine_name: all
 
 output: dfgdzfgfs
 
