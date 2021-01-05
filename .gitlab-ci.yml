@@ -8,7 +8,7 @@
 # @copyright 2020-2030 ApiOpenStudio
 # @link      https://www.apiopenstudio.com
 
-image: php:7.3
+image: php:7.4
 
 cache:
   key: "$CI_COMMIT_REF_SLUG"
@@ -37,8 +37,8 @@ before_script:
   - php -r "unlink('composer-setup.php');"
 
 stages:
-#  - lint
-  - test
+  - lint
+#  - test
 #  - deploy
 
 phpcs:
@@ -47,48 +47,48 @@ phpcs:
     - php composer.phar install
     - ./vendor/bin/phpcs includes/ src/scss/ src/js/ public/*.php public/admin/*.php *.js
 
-functional_tests:
-  stage: test
-  services:
-    - mariadb:latest
-  script:
-    - echo "Running functional tests."
-    - apt-get install -y mariadb-client
-    - docker-php-ext-install mysqli
-    - mysql --version
-    - php composer.phar install
-    - echo "Setup the DB."
-    - php ./includes/scripts/runner_generate_db.php
+#functional_tests:
+#  stage: test
+#  services:
+#    - mariadb:latest
+#  script:
+#    - echo "Running functional tests."
+#    - apt-get install -y mariadb-client
+#    - docker-php-ext-install mysqli
+#    - mysql --version
+#    - php composer.phar install
+#    - echo "Setup the DB."
+#    - php ./includes/scripts/runner_generate_db.php
 
 #unit_tests:
 #  stage: test
 
-deploy_wiki_develop:
-  stage: deploy
-  only:
-    - develop
-  script:
-    - echo "Compile and deploy the wiki to dev."
-    - php composer.phar install
-    - ./vendor/bin/bookdown src/wiki/bookdown.json
-    - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-    - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
-    - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
-    - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
+#deploy_wiki_develop:
+#  stage: deploy
+#  only:
+#    - develop
+#  script:
+#    - echo "Compile and deploy the wiki to dev."
+#    - php composer.phar install
+#    - ./vendor/bin/bookdown src/wiki/bookdown.json
+#    - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
+#    - chmod 644 ~/.ssh/known_hosts
+#    - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+#    - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+#    - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
 
-deploy_phpdoc_develop:
-  stage: deploy
-  only:
-    - develop
-  script:
-    - echo "Compile and deploy the phpdoc to dev."
-    - php composer.phar install
-    - ./vendor/bin/phpdox
-    - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-    - rsync -rvI --delete --exclude=".*" "public/phpdoc/html/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
-    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
+#deploy_phpdoc_develop:
+#  stage: deploy
+#  only:
+#    - develop
+#  script:
+#    - echo "Compile and deploy the phpdoc to dev."
+#    - php composer.phar install
+#    - ./vendor/bin/phpdox
+#    - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
+#    - chmod 644 ~/.ssh/known_hosts
+#    - rsync -rvI --delete --exclude=".*" "public/phpdoc/html/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
+#    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
 
 #deploy_wiki_master:
 #  stage: deploy
