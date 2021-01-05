@@ -2,24 +2,24 @@
 /**
  * Class Twitter.
  *
- * @package    Gaterdata
+ * @package    ApiOpenStudio
  * @subpackage Endpoint
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 GaterData
+ * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link       https://gaterdata.com
+ * @link       https://www.apiopenstudio.com
  */
 //
 ///**
 // * Get data form the Facebook API.
 // */
 //
-//namespace Gaterdata\Endpoint;
-//use Gaterdata\Db\ExternalUserMapper;
-//use Gaterdata\Processor;
-//use Gaterdata\Core;
+//namespace ApiOpenStudio\Endpoint;
+//use ApiOpenStudio\Db\ExternalUserMapper;
+//use ApiOpenStudio\Processor;
+//use ApiOpenStudio\Core;
 //
 //class Twitter extends Core\ProcessorEntity
 //{
@@ -33,7 +33,7 @@
 //    'name' => 'Twitter',
 //    'machineName' => 'twitter',
 //    'description' => 'Fetch results from the Twitter API.',
-//    'account' => 'Gaterdata',
+//    'account' => 'Apiopenstudio',
 //    'menu' => 'Endpoint',
 //    'input' => array(
 //      'key' => array(
@@ -144,7 +144,7 @@
 //   * @param $appId
 //   * @param $twitterId
 //   * @return mixed
-//   * @throws \Gaterdata\Core\ApiException
+//   * @throws \Apiopenstudio\Core\ApiException
 //   */
 //  private function _getToken($key, $secret, $appId, $twitterId)
 //  {

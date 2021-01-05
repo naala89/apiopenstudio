@@ -2,19 +2,19 @@
 /**
  * Class ExternalUserMapper.
  *
- * @package    Gaterdata
+ * @package    ApiOpenStudio
  * @subpackage Db
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 GaterData
+ * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link       https://gaterdata.com
+ * @link       https://www.apiopenstudio.com
  */
 
-namespace Gaterdata\Db;
+namespace ApiOpenStudio\Db;
 
-use Gaterdata\Core\ApiException;
+use ApiOpenStudio\Core\ApiException;
 
 /**
  * Class ExternalUserMapper.
@@ -27,7 +27,7 @@ class ExternalUserMapper extends Mapper
     /**
      * Save an external user object.
      *
-     * @param \Gaterdata\Db\ExternalUser $user ExternalUser object.
+     * @param \ApiOpenStudio\Db\ExternalUser $user ExternalUser object.
      *
      * @return boolean Success.
      *
@@ -65,7 +65,7 @@ class ExternalUserMapper extends Mapper
     /**
      * Delete an external user.
      *
-     * @param \Gaterdata\Db\ExternalUser $externalUser ExternalUser object.
+     * @param \ApiOpenStudio\Db\ExternalUser $externalUser ExternalUser object.
      *
      * @return boolean Success.
      *
@@ -83,7 +83,7 @@ class ExternalUserMapper extends Mapper
      *
      * @param integer $id External user ID.
      *
-     * @return \Gaterdata\Db\ExternalUser External user object.
+     * @return \ApiOpenStudio\Db\ExternalUser External user object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
@@ -101,7 +101,7 @@ class ExternalUserMapper extends Mapper
      * @param string $externalEntity External entity name.
      * @param integer $externalId External ID.
      *
-     * @return \Gaterdata\Db\ExternalUser External user object.
+     * @return \ApiOpenStudio\Db\ExternalUser External user object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
@@ -137,7 +137,7 @@ class ExternalUserMapper extends Mapper
      *
      * @param array $row DB row results object.
      *
-     * @return \Gaterdata\Db\ExternalUser ExternalUser object.
+     * @return \ApiOpenStudio\Db\ExternalUser ExternalUser object.
      */
     protected function mapArray(array $row)
     {

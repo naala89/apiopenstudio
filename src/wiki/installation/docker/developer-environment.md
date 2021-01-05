@@ -2,13 +2,13 @@
 
 This is suitable for a local dev environment.
 
-Replace ```admin.gaterdata.local```, ```api.gaterdata.local``` and ```wiki.gaterdata.local``` with whatever domains you wish.
+Replace ```admin.apiopenstudio.local```, ```api.apiopenstudio.local``` and ```wiki.apiopenstudio.local``` with whatever domains you wish.
 
 ## Directory and files
 
 The following files and directory structure needs to be added to a project:
 
-    gaterdata
+    apiopenstudio
     |   .env
     |   docker-compose.yml
     └───certs
@@ -28,8 +28,8 @@ The following files and directory structure needs to be added to a project:
 
     $ brew install mkcert nss
     $ mkcert -install
-    $ cd <gaterdata>/certs
-    $ mkcert -cert-file gaterdata.local.crt -key-file gaterdata.local.key "*.gaterdata.local"
+    $ cd <apiopenstudio>/certs
+    $ mkcert -cert-file apiopenstudio.local.crt -key-file apiopenstudio.local.key "*.apiopenstudio.local"
     $ cp "$(mkcert -CAROOT)/rootCA.pem" ca.crt
 
 ### .env
@@ -38,21 +38,21 @@ Copy ```example.env``` to ```.env```.
 
 Edit the values so the values must match those in ```settings.yml```
     
-    APP_NAME=gaterdata
+    APP_NAME=apiopenstudio
     
     WITH_XDEBUG=true
-    PHP_IDE_CONFIG=serverName=gaterdata
+    PHP_IDE_CONFIG=serverName=apiopenstudio
     XDEBUG_CONFIG=remote_host=docker.for.mac.localhost remote_port=9001
     
-    API_DOMAIN=api.gaterdata.local
-    ADMIN_DOMAIN=admin.gaterdata.local
-    WIKI_DOMAIN=wiki.gaterdata.local
+    API_DOMAIN=api.apiopenstudio.local
+    ADMIN_DOMAIN=admin.apiopenstudio.local
+    WIKI_DOMAIN=wiki.apiopenstudio.local
     
     MYSQL_HOST=mariadb
-    MYSQL_DATABASE=gaterdata
-    MYSQL_USER=gaterdata
-    MYSQL_PASSWORD=gaterdata
-    MYSQL_ROOT_PASSWORD=gaterdata
+    MYSQL_DATABASE=apiopenstudio
+    MYSQL_USER=apiopenstudio
+    MYSQL_PASSWORD=apiopenstudio
+    MYSQL_ROOT_PASSWORD=apiopenstudio
     
     EMAIL_USERNAME=foo@bar.com.au
     EMAIL_PASSWORD=secret
@@ -63,7 +63,7 @@ Replace server_name with whatever domain you want to host locally.
 
     server {
         listen 80;
-        server_name admin.gaterdata.local;
+        server_name admin.apiopenstudio.local;
         index index.php;
         error_log    /var/log/nginx/error.log debug;
         access_log    /var/log/nginx/access.log;
@@ -98,7 +98,7 @@ Replace server_name with whatever domain you want to host locally.
 
     server {
         listen 80;
-        server_name api.gaterdata.local;
+        server_name api.apiopenstudio.local;
         index index.php;
         error_log /var/log/nginx/error.log debug;
         access_log /var/log/nginx/access.log;
@@ -129,7 +129,7 @@ Replace server_name with whatever domain you want to host locally.
 
     server {
         listen 80;
-        server_name phpdoc.gaterdata.local;
+        server_name phpdoc.apiopenstudio.local;
         index index.html;
         error_log /var/log/nginx/error.log debug;
         access_log /var/log/nginx/access.log;
@@ -150,7 +150,7 @@ Replace server_name with whatever domain you want to host locally.
 
     server {
         listen 80;
-        server_name wiki.gaterdata.local;
+        server_name wiki.apiopenstudio.local;
         index index.html;
         error_log /var/log/nginx/error.log debug;
         access_log /var/log/nginx/access.log;
@@ -352,10 +352,10 @@ Replace server_name with whatever domain you want to host locally.
             #   - SES_PASSWORD=
             #   - SES_REGION=
                 # if provided will enable TLS support
-            #   - KEY_PATH=certs/gaterdata.local
-            #   - CERTIFICATE_PATH=certs/gateradta.local.crt
+            #   - KEY_PATH=certs/apiopenstudio.local
+            #   - CERTIFICATE_PATH=certs/apiopenstudio.local.crt
                 # the outgoing mail hostname
-            #   - MAILNAME=admin.gaterdata.local
+            #   - MAILNAME=admin.apiopenstudio.local
                 # set this to any value to disable ipv6
             #   - DISABLE_IPV6=
                 # Generic SMTP Relay
@@ -427,9 +427,9 @@ Hosts file
 
 Update ```/etc/hosts``` to contain:
 
-    127.0.0.1      admin.gaterdata.local
-    127.0.0.1      api.gaterdata.local
-    127.0.0.1      wiki.gaterdata.local
+    127.0.0.1      admin.apiopenstudio.local
+    127.0.0.1      api.apiopenstudio.local
+    127.0.0.1      wiki.apiopenstudio.local
 
 Spinning up docker
 ------------------

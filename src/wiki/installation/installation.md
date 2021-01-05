@@ -6,8 +6,8 @@ There are several ways to do this:
 
 Where <my_group> is the group your server uses.
 
-1. ```$ git clone git@gitlab.com:john89/gaterdata.git```
-2. ```$ cd gaterdata```
+1. ```$ git clone git@gitlab.com:john89/apiopenstudio.git```
+2. ```$ cd apiopenstudio```
 3. ```$ chmod -R 760 .```
 4. Create the settings file:
     1. ```$ cp config/settings.example.ini config/settings.ini```
@@ -24,7 +24,7 @@ If you are using docker, you can skip the following steps.
    3. php-dom
    4. php-zip
 8. Run composer install in the docroot:
-    1. ```$ cd /path/to/gaterdata```
+    1. ```$ cd /path/to/apiopenstudio```
     2. ```$ composer install```
 9. Install npm
 10. Run npm install in the docroot:
@@ -47,5 +47,5 @@ If you are using docker, you can skip the following steps.
 
 Remove the production non-critical files and directories:
 
-1. ```$ cd gaterdata```
+1. ```$ cd apiopenstudio```
 2. ```$ rm -R html/admin/install.php codeception.yml tests```

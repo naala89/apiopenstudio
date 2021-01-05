@@ -1,35 +1,35 @@
 # Example settings file.
 #
-# @package   Gaterdata
+# @package   ApiOpenStudio
 # @license   This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 #            If a copy of the MPL was not distributed with this file,
 #            You can obtain one at https://mozilla.org/MPL/2.0/.
 # @author    john89 (https://gitlab.com/john89)
-# @copyright 2020-2030 GaterData
-# @link      https://gaterdata.com
+# @copyright 2020-2030 ApiOpenStudio
+# @link      https://www.apiopenstudio.com
 
 debug:
   formatters:
-    gaterdata:
+    api_open_studio:
       format: "%datetime%-%channel%.%level_name% - %message%\n"
   handlers:
     console:
       class: Monolog\Handler\StreamHandler
       level: DEBUG
-      formatter: gaterdata
+      formatter: api_open_studio
       processors: [memory_processor]
       bubble: true
       stream: php://stdout
     api_file_handler:
       class: Monolog\Handler\StreamHandler
       level: NOTICE
-      formatter: gaterdata
+      formatter: api_open_studio
       bubble: true
       stream: /var/www/html/logs/api/error.log
     db_file_handler:
       class: Monolog\Handler\StreamHandler
       level: NOTICE
-      formatter: gaterdata
+      formatter: api_open_studio
       bubble: true
       stream: /var/www/html/logs/db/error.log
   processors:
@@ -48,11 +48,11 @@ debug:
 db:
   definition_path: "includes/db/dbDefinition.yaml"
   driver: mysqli
-  host: gaterdata-db
-  root_password: gaterdata
-  username: gaterdata
-  password: gaterdata
-  database: gaterdata
+  host: apiopenstudio-db
+  root_password: apiopenstudio
+  username: apiopenstudio
+  password: apiopenstudio
+  database: apiopenstudio
   options:
     debug: false
   charset: utf8
@@ -62,11 +62,11 @@ api:
   protocols:
     - https
   base_path: "/var/www/html/"
-  url: "api.gaterdata.local"
+  url: "api.apiopenstudio.local"
   cache: false
   default_format: json
   token_life: "+6 hour"
-  core_account: gaterdata
+  core_account: apiopenstudio
   core_application: core
   core_resource_lock: false
   dir_public: "public/"
@@ -75,7 +75,7 @@ api:
   dir_tmp: "tmp/"
 
 admin:
-  url: "admin.gaterdata.local"
+  url: "admin.apiopenstudio.local"
   pagination_step: 20
   admin_templates: "includes/admin/templates/"
   slim:
@@ -89,9 +89,9 @@ twig:
   template_path: "includes/Admin/templates/"
 
 email:
-  host: gaterdata-email
-  username: "admin@gaterdata.com"
+  host: apiopenstudio-email
+  username: "admin@apiopenstudio.com"
   password: "secret"
   from:
-    email: "admin@admin.gaterdata.local"
-    name: "GaterData admin"
+    email: "admin@apiopenstudio.com"
+    name: "ApiOpenStudio admin"

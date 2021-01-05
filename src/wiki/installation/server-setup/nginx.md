@@ -6,7 +6,7 @@ Admin
 
     server {
         listen 80;
-        server_name admin.gaterdata.local;
+        server_name admin.apiopenstudio.local;
         index index.php;
         error_log    /var/log/nginx/error.log debug;
         access_log    /var/log/nginx/access.log;
@@ -40,7 +40,7 @@ API
 
     server {
         listen 80;
-        server_name api.gaterdata.local;
+        server_name api.apiopenstudio.local;
         index index.php;
         error_log /var/log/nginx/error.log debug;
         access_log /var/log/nginx/access.log;
@@ -70,7 +70,7 @@ Wiki (optional)
 
     server {
         listen 80;
-        server_name wiki.gaterdata.local;
+        server_name wiki.apiopenstudio.local;
         index index.html;
         error_log /var/log/nginx/error.log debug;
         access_log /var/log/nginx/access.log;

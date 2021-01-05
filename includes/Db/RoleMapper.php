@@ -2,17 +2,17 @@
 /**
  * Class RoleMapper.
  *
- * @package    Gaterdata
+ * @package    ApiOpenStudio
  * @subpackage Db
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 GaterData
+ * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link       https://gaterdata.com
+ * @link       https://www.apiopenstudio.com
  */
 
-namespace Gaterdata\Db;
+namespace ApiOpenStudio\Db;
 
 /**
  * Class RoleMapper.
@@ -24,11 +24,11 @@ class RoleMapper extends Mapper
     /**
      * Save a Role object into the DB.
      *
-     * @param \Gaterdata\Db\Role $role Role object.
+     * @param \ApiOpenStudio\Db\Role $role Role object.
      *
      * @return boolean Success.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function save(Role $role)
     {
@@ -50,11 +50,11 @@ class RoleMapper extends Mapper
     /**
      * Delete a Role.
      *
-     * @param \Gaterdata\Db\Role $role Role object.
+     * @param \ApiOpenStudio\Db\Role $role Role object.
      *
      * @return boolean Success.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function delete(Role $role)
     {
@@ -70,7 +70,7 @@ class RoleMapper extends Mapper
      *
      * @return array Array of role objects.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findAll(array $params = [])
     {
@@ -83,9 +83,9 @@ class RoleMapper extends Mapper
      *
      * @param integer $rid Role ID.
      *
-     * @return \Gaterdata\Db\Role Role object.
+     * @return \ApiOpenStudio\Db\Role Role object.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByRid(int $rid)
     {
@@ -99,9 +99,9 @@ class RoleMapper extends Mapper
      *
      * @param string $name Role name.
      *
-     * @return \Gaterdata\Db\Role Role object.
+     * @return \ApiOpenStudio\Db\Role Role object.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByName(string $name)
     {
@@ -117,7 +117,7 @@ class RoleMapper extends Mapper
      *
      * @return array Array of role objects.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByUid(int $uid)
     {
@@ -131,7 +131,7 @@ class RoleMapper extends Mapper
      *
      * @param array $row DB row.
      *
-     * @return \Gaterdata\Db\Role
+     * @return \ApiOpenStudio\Db\Role
      *   Role object.
      */
     protected function mapArray(array $row)

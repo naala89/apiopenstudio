@@ -1,13 +1,13 @@
 /**
  * JS for the admin user role page.
  *
- * @package   Gaterdata
+ * @package   Apiopenstudio
  * @license   This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *            If a copy of the MPL was not distributed with this file,
  *            You can obtain one at https://mozilla.org/MPL/2.0/.
  * @author    john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @link      https://gaterdata.com
+ * @copyright 2020-2030 ApiOpenStudio
+ * @link      https://www.apiopenstudio.com
  */
 
 $(document).ready(function () {
@@ -42,7 +42,7 @@ $(document).ready(function () {
      * User role create - account select.
      */
     $("#modal-user-role-create select[name='accid']").on('change', function () {
-        GATERDATA.setApplicationOptions($(this).val(), '#modal-user-role-create select[name="appid"]');
+        APIOPENSTUDIO.setApplicationOptions($(this).val(), '#modal-user-role-create select[name="appid"]');
     });
 
     /**

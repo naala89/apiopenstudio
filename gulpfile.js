@@ -1,13 +1,13 @@
 /**
  * Class CtrlApplication.
  *
- * @package   Gaterdata
+ * @package   Apiopenstudio
  * @license   This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *            If a copy of the MPL was not distributed with this file,
  *            You can obtain one at https://mozilla.org/MPL/2.0/.
  * @author    john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @link      https://gaterdata.com
+ * @copyright 2020-2030 ApiOpenStudio
+ * @link      https://www.apiopenstudio.com
  */
 
 /**
@@ -68,10 +68,10 @@ gulp.task('js', ['clean.js'], function () {
     gulp.src([vendor_src + '**/*.min.js'])
         .pipe(rename({dirname: ''}))
         .pipe(gulp.dest(js_dest));
-    // Minify Gaterdata js and copy.
+    // Minify ApiOpenStudio js and copy.
     gulp.src([js_src])
         .pipe(errorHandler())
-        .pipe(concat('gaterdata.min.js'))
+        .pipe(concat('apiopenstudio.min.js'))
         .pipe(striplog())
         .pipe(uglify())
         .pipe(gulp.dest(js_dest))
@@ -83,11 +83,11 @@ gulp.task('css', ['clean.css'], function () {
     gulp.src([vendor_src + '**/*.min.css'])
         .pipe(rename({dirname: ''}))
         .pipe(gulp.dest(css_dest));
-    // Minify Gaterdata sass, minify and copy.
+    // Minify ApiOpenStudio sass, minify and copy.
     gulp.src([scss_src])
         .pipe(errorHandler())
         .pipe(sass({style: 'compressed', errLogToConsole: true}))
-        .pipe(concat('gaterdata.min.css'))
+        .pipe(concat('apiopenstudio.min.css'))
         .pipe(cleancss())
         .pipe(gulp.dest(css_dest))
 });

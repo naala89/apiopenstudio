@@ -2,17 +2,17 @@
 /**
  * Class ResourceValidator.
  *
- * @package    Gaterdata
+ * @package    ApiOpenStudio
  * @subpackage Core
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 GaterData
+ * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link       https://gaterdata.com
+ * @link       https://www.apiopenstudio.com
  */
 
-namespace Gaterdata\Core;
+namespace ApiOpenStudio\Core;
 
 use Monolog\Logger;
 use \ADODB_mysqli;
@@ -47,8 +47,6 @@ class ResourceValidator
 
     /**
      * Constructor. Store processor metadata and request data in object.
-     *
-     * If this method is overridden by any derived classes, don't forget to call parent::__construct()
      *
      * @param ADODB_mysqli $db Database.
      * @param Logger $logger Logger.
@@ -178,7 +176,7 @@ class ResourceValidator
                     $parents[] = $parent->getName();
                     $class = $parent;
                 }
-                if (in_array('Gaterdata\Output\Output', $parents)) {
+                if (in_array('ApiOpenStudio\Output\Output', $parents)) {
                     $class = new $classStr([], 0, $this->logger, []);
                 } else {
                     $class = new $classStr($meta, new Request(), $this->db, $this->logger);

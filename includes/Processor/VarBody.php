@@ -2,21 +2,21 @@
 /**
  * Class VarBody.
  *
- * @package    Gaterdata
+ * @package    ApiOpenStudio
  * @subpackage Processor
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 GaterData
+ * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link       https://gaterdata.com
+ * @link       https://www.apiopenstudio.com
  */
 
-namespace Gaterdata\Processor;
+namespace ApiOpenStudio\Processor;
 
-use Gaterdata\Core;
-use Gaterdata\Core\ApiException;
-use Gaterdata\Core\Debug;
+use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\Debug;
 
 /**
  * Class VarBody
@@ -38,7 +38,7 @@ class VarBody extends VarLooselyTyped
         'input' => [
             'type' => [
                 // phpcs:ignore
-                'description' => 'The expected data type in the body. If type is not defined, then GaterData will attempt automatically set the data type.',
+                'description' => 'The expected data type in the body. If type is not defined, then ApiOpenStudio will attempt automatically set the data type.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],

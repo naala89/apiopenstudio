@@ -1,7 +1,7 @@
 <?php
 
-use Gaterdata\Core\Request;
-use Gaterdata\Processor\VarBool;
+use ApiOpenStudio\Core\Request;
+use ApiOpenStudio\Processor\VarBool;
 
 class ValTest extends \Codeception\Test\Unit
 {
@@ -34,7 +34,7 @@ class ValTest extends \Codeception\Test\Unit
         $varBool = new VarBool($meta, $this->request, '');
         $val = $varBool->val('value');
         $this->assertTrue(is_object($val), 'Return value is not class.');
-        $this->assertTrue(get_class($val) == 'Gaterdata\Core\DataContainer', 'Return object is not DataContainer');
+        $this->assertTrue(get_class($val) == 'ApiOpenStudio\Core\DataContainer', 'Return object is not DataContainer');
         $this->assertTrue($val->getData());
         $val = $varBool->val('value', true);
         $this->assertFalse(is_object($val), 'Return value is a class.');

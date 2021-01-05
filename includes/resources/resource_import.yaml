@@ -1,12 +1,12 @@
 # Resource import resource.
 #
-# @package   Gaterdata
+# @package   Apiopenstudio
 # @license   This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 #            If a copy of the MPL was not distributed with this file,
 #            You can obtain one at https://mozilla.org/MPL/2.0/.
 # @author    john89 (https://gitlab.com/john89)
-# @copyright 2020-2030 GaterData
-# @link      https://gaterdata.com
+# @copyright 2020-2030 ApiOpenStudio
+# @link      https://www.apiopenstudio.com
 
 name: Resource import
 
@@ -28,7 +28,7 @@ security:
     id: resource_import_security_token
   role: Developer
   # Validate account and application is turned off.
-  # Otherwise all developers need to be assigned developer role in gaterdata/core.
+  # Otherwise all developers need to be assigned developer role in apiopenstudio/core.
   # The processor ensures correct access rights.
   validate_account: false
   validate_application: false

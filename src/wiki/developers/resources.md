@@ -49,7 +49,7 @@ Mandatory. This is the body of the resource, where you define all the data logic
 output
 ------
 
-Optional. If no output section is defined then GaterData will look for the Accept header to find the output type.
+Optional. If no output section is defined then ApiOpenStudio will look for the Accept header to find the output type.
 
 You can have multiple outputs defined, to allow you to return the process result in the response in an opinionated format and also to upload to remote locations or send in an email/s.
 
@@ -72,7 +72,7 @@ Upload the result in XML format to a remote server. The response will contain ``
     output:
         function: file
         id: output_file_remote_destination
-        filename: gaterdata.xml
+        filename: apiopenstudio.xml
         destination: 'http://this.server.com/drop/box
         method: post
         options:
@@ -87,7 +87,7 @@ Return the response in JSON format and upload in HTML format to a remote server
         -
             function: xml
             id: output_xml_remote_destination
-            filename: gaterdata.xml
+            filename: apiopenstudio.xml
             destination: 'http://this.server.com/drop/box
             method: post
             options:

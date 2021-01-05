@@ -1,6 +1,6 @@
 <?php
 
-use Gaterdata\Core\DataContainer;
+use ApiOpenStudio\Core\DataContainer;
 
 class DataContainerTest extends \Codeception\Test\Unit
 {

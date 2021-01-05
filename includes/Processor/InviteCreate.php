@@ -2,20 +2,20 @@
 /**
  * Class InviteCreate.
  *
- * @package    Gaterdata
+ * @package    ApiOpenStudio
  * @subpackage Processor
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 GaterData
+ * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link       https://gaterdata.com
+ * @link       https://www.apiopenstudio.com
  */
 
-namespace Gaterdata\Processor;
+namespace ApiOpenStudio\Processor;
 
-use Gaterdata\Core;
-use Gaterdata\Db;
+use ApiOpenStudio\Core;
+use ApiOpenStudio\Db;
 use Swift_SmtpTransport;
 use Swift_Mailer;
 use Swift_Message;
@@ -78,7 +78,7 @@ class InviteCreate extends Core\ProcessorEntity
     protected $details = [
         'name' => 'Create a user invite',
         'machineName' => 'invite_create',
-        'description' => 'Invite a user to GaterData.',
+        'description' => 'Invite a user to ApiOpenStudio.',
         'menu' => 'Admin',
         'input' => [
             'email' => [
@@ -137,7 +137,7 @@ class InviteCreate extends Core\ProcessorEntity
             }
         }
 
-        $account = $this->accountMapper->findByName('gaterdata');
+        $account = $this->accountMapper->findByName('apiopenstudio');
         $application = $this->applicationMapper->findByAccidAppname($account->getAccid(), 'core');
         $var = $this->varStoreMapper->findByAppIdKey($application->getAppid(), 'user_invite_subject');
         $subject = $var->getVal();

@@ -1,7 +1,7 @@
 Error responses
 ---------------
 
-All errors should be trapped by an exception and return a standard error object, which is translated into the correct output format by Gaterdata.
+All errors should be trapped by an exception and return a standard error object, which is translated into the correct output format by ApiOpenStudio.
 
 example (json):
 

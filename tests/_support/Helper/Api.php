@@ -8,7 +8,7 @@ namespace Helper;
 class Api extends \Codeception\Module
 {
     private $token = '';
-    private $accountName = 'gaterdata';
+    private $accountName = 'apiopenstudio';
     private $accountId = 1;
     private $applicationName = 'testing';
     private $applicationId = 2;
@@ -53,7 +53,7 @@ class Api extends \Codeception\Module
      */
     public function getCoreBaseUri()
     {
-        return '/gaterdata/core';
+        return '/apiopenstudio/core';
     }
 
     /**

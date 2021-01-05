@@ -2,19 +2,19 @@
 /**
  * Class Facebook.
  *
- * @package    Gaterdata
+ * @package    Apiopenstudio
  * @subpackage Endpoint
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 GaterData
+ * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link       https://gaterdata.com
+ * @link       https://www.apiopenstudio.com
  */
 
-namespace Gaterdata\Endpoint;
+namespace ApiOpenStudio\Endpoint;
 
-use Gaterdata\Core;
+use ApiOpenStudio\Core;
 use Facebook\Exceptions;
 
 /**
@@ -132,7 +132,7 @@ class Facebook extends Core\ProcessorEntity
      * @param $fb
      * @param bool|TRUE $longLived
      * @return mixed
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Apiopenstudio\Core\ApiException
      */
     private function _getToken($fb, $longLived = true)
     {
@@ -180,7 +180,7 @@ class Facebook extends Core\ProcessorEntity
      * @param $node
      * @param $accessToken
      * @return mixed
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Apiopenstudio\Core\ApiException
      */
     private function _get($fb, $node, $accessToken)
     {
@@ -203,7 +203,7 @@ class Facebook extends Core\ProcessorEntity
      * @param $node
      * @param $accessToken
      * @return mixed
-     * @throws \Gaterdata\Core\ApiException
+     * @throws \Apiopenstudio\Core\ApiException
      */
     private function _post($fb, $node, $accessToken)
     {

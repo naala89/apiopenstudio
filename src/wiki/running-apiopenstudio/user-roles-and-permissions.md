@@ -7,7 +7,7 @@ To view, create or edit new roles, visit admin -> roles.
 
 To assign a role to a user, visit admin -> user-roles.
 
-The following are default roles that Core GaterData uses, and should not be be altered.
+The following are default roles that Core ApiOpenStudio uses, and should not be be altered.
 
 Administrator
 -------------

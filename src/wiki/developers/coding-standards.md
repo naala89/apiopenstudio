@@ -9,11 +9,11 @@ Any Merge request or commit that fails the phpcs test will not be accepted.
 So it is worth running phpcs locally before any commit.
 
 `php_codesniffer` will be installed by composer,
-and a custom phpcs ruleset is pre-defined in `./gaterdata_phpcs_rulesset.xml`.
+and a custom phpcs ruleset is pre-defined in `./apiopenstudio_phpcs_rulesset.xml`.
 
 After `composer install` has run, the following command will test your code locally:
 
-    $ ./vendor/bin/phpcs --standard=gaterdata_phpcs_rulesset.xml includes/ src/scss/ src/js/
+    $ ./vendor/bin/phpcs --standard=apiopenstudio_phpcs_rulesset.xml includes/ src/scss/ src/js/
 
 Line length
 -----------
@@ -99,7 +99,7 @@ Should be in the following format:
      *
      * @return type Comment.
      * 
-     * @throws \Gaterdata\Core\ApiException Exception comment.
+     * @throws \Apiopenstudio\Core\ApiException Exception comment.
      */
 
 ### Function declarations

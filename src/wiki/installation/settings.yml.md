@@ -83,11 +83,11 @@ Copy ```settings.example.yml``` to ```example.yml```, and then edit the settings
 
     - core_account
 
-        This is the account created on installation, for GaterData's core resources. This should not be altered.
+        This is the account created on installation, for ApiOpenStudio's core resources. This should not be altered.
 
     - core_application
 
-        This is the application created on installation, for GaterData's core resources. This should not be altered.
+        This is the application created on installation, for ApiOpenStudio's core resources. This should not be altered.
 
     - core_resource_lock
 

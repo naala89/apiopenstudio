@@ -2,17 +2,17 @@
 /**
  * Class VarStoreMapper.
  *
- * @package    Gaterdata
+ * @package    ApiOpenStudio
  * @subpackage Db
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 GaterData
+ * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link       https://gaterdata.com
+ * @link       https://www.apiopenstudio.com
  */
 
-namespace Gaterdata\Db;
+namespace ApiOpenStudio\Db;
 
 /**
  * Class VarStoreMapper.
@@ -24,11 +24,11 @@ class VarStoreMapper extends Mapper
     /**
      * Save the var.
      *
-     * @param \Gaterdata\Db\VarStore $varStore VarStore object.
+     * @param \ApiOpenStudio\Db\VarStore $varStore VarStore object.
      *
      * @return boolean Success.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function save(VarStore $varStore)
     {
@@ -55,11 +55,11 @@ class VarStoreMapper extends Mapper
     /**
      * Delete the vars.
      *
-     * @param \Gaterdata\Db\VarStore $varStore VarStore object.
+     * @param \ApiOpenStudio\Db\VarStore $varStore VarStore object.
      *
      * @return boolean Success.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function delete(VarStore $varStore)
     {
@@ -78,7 +78,7 @@ class VarStoreMapper extends Mapper
      *
      * @return array Array of varStore objects.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByVid(int $vid)
     {
@@ -94,7 +94,7 @@ class VarStoreMapper extends Mapper
      *
      * @return array Array of varStore objects.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findAll(array $params = [])
     {
@@ -111,7 +111,7 @@ class VarStoreMapper extends Mapper
      *
      * @return array Array of varStore objects.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByUid(int $uid, array $params = [])
     {
@@ -138,7 +138,7 @@ class VarStoreMapper extends Mapper
      *
      * @return array Array of varStore objects.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByUidRolesVid(int $uid, array $roles, int $vid)
     {
@@ -167,7 +167,7 @@ class VarStoreMapper extends Mapper
      *
      * @return array
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByUidRolesAll(int $uid, array $roles, array $params)
     {
@@ -194,7 +194,7 @@ class VarStoreMapper extends Mapper
      *
      * @return VarStore VarStore object.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByAppIdKey(int $appId, string $key)
     {
@@ -210,7 +210,7 @@ class VarStoreMapper extends Mapper
      *
      * @return array Array of VarStore objects.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByAppId(int $appId)
     {

@@ -2,20 +2,20 @@
 /**
  * Class Email.
  *
- * @package    Gaterdata
+ * @package    ApiOpenStudio
  * @subpackage Output
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 GaterData
+ * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link       https://gaterdata.com
+ * @link       https://www.apiopenstudio.com
  */
 
-namespace Gaterdata\Output;
+namespace ApiOpenStudio\Output;
 
-use Gaterdata\Config;
-use Gaterdata\Core;
+use ApiOpenStudio\Config;
+use ApiOpenStudio\Core;
 use Swift_Mailer;
 use Swift_Message;
 use Swift_SmtpTransport;
@@ -126,7 +126,7 @@ class Email extends Output
         $message = $this->val('message', true);
         $format = $this->val('format', true);
 
-        $class = '\\Gaterdata\\Output\\' . $format;
+        $class = '\\ApiOpenStudio\\Output\\' . $format;
         $obj = new $class($message, 200, '');
         $message = $obj->getData();
 

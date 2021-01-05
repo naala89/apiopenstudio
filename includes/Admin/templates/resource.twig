@@ -9,9 +9,9 @@
 {% block content %}
   <script src="/js/js-yaml.min.js"></script>
   <script>
-    GATERDATA.accAppMap = [];
+    APIOPENSTUDIO.accAppMap = [];
     {% for appid, application in applications %}
-      GATERDATA.accAppMap[{{ appid }}] = {'accid': {{ application.accid }}, 'name': "{{ application.name }}"};
+      APIOPENSTUDIO.accAppMap[{{ appid }}] = {'accid': {{ application.accid }}, 'name': "{{ application.name }}"};
     {% endfor %}
   </script>
   <div class="row">
@@ -24,7 +24,7 @@
 
     <div class="row">
       <div class="col s4">
-        <label>Import from a GaterData resource file.</label>
+        <label>Import from a ApiOpenStudio resource file.</label>
         <div class="file-field input-field">
           <div class="btn">
             <span>Browse</span>
@@ -62,7 +62,7 @@
             <select name="accid" id="accid">
               <option value="" disabled selected>Please select</option>
               {% for account in accounts %}
-                <option value="{{ account.accid }}" {% if GATERDATA.accAppMap[appid] is not empty %}selected{% endif %}>{{ account.name }}</option>
+                <option value="{{ account.accid }}" {% if APIOPENSTUDIO.accAppMap[appid] is not empty %}selected{% endif %}>{{ account.name }}</option>
               {% endfor %}
             </select>
             <label>Account</label>

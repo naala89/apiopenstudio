@@ -2,14 +2,14 @@
 
 For this tutorial, you will need:
 
-* An installed GaterData project.
+* An installed ApiOpenStudio project.
     * See <a href="/installation/installation.html" target="_blank">Installing the codebase</a>
     and <a href="/installation/docker/developer-environment.html" target="_blank">Setup docker</a>
 * Postman (<a href="https://www.postman.com/downloads/" target="_blank">Download</a>) or similar REST client.
 
 # Create a new account and application
 
-Click on "Accounts" in the menu or navigate to [admin.gaterdata.local/accounts](https://admin.gaterdata.locall/accounts).
+Click on "Accounts" in the menu or navigate to [admin.apiopenstudio.local/accounts](https://admin.apiopenstudio.locall/accounts).
 
 Click on the Plus icon:
 
@@ -23,7 +23,7 @@ You have now created a new top level account:
 
 ![Tutorial account created](../images/quick-start/new_account.png)
 
-Click on "Applications" in the menu or navigate to [admin.gaterdata.local/applications](https://admin.gaterdata.locall/applications).
+Click on "Applications" in the menu or navigate to [admin.apiopenstudio.local/applications](https://admin.apiopenstudio.locall/applications).
 
 Click on the Plus icon to create a new application. Assign the application to the "tutorial" account and call it "quick_start".
 
@@ -37,7 +37,7 @@ You have now created the "quick-start" application that our resource will belong
 
 ## Create a developer role for the new application
 
-Click on "User Roles" in the menu or navigate to [admin.gaterdata.local/user/roles](https://admin.gaterdata.locall/user/roles).
+Click on "User Roles" in the menu or navigate to [admin.apiopenstudio.local/user/roles](https://admin.apiopenstudio.locall/user/roles).
 
 Click on the plus icon and assign yourself the developer role for Account: tutorial and application: quick_start.
 
@@ -56,9 +56,9 @@ The authentication method will vbe bearer token.
 Fill out the following fields in the interface:
 
 * Name: ```Hello world```
-    * This is the title of the resource that appears in [admin.gaterdata.local/resources](https://admin.gaterdata.locall/resources).
+    * This is the title of the resource that appears in [admin.apiopenstudio.local/resources](https://admin.apiopenstudio.locall/resources).
 * Description: ```A quick-start hello world resource```
-    * This is the description of the resource that appears in [admin.gaterdata.local/resources](https://admin.gaterdata.locall/resources).
+    * This is the description of the resource that appears in [admin.apiopenstudio.local/resources](https://admin.apiopenstudio.locall/resources).
 * Account: ```tutorial```
     * This assigns the resource to the account tutorial.
 * Application: ```quick_start```
@@ -72,7 +72,7 @@ Fill out the following fields in the interface:
 
 ![Resource definition](../images/quick-start/resource_definition_1.png)
 
-So far, we have defined a resource that can be called from (GET) [api.gaterdata.local/tutorial/quick_start/hello/world](https://api.gaterdata.local/tutorial/quick_start/hello/world).
+So far, we have defined a resource that can be called from (GET) [api.apiopenstudio.local/tutorial/quick_start/hello/world](https://api.apiopenstudio.local/tutorial/quick_start/hello/world).
 
 However, it does nothing and has no security yet.
 
@@ -125,7 +125,7 @@ Click on the ```Upload``` button.
 
 The resource will be parsed and checked for any error, and saved to the database.
 
-If you navigate back to [admin.gaterdata.local/resources](https://admin.gaterdata.locall/resources),
+If you navigate back to [admin.apiopenstudio.local/resources](https://admin.apiopenstudio.locall/resources),
 you should see your new resource.
 
 ![Resource created](../images/quick-start/resource_created.png)
@@ -160,7 +160,7 @@ Open up your REST client
 ## Get a new token for your user
 
 * Method: POST
-* URL: https://api.gaterdata.local/gaterdata/core/login
+* URL: https://api.apiopenstudio.local/apiopenstudio/core/login
 * Header:
     * Accept: application/json
 * Body:
@@ -185,7 +185,7 @@ Copy the value for the token.
 ## Run Hello world!
 
 * Method: GET
-* URL: https://api.gaterdata.local/tutorial/quick_start/hello/world
+* URL: https://api.apiopenstudio.local/tutorial/quick_start/hello/world
 * Header:
     * Accept: application/json
     * Authorization: Bearer <token>
@@ -200,7 +200,7 @@ If we change the Accept value in the header to ```application/xml```,
 we will get something similar to:
 
     <?xml version="1.0"?>
-    <gaterdataWrapper>Hello world!</gaterdataWrapper>
+    <apiopenstudioWrapper>Hello world!</apiopenstudioWrapper>
 
 # Exercises
 

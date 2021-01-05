@@ -2,17 +2,17 @@
 /**
  * Class AccountMapper.
  *
- * @package    Gaterdata
+ * @package    ApiOpenStudio
  * @subpackage Db
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 GaterData
+ * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link       https://gaterdata.com
+ * @link       https://www.apiopenstudio.com
  */
 
-namespace Gaterdata\Db;
+namespace ApiOpenStudio\Db;
 
 /**
  * Class AccountMapper.
@@ -24,11 +24,11 @@ class AccountMapper extends Mapper
     /**
      * Save an Account.
      *
-     * @param \Gaterdata\Db\Account $account Account object.
+     * @param \ApiOpenStudio\Db\Account $account Account object.
      *
      * @return boolean Success.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function save(Account $account)
     {
@@ -48,11 +48,11 @@ class AccountMapper extends Mapper
     /**
      * Delete an account.
      *
-     * @param \Gaterdata\Db\Account $account Account object.
+     * @param \ApiOpenStudio\Db\Account $account Account object.
      *
      * @return boolean Success.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function delete(Account $account)
     {
@@ -68,7 +68,7 @@ class AccountMapper extends Mapper
      *
      * @return array array Account objects.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findAll(array $params = [])
     {
@@ -81,9 +81,9 @@ class AccountMapper extends Mapper
      *
      * @param integer $accid Account Id.
      *
-     * @return \Gaterdata\Db\Account Account object.
+     * @return \ApiOpenStudio\Db\Account Account object.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByAccid(int $accid)
     {
@@ -99,7 +99,7 @@ class AccountMapper extends Mapper
      *
      * @return array Array of Account objects.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByAccids(array $accids)
     {
@@ -119,9 +119,9 @@ class AccountMapper extends Mapper
      *
      * @param string $name Account name.
      *
-     * @return \Gaterdata\Db\Account Account object.
+     * @return \ApiOpenStudio\Db\Account Account object.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByName(string $name)
     {
@@ -135,9 +135,9 @@ class AccountMapper extends Mapper
      *
      * @param array $names Account names.
      *
-     * @return \Gaterdata\Db\Account Account object.
+     * @return \ApiOpenStudio\Db\Account Account object.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByNames(array $names = [])
     {
@@ -158,7 +158,7 @@ class AccountMapper extends Mapper
      *
      * @return array Array of Account objects.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findAllForUser(int $uid, array $params = [])
     {
@@ -193,7 +193,7 @@ class AccountMapper extends Mapper
      *
      * @param array $row DB row object.
      *
-     * @return \Gaterdata\Db\Account Account object.
+     * @return \ApiOpenStudio\Db\Account Account object.
      */
     protected function mapArray(array $row)
     {

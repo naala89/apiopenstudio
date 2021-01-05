@@ -13,7 +13,7 @@ $ npm install gulp
 Install the node dependencies.
 
 ```
-$ cd gaterdata
+$ cd apiopenstudio
 $ npm install
 ```
     

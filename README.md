@@ -1,10 +1,10 @@
-# GaterData
+# ApiOpenStudio
 
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
 
-GaterData is an open source product, and contributions are welcome.
+ApiOpenStudio is an open source product, and contributions are welcome.
 
-At heart, GaterData is a complete en d to end REST API solution.
+At heart, ApiOpenStudio is a complete en d to end REST API solution.
 
 It enables you to generate API's without the need for coding.
 API resources are stored in YAML or JSON format,
@@ -13,19 +13,19 @@ which include security business logic and multiple outputs of required.
 All administrative tools are available via secure API calls.
 However, there is also an admin site that you can use to manage your resources.
 
-GaterData has a heirarchical approach to API resources.
+ApiOpenStudio has a heirarchical approach to API resources.
 
 * `account` - this defines a top-level entity, like a client.
 * `application` - these belong to an account,
    and are used to group API resources, like a department, project or product.
 * `resource` - These are individual API definitions that belong to an application.
 
-Each registered user has a role that assigns them specific access rights to the GaterData.
+Each registered user has a role that assigns them specific access rights to the ApiOpenStudio.
 A user that does not have access rights to an account, application or resource cannot use them.
 
 You can create custom roles if you want to further split consumers into groups.
 
-For more information, visit the wiki at [wiki.gaterdata.com](https://wiki.gaterdata.com) or [phpdoc.gaterdata.com](https://phpdoc.gaterdata.com)
+For more information, visit the wiki at [wiki.apiopenstudio.com](https://wiki.apiopenstudio.com) or [phpdoc.apiopenstudio.com](https://phpdoc.apiopenstudio.com)
 
 # Overview
 
@@ -43,14 +43,14 @@ Easy - consider that all programming can be reduced down to semantic blocks, lik
 * do another thing
 * finish and return result
 
-GaterData has Processors that you use to call each semantic block
+ApiOpenStudio has Processors that you use to call each semantic block
 and the result of each processor flows into another, like a node tree.
 
 This means that you can define all programmatic logic quickly and easily in a YAML or JSON file.
 
 ## Granular access
 
-Access to the GaterData is controlled by user roles.
+Access to ApiOpenStudio is controlled by user roles.
 Although you can also create API resources that do not require user validation,
 If you want to create a resource that is open to the general public.
 
@@ -80,8 +80,8 @@ More security strategies are coming.
 
 ## Input
 
-GaterData can fetch data from other endpoints,
-like API's on a remote, another GaterData resource or a file on a remote server.
+ApiOpenStudio can fetch data from other endpoints,
+like API's on a remote, another ApiOpenStudio resource or a file on a remote server.
 These remote endpoints do not need to be completely open:
 a resource can be created to use whatever authentication you require on that endpoint.
 
@@ -106,18 +106,18 @@ or want to trigger a process on a remote server.
 
 ## Architecture
 
-GaterData is created to cater for distributed or single server (monollithic) architecture.
+ApiOpenStudio is created to cater for distributed or single server (monollithic) architecture.
 Docker examples have been created and also example configurations for NGINX or Apache servers.
 
 # Quick start
 
 ## Installation
 
-The quickest way to install GaterData is to create a project with composer:
+The quickest way to install ApiOpenStudio is to create a project with composer:
 
     TODO
 
-Serve the GaterData API and admin through Docker. See the [wiki](https://wiki.gaterdata.com) 
+Serve the ApiOpenStudio API and admin through Docker. See the [wiki](https://wiki.apiopenstudio.com) 
 
 # Hello world
 
@@ -129,7 +129,7 @@ You will need:
 
 # Create a new account and application
 
-Click on "Accounts" in the menu or navigate to [admin.gaterdata.local/accounts](https://admin.gaterdata.locall/accounts).
+Click on "Accounts" in the menu or navigate to [admin.apiopenstudio.local/accounts](https://admin.apiopenstudio.locall/accounts).
 
 Click on the Plus icon:
 
@@ -143,7 +143,7 @@ You have now created a new top level account:
 
 ![Tutorial account created](src/wiki/images/quick-start/new_account.png)
 
-Click on "Applications" in the menu or navigate to [admin.gaterdata.local/applications](https://admin.gaterdata.locall/applications).
+Click on "Applications" in the menu or navigate to [admin.apiopenstudio.local/applications](https://admin.apiopenstudio.locall/applications).
 
 Click on the Plus icon to create a new application. Assign the application to the "tutorial" account and call it "quick_start".
 
@@ -157,7 +157,7 @@ You have now created the "quick-start" application that our resource will belong
 
 ## Create a developer role for the new application
 
-Click on "User Roles" in the menu or navigate to [admin.gaterdata.local/user/roles](https://admin.gaterdata.locall/user/roles).
+Click on "User Roles" in the menu or navigate to [admin.apiopenstudio.local/user/roles](https://admin.apiopenstudio.locall/user/roles).
 
 Click on the plus icon and assign yourself the developer role for Account: tutorial and application: quick_start.
 
@@ -176,9 +176,9 @@ The authentication method will vbe bearer token.
 Fill out the following fields in the interface:
 
 * Name: ```Hello world```
-    * This is the title of the resource that appears in [admin.gaterdata.local/resources](https://admin.gaterdata.locall/resources).
+    * This is the title of the resource that appears in [admin.apiopenstudio.local/resources](https://admin.apiopenstudio.local/resources).
 * Description: ```A quick-start hello world resource```
-    * This is the description of the resource that appears in [admin.gaterdata.local/resources](https://admin.gaterdata.locall/resources).
+    * This is the description of the resource that appears in [admin.apiopenstudio.local/resources](https://admin.apiopenstudio.local/resources).
 * Account: ```tutorial```
     * This assigns the resource to the account tutorial.
 * Application: ```quick_start```
@@ -192,7 +192,7 @@ Fill out the following fields in the interface:
 
 ![Resource definition](src/wiki/images/quick-start/resource_definition_1.png)
 
-So far, we have defined a resource that can be called from (GET) [api.gaterdata.local/tutorial/quick_start/hello/world](https://api.gaterdata.local/tutorial/quick_start/hello/world).
+So far, we have defined a resource that can be called from (GET) [api.apiopenstudio.local/tutorial/quick_start/hello/world](https://api.apiopenstudio.local/tutorial/quick_start/hello/world).
 
 However, it does nothing and has no security yet.
 
@@ -245,7 +245,7 @@ Click on the ```Upload``` button.
 
 The resource will be parsed and checked for any error, and saved to the database.
 
-If you navigate back to [admin.gaterdata.local/resources](https://admin.gaterdata.locall/resources),
+If you navigate back to [admin.apiopenstudio.local/resources](https://admin.apiopenstudio.local/resources),
 you should see your new resource.
 
 ![Resource created](src/wiki/images/quick-start/resource_created.png)
@@ -280,7 +280,7 @@ Open up your REST client
 ## Get a new token for your user
 
 * Method: POST
-* URL: https://api.gaterdata.local/gaterdata/core/login
+* URL: https://api.apiopenstudio.local/apiopenstudio/core/login
 * Header:
     * Accept: application/json
 * Body:
@@ -305,7 +305,7 @@ Copy the value for the token.
 ## Run Hello world!
 
 * Method: GET
-* URL: https://api.gaterdata.local/tutorial/quick_start/hello/world
+* URL: https://api.apiopenstudio.local/tutorial/quick_start/hello/world
 * Header:
     * Accept: application/json
     * Authorization: Bearer <token>
@@ -320,16 +320,16 @@ If we change the Accept value in the header to ```application/xml```,
 we will get something similar to:
 
     <?xml version="1.0"?>
-    <gaterdataWrapper>Hello world!</gaterdataWrapper>
+    <apiopenstudioWrapper>Hello world!</apiopenstudioWrapper>
 
 # Developers and contributors
 
-GaterData is hosted on both GitHub and Gitlab.
+ApiOpenStudio is hosted on both GitHub and Gitlab.
 
 If you want to create a standalone processor that users can include in their composer project,
 You can do that in any versioning system you like.
-If the processor is really popular, we may ask you for your permission to include this in GaterData core.
+If the processor is really popular, we may ask you for your permission to include this in ApiOpenStudio core.
 
-If you want to contribute to the GaterData code base, all project development occurs on Gitlab, so you will need to create a GitLab account.
+If you want to contribute to the ApiOpenStudio code base, all project development occurs on Gitlab, so you will need to create a GitLab account.
 Then create a fork of the project, and submit your changes in a PR.
-See [wiki.gaterdata.com](https://wiki.gaterdata.com) for more details.
+See [wiki.apiopenstudio.com](https://wiki.apiopenstudio.com) for more details.

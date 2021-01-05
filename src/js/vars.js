@@ -1,22 +1,22 @@
 /**
  * JS for the admin vars page.
  *
- * @package   Gaterdata
+ * @package   Apiopenstudio
  * @license   This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *            If a copy of the MPL was not distributed with this file,
  *            You can obtain one at https://mozilla.org/MPL/2.0/.
  * @author    john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @link      https://gaterdata.com
+ * @copyright 2020-2030 ApiOpenStudio
+ * @link      https://www.apiopenstudio.com
  */
 
 $(document).ready(function () {
     $('#modal-var-create select[name="create-var-accid"]').on('change', function () {
-        GATERDATA.setApplicationOptions($(this).val(), '#modal-var-create select[name="create-var-appid"]');
+        APIOPENSTUDIO.setApplicationOptions($(this).val(), '#modal-var-create select[name="create-var-appid"]');
     });
 
     $('#modal-var-create select[name="create-var-appid"]').on('change', function () {
-        GATERDATA.setAccount($(this).val(), '#modal-var-create select[name="create-var-accid"]');
+        APIOPENSTUDIO.setAccount($(this).val(), '#modal-var-create select[name="create-var-accid"]');
     });
 
     $('.modal-var-edit-trigger').on('click', function () {

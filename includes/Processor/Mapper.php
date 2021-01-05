@@ -2,19 +2,19 @@
 /**
  * Class Mapper.
  *
- * @package    Gaterdata
+ * @package    ApiOpenStudio
  * @subpackage Processor
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 GaterData
+ * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link       https://gaterdata.com
+ * @link       https://www.apiopenstudio.com
  */
 
-namespace Gaterdata\Processor;
+namespace ApiOpenStudio\Processor;
 
-use Gaterdata\Core;
+use ApiOpenStudio\Core;
 use JmesPath;
 
 /**
@@ -136,7 +136,7 @@ class Mapper extends Core\ProcessorEntity
      *
      * @return void
      *
-     * @throws \Gaterdata\Core\ApiException Error.
+     * @throws \ApiOpenStudio\Core\ApiException Error.
      *
      * @see https://github.com/jmespath/jmespath.php
      */
@@ -223,7 +223,7 @@ class Mapper extends Core\ProcessorEntity
      * @param array $mappings Array of DOMDocument mapping strings.
      * @param string $format Output format for the DataContainer result.
      *
-     * @return \Gaterdata\Core\DataContainer
+     * @return \ApiOpenStudio\Core\DataContainer
      *
      * @throws Core\ApiException Error.
      */

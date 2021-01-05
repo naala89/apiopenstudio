@@ -2,19 +2,19 @@
 /**
  * Class Functions.
  *
- * @package    Gaterdata
+ * @package    ApiOpenStudio
  * @subpackage Processor
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 GaterData
+ * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link       https://gaterdata.com
+ * @link       https://www.apiopenstudio.com
  */
 
-namespace Gaterdata\Processor;
+namespace ApiOpenStudio\Processor;
 
-use Gaterdata\Core;
+use ApiOpenStudio\Core;
 use RecursiveIteratorIterator;
 use ReflectionClass;
 use RegexIterator;
@@ -127,7 +127,7 @@ class Functions extends Core\ProcessorEntity
      */
     private function _getDetails(string $namespace, string $className)
     {
-        $reflector = new ReflectionClass("\\Gaterdata\\$namespace\\$className");
+        $reflector = new ReflectionClass("\\ApiOpenStudio\\$namespace\\$className");
         if (!$reflector->isAbstract()) {
             $properties = $reflector->getDefaultProperties();
             return $properties['details'];

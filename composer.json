@@ -1,13 +1,16 @@
 {
-  "name": "gaterdata/gaterdata",
+  "name": "apiopenstudio/apiopenstudio",
   "description": "Build APIs faster & at less cost",
   "license": "MPL 2.0",
   "version": "1.0.0-alpha1",
   "keywords": [
     "api",
-    "open source",
-    "multitool",
-    "business logic"
+    "open-source",
+    "multi-tool",
+    "business logic",
+    "studio",
+    "open",
+    "community"
   ],
   "readme": "./README.md",
   "authors": [
@@ -18,20 +21,13 @@
     }
   ],
   "support": {
-    "issue tracker": "https://gitlab.com/john89/gaterdata/-/issues"
-  },
-  "config": {
-    "platform": {
-      "ext-xsl": "2.9.4"
-    }
+    "issue tracker": "https://gitlab.com/john89/apiopenstudio/-/issues"
   },
   "require-dev": {
     "codeception/codeception": "^2.4",
     "components/jquery": "^3.3",
     "squizlabs/php_codesniffer": "*",
-    "bookdown/bookdown": "^1.1",
-    "vlucas/phpdotenv": "^3",
-    "theseer/phpdox": "^0.12.0"
+    "vlucas/phpdotenv": "^3"
   },
   "require": {
     "adodb/adodb-php": "^5.20",
@@ -51,7 +47,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Gaterdata\\": "includes/"
+      "ApiOpenStudio\\": "includes/"
     }
   }
 }

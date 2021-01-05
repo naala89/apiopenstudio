@@ -2,19 +2,19 @@
 /**
  * Class Xml.
  *
- * @package    Gaterdata
+ * @package    ApiOpenStudio
  * @subpackage Output
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 GaterData
+ * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link       https://gaterdata.com
+ * @link       https://www.apiopenstudio.com
  */
 
-namespace Gaterdata\Output;
+namespace ApiOpenStudio\Output;
 
-use Gaterdata\Core;
+use ApiOpenStudio\Core;
 
 /**
  * Class Xml
@@ -92,7 +92,7 @@ class Xml extends Output
      */
     protected function fromBoolean(bool &$data)
     {
-        return '<?xml version="1.0"?><gaterDataWrapper>' . $data ? 'true' : 'false' . '</gaterdataWrapper>';
+        return '<?xml version="1.0"?><apiOpenStudioWrapper>' . $data ? 'true' : 'false' . '</apiOpenStudioWrapper>';
     }
 
     /**
@@ -104,7 +104,7 @@ class Xml extends Output
      */
     protected function fromInteger(int &$data)
     {
-        return '<?xml version="1.0"?><gaterdataWrapper>' . $data . '</gaterdataWrapper>';
+        return '<?xml version="1.0"?><apiOpenStudioWrapper>' . $data . '</apiOpenStudioWrapper>';
     }
 
     /**
@@ -116,7 +116,7 @@ class Xml extends Output
      */
     protected function fromFloat(float &$data)
     {
-        return '<?xml version="1.0"?><gaterdataWrapper>' . $data . '</gaterdataWrapper>';
+        return '<?xml version="1.0"?><apiOpenStudioWrapper>' . $data . '</apiOpenStudioWrapper>';
     }
 
     /**
@@ -132,7 +132,7 @@ class Xml extends Output
         $doc = simplexml_load_string($data);
         if (!$doc) {
             libxml_clear_errors();
-            return '<?xml version="1.0"?><gaterdataWrapper>' . $data . '</gaterdataWrapper>';
+            return '<?xml version="1.0"?><apiOpenStudioWrapper>' . $data . '</apiOpenStudioWrapper>';
         } else {
             return $data;
         }
@@ -159,7 +159,7 @@ class Xml extends Output
      */
     protected function fromText(string &$data)
     {
-        return '<?xml version="1.0"?><gaterdataWrapper>' . $data . '</gaterdataWrapper>';
+        return '<?xml version="1.0"?><apiOpenStudioWrapper>' . $data . '</apiOpenStudioWrapper>';
     }
 
     /**
@@ -171,7 +171,7 @@ class Xml extends Output
      */
     protected function fromArray(array &$data)
     {
-        $xml_data = new \SimpleXMLElement('<?xml version="1.0"?><gaterdataWrapper></gaterdataWrapper>');
+        $xml_data = new \SimpleXMLElement('<?xml version="1.0"?><apiOpenStudioWrapper></apiOpenStudioWrapper>');
         $this->_array2xml($data, $xml_data);
         return $xml_data->asXML();
     }

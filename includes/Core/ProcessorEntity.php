@@ -2,22 +2,22 @@
 /**
  * Class ProcessorEntity.
  *
- * @package    Gaterdata
+ * @package    ApiOpenStudio
  * @subpackage Core
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 GaterData
+ * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link       https://gaterdata.com
+ * @link       https://www.apiopenstudio.com
  */
 
-namespace Gaterdata\Core;
+namespace ApiOpenStudio\Core;
 
-use Gaterdata\Config;
-use Gaterdata\Db\AccountMapper;
-use Gaterdata\Db\ApplicationMapper;
-use Gaterdata\Db\UserRoleMapper;
+use ApiOpenStudio\Config;
+use ApiOpenStudio\Db\AccountMapper;
+use ApiOpenStudio\Db\ApplicationMapper;
+use ApiOpenStudio\Db\UserRoleMapper;
 use Monolog\Logger;
 use phpDocumentor\Reflection\Types\Boolean;
 
@@ -239,7 +239,7 @@ abstract class ProcessorEntity extends Entity
      */
     protected function isDataContainer($data)
     {
-        return is_object($data) && get_class($data) == 'Gaterdata\Core\DataContainer';
+        return is_object($data) && get_class($data) == 'ApiOpenStudio\Core\DataContainer';
     }
 
     /**
@@ -290,7 +290,7 @@ abstract class ProcessorEntity extends Entity
     /**
      * Get the appids for applications that the user has roles for.
      *
-     * @param integer$uid User ID.
+     * @param integer $uid User ID.
      *
      * @return DataContainer Array of appid.
      *

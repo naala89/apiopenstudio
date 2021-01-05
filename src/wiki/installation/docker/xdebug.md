@@ -27,7 +27,7 @@ Go to File -> Settings -> Languages and Frameworks -> PHP -> Servers
 ![Configure the xDebug server](../../images/installation/docker/xdebug_server.png)
 
 Give a name to the server. It should match the value you have defined in your "PHP_IDE_CONFIG" environment variable,
-i.e. "gaterdata".
+i.e. "apiopenstudio".
 
 The "host" and "port" is how will access your application.
 In this case is the host is a mac, in other cases, you should use "localhost".

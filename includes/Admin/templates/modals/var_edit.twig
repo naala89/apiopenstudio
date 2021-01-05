@@ -1,8 +1,8 @@
 <!-- edit var modal -->
 <script>
-  GATERDATA.accAppMap = [];
+  APIOPENSTUDIO.accAppMap = [];
   {% for appid, application in applications %}
-  GATERDATA.accAppMap[{{ appid }}] = {'accid': {{ application.accid }}, 'name': "{{ application.name }}"};
+  APIOPENSTUDIO.accAppMap[{{ appid }}] = {'accid': {{ application.accid }}, 'name': "{{ application.name }}"};
   {% endfor %}
 </script>
 <div id="modal-var-edit" class="modal">

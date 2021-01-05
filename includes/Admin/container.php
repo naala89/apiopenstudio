@@ -1,14 +1,14 @@
 <?php
 /**
- * Slim PHP containers declaration file for GaterData admin.
+ * Slim PHP containers declaration file for ApiOpenStudio admin.
  *
- * @package   Gaterdata
+ * @package   ApiOpenStudio
  * @license   This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *            If a copy of the MPL was not distributed with this file,
  *            You can obtain one at https://mozilla.org/MPL/2.0/.
  * @author    john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @link      https://gaterdata.com
+ * @copyright 2020-2030 ApiOpenStudio
+ * @link      https://www.apiopenstudio.com
  */
 
 use Slim\Container;
@@ -17,7 +17,7 @@ use Twig\Extension\DebugExtension;
 use Slim\Http\Uri;
 use Slim\Views\Twig;
 use Slim\Flash\Messages;
-use Gaterdata\Admin\Controllers;
+use ApiOpenStudio\Admin\Controllers;
 
 $container = $app->getContainer();
 
@@ -65,7 +65,7 @@ $container['view'] = function (Container $container) {
  * @param Container $container
  *   Slim container.
  *
- * @return Gaterdata\Admin\Controllers\CtrlAccount
+ * @return ApiOpenStudio\Admin\Controllers\CtrlAccount
  *   CtrlApplication object.
  */
 $container['CtrlAccount'] = function (Container $container) {
@@ -81,7 +81,7 @@ $container['CtrlAccount'] = function (Container $container) {
  * @param Container $container
  *   Slim container.
  *
- * @return Gaterdata\Admin\Controllers\CtrlAccount
+ * @return ApiOpenStudio\Admin\Controllers\CtrlAccount
  *   CtrlApplication object.
  */
 $container['CtrlApplication'] = function (Container $container) {
@@ -97,7 +97,7 @@ $container['CtrlApplication'] = function (Container $container) {
  * @param Container $container
  *   Slim container.
  *
- * @return Gaterdata\Admin\Controllers\CtrlHome
+ * @return ApiOpenStudio\Admin\Controllers\CtrlHome
  *   CtrlHome object.
  */
 $container['CtrlHome'] = function (Container $container) {
@@ -113,7 +113,7 @@ $container['CtrlHome'] = function (Container $container) {
  * @param Container $container
  *   Slim container.
  *
- * @return Gaterdata\Admin\Controllers\CtrlUser
+ * @return ApiOpenStudio\Admin\Controllers\CtrlUser
  *   CtrlUser object.
  */
 $container['CtrlInvite'] = function (Container $container) {
@@ -129,7 +129,7 @@ $container['CtrlInvite'] = function (Container $container) {
  * @param Container $container
  *   Slim container.
  *
- * @return Gaterdata\Admin\Controllers\CtrlLogin
+ * @return ApiOpenStudio\Admin\Controllers\CtrlLogin
  *   CtrlLogin object.
  */
 $container['CtrlLogin'] = function (Container $container) {
@@ -177,7 +177,7 @@ $container['CtrlRole'] = function (Container $container) {
  * @param Container $container
  *   Slim container.
  *
- * @return Gaterdata\Admin\Controllers\CtrlUser
+ * @return ApiOpenStudio\Admin\Controllers\CtrlUser
  *   CtrlUser object.
  */
 $container['CtrlUser'] = function (Container $container) {
@@ -193,7 +193,7 @@ $container['CtrlUser'] = function (Container $container) {
  * @param Container $container
  *   Slim container.
  *
- * @return Gaterdata\Admin\Controllers\CtrlUsers
+ * @return ApiOpenStudio\Admin\Controllers\CtrlUsers
  *   CtrlUser object.
  */
 $container['CtrlUsers'] = function (Container $container) {

@@ -1,13 +1,13 @@
 /**
  * JS for the admin resource page.
  *
- * @package   Gaterdata
+ * @package   Apiopenstudio
  * @license   This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *            If a copy of the MPL was not distributed with this file,
  *            You can obtain one at https://mozilla.org/MPL/2.0/.
  * @author    john89 (https://gitlab.com/john89)
- * @copyright 2020-2030 GaterData
- * @link      https://gaterdata.com
+ * @copyright 2020-2030 ApiOpenStudio
+ * @link      https://www.apiopenstudio.com
  */
 
 $(document).ready(function () {
@@ -25,36 +25,36 @@ $(document).ready(function () {
 
         reader.onload = function (event) {
             try {
-                GATERDATA.doc = jsyaml.safeLoad(this.result);
+                APIOPENSTUDIO.doc = jsyaml.safeLoad(this.result);
             } catch (e) {
                 M.toast({html: e});
             }
 
             ['name', 'description', 'uri', 'ttl'].forEach(function (item) {
-                if (typeof GATERDATA.doc[item] != 'undefined') {
-                    $('#' + item).val(GATERDATA.doc[item]);
+                if (typeof APIOPENSTUDIO.doc[item] != 'undefined') {
+                    $('#' + item).val(APIOPENSTUDIO.doc[item]);
                 } else {
                     $('#' + item).val('');
                 }
             });
 
-            GATERDATA.resetApplications('#appid');
+            APIOPENSTUDIO.resetApplications('#appid');
             ['appid', 'method'].forEach(function (item) {
-                if (typeof GATERDATA.doc[item] != 'undefined') {
-                    $('#' + item).val(GATERDATA.doc[item]);
+                if (typeof APIOPENSTUDIO.doc[item] != 'undefined') {
+                    $('#' + item).val(APIOPENSTUDIO.doc[item]);
                 } else {
                     $('#' + item).val('');
                 }
                 $('#' + item).formSelect();
             });
 
-            GATERDATA.setAccount($('#appid').val(), '#accid');
+            APIOPENSTUDIO.setAccount($('#appid').val(), '#accid');
             $('#accid').formSelect();
 
             $('ul.tabs').tabs('select', 'yaml');
             ['security', 'process', 'output'].forEach(function (item) {
-                if (typeof GATERDATA.doc[item] != 'undefined') {
-                    $("textarea[name='" + item + "']").val(jsyaml.dump(GATERDATA.doc[item]));
+                if (typeof APIOPENSTUDIO.doc[item] != 'undefined') {
+                    $("textarea[name='" + item + "']").val(jsyaml.dump(APIOPENSTUDIO.doc[item]));
                 } else {
                     $("textarea[name='" + item + "']").val('');
                 }
@@ -71,14 +71,14 @@ $(document).ready(function () {
      * Resource create - account select.
      */
     $("#create-resource select[name='accid']").on('change', function () {
-        GATERDATA.setApplicationOptions($(this).val(), '#appid')
+        APIOPENSTUDIO.setApplicationOptions($(this).val(), '#appid')
     });
 
     /**
      * Resource create - application select.
      */
     $("#create-resource select[name='appid']").on('change', function () {
-        GATERDATA.setAccount($(this).val(), '#accid')
+        APIOPENSTUDIO.setAccount($(this).val(), '#accid')
     });
 
     /**

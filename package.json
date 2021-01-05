@@ -1,7 +1,7 @@
 {
-  "name": "gaterdata",
+  "name": "apiopenstudio",
   "version": "1.0.0-alpha1",
-  "description": "Compile and minify GaterData styles, scripts and images.",
+  "description": "Compile and minify ApiOpenStudio styles, scripts and images.",
   "main": "gulpfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

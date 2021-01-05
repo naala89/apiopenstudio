@@ -2,17 +2,17 @@
 /**
  * Class CtrlLogin.
  *
- * @package    Gaterdata
+ * @package    ApiOpenStudio
  * @subpackage Admin\Controllers
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 GaterData
+ * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link       https://gaterdata.com
+ * @link       https://www.apiopenstudio.com
  */
 
-namespace Gaterdata\Admin\Controllers;
+namespace ApiOpenStudio\Admin\Controllers;
 
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;

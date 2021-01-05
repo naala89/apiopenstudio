@@ -2,17 +2,17 @@
 /**
  * Class ApplicationMapper.
  *
- * @package    Gaterdata
+ * @package    ApiOpenStudio
  * @subpackage Db
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 GaterData
+ * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
- * @link       https://gaterdata.com
+ * @link       https://www.apiopenstudio.com
  */
 
-namespace Gaterdata\Db;
+namespace ApiOpenStudio\Db;
 
 /**
  * Class ApplicationMapper.
@@ -24,11 +24,11 @@ class ApplicationMapper extends Mapper
     /**
      * Save an Application object.
      *
-     * @param \Gaterdata\Db\Application $application The Applicationm object.
+     * @param \ApiOpenStudio\Db\Application $application The Applicationm object.
      *
      * @return boolean Success.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function save(Application $application)
     {
@@ -52,11 +52,11 @@ class ApplicationMapper extends Mapper
     /**
      * Delete an application.
      *
-     * @param \Gaterdata\Db\Application $application Application object.
+     * @param \ApiOpenStudio\Db\Application $application Application object.
      *
      * @return boolean Success.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function delete(Application $application)
     {
@@ -72,7 +72,7 @@ class ApplicationMapper extends Mapper
      *
      * @return array Array of Application objects.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findAll(array $params = [])
     {
@@ -86,9 +86,9 @@ class ApplicationMapper extends Mapper
      *
      * @param integer $appid Application ID.
      *
-     * @return \Gaterdata\Db\Application Application object.
+     * @return \ApiOpenStudio\Db\Application Application object.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByAppid(int $appid)
     {
@@ -105,7 +105,7 @@ class ApplicationMapper extends Mapper
      *
      * @return array Array of Application objects.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByUid(int $uid, array $params = [])
     {
@@ -149,9 +149,9 @@ class ApplicationMapper extends Mapper
      * @param integer $accid Account ID.
      * @param string $name Application name.
      *
-     * @return \Gaterdata\Db\Application Application object.
+     * @return \ApiOpenStudio\Db\Application Application object.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByAccidAppname(int $accid, string $name)
     {
@@ -170,7 +170,7 @@ class ApplicationMapper extends Mapper
      *
      * @return array array of mapped Application objects.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByAccid(int $accid)
     {
@@ -188,7 +188,7 @@ class ApplicationMapper extends Mapper
      *
      * @return array array of mapped Application objects.
      *
-     * @throws \Gaterdata\Core\ApiException Return an ApiException on DB error.
+     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
      */
     public function findByAccidsAppnames(array $accids = [], array $appNames = [], array $params = [])
     {
@@ -243,7 +243,7 @@ class ApplicationMapper extends Mapper
      *
      * @param array $row DB row object.
      *
-     * @return \Gaterdata\Db\Application Application object
+     * @return \ApiOpenStudio\Db\Application Application object
      */
     protected function mapArray(array $row)
     {
