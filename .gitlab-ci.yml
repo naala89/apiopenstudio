@@ -46,18 +46,19 @@ stages:
 phpcs:
   stage: lint
   script:
+    - echo "Linting the codebase."
     - *run_composer
     - ./vendor/bin/phpcs --standard=PSR12 includes/ src/scss/ src/js/ public/*.php public/admin/*.php *.js
 
-#deploy_wiki_develop:
-#  stage: supporting_sites
-#  only:
-#    - develop
-#  services:
-#    - name: sandrokeil/bookdown
-#      command: ["sh", "-C", "cp -R /builds/src/wiki/* /app/ ; ls -alth /app/"]
-#  script:
-#    - echo "Compile and deploy the wiki to dev."
+deploy_wiki_develop:
+  stage: supporting_sites
+  only:
+    - develop
+  services:
+    - name: sandrokeil/bookdown
+      command: ["sh", "-C", "cp -R /builds/src/wiki/* /app/ ; ls -alth /app/"]
+  script:
+    - echo "Compile and deploy the wiki to dev."
 #    - php composer.phar install
 #    - ./vendor/bin/bookdown src/wiki/bookdown.json
 #    - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
