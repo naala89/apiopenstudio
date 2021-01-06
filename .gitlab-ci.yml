@@ -24,7 +24,7 @@ variables:
   MYSQL_USERNAME: ${MYSQL_TEST_USERNAME}
   MYSQL_PASSWORD: ${MYSQL_TEST_PASSWORD}
 
-.run_composer: &run_composer |
+.setup_ssh: &setup_ssh |
   apt-get update
   apt-get install -y libzip-dev openssh-client rsync libxslt-dev unzip
   docker-php-ext-install zip xsl
@@ -32,6 +32,8 @@ variables:
   mkdir -p ~/.ssh
   chmod 700 ~/.ssh
   echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+
+.composer_install: &composer_install |
   php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
   php composer-setup.php
   php -r "unlink('composer-setup.php');"
@@ -47,25 +49,24 @@ phpcs:
   stage: lint
   script:
     - echo "Linting the codebase."
-    - *run_composer
+    - *setup_ssh
+    - *composer_install
     - ./vendor/bin/phpcs --standard=PSR12 includes/ src/scss/ src/js/ public/*.php public/admin/*.php *.js
 
-deploy_wiki_develop:
+wiki_dev:
   stage: supporting_sites
   only:
     - develop
-  services:
-    - name: sandrokeil/bookdown
-      command: ["sh", "-C", "cp -R /builds/src/wiki/* /app/ ; ls -alth /app/"]
   script:
     - echo "Compile and deploy the wiki to dev."
-#    - php composer.phar install
-#    - ./vendor/bin/bookdown src/wiki/bookdown.json
-#    - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
-#    - chmod 644 ~/.ssh/known_hosts
-#    - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
-#    - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
-#    - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
+    - *setup_ssh
+    - *composer_install
+    - ./vendor/bin/bookdown src/wiki/bookdown.json
+    - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+    - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+    - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
 
 #functional_tests:
 #  stage: test

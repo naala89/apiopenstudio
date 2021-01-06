@@ -27,7 +27,8 @@
     "codeception/codeception": "^2.4",
     "components/jquery": "^3.3",
     "squizlabs/php_codesniffer": "*",
-    "vlucas/phpdotenv": "^3"
+    "vlucas/phpdotenv": "^3",
+    "bookdown/bookdown": "^1.1"
   },
   "require": {
     "adodb/adodb-php": "^5.20",
