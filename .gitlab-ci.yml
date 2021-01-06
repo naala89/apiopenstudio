@@ -38,6 +38,7 @@ before_script:
 
 stages:
   - lint
+  - supporting_sites
 #  - test
 #  - deploy
 
@@ -46,6 +47,23 @@ phpcs:
   script:
     - php composer.phar install
     - ./vendor/bin/phpcs --standard=PSR12 includes/ src/scss/ src/js/ public/*.php public/admin/*.php *.js
+
+deploy_wiki_develop:
+  stage: supporting_sites
+  only:
+    - develop
+  services:
+    - name: sandrokeil/bookdown
+      command: ["sh", "-C", "cp -R /builds/src/wiki/* /app/ ; ls -alth /app/"]
+#  script:
+#    - echo "Compile and deploy the wiki to dev."
+#    - php composer.phar install
+#    - ./vendor/bin/bookdown src/wiki/bookdown.json
+#    - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
+#    - chmod 644 ~/.ssh/known_hosts
+#    - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+#    - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+#    - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
 
 #functional_tests:
 #  stage: test
@@ -62,20 +80,6 @@ phpcs:
 
 #unit_tests:
 #  stage: test
-
-#deploy_wiki_develop:
-#  stage: deploy
-#  only:
-#    - develop
-#  script:
-#    - echo "Compile and deploy the wiki to dev."
-#    - php composer.phar install
-#    - ./vendor/bin/bookdown src/wiki/bookdown.json
-#    - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
-#    - chmod 644 ~/.ssh/known_hosts
-#    - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
-#    - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
-#    - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
 
 #deploy_phpdoc_develop:
 #  stage: deploy
