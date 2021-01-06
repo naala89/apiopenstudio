@@ -24,7 +24,7 @@ variables:
   MYSQL_USERNAME: ${MYSQL_TEST_USERNAME}
   MYSQL_PASSWORD: ${MYSQL_TEST_PASSWORD}
 
-before_script:
+.run_composer:
   - apt-get update
   - apt-get install -y libzip-dev openssh-client rsync libxslt-dev unzip
   - docker-php-ext-install zip xsl
@@ -35,6 +35,7 @@ before_script:
   - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
   - php composer-setup.php
   - php -r "unlink('composer-setup.php');"
+  - php composer.phar install
 
 stages:
   - lint
@@ -44,19 +45,19 @@ stages:
 
 phpcs:
   stage: lint
-  script:
-    - php composer.phar install
+  extends: .run_composer
+  after-script:
     - ./vendor/bin/phpcs --standard=PSR12 includes/ src/scss/ src/js/ public/*.php public/admin/*.php *.js
 
-deploy_wiki_develop:
-  stage: supporting_sites
-  only:
-    - develop
-  services:
-    - name: sandrokeil/bookdown
-      command: ["sh", "-C", "cp -R /builds/src/wiki/* /app/ ; ls -alth /app/"]
-  script:
-    - echo "Compile and deploy the wiki to dev."
+#deploy_wiki_develop:
+#  stage: supporting_sites
+#  only:
+#    - develop
+#  services:
+#    - name: sandrokeil/bookdown
+#      command: ["sh", "-C", "cp -R /builds/src/wiki/* /app/ ; ls -alth /app/"]
+#  script:
+#    - echo "Compile and deploy the wiki to dev."
 #    - php composer.phar install
 #    - ./vendor/bin/bookdown src/wiki/bookdown.json
 #    - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
