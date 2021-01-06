@@ -45,7 +45,7 @@ phpcs:
   stage: lint
   script:
     - php composer.phar install
-    - ./vendor/bin/phpcs includes/ src/scss/ src/js/ public/*.php public/admin/*.php *.js
+    - ./vendor/bin/phpcs --standard=PSR12 includes/ src/scss/ src/js/ public/*.php public/admin/*.php *.js
 
 #functional_tests:
 #  stage: test
