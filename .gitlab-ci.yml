@@ -47,7 +47,7 @@ stages:
 phpcs:
   stage: lint
   extends: .run_composer
-  after-script:
+  script:
     - ./vendor/bin/phpcs --standard=PSR12 includes/ src/scss/ src/js/ public/*.php public/admin/*.php *.js
 
 #deploy_wiki_develop:
