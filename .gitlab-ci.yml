@@ -25,17 +25,18 @@ variables:
   MYSQL_PASSWORD: ${MYSQL_TEST_PASSWORD}
 
 .run_composer:
-  - apt-get update
-  - apt-get install -y libzip-dev openssh-client rsync libxslt-dev unzip
-  - docker-php-ext-install zip xsl
-  - eval $(ssh-agent -s)
-  - mkdir -p ~/.ssh
-  - chmod 700 ~/.ssh
-  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-  - php composer-setup.php
-  - php -r "unlink('composer-setup.php');"
-  - php composer.phar install
+  script:
+    - apt-get update
+    - apt-get install -y libzip-dev openssh-client rsync libxslt-dev unzip
+    - docker-php-ext-install zip xsl
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php
+    - php -r "unlink('composer-setup.php');"
+    - php composer.phar install
 
 stages:
   - lint
