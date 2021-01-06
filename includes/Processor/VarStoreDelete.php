@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class VarStoreDelete.
  *
@@ -136,14 +137,17 @@ class VarStoreDelete extends Core\ProcessorEntity
         }
 
         if ($validateAccess) {
-            if (!$this->userRoleMapper->findByUidAppidRolename(
-                $currentUser->getUid(),
-                $var->getAppid(),
-                'Application manager'
+            if (
+                !$this->userRoleMapper->findByUidAppidRolename(
+                    $currentUser->getUid(),
+                    $var->getAppid(),
+                    'Application manager'
                 ) && !$this->userRoleMapper->findByUidAppidRolename(
                     $currentUser->getUid(),
                     $var->getAppid(),
-                    'Developer')) {
+                    'Developer'
+                )
+            ) {
                 throw new Core\ApiException('permission denied (appid: ' . $var->getAppid() . ')', 6, $this->id, 400);
             }
         }

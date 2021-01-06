@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Collection.
  *
@@ -71,7 +72,7 @@ class Collection extends Core\ProcessorEntity
         if (!is_array($items)) {
             return new Core\DataContainer([$items], 'array');
         }
-    
+
         return new Core\DataContainer($items, 'array');
     }
 }

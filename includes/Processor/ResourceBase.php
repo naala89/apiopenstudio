@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class ResourceBase.
  *
@@ -143,7 +144,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                     throw new Core\ApiException('Missing appName', 1, $this->id);
                 }
                 $string = $this->val('resourceString', true);
-                $resource = $this->_importData($string);
+                $resource = $this->importData($string);
                 $result = $this->create($resource, $accName, $appName);
                 break;
             case 'get':
@@ -186,7 +187,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @return mixed
      */
-    abstract protected function _importData($data);
+    abstract protected function importData($data);
 
     /**
      * Abstract class used to fetch input resource into the correct array format.
@@ -196,7 +197,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @return mixed
      */
-    abstract protected function _exportData($data);
+    abstract protected function exportData($data);
 
     /**
      * Fetch a resource.
@@ -235,7 +236,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
         $result['method'] = $resource->getMethod();
         $result['ttl'] = $resource->getTtl();
 
-        return new Core\DataContainer($this->_exportData($result), 'text');
+        return new Core\DataContainer($this->exportData($result), 'text');
     }
 
     /**
@@ -282,7 +283,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
     protected function create(array $data, string $accName, string $appName)
     {
         $this->logger->debug('New resource' . print_r($data, true));
-        $this->_validateData($data);
+        $this->validateData($data);
 
         $name = $data['name'];
         $description = $data['description'];
@@ -335,7 +336,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Error.
      */
-    protected function _validateData($data)
+    protected function validateData($data)
     {
         $this->logger->info("Validating the new resource...");
         // check mandatory elements exists in data
@@ -366,12 +367,12 @@ abstract class ResourceBase extends Core\ProcessorEntity
         }
 
         // validate for identical IDs
-        $this->_identicalIds($data);
+        $this->identicalIds($data);
 
         // validate dictionaries
         if (isset($data['security'])) {
             // check for identical IDs
-            $this->_validateDetails($data['security']);
+            $this->validateDetails($data['security']);
         }
         if (!empty($data['output'])) {
             if (!is_array($data['output']) || Core\Utilities::is_assoc($data['output'])) {
@@ -383,7 +384,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                         $message = "bad function declaration in output at index $i in new resource";
                         throw new Core\ApiException($message, 6, -1, 406);
                     }
-                    $this->_validateDetails($output);
+                    $this->validateDetails($output);
                 } elseif ($output != 'response') {
                     throw new Core\ApiException("invalid output structure at index: $i, in new resource", 6, -1, 406);
                 }
@@ -394,10 +395,10 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 throw new Core\ApiException("invalid fragments structure in new resource", 6, -1, 406);
             }
             foreach ($data['fragments'] as $fragKey => $fragVal) {
-                $this->_validateDetails($fragVal);
+                $this->validateDetails($fragVal);
             }
         }
-        $this->_validateDetails($data['process']);
+        $this->validateDetails($data['process']);
     }
 
     /**
@@ -409,7 +410,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @throws \ApiOpenStudio\Core\ApiException Error.
      */
-    private function _identicalIds(array $meta)
+    private function identicalIds(array $meta)
     {
         $id = [];
         $stack = [$meta];
@@ -438,7 +439,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Error.
      */
-    private function _validateDetails(array $meta)
+    private function validateDetails(array $meta)
     {
         $stack = array($meta);
 
@@ -475,7 +476,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                                 if ($this->helper->isProcessor($item)) {
                                     array_unshift($stack, $item);
                                 } else {
-                                    $this->_validateTypeValue($item, $limitTypes, $id);
+                                    $this->validateTypeValue($item, $limitTypes, $id);
                                 }
                             }
                             $count = sizeof($input);
@@ -488,7 +489,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                                 throw new Core\ApiException($message, 6, $id, 406);
                             }
                             if (!empty($limitTypes)) {
-                                $this->_validateTypeValue($input, $limitTypes, $id);
+                                $this->validateTypeValue($input, $limitTypes, $id);
                             }
                             $count = 1;
                         }
@@ -526,7 +527,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Error.
      */
-    private function _validateTypeValue($element, array $accepts, int $id)
+    private function validateTypeValue($element, array $accepts, int $id)
     {
         if (empty($accepts)) {
             return true;
@@ -540,19 +541,25 @@ abstract class ResourceBase extends Core\ProcessorEntity
             } elseif ($accept == 'literal' && (is_string($element) || is_numeric($element))) {
                 $valid = true;
                 break;
-            } elseif ($accept == 'boolean'
-                && filter_var($element, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) !== null) {
+            } elseif (
+                $accept == 'boolean'
+                && filter_var($element, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) !== null
+            ) {
                 $valid = true;
                 break;
-            } elseif ($accept == 'integer'
-                && filter_var($element, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) !== null) {
+            } elseif (
+                $accept == 'integer'
+                && filter_var($element, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) !== null
+            ) {
                 $valid = true;
                 break;
             } elseif ($accept == 'text' && is_string($element)) {
                 $valid = true;
                 break;
-            } elseif ($accept == 'float'
-                && filter_var($element, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) !== null) {
+            } elseif (
+                $accept == 'float'
+                && filter_var($element, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) !== null
+            ) {
                 $valid = true;
                 break;
             } elseif ($accept == 'array' && is_array($element)) {

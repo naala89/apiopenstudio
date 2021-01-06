@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class VarStoreCreate.
  *
@@ -152,8 +153,10 @@ class VarStoreCreate extends Core\ProcessorEntity
         $val = $this->val('val', true);
 
         if ($validateAccess) {
-            if (!$this->userRoleMapper->findByUidAppidRolename($currentUser->getUid(), $appid, 'Application manager')
-                && !$this->userRoleMapper->findByUidAppidRolename($currentUser->getUid(), $appid, 'Developer')) {
+            if (
+                !$this->userRoleMapper->findByUidAppidRolename($currentUser->getUid(), $appid, 'Application manager')
+                && !$this->userRoleMapper->findByUidAppidRolename($currentUser->getUid(), $appid, 'Developer')
+            ) {
                 throw new Core\ApiException("permission denied (appid: $appid)", 6, $this->id, 400);
             }
         }

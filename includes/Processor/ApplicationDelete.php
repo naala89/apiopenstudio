@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class ApplicationDelete.
  *
@@ -119,24 +120,38 @@ class ApplicationDelete extends Core\ProcessorEntity
         $appid = $this->val('applicationId', true);
         $application = $this->applicationMapper->findByAppid($appid);
         $accid = $application->getAccid();
-        if (!$this->userRoleMapper->hasRole($user->getUid(), 'Administrator')
-            && !$this->userRoleMapper->hasAccidRole($user->getUid(), $accid, 'Account manager')) {
+        if (
+            !$this->userRoleMapper->hasRole($user->getUid(), 'Administrator')
+            && !$this->userRoleMapper->hasAccidRole($user->getUid(), $accid, 'Account manager')
+        ) {
             throw new ApiException("Permission denied.", 6, $this->id, 417);
         }
         if (empty($application->getAppid())) {
-            throw new ApiException("Delete application, invalid appid: $appid",
-                6, $this->id, 417);
+            throw new ApiException(
+                "Delete application, invalid appid: $appid",
+                6,
+                $this->id,
+                417
+            );
         }
 
         $resources = $this->resourceMapper->findByAppId($appid);
         if (!empty($resources)) {
-            throw new ApiException("Cannot delete application, resources are assigned to this application: $appid",
-                6, $this->id, 417);
+            throw new ApiException(
+                "Cannot delete application, resources are assigned to this application: $appid",
+                6,
+                $this->id,
+                417
+            );
         }
         $userRoles = $this->userRoleMapper->findByFilter(['col' => ['appid' => $appid]]);
         if (!empty($userRoles)) {
-            throw new ApiException("Cannot delete application, users are assigned to this application: $appid",
-                6, $this->id, 417);
+            throw new ApiException(
+                "Cannot delete application, users are assigned to this application: $appid",
+                6,
+                $this->id,
+                417
+            );
         }
 
         return $this->applicationMapper->delete($application);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class UserCreate.
  *
@@ -245,7 +246,7 @@ class UserCreate extends Core\ProcessorEntity
         $active = $this->val('active', true);
         $bool = ($active === 'true') ? true : ($active === 'false' ? false : $active);
         $user->setTokenTtl(null);
-        $user->setActive((boolean) $bool ? 1 : 0);
+        $user->setActive((bool) $bool ? 1 : 0);
         $user->setHonorific($this->val('honorific', true));
         $user->setNameFirst($this->val('name_first', true));
         $user->setNameLast($this->val('name_last', true));

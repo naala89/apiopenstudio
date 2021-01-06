@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class VarUri.
  *
@@ -66,7 +67,7 @@ class VarUri extends Core\ProcessorEntity
     public function process()
     {
         $this->logger->info('Processor: ' . $this->details()['machineName']);
-        
+
         $index = intval($this->val('index', true));
         $nullable = $this->val('nullable', true);
         $args = $this->request->getArgs();

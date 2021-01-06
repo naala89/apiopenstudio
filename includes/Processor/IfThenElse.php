@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class IfThenElse.
  *
@@ -100,24 +101,24 @@ class IfThenElse extends Core\ProcessorEntity
         switch ($operator) {
             case '==':
                 $result = $lhs == $rhs;
-            break;
+                break;
             case '!=':
                 $result = $lhs != $rhs;
-            break;
+                break;
             case '>':
                 $result = $lhs > $rhs;
-            break;
+                break;
             case '>=':
                 $result = $lhs >= $rhs;
-            break;
+                break;
             case '<':
                 $result = $lhs < $rhs;
-            break;
+                break;
             case '<=':
                 $result = $lhs <= $rhs;
-            break;
+                break;
             default:
-            throw new Core\ApiException("invalid operator: $operator", 1, $this->id);
+                throw new Core\ApiException("invalid operator: $operator", 1, $this->id);
             break;
         }
 

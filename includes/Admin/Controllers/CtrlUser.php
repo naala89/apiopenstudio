@@ -1,6 +1,9 @@
 <?php
+
 /**
  * Class CtrlUser.
+ *
+ * Controller for user page.
  *
  * @package    ApiOpenStudio
  * @subpackage Admin\Controllers
@@ -79,7 +82,8 @@ class CtrlUser extends CtrlBase
 
         try {
             $result = $this->apiCall(
-                'get', 'user',
+                'get',
+                'user',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -126,7 +130,8 @@ class CtrlUser extends CtrlBase
 
         try {
             $result = $this->apiCall(
-                'get', 'user',
+                'get',
+                'user',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -184,7 +189,9 @@ class CtrlUser extends CtrlBase
             $uid = $allPostVars['uid'];
             unset($allPostVars['uid']);
             try {
-                $result = $this->apiCall('put', "user/$uid",
+                $result = $this->apiCall(
+                    'put',
+                    "user/$uid",
                     [
                         'headers' => [
                             'Authorization' => "Bearer " . $_SESSION['token'],
@@ -215,7 +222,9 @@ class CtrlUser extends CtrlBase
         } else {
             // Create a user.
             try {
-                $result = $this->apiCall('post', 'user',
+                $result = $this->apiCall(
+                    'post',
+                    'user',
                     [
                         'headers' => [
                             'Authorization' => "Bearer " . $_SESSION['token'],
@@ -280,7 +289,9 @@ class CtrlUser extends CtrlBase
         $uid = $args['uid'];
 
         try {
-            $result = $this->apiCall('delete', "user/$uid",
+            $result = $this->apiCall(
+                'delete',
+                "user/$uid",
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],

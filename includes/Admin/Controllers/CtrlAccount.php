@@ -1,6 +1,9 @@
 <?php
+
 /**
  * Class CtrlAccount.
+ *
+ * Controller for account page.
  *
  * @package    ApiOpenStudio
  * @subpackage Admin\Controllers
@@ -18,7 +21,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 
 /**
- * Class CtrlAccount
+ * Class CtrlAccount.
  *
  * Controller for the account page.
  */
@@ -52,7 +55,7 @@ class CtrlAccount extends CtrlBase
             $this->flash->addMessage('error', 'View accounts: access denied');
             return $response->withStatus(302)->withHeader('Location', '/');
         }
-    
+
         $menu = $this->getMenus();
 
         // Filter params and current page.
@@ -69,10 +72,12 @@ class CtrlAccount extends CtrlBase
 
         // Get total number of pages and current page's accounts to display.
         $pages = ceil(count($accounts) / $this->settings['admin']['pagination_step']);
-        $accounts = array_slice($accounts,
+        $accounts = array_slice(
+            $accounts,
             ($page - 1) * $this->settings['admin']['pagination_step'],
             $this->settings['admin']['pagination_step'],
-            true);
+            true
+        );
 
         return $this->view->render($response, 'accounts.twig', [
             'keyword' => isset($params['keyword']) ? $params['keyword'] : '',
@@ -173,7 +178,7 @@ class CtrlAccount extends CtrlBase
                     'form_params' => [
                         'name' => $name,
                     ],
-                ],
+                ]
             );
             if (json_decode($result->getBody()->getContents()) == 'true') {
                 $this->flash->addMessage('info', "Account '$accid' updated to '$name'.");

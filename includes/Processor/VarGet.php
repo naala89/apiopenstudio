@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class VarGet.
  *
@@ -68,7 +69,7 @@ class VarGet extends Core\ProcessorEntity
 
         $key = $this->val('key', true);
         $vars = $this->request->getGetVars();
-    
+
         if (isset($vars[$key])) {
             if (is_array($vars[$key])) {
                 foreach ($vars[$key] as $index => $val) {

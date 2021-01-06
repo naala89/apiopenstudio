@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Output.
  *
@@ -178,7 +179,7 @@ abstract class Output extends Core\ProcessorEntity
             $this->data = new Core\DataContainer($this->data);
         }
         $type = $this->data->getType();
-        $this->_dataContainer2value($this->data);
+        $this->dataContainer2value($this->data);
 
         switch ($type) {
             case 'boolean':
@@ -223,21 +224,21 @@ abstract class Output extends Core\ProcessorEntity
      *
      * @return mixed outgoing data.
      */
-    private function _dataContainer2value(&$data)
+    private function dataContainer2value(&$data)
     {
         if (is_array($data)) {
             foreach ($data as $key => & $value) {
-                $value = $this->_dataContainer2value($value);
+                $value = $this->dataContainer2value($value);
             }
         } elseif ($this->isDataContainer($data)) {
             $type = $data->getType();
             $data = $data->getData();
             if ($type == 'array') {
                 foreach ($data as & $item) {
-                    $item = $this->_dataContainer2value($item);
+                    $item = $this->dataContainer2value($item);
                 }
             } elseif ($this->isDataContainer($data)) {
-                $data = $this->_dataContainer2value($data);
+                $data = $this->dataContainer2value($data);
             }
         }
         return $data;

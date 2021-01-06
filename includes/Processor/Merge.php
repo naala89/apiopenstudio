@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Merge.
  *
@@ -78,7 +79,7 @@ class Merge extends Core\ProcessorEntity
         $sources = $this->val('sources', true);
         $unique = $this->val('unique', true);
         $mergeType = $this->val('mergeType', true);
-        $method = '_' . strtolower(trim($mergeType));
+        $method = strtolower(trim($mergeType));
 
         if (!method_exists($this, $method)) {
             throw new Core\ApiException("invalid mergeType: $mergeType", 6, $this->id, 407);
@@ -97,7 +98,7 @@ class Merge extends Core\ProcessorEntity
      *
      * @return array|mixed
      */
-    private function _union(array $values)
+    private function union(array $values)
     {
         $result = array_shift($values);
         $result = is_array($result) ? $result : array($result);
@@ -115,7 +116,7 @@ class Merge extends Core\ProcessorEntity
      *
      * @return array|mixed
      */
-    private function _intersect(array $values)
+    private function intersect(array $values)
     {
         $result = array_shift($values);
         $result = is_array($result) ? $result : array($result);
@@ -133,7 +134,7 @@ class Merge extends Core\ProcessorEntity
      *
      * @return array|mixed
      */
-    private function _difference(array $values)
+    private function difference(array $values)
     {
         $result = array_shift($values);
         $result = is_array($result) ? $result : array($result);

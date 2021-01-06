@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Mapper.
  *
@@ -175,9 +176,10 @@ abstract class Mapper
             if (stripos($sql, ' limit ') !== false) {
                 throw new ApiException('Trying to limit params on SQL with LIMIT clause: ' . $sql);
             }
-            $recordSet = $this->db->selectLimit($sql,
-                (integer) $params['limit'],
-                (integer) $params['offset'],
+            $recordSet = $this->db->selectLimit(
+                $sql,
+                (int) $params['limit'],
+                (int) $params['offset'],
                 $bindParams
             );
         } else {

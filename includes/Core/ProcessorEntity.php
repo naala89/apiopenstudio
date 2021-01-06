@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class ProcessorEntity.
  *
@@ -224,8 +225,8 @@ abstract class ProcessorEntity extends Entity
             ? $this->meta->$key
             : new DataContainer($this->meta->$key);
 
-        $this->_validateAllowedValues($container->getData(), $limitValues, $min, $key);
-        $this->_validateAllowedTypes($container->getType(), $limitTypes, $min, $key);
+        $this->validateAllowedValues($container->getData(), $limitValues, $min, $key);
+        $this->validateAllowedTypes($container->getType(), $limitTypes, $min, $key);
 
         return $realValue ? $container->getData() : $container;
     }
@@ -345,7 +346,7 @@ abstract class ProcessorEntity extends Entity
      *
      * @throws ApiException Invalid value.
      */
-    private function _validateAllowedValues($val, array $limitValues, int $min, string $key)
+    private function validateAllowedValues($val, array $limitValues, int $min, string $key)
     {
         if (empty($limitValues) || ($min < 1 && empty($val))) {
             return true;
@@ -369,7 +370,7 @@ abstract class ProcessorEntity extends Entity
      *
      * @throws ApiException Invalid data type.
      */
-    private function _validateAllowedTypes(string $type, array $limitTypes, int $min, string $key)
+    private function validateAllowedTypes(string $type, array $limitTypes, int $min, string $key)
     {
         if (empty($limitTypes) || ($min < 1 && $type == 'empty')) {
             return true;

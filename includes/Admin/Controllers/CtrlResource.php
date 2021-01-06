@@ -1,6 +1,9 @@
 <?php
+
 /**
  * Class CtrlResource.
+ *
+ * Controller for resources page.
  *
  * @package    ApiOpenStudio
  * @subpackage Admin\Controllers
@@ -21,7 +24,7 @@ use Symfony\Component\Yaml\Yaml;
 use Exception;
 
 /**
- * Class CtrlUserRole.
+ * Class CtrlResource.
  *
  * Controller for the resource pages.
  */
@@ -37,11 +40,11 @@ class CtrlResource extends CtrlBase
     ];
 
     /**
-     * Array of sections within a resource file.
+     * Sections within a resource file.
      *
-     * @var array Array of sections in a metadata string.
+     * @var array
      */
-    const META_SECTIONS = [
+    private const META_SECTIONS = [
         'security',
         'process',
         'output',
@@ -78,9 +81,11 @@ class CtrlResource extends CtrlBase
         if (!empty($allParams['keyword'])) {
             $query['keyword'] = $allParams['keyword'];
         }
-        if (!empty($allParams['order_by'])
+        if (
+            !empty($allParams['order_by'])
                 && $allParams['order_by'] != 'account'
-                && $allParams['order_by'] != 'application') {
+                && $allParams['order_by'] != 'application'
+        ) {
             $query['order_by'] = $allParams['order_by'];
         }
         if (!empty($allParams['direction'])) {
@@ -89,12 +94,16 @@ class CtrlResource extends CtrlBase
 
         $resources = [];
         try {
-            $result = $this->apiCall('GET', 'resource', [
-                'headers' => [
-                    'Authorization' => "Bearer " . $_SESSION['token'],
-                ],
-                'query' => $query,
-            ]);
+            $result = $this->apiCall(
+                'GET',
+                'resource',
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token'],
+                    ],
+                    'query' => $query,
+                ]
+            );
             $resources = json_decode($result->getBody()->getContents(), true);
         } catch (Exception $e) {
             $this->flash->addMessageNow('error', $e->getMessage());
@@ -125,8 +134,10 @@ class CtrlResource extends CtrlBase
             foreach ($this->userAccounts as $userAccount) {
                 foreach ($this->userApplications as $userApplication) {
                     foreach ($resources as $index => $resource) {
-                        if ($userAccount['accid'] == $userApplication['accid']
-                                && $userApplication['appid'] == $resource['appid']) {
+                        if (
+                            $userAccount['accid'] == $userApplication['accid']
+                                && $userApplication['appid'] == $resource['appid']
+                        ) {
                             $sortedResources[] = $resource;
                             unset($resources[$index]);
                         }
@@ -190,7 +201,9 @@ class CtrlResource extends CtrlBase
         $menu = $this->getMenus();
 
         try {
-            $result = $this->apiCall('get', 'functions/all',
+            $result = $this->apiCall(
+                'get',
+                'functions/all',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -243,7 +256,9 @@ class CtrlResource extends CtrlBase
 
         if (empty($args['resource'])) {
             try {
-                $result = $this->apiCall('get', 'resource',
+                $result = $this->apiCall(
+                    'get',
+                    'resource',
                     [
                         'headers' => [
                             'Authorization' => "Bearer " . $_SESSION['token'],
@@ -268,7 +283,9 @@ class CtrlResource extends CtrlBase
         $accounts = $this->userAccounts;
         $applications = $this->userApplications;
         try {
-            $result = $this->apiCall('get', 'functions/all',
+            $result = $this->apiCall(
+                'get',
+                'functions/all',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -359,7 +376,9 @@ class CtrlResource extends CtrlBase
 
         if (!empty($allPostVars['resid'])) {
             try {
-                $result = $this->apiCall('put', 'resource',
+                $result = $this->apiCall(
+                    'put',
+                    'resource',
                     [
                         'headers' => [
                             'Authorization' => "Bearer " . $_SESSION['token'],
@@ -384,7 +403,9 @@ class CtrlResource extends CtrlBase
             }
         } else {
             try {
-                $result = $this->apiCall('post', 'resource',
+                $result = $this->apiCall(
+                    'post',
+                    'resource',
                     [
                         'headers' => [
                             'Authorization' => "Bearer " . $_SESSION['token'],
@@ -493,11 +514,15 @@ class CtrlResource extends CtrlBase
         }
 
         try {
-            $result = $this->apiCall('get', "resource/export/{$args['format']}/{$args['resid']}", [
-                'headers' => [
-                    'Authorization' => "Bearer " . $_SESSION['token']
+            $result = $this->apiCall(
+                'get',
+                "resource/export/{$args['format']}/{$args['resid']}",
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $_SESSION['token']
+                    ]
                 ]
-            ]);
+            );
         } catch (\Exception $e) {
             $this->flash->addMessage('error', $e->getMessage());
             return $response->withStatus(302)->withHeader('Location', '/resources');
@@ -533,7 +558,9 @@ class CtrlResource extends CtrlBase
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
             try {
                 $filename = $this->moveUploadedFile($directory, $uploadedFile);
-                $this->apiCall('post', 'resource/import',
+                $this->apiCall(
+                    'post',
+                    'resource/import',
                     [
                         'headers' => [
                             'Authorization' => "Bearer " . $_SESSION['token'],

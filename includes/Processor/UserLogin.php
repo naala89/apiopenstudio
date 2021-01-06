@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class UserLogin.
  *
@@ -97,7 +98,8 @@ class UserLogin extends Core\ProcessorEntity
         // if token exists and is active, return it
         $config = new Config();
         $tokenLife = $config->__get(['api', 'token_life']);
-        if (!empty($user->getToken())
+        if (
+            !empty($user->getToken())
             && !empty($user->getTokenTtl())
             && $user->getTokenTtl() > Core\Utilities::mysqlNow()
         ) {

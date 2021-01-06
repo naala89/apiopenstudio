@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Install ApiOpenStudio script.
  *
@@ -69,13 +70,13 @@ switch ($step) {
         // Create and pre-populate the database.
         // If re-installation, remove any current logins.
         if (isset($_SESSION['accountName'])) {
-            unset ($_SESSION['accountName']);
+            unset($_SESSION['accountName']);
         }
         if (isset($_SESSION['accountId'])) {
-            unset ($_SESSION['accountId']);
+            unset($_SESSION['accountId']);
         }
         if (isset($_SESSION['token'])) {
-            unset ($_SESSION['token']);
+            unset($_SESSION['token']);
         }
         $include_test = isset($_POST['include_test']) && $_POST['include_test'] == 1;
         $yaml = file_get_contents($settings->__get(['api', 'base_path']) . $settings->__get(['db', 'definition_path']));
@@ -211,9 +212,11 @@ switch ($step) {
             $addressPostcode = !empty($_POST['address_postcode']) ? $_POST['address_postcode'] : null;
             $phoneMobile = !empty($_POST['phone_mobile']) ? $_POST['phone_mobile'] : 0;
             $phoneWork = !empty($_POST['phone_work']) ? $_POST['phone_work'] : 0;
-            if (empty($username) ||
+            if (
+                empty($username) ||
                 empty($password) ||
-                empty($email)) {
+                empty($email)
+            ) {
                 // Missing mandatory fields.
                 $messages['error'][] = 'Required fields not entered.';
                 $template = $twig->load('install/install_2.twig');

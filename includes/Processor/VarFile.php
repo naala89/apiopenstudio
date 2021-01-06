@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class VarFile.
  *
@@ -216,7 +217,8 @@ class VarFile extends Core\ProcessorEntity
     private function validateFilesError(string $filename, bool $nullable)
     {
         if (
-            !isset($_FILES[$filename]['error']) || is_array($_FILES[$filename]['error'])) {
+            !isset($_FILES[$filename]['error']) || is_array($_FILES[$filename]['error'])
+        ) {
             throw new Core\ApiException('Undefined, multiple files or file corrupt', 5, $this->id, 417);
         }
 

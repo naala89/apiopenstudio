@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ApiOpenStudio Admin page.
  *

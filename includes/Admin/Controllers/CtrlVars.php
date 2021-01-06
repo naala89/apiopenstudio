@@ -1,6 +1,9 @@
 <?php
+
 /**
  * Class CtrlVars.
+ *
+ * Controller for variables page.
  *
  * @package    ApiOpenStudio
  * @subpackage Admin\Controllers
@@ -111,8 +114,10 @@ class CtrlVars extends CtrlBase
             foreach ($this->userAccounts as $userAccount) {
                 foreach ($this->userApplications as $userApplication) {
                     foreach ($vars as $index => $var) {
-                        if ($userAccount['accid'] == $userApplication['accid']
-                                && $userApplication['appid'] == $var['appid']) {
+                        if (
+                            $userAccount['accid'] == $userApplication['accid']
+                                && $userApplication['appid'] == $var['appid']
+                        ) {
                             $sortedVars[] = $var;
                             unset($vars[$index]);
                         }
@@ -137,10 +142,12 @@ class CtrlVars extends CtrlBase
         // Pagination.
         $page = isset($params['page']) ? $allParams['page'] : 1;
         $pages = ceil(count($vars) / $this->settings['admin']['pagination_step']);
-        $users = array_slice($vars,
+        $users = array_slice(
+            $vars,
             ($page - 1) * $this->settings['admin']['pagination_step'],
             $this->settings['admin']['pagination_step'],
-            true);
+            true
+        );
 
         return $this->view->render($response, 'vars.twig', [
             'menu' => $menu,

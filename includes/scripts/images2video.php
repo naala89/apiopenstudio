@@ -1,5 +1,6 @@
 #!/usr/bin/php
 <?php
+
 /**
  * Script to convert images to video.
  *

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class ResourceUpdate.
  *
@@ -242,16 +243,20 @@ class ResourceUpdate extends Core\ProcessorEntity
         $existingResourceRoles = $this->userRoleMapper->findByUidAppidRolename(
             $currentUser->getUid(),
             $application->getAppid(),
-            'Developer');
+            'Developer'
+        );
         $proposedResourceRoles = $this->userRoleMapper->findByUidAppidRolename(
             $currentUser->getUid(),
             $appid,
-            'Developer');
+            'Developer'
+        );
         if (empty($existingResourceRoles) || empty($proposedResourceRoles)) {
-            throw new Core\ApiException("Unauthorised: you do not have permissions for this application",
+            throw new Core\ApiException(
+                "Unauthorised: you do not have permissions for this application",
                 6,
                 $this->id,
-                400);
+                400
+            );
         }
 
         // Resource is locked.
@@ -272,10 +277,12 @@ class ResourceUpdate extends Core\ProcessorEntity
             && $application->getName() == $this->settings->__get(['api', 'core_application'])
             && $this->settings->__get(['api', 'core_resource_lock'])
         ) {
-            throw new Core\ApiException("Unauthorised: this is a core resource",
+            throw new Core\ApiException(
+                "Unauthorised: this is a core resource",
                 6,
                 $this->id,
-                400);
+                400
+            );
         }
 
         $meta = $this->translateMetaString($format, $meta);

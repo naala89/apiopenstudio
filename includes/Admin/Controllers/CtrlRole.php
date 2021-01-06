@@ -1,6 +1,9 @@
 <?php
+
 /**
  * Class CtrlRole.
+ *
+ * Controller for role page.
  *
  * @package    ApiOpenStudio
  * @subpackage Admin\Controllers
@@ -66,7 +69,9 @@ class CtrlRole extends CtrlBase
         }
 
         try {
-            $result = $this->apiCall('get', 'role/all',
+            $result = $this->apiCall(
+                'get',
+                'role/all',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -122,7 +127,9 @@ class CtrlRole extends CtrlBase
         $name = !empty($allParams['name']) ? $allParams['name'] : '';
 
         try {
-            $result = $this->apiCall('post', "role",
+            $result = $this->apiCall(
+                'post',
+                "role",
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -167,7 +174,9 @@ class CtrlRole extends CtrlBase
         $rid = !empty($allParams['rid']) ? $allParams['rid'] : '';
 
         try {
-            $result = $this->apiCall('put', 'role',
+            $result = $this->apiCall(
+                'put',
+                'role',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -211,7 +220,9 @@ class CtrlRole extends CtrlBase
         $rid = !empty($allParams['rid']) ? $allParams['rid'] : '';
 
         try {
-            $result = $this->apiCall('delete', "role/$rid",
+            $result = $this->apiCall(
+                'delete',
+                "role/$rid",
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],

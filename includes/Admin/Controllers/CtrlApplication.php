@@ -1,6 +1,9 @@
 <?php
+
 /**
  * Class CtrlApplication.
+ *
+ * Controller for application page.
  *
  * @package    ApiOpenStudio
  * @subpackage Admin\Controllers
@@ -89,7 +92,8 @@ class CtrlApplication extends CtrlBase
 
         // Get total number of pages and current page's applications to display.
         $pages = ceil(count($sortedApps) / $this->settings['admin']['pagination_step']);
-        $sortedApps = array_slice($sortedApps,
+        $sortedApps = array_slice(
+            $sortedApps,
             ($page - 1) * $this->settings['admin']['pagination_step'],
             $this->settings['admin']['pagination_step'],
             true
@@ -178,9 +182,11 @@ class CtrlApplication extends CtrlBase
         }
 
         $allPostVars = $request->getParsedBody();
-        if (empty($appid = $allPostVars['edit-app-appid']) ||
+        if (
+            empty($appid = $allPostVars['edit-app-appid']) ||
             empty($accid = $allPostVars['edit-app-accid']) ||
-            empty($name = $allPostVars['edit-app-name'])) {
+            empty($name = $allPostVars['edit-app-name'])
+        ) {
             $this->flash->addMessage('error', 'Cannot edit application, Account ID, Application ID or name defined.');
         } else {
             try {

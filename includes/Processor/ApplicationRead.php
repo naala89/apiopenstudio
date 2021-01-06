@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class ApplicationRead.
  *
@@ -191,7 +192,7 @@ class ApplicationRead extends Core\ProcessorEntity
         $result = [];
         foreach ($applications as $application) {
             $result[$application->getAppid()] = [
-                'accid' =>$application->getAccid(),
+                'accid' => $application->getAccid(),
                 'appid' => $application->getAppid(),
                 'name' => $application->getName(),
             ];

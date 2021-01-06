@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Api.
  *
@@ -118,7 +119,7 @@ class Api
         }
 
         // get the request data for processing.
-        $this->request = $this->_getData();
+        $this->request = $this->getData();
         $this->logger->debug('request: ' . print_r($this->request, true));
         $resource = $this->request->getResource();
         $this->logger->debug('resource: ' . print_r($resource, true));
@@ -128,27 +129,27 @@ class Api
         // validate user access rights for the call.
         if (!empty($meta->security)) {
             $this->logger->debug('Process security: ' . print_r($meta->security, true));
-            $this->_crawlMeta($meta->security);
+            $this->crawlMeta($meta->security);
         }
 
         // fetch the cache of the call, and process into output if it is not stale
-        $result = $this->_getCache($this->request->getCacheKey());
+        $result = $this->getCache($this->request->getCacheKey());
         if ($result !== false) {
-            return $this->_getOutput($result);
+            return $this->getOutput($result);
         }
         // set fragments in Meta class
         if (isset($meta->fragments)) {
             $fragments = $meta->fragments;
             foreach ($fragments as $fragKey => $fragVal) {
                 $this->logger->debug('Process fragment: ' . print_r($fragVal, true));
-                $fragments->$fragKey = $this->_crawlMeta($fragVal);
+                $fragments->$fragKey = $this->crawlMeta($fragVal);
             }
             $this->request->setFragments($fragments);
         }
 
         // process the call
         $this->logger->debug('Process resource: ' . print_r($meta->process, true));
-        $result = $this->_crawlMeta($meta->process);
+        $result = $this->crawlMeta($meta->process);
 
         // store the results in cache for next time
         if (is_object($result) && get_class($result) == 'Error') {
@@ -159,7 +160,7 @@ class Api
             $this->cache->set($this->request->getCacheKey(), $cacheData, $ttl);
         }
 
-        return $this->_getOutput($result);
+        return $this->getOutput($result);
     }
 
     /**
@@ -169,9 +170,9 @@ class Api
      *
      * @throws ApiException Invalid request or exception flowing though.
      */
-    private function _getData()
+    private function getData()
     {
-        $method = $this->_getMethod();
+        $method = $this->getMethod();
         if ($method == 'options') {
             die();
         }
@@ -199,9 +200,9 @@ class Api
                 throw new ApiException("invalid request", 3, -1, 404);
             }
 
-            $result = $this->_getResource($appId, $method, $uriParts);
+            $result = $this->getResource($appId, $method, $uriParts);
         } catch (ApiEception $e) {
-            throw new ApiException($e->getMessage(), 3 -1, 404);
+            throw new ApiException($e->getMessage(), 3 - 1, 404);
         }
 
         $request->setAccName($accName);
@@ -240,7 +241,7 @@ class Api
      *
      * @throws ApiException Exception flowing throuigh, ot invalid test YAML.
      */
-    private function _getResource(int $appId, string $method, array $uriParts)
+    private function getResource(int $appId, string $method, array $uriParts)
     {
         if (!$this->test) {
             $resourceMapper = new Db\ResourceMapper($this->db);
@@ -291,9 +292,9 @@ class Api
      *
      * @return string
      */
-    private function _getCacheKey(array $uriParts)
+    private function getCacheKey(array $uriParts)
     {
-        $cacheKey = $this->_cleanData($this->request->getMethod() . '_' . implode('_', $uriParts));
+        $cacheKey = $this->cleanData($this->request->getMethod() . '_' . implode('_', $uriParts));
         $this->logger->info('cache key: ' . $cacheKey);
         return $cacheKey;
     }
@@ -307,7 +308,7 @@ class Api
      *
      * @throws ApiException Allow any exceptions to flow through.
      */
-    private function _getCache(string $cacheKey)
+    private function getCache(string $cacheKey)
     {
         if (!$this->cache->cacheActive()) {
             $this->logger->info('not searching for cache - inactive');
@@ -318,7 +319,7 @@ class Api
 
         if (!empty($data)) {
             $this->logger->debug('from cache: ' . $data);
-            return $this->_getOutput($data, new Request());
+            return $this->getOutput($data, new Request());
         }
 
         $this->logger->info('no cache entry found');
@@ -334,7 +335,7 @@ class Api
      *
      * @throws ApiException Let any exceptions flow through.
      */
-    private function _crawlMeta($meta)
+    private function crawlMeta($meta)
     {
         if (!$this->helper->isProcessor($meta)) {
             return $meta;
@@ -416,7 +417,7 @@ class Api
      *
      * @throws ApiException Let any exceptions flow through.
      */
-    private function _getOutput($data)
+    private function getOutput($data)
     {
         $result = true;
         $resource = $this->request->getMeta();
@@ -467,7 +468,7 @@ class Api
         if (!isset($meta['function'])) {
             throw new ApiException("No function found in the output section: $index.", 3, -1, 400);
         }
-        $outFormat = ucfirst($this->_cleanData($meta['function']));
+        $outFormat = ucfirst($this->cleanData($meta['function']));
         $class = $this->helper->getProcessorString($outFormat, ['Output']);
         $obj = new $class($data, 200, $this->logger);
         $result = $obj->process();
@@ -492,7 +493,7 @@ class Api
         if (!isset($meta['function'])) {
             throw new ApiException("No function found in the output section: $index.", 3, -1, 400);
         }
-        $outFormat = ucfirst($this->_cleanData($meta['function']));
+        $outFormat = ucfirst($this->cleanData($meta['function']));
         $class = $this->helper->getProcessor($outFormat, ['Output']);
         $obj = new $class($data, 200, $meta);
         $obj->process();
@@ -505,7 +506,7 @@ class Api
      *
      * @throws ApiException Thow exception for unexpected headers.
      */
-    private function _getMethod()
+    private function getMethod()
     {
         $method = strtolower($_SERVER['REQUEST_METHOD']);
         if ($method == 'post' && array_key_exists('HTTP_X_HTTP_METHOD', $_SERVER)) {
@@ -547,7 +548,7 @@ class Api
                 $values[$key]['mimeType'] = $tempArr[0];
                 $values[$key]['mimeSubType'] = $tempArr[1];
             }
-            usort($values, ['self', '_sortHeadersWeight']);
+            usort($values, ['self', 'sortHeadersWeight']);
         }
         if (sizeof($values) < 1) {
             return $default;
@@ -555,7 +556,7 @@ class Api
 
         $result = $default;
         switch ($values[0]['mimeType']) {
-            case 'image' :
+            case 'image':
                 $result = 'image';
                 break;
             case 'text':
@@ -585,7 +586,7 @@ class Api
      *
      * @return integer
      */
-    private static function _sortHeadersWeight($a, $b)
+    private static function sortHeadersWeight($a, $b)
     {
         if ($a['weight'] == $b['weight']) {
             return 0;
@@ -600,12 +601,12 @@ class Api
      *
      * @return array|string
      */
-    private function _cleanData($data)
+    private function cleanData($data)
     {
         $cleaned = [];
         if (is_array($data)) {
             foreach ($data as $k => $v) {
-                $cleaned[$k] = $this->_cleanData($v);
+                $cleaned[$k] = $this->cleanData($v);
             }
         } else {
             $cleaned = trim(strip_tags($data));

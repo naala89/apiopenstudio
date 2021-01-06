@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Populate test DB for gitlab pipelines functional tests.
  *

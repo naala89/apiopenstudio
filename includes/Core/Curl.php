@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Curl.
  *
@@ -89,7 +90,7 @@ class Curl
     public function get(string $url, array $options = [])
     {
         $options[CURLOPT_HTTPGET] = true;
-        return $this->_exec($url, $options);
+        return $this->exec($url, $options);
     }
 
     /**
@@ -103,7 +104,7 @@ class Curl
     public function post(string $url, array $options = array())
     {
         $options[CURLOPT_POST] = true;
-        return $this->_exec($url, $options);
+        return $this->exec($url, $options);
     }
 
     /**
@@ -114,7 +115,7 @@ class Curl
      *
      * @return array Array of options
      */
-    private function _getCurlOptions(string $url, array $options = [])
+    private function getCurlOptions(string $url, array $options = [])
     {
         return $this->options + array(CURLOPT_URL => $url) + $options;
     }
@@ -127,9 +128,9 @@ class Curl
      *
      * @return string
      */
-    private function _exec(string $url, array $options = [])
+    private function exec(string $url, array $options = [])
     {
-        $options = $this->_getCurlOptions($url, $options);
+        $options = $this->getCurlOptions($url, $options);
 
         $ch = curl_init();
         curl_setopt_array($ch, $options);

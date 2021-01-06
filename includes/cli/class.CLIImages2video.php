@@ -1,5 +1,6 @@
 #!/usr/bin/php -q
 <?php
+
 /**
  * Class CLIImages2video.
  *

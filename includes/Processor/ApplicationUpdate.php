@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class ApplicationUpdate.
  *
@@ -143,7 +144,8 @@ class ApplicationUpdate extends Core\ProcessorEntity
         }
 
         if (!$this->userRoleMapper->hasRole($user->getUid(), 'Administrator')) {
-            if ((
+            if (
+                (
                     !empty($accid)
                     && $this->userRoleMapper->findByUidAppidRolename($user->getUid(), $appid, 'Account manager')
                 )
@@ -151,7 +153,8 @@ class ApplicationUpdate extends Core\ProcessorEntity
                     $user->getUid(),
                     $application->getAccid(),
                     'Account manager'
-                )) {
+                )
+            ) {
                 throw new ApiException("Permission denied.", 6, $this->id, 417);
             }
         }

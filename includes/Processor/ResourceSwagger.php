@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class ResourceSwagger.
  *
@@ -67,7 +68,7 @@ class ResourceSwagger extends ResourceBase
 
         $this->paramCount = 2;
         $resources = array();
-        $swagger = $this->_importData();
+        $swagger = $this->importData();
 
         if (empty($swagger['paths'])) {
             throw new Core\ApiException('Missing paths element in swagger YAML', 1);
@@ -82,13 +83,13 @@ class ResourceSwagger extends ResourceBase
 
             $uriParams = array();
             if (sizeof($pathParts) > 2) {
-                $uriParams = $this->_extractUriParams(array_slice($pathParts, 2));
+                $uriParams = $this->extractUriParams(array_slice($pathParts, 2));
             }
             $noun = $pathParts[0];
             $verb = $pathParts[1];
 
             foreach ($methods as $method => $definition) {
-                $requestVars = $this->_extractParameters($definition['parameters'], $method);
+                $requestVars = $this->extractParameters($definition['parameters'], $method);
 
                 $resource = array();
                 $resource['name'] = !empty($definition['operationId']) ? $definition['operationId'] : 'noName';
@@ -119,7 +120,7 @@ class ResourceSwagger extends ResourceBase
 
                 $resources[] = array(
                 'uri' => $resource['uri'],
-                'method' =>$method,
+                'method' => $method,
                 'appId' => $this->request->getAppId()
                 );
             }
@@ -141,7 +142,7 @@ class ResourceSwagger extends ResourceBase
      */
     protected function save($data)
     {
-        $this->_validateData($data);
+        $this->validateData($data);
 
         $name = $data['name'];
         $description = $data['description'];
@@ -173,7 +174,7 @@ class ResourceSwagger extends ResourceBase
      *
      * @return array|string
      */
-    protected function _importData($data)
+    protected function importData($data)
     {
         return \Spyc::YAMLLoadString($data);
     }
@@ -185,7 +186,7 @@ class ResourceSwagger extends ResourceBase
      *
      * @return mixed
      */
-    protected function _exportData($data)
+    protected function exportData($data)
     {
     }
 
@@ -198,7 +199,7 @@ class ResourceSwagger extends ResourceBase
      *
      * @throws \ApiOpenStudio\Core\ApiException Error.
      */
-    protected function _extractUriParams(array $uriParams)
+    protected function extractUriParams(array $uriParams)
     {
         $result = array();
         foreach ($uriParams as $key => $val) {
@@ -225,7 +226,7 @@ class ResourceSwagger extends ResourceBase
      *
      * @throws Core\ApiException Error.
      */
-    protected function _extractParameters(array $parameters, string $method)
+    protected function extractParameters(array $parameters, string $method)
     {
         $result = [];
         foreach ($parameters as $parameter) {
@@ -236,11 +237,11 @@ class ResourceSwagger extends ResourceBase
                     $p['processor'] = $method == 'get' ? 'varGet' : 'varPost';
                     $p['meta']['id'] = $this->paramCount++;
                     $p['meta']['name'] = $parameter['name'];
-                  break;
+                    break;
                 case 'body':
                     $p['processor'] = 'varBody';
                     $p['meta']['id'] = $this->paramCount++;
-                  break;
+                    break;
             }
             // strongly typed
             if (!empty($parameter['items']['type'])) {

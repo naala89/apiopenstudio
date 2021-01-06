@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class ResourceMapper.
  *
@@ -196,7 +197,7 @@ class ResourceMapper extends Mapper
                     throw new ApiException("invalid appid: $appid", 6, $this->id, 401);
                 }
                 $placeholders[] = '?';
-                $bindParams[] = (Integer) $appid;
+                $bindParams[] = (int) $appid;
             }
             $sql = 'SELECT * FROM resource WHERE appid IN (' . implode(', ', $placeholders) . ')';
         }
@@ -251,7 +252,7 @@ class ResourceMapper extends Mapper
     {
         // Find Applications for the user role.
         $userRoleMapper = new UserRoleMapper($this->db);
-        $result = $userRoleMapper->findByFilter(['col'=> ['uid' => $uid, 'rid' => $rid]]);
+        $result = $userRoleMapper->findByFilter(['col' => ['uid' => $uid, 'rid' => $rid]]);
         $appids = [];
         foreach ($result as $item) {
             $app_id = $item->getAppid();

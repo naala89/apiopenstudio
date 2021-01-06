@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Functions.
  *
@@ -76,9 +77,9 @@ class Functions extends Core\ProcessorEntity
 
         $details = [];
         foreach ($this->namespaces as $namespace) {
-            $classNames = $this->_getClassList($namespace);
+            $classNames = $this->getClassList($namespace);
             foreach ($classNames as $className) {
-                $detail = $this->_getDetails($namespace, $className);
+                $detail = $this->getDetails($namespace, $className);
                 if ($detail !== false) {
                     $details[$detail['machineName']] =  $detail;
                 }
@@ -103,7 +104,7 @@ class Functions extends Core\ProcessorEntity
      *
      * @return array The list of class names.
      */
-    private function _getClassList(string $namespace)
+    private function getClassList(string $namespace)
     {
         $iterator = new RecursiveIteratorIterator(new \RecursiveDirectoryIterator(__DIR__ . '/../' . $namespace));
         $objects = new RegexIterator($iterator, '/[a-z0-9]+\.php/i', \RecursiveRegexIterator::GET_MATCH);
@@ -125,7 +126,7 @@ class Functions extends Core\ProcessorEntity
      *
      * @throws \ReflectionException Error.
      */
-    private function _getDetails(string $namespace, string $className)
+    private function getDetails(string $namespace, string $className)
     {
         $reflector = new ReflectionClass("\\ApiOpenStudio\\$namespace\\$className");
         if (!$reflector->isAbstract()) {

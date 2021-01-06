@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class ProcessorHelper.
  *
@@ -26,7 +27,7 @@ class ProcessorHelper
      *
      * @var string[]
      */
-    private $_namespaces = array('Security', 'Endpoint', 'Output', 'Processor', 'Core');
+    private $namespaces = array('Security', 'Endpoint', 'Output', 'Processor', 'Core');
 
     /**
      * Return processor namespace and class name string.
@@ -43,7 +44,7 @@ class ProcessorHelper
         if (empty($className)) {
             throw new ApiException('empty function name', 1, -1, 406);
         }
-        $namespaces = empty($namespaces) ? $this->_namespaces : $namespaces;
+        $namespaces = empty($namespaces) ? $this->namespaces : $namespaces;
         $className = str_replace('-', '_', $className);
         $parts = explode('_', $className);
         foreach ($parts as $key => $part) {

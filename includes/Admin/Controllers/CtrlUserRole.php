@@ -1,6 +1,9 @@
 <?php
+
 /**
  * Class CtrlUserRole.
+ *
+ * Controller for user/role page.
  *
  * @package    ApiOpenStudio
  * @subpackage Admin\Controllers
@@ -99,7 +102,7 @@ class CtrlUserRole extends CtrlBase
             'accounts' => $sortedAccounts,
             'applications' => $this->userApplications,
             'users' => $sortedUsers,
-            'roles'=> $this->allRoles,
+            'roles' => $this->allRoles,
             'messages' => $this->flash->getMessages(),
         ]);
     }
@@ -141,10 +144,10 @@ class CtrlUserRole extends CtrlBase
             $this->flash->addMessage('error', $this->getErrorMessage($e));
             switch ($result->getStatusCode()) {
                 case 401:
-                return $response->withStatus(302)->withHeader('Location', '/login');
+                    return $response->withStatus(302)->withHeader('Location', '/login');
                 break;
                 default:
-                return $response->withStatus(302)->withHeader('Location', '/user/roles');
+                    return $response->withStatus(302)->withHeader('Location', '/user/roles');
                 break;
             }
         }

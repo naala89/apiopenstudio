@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class ResourceDelete.
  *
@@ -147,12 +148,15 @@ class ResourceDelete extends Core\ProcessorEntity
         $role = $this->userRoleMapper->findByUidAppidRolename(
             $currentUser->getUid(),
             $resource->getAppid(),
-            'Developer');
+            'Developer'
+        );
         if (empty($role->getUrid())) {
-            throw new Core\ApiException("Unauthorised: you do not have permissions for this application",
+            throw new Core\ApiException(
+                "Unauthorised: you do not have permissions for this application",
                 6,
                 $this->id,
-                400);
+                400
+            );
         }
 
         $application = $this->applicationMapper->findByAppid($resource->getAppid());

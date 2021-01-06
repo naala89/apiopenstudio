@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class VarStoreRead.
  *
@@ -176,7 +177,7 @@ class VarStoreRead extends Core\ProcessorEntity
             $params['filter'][] = ['keyword' => $vid, 'column' => 'vid`'];
         }
         if (!empty($appid)) {
-            $params['filter'][] = ['value' => (integer) $appid, 'column' => 'appid'];
+            $params['filter'][] = ['value' => (int) $appid, 'column' => 'appid'];
         }
         if (!empty($keyword)) {
             $params['filter'][] = ['keyword' => "%$keyword%", 'column' => '`key`'];

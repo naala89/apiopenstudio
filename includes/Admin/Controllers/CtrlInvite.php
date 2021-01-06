@@ -1,6 +1,9 @@
 <?php
+
 /**
  * Class CtrlInvite.
+ *
+ * Controller for invite page.
  *
  * @package    ApiOpenStudio
  * @subpackage Admin\Controllers
@@ -58,7 +61,9 @@ class CtrlInvite extends CtrlBase
 
         $invites = [];
         try {
-            $result = $this->apiCall('get', 'invite',
+            $result = $this->apiCall(
+                'get',
+                'invite',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -75,10 +80,12 @@ class CtrlInvite extends CtrlBase
         // Pagination.
         $page = isset($params['page']) ? $params['page'] : 1;
         $pages = ceil(count($invites) / $this->settings['admin']['pagination_step']);
-        $invites = array_slice($invites,
+        $invites = array_slice(
+            $invites,
             ($page - 1) * $this->settings['admin']['pagination_step'],
             $this->settings['admin']['pagination_step'],
-            true);
+            true
+        );
 
         return $this->view->render($response, 'invites.twig', [
             'menu' => $menu,
@@ -114,7 +121,9 @@ class CtrlInvite extends CtrlBase
         }
 
         try {
-            $result = $this->apiCall('delete', "invite/$iid",
+            $result = $this->apiCall(
+                'delete',
+                "invite/$iid",
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -130,7 +139,9 @@ class CtrlInvite extends CtrlBase
 
         $invites = [];
         try {
-            $result = $this->apiCall('get', 'invite',
+            $result = $this->apiCall(
+                'get',
+                'invite',
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],
@@ -146,10 +157,12 @@ class CtrlInvite extends CtrlBase
         // Pagination.
         $page = 1;
         $pages = ceil(count($invites) / $this->settings['admin']['pagination_step']);
-        $invites = array_slice($invites,
+        $invites = array_slice(
+            $invites,
             ($page - 1) * $this->settings['admin']['pagination_step'],
             $this->settings['admin']['pagination_step'],
-            true);
+            true
+        );
 
         return $this->view->render($response, 'invites.twig', [
             'menu' => $menu,
@@ -185,7 +198,9 @@ class CtrlInvite extends CtrlBase
         }
 
         try {
-            $result = $this->apiCall('post', "user/invite",
+            $result = $this->apiCall(
+                'post',
+                "user/invite",
                 [
                     'headers' => [
                         'Authorization' => "Bearer " . $_SESSION['token'],

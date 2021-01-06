@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Utilities.
  *
@@ -218,7 +219,7 @@ class Utilities
     {
         $a_selfUrl = self::selfUrl(true);
         if ($a_selfUrl['protocol'] == 'http') {
-            header('Location: ' . $a_selfUrl['protocol']. 's://'
+            header('Location: ' . $a_selfUrl['protocol'] . 's://'
                 . $a_selfUrl['address'] . $a_selfUrl['port'] . $a_selfUrl['uri']);
             exit();
         }
@@ -264,10 +265,12 @@ class Utilities
         $isSecure = false;
         if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
             $isSecure = true;
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])
+        } elseif (
+            !empty($_SERVER['HTTP_X_FORWARDED_PROTO'])
             && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
             || !empty($_SERVER['HTTP_X_FORWARDED_SSL'])
-            && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
+            && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on'
+        ) {
             $isSecure = true;
         }
         return $isSecure;

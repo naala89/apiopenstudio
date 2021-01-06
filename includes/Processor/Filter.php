@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Filter.
  *
@@ -127,8 +128,8 @@ class Filter extends Core\ProcessorEntity
             $filter = array($filter);
         }
 
-        $func = '_filterBy' . ucfirst($keyOrValue) . ($recursive ? 'Recursive' : 'Nonrecursive');
-        $getCallback = '_callback' . ($inverse ? 'Inverse' : 'Noninverse') . ($regex ? 'Regex' : 'Nonregex');
+        $func = 'filterBy' . ucfirst($keyOrValue) . ($recursive ? 'Recursive' : 'Nonrecursive');
+        $getCallback = 'callback' . ($inverse ? 'Inverse' : 'Noninverse') . ($regex ? 'Regex' : 'Nonregex');
         $callback = $this->{$getCallback}($filter);
 
         $result = $this->{$func}($source, $callback);
@@ -147,7 +148,7 @@ class Filter extends Core\ProcessorEntity
      * @see https://wpscholar.com/blog/filter-multidimensional-array-php/
      * @see http://www.phptherightway.com/pages/Functional-Programming.html
      */
-    private function _filterByKeyNonrecursive($data, $callback)
+    private function filterByKeyNonrecursive($data, $callback)
     {
         if (!is_array($data)) {
             return $data;
@@ -164,7 +165,7 @@ class Filter extends Core\ProcessorEntity
      *
      * @return array
      */
-    private function _filterByKeyRecursive($data, $callback)
+    private function filterByKeyRecursive($data, $callback)
     {
         if (!is_array($data)) {
             return $data;
@@ -174,7 +175,7 @@ class Filter extends Core\ProcessorEntity
 
         foreach ($data as $key => $item) {
             if (is_array($item)) {
-                $data[$key] = $this->_filterByKeyRecursive($item, $callback);
+                $data[$key] = $this->filterByKeyRecursive($item, $callback);
             }
         }
 
@@ -189,7 +190,7 @@ class Filter extends Core\ProcessorEntity
      *
      * @return array
      */
-    private function _filterByValueNonrecursive($data, $callback)
+    private function filterByValueNonrecursive($data, $callback)
     {
         if (!is_array($data)) {
             return !$callback($data) ? null : $data;
@@ -213,7 +214,7 @@ class Filter extends Core\ProcessorEntity
      *
      * @return array
      */
-    private function _filterByValueRecursive($data, $callback)
+    private function filterByValueRecursive($data, $callback)
     {
         if (!is_array($data)) {
             return $callback($data) ? null : $data;
@@ -225,7 +226,7 @@ class Filter extends Core\ProcessorEntity
                     unset($data[$key]);
                 }
             } else {
-                $data[$key] = $this->_filterByValueRecursive($item, $callback);
+                $data[$key] = $this->filterByValueRecursive($item, $callback);
             }
         }
 
@@ -239,7 +240,7 @@ class Filter extends Core\ProcessorEntity
      *
      * @return \Closure
      */
-    private function _callbackNoninverseNonregex(array $filter)
+    private function callbackNoninverseNonregex(array $filter)
     {
         return function ($item) use ($filter) {
             return !in_array($item, $filter);
@@ -253,7 +254,7 @@ class Filter extends Core\ProcessorEntity
      *
      * @return \Closure
      */
-    private function _callbackInverseNonregex(array $filter)
+    private function callbackInverseNonregex(array $filter)
     {
         return function ($item) use ($filter) {
             return in_array($item, $filter);
@@ -267,7 +268,7 @@ class Filter extends Core\ProcessorEntity
      *
      * @return \Closure
      */
-    private function _callbackNoninverseRegex(array $filter)
+    private function callbackNoninverseRegex(array $filter)
     {
         return function ($item) use ($filter) {
             return preg_match($filter, $item) == 0;
@@ -281,7 +282,7 @@ class Filter extends Core\ProcessorEntity
      *
      * @return \Closure
      */
-    private function _callbackInverseRegex(array $filter)
+    private function callbackInverseRegex(array $filter)
     {
         return function ($item) use ($filter) {
             return preg_match($filter, $item) > 0;

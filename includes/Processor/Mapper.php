@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Mapper.
  *
@@ -90,7 +91,7 @@ class Mapper extends Core\ProcessorEntity
                 if (is_string($sourceData)) {
                     $sourceData = \json_decode($sourceData);
                 }
-            break;
+                break;
             case 'xml':
             default:
                 $this->result = new \DOMDocument();
@@ -100,16 +101,16 @@ class Mapper extends Core\ProcessorEntity
                     $sourceData = new \DOMDocument();
                     $sourceData->loadXML($xml);
                 }
-            break;
+                break;
         }
 
         switch ($type) {
             case 'xml':
-                $this->_mapXml($sourceData, $mappings, $format);
-            break;
+                $this->mapXml($sourceData, $mappings, $format);
+                break;
             case 'json':
-                $this->_mapJson($sourceData, $mappings, $format);
-            break;
+                $this->mapJson($sourceData, $mappings, $format);
+                break;
             default:
                 $message = "can only perform mappings on types XML or JSON. '$type' received";
                 throw new Core\ApiException($message, 6, $this->id, 417);
@@ -118,11 +119,11 @@ class Mapper extends Core\ProcessorEntity
 
         switch ($format) {
             case 'json':
-            return new Core\DataContainer(\json_encode($this->result), $format);
+                return new Core\DataContainer(\json_encode($this->result), $format);
             break;
             case 'xml':
             default:
-            return new Core\DataContainer($this->result->saveXML(), $format);
+                return new Core\DataContainer($this->result->saveXML(), $format);
             break;
         }
     }
@@ -140,7 +141,7 @@ class Mapper extends Core\ProcessorEntity
      *
      * @see https://github.com/jmespath/jmespath.php
      */
-    private function _mapJson(DOMDocument &$source, array $mappings, string $format)
+    private function mapJson(DOMDocument &$source, array $mappings, string $format)
     {
         $resultFunc = '_addResult' . ucfirst($format);
 
@@ -169,7 +170,7 @@ class Mapper extends Core\ProcessorEntity
      *
      * @return void
      */
-    private function _addResultJson(string $regex, DOMNodeList $value)
+    private function addResultJson(string $regex, DOMNodeList $value)
     {
         $nodes = explode('/', $regex);
         while (empty($nodes[0])) {
@@ -227,7 +228,7 @@ class Mapper extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Error.
      */
-    private function _mapXml(DOMDocument $source, array $mappings, string $format)
+    private function mapXml(DOMDocument $source, array $mappings, string $format)
     {
         $resultFunc = '_addResult' . ucfirst($format);
         $xpath = new \DOMXPath($source);
@@ -258,7 +259,7 @@ class Mapper extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Error.
      */
-    private function _addResultXml(string $regex, DOMNodeList $values)
+    private function addResultXml(string $regex, DOMNodeList $values)
     {
         $queryNodes = explode('/', trim($regex, '/'));
         // $xpath = new \DOMXPath($this->result);
@@ -298,7 +299,7 @@ class Mapper extends Core\ProcessorEntity
                     // add value as attribute of a node
                     if ($values->length > 1) {
                         $message = "error, cannot add multiple valies to attribute to XML ($regex).";
-                        throw new Core\ApiException($message, 6, $this->id, 417 );
+                        throw new Core\ApiException($message, 6, $this->id, 417);
                     }
                     $left = strpos($queryNode, '[');
                     $right = strpos($queryNode, ']');

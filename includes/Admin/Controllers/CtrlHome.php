@@ -1,6 +1,9 @@
 <?php
+
 /**
  * Class CtrlHome.
+ *
+ * Controller for the home page.
  *
  * @package    ApiOpenStudio
  * @subpackage Admin\Controllers

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class UserUpdate.
  *
@@ -254,9 +255,11 @@ class UserUpdate extends Core\ProcessorEntity
         $uid = $this->val('uid', true);
         $currentUser = $this->userMapper->findBytoken($token);
 
-        if (!$this->userRoleMapper->hasRole($currentUser->getUid(), 'Administrator')
+        if (
+            !$this->userRoleMapper->hasRole($currentUser->getUid(), 'Administrator')
             && !$this->userRoleMapper->hasRole($currentUser->getUid(), 'Account manager')
-            && !$this->userRoleMapper->hasRole($currentUser->getUid(), 'Application manager')) {
+            && !$this->userRoleMapper->hasRole($currentUser->getUid(), 'Application manager')
+        ) {
             // Non-privileged accounts can only edit their own accounts.
             if (!empty($uid) && $uid != $currentUser->getUid()) {
                 throw new Core\ApiException("Permission denied", 6, $this->id, 400);
@@ -271,7 +274,7 @@ class UserUpdate extends Core\ProcessorEntity
 
         if (!empty($active = $this->val('active', true))) {
             $active = $active === 'true' ? true : ($active === 'false' ? false : $active);
-            $user->setActive((boolean) $active ? 1 : 0);
+            $user->setActive((bool) $active ? 1 : 0);
         }
         if (!empty($username = $this->val('username', true)) && $user->getUsername() != $username) {
             $userCheck = $this->userMapper->findByUsername($username);

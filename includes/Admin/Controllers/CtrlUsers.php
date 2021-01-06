@@ -1,6 +1,9 @@
 <?php
+
 /**
  * Class CtrlUsers.
+ *
+ * Controller for users page.
  *
  * @package    ApiOpenStudio
  * @subpackage Admin\Controllers
@@ -24,11 +27,11 @@ use Slim\Http\Response;
  */
 class CtrlUsers extends CtrlBase
 {
-  /**
-   * Roles allowed to visit the page.
-   *
-   * @var array
-   */
+    /**
+     * Roles allowed to visit the page.
+     *
+     * @var array
+     */
     protected $permittedRoles = [
         'Administrator',
         'Account manager',
@@ -86,10 +89,12 @@ class CtrlUsers extends CtrlBase
         // Pagination.
         $page = isset($params['page']) ? $allParams['page'] : 1;
         $pages = ceil(count($users) / $this->settings['admin']['pagination_step']);
-        $users = array_slice($users,
-        ($page - 1) * $this->settings['admin']['pagination_step'],
-        $this->settings['admin']['pagination_step'],
-        true);
+        $users = array_slice(
+            $users,
+            ($page - 1) * $this->settings['admin']['pagination_step'],
+            $this->settings['admin']['pagination_step'],
+            true
+        );
 
         return $this->view->render($response, 'users.twig', [
             'menu' => $menu,

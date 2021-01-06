@@ -1,6 +1,9 @@
 <?php
+
 /**
  * Class CtrlLogin.
+ *
+ * Controller for login page.
  *
  * @package    ApiOpenStudio
  * @subpackage Admin\Controllers

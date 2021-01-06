@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class ResourceValidator.
  *
@@ -15,7 +16,7 @@
 namespace ApiOpenStudio\Core;
 
 use Monolog\Logger;
-use \ADODB_mysqli;
+use ADODB_mysqli;
 
 /**
  * Class ResourceValidator
@@ -107,13 +108,22 @@ class ResourceValidator
                     if ($this->helper->isProcessor($output)) {
                         $this->validateDetails($output);
                     } elseif ($output != 'response') {
-                        throw new ApiException('Invalid output declaration, only functions or array of functions or "response" allowed', 6, -1, 400);
+                        throw new ApiException(
+                            'Invalid output declaration, only functions or array of functions or "response" allowed',
+                            6,
+                            -1,
+                            400
+                        );
                     }
                 }
-            }
-            else {
+            } else {
                 if ($data['output'] != 'response') {
-                    throw new ApiException('Invalid output declaration, only functions or array of functions or "response" allowed', 6, -1, 400);
+                    throw new ApiException(
+                        'Invalid output declaration, only functions or array of functions or "response" allowed',
+                        6,
+                        -1,
+                        400
+                    );
                 }
             }
         }
@@ -136,10 +146,11 @@ class ResourceValidator
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
                 if (in_array($node['id'], $id)) {
-                    throw new ApiException('identical IDs in new resource: ' . $node['id'],
+                    throw new ApiException(
+                        'identical IDs in new resource: ' . $node['id'],
                         6,
                         -1,
-                        400,
+                        400
                     );
                 }
                 $id[] = $node['id'];
@@ -278,19 +289,25 @@ class ResourceValidator
             } elseif ($accept == 'literal' && (is_string($element) || is_numeric($element))) {
                 $valid = true;
                 break;
-            } elseif ($accept == 'boolean'
-                && filter_var($element, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) !== null) {
+            } elseif (
+                $accept == 'boolean'
+                && filter_var($element, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) !== null
+            ) {
                 $valid = true;
                 break;
-            } elseif ($accept == 'integer'
-                && filter_var($element, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) !== null) {
+            } elseif (
+                $accept == 'integer'
+                && filter_var($element, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) !== null
+            ) {
                 $valid = true;
                 break;
             } elseif ($accept == 'text' && is_string($element)) {
                 $valid = true;
                 break;
-            } elseif ($accept == 'float'
-                && filter_var($element, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) !== null) {
+            } elseif (
+                $accept == 'float'
+                && filter_var($element, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) !== null
+            ) {
                 $valid = true;
                 break;
             } elseif ($accept == 'array' && is_array($element)) {

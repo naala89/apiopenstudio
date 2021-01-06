@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Url.
  *
@@ -161,7 +162,7 @@ class Url extends Core\ProcessorEntity
         }
 
         if ($sourceType == 'auto') {
-            $sourceType = $this->_calcFormat();
+            $sourceType = $this->calcFormat();
         }
 
         return new Core\DataContainer($this->data, $sourceType);
@@ -172,7 +173,7 @@ class Url extends Core\ProcessorEntity
      *
      * @return string
      */
-    private function _calcFormat()
+    private function calcFormat()
     {
         $data = $this->data;
         // test for array

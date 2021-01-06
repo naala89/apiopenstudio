@@ -1,6 +1,9 @@
 <?php
+
 /**
  * Class CtrlBase.
+ *
+ * Parent class for all controllers.
  *
  * @package    ApiOpenStudio
  * @subpackage Admin\Controllers

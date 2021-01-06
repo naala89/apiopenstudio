@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class DataContainer.
  *
@@ -197,7 +198,7 @@ class DataContainer extends Entity
         if ($var === 0 || $var === '0') {
             return true;
         }
-        if ((integer) ltrim($var, '0') != ltrim($var, '0')) {
+        if ((int) ltrim($var, '0') != ltrim($var, '0')) {
             return false;
         }
         return is_int(filter_var(ltrim($var, '0'), FILTER_VALIDATE_INT, ['default' => null]));

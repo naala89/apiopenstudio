@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class ConvertToArray.
  *
@@ -135,7 +136,7 @@ class ConvertToArray extends Output
     protected function fromXml(string &$data)
     {
         $xml = simplexml_load_string($data);
-        $json = $this->_xml2json($xml);
+        $json = $this->xml2json($xml);
         return json_decode($json, true);
     }
 
@@ -204,7 +205,7 @@ class ConvertToArray extends Output
      *
      * @return mixed
      */
-    protected function fromJson(string&$data)
+    protected function fromJson(string &$data)
     {
         return json_decode($data, true);
     }
@@ -216,7 +217,7 @@ class ConvertToArray extends Output
      *
      * @return array|false|string
      */
-    private function _xml2json(SimpleXMLElement &$xml)
+    private function xml2json(SimpleXMLElement &$xml)
     {
         $root = (func_num_args() > 1 ? false : true);
         $jsnode = [];
@@ -239,13 +240,13 @@ class ConvertToArray extends Output
                 if (!array_key_exists($childname, $jsnode)) {
                     $jsnode[$childname] = [];
                 }
-                array_push($jsnode[$childname], $this->_xml2json($childxmlnode, true));
+                array_push($jsnode[$childname], $this->xml2json($childxmlnode, true));
             }
             return $jsnode;
         } else {
             $nodename = $xml->getName();
             $jsnode[$nodename] = [];
-            array_push($jsnode[$nodename], $this->_xml2json($xml, true));
+            array_push($jsnode[$nodename], $this->xml2json($xml, true));
             return json_encode($jsnode);
         }
     }

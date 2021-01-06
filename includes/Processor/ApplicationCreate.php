@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class ApplicationCreate.
  *
@@ -126,7 +127,8 @@ class ApplicationCreate extends Core\ProcessorEntity
         $token = $this->val('token', true);
         $user = $this->userMapper->findBytoken($token);
         $accid = $this->val('accid', true);
-        if (!$this->userRoleMapper->hasRole($user->getUid(), 'Administrator')
+        if (
+            !$this->userRoleMapper->hasRole($user->getUid(), 'Administrator')
             && !$this->userRoleMapper->hasAccidRole($user->getUid(), $accid, 'Account manager')
         ) {
             throw new ApiException('Permission denied.', 6, $this->id, 417);

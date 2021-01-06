@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Normalise.
  *
@@ -70,8 +71,12 @@ class Normalise
         $into = empty($into) ? $this->defaultNormalise : $into;
         $normaliseFunc = 'to' . ucfirst($into);
         if (!method_exists($this, $normaliseFunc)) {
-            throw new ApiException("cannot normalise input into $into, this functionality does not exist",
-                6, $this->id, 400);
+            throw new ApiException(
+                "cannot normalise input into $into, this functionality does not exist",
+                6,
+                $this->id,
+                400
+            );
         }
         return $this->{$normaliseFunc}();
     }
@@ -85,27 +90,27 @@ class Normalise
      */
     public function toArray()
     {
-        $format = empty($this->format) ? $this->_calcFormat() : $this->_getFormat();
+        $format = empty($this->format) ? $this->calcFormat() : $this->getFormat();
         switch ($format) {
             case 'xml':
             case 'application/xml':
             case 'text/xml':
-                $data = $this->_xmlToArray($this->data);
-            break;
+                $data = $this->xmlToArray($this->data);
+                break;
             case 'json':
             case 'application/json':
             case 'text/json':
-                $data = $this->_jsonToArray($this->data);
-            break;
+                $data = $this->jsonToArray($this->data);
+                break;
             case 'array':
                 $data = $this->data;
-            break;
+                break;
             case 'text':
             case 'application/text':
             case 'text/text':
             default:
                 $data = array('data' => $this->data);
-            break;
+                break;
         }
         return $data;
     }
@@ -119,23 +124,23 @@ class Normalise
      */
     public function toStdClass()
     {
-        $format = !$this->format ? $this->_calcFormat() : $this->_getFormat();
+        $format = !$this->format ? $this->calcFormat() : $this->getFormat();
         switch ($format) {
             case 'xml':
-                $data = $this->_xmlToStdClass();
-            break;
+                $data = $this->xmlToStdClass();
+                break;
             case 'json':
-                $data = $this->_jsonToStdClass();
-            break;
+                $data = $this->jsonToStdClass();
+                break;
             case 'array':
                 $data = new \stdClass();
                 $data->data = (object) $this->data;
-            break;
+                break;
             case 'text':
             default:
                 $data = new \stdClass();
                 $data->data = $this->data;
-            break;
+                break;
         }
         return $data;
     }
@@ -147,16 +152,16 @@ class Normalise
      *
      * @throws ApiException Exception.
      */
-    private function _getFormat()
+    private function getFormat()
     {
         $format = $this->format;
         if (is_array($format)) {
             if (!empty($format[CURLINFO_CONTENT_TYPE])) {
-                return $this->_parseContentType($format[CURLINFO_CONTENT_TYPE]);
+                return $this->parseContentType($format[CURLINFO_CONTENT_TYPE]);
             }
-            return $this->_calcFormat();
+            return $this->calcFormat();
         }
-        return $this->_parseContentType($format);
+        return $this->parseContentType($format);
     }
 
     /**
@@ -168,7 +173,7 @@ class Normalise
      *
      * @throws ApiException Invalid header value.
      */
-    private function _parseContentType(string $str)
+    private function parseContentType(string $str)
     {
         $result = '';
         if (preg_match('/text\/|application\//', $str) == 1) {
@@ -197,7 +202,7 @@ class Normalise
      *
      * @return string
      */
-    private function _calcFormat()
+    private function calcFormat()
     {
         $data = $this->data;
         // test for array
@@ -223,7 +228,7 @@ class Normalise
      *
      * @see https://github.com/gaarf/XML-string-to-PHP-array
      */
-    private function _xmlToArray()
+    private function xmlToArray()
     {
         $doc = new \DOMDocument();
         $doc->loadXML($this->data);
@@ -247,10 +252,10 @@ class Normalise
             case XML_CDATA_SECTION_NODE:
             case XML_TEXT_NODE:
                 $output = trim($node->textContent);
-            break;
+                break;
 
             case XML_ELEMENT_NODE:
-                for ($i=0, $m=$node->childNodes->length; $i<$m; $i++) {
+                for ($i = 0, $m = $node->childNodes->length; $i < $m; $i++) {
                     $child = $node->childNodes->item($i);
                     $v = $this->domNodeToArray($child);
                     if (isset($child->tagName)) {
@@ -264,7 +269,7 @@ class Normalise
                     }
                 }
                 if ($node->attributes->length && !is_array($output)) { //Has attributes but isn't an array
-                    $output = array('@content'=>$output); //Change output into an array.
+                    $output = array('@content' => $output); //Change output into an array.
                 }
                 if (is_array($output)) {
                     if ($node->attributes->length) {
@@ -275,12 +280,12 @@ class Normalise
                         $output['@attributes'] = $a;
                     }
                     foreach ($output as $t => $v) {
-                        if (is_array($v) && count($v)==1 && $t!='@attributes') {
+                        if (is_array($v) && count($v) == 1 && $t != '@attributes') {
                             $output[$t] = $v[0];
                         }
                     }
                 }
-            break;
+                break;
         }
         return $output;
     }
@@ -290,7 +295,7 @@ class Normalise
      *
      * @return array
      */
-    private function _jsonToArray()
+    private function jsonToArray()
     {
         return json_decode($this->data, true); // Convert to array
     }
@@ -300,7 +305,7 @@ class Normalise
      *
      * @return \stdClass
      */
-    private function _xmlToStdClass()
+    private function xmlToStdClass()
     {
         $obj = simplexml_load_string($this->data); // Parse XML
         return json_decode(json_encode($obj)); // Convert to stdclass
@@ -312,7 +317,7 @@ class Normalise
      *
      * @return \stdClass
      */
-    private function _jsonToStdClass()
+    private function jsonToStdClass()
     {
         return json_decode($this->data); // Convert to stdclass
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Xml.
  *
@@ -172,7 +173,7 @@ class Xml extends Output
     protected function fromArray(array &$data)
     {
         $xml_data = new \SimpleXMLElement('<?xml version="1.0"?><apiOpenStudioWrapper></apiOpenStudioWrapper>');
-        $this->_array2xml($data, $xml_data);
+        $this->array2xml($data, $xml_data);
         return $xml_data->asXML();
     }
 
@@ -209,14 +210,14 @@ class Xml extends Output
      *
      * @return \SimpleXMLElement A populated SimpleXMLElement.
      */
-    private function _array2xml(array $array, \SimpleXMLElement $xml)
+    private function array2xml(array $array, \SimpleXMLElement $xml)
     {
         foreach ($array as $key => $value) {
             if (is_numeric($key)) {
                 $key = "item$key";
             }
             if (is_array($value)) {
-                $this->_array2xml($value, $xml->addChild($key));
+                $this->array2xml($value, $xml->addChild($key));
             } else {
                 $xml->addchild($key, htmlentities($value));
             }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class ResourceImport.
  *
@@ -194,12 +195,15 @@ class ResourceImport extends Core\ProcessorEntity
         $role = $this->userRoleMapper->findByUidAppidRolename(
             $currentUser->getUid(),
             $resource['appid'],
-            'Developer');
+            'Developer'
+        );
         if (empty($role->getUrid())) {
-            throw new Core\ApiException("Unauthorised: you do not have permissions for this application",
+            throw new Core\ApiException(
+                "Unauthorised: you do not have permissions for this application",
                 6,
                 $this->id,
-                400);
+                400
+            );
         }
 
         $meta = [];
@@ -225,9 +229,11 @@ class ResourceImport extends Core\ProcessorEntity
         }
 
         $account = $this->accountMapper->findByAccid($application->getAccid());
-        if ($account->getName() == $this->settings->__get(['api', 'core_account'])
+        if (
+            $account->getName() == $this->settings->__get(['api', 'core_account'])
                 && $application->getName() == $this->settings->__get(['api', 'core_application'])
-                && $this->settings->__get(['api', 'core_resource_lock'])) {
+                && $this->settings->__get(['api', 'core_resource_lock'])
+        ) {
             throw new Core\ApiException(
                 'Unauthorised: this is the core application',
                 6,

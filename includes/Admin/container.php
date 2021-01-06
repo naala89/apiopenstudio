@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Slim PHP containers declaration file for ApiOpenStudio admin.
  *
