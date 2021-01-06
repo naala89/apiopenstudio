@@ -55,8 +55,8 @@ deploy_wiki_develop:
   services:
     - name: sandrokeil/bookdown
       command: ["sh", "-C", "cp -R /builds/src/wiki/* /app/ ; ls -alth /app/"]
-#  script:
-#    - echo "Compile and deploy the wiki to dev."
+  script:
+    - echo "Compile and deploy the wiki to dev."
 #    - php composer.phar install
 #    - ./vendor/bin/bookdown src/wiki/bookdown.json
 #    - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
