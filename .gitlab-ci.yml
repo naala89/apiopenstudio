@@ -107,7 +107,7 @@ phpdoc_dev:
     - php /usr/local/bin/phpDocumentor.phar -d "$CI_PROJECT_DIR/" -t "$CI_PROJECT_DIR/public/phpdoc" --ignore=vendor/,tests/
     - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/html/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
+    - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
 
 #functional_tests:
