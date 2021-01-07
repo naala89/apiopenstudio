@@ -93,7 +93,7 @@ wiki_dev:
     - chmod 644 ~/.ssh/known_hosts
     - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
-    - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R www-data:$DEV_DEPLOYER $DEV_WIKI_PATH/*"
+    - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
 
 wiki_prod:
   stage: deploy
@@ -108,7 +108,7 @@ wiki_prod:
     - chmod 644 ~/.ssh/known_hosts
     - rsync -rvI --delete --exclude=".*" "/wiki/" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
     - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
-    - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "sudo chown -R www-data:$PROD_DEPLOYER $PROD_WIKI_PATH/*"
+    - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "sudo chown -R $PROD_DEPLOYER::www-data $PROD_WIKI_PATH/*"
 
 ##################################
 ## PHPDOC
@@ -127,7 +127,7 @@ phpdoc_dev:
     - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
-    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R www-data:$DEV_DEPLOYER $DEV_PHPDOC_PATH/*"
+    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
 
 phpdoc_prod:
   stage: deploy
@@ -142,4 +142,4 @@ phpdoc_prod:
     - ssh-keyscan "$PROD_PHPDOC_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL":"$PROD_PHPDOC_PATH/"
-    - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "sudo chown -R www-data:$PROD_DEPLOYER $PROD_PHPDOC_PATH/*"
+    - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_PHPDOC_PATH/*"
