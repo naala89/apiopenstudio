@@ -57,7 +57,7 @@ class CtrlBase
     /**
      * Flash messages object.
      *
-     * @var Messages.
+     * @var Slim\Flash\Messages.
      */
     protected $flash;
 
@@ -78,7 +78,7 @@ class CtrlBase
     /**
      * Array of the user access rights.
      *
-     * @var array,
+     * @var array
      *
      * [
      *      accid => [

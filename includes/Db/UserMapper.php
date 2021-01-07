@@ -123,7 +123,7 @@ class UserMapper extends Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      *
-     * @see \ApiOpenStudio\Db\Mapper.
+     * @see ApiOpenStudio\Db\Mapper.
      */
     public function findAllByPermissions(int $uid, array $params = [])
     {

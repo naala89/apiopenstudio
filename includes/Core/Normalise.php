@@ -49,7 +49,7 @@ class Normalise
      * @param mixed $data Data to normalize.
      * @param string $format Format to normalise into.
      *
-     * @return void.
+     * @return void
      */
     public function set($data, string $format)
     {
