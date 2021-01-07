@@ -365,68 +365,68 @@ Replace server_name with whatever domain you want to host locally.
             #   - SMARTHOST_PASSWORD=
             #   - SMARTHOST_ALIASES=
                    
-        # Uncomment this for compiling the wiki.
-        # Bookdown container.
-        bookdown:
-            image: sandrokeil/bookdown
-            container_name: "${APP_NAME}-bookdown"
-            volumes:
-                - ./src/wiki:/app
-                - ./public/wiki:/wiki
-            command: ["bookdown.json"]
-            networks:
-                - api_network
+        # # Uncomment this for compiling the wiki.
+        # # Bookdown container.
+        # bookdown:
+        #     image: sandrokeil/bookdown
+        #     container_name: "${APP_NAME}-bookdown"
+        #     volumes:
+        #         - ./src/wiki:/app
+        #         - ./public/wiki:/wiki
+        #     command: ["bookdown.json"]
+        #     networks:
+        #         - api_network
                    
-        # Uncomment this to serve the wiki locally.
-        # NGINX Wiki server.
-        wiki:
-            image: nginx:stable
-            container_name: "${APP_NAME}-wiki"
-            hostname: "${WIKI_DOMAIN}"
-            ports:
-                - 80
-            volumes:
-                - ./docker/nginx/wiki.conf:/etc/nginx/conf.d/default.conf
-                - ./public/wiki:/var/www/html
-                - ./logs/wiki:/var/log/nginx
-                - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
-            environment:
-                - VIRTUAL_HOST=${WIKI_DOMAIN}
-            networks:
-                api_network:
-                    aliases:
-                        - ${WIKI_DOMAIN}
+        # # Uncomment this to serve the wiki locally.
+        # # NGINX Wiki server.
+        # wiki:
+        #     image: nginx:stable
+        #     container_name: "${APP_NAME}-wiki"
+        #     hostname: "${WIKI_DOMAIN}"
+        #     ports:
+        #         - 80
+        #     volumes:
+        #         - ./docker/nginx/wiki.conf:/etc/nginx/conf.d/default.conf
+        #         - ./public/wiki:/var/www/html
+        #         - ./logs/wiki:/var/log/nginx
+        #         - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
+        #     environment:
+        #         - VIRTUAL_HOST=${WIKI_DOMAIN}
+        #     networks:
+        #         api_network:
+        #             aliases:
+        #                 - ${WIKI_DOMAIN}
         
-        # Uncomment this for compiling the phpdoc API.
-        # PhpDocumentor container.
-        phpdocumentor:
-        image: phpdoc/phpdoc
-        container_name: "${APP_NAME}-phpdocumentor"
-        volumes:
-        - .:/data
-        command: "run -d ./ -t public/phpdoc --ignore vendor/,tests/"
-        networks:
-        - api_network
+        # # Uncomment this for compiling the phpdoc API.
+        # # PhpDocumentor container.
+        # phpdocumentor:
+        #     image: phpdoc/phpdoc
+        #     container_name: "${APP_NAME}-phpdocumentor"
+        #     volumes:
+        #         - .:/data
+        #     command: "run -d ./ -t public/phpdoc --ignore vendor/,tests/"
+        #     networks:
+        #         - api_network
   
-        # Uncomment this to serve the phpdoc locally.
-        # NGINX Wiki server.
-        phpdoc:
-            image: nginx:stable
-            container_name: "${APP_NAME}-phpdoc"
-            hostname: "${PHPDOC_DOMAIN}"
-            ports:
-                - 80
-            volumes:
-                - ./docker/nginx/phpdoc.conf:/etc/nginx/conf.d/default.conf
-                - ./public/phpdoc/html:/var/www/html
-                - ./logs/phpdoc:/var/log/nginx
-                - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
-            environment:
-                - VIRTUAL_HOST=${PHPDOC_DOMAIN}
-            networks:
-                api_network:
-                    aliases:
-                        - ${PHPDOC_DOMAIN}
+        # # Uncomment this to serve the phpdoc locally.
+        # # NGINX Wiki server.
+        # phpdoc:
+        #     image: nginx:stable
+        #     container_name: "${APP_NAME}-phpdoc"
+        #     hostname: "${PHPDOC_DOMAIN}"
+        #     ports:
+        #         - 80
+        #     volumes:
+        #         - ./docker/nginx/phpdoc.conf:/etc/nginx/conf.d/default.conf
+        #         - ./public/phpdoc/html:/var/www/html
+        #         - ./logs/phpdoc:/var/log/nginx
+        #         - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
+        #     environment:
+        #         - VIRTUAL_HOST=${PHPDOC_DOMAIN}
+        #     networks:
+        #         api_network:
+        #             aliases:
+        #                 - ${PHPDOC_DOMAIN}
                
     networks:
         api_network:
