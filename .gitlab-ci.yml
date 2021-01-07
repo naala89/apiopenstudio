@@ -10,12 +10,12 @@
 
 image: php:7.4
 
-cache:
-  key: "$CI_COMMIT_REF_SLUG"
-  paths:
-    - vendor/
-    - .composer/
-    - composer.lock
+#cache:
+#  key: "$CI_COMMIT_REF_SLUG"
+#  paths:
+#    - vendor/
+#    - .composer/
+#    - composer.lock
 
 variables:
   MYSQL_HOST: ${MYSQL_TEST_HOST}
