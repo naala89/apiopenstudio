@@ -57,7 +57,7 @@ class CtrlBase
     /**
      * Flash messages object.
      *
-     * @var Slim\Flash\Messages.
+     * @var \Slim\Flash\Messages.
      */
     protected $flash;
 
