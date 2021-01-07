@@ -396,9 +396,19 @@ Replace server_name with whatever domain you want to host locally.
                 api_network:
                     aliases:
                         - ${WIKI_DOMAIN}
-                   
+        
+        # Uncomment this for compiling the phpdoc API.
+        # PhpDocumentor container.
+        phpdocumentor:
+        image: phpdoc/phpdoc
+        container_name: "${APP_NAME}-phpdocumentor"
+        volumes:
+        - .:/data
+        command: "run -d ./ -t public/phpdoc --ignore vendor/,tests/"
+        networks:
+        - api_network
+  
         # Uncomment this to serve the phpdoc locally.
-        # To generate the phpdoc, run ./vendor/bin/phpdox
         # NGINX Wiki server.
         phpdoc:
             image: nginx:stable
