@@ -123,7 +123,7 @@ phpdoc_dev:
     - *setup_ssh
     - php -r "copy('https://github.com/phpDocumentor/phpDocumentor/releases/download/v2.9.0/phpDocumentor.phar', 'phpDocumentor.phar');"
     - cp phpDocumentor.phar /usr/local/bin/
-    - php /usr/local/bin/phpDocumentor.phar -d "$CI_PROJECT_DIR/" -t "$CI_PROJECT_DIR/public/phpdoc" --ignore=vendor/,tests/
+    - php /usr/local/bin/phpDocumentor.phar -d "$CI_PROJECT_DIR/" -t "$CI_PROJECT_DIR/public/phpdoc" --ignore vendor/,tests/
     - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
@@ -138,7 +138,7 @@ phpdoc_prod:
     - *setup_ssh
     - php -r "copy('https://github.com/phpDocumentor/phpDocumentor/releases/download/v2.9.0/phpDocumentor.phar', 'phpDocumentor.phar');"
     - cp phpDocumentor.phar /usr/local/bin/
-    - php /usr/local/bin/phpDocumentor.phar -d "$CI_PROJECT_DIR/" -t "$CI_PROJECT_DIR/public/phpdoc" --ignore=vendor/,tests/
+    - php /usr/local/bin/phpDocumentor.phar -d "$CI_PROJECT_DIR/" -t "$CI_PROJECT_DIR/public/phpdoc" --ignore vendor/,tests/
     - ssh-keyscan "$PROD_PHPDOC_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL":"$PROD_PHPDOC_PATH/"
