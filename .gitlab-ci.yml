@@ -108,7 +108,7 @@ wiki_prod:
     - chmod 644 ~/.ssh/known_hosts
     - rsync -rvI --delete --exclude=".*" "/wiki/" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
     - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
-    - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "sudo chown -R $PROD_DEPLOYER::www-data $PROD_WIKI_PATH/*"
+    - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_WIKI_PATH/*"
 
 ##################################
 ## PHPDOC
