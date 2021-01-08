@@ -8,7 +8,7 @@
   },
   "content": [
     "coding-standards.md",
-    "configuring-debug-devels.md",
+    "configuring-debug-levels.md",
     "contributing.md",
     "core-resources.md",
     "creating-processors.md",
