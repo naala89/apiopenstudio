@@ -55,6 +55,11 @@ phpcs:
     - *setup_ssh
     - *composer_install
     - ./vendor/bin/phpcs --standard=PSR12 includes/ src/scss/ src/js/ public/*.php public/admin/*.php *.js
+  artifacts:
+    - vendor/
+    - .composer/
+    - composer.lock
+
 
 ##################################
 ## TESTS
@@ -92,7 +97,6 @@ wiki_dev:
   script:
     - echo "Compile and deploy the wiki to dev."
     - *setup_ssh
-    - *composer_install
     - ./vendor/bin/bookdown src/wiki/bookdown.json
     - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
@@ -107,7 +111,6 @@ wiki_prod:
   script:
     - echo "Compile and deploy the wiki to prod."
     - *setup_ssh
-    - *composer_install
     - ./vendor/bin/bookdown src/wiki/bookdown.json
     - ssh-keyscan "$PROD_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
