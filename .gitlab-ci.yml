@@ -74,6 +74,7 @@ functional_tests:
     - php composer.phar install
     - echo "Setup the DB."
     - php ./includes/scripts/runner_generate_db.php
+    - ./vendor/bin/codecept run api
 
 #unit_tests:
 #  stage: test
