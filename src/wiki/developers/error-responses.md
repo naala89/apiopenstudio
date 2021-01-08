@@ -1,5 +1,5 @@
 Error responses
----------------
+===============
 
 All errors should be trapped by an exception and return a standard error object, which is translated into the correct output format by ApiOpenStudio.
 
@@ -30,7 +30,7 @@ example (xml):
 * **message** is a human friendly error message.
 
 Error codes
---------------------
+-----------
 
 0. Core error
 1. Processor format error

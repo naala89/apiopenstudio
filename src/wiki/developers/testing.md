@@ -1,5 +1,5 @@
 Testing
--------
+=======
 
 Testing is done with [Codeception](http://codeception.com/).
 From Docroot, run:
@@ -10,7 +10,8 @@ If you are running testcase first time in api suite, then in your api directory 
 
 ```$ vendor/bin/codecept build```
 
-### Testing user
+Testing user
+------------
 
 The following testing credentials  are stored in /tests/_support/Helper/api.php
 
@@ -19,19 +20,23 @@ The following testing credentials  are stored in /tests/_support/Helper/api.php
 * Username: tester
 * Password: tester_pass
 
-### Creating Tests
+Creating Tests
+--------------
 
 ```$ vendor/bin/codecept generate:cept TestName```
 
-### Create api test
+Create api test
+---------------
 
 ```$ vendor/bin/codecept generate:cept api TestName```
 
-### Test YAML files
+Test YAML files
+---------------
 
 These are in ```/tests/_data/```
 
-### Running tests
+Running tests
+-------------
 
 ```$ vendor/bin/codecept run --env staging|local|prod```
 

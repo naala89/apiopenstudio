@@ -1,5 +1,5 @@
 How ApiOpenStudio Works
-===================
+=======================
 
 ApiOpenStudio has several layers that it uses to define its resources and access to them.
 
