@@ -75,6 +75,7 @@ functional_tests:
     - echo "Setup the DB."
     - php ./includes/scripts/runner_generate_db.php
     - cp example.env .env
+    - cp example.settings.yml settings.yml
     - ./vendor/bin/codecept run api
 
 #unit_tests:
