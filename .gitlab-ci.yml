@@ -66,6 +66,8 @@ functional_tests:
     - mariadb:latest
   script:
     - echo "Running functional tests."
+    - *setup_ssh
+    - *composer_install
     - apt-get install -y mariadb-client
     - docker-php-ext-install mysqli
     - mysql --version
