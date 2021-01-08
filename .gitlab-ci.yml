@@ -41,7 +41,7 @@ variables:
 
 stages:
   - lint
-  #  - test
+#  - test
   - deploy
 
 ##################################
@@ -66,12 +66,17 @@ phpcs:
 #    - mariadb:latest
 #  script:
 #    - echo "Running functional tests."
+#    - *setup_ssh
+#    - *composer_install
 #    - apt-get install -y mariadb-client
 #    - docker-php-ext-install mysqli
 #    - mysql --version
 #    - php composer.phar install
 #    - echo "Setup the DB."
 #    - php ./includes/scripts/runner_generate_db.php
+#    - cp example.env .env
+#    - cp example.settings.yml settings.yml
+#    - ./vendor/bin/codecept run api
 
 #unit_tests:
 #  stage: test
