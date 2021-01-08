@@ -7,7 +7,6 @@
     "quick-start/bookdown.json",
     "running-apiopenstudio/bookdown.json",
     "developers/bookdown.json",
-    "privacy.md",
     "license.md"
   ],
   "target": "/wiki",

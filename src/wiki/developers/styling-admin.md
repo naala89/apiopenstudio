@@ -1,5 +1,5 @@
 Styling Admin
--------------
+=============
 
 Install npm: [get-npm](https://www.npmjs.com/get-npm)
 

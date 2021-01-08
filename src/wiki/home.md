@@ -1,5 +1,5 @@
 Welcome to ApiOpenStudio
-====================
+========================
 
 Thank you for downloading ApiOpenStudio, and welcome to a great open-source API community!
 

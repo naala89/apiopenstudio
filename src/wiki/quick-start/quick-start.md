@@ -1,4 +1,8 @@
-# Requirements
+Quick start
+===========
+
+Requirements
+------------
 
 For this tutorial, you will need:
 
@@ -7,7 +11,8 @@ For this tutorial, you will need:
     and <a href="/installation/docker/developer-environment.html" target="_blank">Setup docker</a>
 * Postman (<a href="https://www.postman.com/downloads/" target="_blank">Download</a>) or similar REST client.
 
-# Create a new account and application
+Create a new account and application
+------------------------------------
 
 Click on "Accounts" in the menu or navigate to [admin.apiopenstudio.local/accounts](https://admin.apiopenstudio.locall/accounts).
 
@@ -33,9 +38,10 @@ You have now created the "quick-start" application that our resource will belong
 
 ![Application created](../images/quick-start/new_application.png)
 
-# Configure users and roles
+Configure users and roles
+-------------------------
 
-## Create a developer role for the new application
+### Create a developer role for the new application
 
 Click on "User Roles" in the menu or navigate to [admin.apiopenstudio.local/user/roles](https://admin.apiopenstudio.locall/user/roles).
 
@@ -45,13 +51,13 @@ Click on the plus icon and assign yourself the developer role for Account: tutor
 
 You now have permission to create a resource for the newly created quick_start application.
 
-# Create a "Hello world!" resource
+### Create a "Hello world!" resource
 
 This resource will display "Hello world!" in the result in whatever format the client requires,
 and will have security that requires an active token from a user with a developer role.
 The authentication method will vbe bearer token.
 
-## Define the resource name, descriptio, and URL
+#### Define the resource name, description, and URL
 
 Fill out the following fields in the interface:
 
@@ -76,7 +82,7 @@ So far, we have defined a resource that can be called from (GET) [api.apiopenstu
 
 However, it does nothing and has no security yet.
 
-## Define the security
+#### Define the security
 
 Add the following snippet to the Security section:
 
@@ -104,7 +110,7 @@ So we're using a static string: "Developer".
 
 ![Resource security](../images/quick-start/resource_definition_2.png)
 
-## Define the process
+#### Define the process
 
 Add the following snippet to the Process section:
 
@@ -119,7 +125,7 @@ It's input value does not need to be dynamic here, so we're giving it a static s
 
 ![Resource process](../images/quick-start/resource_definition_3.png)
 
-## Save
+#### Save
 
 Click on the ```Upload``` button.
 
@@ -153,11 +159,11 @@ it should look like this:
 
 You can edit and upload this yaml file as you wish.
 
-# Run the new resource
+### Run the new resource
 
 Open up your REST client
 
-## Get a new token for your user
+#### Get a new token for your user
 
 * Method: POST
 * URL: https://api.apiopenstudio.local/apiopenstudio/core/login
@@ -182,7 +188,7 @@ The result should be something similar to:
 
 Copy the value for the token.
 
-## Run Hello world!
+#### Run Hello world!
 
 * Method: GET
 * URL: https://api.apiopenstudio.local/tutorial/quick_start/hello/world
@@ -202,7 +208,8 @@ we will get something similar to:
     <?xml version="1.0"?>
     <apiopenstudioWrapper>Hello world!</apiopenstudioWrapper>
 
-# Exercises
+Exercises
+---------
 
 1. Fetch a get variable and assign this to the var_str.
 1. Set up a var in the admin interface, hello_world_string: "Hello world!"

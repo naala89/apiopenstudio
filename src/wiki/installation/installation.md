@@ -1,8 +1,10 @@
-# Installing the codebase
+Installing the codebase
+=======================
 
 There are several ways to do this:
 
-## Clone the repository
+Clone the repository
+--------------------
 
 Where <my_group> is the group your server uses.
 
@@ -43,7 +45,8 @@ If you are using docker, you can skip the following steps.
     1. ```ServerSignature Off```
     2. ```ServerTokens Prod```
     
-## Production
+Production
+----------
 
 Remove the production non-critical files and directories:
 
