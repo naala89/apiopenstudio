@@ -41,7 +41,7 @@ variables:
 
 stages:
   - lint
-  #  - test
+  - test
   - deploy
 
 ##################################
@@ -60,18 +60,18 @@ phpcs:
 ## TESTS
 ##################################
 
-#functional_tests:
-#  stage: test
-#  services:
-#    - mariadb:latest
-#  script:
-#    - echo "Running functional tests."
-#    - apt-get install -y mariadb-client
-#    - docker-php-ext-install mysqli
-#    - mysql --version
-#    - php composer.phar install
-#    - echo "Setup the DB."
-#    - php ./includes/scripts/runner_generate_db.php
+functional_tests:
+  stage: test
+  services:
+    - mariadb:latest
+  script:
+    - echo "Running functional tests."
+    - apt-get install -y mariadb-client
+    - docker-php-ext-install mysqli
+    - mysql --version
+    - php composer.phar install
+    - echo "Setup the DB."
+    - php ./includes/scripts/runner_generate_db.php
 
 #unit_tests:
 #  stage: test
