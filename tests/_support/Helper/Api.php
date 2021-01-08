@@ -9,9 +9,7 @@ class Api extends \Codeception\Module
 {
     private $token = '';
     private $accountName = 'apiopenstudio';
-    private $accountId = 1;
     private $applicationName = 'testing';
-    private $applicationId = 2;
     private $username = 'tester';
     private $password = 'tester_pass';
     private $yamlFilename = '';

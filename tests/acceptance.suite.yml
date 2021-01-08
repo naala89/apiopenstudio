@@ -8,5 +8,5 @@ class_name: AcceptanceTester
 modules:
     enabled:
         - PhpBrowser:
-            url: http://datagator.local/api
+            url: https://api.apiopenstudio.local
         - \Helper\Acceptance
