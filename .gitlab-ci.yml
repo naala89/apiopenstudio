@@ -55,11 +55,6 @@ phpcs:
     - *setup_ssh
     - *composer_install
     - ./vendor/bin/phpcs --standard=PSR12 includes/ src/scss/ src/js/ public/*.php public/admin/*.php *.js
-  artifacts:
-    - vendor/
-    - .composer/
-    - composer.lock
-
 
 ##################################
 ## TESTS
