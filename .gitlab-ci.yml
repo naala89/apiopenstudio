@@ -18,30 +18,28 @@ image: php:7.4
 #    - composer.lock
 
 variables:
-  MYSQL_HOST: ${MYSQL_TEST_HOST}
-  MYSQL_ROOT_PASSWORD: ${MYSQL_TEST_ROOT_PASSWORD}
-  MYSQL_DATABASE: ${MYSQL_TEST_DATABASE}
-  MYSQL_USERNAME: ${MYSQL_TEST_USERNAME}
-  MYSQL_PASSWORD: ${MYSQL_TEST_PASSWORD}
+  MYSQL_HOST: "mariadb"
+  MYSQL_ROOT_PASSWORD: "apiopenstudio"
+  MYSQL_DATABASE: "apiopenstudio"
+  MYSQL_USERNAME: "apiopenstudio"
+  MYSQL_PASSWORD: "apiopenstudio"
 
-.setup_ssh: &setup_ssh |
-  apt-get update
-  apt-get install -y libzip-dev openssh-client rsync libxslt-dev unzip
-  docker-php-ext-install zip xsl
-  eval $(ssh-agent -s)
-  mkdir -p ~/.ssh
-  chmod 700 ~/.ssh
-  echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-
-.composer_install: &composer_install |
-  php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-  php composer-setup.php
-  php -r "unlink('composer-setup.php');"
-  php composer.phar install
+before_script:
+  - apt-get update
+  - apt-get install -y libzip-dev openssh-client rsync libxslt-dev unzip
+  - docker-php-ext-install zip xsl
+  - eval $(ssh-agent -s)
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+  - php composer-setup.php
+  - php -r "unlink('composer-setup.php');"
+  - php composer.phar install
 
 stages:
   - lint
-  - test
+#  - test
   - deploy
 
 ##################################
@@ -52,32 +50,39 @@ phpcs:
   stage: lint
   script:
     - echo "Linting the codebase."
-    - *setup_ssh
-    - *composer_install
     - ./vendor/bin/phpcs --standard=PSR12 includes/ src/scss/ src/js/ public/*.php public/admin/*.php *.js
 
 ##################################
 ## TESTS
 ##################################
 
-functional_tests:
-  stage: test
-  services:
-    - mariadb:latest
-  script:
-    - echo "Running functional tests."
-    - *setup_ssh
-    - *composer_install
-    - apt-get install -y mariadb-client
-    - docker-php-ext-install mysqli
-    - mysql --version
-    - php composer.phar install
-    - echo "Setup the DB."
-    - php ./includes/scripts/runner_generate_db.php
-    - cp example.env .env
-    - cp example.settings.yml settings.yml
-    - php -S localhost:8085 --docroot public &>/dev/null&
-    - ./vendor/bin/codecept run api
+#functional_tests:
+#  stage: test
+#  services:
+#    - mariadb:latest
+#  script:
+#    - apt-get install -y mariadb-client iproute2
+#    - docker-php-ext-install mysqli
+#    - mysql --version
+#    - echo "Setup the DB."
+#    - php ./includes/scripts/runner_generate_db.php
+#    # Test using Ip address
+#    - LOCAL_IP=$(ip route get 8.8.8.8 | awk -F"src " 'NR==1{split($2,a," ");print a[1]}')
+#    - echo Local IP $LOCAL_IP
+#    - php -S 0.0.0.0:8080 -t public/ 2> /dev/null &
+#    - sed -i "s/localhost/$LOCAL_IP:8080/" tests/api.suite.yml
+#    # Backup settings files.
+#    - if [ -f ".env" ]; then cp .env .env.bak; fi
+#    - if [ -f "settings.yml" ]; then cp settings.yml settings.yml.bak; fi
+#    # Copy example settings files.
+#    - cp example.env .env
+#    - cp example.settings.yml settings.yml
+#    - php -S localhost:8085 --docroot public &>/dev/null&
+#    - ./vendor/bin/codecept build
+#    - ./vendor/bin/codecept run --env ci api
+#    # Revert settings files.
+#    - if [ -f ".env".bak ]; then cp .env.bak .env; rm .env.bak; fi
+#    - if [ -f "settings.yml.bak" ]; then cp settings.yml.bak settings.yml; rm settings.yml.bak; fi
 
 #unit_tests:
 #  stage: test
@@ -92,7 +97,6 @@ wiki_dev:
     - develop
   script:
     - echo "Compile and deploy the wiki to dev."
-    - *setup_ssh
     - ./vendor/bin/bookdown src/wiki/bookdown.json
     - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
@@ -106,7 +110,6 @@ wiki_prod:
     - master
   script:
     - echo "Compile and deploy the wiki to prod."
-    - *setup_ssh
     - ./vendor/bin/bookdown src/wiki/bookdown.json
     - ssh-keyscan "$PROD_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
@@ -124,7 +127,6 @@ phpdoc_dev:
     - develop
   script:
     - echo "Compile and deploy the phpdoc to dev."
-    - *setup_ssh
     - php -r "copy('https://github.com/phpDocumentor/phpDocumentor/releases/download/v2.9.0/phpDocumentor.phar', 'phpDocumentor.phar');"
     - cp phpDocumentor.phar /usr/local/bin/
     - php /usr/local/bin/phpDocumentor.phar -d "$CI_PROJECT_DIR/" -t "$CI_PROJECT_DIR/public/phpdoc" --ignore vendor/,tests/
@@ -139,7 +141,6 @@ phpdoc_prod:
     - master
   script:
     - echo "Compile and deploy the phpdoc to prod."
-    - *setup_ssh
     - php -r "copy('https://github.com/phpDocumentor/phpDocumentor/releases/download/v2.9.0/phpDocumentor.phar', 'phpDocumentor.phar');"
     - cp phpDocumentor.phar /usr/local/bin/
     - php /usr/local/bin/phpDocumentor.phar -d "$CI_PROJECT_DIR/" -t "$CI_PROJECT_DIR/public/phpdoc" --ignore vendor/,tests/
