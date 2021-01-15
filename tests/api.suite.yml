@@ -14,6 +14,13 @@ env:
                     url: "https://%ADMIN_DOMAIN%"
                 REST:
                     url: "https://%API_DOMAIN%"
+    ci:
+        modules:
+            config:
+                PhpBrowser:
+                    url: "http://localhost"
+                REST:
+                    url: "http://localhost"
     staging:
         modules:
             config:
