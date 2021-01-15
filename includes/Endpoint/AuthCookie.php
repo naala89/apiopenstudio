@@ -58,6 +58,6 @@ class AuthCookie extends Core\ProcessorEntity
 
         $cookie = $this->val('cookie', true);
 
-        return array(CURLOPT_COOKIE => $cookie);
+        return new Core\DataContainer([CURLOPT_COOKIE => $cookie], 'array');
     }
 }

@@ -68,6 +68,6 @@ class AuthBasic extends Core\ProcessorEntity
         $username = $this->val('username', true);
         $password = $this->val('password', true);
 
-        return array(CURLOPT_USERPWD => "$username:$password");
+        return new Core\DataContainer([CURLOPT_USERPWD => "$username:$password"], 'array');
     }
 }

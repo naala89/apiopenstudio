@@ -58,6 +58,6 @@ class AuthBearerToken extends Core\ProcessorEntity
 
         $token = $this->val('token', true);
 
-        return array(CURLOPT_HTTPHEADER => "Authorization: Bearer $token");
+        return new Core\DataContainer([CURLOPT_HTTPHEADER => "Authorization: Bearer $token"], 'array');
     }
 }
