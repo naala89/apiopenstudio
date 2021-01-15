@@ -138,7 +138,9 @@ abstract class ProcessorEntity extends Entity
      *      ]
      *
      *      This Processor has 4 inputs:
-     *          method, which has only one input, of type text, with only 2 possible values ('get' and 'post'), literals are allowed.
+     *
+     *          method, which has only one input, of type text, with only 2 possible values ('get' and 'post'),
+     *              literals are allowed.
      *          auth, which has only one value, of type processor (var_get).
      *          vars, which can contain:
      *              0 or many values
@@ -385,15 +387,22 @@ abstract class ProcessorEntity extends Entity
      *
      * @throws ApiException Invalid data type.
      */
-    private function validateAllowedTypes(string $type, array $limitTypes, int $min, string $key)
-    {
+    private function validateAllowedTypes(
+        string $type,
+        array $limitTypes,
+        int $min,
+        string $key
+    ) {
         if (empty($limitTypes) || ($min < 1 && $type == 'empty')) {
             return true;
         }
         if (!in_array($type, $limitTypes)) {
-            throw new ApiException("invalid type ($type), only '"
-                . implode("', '", $limitTypes)
-                . "' allowed in input '$key'", 6, $this->id, 400);
+            throw new ApiException(
+                "invalid type ($type), only '" . implode("', '", $limitTypes) . "' allowed in input '$key'",
+                6,
+                $this->id,
+                400
+            );
         }
     }
 }
