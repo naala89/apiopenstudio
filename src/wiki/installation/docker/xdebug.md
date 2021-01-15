@@ -12,7 +12,7 @@ rebuild your docker containers
 
 ### Set the port defined in .env
 
-In PhpStorm, go to PhpStorm -> Settings -> Languages and Frameworks -> PHP > Debug.
+In PhpStorm, go to PhpStorm -> Settings -> Languages and Frameworks -> PHP -> Debug.
 
 Make sure you have the same port that you have configured previously in "XDEBUG_CONFIG" environment variable:
 

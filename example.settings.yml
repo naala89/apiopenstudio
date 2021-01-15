@@ -60,6 +60,7 @@ db:
 
 api:
   protocols:
+    - http
     - https
   base_path: "/var/www/html/"
   url: "api.apiopenstudio.local"

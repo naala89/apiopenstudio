@@ -82,7 +82,6 @@ abstract class Mapper
         if (empty($this->db->ErrorMsg())) {
             $message = 'Affected rows: 0, no error message returned. There was possibly nothing to update';
             $this->logger->warning($message);
-            throw new ApiException($message, 2);
         }
         $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
         $this->logger->error($message);
