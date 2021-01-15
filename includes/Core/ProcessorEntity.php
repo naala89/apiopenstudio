@@ -209,7 +209,7 @@ abstract class ProcessorEntity extends Entity
         $limitTypes = $inputDet[$key]['limitTypes'];
         $default = $inputDet[$key]['default'];
 
-        $count = empty($this->meta->$key) ? 0 : is_array($this->meta->$key) ? sizeof($this->meta->$key) : 1;
+        $count = (empty($this->meta->$key) ? 0 : is_array($this->meta->$key)) ? sizeof($this->meta->$key) : 1;
         if ($count < $min || ($max != '*' && $count > $max)) {
             // invalid cardinality
             throw new ApiException("invalid number of inputs ($count) in $key, requires $min - $max", 7, $this->id);
