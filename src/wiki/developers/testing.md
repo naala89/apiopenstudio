@@ -10,6 +10,11 @@ If you are running testcase first time in api suite, then in your api directory 
 
 ```$ vendor/bin/codecept build```
 
+Config
+------
+
+Domains for testing in environments are stored in ```/tests/api.suite.yml```
+
 Testing user
 ------------
 
