@@ -63,36 +63,40 @@ abstract class ProcessorEntity extends Entity
      * @var array Details of the processor.
      *
      * Indexes:
-     *  name: name of the processor.
+     *  name: Human readable name of the processor.
      *
-     *  machineName: machine name of the processor.
+     *  machineName: Machine name of the processor.
      *
-     *  description: description of the processor.
+     *  description: Description of the processor.
      *
-     *  account: The account that can use the processor.
-     *
-     *  menu: lists the immediate menu parents.
+     *  menu: Lists the immediate menu parents.
      *
      *    examples:
      *      'menu' => 'menu1' - belongs to menu1
      *
-     *  input: list the input nodes for this processor
+     *  input: List the input nodes for this processor
      *    This is an array with the following indexes:
+     *
      *    description (string): description of what the processor does
+     *
      *    cardinality: (int min, mixed max)
      *      e.g. [0, 1]
      *      max can be integer or '*'. '*' = infinite
-     *    type: (array): an array of input type this processor will accept.
+     *
+     *    literalAllowed (boolean): Allow liter values.
+     *
+     *    limitValues (array|mixed): Limit the sult values passed into the function/processor.
+     *
+     *    limitFunctions (array|string): Limit the input functions/processors.
+     *
+     *    limitTypes: (array): an array of input type this processor will accept.
      *      Possible values:
-     *        processor - any processor
-     *        processor <name> - specific processor
-     *        "predefined string"
      *        file
      *        literal
      *        bool
      *        numeric
      *        integer
-     *        string
+     *        text
      *        float
      *        bool
      *
@@ -101,35 +105,48 @@ abstract class ProcessorEntity extends Entity
      *        'sources' => [
      *            'description' => 'desc1',
      *            'cardinality' => [1, '*'],
-     *            type => ['function', 'literal']
+     *            type => ['literal']
      *         ]
      *      ]
      *      This processor has only one input, called sources.
      *      Sources must contain at least one value.
-     *      The inputs can only be string or another processor.
+     *      The inputs can only be a literal value.
      *
      *      input => [
      *        'method' => [
      *          'description' => 'desc1',
      *          'cardinality' => [1, 1],
-     *          'accepts' => [
-     *            'literal' => ['"get"', '"post"']
-     *          ],
+     *          'literalAllowed': true
+     *          'limitType': ['text'],
+     *          'limitValues' => ["get", "post"]
      *        ],
-     *        'auth' => ['description' => 'desc2', 'cardinality' => [1, 1], 'accepts' => ['function'],
-     *        'vars' => ['description' => 'desc3', 'cardinality' => [0, '*'],
-     *            type => ['function', 'integer']],
-     *        't' => ['description' => 'desc4', 'cardinality' => [0, '*'],
-     *            type => ['processor field', 'string']]
+     *        'auth' => [
+     *           'description' => 'desc2',
+     *           'cardinality' => [1, 1],
+     *           'limitFunctions' => ['var_get'],
+     *        ],
+     *        'vars' => [
+     *           'description' => 'desc3',
+     *           'cardinality' => [0, '*'],
+     *            limitTypes => ['integer'],
+     *        ],
+     *        't' => [
+     *           'description' => 'desc4',
+     *           'cardinality' => [0, '*'],
+     *           'limitFunctions' => ['field'],
+     *        ],
      *      ]
-     *          This Processor has 3 inputs:
-     *          method, which has only one sub-input, of type string, with only 2 possible values ('get' and 'post')
-     *          auth, which has only one value, of type processor
+     *
+     *      This Processor has 4 inputs:
+     *
+     *          method, which has only one input, of type text, with only 2 possible values ('get' and 'post'),
+     *              literals are allowed.
+     *          auth, which has only one value, of type processor (var_get).
      *          vars, which can contain:
-     *              an infinite number of values
-     *              be of type processor or integer
+     *              0 or many values
+     *              Must be an integer
      *              with no limit on value
-     *          t, which can take or or many input of Processor Field or a string.
+     *          t, which can take or or many input of Processor Field.
      */
     protected $details = array();
 
@@ -370,15 +387,22 @@ abstract class ProcessorEntity extends Entity
      *
      * @throws ApiException Invalid data type.
      */
-    private function validateAllowedTypes(string $type, array $limitTypes, int $min, string $key)
-    {
+    private function validateAllowedTypes(
+        string $type,
+        array $limitTypes,
+        int $min,
+        string $key
+    ) {
         if (empty($limitTypes) || ($min < 1 && $type == 'empty')) {
             return true;
         }
         if (!in_array($type, $limitTypes)) {
-            throw new ApiException("invalid type ($type), only '"
-                . implode("', '", $limitTypes)
-                . "' allowed in input '$key'", 6, $this->id, 400);
+            throw new ApiException(
+                "invalid type ($type), only '" . implode("', '", $limitTypes) . "' allowed in input '$key'",
+                6,
+                $this->id,
+                400
+            );
         }
     }
 }

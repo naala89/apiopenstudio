@@ -93,15 +93,15 @@ class AuthOAuth extends Core\ProcessorEntity
         $this->logger->info('Processor: ' . $this->details()['machineName']);
 
         $headers = array(
-        Authorization => OAuth,
-        'oauth_consumer_key' => $this->val('key', true),
-        'oauth_nonce' => $this->val('nonce', true),
-        'oauth_signature' => $this->val('signature', true),
-        'oauth_signature_method' => $this->val('signatureMethod', true),
-        'oauth_timestamp' => time(),
-        'oauth_version' => $this->val('oauthVersion', true)
+            Authorization => OAuth,
+            'oauth_consumer_key' => $this->val('key', true),
+            'oauth_nonce' => $this->val('nonce', true),
+            'oauth_signature' => $this->val('signature', true),
+            'oauth_signature_method' => $this->val('signatureMethod', true),
+            'oauth_timestamp' => time(),
+            'oauth_version' => $this->val('oauthVersion', true)
         );
 
-        return array(CURLOPT_HTTPHEADER => $headers);
+        return new Core\DataContainer([CURLOPT_HTTPHEADER => $headers], 'array');
     }
 }

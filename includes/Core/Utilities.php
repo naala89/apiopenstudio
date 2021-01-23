@@ -82,10 +82,10 @@ class Utilities
         bool $special = null
     ) {
         $length = empty($length) ? 8 : $length;
-        $lower = empty($lower) ? true : $lower;
-        $upper = empty($upper) ? true : $upper;
-        $number = empty($number) ? true : $number;
-        $special = empty($special) ? false : $special;
+        $lower = $lower === null ? true : $lower;
+        $upper = $upper === null ? true : $upper;
+        $number = $number === null ? true : $number;
+        $special = $special === null ? false : $special;
         $chars = '';
         if ($lower) {
             $chars .= self::$lower_case;

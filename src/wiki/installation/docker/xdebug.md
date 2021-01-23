@@ -12,7 +12,7 @@ rebuild your docker containers
 
 ### Set the port defined in .env
 
-In PhpStorm, go to PhpStorm -> Settings -> Languages and Frameworks -> PHP -> Debug.
+In PhpStorm, go to PhpStorm -> Preferences -> Languages and Frameworks -> PHP -> Debug.
 
 Make sure you have the same port that you have configured previously in "XDEBUG_CONFIG" environment variable:
 
@@ -31,6 +31,7 @@ i.e. "apiopenstudio".
 
 The "host" and "port" is how will access your application.
 In this case is the host is a mac, in other cases, you should use "localhost".
+The default port for xdebug 3 is now 9003.
 
 Set the path mappings to map your local environment project to "/var/www/html" in docker.
 

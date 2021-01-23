@@ -39,16 +39,15 @@ The following files and directory structure needs to be added to a project:
 Copy ```example.env``` to ```.env```.
 
 Edit the values so the values must match those in ```settings.yml```
-    
+
     APP_NAME=apiopenstudio
     
     WITH_XDEBUG=true
-    PHP_IDE_CONFIG=serverName=apiopenstudio
-    XDEBUG_CONFIG=remote_host=docker.for.mac.localhost remote_port=9001
     
     API_DOMAIN=api.apiopenstudio.local
     ADMIN_DOMAIN=admin.apiopenstudio.local
     WIKI_DOMAIN=wiki.apiopenstudio.local
+    PHPDOC_DOMAIN=phpdoc.apiopenstudio.local
     
     MYSQL_HOST=mariadb
     MYSQL_DATABASE=apiopenstudio
@@ -169,23 +168,19 @@ Replace server_name with whatever domain you want to host locally.
 
 ### docker/php/Dockerfile
 
-    FROM php:fpm
+    FROM php:7-fpm
     
     ARG WITH_XDEBUG=false
-                  
+    
     RUN apt-get update \
-        && apt-get install -y iputils-ping libxslt1-dev
-    RUN docker-php-ext-install mysqli \
-        && docker-php-ext-enable mysqli \
-        && docker-php-ext-install xsl
+    && apt-get install -y iputils-ping \
+    && docker-php-ext-install mysqli \
+    && docker-php-ext-enable mysqli;
+    
     RUN if [ $WITH_XDEBUG = "true" ] ; then \
-            pecl install xdebug; \
-            docker-php-ext-enable xdebug; \
-            echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
-            echo "display_startup_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
-            echo "display_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
-            echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
-        fi ;
+    echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    fi ;
 
 ### docker/php/php.conf
 
@@ -277,7 +272,7 @@ Replace server_name with whatever domain you want to host locally.
                    
         # Generic PHP container.
         php:
-            image: php:fpm-stretch
+            image: php:7-fpm
             container_name: "${APP_NAME}-php"
             build:
                  context: ./docker/php
