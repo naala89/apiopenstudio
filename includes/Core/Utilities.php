@@ -75,17 +75,17 @@ class Utilities
      * @return string
      **/
     public static function randomString(
-        int $length = NULL,
-        bool $lower = NULL,
-        bool $upper = NULL,
-        bool $number = NULL,
-        bool $special = NULL
+        int $length = null,
+        bool $lower = null,
+        bool $upper = null,
+        bool $number = null,
+        bool $special = null
     ) {
         $length = empty($length) ? 8 : $length;
-        $lower = $lower === NULL ? true : $lower;
-        $upper = $upper === NULL ? true : $upper;
-        $number = $number === NULL ? true : $number;
-        $special = $special === NULL ? false : $special;
+        $lower = $lower === null ? true : $lower;
+        $upper = $upper === null ? true : $upper;
+        $number = $number === null ? true : $number;
+        $special = $special === null ? false : $special;
         $chars = '';
         if ($lower) {
             $chars .= self::$lower_case;
