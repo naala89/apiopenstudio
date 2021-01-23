@@ -103,11 +103,13 @@ class VarRand extends Core\ProcessorEntity
 
         return new Core\DataContainer(
             Core\Utilities::randomString(
-                $length, boolval($lower),
+                $length,
+                boolval($lower),
                 boolval($upper),
                 boolval($numeric),
                 boolval($special)
-            ), 'text'
+            ),
+            'text'
         );
     }
 }
