@@ -1,7 +1,7 @@
 {
   "name": "apiopenstudio/apiopenstudio",
   "description": "Build APIs faster & at less cost",
-  "license": "MPL 2.0",
+  "license": "MPL-2.0",
   "version": "1.0.0-alpha1",
   "keywords": [
     "api",
