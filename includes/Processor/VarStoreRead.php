@@ -98,7 +98,7 @@ class VarStoreRead extends Core\ProcessorEntity
                 'default' => '',
             ],
             'appid' => [
-                'description' => 'Application ID ID. If empty, all vars that the user has access to will be returned.',
+                'description' => 'Application ID. If empty, all vars that the user has access to will be returned.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitFunctions' => [],
