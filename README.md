@@ -324,12 +324,14 @@ we will get something similar to:
 
 # Developers and contributors
 
-ApiOpenStudio is hosted on both GitHub and Gitlab.
+ApiOpenStudio is hosted on both GitHub and Gitlab (because GitLab is great).
+
+The GitHub repository is purely a read only mirror of the GitLab repository, for ease of access and its popularity.
 
 If you want to create a standalone processor that users can include in their composer project,
 You can do that in any versioning system you like.
 If the processor is really popular, we may ask you for your permission to include this in ApiOpenStudio core.
 
-If you want to contribute to the ApiOpenStudio code base, all project development occurs on Gitlab, so you will need to create a GitLab account.
-Then create a fork of the project, and submit your changes in a PR.
+If you want to contribute to the ApiOpenStudio code base, all project development occurs on Gitlab,
+so you will need to create a GitLab account, create a fork of the project, and submit your changes in a PR.
 See [wiki.apiopenstudio.com](https://wiki.apiopenstudio.com) for more details.
