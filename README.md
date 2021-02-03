@@ -115,7 +115,7 @@ Docker examples have been created and also example configurations for NGINX or A
 
 The quickest way to install ApiOpenStudio is to create a project with composer:
 
-    TODO
+    composer create-project apiopenstudio/apiopenstudio
 
 Serve the ApiOpenStudio API and admin through Docker. See the [wiki](https://wiki.apiopenstudio.com) 
 

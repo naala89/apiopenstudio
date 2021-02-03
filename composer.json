@@ -2,7 +2,6 @@
   "name": "apiopenstudio/apiopenstudio",
   "description": "Build APIs faster & at less cost",
   "license": "MPL-2.0",
-  "version": "1.0.0-beta",
   "keywords": [
     "api",
     "open-source",
@@ -12,16 +11,21 @@
     "open",
     "community"
   ],
+  "type": "project",
+  "homepage": "https://www.apiopenstudio.com/",
   "readme": "./README.md",
   "authors": [
     {
-      "name": "naala89",
-      "homepage": "https://gitlab.com/john89",
-      "role": "Developer"
+      "name": "John Avery",
+      "homepage": "https://gitlab.com/john89"
     }
   ],
   "support": {
-    "issue tracker": "https://gitlab.com/john89/apiopenstudio/-/issues"
+    "email": "contact@apiopenstudio.com",
+    "issues": "https://gitlab.com/john89/apiopenstudio/-/issues",
+    "forum": "https://www.apiopenstudio.com/questions-answers/",
+    "wiki": "https://wiki.apiopenstudio.com/",
+    "source": "https://github.com/naala89/apiopenstudio"
   },
   "require-dev": {
     "codeception/codeception": "^2.4",
