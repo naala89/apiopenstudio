@@ -28,11 +28,12 @@ The following files and directory structure needs to be added to a project:
 
 #### Mac
 
-    $ brew install mkcert nss
-    $ mkcert -install
-    $ cd <apiopenstudio>/certs
-    $ mkcert -cert-file apiopenstudio.local.crt -key-file apiopenstudio.local.key "*.apiopenstudio.local"
-    $ cp "$(mkcert -CAROOT)/rootCA.pem" ca.crt
+    brew install mkcert nss
+    mkcert -install
+    mkdir certs
+    cd <apiopenstudio>/certs
+    mkcert -cert-file apiopenstudio.local.crt -key-file apiopenstudio.local.key "*.apiopenstudio.local"
+    cp "$(mkcert -CAROOT)/rootCA.pem" ca.crt
 
 ### .env
 

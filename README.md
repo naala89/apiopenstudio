@@ -64,7 +64,7 @@ Default roles:
 * Developer
 * Consumer
 
-![User roles](src/images/user_roles.png)
+![User roles](includes/images/user_roles.png)
 
 ## Security
 

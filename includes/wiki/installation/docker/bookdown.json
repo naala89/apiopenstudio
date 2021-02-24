@@ -2,6 +2,7 @@
   "title": "Docker",
   "content": [
     "developer-environment.md",
+    "multiple-instances.md",
     "xdebug.md"
   ],
   "tocDepth": 1

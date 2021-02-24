@@ -66,11 +66,12 @@ Run "composer update" on in the docroot after transferring files.
 - added Filter processor
 - fixed config override
 
-ApiOpenStudio 0.4 Jan 2021
---------------------------
+v1.0.0-beta-RC1
+---------------
 
 - Renamed the code to ApiOpenStudio
     - Docker used
+    - Decoupled admin from the DB (API abstraction call only)
     - Implemented with GitLab CI runner
     - Wiki created
     - phpdoc implemented
@@ -79,6 +80,8 @@ ApiOpenStudio 0.4 Jan 2021
     - Admin interface implemented
     - Changed to use Monolog for logging
     - Changed to use Cascade for settings
-    
-    
+  
+v1.0.0-beta-RC2
+---------------
 
+- Separated admin from api.

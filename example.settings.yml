@@ -62,7 +62,7 @@ api:
   protocols:
     - http
     - https
-  base_path: "/var/www/html/"
+  base_path: "/var/www/html/api/"
   url: "api.apiopenstudio.local"
   cache: false
   default_format: json
@@ -74,20 +74,6 @@ api:
   dir_yaml: "resources/"
   dir_uploads: "uploads/"
   dir_tmp: "tmp/"
-
-admin:
-  url: "admin.apiopenstudio.local"
-  pagination_step: 20
-  admin_templates: "includes/admin/templates/"
-  slim:
-    displayErrorDetails: true
-    determineRouteBeforeAppMiddleware: true
-
-twig:
-  options:
-    cache_enabled: true
-    cache_path: "twig_cache/"
-  template_path: "includes/Admin/templates/"
 
 email:
   host: apiopenstudio-email
