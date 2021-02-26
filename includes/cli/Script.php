@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Class CLIScript.
+ * Class Script.
  *
  * @package    ApiOpenStudio
- * @subpackage Core\Cli
+ * @subpackage Cli
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
@@ -16,12 +16,12 @@
 namespace ApiOpenStudio\Cli;
 
 /**
- * Class CLIScript
+ * Class Script
  *
  * Run a PHP class as a bash command.
  * This prevents PHP or browser timeout.
  */
-abstract class CLIScript
+abstract class Script
 {
     /**
      * The current executed argument.
@@ -59,7 +59,7 @@ abstract class CLIScript
     protected $argMap;
 
     /**
-     * CLIScript constructor.
+     * Script constructor.
      */
     public function __construct()
     {

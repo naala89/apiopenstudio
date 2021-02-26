@@ -1,12 +1,10 @@
 <?php
 
-//use ApiOpenStudio\Core\ApiException;
-
 /**
- * Class CLIImages2video.
+ * Class Install.
  *
  * @package    ApiOpenStudio
- * @subpackage Core\Cli
+ * @subpackage Cli
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
@@ -22,11 +20,11 @@ use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Db;
 
 /**
- * Class CLIInstall
+ * Class Install
  *
  * Script to setup the ApiOpenStudio database.
  */
-class CLIInstall extends CLIScript
+class Install extends Script
 {
     /**
      * {@inheritDoc}
@@ -47,7 +45,7 @@ class CLIInstall extends CLIScript
     protected $db;
 
     /**
-     * CLIInstall constructor.
+     * Install constructor.
      */
     public function __construct()
     {
@@ -60,7 +58,7 @@ class CLIInstall extends CLIScript
      */
     protected function help()
     {
-        $help = "CLIInstall\n\n";
+        $help = "Install\n\n";
         $help .= "This command will create the database  and install ApiOpenStudio\n\n";
         $help .= "Example:\n";
         $help .= "./install.php\n";

@@ -2,7 +2,7 @@
 <?php
 
 /**
- * Script to install the ApiOpenStudio.
+ * Script to install the ApiOpenStudio DB.
  *
  * @package   ApiOpenStudio
  * @license   This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
@@ -17,7 +17,7 @@ require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
 global $argv;
 
-$install = new \ApiOpenStudio\Cli\CLIInstall();
+$install = new \ApiOpenStudio\Cli\Install();
 
 $install->exec($argv);
 

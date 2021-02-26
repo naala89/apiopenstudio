@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Class CLIImages2video.
+ * Class zImages2video.
  *
  * @package    ApiOpenStudio
- * @subpackage Core\Cli
+ * @subpackage Cli
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 ApiOpenStudio
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
@@ -19,15 +19,15 @@ use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Utilities;
 
 /**
- * Class CLIImages2video
+ * Class Images2video
  *
  * Script to convert images into a video.
  */
-class CLIImages2video extends CLIScript
+class Images2video extends Script
 {
 
     /**
-     * CLIImages2video constructor.
+     * Images2video constructor.
      */
     public function __construct()
     {
@@ -94,7 +94,7 @@ class CLIImages2video extends CLIScript
      */
     protected function help()
     {
-        $help = "CLIImages2video\n\n";
+        $help = "Images2video\n\n";
         $help .= "This command will fetch images from a set of URLs and convert them into a video.\n";
         $help .= "The input is a temporary directory containing a file with a list of image URLs to fetch.\n";
         $help .= "The image files are downloaded into the above temporary directory.\n";
@@ -110,7 +110,7 @@ class CLIImages2video extends CLIScript
         $help .= "-transitionFormat: image format to covert to before encode. Defaults to png\n";
         $help .= "--del: Delete the input directory on completion\n\n";
         $help .= "Example:\n";
-        $help .= "CLIImages2video -i /tmp -d /home/foo/bar -resize 400x400 -delay 10 -morph 5 -qscale 1 --del";
+        $help .= "Images2video -i /tmp -d /home/foo/bar -resize 400x400 -delay 10 -morph 5 -qscale 1 --del";
         echo $help;
     }
 
