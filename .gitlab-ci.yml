@@ -50,7 +50,7 @@ phpcs:
   stage: lint
   script:
     - echo "Linting the codebase."
-    - ./vendor/bin/phpcs --standard=PSR12 includes/ src/scss/ src/js/ public/*.php public/admin/*.php *.js
+    - ./vendor/bin/phpcs --standard=PSR12 includes/ public/*.php
 
 ##################################
 ## TESTS
