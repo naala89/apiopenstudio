@@ -39,10 +39,9 @@ If you are using docker, you can skip the following steps.
     1. ```gulp all```
 12. Create the wiki (optional)
     1. ```./vendor/bin/bookdown src/wiki/bookdown/json```
-13. Create an empty database and user. Give the user full permission for the DB.
-    1. ``mysql -u root -p``
-    2. ``CREATE DATABASE <db_name>;``
-    3. ``GRANT ALL PRIVILEGES ON <db_name>.* TO <username>@localhost IDENTIFIED BY "<password>";``
+13. Set up the database.
+    1. ```cd api_open_studio```
+    2. ```./includes/scripts/install.php```
 14. Update ```php.ini``` (if using non-apache server, see [Hardening your HTTP response headers](https://scotthelme.co.uk/hardening-your-http-response-headers/#removingheaders)):
     1. ```expose_php = Off```
 14. Update ```httpd.conf```
@@ -54,5 +53,5 @@ Production
 
 Remove the production non-critical files and directories:
 
-1. ```cd apiopenstudio```
-2. ```rm -R public/admin/install.php codeception.yml tests```
+1. ```cd api_open_studio```
+2. ```rm includes/scripts/install.php```

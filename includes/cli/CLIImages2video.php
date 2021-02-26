@@ -1,4 +1,3 @@
-#!/usr/bin/php -q
 <?php
 
 /**
@@ -14,7 +13,7 @@
  * @link       https://www.apiopenstudio.com
  */
 
-namespace ApiOpenStudio\Core\Cli;
+namespace ApiOpenStudio\Cli;
 
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Utilities;
@@ -35,37 +34,37 @@ class CLIImages2video extends CLIScript
         $this->argMap = [
             'options' => [
                 'i' => [
-                  'required' => true,
-                  'multiple' => false,
+                    'required' => true,
+                    'multiple' => false,
                 ],
                 'd' => [
-                  'required' => true,
-                  'multiple' => false,
+                    'required' => true,
+                    'multiple' => false,
                 ],
                 'r' => [
-                  'required' => false,
-                  'multiple' => false,
+                    'required' => false,
+                    'multiple' => false,
                 ],
                 'resize' => [
-                  'required' => false,
-                  'multiple' => false,
+                    'required' => false,
+                    'multiple' => false,
                 ],
                 'morph' => [
-                  'required' => false,
-                  'multiple' => false,
+                    'required' => false,
+                    'multiple' => false,
                 ],
                 'delay' => [
-                  'required' => false,
-                  'multiple' => false,
+                    'required' => false,
+                    'multiple' => false,
                 ],
                 'qscale' => [
-                  'required' => false,
-                  'multiple' => false,
+                    'required' => false,
+                    'multiple' => false,
                 ],
                 'transitionFormat' => [
-                  'required' => false,
-                  'multiple' => false,
-                  'default' => 'png'
+                    'required' => false,
+                    'multiple' => false,
+                    'default' => 'png'
                 ],
             ],
             'flags' => [

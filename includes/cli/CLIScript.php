@@ -1,4 +1,3 @@
-#!/usr/bin/php -q
 <?php
 
 /**
@@ -14,9 +13,7 @@
  * @link       https://www.apiopenstudio.com
  */
 
-namespace ApiOpenStudio\Core\Cli;
-
-use ApiOpenStudio\Core\Config;
+namespace ApiOpenStudio\Cli;
 
 /**
  * Class CLIScript
@@ -111,6 +108,29 @@ abstract class CLIScript
     }
 
     /**
+     * Fetch a parameter from the command line.
+     *
+     * @param string $prompt
+     *   Input prompt text.
+     *
+     * @return false|string
+     *   Response in from the user.
+     */
+    protected function readlineTerminal($prompt = '')
+    {
+        $prompt && print $prompt;
+        $terminal_device = '/dev/tty';
+        $h = fopen($terminal_device, 'r');
+        if ($h === false) {
+            #throw new RuntimeException("Failed to open terminal device $terminal_device");
+            return false; # probably not running in a terminal.
+        }
+        $line = rtrim(fgets($h), "\r\n");
+        fclose($h);
+        return $line;
+    }
+
+    /**
      * Helper function to die.
      *
      * @param string $msg Log message.
@@ -121,10 +141,10 @@ abstract class CLIScript
     {
         if (is_array($msg)) {
             foreach ($msg as $m) {
-                Debug::message($m, 1, Config::$debugCLI, Debug::LOG);
+                echo "$m\n";
             }
         } else {
-            Debug::message($msg, 1, Config::$debugCLI, Debug::LOG);
+            echo "$msg\n";
         }
         die("Error: controlled termination of cli script.\n");
     }
@@ -153,9 +173,7 @@ abstract class CLIScript
      */
     private function validateFlags()
     {
-        Debug::variable($this->flags, 'flags', 1, Config::$debugCLI, Debug::LOG);
         foreach ($this->flags as $name => $value) {
-            Debug::variable($this->argMap['flags'], '$this->argMap[$index]', 1, Config::$debugCLI, Debug::LOG);
             $this->validateAllowed($name, 'flags');
         }
     }
@@ -163,12 +181,12 @@ abstract class CLIScript
     /**
      * Validate all required options are present.
      *
-     * @param string $opt Option name.
+     * @param array $opt Option name.
      * @param mixed $index Option index.
      *
      * @return void
      */
-    private function validateRequired(string $opt, $index)
+    private function validateRequired(array $opt, $index)
     {
         $error = false;
         $messages = array();
@@ -309,11 +327,6 @@ abstract class CLIScript
                 }
             }
         }
-
-        Debug::variable($this->exec, 'exec', 4, Config::$debugCLI, Debug::LOG);
-        Debug::variable($this->flags, 'flags', 4, Config::$debugCLI, Debug::LOG);
-        Debug::variable($this->options, 'options', 4, Config::$debugCLI, Debug::LOG);
-        Debug::variable($this->arguments, 'arguments', 4, Config::$debugCLI, Debug::LOG);
     }
 
     /**

@@ -56,4 +56,4 @@ If the linting fails, the CI will not deploy the phpdoc or wiki changes.
 
 squizlabs/phpcs is defined in the composer.json file. Before final PR, you should run:
 
-    ./vendor/bin/phpcs --standard=PSR12 includes/ src/scss/ src/js/ public/*.php public/admin/*.php *.js
+    ./vendor/bin/phpcs --standard=PSR12 includes/ public/*.php
