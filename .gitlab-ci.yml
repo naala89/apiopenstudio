@@ -97,11 +97,11 @@ wiki_dev:
     - develop
   script:
     - echo "Compile and deploy the wiki to dev."
-    - ./vendor/bin/bookdown src/wiki/bookdown.json
+    - ./vendor/bin/bookdown includes/wiki/bookdown.json
     - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
-    - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+    - rsync -rvI "$CI_PROJECT_DIR/includes/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
 
 wiki_prod:
@@ -110,11 +110,11 @@ wiki_prod:
     - master
   script:
     - echo "Compile and deploy the wiki to prod."
-    - ./vendor/bin/bookdown src/wiki/bookdown.json
+    - ./vendor/bin/bookdown includes/wiki/bookdown.json
     - ssh-keyscan "$PROD_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - rsync -rvI --delete --exclude=".*" "/wiki/" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
-    - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
+    - rsync -rvI "$CI_PROJECT_DIR/includes/wiki/images" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
     - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_WIKI_PATH/*"
 
 ##################################
