@@ -33,6 +33,9 @@ class Config
 
     /**
      * Config constructor.
+     *
+     * @param string $settingsFile
+     *   Optional path to the settings file.
      */
     public function __construct($settingsFile = '')
     {
