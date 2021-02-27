@@ -10,7 +10,7 @@
 
 name: Account read
 
-description: Fetch an account.
+description: Fetch a single or multiple accounts.
 
 uri: account
 

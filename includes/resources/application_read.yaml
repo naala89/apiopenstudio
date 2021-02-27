@@ -47,9 +47,9 @@ process:
     key: account_id
   applicationId:
     function: var_get
-    id: application_read_application_name
+    id: application_read_application_id
     nullable: true
-    key: application_names
+    key: application_id
   keyword:
     function: var_get
     id: application_read_keyword

@@ -10,7 +10,7 @@
 
 name: User Role delete
 
-description: Delete a role for a user for an application.
+description: Delete a role for a user for an account/application.
 
 uri: user/role
 

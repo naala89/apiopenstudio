@@ -10,7 +10,7 @@
 
 name: Invite delete
 
-description: delete user invite
+description: Delete a user invite.
 
 uri: invite
 
