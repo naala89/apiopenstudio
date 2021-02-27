@@ -51,6 +51,6 @@ Make sure you associate it with the previously created "server" definition. Use 
 
 Your IDE should be now correctly configured. Lets test.
 
-# Links
+## Links
 
 * [https://dev.to/brpaz/docker-phpstorm-and-xdebug-the-definitive-guide-14og](https://dev.to/brpaz/docker-phpstorm-and-xdebug-the-definitive-guide-14og)

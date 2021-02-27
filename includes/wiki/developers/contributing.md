@@ -3,7 +3,7 @@ Contributing
 
 All development work and maintenance is performed in the [GitLab](https://gitlab.com/john89/api_open_studio) repository.
 
-The [GitHub](https://github.com/naala89/apiopenstudio) repository is only a mirror for visibility.
+The [GitHub](https://github.com/naala89/apiopenstudio) read-only repository is only a mirror for visibility.
 
 Please ensure that all work is done in GitLab.
 
@@ -28,11 +28,11 @@ This will be validated by the maintainers and if accepted, will be merged.
 Wiki
 ----
 
-All wiki text is stored in markdown format in ```src/wiki```.
+All wiki text is stored in markdown format in ```includes/wiki/```.
 
 We use bookdown to compile the markdown to html.
 
-So any changed that you want to make to the wiki will be instantly visible once merged.
+Any changed that you want to make to the wiki will be instantly visible once merged.
 
 The develop branch wiki is deployed to https://dev.wiki.apiopenstudio.com and master is deployed to https://wiki.apiopenstudio.com.
 
@@ -54,6 +54,6 @@ for details on using a docker for spinning up a phpdoc local site and linting fo
 All commits and merges go through a linting process, using phpcs.
 If the linting fails, the CI will not deploy the phpdoc or wiki changes.
 
-squizlabs/phpcs is defined in the composer.json file. Before final PR, you should run:
+squizlabs/phpcs is defined in the composer.json file. Before creating a PR, you should run:
 
     ./vendor/bin/phpcs --standard=PSR12 includes/ public/*.php

@@ -30,4 +30,5 @@ To add console output to the stream, add "console" to loggers.<name>.handlers ar
 
 Links
 -----
- * https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#installation
+
+* https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#installation

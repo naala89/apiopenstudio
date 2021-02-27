@@ -8,16 +8,16 @@ The GitLab pipelines runner will run phpcs against any commit or merge resquest.
 Any Merge request or commit that fails the phpcs test will not be accepted.
 So it is worth running phpcs locally before any commit.
 
-`php_codesniffer` will be installed by composer. The standard used is PSR12.
+```php_codesniffer``` will be installed by composer. The standard used is PSR12.
 
-After `composer install` has run, the following command will test your code locally:
+After ```composer install``` has run, the following command will test your code locally:
 
-    ./vendor/bin/phpcs --standard=PSR12 includes/ src/scss/ src/js/ public/*.php public/admin/*.php *.js
+    ./vendor/bin/phpcs --standard=PSR12 includes/ public/*.php
 
 Line length
 -----------
 
-A line of code should not exceed 120 characters.
+A line of code should not exceed 80 characters.
 
 Variables
 ---------
@@ -98,7 +98,7 @@ Should be in the following format:
      *
      * @return type Comment.
      * 
-     * @throws \Apiopenstudio\Core\ApiException Exception comment.
+     * @throws ApiException Exception comment.
      */
 
 ### Function declarations
