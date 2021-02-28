@@ -48,7 +48,7 @@ debug:
 db:
   definition_path: "includes/db/dbDefinition.yaml"
   driver: mysqli
-  host: apiopenstudio-db
+  host: mariadb
   root_password: apiopenstudio
   username: apiopenstudio
   password: apiopenstudio
