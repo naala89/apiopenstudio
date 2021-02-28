@@ -63,6 +63,6 @@ Running tests
 
 ```vendor/bin/codecept run unit --env staging|local|prod```
 
-### Run all functional tests
+### Run all functional api tests
 
-```vendor/bin/codecept run functional --env staging|local|prod```
+```vendor/bin/codecept run api --env staging|local|prod```

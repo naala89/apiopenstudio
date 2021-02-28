@@ -18,11 +18,11 @@ image: php:7.4
 #    - composer.lock
 
 variables:
-  MYSQL_HOST: "mariadb"
-  MYSQL_ROOT_PASSWORD: "apiopenstudio"
-  MYSQL_DATABASE: "apiopenstudio"
-  MYSQL_USERNAME: "apiopenstudio"
-  MYSQL_PASSWORD: "apiopenstudio"
+  MYSQL_HOST: $MYSQL_HOST
+  MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+  MYSQL_DATABASE: $MYSQL_DATABASE
+  MYSQL_USERNAME: $MYSQL_USERNAME
+  MYSQL_PASSWORD: $MYSQL_PASSWORD
 
 before_script:
   - apt-get update
@@ -56,39 +56,36 @@ phpcs:
 ## TESTS
 ##################################
 
-functional_tests:
+api_tests:
   stage: test
   services:
     - mariadb:latest
+  only:
+    - develop
+    - master
   script:
     - apt-get install -y mariadb-client iproute2
     - docker-php-ext-install mysqli
     - mysql --version
     - echo "Setup the DB."
     - php ./includes/scripts/runner_generate_db.php
-    # Run webserver
-#    # Test using Ip address
-#    - LOCAL_IP=$(ip route get 8.8.8.8 | awk -F"src " 'NR==1{split($2,a," ");print a[1]}')
-#    - echo Local IP $LOCAL_IP
-#    - php -S 0.0.0.0:8080 -t public/ 2> /dev/null &
-##    - sed -i "s/localhost/$LOCAL_IP:8080/" tests/api.suite.yml
-#    # Backup settings files.
-#    - if [ -f ".env" ]; then mv .env .env.bak; fi
-#    - if [ -f "settings.yml" ]; then mv settings.yml settings.yml.bak; fi
-#    # Copy example settings files.
     - touch .env
     - echo "API_DOMAIN=localhost:8085" >> .env
-#    - echo "ADMIN_DOMAIN=admin.apiopenstudio.local" >> .env
     - cp ci.settings.yml settings.yml
     - php -S localhost:8085 --docroot public &>/dev/null&
-#    - ./vendor/bin/codecept build
-    - ./vendor/bin/codecept run --env ci
-#    # Revert settings files.
-#    - if [ -f ".env".bak ]; then mv .env.bak .env; fi
-#    - if [ -f "settings.yml.bak" ]; then mv settings.yml.bak settings.yml; fi
+    - ./vendor/bin/codecept run api --env ci
 
-#unit_tests:
-#  stage: test
+unit_tests:
+  stage: test
+  only:
+    - develop
+    - master
+  script:
+    - touch .env
+    - echo "API_DOMAIN=localhost:8085" >> .env
+    - cp ci.settings.yml settings.yml
+    - php -S localhost:8085 --docroot public &>/dev/null&
+    - ./vendor/bin/codecept run unit --env ci
 
 ##################################
 ## WIKI

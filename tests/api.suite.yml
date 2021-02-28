@@ -25,9 +25,3 @@ env:
                 REST:
                     url: "https://%API_DOMAIN%"
                     depends: PhpBrowser
-    production:
-        modules:
-            config:
-                REST:
-                    url: "https://%API_DOMAIN%"
-                    depends: PhpBrowser
