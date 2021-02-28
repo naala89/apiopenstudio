@@ -35,7 +35,7 @@ echo "Connected successfully\n";
 // Create user.
 $sql = 'CREATE USER IF NOT EXISTS '
     . "'" . getenv('MYSQL_USERNAME') . "'@'localhost' "
-    . 'IDENTIFIED BY "' . getenv('MYSQL_PASSWORD') . '"';
+    . "IDENTIFIED BY '" . getenv('MYSQL_PASSWORD') . "'";
 if ($conn->query($sql)) {
     echo "Create user success\n";
 } else {
