@@ -77,7 +77,7 @@ functional_tests:
 #    - if [ -f "settings.yml" ]; then mv settings.yml settings.yml.bak; fi
 #    # Copy example settings files.
     - touch .env
-    - echo "API_DOMAIN=localhost:8085" >> .env
+    - echo "API_DOMAIN=localhost" >> .env
 #    - echo "ADMIN_DOMAIN=admin.apiopenstudio.local" >> .env
     - cp ci.settings.yml settings.yml
     - php -S localhost:8085 --docroot public &>/dev/null&
