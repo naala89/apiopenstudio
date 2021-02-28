@@ -10,28 +10,20 @@ env:
     local:
         modules:
             config:
-                PhpBrowser:
-                    url: "https://%ADMIN_DOMAIN%"
                 REST:
                     url: "https://%API_DOMAIN%"
     ci:
         modules:
             config:
-                PhpBrowser:
-                    url: "http://localhost"
                 REST:
-                    url: "http://localhost"
+                    url: "http://%LOCAL_IP%"
     staging:
         modules:
             config:
-                PhpBrowser:
-                    url: "https://%ADMIN_DOMAIN%"
                 REST:
                     url: "https://%API_DOMAIN%"
     production:
         modules:
             config:
-                PhpBrowser:
-                    url: "https://%ADMIN_DOMAIN%"
                 REST:
                     url: "https://%API_DOMAIN%"

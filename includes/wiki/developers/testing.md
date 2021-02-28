@@ -15,6 +15,10 @@ Config
 
 Domains for testing in environments are stored in ```/tests/api.suite.yml```
 
+Tests require a .env file:
+
+    API_DOMAIN=api.apiopenstudio.local
+
 Testing user
 ------------
 

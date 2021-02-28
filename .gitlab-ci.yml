@@ -39,7 +39,7 @@ before_script:
 
 stages:
   - lint
-#  - test
+  - test
   - deploy
 
 ##################################
@@ -56,33 +56,35 @@ phpcs:
 ## TESTS
 ##################################
 
-#functional_tests:
-#  stage: test
-#  services:
-#    - mariadb:latest
-#  script:
-#    - apt-get install -y mariadb-client iproute2
-#    - docker-php-ext-install mysqli
-#    - mysql --version
-#    - echo "Setup the DB."
-#    - php ./includes/scripts/runner_generate_db.php
-#    # Test using Ip address
-#    - LOCAL_IP=$(ip route get 8.8.8.8 | awk -F"src " 'NR==1{split($2,a," ");print a[1]}')
-#    - echo Local IP $LOCAL_IP
-#    - php -S 0.0.0.0:8080 -t public/ 2> /dev/null &
+functional_tests:
+  stage: test
+  services:
+    - mariadb:latest
+  script:
+    - apt-get install -y mariadb-client iproute2
+    - docker-php-ext-install mysqli
+    - mysql --version
+    - echo "Setup the DB."
+    - php ./includes/scripts/runner_generate_db.php
+    # Test using Ip address
+    - LOCAL_IP=$(ip route get 8.8.8.8 | awk -F"src " 'NR==1{split($2,a," ");print a[1]}')
+    - echo Local IP $LOCAL_IP
+    - php -S 0.0.0.0:8080 -t public/ 2> /dev/null &
 #    - sed -i "s/localhost/$LOCAL_IP:8080/" tests/api.suite.yml
-#    # Backup settings files.
-#    - if [ -f ".env" ]; then cp .env .env.bak; fi
-#    - if [ -f "settings.yml" ]; then cp settings.yml settings.yml.bak; fi
-#    # Copy example settings files.
-#    - cp example.env .env
-#    - cp example.settings.yml settings.yml
-#    - php -S localhost:8085 --docroot public &>/dev/null&
-#    - ./vendor/bin/codecept build
-#    - ./vendor/bin/codecept run --env ci api
-#    # Revert settings files.
-#    - if [ -f ".env".bak ]; then cp .env.bak .env; rm .env.bak; fi
-#    - if [ -f "settings.yml.bak" ]; then cp settings.yml.bak settings.yml; rm settings.yml.bak; fi
+    # Backup settings files.
+    - if [ -f ".env" ]; then mv .env .env.bak; fi
+    - if [ -f "settings.yml" ]; then mv settings.yml settings.yml.bak; fi
+    # Copy example settings files.
+    - touch .env
+    - echo "API_DOMAIN=api.apiopenstudio.local" >> .env
+    - echo "ADMIN_DOMAIN=admin.apiopenstudio.local" >> .env
+    - cp example.settings.yml settings.yml
+    - php -S localhost:8085 --docroot public &>/dev/null&
+    - ./vendor/bin/codecept build
+    - ./vendor/bin/codecept run --env ci
+    # Revert settings files.
+    - if [ -f ".env".bak ]; then mv .env.bak .env; fi
+    - if [ -f "settings.yml.bak" ]; then mv settings.yml.bak settings.yml; fi
 
 #unit_tests:
 #  stage: test
