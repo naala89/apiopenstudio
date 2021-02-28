@@ -56,7 +56,7 @@ phpcs:
 ## TESTS
 ##################################
 
-api_tests:
+functional_tests:
   stage: test
   services:
     - mariadb:latest
