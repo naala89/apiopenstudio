@@ -43,14 +43,22 @@ These are in ```/tests/_data/```
 Running tests
 -------------
 
-```$ vendor/bin/codecept run --env staging|local|prod```
+### Run all tests
 
-```$ vendor/bin/codecept run --env staging|local|prod api```
+```vendor/bin/codecept run --env staging|local|prod```
 
-```$ vendor/bin/codecept run --env staging|local|prod api testName```
+### Run all api tests
 
-If only testing API locally:
+```vendor/bin/codecept run --env staging|local|prod api```
 
-```$ vendor/bin/codecept run api```
+### Run a specific test
 
-```$ vendor/bin/codecept run api testName```
+```vendor/bin/codecept run --env staging|local|prod api testName```
+
+### Run all unit tests
+
+```vendor/bin/codecept run unit --env staging|local|prod```
+
+### Run all functional tests
+
+```vendor/bin/codecept run functional --env staging|local|prod```

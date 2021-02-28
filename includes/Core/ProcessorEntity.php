@@ -160,12 +160,12 @@ abstract class ProcessorEntity extends Entity
     /**
      * Constructor. Store processor metadata and request data in object.
      *
-     * @param mixed $meta The processor metadata.
-     * @param Request $request Request object.
-     * @param \ADODB_mysqli $db Database object.
-     * @param \Monolog\Logger $logger Logger object.
+     * @param $meta
+     * @param Request $request
+     * @param ADODB_mysqli|null $db
+     * @param Logger|null $logger
      */
-    public function __construct($meta, Request &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, Request &$request, $db = null, $logger = null)
     {
         $this->meta = $meta;
         $this->request = $request;
