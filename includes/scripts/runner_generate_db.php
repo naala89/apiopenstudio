@@ -29,7 +29,7 @@ $conn = new mysqli(
 
 // Check connection
 if ($conn->connect_error) {
-    echo "Connection failed: " . $conn->connect_error;
+    echo "Connection failed: " . $conn->connect_error . "\n";
     exit(1);
 }
 echo "Connected successfully\n";
@@ -50,7 +50,7 @@ if ($conn->query($sql)) {
     echo "Create user fail\n";
     exit(1);
 }
-$sql = 'GRANT ALL PRIVILEGES ON * . * TO "' . getenv('MYSQL_USERNAME');
+$sql = 'GRANT ALL PRIVILEGES ON *.' . getenv('MYSQL_DATABASE') . ' TO "' . getenv('MYSQL_USERNAME');
 $sql .= '"@"' . getenv('MYSQL_HOST') . '"';
 if ($conn->query($sql)) {
     echo "Grant privileges success\n";
@@ -65,6 +65,20 @@ if ($conn->query($sql)) {
     echo "Flush privileges fail\n";
     exit(1);
 }
+
+// Drop connection and login again as user.
+mysqli_close($conn);
+$conn = new mysqli(
+    getenv('MYSQL_HOST'),
+    getenv('MYSQL_USERNAME'),
+    getenv('MYSQL_PASSWORD')
+);
+if ($conn->connect_error) {
+    echo "Connection failed: " . $conn->connect_error . "\n";
+    exit(1);
+}
+echo "Reconnected as ApiOpenStudio user successfully\n";
+
 $sql = 'USE ' . getenv('MYSQL_DATABASE');
 if ($conn->query($sql)) {
     echo "Use database success\n";
