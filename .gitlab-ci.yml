@@ -67,7 +67,6 @@ functional_tests:
     - echo "Setup the DB."
     - php ./includes/scripts/runner_generate_db.php
     # Run webserver
-    - php -S localhost:8085 --docroot public &>/dev/null&
 #    # Test using Ip address
 #    - LOCAL_IP=$(ip route get 8.8.8.8 | awk -F"src " 'NR==1{split($2,a," ");print a[1]}')
 #    - echo Local IP $LOCAL_IP
@@ -77,11 +76,11 @@ functional_tests:
 #    - if [ -f ".env" ]; then mv .env .env.bak; fi
 #    - if [ -f "settings.yml" ]; then mv settings.yml settings.yml.bak; fi
 #    # Copy example settings files.
-#    - touch .env
-#    - echo "API_DOMAIN=api.apiopenstudio.local" >> .env
+    - touch .env
+    - echo "API_DOMAIN=api.apiopenstudio.local" >> .env
 #    - echo "ADMIN_DOMAIN=admin.apiopenstudio.local" >> .env
-#    - cp example.settings.yml settings.yml
-#    - php -S localhost:8085 --docroot public &>/dev/null&
+    - cp example.settings.yml settings.yml
+    - php -S localhost:8085 --docroot public &>/dev/null&
 #    - ./vendor/bin/codecept build
     - ./vendor/bin/codecept run --env ci
 #    # Revert settings files.
