@@ -8,7 +8,7 @@ $I->createResourceFromYaml('url.yaml');
 $I->deleteHeader('Authorization');
 
 $uri = $I->getMyBaseUri() . '/url';
-$sampleBaseUrl = 'http://' . getenv('ADMIN_DOMAIN') . '/sample/';
+$sampleBaseUrl = 'http://' . getenv('API_DOMAIN') . '/sample/';
 
 $I->wantTo('populate a Url with sample1.xml and Accept:application/xml in header see the result.');
 $I->haveHttpHeader('Accept', 'application/xml');

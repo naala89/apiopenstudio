@@ -112,8 +112,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson([
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
 ]);
 
@@ -175,8 +175,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson([
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ],
 ]);
 
@@ -211,8 +211,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson([
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ],
 ]);
 
@@ -271,8 +271,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson([
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ],
 ]);
 
@@ -367,8 +367,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson([
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
 ]);
 
@@ -403,8 +403,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson([
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
 ]);
 
@@ -439,8 +439,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson([
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
 ]);
 
@@ -475,8 +475,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson([
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
 ]);
 
@@ -509,8 +509,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson([
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
 ]);
 
@@ -543,8 +543,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson([
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
 ]);
 
@@ -577,8 +577,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson([
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
 ]);
 
@@ -634,8 +634,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson([
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
 ]);
 
@@ -668,8 +668,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson([
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
 ]);
 
@@ -702,8 +702,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson([
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
 ]);
 
@@ -772,8 +772,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson([
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
 ]);
 
