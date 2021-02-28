@@ -17,7 +17,7 @@ env:
         modules:
             config:
                 REST:
-                    url: "http://api.apiopenstudio.local"
+                    url: "http://%API_DOMAIN%"
                     depends: PhpBrowser
     staging:
         modules:
