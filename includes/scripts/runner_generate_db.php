@@ -50,7 +50,7 @@ if ($conn->query($sql)) {
     echo "Create user fail\n";
     exit(1);
 }
-$sql = 'GRANT ALL PRIVILEGES ON *.' . getenv('MYSQL_DATABASE') . ' TO "' . getenv('MYSQL_USERNAME');
+$sql = 'GRANT ALL PRIVILEGES ON ' . getenv('MYSQL_DATABASE') . '.* TO "' . getenv('MYSQL_USERNAME');
 $sql .= '"@"' . getenv('MYSQL_HOST') . '"';
 if ($conn->query($sql)) {
     echo "Grant privileges success\n";
