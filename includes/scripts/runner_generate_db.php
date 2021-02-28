@@ -26,15 +26,24 @@ $conn = new mysqli(
     'root',
     getenv('MYSQL_ROOT_PASSWORD')
 );
-
-// Check connection
 if ($conn->connect_error) {
     echo "Connection failed: " . $conn->connect_error . "\n";
     exit(1);
 }
 echo "Connected successfully\n";
 
-// Create the database, user and permissions.
+// Create user.
+$sql = 'CREATE USER IF NOT EXISTS '
+    . "'" . getenv('MYSQL_USERNAME') . "'@'localhost'"
+    . '" IDENTIFIED BY "' . getenv('MYSQL_PASSWORD') . '"';
+if ($conn->query($sql)) {
+    echo "Create user success\n";
+} else {
+    echo "Create user fail\n";
+    exit(1);
+}
+
+// Create the database.
 $sql = 'CREATE DATABASE IF NOT EXISTS `' . getenv('MYSQL_DATABASE') . '`';
 if ($conn->query($sql)) {
     echo "Create database success\n";
@@ -42,16 +51,10 @@ if ($conn->query($sql)) {
     echo "Create database fail\n";
     exit(1);
 }
-$sql = 'CREATE USER IF NOT EXISTS "' . getenv('MYSQL_USERNAME') . '"@"';
-$sql .= getenv('MYSQL_HOST') . '" IDENTIFIED BY "' . getenv('MYSQL_PASSWORD') . '"';
-if ($conn->query($sql)) {
-    echo "Create user success\n";
-} else {
-    echo "Create user fail\n";
-    exit(1);
-}
-$sql = 'GRANT ALL PRIVILEGES ON ' . getenv('MYSQL_DATABASE') . '.* TO "' . getenv('MYSQL_USERNAME');
-$sql .= '"@"' . getenv('MYSQL_HOST') . '"';
+
+// Grant privileges.
+$sql = 'GRANT ALL PRIVILEGES ON `' . getenv('MYSQL_DATABASE') . "`.* TO "
+    . "'" . getenv('MYSQL_USERNAME') . "'@'localhost'";
 if ($conn->query($sql)) {
     echo "Grant privileges success\n";
 } else {
@@ -79,6 +82,7 @@ if ($conn->connect_error) {
 }
 echo "Reconnected as ApiOpenStudio user successfully\n";
 
+// Use database.
 $sql = 'USE ' . getenv('MYSQL_DATABASE');
 if ($conn->query($sql)) {
     echo "Use database success\n";
