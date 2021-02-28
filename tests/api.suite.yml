@@ -12,18 +12,22 @@ env:
             config:
                 REST:
                     url: "https://%API_DOMAIN%"
+                    depends: PhpBrowser
     ci:
         modules:
             config:
                 REST:
-                    url: "http://%LOCAL_IP%"
+                    url: "http://api.apiopenstudio.local"
+                    depends: PhpBrowser
     staging:
         modules:
             config:
                 REST:
                     url: "https://%API_DOMAIN%"
+                    depends: PhpBrowser
     production:
         modules:
             config:
                 REST:
                     url: "https://%API_DOMAIN%"
+                    depends: PhpBrowser
