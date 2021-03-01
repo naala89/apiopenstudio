@@ -41,9 +41,13 @@ stages:
 
 phpcs:
   stage: lint
+  artifacts:
+    when: on_failure
+    paths:
+      - phpcs.txt
   script:
     - echo "Linting the codebase."
-    - ./vendor/bin/phpcs --standard=PSR12 includes/ public/*.php
+    - ./vendor/bin/phpcs --standard=PSR12 --report-file=phpcs.txt includes/ public/*.php
 
 ##################################
 ## TESTS
@@ -62,6 +66,10 @@ functional_tests:
   only:
     - develop
     - master
+  artifacts:
+    when: on_failure
+    paths:
+      - tests/_output/
   script:
     - apt-get install -y mariadb-client iproute2
     - docker-php-ext-install mysqli
@@ -79,6 +87,10 @@ unit_tests:
   only:
     - develop
     - master
+  artifacts:
+    when: on_failure
+    paths:
+      - tests/_output/
   script:
     - touch .env
     - echo "API_DOMAIN=localhost:8085" >> .env
