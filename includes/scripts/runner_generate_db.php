@@ -73,7 +73,7 @@ if ($conn->query($sql)) {
 mysqli_close($conn);
 $conn = new mysqli(
     getenv('MYSQL_HOST'),
-    getenv('MYSQL_USERNAME'),
+    getenv('MYSQL_USER'),
     getenv('MYSQL_PASSWORD')
 );
 if ($conn->connect_error) {
