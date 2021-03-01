@@ -146,7 +146,7 @@ foreach ($definition as $table => $tableData) {
 }
 
 // Add resource data from the resources directory
-$dir = dirname(dirname(__DIR__)) . '/includes/resources';
+$dir = dirname(__DIR__) . '/includes/resources';
 $filenames = scandir($dir);
 foreach ($filenames as $filename) {
     if (pathinfo($filename, PATHINFO_EXTENSION) != 'yaml') {
