@@ -79,6 +79,7 @@ functional_tests:
     - touch .env
     - echo "API_DOMAIN=localhost:8085" >> .env
     - cp ci.settings.yml settings.yml
+    - mkdir /tmp
     - php -S localhost:8085 includes/routing.php &>/dev/null&
     - ./vendor/bin/codecept run api --env ci
 

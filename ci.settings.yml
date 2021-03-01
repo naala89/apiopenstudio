@@ -72,7 +72,7 @@ api:
   dir_public: "public/"
   dir_resources: "includes/resources/"
   dir_uploads: "uploads/"
-  dir_tmp: "tmp/"
+  dir_tmp: "/tmp/"
 
 email:
   host: apiopenstudio-email
