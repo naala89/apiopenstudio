@@ -91,7 +91,7 @@ if ($conn->query($sql)) {
     exit(1);
 }
 
-$yaml = file_get_contents(dirname(dirname(__DIR__)) . '/includes/Db/dbDefinition.yaml');
+$yaml = file_get_contents(dirname(__DIR__) . '/includes/Db/dbDefinition.yaml');
 $definition = \Spyc::YAMLLoadString($yaml);
 
 // Parse the DB  table definition array.
