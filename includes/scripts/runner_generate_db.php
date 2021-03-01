@@ -34,7 +34,7 @@ echo "Connected successfully\n";
 
 // Create user.
 $sql = 'CREATE USER IF NOT EXISTS '
-    . "'" . getenv('MYSQL_USERNAME') . "'@'localhost' "
+    . "'" . getenv('MYSQL_USERNAME') . "'@'" . getenv('MYSQL_HOST') . "' "
     . "IDENTIFIED BY '" . getenv('MYSQL_PASSWORD') . "'";
 if ($conn->query($sql)) {
     echo "Create user success\n";
@@ -54,7 +54,7 @@ if ($conn->query($sql)) {
 
 // Grant privileges.
 $sql = 'GRANT ALL PRIVILEGES ON `' . getenv('MYSQL_DATABASE') . "`.* TO "
-    . "'" . getenv('MYSQL_USERNAME') . "'@'localhost'";
+    . "'" . getenv('MYSQL_USERNAME') . "'@'" . getenv('MYSQL_HOST') . "'";
 if ($conn->query($sql)) {
     echo "Grant privileges success\n";
 } else {

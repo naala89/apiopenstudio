@@ -19,9 +19,4 @@ env:
                 REST:
                     url: "http://%API_DOMAIN%"
                     depends: PhpBrowser
-    staging:
-        modules:
-            config:
-                REST:
-                    url: "https://%API_DOMAIN%"
-                    depends: PhpBrowser
+

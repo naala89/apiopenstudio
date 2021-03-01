@@ -17,13 +17,6 @@ image: php:7.4
 #    - .composer/
 #    - composer.lock
 
-variables:
-  MYSQL_HOST: $MYSQL_HOST
-  MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-  MYSQL_DATABASE: $MYSQL_DATABASE
-  MYSQL_USERNAME: $MYSQL_USERNAME
-  MYSQL_PASSWORD: $MYSQL_PASSWORD
-
 before_script:
   - apt-get update
   - apt-get install -y libzip-dev openssh-client rsync libxslt-dev unzip
@@ -60,6 +53,12 @@ functional_tests:
   stage: test
   services:
     - mariadb:latest
+  variables:
+    MYSQL_HOST: $MYSQL_HOST
+    MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+    MYSQL_DATABASE: $MYSQL_DATABASE
+    MYSQL_USERNAME: $MYSQL_USERNAME
+    MYSQL_PASSWORD: $MYSQL_PASSWORD
   only:
     - develop
     - master
