@@ -77,7 +77,7 @@ functional_tests:
     - echo "Setup the DB."
     - php ./includes/scripts/runner_generate_db.php
     - touch .env
-    - echo "API_DOMAIN=localhost" >> .env
+    - echo "API_DOMAIN=localhost:8085" >> .env
     - cp ci.settings.yml settings.yml
     - php -S localhost:8085 --docroot public &>/dev/null&
     - ./vendor/bin/codecept run api --env ci
