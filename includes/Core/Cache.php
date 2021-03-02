@@ -86,18 +86,15 @@ class Cache
    *
    * @return boolean
    */
-    public function __construct(array $config, Logger $logger, bool $cache = null)
+    public function __construct(array $config, Logger $logger, bool $cache = false)
     {
-        $cache = empty($cache) ? false : $cache;
-        if ($cache) {
-            $this->host = $config['api']['cache_host'];
-            $this->port = $config['api']['cache_port'];
-        }
         $this->logger = $logger;
-        $this->logger->debug('cache setup request: ' . print_r($cache, false));
+        $this->logger->info('Caching request with cache set to: ' . print_r($cache, true));
         $this->cacheActive = false;
 
         if ($cache === true || $cache == 1) {
+            $this->host = $config['api']['cache_host'];
+            $this->port = $config['api']['cache_port'];
             $caches = $this->caches;
             while (!$this->cacheActive && $cache = array_shift($caches)) {
                 $func = 'setup' . ucfirst($cache);

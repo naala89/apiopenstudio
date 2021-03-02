@@ -24,10 +24,3 @@ process:
 
 output:
   - response
-  - function: email
-    to: john@naala.com.au
-    subject: "test email"
-    format: html
-  - function: xml
-    destination: www.foo.bar
-    method: post

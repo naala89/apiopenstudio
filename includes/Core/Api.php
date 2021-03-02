@@ -115,6 +115,7 @@ class Api
             . $dsnOptions;
         $this->db = \ADONewConnection($dsn);
         if (!$this->db) {
+            $this->logger->error('DB connection failed');
             throw new ApiException('DB connection failed', 2, -1, 500);
         }
 
@@ -135,6 +136,7 @@ class Api
         // fetch the cache of the call, and process into output if it is not stale
         $result = $this->getCache($this->request->getCacheKey());
         if ($result !== false) {
+            $this->logger->info('Returning cached rsults');
             return $this->getOutput($result);
         }
         // set fragments in Meta class
@@ -150,6 +152,8 @@ class Api
         // process the call
         $this->logger->debug('Process resource: ' . print_r($meta->process, true));
         $result = $this->crawlMeta($meta->process);
+        $this->logger->debug('Results: ' . print_r($result, true));
+
 
         // store the results in cache for next time
         if (is_object($result) && get_class($result) == 'Error') {
