@@ -75,6 +75,9 @@ abstract class Mapper
      */
     protected function saveDelete(string $sql, array $bindParams)
     {
+        $this->logger->debug("INSERT or DROP SQL...");
+        $this->logger->debug("SQL: $sql");
+        $this->logger->debug("Bind Params: $bindParams");
         $this->db->Execute($sql, $bindParams);
         if ($this->db->affected_rows() !== 0) {
             return true;
@@ -101,6 +104,9 @@ abstract class Mapper
      */
     protected function fetchRow(string $sql, array $bindParams)
     {
+        $this->logger->debug("SELECT single row SQL...");
+        $this->logger->debug("SQL: $sql");
+        $this->logger->debug("Bind Params: $bindParams");
         $row = $this->db->GetRow($sql, $bindParams);
         if ($row === false) {
             $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
@@ -139,6 +145,7 @@ abstract class Mapper
      */
     protected function fetchRows(string $sql, array $bindParams = [], array $params = [])
     {
+        $this->logger->debug("SELECT multiple rows SQL...");
         // Add filter by keyword.
         if (!empty($params['filter'])) {
             $arr = [];
@@ -172,6 +179,8 @@ abstract class Mapper
         }
 
         // Add limit.
+        $this->logger->debug("SQL: $sql");
+        $this->logger->debug("Bind Params: $bindParams");
         if (!empty($params['offset']) || !empty($params['limit'])) {
             if (stripos($sql, ' limit ') !== false) {
                 throw new ApiException('Trying to limit params on SQL with LIMIT clause: ' . $sql);
