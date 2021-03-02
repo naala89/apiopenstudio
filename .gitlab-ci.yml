@@ -75,11 +75,11 @@ functional_tests:
     - apt-get install -y mariadb-client iproute2
     - docker-php-ext-install mysqli
     - mysql --version
-    - echo "Setup the DB."
-    - php tests/runner_generate_db.php
+    - mkdir logs
     - touch .env
     - echo "API_DOMAIN=localhost:8085" >> .env
     - cp tests/ci.settings.yml settings.yml
+    - php tests/runner_generate_db.php
     - php -S localhost:8085 tests/routing.php &>/dev/null&
     - ./vendor/bin/codecept run api --env ci
 
