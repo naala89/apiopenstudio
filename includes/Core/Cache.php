@@ -89,8 +89,10 @@ class Cache
     public function __construct(array $config, Logger $logger, bool $cache = null)
     {
         $cache = empty($cache) ? false : $cache;
-        $this->host = $config['api']['cache_host'];
-        $this->port = $config['api']['cache_port'];
+        if ($cache) {
+            $this->host = $config['api']['cache_host'];
+            $this->port = $config['api']['cache_port'];
+        }
         $this->logger = $logger;
         $this->logger->debug('cache setup request: ' . print_r($cache, false));
         $this->cacheActive = false;
