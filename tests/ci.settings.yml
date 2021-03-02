@@ -22,13 +22,13 @@ debug:
       stream: php://stdout
     api_file_handler:
       class: Monolog\Handler\StreamHandler
-      level: NOTICE
+      level: DEBUG
       formatter: api_open_studio
       bubble: true
       stream: logs/api.error.log
     db_file_handler:
       class: Monolog\Handler\StreamHandler
-      level: NOTICE
+      level: DEBUG
       formatter: api_open_studio
       bubble: true
       stream: logs/db.error.log
