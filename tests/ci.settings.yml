@@ -25,13 +25,13 @@ debug:
       level: NOTICE
       formatter: api_open_studio
       bubble: true
-      stream: /var/www/html/logs/api.error.log
+      stream: logs/api.error.log
     db_file_handler:
       class: Monolog\Handler\StreamHandler
       level: NOTICE
       formatter: api_open_studio
       bubble: true
-      stream: /var/www/html/logs/db.error.log
+      stream: logs/db.error.log
   processors:
     web_processor:
       class: Monolog\Processor\WebProcessor
