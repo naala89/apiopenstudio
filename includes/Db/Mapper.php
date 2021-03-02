@@ -77,7 +77,7 @@ abstract class Mapper
     {
         $this->logger->debug("INSERT or DROP SQL...");
         $this->logger->debug("SQL: $sql");
-        $this->logger->debug('Bind Params: ' . print_r($bindParams));
+        $this->logger->debug('Bind Params: ' . print_r($bindParams,true));
         $this->db->Execute($sql, $bindParams);
         if ($this->db->affected_rows() !== 0) {
             return true;
@@ -106,7 +106,7 @@ abstract class Mapper
     {
         $this->logger->debug("SELECT single row SQL...");
         $this->logger->debug("SQL: $sql");
-        $this->logger->debug('Bind Params: ' . print_r($bindParams));
+        $this->logger->debug('Bind Params: ' . print_r($bindParams, true));
         $row = $this->db->GetRow($sql, $bindParams);
         if ($row === false) {
             $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
@@ -180,7 +180,7 @@ abstract class Mapper
 
         // Add limit.
         $this->logger->debug("SQL: $sql");
-        $this->logger->debug('Bind Params: ' . print_r($bindParams));
+        $this->logger->debug('Bind Params: ' . print_r($bindParams, true));
         if (!empty($params['offset']) || !empty($params['limit'])) {
             if (stripos($sql, ' limit ') !== false) {
                 throw new ApiException('Trying to limit params on SQL with LIMIT clause: ' . $sql);
