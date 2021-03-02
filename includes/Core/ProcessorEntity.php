@@ -214,6 +214,8 @@ abstract class ProcessorEntity extends Entity
      */
     public function val(string $key, bool $realValue = null)
     {
+        $this->logger->debug("Fetching val for: $key");
+        $this->logger->debug("Real value: $realValue");
         $inputDet = $this->details['input'];
         if (!isset($inputDet[$key])) {
             // undefined input key for this processor type
@@ -244,6 +246,8 @@ abstract class ProcessorEntity extends Entity
 
         $this->validateAllowedValues($container->getData(), $limitValues, $min, $key);
         $this->validateAllowedTypes($container->getType(), $limitTypes, $min, $key);
+
+        $this->logger->debug('Value: ' . $container->getData());
 
         return $realValue ? $container->getData() : $container;
     }
