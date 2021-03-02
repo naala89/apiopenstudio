@@ -140,7 +140,7 @@ class VarFile extends Core\ProcessorEntity
     {
         $this->validateFilesError($filename, $nullable);
         if ($getContents) {
-            $dir = $this->settings->__get(['api', 'base_path']) . $this->settings->__get(['api', 'dir_tmp']);
+            $dir = $this->settings->__get(['api', 'dir_tmp']);
             $extension = pathinfo($_FILES[$filename]['name'], PATHINFO_EXTENSION);
             $basename = bin2hex(random_bytes(8));
             $basename = sprintf('%s.%0.8s', $basename, $extension);
@@ -150,7 +150,7 @@ class VarFile extends Core\ProcessorEntity
             unlink($dest);
             return new Core\DataContainer($fileContent, 'text');
         } else {
-            $dir = $this->settings->__get(['api', 'base_path']) . $this->settings->__get(['api', 'dir_tmp']);
+            $dir = $this->settings->__get(['api', 'dir_tmp']);
             $extension = pathinfo($_FILES[$filename]['name'], PATHINFO_EXTENSION);
             $basename = bin2hex(random_bytes(8));
             $basename = sprintf('%s.%0.8s', $basename, $extension);

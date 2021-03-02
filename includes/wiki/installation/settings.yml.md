@@ -103,7 +103,7 @@ Copy ```settings.example.yml``` to ```example.yml```, and then edit the settings
 
     - dir_tmp
 
-        The relative path to the tmp directory from docroot.
+      The full path to the tmp directory on the server.
 
 - admin
 
