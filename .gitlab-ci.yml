@@ -70,6 +70,7 @@ functional_tests:
     when: on_failure
     paths:
       - tests/_output/
+      - logs/
   script:
     - apt-get install -y mariadb-client iproute2
     - docker-php-ext-install mysqli
