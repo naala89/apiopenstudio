@@ -38,20 +38,24 @@ try {
     $api = new Api($config->all());
     $result = $api->process();
 } catch (ApiException $e) {
+    Cascade::fileConfig($config->__get(['debug']));
+    $logger = Cascade::getLogger('api');
     $outputClass = 'ApiOpenStudio\\Output\\' . ucfirst($api->getAccept($config->__get(['api', 'default_format'])));
     if (!class_exists($outputClass)) {
+        $logger->error('Error: no default format defined in the config!');
         echo 'Error: no default format defined in the config!';
         exit();
     }
-    Cascade::fileConfig($config->__get(['debug']));
-    $logger = Cascade::getLogger('api');
     $error = new Error($e->getCode(), $e->getProcessor(), $e->getMessage());
     $output = new $outputClass($error->process(), $e->getHtmlCode(), $logger);
     ob_end_flush();
     echo $output->process();
     exit();
 } catch (Exception $e) {
+    Cascade::fileConfig($config->__get(['debug']));
+    $logger = Cascade::getLogger('api');
     ob_end_flush();
+    $logger->error('Error: ' . $e->getCode() . '. ' . $e->getMessage());
     echo 'Error: ' . $e->getCode() . '. ' . $e->getMessage();
     exit();
 }
