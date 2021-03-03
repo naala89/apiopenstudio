@@ -19,15 +19,20 @@ Tests require a .env file:
 
     API_DOMAIN=api.apiopenstudio.local
 
+The configuration defined in ```api.suite.yml``` will dynamically pull the domain name for the
+local domain for the API from the ```.env``` file.
+
 Testing user
 ------------
 
 The following testing credentials  are stored in /tests/_support/Helper/api.php
 
-* Account: Datagator
+* Account: apiopenstudio
 * Application: Testing
 * Username: tester
 * Password: tester_pass
+
+When you create the database, ensure that you include the tester credentials at the prompt.
 
 Creating Tests
 --------------

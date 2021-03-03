@@ -61,7 +61,7 @@ db:
 api:
   protocols:
     - http
-  base_path: "/var/www/html/"
+  base_path: "/var/www/html/api/"
   url: "localhost"
   cache: false
   default_format: json

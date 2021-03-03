@@ -31,59 +31,38 @@ before_script:
   - php composer.phar install
 
 stages:
-#  - lint
+  - lint
   - test
-#  - deploy
+  - deploy
 
 ##################################
 ## LINTING
 ##################################
 
-#phpcs:
-#  stage: lint
-#  artifacts:
-#    when: on_failure
-#    paths:
-#      - phpcs.txt
-#  script:
-#    - echo "Linting the codebase."
-#    - ./vendor/bin/phpcs --standard=PSR12 --report-file=phpcs.txt includes/ public/*.php
+phpcs:
+  stage: lint
+  artifacts:
+    when: on_failure
+    paths:
+      - phpcs.txt
+  script:
+    - echo "Linting the codebase."
+    - ./vendor/bin/phpcs --standard=PSR12 --report-file=phpcs.txt includes/ public/*.php
 
 ##################################
 ## TESTS
 ##################################
 
-functional_tests:
-  stage: test
-  services:
-    - mariadb:latest
-  variables:
-    MYSQL_HOST: $CI_MYSQL_HOST
-    MYSQL_ROOT_PASSWORD: $CI_MYSQL_ROOT_PASSWORD
-    MYSQL_DATABASE: $CI_MYSQL_DATABASE
-    MYSQL_USER: $CI_MYSQL_USER
-    MYSQL_PASSWORD: $CI_MYSQL_PASSWORD
-  only:
-    - develop
-    - master
-  artifacts:
-    when: on_failure
-    paths:
-      - tests/_output/
-      - logs/
-  script:
-    - touch .env
-    - echo "API_DOMAIN=localhost:8085" >> .env
-    - cp tests/ci.settings.yml settings.yml
-    - apt-get install -y mariadb-client iproute2
-    - docker-php-ext-install mysqli
-    - mysql --version
-    - php tests/runner_generate_db.php
-    - php -S localhost:8085 tests/routing.php &>/dev/null&
-    - ./vendor/bin/codecept run api --env ci
-
-#unit_tests:
+#functional_tests:
 #  stage: test
+#  services:
+#    - mariadb:latest
+#  variables:
+#    MYSQL_HOST: $CI_MYSQL_HOST
+#    MYSQL_ROOT_PASSWORD: $CI_MYSQL_ROOT_PASSWORD
+#    MYSQL_DATABASE: $CI_MYSQL_DATABASE
+#    MYSQL_USER: $CI_MYSQL_USER
+#    MYSQL_PASSWORD: $CI_MYSQL_PASSWORD
 #  only:
 #    - develop
 #    - master
@@ -91,71 +70,92 @@ functional_tests:
 #    when: on_failure
 #    paths:
 #      - tests/_output/
+#      - logs/
 #  script:
 #    - touch .env
 #    - echo "API_DOMAIN=localhost:8085" >> .env
-#    - cp ci.settings.yml settings.yml
-#    - php -S localhost:8085 --docroot public &>/dev/null&
-#    - ./vendor/bin/codecept run unit --env ci
+#    - cp tests/ci.settings.yml settings.yml
+#    - apt-get install -y mariadb-client iproute2
+#    - docker-php-ext-install mysqli
+#    - mysql --version
+#    - php tests/runner_generate_db.php
+#    - php -S localhost:8085 tests/routing.php &>/dev/null&
+#    - ./vendor/bin/codecept run api --env ci
+
+unit_tests:
+  stage: test
+  only:
+    - develop
+    - master
+  artifacts:
+    when: on_failure
+    paths:
+      - tests/_output/
+  script:
+    - touch .env
+    - echo "API_DOMAIN=localhost:8085" >> .env
+    - cp ci.settings.yml settings.yml
+    - php -S localhost:8085 --docroot public &>/dev/null&
+    - ./vendor/bin/codecept run unit --env ci
 
 ##################################
 ## WIKI
 ##################################
 
-#wiki_dev:
-#  stage: deploy
-#  only:
-#    - develop
-#  script:
-#    - echo "Compile and deploy the wiki to dev."
-#    - ./vendor/bin/bookdown includes/wiki/bookdown.json
-#    - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
-#    - chmod 644 ~/.ssh/known_hosts
-#    - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
-#    - rsync -rvI "$CI_PROJECT_DIR/includes/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
-#    - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
-#
-#wiki_prod:
-#  stage: deploy
-#  only:
-#    - master
-#  script:
-#    - echo "Compile and deploy the wiki to prod."
-#    - ./vendor/bin/bookdown includes/wiki/bookdown.json
-#    - ssh-keyscan "$PROD_WIKI_URL" >> ~/.ssh/known_hosts
-#    - chmod 644 ~/.ssh/known_hosts
-#    - rsync -rvI --delete --exclude=".*" "/wiki/" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
-#    - rsync -rvI "$CI_PROJECT_DIR/includes/wiki/images" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
-#    - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_WIKI_PATH/*"
+wiki_dev:
+  stage: deploy
+  only:
+    - develop
+  script:
+    - echo "Compile and deploy the wiki to dev."
+    - ./vendor/bin/bookdown includes/wiki/bookdown.json
+    - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+    - rsync -rvI "$CI_PROJECT_DIR/includes/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+    - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
+
+wiki_prod:
+  stage: deploy
+  only:
+    - master
+  script:
+    - echo "Compile and deploy the wiki to prod."
+    - ./vendor/bin/bookdown includes/wiki/bookdown.json
+    - ssh-keyscan "$PROD_WIKI_URL" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - rsync -rvI --delete --exclude=".*" "/wiki/" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
+    - rsync -rvI "$CI_PROJECT_DIR/includes/wiki/images" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
+    - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_WIKI_PATH/*"
 
 ##################################
 ## PHPDOC
 ##################################
 
-#phpdoc_dev:
-#  stage: deploy
-#  only:
-#    - develop
-#  script:
-#    - echo "Compile and deploy the phpdoc to dev."
-#    - php -r "copy('https://github.com/phpDocumentor/phpDocumentor/releases/download/v2.9.0/phpDocumentor.phar', 'phpDocumentor.phar');"
-#    - cp phpDocumentor.phar /usr/local/bin/
-#    - php /usr/local/bin/phpDocumentor.phar -d "$CI_PROJECT_DIR/" -t "$CI_PROJECT_DIR/public/phpdoc" --ignore vendor/,tests/
-#    - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
-#    - chmod 644 ~/.ssh/known_hosts
-#    - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
-#    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
-#
-#phpdoc_prod:
-#  stage: deploy
-#  only:
-#    - master
-#  script:
-#    - echo "Compile and deploy the phpdoc to prod."
-#    - php -r "copy('https://github.com/phpDocumentor/phpDocumentor/releases/download/v2.9.0/phpDocumentor.phar', 'phpDocumentor.phar');"
-#    - cp phpDocumentor.phar /usr/local/bin/
-#    - php /usr/local/bin/phpDocumentor.phar -d "$CI_PROJECT_DIR/" -t "$CI_PROJECT_DIR/public/phpdoc" --ignore vendor/,tests/
-#    - ssh-keyscan "$PROD_PHPDOC_URL" >> ~/.ssh/known_hosts
-#    - chmod 644 ~/.ssh/known_hosts
-#    - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL":"$PROD_PHPDOC_PATH/"
-#    - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_PHPDOC_PATH/*"
+phpdoc_dev:
+  stage: deploy
+  only:
+    - develop
+  script:
+    - echo "Compile and deploy the phpdoc to dev."
+    - php -r "copy('https://github.com/phpDocumentor/phpDocumentor/releases/download/v2.9.0/phpDocumentor.phar', 'phpDocumentor.phar');"
+    - cp phpDocumentor.phar /usr/local/bin/
+    - php /usr/local/bin/phpDocumentor.phar -d "$CI_PROJECT_DIR/" -t "$CI_PROJECT_DIR/public/phpdoc" --ignore vendor/,tests/
+    - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
+    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
+
+phpdoc_prod:
+  stage: deploy
+  only:
+    - master
+  script:
+    - echo "Compile and deploy the phpdoc to prod."
+    - php -r "copy('https://github.com/phpDocumentor/phpDocumentor/releases/download/v2.9.0/phpDocumentor.phar', 'phpDocumentor.phar');"
+    - cp phpDocumentor.phar /usr/local/bin/
+    - php /usr/local/bin/phpDocumentor.phar -d "$CI_PROJECT_DIR/" -t "$CI_PROJECT_DIR/public/phpdoc" --ignore vendor/,tests/
+    - ssh-keyscan "$PROD_PHPDOC_URL" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL":"$PROD_PHPDOC_PATH/"
+    - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_PHPDOC_PATH/*"
