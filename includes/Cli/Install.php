@@ -59,9 +59,9 @@ class Install extends Script
     protected function help()
     {
         $help = "Install\n\n";
-        $help .= "This command will create the database  and install ApiOpenStudio\n\n";
+        $help .= "This command will create the database and install ApiOpenStudio.\n\n";
         $help .= "Example:\n";
-        $help .= "./install.php\n";
+        $help .= "./include/scripts/install.php\n";
         echo $help;
     }
 
@@ -77,7 +77,7 @@ class Install extends Script
             $prompt = 'Continuing will create a new database and erase the current database, ';
             $prompt .= 'if it exists, continue [Y/n]: ';
             $response = $this->readlineTerminal($prompt);
-            $response = empty($response) ? 'y' : $response;
+            $response = empty($response) ? 'y' : strtolower($response);
         }
         if ($response != 'y') {
             echo "Exiting install...\n";
