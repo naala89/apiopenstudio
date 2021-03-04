@@ -112,24 +112,17 @@ class ResourceValidator
                     if ($this->helper->isProcessor($output)) {
                         $this->validateDetails($output);
                     } elseif ($output != 'response') {
-                        $this->logger->error('Invalid output declaration, only functions or array of functions or "response" allowed');
-                        throw new ApiException(
-                            'Invalid output declaration, only functions or array of functions or "response" allowed',
-                            6,
-                            -1,
-                            400
-                        );
+                        $message = 'Invalid output declaration, ';
+                        $message .= 'only functions or array of functions or "response" allowed';
+                        $this->logger->error($message);
+                        throw new ApiException($message, 6, -1, 400);
                     }
                 }
             } else {
                 if ($data['output'] != 'response') {
-                    $this->logger->error('Invalid output declaration, only functions or array of functions or "response" allowed');
-                    throw new ApiException(
-                        'Invalid output declaration, only functions or array of functions or "response" allowed',
-                        6,
-                        -1,
-                        400
-                    );
+                    $message = 'Invalid output declaration, only functions or array of functions or "response" allowed';
+                    $this->logger->error($message);
+                    throw new ApiException($message, 6, -1, 400);
                 }
             }
         }
