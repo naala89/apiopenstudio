@@ -31,6 +31,12 @@ blacklist:
     min_ip: { type: varchar(32), notnull: true, comment: ip range minimum }
     max_ip: { type: varchar(32), notnull: true, comment: ip range maximum }
 
+core:
+  columns:
+    version: { type: varchar(255), notnull: true, comment: current core version }
+  data:
+    - { version: 1.0.0 }
+
 external_user:
   columns:
     euid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: external user id }

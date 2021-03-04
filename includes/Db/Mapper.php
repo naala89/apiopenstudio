@@ -66,8 +66,8 @@ abstract class Mapper
     /**
      * Perform a save or delete.
      *
-     * @param string $sql Query string.
-     * @param array $bindParams Array of bind params.
+     * @param string $sql        Query string.
+     * @param array  $bindParams Array of bind params.
      *
      * @return boolean Success status.
      *
@@ -77,7 +77,7 @@ abstract class Mapper
     {
         $this->logger->debug("INSERT or DROP SQL...");
         $this->logger->debug("SQL: $sql");
-        $this->logger->debug('Bind Params: ' . print_r($bindParams,true));
+        $this->logger->debug('Bind Params: ' . print_r($bindParams, true));
         $this->db->Execute($sql, $bindParams);
         if ($this->db->affected_rows() !== 0) {
             return true;
@@ -95,8 +95,8 @@ abstract class Mapper
     /**
      * Perform an SQL statement that expects a single row.
      *
-     * @param string $sql Query string.
-     * @param array $bindParams Array of bind params.
+     * @param string $sql        Query string.
+     * @param array  $bindParams Array of bind params.
      *
      * @return array Mapped row.
      *
@@ -119,24 +119,28 @@ abstract class Mapper
     /**
      * Perform an SQL statement that expects multiple rows.
      *
-     * @param string $sql Query string.
-     * @param array $bindParams Array of bind params.
-     * @param array $params Parameters (optional).
-     *   Example:
-     *     [
-     *       'filter' => [
-     *         'keyword' => string,
-     *         'column' => string,
-     *       ]
-     *       'order_by' => string,
-     *       'direction' => string "ASC"|"DESC",
-     *       'offset' => int,
-     *       'limit' => int,
-     *     ]
-     * NOTE:
-     *   * This will throw an exception if the sql already contains a WHERE clause and should be calculated separately
-     *     in these cases.
-     *   * ['filter']['keyword'] '%' characters in keyword not added to keyword automatically.
+     * @param string $sql        Query string.
+     * @param array  $bindParams Array of bind params.
+     * @param array  $params     Parameters (optional).
+     *                           Example: [ 'filter' =>
+     *                           [ 'keyword' => string,
+     *                           'column' => string, ]
+     *                           'order_by' => string,
+     *                           'direction' => string
+     *                           "ASC"|"DESC", 'offset'
+     *                           => int, 'limit' =>
+     *                           int, ] NOTE: * This
+     *                           will throw an
+     *                           exception if the sql
+     *                           already contains a
+     *                           WHERE clause and
+     *                           should be calculated
+     *                           separately in these
+     *                           cases. *
+     *                           ['filter']['keyword']
+     *                           '%' characters in
+     *                           keyword not added to
+     *                           keyword automatically.
      *
      * @return array
      *   Array of mapped rows.
