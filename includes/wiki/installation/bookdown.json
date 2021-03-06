@@ -1,11 +1,11 @@
 {
   "title": "Installation",
   "content": [
-    "requirements.md",
-    "server-setup/bookdown.json",
-    "installation.md",
-    "settings.yml.md",
-    "docker/bookdown.json"
+    "api/bookdown.json",
+    "admin/bookdown.json",
+    "docker/bookdown.json",
+    "wiki/bookdown.json",
+    "phpdoc/bookdown.json"
   ],
   "tocDepth": 1
 }

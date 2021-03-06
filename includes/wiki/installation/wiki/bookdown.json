@@ -1,6 +1,7 @@
 {
-  "title": "Server setup",
+  "title": "Wiki setup",
   "content": [
+    "introduction.md",
     "apache.md",
     "nginx.md"
   ],

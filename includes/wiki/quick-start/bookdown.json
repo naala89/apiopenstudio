@@ -1,7 +1,8 @@
 {
   "title": "Quick start",
   "content": [
-    "quick-start.md"
+    "setup.md",
+    "hello-world.md"
   ],
   "tocDepth": 1
 }

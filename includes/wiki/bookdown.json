@@ -3,8 +3,8 @@
   "content": [
     "home.md",
     "how-it-works.md",
-    "installation/bookdown.json",
     "quick-start/bookdown.json",
+    "installation/bookdown.json",
     "running-apiopenstudio/bookdown.json",
     "developers/bookdown.json",
     "license.md"
