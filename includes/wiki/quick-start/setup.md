@@ -101,6 +101,6 @@ Congratulations!
 
 You should now be able to visit the following URLs in your browser:
 
-* [https://admin.apiopenstudio.com](https://admin.apiopenstudio.com)
-* [https://wiki.apiopenstudio.com](https://wiki.apiopenstudio.com)
-* [https://phpdoc.apiopenstudio.com](https://phpdoc.apiopenstudio.com)
+* [https://admin.apiopenstudio.local](https://admin.apiopenstudio.local)
+* [https://wiki.apiopenstudio.local](https://wiki.apiopenstudio.local)
+* [https://phpdoc.apiopenstudio.local](https://phpdoc.apiopenstudio.local)

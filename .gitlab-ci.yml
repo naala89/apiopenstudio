@@ -47,7 +47,7 @@ phpcs:
       - phpcs.txt
   script:
     - echo "Linting the codebase."
-    - ./vendor/bin/phpcs --standard=PSR12 --report-file=phpcs.txt includes/ public/*.php
+    - ./vendor/bin/phpcs --standard=PSR12 includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
 
 ##################################
 ## TESTS
@@ -82,21 +82,21 @@ functional_tests:
 #    - php -S localhost:8085 tests/routing.php &>/dev/null&
 #    - ./vendor/bin/codecept run api --env ci
 
-#unit_tests:
-#  stage: test
-#  only:
-#    - develop
-#    - master
-#  artifacts:
-#    when: on_failure
-#    paths:
-#      - tests/_output/
-#  script:
-#    - touch .env
-#    - echo "API_DOMAIN=localhost:8085" >> .env
-#    - cp ci.settings.yml settings.yml
-#    - php -S localhost:8085 --docroot public &>/dev/null&
-#    - ./vendor/bin/codecept run unit --env ci
+unit_tests:
+  stage: test
+  only:
+    - develop
+    - master
+  artifacts:
+    when: on_failure
+    paths:
+      - tests/_output/
+  script:
+    - touch .env
+    - echo "API_DOMAIN=localhost:8085" >> .env
+    - cp ci.settings.yml settings.yml
+    - php -S localhost:8085 tests/routing.php &>/dev/null&
+    - ./vendor/bin/codecept run unit --env ci
 
 ##################################
 ## WIKI

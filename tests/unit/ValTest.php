@@ -46,7 +46,10 @@ class ValTest extends \Codeception\Test\Unit
         $varBool = new VarBool($meta, $this->request, null, null);
         $val = $varBool->val('value');
         $this->assertIsObject($val, 'Return value is not class.');
-        $this->assertTrue(get_class($val) == 'ApiOpenStudio\Core\DataContainer', 'Return object is not DataContainer');
+        $this->assertTrue(
+            get_class($val) == 'ApiOpenStudio\Core\DataContainer',
+            'Return object is not DataContainer'
+        );
         $this->assertTrue($val->getData());
         $val = $varBool->val('value', true);
         $this->assertFalse(is_object($val), 'Return value is a class.');
@@ -130,7 +133,9 @@ class ValTest extends \Codeception\Test\Unit
     {
         $this->expectException("Exception");
         $this->expectExceptionCode(6);
-        $this->expectExceptionMessage("invalid type (array), only 'boolean', 'integer', 'text' allowed in input 'value'");
+        $this->expectExceptionMessage(
+            "invalid type (array), only 'boolean', 'integer', 'text' allowed in input 'value'"
+        );
 
         $meta = json_decode(json_encode([
             'function' => 'var_bool',
