@@ -86,7 +86,7 @@ class Install extends Script
 
         $createDb = '';
         while (!is_bool($createDb)) {
-            $prompt = "Recreate or create new database, user and user permissions (you must have the root_password in your settings.yml file) (Y/n)?";
+            $prompt = "Recreate or create new database, user and user permissions (Y/n)?";
             $response = strtolower($this->readlineTerminal($prompt));
             $createDb = $response === 'y' || empty($response) ? true : $createDb;
             $createDb = $response === 'n' ? false : $createDb;
@@ -128,8 +128,13 @@ class Install extends Script
      * @param string|null $password
      *   Database password.
      */
-    public function createLink(string $driver = null, string $host = null, string $database = null, string $username = null, string $password = null)
-    {
+    public function createLink(
+        string $driver = null,
+        string $host = null,
+        string $database = null,
+        string $username = null,
+        string $password = null
+    ) {
         echo "Creating a connection the the database host...\n";
 
         try {
@@ -152,8 +157,7 @@ class Install extends Script
                 echo $this->db->errorMsg() . "\n";
                 exit;
             }
-        }
-        else {
+        } else {
             if (!$this->db->connect($host, $username, $password, $database)) {
                 echo "Error: DB connection failed.\n";
                 echo $this->db->errorMsg() . "\n";
@@ -319,7 +323,8 @@ class Install extends Script
      * @param string|null $username
      *   Username to drop.
      */
-    public function dropUser(string $username = null) {
+    public function dropUser(string $username = null)
+    {
         try {
             $username = $username === null ? $this->config->__get(['db', 'username']) : $username;
         } catch (ApiException $e) {
@@ -354,7 +359,9 @@ class Install extends Script
 
         try {
             $basePath = $basePath === null ? $this->config->__get(['api', 'base_path']) : $basePath;
-            $definitionPath = $definitionPath === null ? $this->config->__get(['db', 'definition_path']) : $definitionPath;
+            $definitionPath = $definitionPath === null
+                ? $this->config->__get(['db', 'definition_path'])
+                : $definitionPath;
         } catch (ApiException $e) {
             echo "Error: Create tables failed, please check your settings.yml file.\n";
             echo $e->getMessage() . "\n";
@@ -380,7 +387,7 @@ class Install extends Script
                 $sqlColumn = "`$column` ";
                 if (!isset($columnData['type'])) {
                     echo "CREATE TABLE `$table` failed!\n";
-                    echo "Error: Type missing in the metadata for table `$table`, please check the DB definition ($definitionPath).\n";
+                    echo "Error: Type missing in the metadata for table `$table`, please check $definitionPath.\n";
                     exit;
                 }
                 $sqlColumn .= ' ' . $columnData['type'];
