@@ -32,7 +32,7 @@ before_script:
 
 stages:
   - lint
-#  - test
+  - test
   - deploy
 
 ##################################
@@ -53,32 +53,32 @@ phpcs:
 ## TESTS
 ##################################
 
-#functional_tests:
-#  stage: test
-#  services:
-#    - mariadb:latest
-#  variables:
-#    MYSQL_HOST: $CI_MYSQL_HOST
-#    MYSQL_ROOT_PASSWORD: $CI_MYSQL_ROOT_PASSWORD
-#    MYSQL_DATABASE: $CI_MYSQL_DATABASE
-#    MYSQL_USER: $CI_MYSQL_USER
-#    MYSQL_PASSWORD: $CI_MYSQL_PASSWORD
-#  only:
-#    - develop
-#    - master
-#  artifacts:
-#    when: on_failure
-#    paths:
-#      - tests/_output/
-#      - logs/
-#  script:
-#    - touch .env
-#    - echo "API_DOMAIN=localhost:8085" >> .env
-#    - cp tests/ci.settings.yml settings.yml
-#    - apt-get install -y mariadb-client iproute2
-#    - docker-php-ext-install mysqli
-#    - mysql --version
-#    - php tests/runner_generate_db.php
+functional_tests:
+  stage: test
+  services:
+    - mariadb:latest
+  variables:
+    MYSQL_HOST: $CI_MYSQL_HOST
+    MYSQL_ROOT_PASSWORD: $CI_MYSQL_ROOT_PASSWORD
+    MYSQL_DATABASE: $CI_MYSQL_DATABASE
+    MYSQL_USER: $CI_MYSQL_USER
+    MYSQL_PASSWORD: $CI_MYSQL_PASSWORD
+  only:
+    - develop
+    - master
+  artifacts:
+    when: on_failure
+    paths:
+      - tests/_output/
+      - logs/
+  script:
+    - touch .env
+    - echo "API_DOMAIN=localhost:8085" >> .env
+    - cp tests/ci.settings.yml settings.yml
+    - apt-get install -y mariadb-client iproute2
+    - docker-php-ext-install mysqli
+    - mysql --version
+    - php tests/runner_generate_db.php
 #    - php -S localhost:8085 tests/routing.php &>/dev/null&
 #    - ./vendor/bin/codecept run api --env ci
 
