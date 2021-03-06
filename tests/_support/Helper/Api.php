@@ -104,7 +104,10 @@ class Api extends \Codeception\Module
     public function storeMyToken()
     {
         $response = $this->getModule('REST')->response;
-        $arr = \GuzzleHttp\json_decode(\GuzzleHttp\json_encode(\GuzzleHttp\json_decode($response)), true);
+        $arr = \GuzzleHttp\json_decode(
+            \GuzzleHttp\json_encode(\GuzzleHttp\json_decode($response)),
+            true
+        );
         if (isset($arr['token'])) {
             $this->token = $arr['token'];
         }
@@ -211,7 +214,10 @@ class Api extends \Codeception\Module
         $resid = 0;
         if (!isset($resources['error'])) {
             foreach ($resources as $resource) {
-                if (strtolower($resource['method']) == strtolower($yamlArr['method']) && $resource['uri'] == $yamlArr['uri']) {
+                if (
+                    strtolower($resource['method']) == strtolower($yamlArr['method'])
+                    && $resource['uri'] == $yamlArr['uri']
+                ) {
                     $resid = $resource['resid'];
                 }
             }

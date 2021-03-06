@@ -11,9 +11,11 @@ $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->createResourceFromYaml('varField.yaml');
 $I->deleteHeader('Authorization');
 $I->sendGet($uri, ['token' => $I->getMyStoredToken()]);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'my_test_var' => 'my_test_val',
-]);
+    ]
+);
 
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->tearDownTestFromYaml('varField.yaml');

@@ -12,18 +12,22 @@ $sampleBaseUrl = 'http://' . getenv('API_DOMAIN') . '/sample/';
 
 $I->wantTo('populate a Url with sample1.xml and Accept:application/xml in header see the result.');
 $I->haveHttpHeader('Accept', 'application/xml');
-$I->sendGet($uri, [
-    'token' => $I->getMyStoredToken(),
-    'method' => 'get',
-    'url' => $sampleBaseUrl . 'sample1.xml',
-    'source_type' => 'xml',
-    'report_error' => true,
-    'connect_timeout' => 10,
-    'timeout' => 30
-]);
+$I->sendGet(
+    $uri,
+    [
+        'token' => $I->getMyStoredToken(),
+        'method' => 'get',
+        'url' => $sampleBaseUrl . 'sample1.xml',
+        'source_type' => 'xml',
+        'report_error' => true,
+        'connect_timeout' => 10,
+        'timeout' => 30
+    ]
+);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsXml();
-$I->seeResponseContains('<!DOCTYPE web-app
+$I->seeResponseContains(
+    '<!DOCTYPE web-app
         PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
         "http://java.sun.com/j2ee/dtds/web-app_2.2.dtd">
 <web-app>
@@ -404,22 +408,27 @@ $I->seeResponseContains('<!DOCTYPE web-app
     </taglib>
 
 </web-app>
-');
+'
+);
 
 $I->wantTo('populate a Url with sample1.json and Accept:application/json in the header and see the result.');
 $I->haveHttpHeader('Accept', 'application/json');
-$I->sendGet($uri, [
-    'token' => $I->getMyStoredToken(),
-    'method' => 'get',
-    'url' => $sampleBaseUrl . 'sample1.json',
-    'source_type' => 'json',
-    'report_error' => true,
-    'connect_timeout' => 10,
-    'timeout' => 30
-]);
+$I->sendGet(
+    $uri,
+    [
+        'token' => $I->getMyStoredToken(),
+        'method' => 'get',
+        'url' => $sampleBaseUrl . 'sample1.json',
+        'source_type' => 'json',
+        'report_error' => true,
+        'connect_timeout' => 10,
+        'timeout' => 30
+    ]
+);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('{
+$I->seeResponseContains(
+    '{
   "web-app": {
     "servlet": [
       {
@@ -519,19 +528,23 @@ $I->seeResponseContains('{
     }
   }
 }
-');
+'
+);
 
 $I->wantTo('populate a Url with sample1.json and Accept:application/xml in the header and see the result.');
 $I->haveHttpHeader('Accept', 'application/xml');
-$I->sendGet($uri, [
-    'token' => $I->getMyStoredToken(),
-    'method' => 'get',
-    'url' => $sampleBaseUrl . 'sample1.json',
-    'source_type' => 'json',
-    'report_error' => true,
-    'connect_timeout' => 10,
-    'timeout' => 30
-]);
+$I->sendGet(
+    $uri,
+    [
+        'token' => $I->getMyStoredToken(),
+        'method' => 'get',
+        'url' => $sampleBaseUrl . 'sample1.json',
+        'source_type' => 'json',
+        'report_error' => true,
+        'connect_timeout' => 10,
+        'timeout' => 30
+    ]
+);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsXml();
 // phpcs:ignore

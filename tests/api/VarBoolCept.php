@@ -1,4 +1,5 @@
 <?php
+
 $I = new ApiTester($scenario);
 $I->performLogin();
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
@@ -59,21 +60,25 @@ $I->wantTo('populate a VarBool with 6 and see the result.');
 $I->sendGet($uri, ['token' => $I->getMyStoredToken(), 'value' => 6]);
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => [
+$I->seeResponseContainsJson(
+    ["error" => [
     "code" => 6,
     "message" => "6 is not boolean.",
     "id" => 'test var_bool process',
-]]);
+    ]]
+);
 
 $I->wantTo('populate a VarBool with fales and see the result.');
 $I->sendGet($uri, ['token' => $I->getMyStoredToken(), 'value' => 'fales']);
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => [
+$I->seeResponseContainsJson(
+    ["error" => [
     "code" => 6,
     "message" => "Fales is not boolean.",
     "id" => 'test var_bool process'
-]]);
+    ]]
+);
 
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->tearDownTestFromYaml('varBool.yaml');

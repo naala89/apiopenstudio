@@ -6,6 +6,7 @@
 //$I->performLogin();
 //$I->haveHttpHeader('Accept', 'application/json');
 //
+// phpcs:ignore
 //$I->wantTo('Test Filter by filtering by key on an array of fields with settings non-regex, non-inverse, non-recursive');
 //$I->setYamlFilename('filterObjectNonRegex.yaml');
 //$I->createResourceFromYaml();
