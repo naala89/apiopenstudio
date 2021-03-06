@@ -24,7 +24,13 @@ global $argv;
 
 $install = new \ApiOpenStudio\Cli\Install();
 
-$install->createLink(getenv('CI_MYSQL_DRIVER'), getenv('CI_MYSQL_HOST'), getenv('CI_MYSQL_DATABASE'), 'root', getenv('CI_MYSQL_PASSWORD'));
+$install->createLink(
+    getenv('CI_MYSQL_DRIVER'),
+    getenv('CI_MYSQL_HOST'),
+    getenv('CI_MYSQL_DATABASE'),
+    'root',
+    getenv('CI_MYSQL_PASSWORD')
+);
 $install->createDatabase(getenv('CI_MYSQL_DATABASE'));
 $install->createUser(getenv('CI_MYSQL_DATABASE'), getenv('CI_MYSQL_USER'), getenv('CI_MYSQL_PASSWORD'));
 $install->useDatabase(getenv('CI_MYSQL_DATABASE'));
