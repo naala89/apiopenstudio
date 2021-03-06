@@ -47,7 +47,7 @@ phpcs:
       - phpcs.txt
   script:
     - echo "Linting the codebase."
-    - ./vendor/bin/phpcs --standard=PSR12 includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
+    - ./vendor/bin/phpcs --standard=PSR12 --report-file=phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
 
 ##################################
 ## TESTS
