@@ -86,7 +86,8 @@ abstract class Script
     /**
      * Execute the function.
      *
-     * @param array $argv CLI args.
+     * @param array|null $argv
+     *   CLI args.
      *
      * @return void
      */

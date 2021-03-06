@@ -152,6 +152,11 @@ class Update extends Script
         }
     }
 
+    /**
+     * Get the current version from the database.
+     *
+     * @return mixed
+     */
     protected function getCurrentVersion()
     {
         echo "Finding current version...\n";
@@ -220,7 +225,13 @@ class Update extends Script
         return $result;
     }
 
-    protected function runUpdates($functions)
+    /**
+     * Run the update,
+     *
+     * @param array $functions
+     *   Ordered array of functions name to run for the update.
+     */
+    protected function runUpdates(array $functions)
     {
         foreach ($functions as $function => $version) {
             echo "Running update $function\n";
