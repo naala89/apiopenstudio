@@ -1,8 +1,11 @@
 <?php
 
 use ApiOpenStudio\Core\Request;
+use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Processor\VarBool;
 use ApiOpenStudio\Core\ApiException;
+use Cascade\Cascade;
+use Monolog\Logger;
 
 class ValTest extends \Codeception\Test\Unit
 {
@@ -17,11 +20,19 @@ class ValTest extends \Codeception\Test\Unit
     protected $request;
 
     /**
+     * @var Logger
+     */
+    protected $logger;
+
+    /**
      * {@inheritDoc}
      */
     protected function _before()
     {
         $this->request = new Request();
+        $config = new Config();
+        Cascade::fileConfig($config->__get('debug'));
+        $this->logger = Cascade::getLogger('api');
     }
 
     /**
@@ -43,7 +54,7 @@ class ValTest extends \Codeception\Test\Unit
             'id' => 'var_bool literal true',
             'value' => true,
         ]));
-        $varBool = new VarBool($meta, $this->request, null, null);
+        $varBool = new VarBool($meta, $this->request, null, $this->logger);
         $val = $varBool->val('value');
         $this->assertIsObject($val, 'Return value is not class.');
         $this->assertTrue(
@@ -68,7 +79,7 @@ class ValTest extends \Codeception\Test\Unit
             'id' => 'var_bool default',
             'value' => '',
         ]));
-        $varBool = new VarBool($meta, $this->request,null, null);
+        $varBool = new VarBool($meta, $this->request,null, $this->logger);
         $val = $varBool->val('value', true);
         $this->assertTrue($val === false);
 
@@ -77,7 +88,7 @@ class ValTest extends \Codeception\Test\Unit
             'id' => 'var_bool default',
             'value' => null,
         ]));
-        $varBool = new VarBool($meta, $this->request, null, null);
+        $varBool = new VarBool($meta, $this->request, null, $this->logger);
         $val = $varBool->val('value', true);
         $this->assertTrue($val === false);
     }
@@ -142,7 +153,7 @@ class ValTest extends \Codeception\Test\Unit
             'id' => 'var_bool literal true',
             'value' => ['I will fail'],
         ]));
-        $varBool = new VarBool($meta, $this->request, null, null);
+        $varBool = new VarBool($meta, $this->request, null, $this->logger);
         $val = $varBool->val('value', true);
     }
 
@@ -165,7 +176,7 @@ class ValTest extends \Codeception\Test\Unit
                 true,
             ]
         ]));
-        $varBool = new VarBool($meta, $this->request, null, null);
+        $varBool = new VarBool($meta, $this->request, null, $this->logger);
         $val = $varBool->val('value', true);
     }
 }
