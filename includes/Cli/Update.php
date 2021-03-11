@@ -17,7 +17,6 @@ namespace ApiOpenStudio\Cli;
 
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
-use ApiOpenStudio\Db;
 use Berlioz\PhpDoc\PhpDocFactory;
 
 /**

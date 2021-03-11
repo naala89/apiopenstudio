@@ -163,9 +163,9 @@ abstract class ProcessorEntity extends Entity
      * @param $meta
      * @param Request $request
      * @param ADODB_mysqli|null $db
-     * @param Logger|null $logger
+     * @param Logger $logger
      */
-    public function __construct($meta, Request &$request, $db = null, $logger = null)
+    public function __construct($meta, Request &$request, $db = null, $logger)
     {
         $this->meta = $meta;
         $this->request = $request;
