@@ -91,10 +91,17 @@ class Functions extends Core\ProcessorEntity
             return $details;
         }
 
-        if (!isset($details[$machineName])) {
+        $result = [];
+        foreach ($details as $detail) {
+            if ($detail['machineName'] == $machineName) {
+                $result = $detail;
+            }
+        }
+
+        if (empty($result)) {
             throw new Core\ApiException("Invalid machine name: $machineName", 6, $this->id, 401);
         }
-        return $details[$machineName];
+        return $result;
     }
 
     /**
