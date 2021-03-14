@@ -66,7 +66,12 @@ class Install extends Script
     }
 
     /**
-     * {@inheritDoc}
+     * Execute the function.
+     *
+     * @param array|null $argv
+     *   CLI args.
+     *
+     * @return void
      */
     public function exec(array $argv = null)
     {
