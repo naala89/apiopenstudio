@@ -36,7 +36,7 @@ class ResourceMapper extends Mapper
     public function save($resource)
     {
         if ($resource->getResid() == null) {
-            $sql = '  INTO resource (appid, name, description, method, uri, meta, ttl) VALUES ';
+            $sql = 'INSERT INTO resource (appid, name, description, method, uri, meta, ttl) VALUES ';
             $sql .= '(?, ?, ?, ?, ?, ?, ?)';
             $bindParams = [
                 $resource->getAppId(),
