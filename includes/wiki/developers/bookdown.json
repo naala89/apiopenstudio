@@ -11,6 +11,7 @@
     "configuring-debug-levels.md",
     "contributing.md",
     "linting.md",
+    "processors.md",
     "creating-processors.md",
     "error-responses.md",
     "resources.md",
