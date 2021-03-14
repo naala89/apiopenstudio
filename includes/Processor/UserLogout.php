@@ -82,7 +82,7 @@ class UserLogout extends Core\ProcessorEntity
         $uid = $this->val('uid', true);
         $username = $this->val('username', true);
         if (empty($token) && empty($uid) && empty($username)) {
-            throw new Core\ApiException('Invalid logout attempt, no input values.',4, $this->id, 401);
+            throw new Core\ApiException('Invalid logout attempt, no input values.', 4, $this->id, 401);
         }
         $userMapper = new Db\UserMapper($this->db);
 
@@ -93,7 +93,7 @@ class UserLogout extends Core\ProcessorEntity
         } elseif (!empty($uid)) {
             $this->logger->debug("Logging out user with UID: $uid.");
             $user = $userMapper->findByUid($uid);
-        } else  {
+        } else {
             $this->logger->debug("Logging out user with username: $username.");
             $user = $userMapper->findByUsername($username);
         }
