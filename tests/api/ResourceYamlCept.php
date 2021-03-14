@@ -46,13 +46,15 @@ $I->sendPOST(
 );
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
         'message' => 'Missing name in new resource.',
         'id' => 'resource_import_process',
     ]
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML missing uri attr and see the result');
 $yamlFilename = 'resourceNoUri.yaml';
@@ -73,13 +75,15 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
         'message' => 'Missing uri in new resource.',
         'id' => 'resource_import_process',
     ],
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML missing description attr and see the result');
 $yamlFilename = 'resourceNoDescription.yaml';
@@ -100,22 +104,26 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
         'message' => 'Missing description in new resource.',
         'id' => 'resource_import_process',
     ]
-]);
+    ]
+);
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML missing method attr and see the result');
 $yamlFilename = 'resourceNoMethod.yaml';
@@ -136,13 +144,15 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
         'message' => 'Missing method in new resource.',
         'id' => 'resource_import_process',
     ],
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML missing ttl attr and see the result');
 $yamlFilename = 'resourceNoTtl.yaml';
@@ -163,22 +173,26 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
         'message' => 'Missing ttl in new resource.',
         'id' => 'resource_import_process',
     ],
-]);
+    ]
+);
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ],
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML negative ttl attr and see the result');
 $yamlFilename = 'resourceTtl-1.yaml';
@@ -199,22 +213,26 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
         'message' => 'Negative ttl in new resource.',
         'id' => 'resource_import_process',
     ],
-]);
+    ]
+);
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ],
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML missing security attr and see the result');
 $yamlFilename = 'resourceNoSecurity.yaml';
@@ -259,22 +277,26 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
         'message' => 'Missing process in new resource.',
         'id' => -1
     ]
-]);
+    ]
+);
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ],
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML missing output attr and see the result');
 $yamlFilename = 'resourceNoOutput.yaml';
@@ -355,22 +377,26 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
         "error" => [
         "code" => 6,
         "message" => "Invalid process declaration, only functions allowed.",
         "id" => -1,
-    ],
-]);
+        ],
+    ]
+);
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML with an integer value in process attr and see the result');
 $yamlFilename = 'resourceStaticInt.yaml';
@@ -391,22 +417,26 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     "error" => [
         "code" => 6,
         "message" => "Invalid process declaration, only functions allowed.",
         "id" => -1,
     ],
-]);
+    ]
+);
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML with an array value in process attr and see the result');
 $yamlFilename = 'resourceStaticArray.yaml';
@@ -427,22 +457,26 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     "error" => [
         "code" => 6,
         "message" => "Invalid process declaration, only functions allowed.",
         "id" => -1,
     ],
-]);
+    ]
+);
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML with an object value in process attr and see the result');
 $yamlFilename = 'resourceStaticObj.yaml';
@@ -463,22 +497,26 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     "error" => [
         "code" => 6,
         "message" => "Invalid process declaration, only functions allowed.",
         "id" => -1,
     ],
-]);
+    ]
+);
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML with an non array output structure and see the result');
 $yamlFilename = 'resourceOutputString.yaml';
@@ -499,20 +537,24 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => [
+$I->seeResponseContainsJson(
+    ["error" => [
     "code" => 6,
     "message" => 'Invalid output declaration, only functions or array of functions or "response" allowed.',
     "id" => -1
-]]);
+    ]]
+);
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML with an associative array output structure and see the result');
 $yamlFilename = 'resourceOutputAssocArr.yaml';
@@ -533,20 +575,24 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => [
+$I->seeResponseContainsJson(
+    ["error" => [
     "code" => 6,
     "message" => 'Invalid output declaration, only functions or array of functions or "response" allowed.',
     "id" => -1
-]]);
+    ]]
+);
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML with a func val missing in output structure and see the result');
 $yamlFilename = 'resourceOutputEmptyFunc.yaml';
@@ -567,20 +613,24 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => [
+$I->seeResponseContainsJson(
+    ["error" => [
     "code" => 6,
     "message" => 'Invalid output declaration, only functions or array of functions or "response" allowed.',
     "id" => -1
-]]);
+    ]]
+);
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML with resource only output and see the result');
 $yamlFilename = 'resourceOutputResponseOnly.yaml';
@@ -624,20 +674,26 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => [
+$message = 'Processor test resource required func type xml options ';
+$message .= 'bad is an invalid function type (only "field" allowed).';
+$I->seeResponseContainsJson(
+    ["error" => [
     "code" => 6,
-    "message" => 'Processor test resource required func type xml options bad is an invalid function type (only "field" allowed).',
+    "message" => $message,
     "id" => 'test resource required func type xml',
-]]);
+    ]]
+);
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML with less than min inputs and see the result');
 $yamlFilename = 'ResourceBadMin.yaml';
@@ -658,20 +714,24 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => [
+$I->seeResponseContainsJson(
+    ["error" => [
     "code" => 6,
     "message" => "Input 'sources' in function 'test resource with bad min process' requires min 2.",
     "id" => 'test resource with bad min process'
-]]);
+    ]]
+);
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML with more than max inputs and see the result');
 $yamlFilename = 'ResourceBadMax.yaml';
@@ -692,20 +752,24 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => [
+$I->seeResponseContainsJson(
+    ["error" => [
     "code" => 6,
     "message" => "Input 'value' in function 'test resource with bad max process' requires max 1.",
     "id" => 'test resource with bad max process',
-]]);
+    ]]
+);
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML for an account without developer access and see the result');
 $yamlFilename = 'resourceAccountNoAccess.yaml';
@@ -726,20 +790,24 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => [
+$I->seeResponseContainsJson(
+    ["error" => [
     "code" => 6,
     "message" => 'Unauthorised: you do not have permissions for this application.',
     "id" => 'resource_import_process',
-]]);
+    ]]
+);
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
         'message' => 'No resources found.',
         'id' => 'resource_read_process',
     ]
-]);
+    ]
+);
 
 $I->wantTo('create a new resource from YAML with identiocal Ids in processors and see the result');
 $yamlFilename = 'resourceIdenticalId.yaml';
@@ -760,22 +828,26 @@ $I->sendPOST(
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     "error" => [
         "code" => 6,
         "message" => 'Identical IDs in new resource: resource identical ids.',
         "id" => -1,
         ]
-]);
+    ]
+);
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
-$I->seeResponseContainsJson([
+$I->seeResponseContainsJson(
+    [
     'error' => [
         'code' => 6,
-        'message' => 'Invalid resource: 0.',
-        'id' => 'resource_delete_process',
+        'message' => 'No resources found.',
+        'id' => 'resource_read_process',
     ]
-]);
+    ]
+);
 
 //$I->wantTo('create a new resource from YAML with good fragments structure and see the result');
 //$I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/ResourceFragmentGood.yaml']);

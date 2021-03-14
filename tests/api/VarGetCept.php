@@ -1,4 +1,5 @@
 <?php
+
 $I = new ApiTester($scenario);
 $I->performLogin();
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
@@ -65,21 +66,25 @@ $I->wantTo('populate a VarGet with wrong varname and nullable false and see the 
 $I->sendGet($uri, ['token' => $I->getMyStoredToken(), 'values' => 'test', 'nullable' => false]);
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(['error' => [
+$I->seeResponseContainsJson(
+    ['error' => [
     'code' => 6,
     'message' => "GET variable (value) not received.",
     'id' => 'test var_get process'
-]]);
+    ]]
+);
 
 $I->wantTo('populate a VarGet with wrong varname and nullable not set and see the result.');
 $I->sendGet($uri, ['token' => $I->getMyStoredToken(), 'values' => 'test']);
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(['error' => [
+$I->seeResponseContainsJson(
+    ['error' => [
     'code' => 6,
     'message' => "GET variable (value) not received.",
     'id' => 'test var_get process'
-]]);
+    ]]
+);
 
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->tearDownTestFromYaml('varGet.yaml');

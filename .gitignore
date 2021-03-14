@@ -7,28 +7,16 @@
 tests/_support/_generated/
 
 #apioopenstudio
+.env
 settings.yml
-logs/
-public/admin/css/
-public/admin/js/
-public/admin/images/
-certs/
 public/wiki/
 public/phpdoc/
+dbdata/
 
-#composer
+#3rd-party
 /vendor
 composer.lock
 /composer
-
-#node
 node_modules
 npm-debug.log
 package-lock.json
-
-#docker
-.env
-\#innodb_temp/
-dbdata/
-docker/
-docker-compose.yml

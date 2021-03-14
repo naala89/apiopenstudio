@@ -1,0 +1,22 @@
+{
+  "title": "Developers",
+  "template": "bookdown/themes",
+  "theme": {
+    "toc": {
+      "collapsibleFromLevel": 1
+    }
+  },
+  "content": [
+    "coding-standards.md",
+    "configuring-debug-levels.md",
+    "contributing.md",
+    "linting.md",
+    "creating-processors.md",
+    "error-responses.md",
+    "resources.md",
+    "styling-admin.md",
+    "testing.md",
+    "sys-admin/bookdown.json"
+  ],
+  "tocDepth": 1
+}

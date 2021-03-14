@@ -1,0 +1,33 @@
+name: test resource missing description
+
+uri: resource/missing/description
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_role
+  id: test bad resource no description security
+  token:
+    function: var_get
+    id: test bad resource no description token
+    key: token
+  role: Consumer
+
+process:
+  function: functions
+  id: test bad resource no description process
+  machine_name: all
+
+output:
+  - response
+  - function: email
+    to: john@naala.com.au
+    subject: "test email"
+    format: html
+  - function: xml
+    destination: www.foo.bar
+    method: post

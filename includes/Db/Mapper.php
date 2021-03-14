@@ -66,8 +66,8 @@ abstract class Mapper
     /**
      * Perform a save or delete.
      *
-     * @param string $sql Query string.
-     * @param array $bindParams Array of bind params.
+     * @param string $sql        Query string.
+     * @param array  $bindParams Array of bind params.
      *
      * @return boolean Success status.
      *
@@ -75,6 +75,9 @@ abstract class Mapper
      */
     protected function saveDelete(string $sql, array $bindParams)
     {
+        $this->logger->debug("INSERT or DROP SQL...");
+        $this->logger->debug("SQL: $sql");
+        $this->logger->debug('Bind Params: ' . print_r($bindParams, true));
         $this->db->Execute($sql, $bindParams);
         if ($this->db->affected_rows() !== 0) {
             return true;
@@ -82,6 +85,7 @@ abstract class Mapper
         if (empty($this->db->ErrorMsg())) {
             $message = 'Affected rows: 0, no error message returned. There was possibly nothing to update';
             $this->logger->warning($message);
+            return true;
         }
         $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
         $this->logger->error($message);
@@ -91,8 +95,8 @@ abstract class Mapper
     /**
      * Perform an SQL statement that expects a single row.
      *
-     * @param string $sql Query string.
-     * @param array $bindParams Array of bind params.
+     * @param string $sql        Query string.
+     * @param array  $bindParams Array of bind params.
      *
      * @return array Mapped row.
      *
@@ -100,6 +104,9 @@ abstract class Mapper
      */
     protected function fetchRow(string $sql, array $bindParams)
     {
+        $this->logger->debug("SELECT single row SQL...");
+        $this->logger->debug("SQL: $sql");
+        $this->logger->debug('Bind Params: ' . print_r($bindParams, true));
         $row = $this->db->GetRow($sql, $bindParams);
         if ($row === false) {
             $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
@@ -112,24 +119,28 @@ abstract class Mapper
     /**
      * Perform an SQL statement that expects multiple rows.
      *
-     * @param string $sql Query string.
-     * @param array $bindParams Array of bind params.
-     * @param array $params Parameters (optional).
-     *   Example:
-     *     [
-     *       'filter' => [
-     *         'keyword' => string,
-     *         'column' => string,
-     *       ]
-     *       'order_by' => string,
-     *       'direction' => string "ASC"|"DESC",
-     *       'offset' => int,
-     *       'limit' => int,
-     *     ]
-     * NOTE:
-     *   * This will throw an exception if the sql already contains a WHERE clause and should be calculated separately
-     *     in these cases.
-     *   * ['filter']['keyword'] '%' characters in keyword not added to keyword automatically.
+     * @param string $sql        Query string.
+     * @param array  $bindParams Array of bind params.
+     * @param array  $params     Parameters (optional).
+     *                           Example: [ 'filter' =>
+     *                           [ 'keyword' => string,
+     *                           'column' => string, ]
+     *                           'order_by' => string,
+     *                           'direction' => string
+     *                           "ASC"|"DESC", 'offset'
+     *                           => int, 'limit' =>
+     *                           int, ] NOTE: * This
+     *                           will throw an
+     *                           exception if the sql
+     *                           already contains a
+     *                           WHERE clause and
+     *                           should be calculated
+     *                           separately in these
+     *                           cases. *
+     *                           ['filter']['keyword']
+     *                           '%' characters in
+     *                           keyword not added to
+     *                           keyword automatically.
      *
      * @return array
      *   Array of mapped rows.
@@ -138,6 +149,7 @@ abstract class Mapper
      */
     protected function fetchRows(string $sql, array $bindParams = [], array $params = [])
     {
+        $this->logger->debug("SELECT multiple rows SQL...");
         // Add filter by keyword.
         if (!empty($params['filter'])) {
             $arr = [];
@@ -171,6 +183,8 @@ abstract class Mapper
         }
 
         // Add limit.
+        $this->logger->debug("SQL: $sql");
+        $this->logger->debug('Bind Params: ' . print_r($bindParams, true));
         if (!empty($params['offset']) || !empty($params['limit'])) {
             if (stripos($sql, ' limit ') !== false) {
                 throw new ApiException('Trying to limit params on SQL with LIMIT clause: ' . $sql);

@@ -183,12 +183,16 @@ class ResourceImport extends Core\ProcessorEntity
             }
         }
 
+        $this->logger->debug('Decoded new resource: ' . print_r($resource, true));
+
         foreach ($this->requiredKeys as $requiredKey) {
             if (!isset($resource[$requiredKey])) {
+                $this->logger->error("Missing $requiredKey in new resource");
                 throw new Core\ApiException("Missing $requiredKey in new resource", 6, $this->id, 400);
             }
         }
         if ($resource['ttl'] < 0) {
+            $this->logger->error("Negative ttl in new resource");
             throw new Core\ApiException("Negative ttl in new resource", 6, $this->id, 400);
         }
 
@@ -198,6 +202,7 @@ class ResourceImport extends Core\ProcessorEntity
             'Developer'
         );
         if (empty($role->getUrid())) {
+            $this->logger->error("Unauthorised: you do not have permissions for this application");
             throw new Core\ApiException(
                 "Unauthorised: you do not have permissions for this application",
                 6,
@@ -217,9 +222,9 @@ class ResourceImport extends Core\ProcessorEntity
             $meta = array_merge($meta, ['output' => $resource['output']]);
         }
 
-
         $application = $this->applicationMapper->findByAppid($resource['appid']);
         if (empty($application)) {
+            $this->logger->error('Invalid application: ' . $resource['appid']);
             throw new Core\ApiException(
                 'Invalid application: ' . $resource['appid'],
                 6,
@@ -234,6 +239,7 @@ class ResourceImport extends Core\ProcessorEntity
                 && $application->getName() == $this->settings->__get(['api', 'core_application'])
                 && $this->settings->__get(['api', 'core_resource_lock'])
         ) {
+            $this->logger->error('Unauthorised: this is the core application');
             throw new Core\ApiException(
                 'Unauthorised: this is the core application',
                 6,
@@ -248,6 +254,7 @@ class ResourceImport extends Core\ProcessorEntity
             $resource['uri']
         );
         if (!empty($resourceExists->getresid())) {
+            $this->logger->error('Resource already exists');
             throw new Core\ApiException('Resource already exists', 6, $this->id, 400);
         }
 

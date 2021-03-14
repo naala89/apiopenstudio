@@ -73,10 +73,12 @@ class ResourceValidator
         $this->logger->notice('Validating the new resource...');
         // Check mandatory elements exists in data.
         if (empty($data)) {
-            throw new ApiException("empty resource uploaded", 6, -1, 400);
+            $this->logger->error('Empty resource uploaded');
+            throw new ApiException('Empty resource uploaded', 6, -1, 400);
         }
         if (!isset($data['process'])) {
-            throw new ApiException("missing process in new resource", 6, -1, 400);
+            $this->logger->error('Missing process in new resource');
+            throw new ApiException('Missing process in new resource', 6, -1, 400);
         }
 
         // Validate for identical IDs.
@@ -88,7 +90,8 @@ class ResourceValidator
         }
         if (!empty($data['fragments'])) {
             if (!Utilities::isAssoc($data['fragments'])) {
-                throw new ApiException("invalid fragments structure in new resource", 6, -1, 400);
+                $this->logger->error('Invalid fragments structure in new resource');
+                throw new ApiException('Invalid fragments structure in new resource', 6, -1, 400);
             }
             foreach ($data['fragments'] as $fragKey => $fragVal) {
                 $this->validateDetails($fragVal);
@@ -96,6 +99,7 @@ class ResourceValidator
         }
 
         if (!$this->helper->isProcessor($data['process'])) {
+            $this->logger->error('Invalid process declaration, only functions allowed');
             throw new ApiException('Invalid process declaration, only functions allowed', 6, -1, 400);
         }
         $this->validateDetails($data['process']);
@@ -108,22 +112,17 @@ class ResourceValidator
                     if ($this->helper->isProcessor($output)) {
                         $this->validateDetails($output);
                     } elseif ($output != 'response') {
-                        throw new ApiException(
-                            'Invalid output declaration, only functions or array of functions or "response" allowed',
-                            6,
-                            -1,
-                            400
-                        );
+                        $message = 'Invalid output declaration, ';
+                        $message .= 'only functions or array of functions or "response" allowed';
+                        $this->logger->error($message);
+                        throw new ApiException($message, 6, -1, 400);
                     }
                 }
             } else {
                 if ($data['output'] != 'response') {
-                    throw new ApiException(
-                        'Invalid output declaration, only functions or array of functions or "response" allowed',
-                        6,
-                        -1,
-                        400
-                    );
+                    $message = 'Invalid output declaration, only functions or array of functions or "response" allowed';
+                    $this->logger->error($message);
+                    throw new ApiException($message, 6, -1, 400);
                 }
             }
         }
@@ -146,6 +145,7 @@ class ResourceValidator
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
                 if (in_array($node['id'], $id)) {
+                    $this->logger->error('identical IDs in new resource: ' . $node['id']);
                     throw new ApiException(
                         'identical IDs in new resource: ' . $node['id'],
                         6,
@@ -212,6 +212,7 @@ class ResourceValidator
                             if (!empty($limitFunctions) && !in_array($input['function'], $limitFunctions)) {
                                 $message = 'processor ' . $input['id'] . ' is an invalid function type (only "'
                                     . implode('", ', $limitFunctions) . '" allowed)';
+                                $this->logger->error($message);
                                 throw new ApiException($message, 6, $id, 400);
                             }
                             array_unshift($stack, $input);
@@ -227,10 +228,12 @@ class ResourceValidator
                             $count = sizeof($input);
                         } elseif (!$literalAllowed) {
                             $message = "literals not allowed as input for '$inputKey' in function: $id";
+                            $this->logger->error($message);
                             throw new ApiException($message, 6, $id, 400);
                         } else {
                             if (!empty($limitValues) && !in_array($input, $limitValues)) {
                                 $message = "invalid value type for '$inputKey' in function: $id";
+                                $this->logger->error($message);
                                 throw new ApiException($message, 6, $id, 400);
                             }
                             if (!empty($limitTypes)) {
@@ -244,15 +247,18 @@ class ResourceValidator
                     if ($count < $min) {
                         // check for nothing to validate and if that is ok.
                         $message = "input '$inputKey' in function '" . $node['id'] . "' requires min $min";
+                        $this->logger->error($message);
                         throw new ApiException($message, 6, $id, 400);
                     }
                     if ($max != '*' && $count > $max) {
                         $message = "input '$inputKey' in function '" . $node['id'] . "' requires max $max";
+                        $this->logger->error($message);
                         throw new ApiException($message, 6, $id, 400);
                     }
                 }
             } elseif (is_array($node)) {
                 if (isset($node['function']) && empty($node['id'])) {
+                    $this->logger->error('Invalid function, id attribute missing');
                     throw new ApiException('Invalid function, id attribute missing', 6, -1, 400);
                 }
                 foreach ($node as $key => $value) {
@@ -318,6 +324,7 @@ class ResourceValidator
         if (!$valid) {
             $message = 'invalid literal in new resource (' . print_r($element) . '. only "' .
                 implode("', '", $accepts) . '" accepted';
+            $this->logger->error($message);
             throw new ApiException($message, 6, $id, 400);
         }
         return true;

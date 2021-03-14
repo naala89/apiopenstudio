@@ -17,13 +17,6 @@ image: php:7.4
 #    - .composer/
 #    - composer.lock
 
-variables:
-  MYSQL_HOST: "mariadb"
-  MYSQL_ROOT_PASSWORD: "apiopenstudio"
-  MYSQL_DATABASE: "apiopenstudio"
-  MYSQL_USERNAME: "apiopenstudio"
-  MYSQL_PASSWORD: "apiopenstudio"
-
 before_script:
   - apt-get update
   - apt-get install -y libzip-dev openssh-client rsync libxslt-dev unzip
@@ -39,7 +32,7 @@ before_script:
 
 stages:
   - lint
-#  - test
+  - test
   - deploy
 
 ##################################
@@ -48,44 +41,47 @@ stages:
 
 phpcs:
   stage: lint
+  artifacts:
+    when: on_failure
+    paths:
+      - phpcs.txt
   script:
     - echo "Linting the codebase."
-    - ./vendor/bin/phpcs --standard=PSR12 includes/ src/scss/ src/js/ public/*.php public/admin/*.php *.js
+    - ./vendor/bin/phpcs --standard=PSR12 --report-file=phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
 
 ##################################
 ## TESTS
 ##################################
 
-#functional_tests:
-#  stage: test
-#  services:
-#    - mariadb:latest
-#  script:
-#    - apt-get install -y mariadb-client iproute2
-#    - docker-php-ext-install mysqli
-#    - mysql --version
-#    - echo "Setup the DB."
-#    - php ./includes/scripts/runner_generate_db.php
-#    # Test using Ip address
-#    - LOCAL_IP=$(ip route get 8.8.8.8 | awk -F"src " 'NR==1{split($2,a," ");print a[1]}')
-#    - echo Local IP $LOCAL_IP
-#    - php -S 0.0.0.0:8080 -t public/ 2> /dev/null &
-#    - sed -i "s/localhost/$LOCAL_IP:8080/" tests/api.suite.yml
-#    # Backup settings files.
-#    - if [ -f ".env" ]; then cp .env .env.bak; fi
-#    - if [ -f "settings.yml" ]; then cp settings.yml settings.yml.bak; fi
-#    # Copy example settings files.
-#    - cp example.env .env
-#    - cp example.settings.yml settings.yml
-#    - php -S localhost:8085 --docroot public &>/dev/null&
-#    - ./vendor/bin/codecept build
-#    - ./vendor/bin/codecept run --env ci api
-#    # Revert settings files.
-#    - if [ -f ".env".bak ]; then cp .env.bak .env; rm .env.bak; fi
-#    - if [ -f "settings.yml.bak" ]; then cp settings.yml.bak settings.yml; rm settings.yml.bak; fi
-
-#unit_tests:
-#  stage: test
+unit_and_functional_tests:
+  stage: test
+  services:
+    - mariadb:latest
+  variables:
+    MYSQL_HOST: $CI_MYSQL_HOST
+    MYSQL_ROOT_PASSWORD: $CI_MYSQL_ROOT_PASSWORD
+    MYSQL_DATABASE: $CI_MYSQL_DATABASE
+    MYSQL_USER: $CI_MYSQL_USER
+    MYSQL_PASSWORD: $CI_MYSQL_PASSWORD
+  only:
+    - develop
+    - master
+  artifacts:
+    when: on_failure
+    paths:
+      - tests/_output/
+      - logs/
+  script:
+    - touch .env
+    - echo "API_DOMAIN=localhost:8085" >> .env
+    - cp tests/ci.settings.yml settings.yml
+    - apt-get install -y mariadb-client iproute2
+    - docker-php-ext-install mysqli
+    - mysql --version
+    - php tests/runner_generate_db.php
+    - php -S localhost:8085 tests/routing.php &>/dev/null&
+    - ./vendor/bin/codecept run unit --env ci
+#    - ./vendor/bin/codecept run api --env ci
 
 ##################################
 ## WIKI
@@ -97,11 +93,11 @@ wiki_dev:
     - develop
   script:
     - echo "Compile and deploy the wiki to dev."
-    - ./vendor/bin/bookdown src/wiki/bookdown.json
+    - ./vendor/bin/bookdown includes/wiki/bookdown.json
     - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - rsync -rvI --delete --exclude=".*" "/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
-    - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
+    - rsync -rvI "$CI_PROJECT_DIR/includes/wiki/images" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
 
 wiki_prod:
@@ -110,11 +106,11 @@ wiki_prod:
     - master
   script:
     - echo "Compile and deploy the wiki to prod."
-    - ./vendor/bin/bookdown src/wiki/bookdown.json
+    - ./vendor/bin/bookdown includes/wiki/bookdown.json
     - ssh-keyscan "$PROD_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - rsync -rvI --delete --exclude=".*" "/wiki/" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
-    - rsync -rvI "$CI_PROJECT_DIR/src/wiki/images" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
+    - rsync -rvI "$CI_PROJECT_DIR/includes/wiki/images" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
     - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_WIKI_PATH/*"
 
 ##################################

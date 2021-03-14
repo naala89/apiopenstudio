@@ -25,6 +25,6 @@ process:
   id: user_invite_accept_process
   token:
     function: var_uri
-    id: user_invite_accpet_token
+    id: user_invite_accept_token
     index: 0
     nullable: false

@@ -1,7 +1,11 @@
 <?php
 
 use ApiOpenStudio\Core\Request;
+use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Processor\VarBool;
+use ApiOpenStudio\Core\ApiException;
+use Cascade\Cascade;
+use Monolog\Logger;
 
 class ValTest extends \Codeception\Test\Unit
 {
@@ -15,15 +19,34 @@ class ValTest extends \Codeception\Test\Unit
      */
     protected $request;
 
+    /**
+     * @var Logger
+     */
+    protected $logger;
+
+    /**
+     * {@inheritDoc}
+     */
     protected function _before()
     {
         $this->request = new Request();
+        $config = new Config();
+        Cascade::fileConfig($config->__get('debug'));
+        $this->logger = Cascade::getLogger('api');
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function _after()
     {
     }
 
+    /**
+     * Test a processor returns a DataContainer.
+     *
+     * @throws ApiException
+     */
     public function testValReturnsContainerOrValue()
     {
         $meta = json_decode(json_encode([
@@ -31,16 +54,24 @@ class ValTest extends \Codeception\Test\Unit
             'id' => 'var_bool literal true',
             'value' => true,
         ]));
-        $varBool = new VarBool($meta, $this->request, '');
+        $varBool = new VarBool($meta, $this->request, null, $this->logger);
         $val = $varBool->val('value');
-        $this->assertTrue(is_object($val), 'Return value is not class.');
-        $this->assertTrue(get_class($val) == 'ApiOpenStudio\Core\DataContainer', 'Return object is not DataContainer');
+        $this->assertIsObject($val, 'Return value is not class.');
+        $this->assertTrue(
+            get_class($val) == 'ApiOpenStudio\Core\DataContainer',
+            'Return object is not DataContainer'
+        );
         $this->assertTrue($val->getData());
         $val = $varBool->val('value', true);
         $this->assertFalse(is_object($val), 'Return value is a class.');
         $this->assertTrue($val);
     }
 
+    /**
+     * Test a container can return the default value.
+     *
+     * @throws ApiException
+     */
     public function testValReturnsDefault()
     {
         $meta = json_decode(json_encode([
@@ -48,7 +79,7 @@ class ValTest extends \Codeception\Test\Unit
             'id' => 'var_bool default',
             'value' => '',
         ]));
-        $varBool = new VarBool($meta, $this->request, '');
+        $varBool = new VarBool($meta, $this->request,null, $this->logger);
         $val = $varBool->val('value', true);
         $this->assertTrue($val === false);
 
@@ -57,56 +88,80 @@ class ValTest extends \Codeception\Test\Unit
             'id' => 'var_bool default',
             'value' => null,
         ]));
-        $varBool = new VarBool($meta, $this->request, '');
+        $varBool = new VarBool($meta, $this->request, null, $this->logger);
         $val = $varBool->val('value', true);
         $this->assertTrue($val === false);
     }
 
-    public function testInvalidValueNumeric()
-    {
-        $this->expectException("Exception");
-        $this->expectExceptionCode(7);
-        $this->expectExceptionMessage("invalid type (integer), only 'boolean' allowed");
+//    /**
+//     * Test an integer is not accepted for boolean type.
+//     *
+//     * @throws ApiException
+//     * @TODO
+//     */
+//    public function testInvalidValueNumeric()
+//    {
+//        $this->expectException("Exception");
+//        $this->expectExceptionCode(6);
+//        $this->expectExceptionMessage("invalid type (integer), only 'boolean', 'integer', 'text' allowed in input 'value'");
+//
+//        $meta = json_decode(json_encode([
+//            'function' => 'var_bool',
+//            'id' => 'var_bool literal integer',
+//            'value' => 'hi',
+//        ]));
+//        $varBool = new VarBool($meta, $this->request, null, null);
+//        $val = $varBool->val('value', true);
+//    }
 
-        $meta = json_decode(json_encode([
-            'function' => 'var_bool',
-            'id' => 'var_bool literal true',
-            'value' => 34,
-        ]));
-        $varBool = new VarBool($meta, $this->request, '');
-        $val = $varBool->val('value', true);
-    }
+//    /**
+//     * Test a string is not allowed as boolean.
+//     *
+//     * @throws ApiException
+//     * @TODO
+//     */
+//    public function testInvalidValueString()
+//    {
+//        $this->expectException("ApiException");
+//        $this->expectExceptionCode(7);
+//        $this->expectExceptionMessage("invalid type (text), only 'boolean' allowed");
+//
+//        $meta = json_decode(json_encode([
+//            'function' => 'var_bool',
+//            'id' => 'var_bool literal true',
+//            'value' => 'I will fail',
+//        ]));
+//        $varBool = new VarBool($meta, $this->request, null, null);
+//        $val = $varBool->val('value', true);
+//    }
 
-    public function testInvalidValueString()
-    {
-        $this->expectException("Exception");
-        $this->expectExceptionCode(7);
-        $this->expectExceptionMessage("invalid type (text), only 'boolean' allowed");
-
-        $meta = json_decode(json_encode([
-            'function' => 'var_bool',
-            'id' => 'var_bool literal true',
-            'value' => 'I will fail',
-        ]));
-        $varBool = new VarBool($meta, $this->request, '');
-        $val = $varBool->val('value', true);
-    }
-
+    /**
+     * Test array is not accepted if it is not in the allowed types.
+     *
+     * @throws ApiException
+     */
     public function testInvalidValueArray()
     {
         $this->expectException("Exception");
-        $this->expectExceptionCode(7);
-        $this->expectExceptionMessage("invalid type (array), only 'boolean' allowed");
+        $this->expectExceptionCode(6);
+        $this->expectExceptionMessage(
+            "invalid type (array), only 'boolean', 'integer', 'text' allowed in input 'value'"
+        );
 
         $meta = json_decode(json_encode([
             'function' => 'var_bool',
             'id' => 'var_bool literal true',
             'value' => ['I will fail'],
         ]));
-        $varBool = new VarBool($meta, $this->request, '');
+        $varBool = new VarBool($meta, $this->request, null, $this->logger);
         $val = $varBool->val('value', true);
     }
 
+    /**
+     * Test for an invalid number of inputs.
+     *
+     * @throws ApiException
+     */
     public function testInvalidNumberInputs()
     {
         $this->expectException("Exception");
@@ -121,7 +176,7 @@ class ValTest extends \Codeception\Test\Unit
                 true,
             ]
         ]));
-        $varBool = new VarBool($meta, $this->request, '');
+        $varBool = new VarBool($meta, $this->request, null, $this->logger);
         $val = $varBool->val('value', true);
     }
 }

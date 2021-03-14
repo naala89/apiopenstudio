@@ -1,0 +1,8 @@
+{
+  "title": "Quick start",
+  "content": [
+    "setup.md",
+    "hello-world.md"
+  ],
+  "tocDepth": 1
+}

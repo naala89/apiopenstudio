@@ -33,21 +33,25 @@ class Config
 
     /**
      * Config constructor.
+     *
+     * @param string $settingsFile
+     *   Optional path to the settings file.
      */
-    public function __construct()
+    public function __construct($settingsFile = '')
     {
-        $this->conf = Spyc::YAMLLoad(dirname(dirname(__DIR__)) . '/settings.yml');
+        $settingsFile = empty($settingsFile) ? dirname(dirname(__DIR__)) . '/settings.yml' : $settingsFile;
+        $this->conf = Spyc::YAMLLoad($settingsFile);
     }
 
-  /**
-   * Get a config value.
-   *
-   * @param array|string $key The key of the config value.
-   *
-   * @return string|NULL The value of the config key or NULL.
-   *
-   * @throws ApiException Invalid config defined.
-   */
+    /**
+     * Get a config value.
+     *
+     * @param array|string $key The key of the config value.
+     *
+     * @return string|NULL The value of the config key or NULL.
+     *
+     * @throws ApiException Invalid config defined.
+     */
     public function __get($key)
     {
         if (is_string($key)) {

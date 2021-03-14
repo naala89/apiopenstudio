@@ -1,0 +1,11 @@
+{
+  "title": "Installation",
+  "content": [
+    "api/bookdown.json",
+    "admin/bookdown.json",
+    "docker/bookdown.json",
+    "wiki/bookdown.json",
+    "phpdoc/bookdown.json"
+  ],
+  "tocDepth": 1
+}

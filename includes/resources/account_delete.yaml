@@ -10,7 +10,7 @@
 
 name: Account delete
 
-description: Delete an account if any applications do not belong to the account.
+description: Delete an account.
 
 uri: account
 

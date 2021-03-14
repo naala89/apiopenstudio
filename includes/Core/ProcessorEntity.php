@@ -160,12 +160,16 @@ abstract class ProcessorEntity extends Entity
     /**
      * Constructor. Store processor metadata and request data in object.
      *
-     * @param mixed $meta The processor metadata.
-     * @param Request $request Request object.
-     * @param \ADODB_mysqli $db Database object.
-     * @param \Monolog\Logger $logger Logger object.
+     * @param $meta
+     *   Metadata for the processor.
+     * @param Request $request
+     *   The full request object.
+     * @param \ADOConnection|null $db
+     *   The DB connection object.
+     * @param Logger|null $logger
+     *   The logger.
      */
-    public function __construct($meta, Request &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, Request &$request, $db = null, Logger $logger = null)
     {
         $this->meta = $meta;
         $this->request = $request;
@@ -214,6 +218,8 @@ abstract class ProcessorEntity extends Entity
      */
     public function val(string $key, bool $realValue = null)
     {
+        $this->logger->debug("Fetching val for: $key");
+        $this->logger->debug("Real value: $realValue");
         $inputDet = $this->details['input'];
         if (!isset($inputDet[$key])) {
             // undefined input key for this processor type
@@ -244,6 +250,8 @@ abstract class ProcessorEntity extends Entity
 
         $this->validateAllowedValues($container->getData(), $limitValues, $min, $key);
         $this->validateAllowedTypes($container->getType(), $limitTypes, $min, $key);
+
+        $this->logger->debug('Value: ' . $container->getData());
 
         return $realValue ? $container->getData() : $container;
     }

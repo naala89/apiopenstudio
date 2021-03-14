@@ -12,21 +12,25 @@ $I->wantTo('populate a VarFloat with text and see the result.');
 $I->sendGet($uri, ['token' => $I->getMyStoredToken(), 'value' => 'text']);
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => [
+$I->seeResponseContainsJson(
+    ["error" => [
     "code" => 6,
     "message" => "Invalid type (text), only 'float', 'integer' allowed in input 'value'.",
     "id" => 'test var_float process',
-]]);
+    ]]
+);
 
 $I->wantTo('populate a VarFloat with true and see the result.');
 $I->sendGet($uri, ['token' => $I->getMyStoredToken(), 'value' => 'true']);
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(["error" => [
+$I->seeResponseContainsJson(
+    ["error" => [
     "code" => 6,
     "message" => "Invalid type (boolean), only 'float', 'integer' allowed in input 'value'.",
     "id" => 'test var_float process',
-]]);
+    ]]
+);
 
 $I->wantTo('populate a VarFloat with 1.6 and see the result.');
 $I->sendGet($uri, ['token' => $I->getMyStoredToken(), 'value' => '1.6']);

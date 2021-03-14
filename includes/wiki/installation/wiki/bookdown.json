@@ -1,0 +1,9 @@
+{
+  "title": "Wiki setup",
+  "content": [
+    "introduction.md",
+    "apache.md",
+    "nginx.md"
+  ],
+  "tocDepth": 1
+}

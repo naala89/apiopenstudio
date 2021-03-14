@@ -1,4 +1,5 @@
 <?php
+
 $I = new ApiTester($scenario);
 $I->performLogin();
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());

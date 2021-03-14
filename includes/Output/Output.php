@@ -93,6 +93,7 @@ abstract class Output extends Core\ProcessorEntity
 
         if (!empty($this->meta)) {
             if (empty($this->meta->destination)) {
+                $this->logger->alert('no destinations defined for output');
                 throw new Core\ApiException('no destinations defined for output', 1, $this->id);
             }
             $method = $this->val('method');
@@ -110,9 +111,11 @@ abstract class Output extends Core\ProcessorEntity
                 $result = $curl->{$method}($url, $curlOpts);
                 if ($result === false) {
                     $message = 'could not get response from remote server: ' . $curl->errorMsg;
+                    $this->logger->alert($message);
                     throw new Core\ApiException($message, 5, $this->id, $curl->httpStatus);
                 }
                 if ($curl->httpStatus != 200) {
+                    $this->logger->alert('Failed to send data: ' . json_encode($result));
                     throw new Core\ApiException(json_encode($result), 5, $this->id, $curl->httpStatus);
                 }
             }

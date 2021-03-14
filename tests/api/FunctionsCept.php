@@ -1,4 +1,5 @@
 <?php
+
 $I = new ApiTester($scenario);
 $I->performLogin();
 
@@ -9,13 +10,15 @@ $I->sendGet($uri);
 $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseMatchesJsonType([
+$I->seeResponseMatchesJsonType(
+    [
     'name' => 'string',
     'machineName' => 'string',
     'description' => 'string',
     'menu' => 'string',
     'input' => 'array',
-]);
+    ]
+);
 
 foreach (\GuzzleHttp\json_decode($I->getResponse()) as $index => $processor) {
     if (empty($processor->name)) {

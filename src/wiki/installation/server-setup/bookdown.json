@@ -1,8 +1,0 @@
-{
-  "title": "Server setup",
-  "content": [
-    "apache.md",
-    "nginx.md"
-  ],
-  "tocDepth": 1
-}

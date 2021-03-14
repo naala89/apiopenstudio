@@ -1,0 +1,83 @@
+# Example settings file.
+#
+# @package   ApiOpenStudio
+# @license   This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+#            If a copy of the MPL was not distributed with this file,
+#            You can obtain one at https://mozilla.org/MPL/2.0/.
+# @author    john89 (https://gitlab.com/john89)
+# @copyright 2020-2030 ApiOpenStudio
+# @link      https://www.apiopenstudio.com
+
+debug:
+  formatters:
+    api_open_studio:
+      format: "%datetime%-%channel%.%level_name% - %message%\n"
+  handlers:
+    console:
+      class: Monolog\Handler\StreamHandler
+      level: DEBUG
+      formatter: api_open_studio
+      processors: [memory_processor]
+      bubble: true
+      stream: php://stdout
+    api_file_handler:
+      class: Monolog\Handler\StreamHandler
+      level: DEBUG
+      formatter: api_open_studio
+      bubble: true
+      stream: logs/api.error.log
+    db_file_handler:
+      class: Monolog\Handler\StreamHandler
+      level: DEBUG
+      formatter: api_open_studio
+      bubble: true
+      stream: logs/db.error.log
+  processors:
+    web_processor:
+      class: Monolog\Processor\WebProcessor
+    memory_processor:
+      class: Monolog\Processor\MemoryUsageProcessor
+  loggers:
+    api:
+      handlers: [api_file_handler]
+      processors: [web_processor]
+    db:
+      handlers: [db_file_handler]
+      processors: [web_processor]
+
+db:
+  definition_path: "includes/db/dbDefinition.yaml"
+  driver: mysqli
+  host: mariadb
+  root_password: apiopenstudio
+  username: apiopenstudio
+  password: apiopenstudio
+  database: apiopenstudio
+  options:
+    debug: false
+  charset: utf8
+  collation: utf8_unicode_ci
+
+api:
+  protocols:
+    - http
+  base_path: "/var/www/html/api/"
+  url: "localhost"
+  cache: false
+  default_format: json
+  token_life: "+6 hour"
+  core_account: apiopenstudio
+  core_application: core
+  core_resource_lock: false
+  dir_public: "public/"
+  dir_resources: "includes/resources/"
+  dir_uploads: "uploads/"
+  dir_tmp: "/tmp/"
+
+email:
+  host: apiopenstudio-email
+  username: "admin@apiopenstudio.com"
+  password: "secret"
+  from:
+    email: "admin@apiopenstudio.com"
+    name: "ApiOpenStudio admin"

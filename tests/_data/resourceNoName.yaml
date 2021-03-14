@@ -1,0 +1,36 @@
+uri: resource/missing/name
+
+description: test resource with no name
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+  function: token_role
+  id: test resource with no name security
+  token:
+    function: var_get
+    id: test resource with no name token
+    key: token
+  role: Consumer
+
+process:
+  function: functions
+  id: test resource with no name process
+  machine_name: all
+
+output:
+  -
+    response
+  -
+    function: email
+    to: john@naala.com.au
+    subject: "test email"
+    format: html
+  -
+    function: xml
+    destination: www.foo.bar
+    method: post
