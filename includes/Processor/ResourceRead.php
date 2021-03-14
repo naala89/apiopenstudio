@@ -171,7 +171,7 @@ class ResourceRead extends Core\ProcessorEntity
 
         $result = $this->resourceMapper->findByUid($currentUser->getUid(), $params);
         if (empty($result)) {
-            throw new Core\ApiException('No resources found', 6, $this->id);
+            throw new Core\ApiException('No resources found or insufficent privileges', 6, $this->id);
         }
 
         $resources = [];
