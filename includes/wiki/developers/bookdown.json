@@ -10,6 +10,7 @@
     "coding-standards.md",
     "configuring-debug-levels.md",
     "contributing.md",
+    "linting.md",
     "creating-processors.md",
     "error-responses.md",
     "resources.md",

@@ -1,7 +1,7 @@
 # Contributing
 
 The source-code for ApiOpenStudio is maintained on GitLab (https://gitlab.com/john89/api_open_studio). 
-If you came scross this project on GitHub (https://github.com/naala89/apiopenstudio), 
+If you came across this project on GitHub (https://github.com/naala89/apiopenstudio), 
 please navigate to GitLab repo for tickets, pull requests, etc.
 
 When contributing to this repository, please first discuss the change you wish to make via issue before making a change.
