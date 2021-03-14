@@ -1,31 +1,34 @@
-# Contributing
+Contributing
+============
 
 The source-code for ApiOpenStudio is maintained on GitLab (https://gitlab.com/john89/api_open_studio). 
 If you came across this project on GitHub (https://github.com/naala89/apiopenstudio), 
-please navigate to GitLab repo for tickets, pull requests, etc.
+please clone the GitLab repo for tickets, pull requests, etc.
 
-When contributing to this repository, please first discuss the change you wish to make via issue before making a change.
+When contributing to this repository, 
+please first discuss the change you wish to make via issues before making a change.
 
-Please note we have a code of conduct, please follow it in all your interactions with the project.
+Please note we have a code of conduct,
+please follow it in all your interactions with the project.
 
 For more detailed notes of the contributing process, please visit [Contributing](https://wiki.apiopenstudio.com/developers/contributing.html)
 
-## Pull Request Process
+Merge Request Process
+---------------------
 
-1. Ensure any install or build dependencies are removed before the end of the layer when doing a
-   build.
-2. Update the README.md with details of changes to the interface, this includes new environment
-   variables, exposed ports, useful file locations and container parameters.
-3. Once you have created a  Pull Request, you may request the second reviewer to merge it for you.
+1. Update the README.md with details of changes to the interface,
+   this includes new environment variables, exposed ports, useful file locations and container parameters.
+3. Once you have created a merge request, you must request a review before it is merged.
    The project maintainer will merge the PR once it is reviewed.
 
-## Code of Conduct
+Code of Conduct
+---------------
 
 ### Our Pledge
 
 In the interest of fostering an open and welcoming environment, we as
 contributors and maintainers pledge to making participation in our project and
-our community a harassment-free experience for everyone, regardless of age, body
+community a harassment-free experience for everyone, regardless of age, body
 size, disability, ethnicity, gender identity and expression, level of experience,
 nationality, personal appearance, race, religion, or sexual identity and
 orientation.
@@ -76,8 +79,8 @@ further defined and clarified by project maintainers.
 ### Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting the project team at [INSERT EMAIL ADDRESS]. All
-complaints will be reviewed and investigated and will result in a response that
+reported by contacting the project team at [support@apiopenstudio.com](support@apiopenstudio.com).
+All complaints will be reviewed and investigated and will result in a response that
 is deemed necessary and appropriate to the circumstances. The project team is
 obligated to maintain confidentiality with regard to the reporter of an incident.
 Further details of specific enforcement policies may be posted separately.

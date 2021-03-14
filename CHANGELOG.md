@@ -1,10 +1,10 @@
-GaterData 0.1.0, 1 Dec 2015
----------------------------
+GaterData (former name) 0.1.0, 1 Dec 2015
+=========================================
 
 - Installed on Swellnet API
 
-GaterData 0.2.0, 25 April 2016
-------------------------------
+GaterData (former name) 0.2.0, 25 April 2016
+============================================
 
 - Improved global handling of error object
 - New YAML importer in uploader
@@ -28,8 +28,8 @@ GaterData 0.2.0, 25 April 2016
 - changed Object processor, so that if input is not an array, then all the fields and values sit at root
 - import resources now has full error feedback to devs
 
-GaterData 0.2.1, 3 May 2016
----------------------------
+GaterData (former name) 0.2.1, 3 May 2016
+=========================================
 
 - added way of defining specific processors in processor->details->accepts, e'g' 'processor varGet'
 - removed Core\UserInterface, having multiple classes with the same name is confusing and extra abstraction was wastung resources
@@ -48,8 +48,8 @@ GaterData 0.2.1, 3 May 2016
 - created Fragments section - this is a partial meta, allowing reuse of processor results - especially useful in IfThenElse to cut down on processing time
 - change all resource meta 'validation' to 'security'
 
-GaterData 0.3, 23 May 2016
----------------------------
+GaterData (former name) 0.3, 23 May 2016
+========================================
 
 Run "composer dump-autoload" on in the docroot after transferring files.
 Run "composer update" on in the docroot after transferring files.
@@ -66,8 +66,8 @@ Run "composer update" on in the docroot after transferring files.
 - added Filter processor
 - fixed config override
 
-v1.0.0-beta-RC1
----------------
+ApiOpenStudio v1.0.0-beta-RC1
+=============================
 
 - Renamed the code to ApiOpenStudio
     - Docker used
@@ -80,8 +80,18 @@ v1.0.0-beta-RC1
     - Admin interface implemented
     - Changed to use Monolog for logging
     - Changed to use Cascade for settings
-  
-v1.0.0-beta-RC2
----------------
 
-- Separated admin from api.
+ApiOpenStudio v1.0.0-beta-RC2
+=============================
+
+- Separated the admin code from the API.
+- Added user logout processor.
+- Restructured the wiki pages.
+- Unit tests running automatically on the CI.
+- Create the bash DB install script for the headless API.
+- Loomed the CI runner DB script to use the same scripts.
+- Added core version.
+- Added the implementation for DB updates if need be.
+- Created the update script.
+- Consolidated settings.yml and .env.
+- Minor bug fixes.
