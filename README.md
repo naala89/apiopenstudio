@@ -30,7 +30,7 @@ You can create custom roles if you want to further split consumers into groups.
 For more information, visit the [Wiki](https://wiki.apiopenstudio.com)
 or [PHPDocm](https://phpdoc.apiopenstudio.com).
 
-Admin GIU
+Admin GUI
 ---------
 
 There is a separate repository/application, which provides a GUI interface:
