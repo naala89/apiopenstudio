@@ -109,8 +109,8 @@ wiki_prod:
     - ./vendor/bin/bookdown includes/wiki/bookdown.json
     - ssh-keyscan "$PROD_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - rsync -rvI --delete --exclude=".*" "/wiki/" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
-    - rsync -rvI "$CI_PROJECT_DIR/includes/wiki/images" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
+    - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/wiki/" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
+#    - rsync -rvI "$CI_PROJECT_DIR/includes/wiki/images" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
     - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_WIKI_PATH/*"
 
 ##################################
