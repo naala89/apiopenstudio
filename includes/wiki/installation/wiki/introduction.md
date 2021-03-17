@@ -19,6 +19,6 @@ Ensure that you have already run ```composer install```.
 
 from the project root, run:
 
-    ./vendor/bin/bookdown includes/wiki/bookdown.json
+    export CSS_BOOTSWATCH=spacelab && export CSS_PRISM=prism && MENU_LOGO=/img/api_open_studio_logo_name_colour.png && php ./vendor/bin/bookdown includes/wiki/bookdown.json
 
 This will compile and place the reault markup in ```public/wiki```.
