@@ -5,8 +5,7 @@
     "installation.md",
     "settings.md",
     "apache.md",
-    "nginx.md",
-    "xdebug.md"
+    "nginx.md"
   ],
   "tocDepth": 1
 }

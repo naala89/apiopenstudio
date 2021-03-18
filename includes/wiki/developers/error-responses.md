@@ -1,7 +1,8 @@
 Error responses
 ===============
 
-All errors should be trapped by an exception and return a standard error object, which is translated into the correct output format by ApiOpenStudio.
+All errors should be trapped by an exception and return a standard error object,
+which is translated into the correct output format by ApiOpenStudio.
 
 example (json):
 
@@ -25,7 +26,7 @@ example (xml):
 </error>
 ```
 
-* **id** is the function in the resource where the error occurred. 
+* **id** is the function in the resource where the error occurred.
 * **code** is the error type.
 * **message** is a human friendly error message.
 
@@ -44,5 +45,5 @@ Error codes
 HTML status codes
 -----------------
 
-Where possible, HTML status codes will also match the above error codes, which will usually be a 200 (Success) or 400 (Bad Request)
-
+Where possible, HTML status codes will also match the above error codes, which
+will usually be a 200 (Success) or 400 (Bad Request)

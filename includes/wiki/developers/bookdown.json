@@ -16,7 +16,8 @@
     "error-responses.md",
     "resources.md",
     "testing.md",
-    "sys-admin/bookdown.json"
+    "sys-admin/bookdown.json",
+    "xdebug.md"
   ],
   "tocDepth": 1
 }

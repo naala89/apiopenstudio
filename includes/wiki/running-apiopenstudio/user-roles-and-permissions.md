@@ -9,6 +9,8 @@ To assign a role to a user, visit admin -> user-roles.
 
 The following are default roles that Core ApiOpenStudio uses, and should not be be altered.
 
+![User roles][user_roles]
+
 Administrator
 -------------
 
@@ -54,3 +56,5 @@ Consumer
 permissions:
 
 * Use resources associated with applications they have permissions for.
+
+[user_roles]: ../images/user_roles_2.png

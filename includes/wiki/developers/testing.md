@@ -1,12 +1,13 @@
 Testing
 =======
 
-Testing is done with [Codeception](http://codeception.com/).
-From Docroot, run:
+Testing is done with [Codeception](http://codeception.com/). From Docroot, run:
 
 ```$ vendor/bin/codecept -v```
 
-If you are running testcase first time in api suite, then in your api directory you will not have api tester file. You need to generate that so run following command:
+If you are running testcase first time in api suite, then in your api directory
+you will not have api tester file. You need to generate that so run following
+command:
 
 ```$ vendor/bin/codecept build```
 
@@ -19,20 +20,21 @@ Tests require a .env file:
 
     API_DOMAIN=api.apiopenstudio.local
 
-The configuration defined in ```api.suite.yml``` will dynamically pull the domain name for the
-local domain for the API from the ```.env``` file.
+The configuration defined in ```api.suite.yml``` will dynamically pull the
+domain name for the local domain for the API from the ```.env``` file.
 
 Testing user
 ------------
 
-The following testing credentials  are stored in /tests/_support/Helper/api.php
+The following testing credentials are stored in /tests/_support/Helper/api.php
 
 * Account: apiopenstudio
 * Application: Testing
 * Username: tester
 * Password: tester_pass
 
-When you create the database, ensure that you include the tester credentials at the prompt.
+When you create the database, ensure that you include the tester credentials at
+the prompt.
 
 Creating Tests
 --------------

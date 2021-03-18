@@ -13,7 +13,8 @@ Example on a [local environment][create_resource]
 Here you can see:
 
 * Processor name: Collection
-* Processor descriptions: Collection contains multiple values, like an array or list.
+* Processor descriptions: Collection contains multiple values, like an array or
+  list.
 * Processor machine name: collection
 * Processor inputs
     * items
@@ -21,15 +22,18 @@ Here you can see:
         * Input cardinality: 0:*
             * Signifies 0 or many values are allowed in this input.
         * Input Literal allowed: true
-            * The input value can be a literal or the output from another processor.
+            * The input value can be a literal or the output from another
+              processor.
         * Input ufnctions allowed: All
             * There is no limit on the input processors
         * Input var types allowed: All
             * There is no limit on var types, like boolean, string, etc.
         * Input values allowed: All
-            * Sometimes a procvessor may require a very sepcific set of input values. In this case, there is no limit.
+            * Sometimes a procvessor may require a very sepcific set of input
+              values. In this case, there is no limit.
         * Input default: None
-            * There is no input default defined. If there is no input, then the response will be an empty collection (in this case).
+            * There is no input default defined. If there is no input, then the
+              response will be an empty collection (in this case).
 
 Example of fetching the processor list via API
 ----------------------------------------------
@@ -92,7 +96,8 @@ Sample response:
         ...
     ]
 
-You can also request the definition for a single processor, using the machine name:
+You can also request the definition for a single processor, using the machine
+name:
 
     Method: GET
     URL: <domain>/apiopenstudio/core/functions/account_create
@@ -116,4 +121,4 @@ The definitions are in the protected attribute:
 
 [create_resource]: https://admin.apiopenstudio.local/resource/create
 
-[example_resource]: ../images/developers/example_processor_documentation.png
+[example_resource]: images/example_processor_documentation.png

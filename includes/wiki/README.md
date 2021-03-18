@@ -10,14 +10,18 @@ the wiki server.
 Compiling the wiki locally
 --------------------------
 
+### Compile
+
+To compile locally, run the following command from the repo root directory:
+
+    export CSS_BOOTSWATCH=spacelab && export CSS_PRISM=prism && MENU_LOGO=/img/api_open_studio_logo_name_colour.png && php ./vendor/bin/bookdown includes/wiki/bookdown.json
+
 ### Docker
 
-Checkout the docker repo at [Docket GitHub][docker_github]
-or [Docket GitLab][docker_gitlab].
+Checkout the docker repo at [Docket GitHub][docker_github] or [Docket GitLab][docker_gitlab].
 
 Uncomment The two wiki containers:
 
-* bookdown
 * wiki
 
 Ensure that you have add the following to ```/etv/hosts```:
@@ -26,24 +30,9 @@ Ensure that you have add the following to ```/etv/hosts```:
 
 Run ```docker-compose up -d```
 
-This will automatically compile, deploy and serve the wiki HTML
-from ```public/wiki/```
+This will automatically deploy and serve the wiki HTML from ```public/wiki/```
 
 Visit [wiki.apiopenstudio.local][wiki_local].
-
-### Manually compile
-
-The root bookdown.json is set for the bookdown container to compile, which has
-its own directory structure.
-
-To compile locally, edit ```includes/wiki/bookdown.json```, and change the
-target path:
-
-    "target": "../../public/wiki",
-
-Run the following command from the repo root directory:
-
-    ./vendor/bin/bookdown includes/wiki/bookdown.json
 
 [docker_github]: https://github.com/naala89/api_open_studio_docker
 

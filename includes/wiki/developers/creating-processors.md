@@ -12,7 +12,7 @@ ApiException will be thrown.
 
 All processors, whether ther are enpoint, output, processing or security
 processors must extend ```ApiOpenStudio\Core\ProcessorEntity``` or a child
-or ```ApiOpenStudio\Core\ProcessorEntity```.
+of this base class..
 
 Attributes
 ----------

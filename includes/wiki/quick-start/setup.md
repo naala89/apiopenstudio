@@ -70,7 +70,6 @@ Edit ```docker-composer.yml```
 
 Uncomment the container blocks for:
 
-* bookdown
 * wiki
 * phpdocumentor
 * phpdoc
@@ -87,6 +86,11 @@ Edit ```/etc/hosts``` and add the following:
 ### Start docker
 
     docker-compose up -d
+
+### Compile the wiki (optional)
+
+    cd <project_root>
+    export CSS_BOOTSWATCH=spacelab && export CSS_PRISM=prism && MENU_LOGO=/img/api_open_studio_logo_name_colour.png && php ./vendor/bin/bookdown includes/wiki/bookdown.json
 
 ### Setup the database
 
