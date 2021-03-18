@@ -11,12 +11,13 @@
     "configuring-debug-levels.md",
     "contributing.md",
     "linting.md",
+    "processors.md",
     "creating-processors.md",
     "error-responses.md",
     "resources.md",
-    "styling-admin.md",
     "testing.md",
-    "sys-admin/bookdown.json"
+    "sys-admin/bookdown.json",
+    "xdebug.md"
   ],
   "tocDepth": 1
 }

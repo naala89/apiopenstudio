@@ -1,6 +1,10 @@
 Coding standards
 ================
 
+ApiOpenStidio adheres to the PSR-12 Extended coding style.
+
+See [PSR-12][psr_12] for the full formal definition
+
 Codesniffer
 -----------
 
@@ -12,12 +16,12 @@ So it is worth running phpcs locally before any commit.
 
 After ```composer install``` has run, the following command will test your code locally:
 
-    ./vendor/bin/phpcs --standard=PSR12 includes/ public/*.php
+    $ ./vendor/bin/phpcs --standard=PSR12 --report-file=phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
 
 Line length
 -----------
 
-A line of code should not exceed 80 characters.
+A line of code should not exceed 120 characters.
 
 Variables
 ---------
@@ -111,3 +115,5 @@ e.g.:
     public function functionName(string $a, int $b, $c)
     {
     }
+
+[psr_12]: https://www.php-fig.org/psr/psr-12/

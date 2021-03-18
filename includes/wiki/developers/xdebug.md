@@ -1,4 +1,5 @@
-# Configure Xdebug in PhpStorm
+Configure Xdebug in PhpStorm
+============================
 
 Turn on xDebug in ```.env```:
 
@@ -8,7 +9,8 @@ rebuild your docker containers
 
     docker-compose build
 
-## PHPStorm configurations
+PHPStorm configurations
+-----------------------
 
 ### Set the port defined in .env
 
@@ -18,7 +20,7 @@ Debug.
 Make sure you have the same port that you have configured previously in "
 XDEBUG_CONFIG" environment variable:
 
-![Set xDebug port](../../images/installation/docker/xdebug_port.png)
+![Set xDebug port][set_xdebug_port]
 
 ### Configure a server.
 
@@ -27,7 +29,7 @@ your container.
 
 Go to File -> Settings -> Languages and Frameworks -> PHP -> Servers
 
-![Configure the xDebug server](../../images/installation/docker/xdebug_server.png)
+![Configure the xDebug server][xdebug_server]
 
 Give a name to the server. It should match the value you have defined in your "
 PHP_IDE_CONFIG" environment variable, i.e. "apiopenstudio".
@@ -50,7 +52,7 @@ from the list.
 
 Now configure it like this:
 
-![Configure the xDebug remote debugger](../../images/installation/docker/xdebug_remote_debug.png)
+![Configure the xDebug remote debugger][xdebug_remote_debug]
 
 Make sure you associate it with the previously created "server" definition.
 Use "PHPSTORM" as idekey.
@@ -59,4 +61,9 @@ Your IDE should be now correctly configured. Lets test.
 
 ## Links
 
-* [https://dev.to/brpaz/docker-phpstorm-and-xdebug-the-definitive-guide-14og](https://dev.to/brpaz/docker-phpstorm-and-xdebug-the-definitive-guide-14og)
+* [docker-phpstorm-and-xdebug-the-definitive-guide-14og][the_definitive_guide]
+
+[set_xdebug_port]: images/xdebug_port.png
+[xdebug_server]: images/xdebug_server.png
+[xdebug_remote_debug]: images/xdebug_remote_debug.png
+[the_definitive_guide]: https://dev.to/brpaz/docker-phpstorm-and-xdebug-the-definitive-guide-14og

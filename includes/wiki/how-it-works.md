@@ -17,7 +17,8 @@ you will need to run ApiOpenStudio. This is available at
 There is another package that will enable you to administer the headless
 ApiOpenStudio through an admin interface:
 
-* [api_open_studio_admin](https://gitlab.com/john89/api_open_studio_admin)
+* [api_open_studio_admin (GitLab)][gitlab_admin]
+  or [api_open_studio_admin (GitHub)][github_admin]
     * An administration GUI interface designed to make it easy to manage your
       accounts, applications, users and resources, as well as an area where you
       can directly create, edit and delete resources.
@@ -72,3 +73,7 @@ for time-consuming programming.
 There are many functions available with ApiOpenStudio core, but you can add more
 functions from the community, or even create custom ones yourself. These can all
 me maintained using composer.
+
+[gitlab_admin]: https://gitlab.com/john89/api_open_studio_admin
+
+[github_admin]: https://github.com/naala89/api_open_studio_admin

@@ -1,7 +1,8 @@
 Settings
 ========
 
-Copy ```settings.example.yml``` to ```example.yml```, and then edit the settings in ```example.yml```
+Copy ```settings.example.yml``` to ```example.yml```, and then edit the settings
+in ```example.yml```
 
 * debug.handlers.*.level
     * Set to the debug verbosity that you require.
@@ -27,15 +28,18 @@ Copy ```settings.example.yml``` to ```example.yml```, and then edit the settings
     * pagination_step
         * The number of entries on listing pages.
     * slim.displayErrorDetails
-        * Display Slim errors on the page. This should be set to false in production.
+        * Display Slim errors on the page. This should be set to false in
+          production.
     * slim.determineRouteBeforeAppMiddleware.
         * This should not be altered.
 * twig
     * options.cache_enabled
         * Turn on twig cache.
     * options.cache_path
-        * The relative path from docroot to the twig cache directory. This should not be altered.
+        * The relative path from docroot to the twig cache directory. This
+          should not be altered.
     * options.debug
         * Turn on twig debug mode. This should not be set to true on production.
     * template_path
-        * The relative path to admin templates from ```base_path```. This should not be altered.
+        * The relative path to admin templates from ```base_path```. This should
+          not be altered.

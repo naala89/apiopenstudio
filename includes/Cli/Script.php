@@ -18,8 +18,7 @@ namespace ApiOpenStudio\Cli;
 /**
  * Class Script
  *
- * Run a PHP class as a bash command.
- * This prevents PHP or browser timeout.
+ * Run a PHP class as a bash command. This prevents PHP or browser timeout.
  */
 abstract class Script
 {

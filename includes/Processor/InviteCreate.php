@@ -144,7 +144,7 @@ class InviteCreate extends Core\ProcessorEntity
         $subject = $var->getVal();
         $var = $this->varStoreMapper->findByAppIdKey($application->getAppid(), 'user_invite_message');
         $message = $var->getVal();
-        $domain = $this->settings->__get(['admin', 'url']);
+        $domain = $this->settings->__get(['api', 'url']);
         $message = str_replace('[domain]', $domain, $message);
         $fromEmail = $this->settings->__get(['email', 'from', 'email']);
         $fromName = $this->settings->__get(['email', 'from', 'name']);
