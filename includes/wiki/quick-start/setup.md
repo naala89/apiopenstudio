@@ -9,8 +9,8 @@ Install [docker](https://docs.docker.com/get-docker/).
 Install [git](https://github.com/git-guides/install-git).
 
     cd /path/to/my/development/directory
-    git clone git@github.com:naala89/api_open_studio.git
-    git clone git@github.com:naala89/api_open_studio_admin.git
+    composer create-project apiopenstudio/apiopenstudio:1.0.0-alpha
+    composer create-project apiopenstudio/apiopenstudio_admin:1.0.0-alpha
     git clone git@github.com:naala89/api_open_studio_docker.git
 
 ### Setup ApiOpenStudio
