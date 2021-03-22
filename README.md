@@ -142,11 +142,15 @@ Installation
 
 The quickest way to install ApiOpenStudio is to create a project with composer:
 
-    composer create-project apiopenstudio/apiopenstudio
+    composer create-project apiopenstudio/apiopenstudio:1.0.0-alpha
 
-Or checkout the repository:
+Or checkout the repository [GitHub mirror][studio_github]:
 
     git clone https://github.com/naala89/api_open_studio
+
+Or checkout the main repository [Gitlab][studio_gitlab]:
+
+    git clone https://gitlab.com/john89/api_open_studio
 
 Serve ApiOpenStudio and admin through Docker. See
 the [Docker github repo][docker_github] or
@@ -195,6 +199,10 @@ for more details.
 [docker_github]: https://github.com/naala89/api_open_studio_docker
 
 [docker_gitlab]: https://gitlab.com/john89/api_open_studio_docker
+
+[studio_github]: https://github.com/naala89/api_open_studio
+
+[studio_gitlab]: https://gitlab.com/john89/api_open_studio
 
 [logo]: includes/wiki/images/general/ApiOpenStudio_Logo_Name_Colour.png
 
