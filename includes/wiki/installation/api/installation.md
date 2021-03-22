@@ -3,7 +3,7 @@ Installing the codebase
 
 ### Composer
 
-    composer create-project apiopenstudio/api_open_studio:1.0.0-beta
+    composer create-project apiopenstudio/apiopenstudio:1.0.0-alpha
 
 ### Git
 
