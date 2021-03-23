@@ -41,6 +41,10 @@ stages:
 
 phpcs:
   stage: lint
+  only:
+    - develop
+    - master
+    - merge_request
   artifacts:
     when: on_failure
     paths:
@@ -66,6 +70,7 @@ unit_and_functional_tests:
   only:
     - develop
     - master
+    - merge_request
   artifacts:
     when: on_failure
     paths:
