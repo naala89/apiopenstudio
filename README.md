@@ -204,6 +204,6 @@ for more details.
 
 [studio_gitlab]: https://gitlab.com/john89/api_open_studio
 
-[logo]: includes/wiki/images/general/ApiOpenStudio_Logo_Name_Colour.png
+[logo]: includes/wiki/images/api_open_studio_logo_name_colour.png
 
-[user_roles]: includes/wiki/images/general/user_roles_2.png
+[user_roles]: includes/wiki/images/user_roles_2.png
