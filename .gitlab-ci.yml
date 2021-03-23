@@ -41,6 +41,9 @@ stages:
 
 phpcs:
   stage: lint
+  only:
+    - develop
+    - master
   artifacts:
     when: on_failure
     paths:
