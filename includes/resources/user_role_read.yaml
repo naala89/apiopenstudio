@@ -21,45 +21,45 @@ appid: 1
 ttl: 0
 
 security:
-  function: token
+  processor: token
   id: user_role_read_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: user_role_read_security_token
 
 process:
-  function: user_role_read
+  processor: user_role_read
   id: user_role_read_process
   token:
-    function: bearer_token
+    processor: bearer_token
     id: user_role_read_token
   uid:
-    function: var_get
+    processor: var_get
     id: user_role_read_uid
     nullable: true
     key: uid
   accid:
-    function: var_get
+    processor: var_get
     id: user_role_read_accid
     nullable: true
     key: accid
   appid:
-    function: var_get
+    processor: var_get
     id: user_role_read_appid
     nullable: true
     key: appid
   rid:
-    function: var_get
+    processor: var_get
     id: user_role_read_rid
     nullable: true
     key: rid
   order_by:
-    function: var_get
+    processor: var_get
     id: user_role_read_order_by
     nullable: true
     key: order_by
   direction:
-    function: var_get
+    processor: var_get
     id: user_role_read_direction
     nullable: true
     key: direction

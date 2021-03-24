@@ -21,45 +21,45 @@ appid: 1
 ttl: 0
 
 security:
-  function: token
+  processor: token
   id: user_read_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: user_read_security_token
 
 process:
-  function: user_read
+  processor: user_read
   id: user_read_process
   token:
-    function: bearer_token
+    processor: bearer_token
     id: user_read_token
   uid:
-    function: var_get
+    processor: var_get
     id: user_read_uid
     nullable: true
     key: uid
   username:
-    function: var_get
+    processor: var_get
     id: user_read_username
     nullable: true
     key: username
   email:
-    function: var_get
+    processor: var_get
     id: user_read_email
     nullable: true
     key: email
   keyword:
-    function: var_get
+    processor: var_get
     id: user_read_keyword
     nullable: true
     key: keyword
   orderBy:
-    function: var_get
+    processor: var_get
     id: user_read_order_by
     nullable: true
     key: order_by
   direction:
-    function: var_get
+    processor: var_get
     id: user_read_direction
     nullable: true
     key: direction

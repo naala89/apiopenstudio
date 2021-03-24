@@ -21,16 +21,16 @@ appid: 1
 ttl: 0
 
 process:
-  function: loginStoreDrupal
+  processor: loginStoreDrupal
   id: 1
   source:
-    function: url
+    processor: url
     id: 2
     source:
-      function: concatenate
+      processor: concatenate
       id: 3
       sources:
-        - function: varPersistent
+        - processor: varPersistent
           id: 4
           key: drupalUrl
           operation: fetch
@@ -40,11 +40,11 @@ process:
     normalise: true
     vars:
       username:
-        function: var_post
+        processor: var_post
         id: 5
         key: username
       password:
-        function: var_post
+        processor: var_post
         id: 6
         key: password
     curlOpts:

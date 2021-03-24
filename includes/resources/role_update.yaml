@@ -21,10 +21,10 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_roles
+  processor: token_roles
   id: role_update_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: role_update_token
   roles:
     - Administrator
@@ -32,43 +32,43 @@ security:
     - Application manager
 
 process:
-  function: role_update
+  processor: role_update
   id: role_update_process
   rid:
-    function: field_value
+    processor: field_value
     id: role_update_rid
     key_value: value
     field:
-      function: var_field
+      processor: var_field
       id: role_update_field_rid
       array:
-        function: filter
+        processor: filter
         id: role_update_filter_rid
         filter: rid
         inverse: true
         source:
-          function: convert_to_array
+          processor: convert_to_array
           id: role_update_array_rid
           source:
-            function: var_body
+            processor: var_body
             id: role_update_body_rid
             nullable: false
   name:
-    function: field_value
+    processor: field_value
     id: role_update_name
     key_value: value
     field:
-      function: var_field
+      processor: var_field
       id: role_update_field_name
       array:
-        function: filter
+        processor: filter
         id: role_update_filter_name
         filter: name
         inverse: true
         source:
-          function: convert_to_array
+          processor: convert_to_array
           id: role_update_array_name
           source:
-            function: var_body
+            processor: var_body
             id: role_update_body_name
             nullable: false

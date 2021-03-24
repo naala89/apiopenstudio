@@ -21,25 +21,25 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: security_token
   role: Administrator
 
 process:
-  function: account_update
+  processor: account_update
   id: account_update
   token:
-    function: bearer_token
+    processor: bearer_token
     id: account_update_token
   accid:
-    function: var_uri
+    processor: var_uri
     id: account_update_accid
     index: 0
   name:
-    function: var_uri
+    processor: var_uri
     id: account_update_name
     index: 1
 

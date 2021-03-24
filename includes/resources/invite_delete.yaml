@@ -21,10 +21,10 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_roles
+  processor: token_roles
   id: invite_delete_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: invite_read_security_token
   roles:
     - Administrator
@@ -34,9 +34,9 @@ security:
   validate_application: false
 
 process:
-  function: invite_delete
+  processor: invite_delete
   id: invite_delete_process
   iid:
-    function: var_uri
+    processor: var_uri
     id: invite_delete_iid
     index: 0

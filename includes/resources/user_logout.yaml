@@ -21,15 +21,15 @@ appid: 1
 ttl: 0
 
 security:
-  function: token
+  processor: token
   id: user_logout_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: user_logout_security_token
 
 process:
-  function: user_logout
+  processor: user_logout
   id: user_logout_process
   token:
-    function: bearer_token
+    processor: bearer_token
     id: user_logout_process_token

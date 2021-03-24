@@ -21,10 +21,10 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_roles
+  processor: token_roles
   id: role_delete_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: role_delete_token
   roles:
     - Administrator
@@ -32,9 +32,9 @@ security:
     - Application manager
 
 process:
-  function: role_delete
+  processor: role_delete
   id: role_delete_process
   rid:
-    function: var_uri
+    processor: var_uri
     id: role_delete_rid
     index: 0

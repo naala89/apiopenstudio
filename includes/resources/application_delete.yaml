@@ -21,22 +21,22 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_roles
+  processor: token_roles
   id: application_delete_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: application_delete_security_token
   roles:
     - Administrator
     - Account manager
 
 process:
-  function: application_delete
+  processor: application_delete
   id: application_delete_process
   token:
-    function: bearer_token
+    processor: bearer_token
     id: account_delete_token
   applicationId:
-    function: var_uri
+    processor: var_uri
     id: application_delete_application_id
     index: 0

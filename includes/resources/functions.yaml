@@ -21,10 +21,10 @@ appid: 1
 ttl: 3600
 
 security:
-  function: token_roles
+  processor: token_roles
   id: functions_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: functions_token
   roles:
     - Account manager
@@ -34,9 +34,9 @@ security:
   validate_application: false
 
 process:
-  function: Functions
+  processor: Functions
   id: functions_process
   machine_name:
-    function: var_uri
+    processor: var_uri
     id: functions_machine_name
     index: 0
