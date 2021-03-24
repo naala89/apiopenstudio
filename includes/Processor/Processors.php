@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Functions.
+ * Class Processors.
  *
  * @package    ApiOpenStudio
  * @subpackage Processor
@@ -23,9 +23,9 @@ use RegexIterator;
 /**
  * Class Functions
  *
- * Processor class to list all processor/functions.
+ * Processor class to list processors.
  */
-class Functions extends Core\ProcessorEntity
+class Processors extends Core\ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -33,9 +33,9 @@ class Functions extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected $details = [
-        'name' => 'Functions',
-        'machineName' => 'functions',
-        'description' => 'Fetch data on a single or all Functions.',
+        'name' => 'Processors',
+        'machineName' => 'processors',
+        'description' => 'Fetch data on a single or all Processors.',
         'menu' => 'System',
         'input' => [
             'machine_name' => [
@@ -72,10 +72,9 @@ class Functions extends Core\ProcessorEntity
     public function process()
     {
         $this->logger->info('Processor: ' . $this->details()['machineName']);
-
         $machineName = $this->val('machine_name', true);
-
         $details = [];
+
         foreach ($this->namespaces as $namespace) {
             $classNames = $this->getClassList($namespace);
             foreach ($classNames as $className) {
@@ -101,6 +100,7 @@ class Functions extends Core\ProcessorEntity
         if (empty($result)) {
             throw new Core\ApiException("Invalid machine name: $machineName", 6, $this->id, 401);
         }
+
         return $result;
     }
 

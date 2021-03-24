@@ -28,18 +28,17 @@ function example_update(ADODB_mysqli $db)
 /**
  * Update all resource meta to use the 'processor' keyword instead of 'function'.
  *
+ * Part 1 - Update meta function key.
+ *
  * @param ADODB_mysqli $db
  *
  * @version V1.0.0-alpha2
  *
  * @see https://gitlab.com/john89/api_open_studio/-/issues/54
  */
-function update_all_resources_54(ADODB_mysqli $db)
+function update_all_resources_54_part_1(ADODB_mysqli $db)
 {
     echo "Updating the meta for all resources...\n";
-    $config = new \ApiOpenStudio\Core\Config();
-    $coreAccount = $config->__get(['api', 'core_account']);
-    $coreApplication = $config->__get(['api', 'core_application']);
 
     $sql = "SELECT * FROM resource";
     $resources = $db->execute($sql);
@@ -57,8 +56,30 @@ function update_all_resources_54(ADODB_mysqli $db)
             $db->execute($sql);
         }
     }
+}
 
+/**
+ * Update all resource meta to use the 'processor' keyword instead of 'function'.
+ *
+ * Part 2 - Update the functions processor.
+ *
+ * @param ADODB_mysqli $db
+ *
+ * @version V1.0.0-alpha2
+ *
+ * @see https://gitlab.com/john89/api_open_studio/-/issues/54
+ */
+function update_all_resources_54_part_2(ADODB_mysqli $db)
+{
     echo "Updating the Core 'Functions' resource\n";
+
+    $config = new \ApiOpenStudio\Core\Config();
+    $coreAccount = $config->__get(['api', 'core_account']);
+    $coreApplication = $config->__get(['api', 'core_application']);
+    $basePath = $config->__get(['api', 'base_path']);
+    $dirResources = $config->__get(['api', 'dir_resources']);
+
+    // Find the old Functions processor in the DB.
     $sql = "SELECT res.* FROM resource AS res ";
     $sql .= "INNER JOIN application AS app ON res.appid = app.appid ";
     $sql .= "INNER JOIN account AS acc ON app.accid = acc.accid ";
@@ -67,15 +88,48 @@ function update_all_resources_54(ADODB_mysqli $db)
     $sql .= "AND res.name = 'Functions'";
     $resources = $db->execute($sql);
     if ($resources->recordCount() === 0) {
-        echo "Unable to find the 'Functions' resource. Please validate the SQL: $sql\n";
+        echo "Error: unable to find the 'Functions' resource for $coreAccount, $coreApplication. Please validate the SQL: $sql\n";
         exit();
     }
+
+    // Load the data from the new Processors processor file.
+    $file = $basePath . $dirResources . 'processors.yaml';
+    $yaml = $name = $description = $uri = $method = $appid = $ttl = $meta = '';
+    if (!$contents = file_get_contents($file)) {
+        echo "Error: unable to find the new $file file!\n";
+        exit();
+    }
+    $yaml = \Spyc::YAMLLoadString($contents);
+    $name = $yaml['name'];
+    $description = $yaml['description'];
+    $uri = $yaml['uri'];
+    $method = $yaml['method'];
+    $appid = $yaml['appid'];
+    $ttl = $yaml['ttl'];
+    $meta = [];
+    if (!empty($yaml['security'])) {
+        $meta[] = '"security": ' . json_encode($yaml['security']);
+    }
+    if (!empty($yaml['process'])) {
+        $meta[] = '"process": ' . json_encode($yaml['process']);
+    }
+    $meta = '{' . implode(', ', $meta) . '}';
+
+    // Delete the old Functions processor.
     while ($resource = $resources->fetchRow()) {
         $resid = $resource['resid'];
-        $name = $resource['name'];
-        echo "Editing name, description and URL for $resid: $name\n";
-        $sql = "UPDATE resource SET name = 'Processors', description = 'Ftech details of processors'";
-        $sql .= ", uri = 'processors' WHERE resid = $resid";
+        echo "Deleting $resid: " . $resource['name'] . "'\n";
+        $sql = "DELETE FROM resource WHERE resid = $resid";
         $db->execute($sql);
+    }
+
+    // Insert the new Processors processor.
+    echo "Inserting new Processors processor\n";
+    $sql = 'INSERT INTO resource (`appid`, `name`, `description`, `method`, `uri`, `meta`, `ttl`)';
+    $sql .= "VALUES ($appid, '$name', '$description', '$method', '$uri', '$meta', $ttl)";
+    if (!($db->execute($sql))) {
+        echo "$sql\n";
+        echo "Error: insert resource `$name` failed, please check your logs.\n";
+        exit;
     }
 }
