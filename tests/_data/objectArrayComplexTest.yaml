@@ -11,16 +11,16 @@ appid: 2
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: test object array security
   token:
-    function: var_get
+    processor: var_get
     id: test object array token
     key: token
   role: Consumer
 
 process:
-  function: var_object
+  processor: var_object
   id: test object array process
   attributes:
     -

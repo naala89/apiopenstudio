@@ -11,15 +11,15 @@ appid: 2
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: test good resource no output security
   token:
-    function: var_get
+    processor: var_get
     id: test good resource no output token
     key: token
   role: Consumer
 
 process:
-  function: functions
+  processor: functions
   id: test good resource no output process
   machine_name: all

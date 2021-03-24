@@ -11,39 +11,39 @@ appid: 2
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: test object fields security
   token:
-    function: var_get
+    processor: var_get
     id: test object fields token
     key: token
   role: Consumer
 
 process:
-  function: var_object
+  processor: var_object
   id: test object process
   attributes:
     -
-      function: var_field
+      processor: var_field
       id: test object fields field 1
       key: key1
       value:
-        function: var_field
+        processor: var_field
         id: test object fields field 1 1
         key: key1_1
         value: value1_1
     -
-      function: var_field
+      processor: var_field
       id: test object fields field 2
       key: key2
       value: field2
     -
-      function: var_field
+      processor: var_field
       id: test object fields field 3
       key: key3
       value: field3
     -
-      function: var_field
+      processor: var_field
       id: test object fields field 4
       key: key4
       value: field4

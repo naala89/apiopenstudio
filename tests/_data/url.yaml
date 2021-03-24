@@ -11,42 +11,42 @@ appid: 2
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: test url security
   token:
-    function: var_get
+    processor: var_get
     id: test url token
     key: token
   role: Consumer
 
 process:
-  function: url
+  processor: url
   id: test url processor
   method:
-    function: var_get
+    processor: var_get
     id: test url method
     key: method
   url:
-    function: var_get
+    processor: var_get
     id: test url url
     key: url
   sourceType:
-    function: var_get
+    processor: var_get
     id: test url source_type
     key: source_type
     nullable: true
   reportError:
-    function: var_get
+    processor: var_get
     id: test url report_error
     key: repor_error
     nullable: true
   connectTimeout:
-    function: var_get
+    processor: var_get
     id: test url connect_timeout
     key: connect_timeout
     nullable: true
   timeout:
-    function: var_get
+    processor: var_get
     id: test url timeout
     key: timeout
     nullable: true

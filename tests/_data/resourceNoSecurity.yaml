@@ -11,18 +11,18 @@ appid: 2
 ttl: 0
 
 process:
-  function: functions
+  processor: functions
   id: test bad resource no security process
   machine_name: all
 
 output:
-  - function: email
+  - processor: email
     id: test bad resource no security output email
     to: john@naala.com.au
     subject: "test email"
     format: html
     message: "test email"
-  - function: xml
+  - processor: xml
     id: output xml
     destination: www.foo.bar
     method: post

@@ -11,15 +11,15 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: resource application no developer role security
   token:
-    function: var_get
+    processor: var_get
     id: resource application no developer role token
     key: token
   role: Consumer
 
 process:
-  function: functions
+  processor: functions
   id: resource application no developer role process
   machine_name: all

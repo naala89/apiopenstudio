@@ -11,26 +11,26 @@ appid: 2
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: resource identical ids security
   token:
-    function: var_get
+    processor: var_get
     id: resource identical ids token
     key: token
   role: Consumer
 
 process:
-  function: functions
+  processor: functions
   id: resource identical ids
 
 output:
-  - function: email
+  - processor: email
     id: resource identical ids
     to: john@naala.com.au
     subject: "test email"
     format: html
     message: test message
-  - function: xml
+  - processor: xml
     id: resource identical ids xml
     destination: www.foo.bar
     method: post

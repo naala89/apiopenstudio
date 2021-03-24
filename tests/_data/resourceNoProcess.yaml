@@ -11,21 +11,21 @@ appid: 2
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: test bad resource no process security
   token:
-    function: var_get
+    processor: var_get
     id: test bad resource no process token
     key: token
   role: Consumer
 
 output:
   - response
-  - function: email
+  - processor: email
     to: john@naala.com.au
     subject: "test email"
     format: html
     message: "test email"
-  - function: xml
+  - processor: xml
     destination: www.foo.bar
     method: post
