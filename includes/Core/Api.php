@@ -403,8 +403,8 @@ class Api
                     }
                 }
 
-                $classStr = $this->helper->getProcessorString($node->function);
-                $class = new $classStr($node, $this->request, $this->db, Cascade::getLogger('api'));
+                $classStr = $this->helper->getProcessorString($node->processor);
+                $class = new $classStr($node, $this->request, $this->db, $this->logger);
                 $results[$node->id] = $class->process();
             }
         }
