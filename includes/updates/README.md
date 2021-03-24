@@ -11,6 +11,20 @@ each file in ```includes/updates``` directory, and call the functions of any
 core version > than the current ```version``` in the ```core``` table in order
 of version.
 
+Versioning
+----------
+
+Use the standard ```1.0.34```.
+
+In the case of alpha, beta or RC, the following is permissible:
+
+    1.0.34-alpha
+    1.0.34-alpha1
+    1.0.34-beta
+    1.0.34-beta3
+    1.0.34-RC
+    1.0.34-RC1
+
 Current DB version
 ------------------
 
