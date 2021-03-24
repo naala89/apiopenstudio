@@ -96,10 +96,10 @@ However, it does nothing and has no security yet.
 
 Add the following snippet to the Security section:
 
-    function: token_role
+    processor: token_role
     id: security
     token:
-      function: bearer_token
+      processor: bearer_token
       id: security_token
     role: Developer
 
@@ -125,7 +125,7 @@ not need to be dynamic. So we're using a static string: "Developer".
 
 Add the following snippet to the Process section:
 
-    function: var_str
+    processor: var_str
     id: process
     value: 'Hello world!'
 
@@ -159,14 +159,14 @@ select YAML format, it should look like this:
     appid: 2
     ttl: ''
     security:
-        function: token_role
+        processor: token_role
         id: security
         token:
-            function: bearer_token
+            processor: bearer_token
             id: security_token
         role: Developer
     process:
-        function: var_str
+        processor: var_str
         id: process
         value: 'Hello world'
 

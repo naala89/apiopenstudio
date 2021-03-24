@@ -63,6 +63,7 @@ commits on top of the latest code in develop):
     git checkout feature/103-my-ticket-title
     git fetch origin develop
     git rebase origin/develop
+    git push origin feature/103-my-ticket-title
 
 ### Test
 
@@ -149,7 +150,7 @@ fails, the CI will not deploy the phpdoc or wiki changes.
 squizlabs/phpcs is defined in the composer.json file. Before creating a PR, you
 should run:
 
-    ./vendor/bin/phpcs --standard=PSR12 includes/ public/*.php
+    ./vendor/bin/phpcs --standard=PSR12 includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
 
 [gitlab]: https://gitlab.com/john89/api_open_studio
 

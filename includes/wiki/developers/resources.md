@@ -78,14 +78,14 @@ responses.
 Always return the result in JSON format
 
     output:
-        function: json
+        processor: json
         id: output_response_json
 
 Upload the result in XML format to a remote server. The response will
 contain ```true``` or ```false```, depending on the process success or failure.
 
     output:
-        function: file
+        processor: file
         id: output_file_remote_destination
         filename: apiopenstudio.xml
         destination: 'http://this.server.com/drop/box
@@ -97,10 +97,10 @@ Return the response in JSON format and upload in HTML format to a remote server
 
     output:
         -
-            function: json
+            processor: json
             id: output_response_json
         -
-            function: xml
+            processor: xml
             id: output_xml_remote_destination
             filename: apiopenstudio.xml
             destination: 'http://this.server.com/drop/box
