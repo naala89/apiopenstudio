@@ -180,7 +180,7 @@ class ResourceValidator
 
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
-                $classStr = $this->helper->getProcessorString($node['function']);
+                $classStr = $this->helper->getProcessorString($node['processor']);
                 $class = new \ReflectionClass($classStr);
                 $parents = [];
                 while ($parent = $class->getParentClass()) {
