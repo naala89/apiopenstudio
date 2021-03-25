@@ -106,8 +106,9 @@ ApiOpenStudio v1.0.0-alpha1
 
 - Fixed release issue where core version was not updated in DB definitions.
 
-ApiOpenStudio v1.0.0-beta
+ApiOpenStudio v1.0.0-alpha2
 =========================
 
 - Added support for alpha/beta/RC release tags to the update script.
 - Replaced all references to 'function' with 'processor', to remove all ambiguity.
+- Updated the docblock in all files to point to the correct copyright entity.
