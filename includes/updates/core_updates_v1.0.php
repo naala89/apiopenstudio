@@ -88,7 +88,9 @@ function update_all_resources_54_part_2(ADODB_mysqli $db)
     $sql .= "AND res.name = 'Functions'";
     $resources = $db->execute($sql);
     if ($resources->recordCount() === 0) {
-        echo "Error: unable to find the 'Functions' resource for $coreAccount, $coreApplication. Please validate the SQL: $sql\n";
+        $message = "Error: unable to find the 'Functions' resource for $coreAccount, $coreApplication.";
+        $message .= " Please validate the SQL: $sql\n";
+        echo $message;
         exit();
     }
 
