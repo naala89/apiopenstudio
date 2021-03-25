@@ -63,15 +63,15 @@ It defines everything about a resource, such as:
 * The flow of data between functions from input/s to the final output.
 * The format of the output, which can be JSON, XML, text, file, image, etc.
 
-### Functions
+### Processors
 
-Functions are the semantic blocks used in the processing of the incoming data.
+Processors are the semantic blocks used in the processing of the incoming data.
 
-You should not need to create any Function classes, thus eliminating the need
+You should not need to create any Processor classes, thus eliminating the need
 for time-consuming programming.
 
-There are many functions available with ApiOpenStudio core, but you can add more
-functions from the community, or even create custom ones yourself. These can all
+There are many processors available with ApiOpenStudio core, but you can add more
+processors from the community, or even create custom ones yourself. These can all
 me maintained using composer.
 
 [gitlab_admin]: https://gitlab.com/john89/api_open_studio_admin

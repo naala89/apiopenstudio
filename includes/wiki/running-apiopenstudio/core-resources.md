@@ -117,16 +117,16 @@ All get, post and uri params should be url encoded.
         <td style="width: fit-content; white-space: nowrap">/apiopenstudio/core/application/33/3/new%name</td>
     </tr>
     <tr>
-        <td style="width: fit-content; white-space: nowrap">Functions</td>
-        <td style="width: fit-content; white-space: nowrap">Fetch details of all functions</td>
-        <td style="width: fit-content; white-space: nowrap">functions</td>
-        <td style="width: fit-content; white-space: nowrap">functions</td>
+        <td style="width: fit-content; white-space: nowrap">Processors</td>
+        <td style="width: fit-content; white-space: nowrap">Fetch details of all processors</td>
+        <td style="width: fit-content; white-space: nowrap">processors</td>
+        <td style="width: fit-content; white-space: nowrap">processors</td>
         <td style="width: fit-content; white-space: nowrap">GET</td>
         <td style="width: fit-content; white-space: nowrap"></td>
         <td style="width: fit-content; white-space: nowrap"></td>
-        <td style="width: fit-content; white-space: nowrap">0 -> machine name</td>
+        <td style="width: fit-content; white-space: nowrap">0 -> machine name or 'all'</td>
         <td style="width: fit-content; white-space: nowrap"></td>
-        <td style="width: fit-content; white-space: nowrap">/apiopenstudio/core/functions<br />/apiopenstudio/core/functions/account_read</td>
+        <td style="width: fit-content; white-space: nowrap">/apiopenstudio/core/processors/all<br />/apiopenstudio/core/processors/account_read</td>
     </tr>
     <tr>
         <td style="width: fit-content; white-space: nowrap">Invite accept</td>
