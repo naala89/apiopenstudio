@@ -66,7 +66,7 @@ Run "composer update" on in the docroot after transferring files.
 - added Filter processor
 - fixed config override
 
-ApiOpenStudio v1.0.0-beta-RC1
+ApiOpenStudio v1.0.0-alpha-RC1
 =============================
 
 - Renamed the code to ApiOpenStudio
@@ -81,7 +81,7 @@ ApiOpenStudio v1.0.0-beta-RC1
     - Changed to use Monolog for logging
     - Changed to use Cascade for settings
 
-ApiOpenStudio v1.0.0-beta-RC2
+ApiOpenStudio v1.0.0-alpha-RC2
 =============================
 
 - Separated the admin code from the API.
@@ -95,3 +95,20 @@ ApiOpenStudio v1.0.0-beta-RC2
 - Created the update script.
 - Consolidated settings.yml and .env.
 - Minor bug fixes.
+
+ApiOpenStudio v1.0.0-alpha
+===========================
+
+- Additional script for updating.
+
+ApiOpenStudio v1.0.0-alpha1
+===========================
+
+- Fixed release issue where core version was not updated in DB definitions.
+
+ApiOpenStudio v1.0.0-alpha2
+=========================
+
+- Added support for alpha/beta/RC release tags to the update script.
+- Replaced all references to 'function' with 'processor', to remove all ambiguity.
+- Updated the docblock in all files to point to the correct copyright entity.

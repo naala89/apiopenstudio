@@ -5,7 +5,7 @@
 #            If a copy of the MPL was not distributed with this file,
 #            You can obtain one at https://mozilla.org/MPL/2.0/.
 # @author    john89 (https://gitlab.com/john89)
-# @copyright 2020-2030 ApiOpenStudio
+# @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
 name: Resource create
@@ -21,55 +21,55 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: resource_create_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: resource_create_token
   role: Developer
   validate_account: false
   validate_application: false
 
 process:
-  function: resource_create
+  processor: resource_create
   id: resource_create_process
   name:
-    function: var_post
+    processor: var_post
     id: resource_create_name
     nullable: false
     key: name
   description:
-    function: var_post
+    processor: var_post
     id: resource_create_description
     nullable: true
     key: description
   appid:
-    function: var_post
+    processor: var_post
     id: resource_create_appid
     nullable: false
     key: appid
   method:
-    function: var_post
+    processor: var_post
     id: resource_create_method
     nullable: false
     key: method
   uri:
-    function: var_post
+    processor: var_post
     id: resource_create_uri
     nullable: false
     key: uri
   ttl:
-    function: var_post
+    processor: var_post
     id: resource_create_ttl
     nullable: false
     key: ttl
   format:
-    function: var_post
+    processor: var_post
     id: resource_create_format
     nullable: false
     key: format
   meta:
-    function: var_post
+    processor: var_post
     id: resource_create_meta
     nullable: false
     key: meta

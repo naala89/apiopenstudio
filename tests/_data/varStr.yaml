@@ -11,18 +11,18 @@ appid: 2
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: test var_uri security
   token:
-    function: var_get
+    processor: var_get
     id: test var_uri token
     key: token
   role: Consumer
 
 process:
-  function: var_str
+  processor: var_str
   id: test var_uri process
   value:
-    function: var_get
+    processor: var_get
     id: test var_uri string value
     key: value

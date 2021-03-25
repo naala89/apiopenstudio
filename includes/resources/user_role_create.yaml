@@ -5,7 +5,7 @@
 #            If a copy of the MPL was not distributed with this file,
 #            You can obtain one at https://mozilla.org/MPL/2.0/.
 # @author    john89 (https://gitlab.com/john89)
-# @copyright 2020-2030 ApiOpenStudio
+# @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
 name: User Role create
@@ -21,10 +21,10 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_roles
+  processor: token_roles
   id: user_role_create_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: user_role_create_token
   roles:
     - Administrator
@@ -32,25 +32,25 @@ security:
     - Application manager
 
 process:
-  function: user_role_create
+  processor: user_role_create
   id: user_role_create_process
   uid:
-    function: var_post
+    processor: var_post
     id: user_role_create_uid
     nullable: false
     key: uid
   accid:
-    function: var_post
+    processor: var_post
     id: user_role_create_accid
     nullable: true
     key: accid
   appid:
-    function: var_post
+    processor: var_post
     id: user_role_create_appid
     nullable: true
     key: appid
   rid:
-    function: var_post
+    processor: var_post
     id: user_role_create_rid
     nullable: false
     key: rid

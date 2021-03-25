@@ -6,7 +6,7 @@
  * @package    ApiOpenStudio
  * @subpackage Core
  * @author     john89 (https://gitlab.com/john89)
- * @copyright  2020-2030 ApiOpenStudio
+ * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  *             If a copy of the MPL was not distributed with this file,
  *             You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -403,8 +403,8 @@ class Api
                     }
                 }
 
-                $classStr = $this->helper->getProcessorString($node->function);
-                $class = new $classStr($node, $this->request, $this->db, Cascade::getLogger('api'));
+                $classStr = $this->helper->getProcessorString($node->processor);
+                $class = new $classStr($node, $this->request, $this->db, $this->logger);
                 $results[$node->id] = $class->process();
             }
         }

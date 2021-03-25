@@ -9,27 +9,27 @@ method: get
 ttl: 0
 
 security:
-  function: TokenConsumer
+  processor: token_consumer
   id: 1
   token:
-    function: varGet
+    processor: var_get
     id: 2
     name: token
 
 process:
-  function: concatenate
+  processor: concatenate
   id: 3
   sources:
-    - function: fragment
+    - processor: fragment
       name: frag1
       id: 4
-    - function: fragment
+    - processor: fragment
       name: frag2
       id: 5
-    - function: fragment
+    - processor: fragment
       name: frag3
       id: 6
-    - function: fragment
+    - processor: fragment
       name: frag1
       id: 7
     - 4
@@ -37,14 +37,14 @@ process:
 
 fragments:
   frag1:
-    function: varGet
+    processor: var_get
     id: 8
     name: val1
   frag2:
-    function: varGet
+    processor: var_get
     id: 9
     name: val2
   frag3:
-    function: varGet
+    processor: var_get
     id: 10
     name: val3

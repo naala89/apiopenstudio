@@ -5,7 +5,7 @@
 #            If a copy of the MPL was not distributed with this file,
 #            You can obtain one at https://mozilla.org/MPL/2.0/.
 # @author    john89 (https://gitlab.com/john89)
-# @copyright 2020-2030 ApiOpenStudio
+# @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
 name: User login
@@ -21,13 +21,13 @@ appid: 1
 ttl: 0
 
 process:
-  function: user_login
+  processor: user_login
   id: user_login_process
   username:
-    function: var_post
+    processor: var_post
     id: user_login_username
     key: username
   password:
-    function: var_post
+    processor: var_post
     id: user_login_password
     key: password

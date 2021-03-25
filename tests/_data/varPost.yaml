@@ -11,20 +11,20 @@ appid: 2
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: test var_post security
   token:
-    function: var_post
+    processor: var_post
     id: test var_post token
     key: token
   role: Consumer
 
 process:
-  function: var_post
+  processor: var_post
   id: test var_post process
   key: value
   nullable:
-    function: var_post
+    processor: var_post
     id: test var_post nullable
     key: nullable
     nullable: true

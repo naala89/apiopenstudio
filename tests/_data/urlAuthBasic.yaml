@@ -9,20 +9,20 @@ method: get
 ttl: 0
 
 security:
-  function: TokenConsumer
+  processor: token_consumer
   id: 1
   token:
-    function: varGet
+    processor: var_get
     id: 2
     name: token
 
 process:
-  function: url
+  processor: url
   id: 3
   method: get
   url: "http://datagator.local/html/sample/testAuthBasic.php"
   auth:
-    function: AuthBasic
+    processor: auth_basic
     id: 4
     username: username
     password: password

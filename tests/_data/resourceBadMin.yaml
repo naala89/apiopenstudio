@@ -11,27 +11,27 @@ appid: 2
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: test resource with bad min security
   token:
-    function: var_get
+    processor: var_get
     id: test resource with bad min token
     key: token
   role: Consumer
 
 process:
-  function: concatenate
+  processor: concatenate
   id: test resource with bad min process
   sources:
     - zsdkfjh
 
 output:
-  - function: email
+  - processor: email
     id: test resource with bad min email
     to: john@naala.com.au
     subject: "test email"
     format: html
-  - function: xml
+  - processor: xml
     id: test resource with bad min xml
     destination:
       - www.foo.bar

@@ -5,7 +5,7 @@
 #            If a copy of the MPL was not distributed with this file,
 #            You can obtain one at https://mozilla.org/MPL/2.0/.
 # @author    john89 (https://gitlab.com/john89)
-# @copyright 2020-2030 ApiOpenStudio
+# @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
 name: Account create
@@ -21,17 +21,17 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: security_token
   role: Administrator
 
 process:
-  function: account_create
+  processor: account_create
   id: account_create_process
   name:
-    function: var_post
+    processor: var_post
     id: account_create_name
     key: name

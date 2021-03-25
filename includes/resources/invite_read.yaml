@@ -5,7 +5,7 @@
 #            If a copy of the MPL was not distributed with this file,
 #            You can obtain one at https://mozilla.org/MPL/2.0/.
 # @author    john89 (https://gitlab.com/john89)
-# @copyright 2020-2030 ApiOpenStudio
+# @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
 name: Invite read
@@ -21,10 +21,10 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_roles
+  processor: token_roles
   id: invite_read_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: invite_read_security_token
   roles:
     - Administrator
@@ -34,35 +34,35 @@ security:
   validate_application: false
 
 process:
-  function: invite_read
+  processor: invite_read
   id: invite_read_process
   iid:
-    function: var_get
+    processor: var_get
     id: invite_read_iid
     key: iid
     nullable: true
   email:
-    function: var_get
+    processor: var_get
     id: invite_read_email
     key: email
     nullable: true
   order_by:
-    function: var_get
+    processor: var_get
     id: invite_read_order_by
     key: order_by
     nullable: true
   direction:
-    function: var_get
+    processor: var_get
     id: invite_read_direction
     key: direction
     nullable: true
   offset:
-    function: var_get
+    processor: var_get
     id: invite_read_offset
     key: offset
     nullable: true
   limit:
-    function: var_get
+    processor: var_get
     id: invite_read_limit
     key: limit
     nullable: true

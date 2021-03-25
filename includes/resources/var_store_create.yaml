@@ -5,7 +5,7 @@
 #            If a copy of the MPL was not distributed with this file,
 #            You can obtain one at https://mozilla.org/MPL/2.0/.
 # @author    john89 (https://gitlab.com/john89)
-# @copyright 2020-2030 ApiOpenStudio
+# @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
 name: Var store create
@@ -21,33 +21,33 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_roles
+  processor: token_roles
   id: validate_user_has_access_rights
   token:
-    function: bearer_token
+    processor: bearer_token
     id: header_bearer_security_token
   roles:
     - Application manager
     - Developer
 
 process:
-  function: var_store_create
+  processor: var_store_create
   id: create_the_var
   token:
-    function: bearer_token
+    processor: bearer_token
     id: var_store_read_token
   appid:
-    function: var_post
+    processor: var_post
     id: get_the_appid
     nullable: false
     key: appid
   key:
-    function: var_post
+    processor: var_post
     id: get_the_var_key
     nullable: false
     key: key
   val:
-    function: var_post
+    processor: var_post
     id: get_the_var_val
     nullable: false
     key: val

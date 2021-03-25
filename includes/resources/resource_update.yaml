@@ -5,7 +5,7 @@
 #            If a copy of the MPL was not distributed with this file,
 #            You can obtain one at https://mozilla.org/MPL/2.0/.
 # @author    john89 (https://gitlab.com/john89)
-# @copyright 2020-2030 ApiOpenStudio
+# @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
 name: Resource update
@@ -21,189 +21,189 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: resource_update_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: resource_update_security_token
   role: Developer
   validate_account: false
   validate_application: false
 
 process:
-  function: resource_update
+  processor: resource_update
   id: resource_update_process
   token:
-    function: bearer_token
+    processor: bearer_token
     id: resource_update_token
   resid:
-    function: field_value
+    processor: field_value
     id: resource_update_resid
     key_value: value
     field:
-      function: var_field
+      processor: var_field
       id: resource_update_field_resid
       array:
-        function: filter
+        processor: filter
         id: resource_update_filter_resid
         filter: resid
         inverse: true
         source:
-          function: convert_to_array
+          processor: convert_to_array
           id: resource_update_array_resid
           source:
-            function: var_body
+            processor: var_body
             id: resource_update_body_resid
             nullable: false
   name:
-    function: field_value
+    processor: field_value
     id: resource_update_name
     key_value: value
     field:
-      function: var_field
+      processor: var_field
       id: resource_update_field_name
       array:
-        function: filter
+        processor: filter
         id: resource_update_filter_name
         filter: name
         inverse: true
         source:
-          function: convert_to_array
+          processor: convert_to_array
           id: resource_update_array_name
           source:
-            function: var_body
+            processor: var_body
             id: resource_update_body_name
             nullable: false
   description:
-    function: field_value
+    processor: field_value
     id: resource_update_description
     key_value: value
     field:
-      function: var_field
+      processor: var_field
       id: resource_update_field_description
       array:
-        function: filter
+        processor: filter
         id: resource_update_filter_description
         filter: description
         inverse: true
         source:
-          function: convert_to_array
+          processor: convert_to_array
           id: resource_update_array_description
           source:
-            function: var_body
+            processor: var_body
             id: resource_update_body_description
             nullable: false
   appid:
-    function: field_value
+    processor: field_value
     id: resource_update_appid
     key_value: value
     field:
-      function: var_field
+      processor: var_field
       id: resource_update_field_appid
       array:
-        function: filter
+        processor: filter
         id: resource_update_filter_appid
         filter: appid
         inverse: true
         source:
-          function: convert_to_array
+          processor: convert_to_array
           id: resource_update_array_appid
           source:
-            function: var_body
+            processor: var_body
             id: resource_update_body_appid
             nullable: false
   method:
-    function: field_value
+    processor: field_value
     id: resource_update_method
     key_value: value
     field:
-      function: var_field
+      processor: var_field
       id: resource_update_field_method
       array:
-        function: filter
+        processor: filter
         id: resource_update_filter_method
         filter: method
         inverse: true
         source:
-          function: convert_to_array
+          processor: convert_to_array
           id: resource_update_array_method
           source:
-            function: var_body
+            processor: var_body
             id: resource_update_body_method
             nullable: false
   uri:
-    function: field_value
+    processor: field_value
     id: resource_update_uri
     key_value: value
     field:
-      function: var_field
+      processor: var_field
       id: resource_update_field_uri
       array:
-        function: filter
+        processor: filter
         id: resource_update_filter_uri
         filter: uri
         inverse: true
         source:
-          function: convert_to_array
+          processor: convert_to_array
           id: resource_update_array_uri
           source:
-            function: var_body
+            processor: var_body
             id: resource_update_body_uri
             nullable: false
   ttl:
-    function: field_value
+    processor: field_value
     id: resource_update_ttl
     key_value: value
     field:
-      function: var_field
+      processor: var_field
       id: resource_update_field_ttl
       array:
-        function: filter
+        processor: filter
         id: resource_update_filter_ttl
         filter: ttl
         inverse: true
         source:
-          function: convert_to_array
+          processor: convert_to_array
           id: resource_update_array_ttl
           source:
-            function: var_body
+            processor: var_body
             id: resource_update_body_ttl
             nullable: false
   format:
-    function: field_value
+    processor: field_value
     id: resource_update_format
     key_value: value
     field:
-      function: var_field
+      processor: var_field
       id: resource_update_field_format
       array:
-        function: filter
+        processor: filter
         id: resource_update_filter_format
         filter: format
         inverse: true
         source:
-          function: convert_to_array
+          processor: convert_to_array
           id: resource_update_array_format
           source:
-            function: var_body
+            processor: var_body
             id: resource_update_body_format
             nullable: false
   meta:
-    function: field_value
+    processor: field_value
     id: resource_update_meta
     key_value: value
     field:
-      function: var_field
+      processor: var_field
       id: resource_update_field_meta
       array:
-        function: filter
+        processor: filter
         id: resource_update_filter_meta
         filter: meta
         inverse: true
         source:
-          function: convert_to_array
+          processor: convert_to_array
           id: resource_update_array_meta
           source:
-            function: var_body
+            processor: var_body
             id: resource_update_body_meta
             nullable: false

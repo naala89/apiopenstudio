@@ -9,22 +9,22 @@ method: get
 ttl: 0
 
 security:
-  function: TokenConsumer
+  processor: token_consumer
   id: 1
   token:
-    function: varGet
+    processor: var_get
     id: 2
     name: token
 
 process:
-  function: collection
+  processor: collection
   id: 3
   values:
-    - function: field
+    - processor: field
       id: 4
       key: key1
       value:
-        function: field
+        processor: field
         id: 5
         key: key2
         value: val2

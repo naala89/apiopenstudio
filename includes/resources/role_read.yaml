@@ -5,7 +5,7 @@
 #            If a copy of the MPL was not distributed with this file,
 #            You can obtain one at https://mozilla.org/MPL/2.0/.
 # @author    john89 (https://gitlab.com/john89)
-# @copyright 2020-2030 ApiOpenStudio
+# @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
 name: Role read
@@ -21,10 +21,10 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_roles
+  processor: token_roles
   id: role_read_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: role_read_token
   roles:
     - Administrator
@@ -35,24 +35,24 @@ security:
   validate_application: false
 
 process:
-  function: role_read
+  processor: role_read
   id: role_read_process
   rid:
-    function: var_uri
+    processor: var_uri
     id: role_read_accid
     index: 0
   keyword:
-    function: var_get
+    processor: var_get
     id: role_read_keyword
     key: keyword
     nullable: true
   order_by:
-    function: var_get
+    processor: var_get
     id: role_read_order_by
     key: order_by
     nullable: true
   direction:
-    function: var_get
+    processor: var_get
     id: role_read_direction
     key: direction
     nullable: true

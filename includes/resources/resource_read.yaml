@@ -5,7 +5,7 @@
 #            If a copy of the MPL was not distributed with this file,
 #            You can obtain one at https://mozilla.org/MPL/2.0/.
 # @author    john89 (https://gitlab.com/john89)
-# @copyright 2020-2030 ApiOpenStudio
+# @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
 name: Resource read
@@ -21,48 +21,48 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: resource_read_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: resource_read_security_token
   role: Developer
   validate_account: false
   validate_application: false
 
 process:
-  function: resource_read
+  processor: resource_read
   id: resource_read_process
   token:
-    function: bearer_token
+    processor: bearer_token
     id: resource_read_token
   resid:
-    function: var_get
+    processor: var_get
     id: resource_read_resid
     nullable: true
     key: resid
   accid:
-    function: var_get
+    processor: var_get
     id: resource_read_accid
     nullable: true
     key: accid
   appid:
-    function: var_get
+    processor: var_get
     id: resource_read_appid
     nullable: true
     key: appid
   keyword:
-    function: var_get
+    processor: var_get
     id: resource_read_keyword
     nullable: true
     key: keyword
   order_by:
-    function: var_get
+    processor: var_get
     id: resource_read_order_by
     nullable: true
     key: order_by
   direction:
-    function: var_get
+    processor: var_get
     id: resource_read_direction
     nullable: true
     key: direction

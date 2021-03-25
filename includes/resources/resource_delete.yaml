@@ -5,7 +5,7 @@
 #            If a copy of the MPL was not distributed with this file,
 #            You can obtain one at https://mozilla.org/MPL/2.0/.
 # @author    john89 (https://gitlab.com/john89)
-# @copyright 2020-2030 ApiOpenStudio
+# @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
 name: Resource delete
@@ -21,22 +21,22 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: resource_delete_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: resource_delete_security_token
   role: Developer
   validate_account: false
   validate_application: false
 
 process:
-  function: resource_delete
+  processor: resource_delete
   id: resource_delete_process
   token:
-    function: bearer_token
+    processor: bearer_token
     id: resource_delete_token
   resid:
-    function: var_uri
+    processor: var_uri
     id: resource_delete_resid
     index: 0
