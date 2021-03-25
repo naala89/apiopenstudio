@@ -48,11 +48,11 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'Missing name in new resource.',
-        'id' => 'resource_import_process',
-    ]
+        'error' => [
+            'code' => 6,
+            'message' => 'Missing name in new resource.',
+            'id' => 'resource_import_process',
+        ]
     ]
 );
 
@@ -77,11 +77,11 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'Missing uri in new resource.',
-        'id' => 'resource_import_process',
-    ],
+        'error' => [
+            'code' => 6,
+            'message' => 'Missing uri in new resource.',
+            'id' => 'resource_import_process',
+        ],
     ]
 );
 
@@ -106,22 +106,22 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'Missing description in new resource.',
-        'id' => 'resource_import_process',
-    ]
+        'error' => [
+            'code' => 6,
+            'message' => 'Missing description in new resource.',
+            'id' => 'resource_import_process',
+        ]
     ]
 );
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'No resources found.',
-        'id' => 'resource_read_process',
-    ]
+        'error' => [
+            'code' => 6,
+            'message' => 'No resources found or insufficent privileges.',
+            'id' => 'resource_read_process',
+        ]
     ]
 );
 
@@ -146,11 +146,11 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'Missing method in new resource.',
-        'id' => 'resource_import_process',
-    ],
+        'error' => [
+            'code' => 6,
+            'message' => 'Missing method in new resource.',
+            'id' => 'resource_import_process',
+        ],
     ]
 );
 
@@ -175,22 +175,22 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'Missing ttl in new resource.',
-        'id' => 'resource_import_process',
-    ],
+        'error' => [
+            'code' => 6,
+            'message' => 'Missing ttl in new resource.',
+            'id' => 'resource_import_process',
+        ],
     ]
 );
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'No resources found.',
-        'id' => 'resource_read_process',
-    ],
+        'error' => [
+            'code' => 6,
+            'message' => 'No resources found or insufficent privileges.',
+            'id' => 'resource_read_process',
+        ],
     ]
 );
 
@@ -215,22 +215,22 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'Negative ttl in new resource.',
-        'id' => 'resource_import_process',
-    ],
+        'error' => [
+            'code' => 6,
+            'message' => 'Negative ttl in new resource.',
+            'id' => 'resource_import_process',
+        ],
     ]
 );
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'No resources found.',
-        'id' => 'resource_read_process',
-    ],
+        'error' => [
+            'code' => 6,
+            'message' => 'No resources found or insufficent privileges.',
+            'id' => 'resource_read_process',
+        ],
     ]
 );
 
@@ -279,22 +279,22 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'Missing process in new resource.',
-        'id' => -1
-    ]
+        'error' => [
+            'code' => 6,
+            'message' => 'Missing process in new resource.',
+            'id' => -1
+        ]
     ]
 );
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'No resources found.',
-        'id' => 'resource_read_process',
-    ],
+        'error' => [
+            'code' => 6,
+            'message' => 'No resources found or insufficent privileges.',
+            'id' => 'resource_read_process',
+        ],
     ]
 );
 
@@ -353,7 +353,7 @@ $I->seeResponseContains('true');
 //$I->seeResponseContainsJson([
 //    'error' => [
 //        'code' => 6,
-//        'message' => 'No resources found.',
+//        'message' => 'No resources found or insufficent privileges.',
 //        'id' => 'resource_read_process',
 //    ],
 //]);
@@ -392,7 +392,7 @@ $I->seeResponseContainsJson(
     [
     'error' => [
         'code' => 6,
-        'message' => 'No resources found.',
+        'message' => 'No resources found or insufficent privileges.',
         'id' => 'resource_read_process',
     ]
     ]
@@ -432,7 +432,7 @@ $I->seeResponseContainsJson(
     [
     'error' => [
         'code' => 6,
-        'message' => 'No resources found.',
+        'message' => 'No resources found or insufficent privileges.',
         'id' => 'resource_read_process',
     ]
     ]
@@ -472,7 +472,7 @@ $I->seeResponseContainsJson(
     [
     'error' => [
         'code' => 6,
-        'message' => 'No resources found.',
+        'message' => 'No resources found or insufficent privileges.',
         'id' => 'resource_read_process',
     ]
     ]
@@ -512,7 +512,7 @@ $I->seeResponseContainsJson(
     [
     'error' => [
         'code' => 6,
-        'message' => 'No resources found.',
+        'message' => 'No resources found or insufficent privileges.',
         'id' => 'resource_read_process',
     ]
     ]
@@ -550,7 +550,7 @@ $I->seeResponseContainsJson(
     [
     'error' => [
         'code' => 6,
-        'message' => 'No resources found.',
+        'message' => 'No resources found or insufficent privileges.',
         'id' => 'resource_read_process',
     ]
     ]
@@ -588,7 +588,7 @@ $I->seeResponseContainsJson(
     [
     'error' => [
         'code' => 6,
-        'message' => 'No resources found.',
+        'message' => 'No resources found or insufficent privileges.',
         'id' => 'resource_read_process',
     ]
     ]
@@ -626,7 +626,7 @@ $I->seeResponseContainsJson(
     [
     'error' => [
         'code' => 6,
-        'message' => 'No resources found.',
+        'message' => 'No resources found or insufficent privileges.',
         'id' => 'resource_read_process',
     ]
     ]
@@ -689,7 +689,7 @@ $I->seeResponseContainsJson(
     [
     'error' => [
         'code' => 6,
-        'message' => 'No resources found.',
+        'message' => 'No resources found or insufficent privileges.',
         'id' => 'resource_read_process',
     ]
     ]
@@ -727,7 +727,7 @@ $I->seeResponseContainsJson(
     [
     'error' => [
         'code' => 6,
-        'message' => 'No resources found.',
+        'message' => 'No resources found or insufficent privileges.',
         'id' => 'resource_read_process',
     ]
     ]
@@ -765,7 +765,7 @@ $I->seeResponseContainsJson(
     [
     'error' => [
         'code' => 6,
-        'message' => 'No resources found.',
+        'message' => 'No resources found or insufficent privileges.',
         'id' => 'resource_read_process',
     ]
     ]
@@ -803,7 +803,7 @@ $I->seeResponseContainsJson(
     [
     'error' => [
         'code' => 6,
-        'message' => 'No resources found.',
+        'message' => 'No resources found or insufficent privileges.',
         'id' => 'resource_read_process',
     ]
     ]
@@ -843,7 +843,7 @@ $I->seeResponseContainsJson(
     [
     'error' => [
         'code' => 6,
-        'message' => 'No resources found.',
+        'message' => 'No resources found or insufficent privileges.',
         'id' => 'resource_read_process',
     ]
     ]
@@ -934,7 +934,7 @@ $I->seeResponseContainsJson(
 //$I->seeResponseContainsJson([
 //    'error' => [
 //        'code' => 6,
-//        'message' => 'No resources found.',
+//        'message' => 'No resources found or insufficent privileges.',
 //        'id' => 'resource_read_process',
 //    ]
 //]);
