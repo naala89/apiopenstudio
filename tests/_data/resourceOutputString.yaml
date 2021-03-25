@@ -11,7 +11,7 @@ appid: 2
 ttl: 0
 
 process:
-  function: functions
+  processor: processors
   id: test resource with static string output process
   machine_name: all
 

@@ -21,23 +21,23 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_roles
+  processor: token_roles
   id: validate_user_has_access_rights
   token:
-    function: bearer_token
+    processor: bearer_token
     id: header_bearer_security_token
   roles:
     - Application manager
     - Developer
 
 process:
-  function: var_store_delete
+  processor: var_store_delete
   id: delete_the_var
   token:
-    function: bearer_token
+    processor: bearer_token
     id: header_bearer_token
   vid:
-    function: var_uri
+    processor: var_uri
     id: get_the_vid
     nullable: false
     index: 0

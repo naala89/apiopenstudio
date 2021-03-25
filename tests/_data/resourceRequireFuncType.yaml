@@ -11,33 +11,33 @@ appid: 2
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: test resource required func type security
   token:
-    function: var_get
+    processor: var_get
     id: test resource required func type token
     key: token
   role: Consumer
 
 process:
-  function: functions
+  processor: processors
   id: test resource required func type process
   machine_name: all
 
 output:
   -
-    function: email
+    processor: email
     id: test resource required func type output email
     to: john@naala.com.au
     subject: "test email"
     format: html
     message: test message
   -
-    function: xml
+    processor: xml
     id: test resource required func type xml
     destination: www.foo.bar
     method: post
     options:
-      function: fucntions
+      processor: fucntions
       id: test resource required func type xml options bad
       machine_name: all

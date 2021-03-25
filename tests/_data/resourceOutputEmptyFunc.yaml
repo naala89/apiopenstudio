@@ -11,16 +11,16 @@ appid: 2
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: test resource with empty function as output security
   token:
-    function: var_get
+    processor: var_get
     id: test resource with empty function as output token
     key: token
   role: Consumer
 
 process:
-  function: functions
+  processor: processors
   id: test resource with empty function as output process
   machine_name: all
 
@@ -30,7 +30,7 @@ output:
     to: john@naala.com.au
     subject: "test email"
     format: html
-  - function: xml
+  - processor: xml
     id: test resource with empty function as output output 1
     destination: www.foo.bar
     method: post

@@ -9,74 +9,74 @@ method: get
 ttl: 0
 
 security:
-  function: TokenConsumer
+  processor: token_consumer
   id: 1
   token:
-    function: varGet
+    processor: var_get
     id: 2
     name: token
 
 process:
-  function: filter
+  processor: filter
   id: 3
   values:
-    function: object
+    processor: object
     id: 4
     attributes:
-      - function: field
+      - processor: field
         id: 5
         key: key1
         value: val1
-      - function: field
+      - processor: field
         id: 6
         key: key2
         value: val2
-      - function: field
+      - processor: field
         id: 7
         key: key3
         value: val3
-      - function: field
+      - processor: field
         id: 8
         key: key4
         value: val4
-      - function: field
+      - processor: field
         id: 9
         key: key5
         value:
-          function: object
+          processor: object
           id: 10
           attributes:
-            - function: field
+            - processor: field
               id: 11
               key: key6
               value: val6
-            - function: field
+            - processor: field
               id: 12
               key: key7
               value: val7
   filter: "/^key[4,6]|val[3,7]$/"
   keyOrValue:
-    function: varGet
+    processor: var_get
     id: 13
     name: keyOrValue
   regex:
-    function: varBool
+    processor: var_bool
     id: 14
     value:
-      function: varGet
+      processor: var_get
       id: 15
       name: regex
   inverse:
-    function: varBool
+    processor: var_bool
     id: 16
     value:
-      function: varGet
+      processor: var_get
       id: 17
       name: inverse
   recursive:
-    function: varBool
+    processor: var_bool
     id: 18
     value:
-      function: varGet
+      processor: var_get
       id: 19
       name: recursive

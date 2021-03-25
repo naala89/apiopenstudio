@@ -11,19 +11,19 @@ appid: 2
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: test sort processor security
   token:
-    function: var_get
+    processor: var_get
     id: test sort processor security token
     key: token
   role: Consumer
 
 process:
-  function: sort
+  processor: sort
   id: test sort processor process
   values:
-    function: collection
+    processor: collection
     id: test sort processor collection
     items:
       - field1
@@ -33,11 +33,11 @@ process:
       - 1
       - 5
   direction:
-    function: var_get
+    processor: var_get
     id: test sort processor direction
     key: direction
   sort_by:
-    function: var_get
+    processor: var_get
     id: test sort processor sort_by
     key: sort_by
 

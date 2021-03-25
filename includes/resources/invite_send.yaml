@@ -21,10 +21,10 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_roles
+  processor: token_roles
   id: user_invite_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: user_invite_token
   roles:
     - Administrator
@@ -32,10 +32,10 @@ security:
     - Application manager
 
 process:
-  function: invite_create
+  processor: invite_create
   id: user_invite_process
   email:
-    function: var_post
+    processor: var_post
     id: user_invite_var_post_email
     key: email
     nullable: false

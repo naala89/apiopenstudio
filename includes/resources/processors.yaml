@@ -1,4 +1,4 @@
-# Functions resource.
+# Processors resource.
 #
 # @package   Apiopenstudio
 # @license   This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
@@ -8,11 +8,11 @@
 # @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
-name: Functions
+name: Processors
 
-description: Fetch details of all functions.
+description: Fetch details of processors.
 
-uri: functions
+uri: processors
 
 method: get
 
@@ -21,11 +21,11 @@ appid: 1
 ttl: 3600
 
 security:
-  function: token_roles
-  id: functions_security
+  processor: token_roles
+  id: processors_security
   token:
-    function: bearer_token
-    id: functions_token
+    processor: bearer_token
+    id: processors_token
   roles:
     - Account manager
     - Application manager
@@ -34,9 +34,9 @@ security:
   validate_application: false
 
 process:
-  function: Functions
-  id: functions_process
+  processor: processors
+  id: processors_process
   machine_name:
-    function: var_uri
-    id: functions_machine_name
+    processor: var_uri
+    id: processors_machine_name
     index: 0

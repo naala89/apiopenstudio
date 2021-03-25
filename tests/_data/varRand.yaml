@@ -11,39 +11,39 @@ appid: 2
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: test var_rand security
   token:
-    function: var_get
+    processor: var_get
     id: test var_rand token
     key: token
   role: Consumer
 
 process:
-  function: var_rand
+  processor: var_rand
   id: test var_rand process
   length:
-    function: var_get
+    processor: var_get
     id: test var_rand length
     key: length
     nullable: true
   lower:
-    function: var_get
+    processor: var_get
     id: test var_rand lower
     key: lower
     nullable: true
   upper:
-    function: var_get
+    processor: var_get
     id: test var_rand upper
     key: upper
     nullable: true
   numeric:
-    function: var_get
+    processor: var_get
     id: test var_rand numeric
     key: numeric
     nullable: true
   special:
-    function: var_get
+    processor: var_get
     id: test var_rand special
     key: special
     nullable: true

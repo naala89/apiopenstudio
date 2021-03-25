@@ -21,22 +21,22 @@ appid: 1
 ttl: 0
 
 security:
-  function: token_role
+  processor: token_role
   id: resource_delete_security
   token:
-    function: bearer_token
+    processor: bearer_token
     id: resource_delete_security_token
   role: Developer
   validate_account: false
   validate_application: false
 
 process:
-  function: resource_delete
+  processor: resource_delete
   id: resource_delete_process
   token:
-    function: bearer_token
+    processor: bearer_token
     id: resource_delete_token
   resid:
-    function: var_uri
+    processor: var_uri
     id: resource_delete_resid
     index: 0

@@ -11,27 +11,27 @@ appid: 2
 ttl: 0
 
 security:
-  function: tokenDeveloper
+  processor: token_developer
   id: 1
   token:
-    function: varGet
+    processor: var_get
     id: 2
     name: token
 
 process:
-  function: fragment
+  processor: fragment
   name: processors
   id: 3
 
 fragments: hgfjfghfv
 
 output:
-  - function: email
+  - processor: email
     id: 4
     to: john@naala.com.au
     subject: "test email"
     format: html
-  - function: xml
+  - processor: xml
     id: 5
     destination: www.foo.bar
     method: post
