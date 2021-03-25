@@ -3,8 +3,8 @@
 $I = new ApiTester($scenario);
 $I->performLogin();
 
-$I->wantTo('call /functions and see the result.');
-$uri = $I->getCoreBaseUri() . '/functions/all';
+$I->wantTo('call /processors and see the result.');
+$uri = $I->getCoreBaseUri() . '/processors/all';
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendGet($uri);
 $I->deleteHeader('Authorization');
