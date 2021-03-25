@@ -20,6 +20,6 @@ security:
   role: Consumer
 
 process:
-  processor: functions
+  processor: processors
   id: test good resource no output process
   machine_name: all

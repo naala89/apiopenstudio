@@ -20,7 +20,7 @@ security:
   role: Consumer
 
 process:
-  processor: functions
+  processor: processors
   id: test resource required func type process
   machine_name: all
 

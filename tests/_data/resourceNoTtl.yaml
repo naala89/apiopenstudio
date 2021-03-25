@@ -18,7 +18,7 @@ security:
   role: Consumer
 
 process:
-  processor: functions
+  processor: processors
   id: test bad resource no ttl process
   machine_name: all
 

@@ -18,7 +18,7 @@ security:
   role: Consumer
 
 process:
-  processor: functions
+  processor: processors
   id: test resource with no name process
   machine_name: all
 

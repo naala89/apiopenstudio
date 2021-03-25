@@ -20,7 +20,7 @@ security:
   role: Consumer
 
 process:
-  processor: functions
+  processor: processors
   id: test bad resource with function without id process
   machine_name: all
 

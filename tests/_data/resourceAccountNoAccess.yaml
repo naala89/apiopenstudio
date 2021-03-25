@@ -2,7 +2,7 @@ name: resource application no developer role
 
 description: test create resource with no developer role for application
 
-uri: functions
+uri: processors
 
 method: get
 
@@ -20,6 +20,6 @@ security:
   role: Consumer
 
 process:
-  processor: functions
+  processor: processors
   id: resource application no developer role process
   machine_name: all

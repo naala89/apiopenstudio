@@ -11,7 +11,7 @@ appid: 2
 ttl: 0
 
 process:
-  processor: functions
+  processor: processors
   id: test resource with associative array output process
   machine_name: all
 
