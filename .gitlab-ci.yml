@@ -31,26 +31,9 @@ before_script:
   - php composer.phar install
 
 stages:
-  - lint
   - test
-  - deploy
-
-##################################
-## LINTING
-##################################
-
-phpcs:
-  stage: lint
-  only:
-    - develop
-    - master
-  artifacts:
-    when: on_failure
-    paths:
-      - phpcs.txt
-  script:
-    - echo "Linting the codebase."
-    - ./vendor/bin/phpcs --standard=PSR12 --report-file=phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
+  - deploy_wiki
+  - deploy_phpdoc
 
 ##################################
 ## TESTS
@@ -67,14 +50,17 @@ unit_and_functional_tests:
     MYSQL_USER: $CI_MYSQL_USER
     MYSQL_PASSWORD: $CI_MYSQL_PASSWORD
   only:
-    - develop
-    - master
+    - merge_request
   artifacts:
     when: on_failure
     paths:
+      - phpcs.txt
       - tests/_output/
       - logs/
   script:
+    - echo "Linting the codebase."
+    - ./vendor/bin/phpcs --standard=PSR12 --report-file=phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
+    - echo "Setting up for unit and functional tests."
     - touch .env
     - echo "API_DOMAIN=localhost:8085" >> .env
     - cp tests/ci.settings.yml settings.yml
@@ -91,7 +77,7 @@ unit_and_functional_tests:
 ##################################
 
 wiki_dev:
-  stage: deploy
+  stage: deploy_wiki
   only:
     - develop
   script:
@@ -103,7 +89,7 @@ wiki_dev:
     - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
 
 wiki_prod:
-  stage: deploy
+  stage: deploy_wiki
   only:
     - master
   script:
@@ -119,7 +105,7 @@ wiki_prod:
 ##################################
 
 phpdoc_dev:
-  stage: deploy
+  stage: deploy_phpdoc
   only:
     - develop
   script:
@@ -133,7 +119,7 @@ phpdoc_dev:
     - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
 
 phpdoc_prod:
-  stage: deploy
+  stage: deploy_phpdoc
   only:
     - master
   script:
