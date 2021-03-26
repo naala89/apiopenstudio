@@ -39,7 +39,7 @@ stages:
 ## TESTS
 ##################################
 
-unit_and_functional_tests:
+tests:
   stage: test
   services:
     - mariadb:latest
