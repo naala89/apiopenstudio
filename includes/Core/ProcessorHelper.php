@@ -37,12 +37,12 @@ class ProcessorHelper
      *
      * @return string Class string.
      *
-     * @throws ApiException Unknown Processor/function.
+     * @throws ApiException Unknown Processor.
      */
     public function getProcessorString(string $className, array $namespaces = null)
     {
         if (empty($className)) {
-            throw new ApiException('empty function name', 1, -1, 406);
+            throw new ApiException('empty processor name', 1, -1, 406);
         }
         $namespaces = empty($namespaces) ? $this->namespaces : $namespaces;
         $className = str_replace('-', '_', $className);
@@ -60,7 +60,7 @@ class ProcessorHelper
             }
         }
 
-        throw new ApiException("unknown function: $className", 1, -1, 400);
+        throw new ApiException("unknown processor: $className", 1, -1, 400);
     }
 
     /**

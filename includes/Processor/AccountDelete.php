@@ -40,7 +40,7 @@ class AccountDelete extends Core\ProcessorEntity
                 'description' => 'The account ID.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
                 'default' => ''

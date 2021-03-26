@@ -48,7 +48,7 @@ class RoleDelete extends Core\ProcessorEntity
                 'description' => 'The ID of the role.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
                 'default' => 0,

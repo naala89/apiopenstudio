@@ -119,7 +119,7 @@ $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 6,
-            'message' => 'No resources found or insufficent privileges.',
+            'message' => 'No resources found or insufficient privileges.',
             'id' => 'resource_read_process',
         ]
     ]
@@ -188,7 +188,7 @@ $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 6,
-            'message' => 'No resources found or insufficent privileges.',
+            'message' => 'No resources found or insufficient privileges.',
             'id' => 'resource_read_process',
         ],
     ]
@@ -228,7 +228,7 @@ $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 6,
-            'message' => 'No resources found or insufficent privileges.',
+            'message' => 'No resources found or insufficient privileges.',
             'id' => 'resource_read_process',
         ],
     ]
@@ -292,7 +292,7 @@ $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 6,
-            'message' => 'No resources found or insufficent privileges.',
+            'message' => 'No resources found or insufficient privileges.',
             'id' => 'resource_read_process',
         ],
     ]
@@ -344,7 +344,7 @@ $I->seeResponseContains('true');
 //$I->seeResponseContainsJson([
 //        "error" => [
 //        "code" => 6,
-//        "message" => "Invalid function, id attribute missing.",
+//        "message" => "Invalid processor, id attribute missing.",
 //        "id" => -1,
 //    ],
 //]);
@@ -353,7 +353,7 @@ $I->seeResponseContains('true');
 //$I->seeResponseContainsJson([
 //    'error' => [
 //        'code' => 6,
-//        'message' => 'No resources found or insufficent privileges.',
+//        'message' => 'No resources found or insufficient privileges.',
 //        'id' => 'resource_read_process',
 //    ],
 //]);
@@ -381,7 +381,7 @@ $I->seeResponseContainsJson(
     [
         "error" => [
         "code" => 6,
-        "message" => "Invalid process declaration, only functions allowed.",
+        "message" => "Invalid process declaration, only processors allowed.",
         "id" => -1,
         ],
     ]
@@ -392,7 +392,7 @@ $I->seeResponseContainsJson(
     [
     'error' => [
         'code' => 6,
-        'message' => 'No resources found or insufficent privileges.',
+        'message' => 'No resources found or insufficient privileges.',
         'id' => 'resource_read_process',
     ]
     ]
@@ -419,22 +419,22 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-    "error" => [
-        "code" => 6,
-        "message" => "Invalid process declaration, only functions allowed.",
-        "id" => -1,
-    ],
+        "error" => [
+            "code" => 6,
+            "message" => "Invalid process declaration, only processors allowed.",
+            "id" => -1,
+        ],
     ]
 );
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'No resources found or insufficent privileges.',
-        'id' => 'resource_read_process',
-    ]
+        'error' => [
+            'code' => 6,
+            'message' => 'No resources found or insufficient privileges.',
+            'id' => 'resource_read_process',
+        ]
     ]
 );
 
@@ -459,22 +459,22 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-    "error" => [
-        "code" => 6,
-        "message" => "Invalid process declaration, only functions allowed.",
-        "id" => -1,
-    ],
+        "error" => [
+            "code" => 6,
+            "message" => "Invalid process declaration, only processors allowed.",
+            "id" => -1,
+        ],
     ]
 );
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'No resources found or insufficent privileges.',
-        'id' => 'resource_read_process',
-    ]
+        'error' => [
+            'code' => 6,
+            'message' => 'No resources found or insufficient privileges.',
+            'id' => 'resource_read_process',
+        ]
     ]
 );
 
@@ -499,22 +499,22 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-    "error" => [
-        "code" => 6,
-        "message" => "Invalid process declaration, only functions allowed.",
-        "id" => -1,
-    ],
+        "error" => [
+            "code" => 6,
+            "message" => "Invalid process declaration, only processors allowed.",
+            "id" => -1,
+        ],
     ]
 );
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'No resources found or insufficent privileges.',
-        'id' => 'resource_read_process',
-    ]
+        'error' => [
+            'code' => 6,
+            'message' => 'No resources found or insufficient privileges.',
+            'id' => 'resource_read_process',
+        ]
     ]
 );
 
@@ -538,21 +538,23 @@ $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
-    ["error" => [
-    "code" => 6,
-    "message" => 'Invalid output declaration, only functions or array of functions or "response" allowed.',
-    "id" => -1
-    ]]
+    [
+        "error" => [
+            "code" => 6,
+            "message" => 'Invalid output declaration. Only processor, array of processors or "response" allowed.',
+            "id" => -1
+        ]
+    ]
 );
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'No resources found or insufficent privileges.',
-        'id' => 'resource_read_process',
-    ]
+        'error' => [
+            'code' => 6,
+            'message' => 'No resources found or insufficient privileges.',
+            'id' => 'resource_read_process',
+        ]
     ]
 );
 
@@ -576,21 +578,23 @@ $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
-    ["error" => [
-    "code" => 6,
-    "message" => 'Invalid output declaration, only functions or array of functions or "response" allowed.',
-    "id" => -1
-    ]]
+    [
+        "error" => [
+            "code" => 6,
+            "message" => 'Invalid output declaration. Only processor, array of processors or "response" allowed.',
+            "id" => -1
+        ]
+    ]
 );
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'No resources found or insufficent privileges.',
-        'id' => 'resource_read_process',
-    ]
+        'error' => [
+            'code' => 6,
+            'message' => 'No resources found or insufficient privileges.',
+            'id' => 'resource_read_process',
+        ]
     ]
 );
 
@@ -614,21 +618,23 @@ $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
-    ["error" => [
-    "code" => 6,
-    "message" => 'Invalid output declaration, only functions or array of functions or "response" allowed.',
-    "id" => -1
-    ]]
+    [
+        "error" => [
+            "code" => 6,
+            "message" => 'Invalid output declaration. Only processor, array of processors or "response" allowed.',
+            "id" => -1
+        ]
+    ]
 );
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'No resources found or insufficent privileges.',
-        'id' => 'resource_read_process',
-    ]
+        'error' => [
+            'code' => 6,
+            'message' => 'No resources found or insufficient privileges.',
+            'id' => 'resource_read_process',
+        ]
     ]
 );
 
@@ -655,7 +661,7 @@ $I->seeResponseContains('true');
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(200);
 
-$I->wantTo('create a new resource from YAML with incorrect function and see the result');
+$I->wantTo('create a new resource from YAML with incorrect processor and see the result');
 $yamlFilename = 'ResourceRequireFuncType.yaml';
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendPOST(
@@ -675,23 +681,25 @@ $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $message = 'Processor test resource required func type xml options ';
-$message .= 'bad is an invalid function type (only "field" allowed).';
+$message .= 'bad is an invalid processor type (only "field" allowed).';
 $I->seeResponseContainsJson(
-    ["error" => [
-    "code" => 6,
-    "message" => $message,
-    "id" => 'test resource required func type xml',
-    ]]
+    [
+        "error" => [
+            "code" => 6,
+            "message" => $message,
+            "id" => 'test resource required func type xml',
+        ]
+    ]
 );
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'No resources found or insufficent privileges.',
-        'id' => 'resource_read_process',
-    ]
+        'error' => [
+            'code' => 6,
+            'message' => 'No resources found or insufficient privileges.',
+            'id' => 'resource_read_process',
+        ]
     ]
 );
 
@@ -715,21 +723,23 @@ $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
-    ["error" => [
-    "code" => 6,
-    "message" => "Input 'sources' in function 'test resource with bad min process' requires min 2.",
-    "id" => 'test resource with bad min process'
-    ]]
+    [
+        "error" => [
+            "code" => 6,
+            "message" => "Input 'sources' in processor 'test resource with bad min process' requires min 2.",
+            "id" => 'test resource with bad min process'
+        ]
+    ]
 );
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'No resources found or insufficent privileges.',
-        'id' => 'resource_read_process',
-    ]
+        'error' => [
+            'code' => 6,
+            'message' => 'No resources found or insufficient privileges.',
+            'id' => 'resource_read_process',
+        ]
     ]
 );
 
@@ -753,21 +763,23 @@ $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
-    ["error" => [
-    "code" => 6,
-    "message" => "Input 'value' in function 'test resource with bad max process' requires max 1.",
-    "id" => 'test resource with bad max process',
-    ]]
+    [
+        "error" => [
+            "code" => 6,
+            "message" => "Input 'value' in processor 'test resource with bad max process' requires max 1.",
+            "id" => 'test resource with bad max process',
+        ]
+    ]
 );
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'No resources found or insufficent privileges.',
-        'id' => 'resource_read_process',
-    ]
+        'error' => [
+            'code' => 6,
+            'message' => 'No resources found or insufficient privileges.',
+            'id' => 'resource_read_process',
+        ]
     ]
 );
 
@@ -791,21 +803,23 @@ $I->deleteHeader('Authorization');
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
-    ["error" => [
-    "code" => 6,
-    "message" => 'Unauthorised: you do not have permissions for this application.',
-    "id" => 'resource_import_process',
-    ]]
+    [
+        "error" => [
+            "code" => 6,
+            "message" => 'Unauthorised: you do not have permissions for this application.',
+            "id" => 'resource_import_process',
+        ]
+    ]
 );
 $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'No resources found or insufficent privileges.',
-        'id' => 'resource_read_process',
-    ]
+        'error' => [
+            'code' => 6,
+            'message' => 'No resources found or insufficient privileges.',
+            'id' => 'resource_read_process',
+        ]
     ]
 );
 
@@ -830,10 +844,10 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-    "error" => [
-        "code" => 6,
-        "message" => 'Identical IDs in new resource: resource identical ids.',
-        "id" => -1,
+        "error" => [
+            "code" => 6,
+            "message" => 'Identical IDs in new resource: resource identical ids.',
+            "id" => -1,
         ]
     ]
 );
@@ -841,11 +855,11 @@ $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(400);
 $I->seeResponseContainsJson(
     [
-    'error' => [
-        'code' => 6,
-        'message' => 'No resources found or insufficent privileges.',
-        'id' => 'resource_read_process',
-    ]
+        'error' => [
+            'code' => 6,
+            'message' => 'No resources found or insufficient privileges.',
+            'id' => 'resource_read_process',
+        ]
     ]
 );
 
@@ -934,7 +948,7 @@ $I->seeResponseContainsJson(
 //$I->seeResponseContainsJson([
 //    'error' => [
 //        'code' => 6,
-//        'message' => 'No resources found or insufficent privileges.',
+//        'message' => 'No resources found or insufficient privileges.',
 //        'id' => 'resource_read_process',
 //    ]
 //]);

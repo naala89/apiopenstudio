@@ -86,7 +86,7 @@ class InviteCreate extends Core\ProcessorEntity
                 'description' => 'The email of the user. Comma separated for multiple addresses.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',

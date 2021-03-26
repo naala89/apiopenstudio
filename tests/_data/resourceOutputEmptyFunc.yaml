@@ -1,6 +1,6 @@
 name: resource output empty func
 
-description: test resource with empty function as output
+description: test resource with empty processor as output
 
 uri: resource/output/empty
 
@@ -12,26 +12,26 @@ ttl: 0
 
 security:
   processor: token_role
-  id: test resource with empty function as output security
+  id: test resource with empty processor as output security
   token:
     processor: var_get
-    id: test resource with empty function as output token
+    id: test resource with empty processor as output token
     key: token
   role: Consumer
 
 process:
   processor: processors
-  id: test resource with empty function as output process
+  id: test resource with empty processor as output process
   machine_name: all
 
 output:
-  - function:
-    id: test resource with empty function as output output 0
+  - processor:
+    id: test resource with empty processor as output output 0
     to: john@naala.com.au
     subject: "test email"
     format: html
   - processor: xml
-    id: test resource with empty function as output output 1
+    id: test resource with empty processor as output output 1
     destination: www.foo.bar
     method: post
 

@@ -40,7 +40,7 @@ class ResourceSwagger extends ResourceBase
                 'description' => 'The resource string or file. This can be an attached file or a urlencoded GET var.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text', 'file'],
                 'limitValues' => [],
                 'default' => '',

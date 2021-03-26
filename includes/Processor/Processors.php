@@ -21,7 +21,7 @@ use ReflectionClass;
 use RegexIterator;
 
 /**
- * Class Functions
+ * Class Processors
  *
  * Processor class to list processors.
  */
@@ -39,10 +39,10 @@ class Processors extends Core\ProcessorEntity
         'menu' => 'System',
         'input' => [
             'machine_name' => [
-                'description' => 'The resource machine_name or "all" for all functions.',
+                'description' => 'The resource machine_name or "all" for all processors.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',

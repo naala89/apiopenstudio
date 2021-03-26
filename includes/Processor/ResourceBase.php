@@ -51,7 +51,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 'description' => 'The HTTP method of the resource (only used if fetching or deleting a resource).',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => ['get', 'post', 'delete', 'push'],
                 'default' => '',
@@ -60,7 +60,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 'description' => 'The application name that the resource is associated with.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
@@ -69,7 +69,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 'description' => 'The application name that the resource is associated with.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
@@ -79,7 +79,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 'description' => 'The URI for the resource, i.e. the part after the App ID in the URL (only used if fetching or deleting a resource).',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
@@ -89,7 +89,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 'description' => 'The resource as a string (this input is only used if you are creating or updating a resource).',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
@@ -99,7 +99,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 'description' => 'The resource as a string (this input is only used if you are creating or updating a resource).',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
@@ -381,7 +381,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
             foreach ($data['output'] as $i => $output) {
                 if (is_array($output)) {
                     if (!$this->helper->isProcessor($output)) {
-                        $message = "bad function declaration in output at index $i in new resource";
+                        $message = "bad processor declaration in output at index $i in new resource";
                         throw new Core\ApiException($message, 6, -1, 406);
                     }
                     $this->validateDetails($output);
@@ -445,7 +445,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
 
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
-                $classStr = $this->helper->getProcessorString($node['function']);
+                $classStr = $this->helper->getProcessorString($node['processor']);
                 $class = new $classStr($meta, new Core\Request(), $this->db);
                 $details = $class->details();
                 $id = $node['id'];
@@ -455,7 +455,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                     $min = $inputDef['cardinality'][0];
                     $max = $inputDef['cardinality'][1];
                     $literalAllowed = $inputDef['literalAllowed'];
-                    $limitFunctions = $inputDef['limitFunctions'];
+                    $limitProcessors = $inputDef['limitProcessors'];
                     $limitTypes = $inputDef['limitTypes'];
                     $limitValues = $inputDef['limitValues'];
                     $count = 0;
@@ -464,9 +464,9 @@ abstract class ResourceBase extends Core\ProcessorEntity
                         $input = $node[$inputKey];
 
                         if ($this->helper->isProcessor($input)) {
-                            if (!empty($limitFunctions) && !in_array($input['function'], $limitFunctions)) {
-                                $message = 'processor ' . $input['id'] . ' is an invalid function type (only "'
-                                    . implode('", ', $limitFunctions) . '" allowed)';
+                            if (!empty($limitProcessors) && !in_array($input['processor'], $limitProcessors)) {
+                                $message = 'processor ' . $input['id'] . ' is an invalid processor type (only "'
+                                    . implode('", ', $limitProcessors) . '" allowed)';
                                 throw new Core\ApiException($message, 6, $id, 406);
                             }
                             array_unshift($stack, $input);
@@ -481,11 +481,11 @@ abstract class ResourceBase extends Core\ProcessorEntity
                             }
                             $count = sizeof($input);
                         } elseif (!$literalAllowed) {
-                            $message = "literals not allowed as input for '$inputKey' in function: $id";
+                            $message = "literals not allowed as input for '$inputKey' in processor: $id";
                             throw new Core\ApiException($message, 6, $id, 406);
                         } else {
                             if (!empty($limitValues) && !in_array($input, $limitValues)) {
-                                $message = "invalid value type for '$inputKey' in function: $id";
+                                $message = "invalid value type for '$inputKey' in processor: $id";
                                 throw new Core\ApiException($message, 6, $id, 406);
                             }
                             if (!empty($limitTypes)) {
@@ -498,11 +498,11 @@ abstract class ResourceBase extends Core\ProcessorEntity
                     // validate cardinality
                     if ($count < $min) {
                         // check for nothing to validate and if that is ok.
-                        $message = "input '$inputKey' in function '" . $node['id'] . "' requires min $min";
+                        $message = "input '$inputKey' in processor '" . $node['id'] . "' requires min $min";
                         throw new Core\ApiException($message, 6, $id, 406);
                     }
                     if ($max != '*' && $count > $max) {
-                        $message = "input '$inputKey' in function '" . $node['id'] . "' requires max $max";
+                        $message = "input '$inputKey' in processor '" . $node['id'] . "' requires max $max";
                         throw new Core\ApiException($message, 6, $id, 406);
                     }
                 }

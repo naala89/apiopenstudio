@@ -48,7 +48,7 @@ class RoleCreate extends Core\ProcessorEntity
                 'description' => 'The name of the role.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['integer', 'text'],
                 'limitValues' => [],
                 'default' => '',

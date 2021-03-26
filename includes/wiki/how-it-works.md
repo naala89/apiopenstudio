@@ -27,8 +27,8 @@ ApiOpenStudio through an admin interface:
     * It is written in SlimPHP and JQuery.
     * A new version is in development, written in VueJS.
 
-Accounts, Applications, Resources and functions
------------------------------------------------
+Accounts, Applications, Resources and Processors
+------------------------------------------------
 
 An account is a superset of applications. This allows you to create fine-grained
 access to ApiOpenStudio and its resources for all levels of users and make
@@ -60,7 +60,7 @@ It defines everything about a resource, such as:
 * Account and Application that the resources is associated with.
 * Caching
 * Resource security - none (completely open), oauth, bearer token, etc.
-* The flow of data between functions from input/s to the final output.
+* The flow of data between processors from input/s to the final output.
 * The format of the output, which can be JSON, XML, text, file, image, etc.
 
 ### Processors

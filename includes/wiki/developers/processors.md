@@ -41,7 +41,7 @@ Example of fetching the processor list via API
 This requires a valid login token.
 
     Method: GET
-    URL: <domain>/apiopenstudio/core/functions/all
+    URL: <domain>/apiopenstudio/core/processors/all
     Headers:
         Accept: application/json
         Authorization: Bearer <token>
@@ -62,7 +62,7 @@ Sample response:
                         1
                     ],
                     "literalAllowed": true,
-                    "limitFunctions": [],
+                    "limitProcessors": [],
                     "limitTypes": [
                         "text"
                     ],
@@ -84,7 +84,7 @@ Sample response:
                         1
                     ],
                     "literalAllowed": true,
-                    "limitFunctions": [],
+                    "limitProcessors": [],
                     "limitTypes": [
                         "text"
                     ],
@@ -100,7 +100,7 @@ You can also request the definition for a single processor, using the machine
 name:
 
     Method: GET
-    URL: <domain>/apiopenstudio/core/functions/account_create
+    URL: <domain>/apiopenstudio/core/processors/account_create
     Headers:
         Accept: application/json
         Authorization: Bearer <token>

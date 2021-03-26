@@ -26,7 +26,7 @@ example (xml):
 </error>
 ```
 
-* **id** is the function in the resource where the error occurred.
+* **id** is the processor in the resource where the error occurred.
 * **code** is the error type.
 * **message** is a human friendly error message.
 

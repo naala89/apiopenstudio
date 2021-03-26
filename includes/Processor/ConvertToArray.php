@@ -55,7 +55,7 @@ class ConvertToArray extends Output
                 'description' => 'The source data.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
                 'default' => '',

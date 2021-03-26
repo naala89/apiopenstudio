@@ -34,14 +34,14 @@ class Equation extends Core\ProcessorEntity
         'name' => 'Equation',
         'machineName' => 'equation',
         // phpcs:ignore
-        'description' => 'This function allows you to define an equation with variables. These input variables are name/value pairs and substitute variables in th4e equation.',
+        'description' => 'This processor allows you to define an equation with variables. These input variables are name/value pairs and substitute variables in th4e equation.',
         'menu' => 'Math',
         'input' => [
             'equation' => [
                 'description' => 'The equation.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
                 'default' => '',
@@ -50,7 +50,7 @@ class Equation extends Core\ProcessorEntity
                 'description' => 'The variables. These are an associative array',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => ['var_object'],
+                'limitProcessors' => ['var_object'],
                 'limitTypes' => [],
                 'limitValues' => [],
                 'default' => '',

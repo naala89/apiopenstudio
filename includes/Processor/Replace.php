@@ -39,7 +39,7 @@ class Replace extends Core\ProcessorEntity
                 'description' => 'The source string.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text', 'json', 'xml'],
                 'limitValues' => [],
                 'default' => ''
@@ -48,7 +48,7 @@ class Replace extends Core\ProcessorEntity
                 'description' => 'The substring to replace.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => ''
@@ -57,7 +57,7 @@ class Replace extends Core\ProcessorEntity
                 'description' => 'The value to replace the needle.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => ''
@@ -66,7 +66,7 @@ class Replace extends Core\ProcessorEntity
                 'description' => 'Ignore case while searching for the needle.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['boolean'],
                 'limitValues' => [],
                 'default' => true,

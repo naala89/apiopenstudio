@@ -40,7 +40,7 @@
 //        'description' => 'The consumer key to attach with.',
 //        'cardinality' => array(1, 1),
 //        'literalAllowed' => false,
-//        'limitFunctions' => array(),
+//        'limitProcessors' => array(),
 //        'limitTypes' => array('string'),
 //        'limitValues' => array(),
 //        'default' => ''
@@ -49,7 +49,7 @@
 //        'description' => 'The consumer secret to attach with.',
 //        'cardinality' => array(1, 1),
 //        'literalAllowed' => false,
-//        'limitFunctions' => array(),
+//        'limitProcessors' => array(),
 //        'limitTypes' => array('string'),
 //        'limitValues' => array(),
 //        'default' => ''
@@ -58,7 +58,7 @@
 //        'description' => 'The ID of the twitter account used for authentication - use this if an application has more than one twitter account that it uses (if omitted it will default to "twitter").',
 //        'cardinality' => array(0, 1),
 //        'literalAllowed' => false,
-//        'limitFunctions' => array(),
+//        'limitProcessors' => array(),
 //        'limitTypes' => array('string'),
 //        'limitValues' => array(),
 //        'default' => ''
@@ -67,7 +67,7 @@
 //        'description' => 'The API call method (get or past).',
 //        'cardinality' => array(1, 1),
 //        'literalAllowed' => false,
-//        'limitFunctions' => array(),
+//        'limitProcessors' => array(),
 //        'limitTypes' => array('string'),
 //        'limitValues' => array('get', 'post'),
 //        'default' => ''
@@ -76,7 +76,7 @@
 //        'description' => 'The call you want to make to the Twitter API (e.g. "statuses/user_timeline.json", "friends/list.json", etc).',
 //        'cardinality' => array(1, 1),
 //        'literalAllowed' => false,
-//        'limitFunctions' => array(),
+//        'limitProcessors' => array(),
 //        'limitTypes' => array('string'),
 //        'limitValues' => array(),
 //        'default' => ''
@@ -85,7 +85,7 @@
 //        'description' => 'The options (an array of Processor Field) allowed by Twitter for the call (e.g. cursor: -1, screen_name: twitterapi, skip_status: true, etc).',
 //        'cardinality' => array(0, '*'),
 //        'literalAllowed' => false,
-//        'limitFunctions' => array('Field'),
+//        'limitProcessors' => array('Field'),
 //        'limitTypes' => array('string'),
 //        'limitValues' => array(),
 //        'default' => ''

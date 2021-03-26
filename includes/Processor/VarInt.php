@@ -39,7 +39,7 @@ class VarInt extends Core\ProcessorEntity
                 'description' => 'The value of the variable.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
                 'default' => '',

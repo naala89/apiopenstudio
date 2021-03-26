@@ -57,7 +57,7 @@ Each input in the input array require s the following key/value pairs:
     * Allow a literal input. If set to false, the input must always coem from a
       processor. This is a security feature, to prevemt developers hard-coding
       values.
-* limitFunctions
+* limitProcessors
     * Limit the inputs to specific processors.
 * limitTypes
     * Limit the input type, e.g. to text, integer or float.
@@ -81,7 +81,7 @@ Example:
                 'description' => 'Input value 1.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => ['var_request'],
+                'limitProcessors' => ['var_request'],
                 'limitTypes' => ['text'],
                 'limitValues' => ['get', 'put'],
                 'default' => 'get',

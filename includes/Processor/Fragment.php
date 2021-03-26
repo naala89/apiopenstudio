@@ -40,7 +40,7 @@ class Fragment extends Core\ProcessorEntity
             'description' => 'The name of the fragment',
             'cardinality' => [1, 1],
             'literalAllowed' => true,
-            'limitFunctions' => [],
+            'limitProcessors' => [],
             'limitTypes' => [],
             'limitValues' => [],
             'default' => ''

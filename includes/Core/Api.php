@@ -440,7 +440,7 @@ class Api
             if ($output == 'response') {
                 // Output format is response, so set the output format from the request header.
                 $output = [
-                    'function' => $this->request->getOutFormat(),
+                    'processor' => $this->request->getOutFormat(),
                     'id' => 'header defined output',
                 ];
             }
@@ -469,10 +469,10 @@ class Api
      */
     private function processOutputResponse(array $meta, $data, int $index = null)
     {
-        if (!isset($meta['function'])) {
-            throw new ApiException("No function found in the output section: $index.", 3, -1, 400);
+        if (!isset($meta['processor'])) {
+            throw new ApiException("No processor found in the output section: $index.", 3, -1, 400);
         }
-        $outFormat = ucfirst($this->cleanData($meta['function']));
+        $outFormat = ucfirst($this->cleanData($meta['processor']));
         $class = $this->helper->getProcessorString($outFormat, ['Output']);
         $obj = new $class($data, 200, $this->logger);
         $result = $obj->process();
@@ -494,10 +494,10 @@ class Api
      */
     private function processOutputRemote(array $meta, $data, int $index = null)
     {
-        if (!isset($meta['function'])) {
-            throw new ApiException("No function found in the output section: $index.", 3, -1, 400);
+        if (!isset($meta['processor'])) {
+            throw new ApiException("No processor found in the output section: $index.", 3, -1, 400);
         }
-        $outFormat = ucfirst($this->cleanData($meta['function']));
+        $outFormat = ucfirst($this->cleanData($meta['processor']));
         $class = $this->helper->getProcessor($outFormat, ['Output']);
         $obj = new $class($data, 200, $meta);
         $obj->process();

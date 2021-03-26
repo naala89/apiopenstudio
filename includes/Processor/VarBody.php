@@ -42,7 +42,7 @@ class VarBody extends VarLooselyTyped
                 'description' => 'The expected data type in the body. If type is not defined, then ApiOpenStudio will attempt automatically set the data type.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [
                     'boolean',
@@ -61,7 +61,7 @@ class VarBody extends VarLooselyTyped
                 'description' => 'Throw an error if the body is empty.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['boolean'],
                 'limitValues' => [],
                 'default' => 'true',

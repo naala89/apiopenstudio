@@ -49,7 +49,7 @@ class ConvertToJson extends Json
                 'description' => 'The source data.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
                 'default' => '',

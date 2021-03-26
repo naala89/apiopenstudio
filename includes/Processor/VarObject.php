@@ -40,7 +40,7 @@ class VarObject extends Core\ProcessorEntity
                 'description' => 'The value of an attribute or a complex object.',
                 'cardinality' => [0, '*'],
                 'literalAllowed' => true,
-                'limitFunctions' => ['var_field'],
+                'limitProcessors' => ['var_field'],
                 'limitTypes' => ['array'],
                 'limitValues' => [],
                 'default' => '',

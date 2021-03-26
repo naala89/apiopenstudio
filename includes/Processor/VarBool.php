@@ -40,7 +40,7 @@ class VarBool extends Core\ProcessorEntity
                 'description' => 'The value of the variable.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['boolean', 'integer', 'text'],
                 'limitValues' => [],
                 'default' => false,
