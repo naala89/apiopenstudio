@@ -56,7 +56,7 @@ class ResourceRead extends Core\ProcessorEntity
                 'description' => 'The token of the user making the call. This is used to limit the resources viewable',
                 'cardinality' => [1, 1],
                 'literalAllowed' => false,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
@@ -65,7 +65,7 @@ class ResourceRead extends Core\ProcessorEntity
                 'description' => 'The Resource ID to filter by.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
                 'default' => '',
@@ -74,7 +74,7 @@ class ResourceRead extends Core\ProcessorEntity
                 'description' => 'The application IDs to filter by.',
                 'cardinality' => [0, '*'],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
                 'default' => '',
@@ -83,7 +83,7 @@ class ResourceRead extends Core\ProcessorEntity
                 'description' => 'order by column',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => ['appid', 'method', 'uri', 'name'],
                 'default' => 'appid',
@@ -92,7 +92,7 @@ class ResourceRead extends Core\ProcessorEntity
                 'description' => 'Sort direction',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => ['asc', 'desc'],
                 'default' => 'asc',
@@ -101,7 +101,7 @@ class ResourceRead extends Core\ProcessorEntity
                 'description' => 'Keyword search',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
                 'default' => '',
@@ -171,7 +171,7 @@ class ResourceRead extends Core\ProcessorEntity
 
         $result = $this->resourceMapper->findByUid($currentUser->getUid(), $params);
         if (empty($result)) {
-            throw new Core\ApiException('No resources found or insufficent privileges', 6, $this->id);
+            throw new Core\ApiException('No resources found or insufficient privileges', 6, $this->id);
         }
 
         $resources = [];

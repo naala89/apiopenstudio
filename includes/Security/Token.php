@@ -55,7 +55,7 @@ class Token extends Core\ProcessorEntity
                 'description' => 'The consumers token.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => false,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',

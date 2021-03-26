@@ -39,7 +39,7 @@ class Concatenate extends Core\ProcessorEntity
             'description' => 'The values to concatenate',
             'cardinality' => [2, '*'],
             'literalAllowed' => true,
-            'limitFunctions' => [],
+            'limitProcessors' => [],
             'limitTypes' => [],
             'limitValues' => [],
             'default' => ''

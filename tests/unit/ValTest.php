@@ -50,7 +50,7 @@ class ValTest extends \Codeception\Test\Unit
     public function testValReturnsContainerOrValue()
     {
         $meta = json_decode(json_encode([
-            'function' => 'var_bool',
+            'processor' => 'var_bool',
             'id' => 'var_bool literal true',
             'value' => true,
         ]));
@@ -75,7 +75,7 @@ class ValTest extends \Codeception\Test\Unit
     public function testValReturnsDefault()
     {
         $meta = json_decode(json_encode([
-            'function' => 'var_bool',
+            'processor' => 'var_bool',
             'id' => 'var_bool default',
             'value' => '',
         ]));
@@ -84,7 +84,7 @@ class ValTest extends \Codeception\Test\Unit
         $this->assertTrue($val === false);
 
         $meta = json_decode(json_encode([
-            'function' => 'var_bool',
+            'processor' => 'var_bool',
             'id' => 'var_bool default',
             'value' => null,
         ]));
@@ -106,7 +106,7 @@ class ValTest extends \Codeception\Test\Unit
 //        $this->expectExceptionMessage("invalid type (integer), only 'boolean', 'integer', 'text' allowed in input 'value'");
 //
 //        $meta = json_decode(json_encode([
-//            'function' => 'var_bool',
+//            'processor' => 'var_bool',
 //            'id' => 'var_bool literal integer',
 //            'value' => 'hi',
 //        ]));
@@ -127,7 +127,7 @@ class ValTest extends \Codeception\Test\Unit
 //        $this->expectExceptionMessage("invalid type (text), only 'boolean' allowed");
 //
 //        $meta = json_decode(json_encode([
-//            'function' => 'var_bool',
+//            'processor' => 'var_bool',
 //            'id' => 'var_bool literal true',
 //            'value' => 'I will fail',
 //        ]));
@@ -149,7 +149,7 @@ class ValTest extends \Codeception\Test\Unit
         );
 
         $meta = json_decode(json_encode([
-            'function' => 'var_bool',
+            'processor' => 'var_bool',
             'id' => 'var_bool literal true',
             'value' => ['I will fail'],
         ]));
@@ -169,7 +169,7 @@ class ValTest extends \Codeception\Test\Unit
         $this->expectExceptionMessage("invalid number of inputs (2) in value, requires 1 - 1");
 
         $meta = json_decode(json_encode([
-            'function' => 'var_bool',
+            'processor' => 'var_bool',
             'id' => 'var_bool literal true',
             'value' => [
                 'I will fail',

@@ -39,7 +39,7 @@ class Collection extends Core\ProcessorEntity
             'description' => 'The items in the collection',
             'cardinality' => [0, '*'],
             'literalAllowed' => true,
-            'limitFunctions' => [],
+            'limitProcessors' => [],
             'limitTypes' => [],
             'limitValues' => [],
             'default' => ''

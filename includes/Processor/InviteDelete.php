@@ -48,7 +48,7 @@ class InviteDelete extends Core\ProcessorEntity
                 'description' => 'Invite ID.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
                 'default' => '',

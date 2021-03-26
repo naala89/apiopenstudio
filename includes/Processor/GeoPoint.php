@@ -33,14 +33,14 @@ class GeoPoint extends Core\ProcessorEntity
         'name' => 'Geo-Point',
         'machineName' => 'geoPoint',
         // phpcs:ignore
-        'description' => 'GeoPoint function is a container object that holds geographic point coordinates and attributes. Each entry of a coordinate pair and associated attributes, if any, represent a discrete element in the geopoint vector.',
+        'description' => 'GeoPoint processor is a container object that holds geographic point coordinates and attributes. Each entry of a coordinate pair and associated attributes, if any, represent a discrete element in the geopoint vector.',
         'menu' => 'Primitive',
         'input' => [
             'lat' => [
                 'description' => 'The latitude of the geo point.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['float', 'integer'],
                 'limitValues' => [],
                 'default' => 0
@@ -49,7 +49,7 @@ class GeoPoint extends Core\ProcessorEntity
                 'description' => 'The longitude of the geo point.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['float', 'integer'],
                 'limitValues' => [],
                 'default' => 0

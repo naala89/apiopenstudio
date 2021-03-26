@@ -39,7 +39,7 @@ class AuthCookie extends Core\ProcessorEntity
                 'description' => 'The cookie string.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => false,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',

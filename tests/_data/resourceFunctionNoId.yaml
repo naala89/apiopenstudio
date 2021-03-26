@@ -2,7 +2,7 @@ name: test resource w no id
 
 description: test resource with no id
 
-uri: resource/function/noid
+uri: resource/processor/noid
 
 method: get
 
@@ -12,16 +12,16 @@ ttl: 0
 
 security:
   processor: token_role
-  id: test bad resource with function without id security
+  id: test bad resource with processor without id security
   token:
     processor: var_get
-    id: test bad resource with function without id token
+    id: test bad resource with processor without id token
     key: token
   role: Consumer
 
 process:
   processor: processors
-  id: test bad resource with function without id process
+  id: test bad resource with processor without id process
   machine_name: all
 
 output:

@@ -39,7 +39,7 @@ class VarFloat extends Core\ProcessorEntity
                 'description' => 'The value of the variable.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['float', 'integer'],
                 'limitValues' => [],
                 'default' => 0,

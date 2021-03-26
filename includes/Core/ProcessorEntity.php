@@ -85,9 +85,9 @@ abstract class ProcessorEntity extends Entity
      *
      *    literalAllowed (boolean): Allow liter values.
      *
-     *    limitValues (array|mixed): Limit the sult values passed into the function/processor.
+     *    limitValues (array|mixed): Limit the sult values passed into the processor.
      *
-     *    limitFunctions (array|string): Limit the input functions/processors.
+     *    limitProcessors (array|string): Limit the input processors.
      *
      *    limitTypes: (array): an array of input type this processor will accept.
      *      Possible values:
@@ -123,7 +123,7 @@ abstract class ProcessorEntity extends Entity
      *        'auth' => [
      *           'description' => 'desc2',
      *           'cardinality' => [1, 1],
-     *           'limitFunctions' => ['var_get'],
+     *           'limitProcessors' => ['var_get'],
      *        ],
      *        'vars' => [
      *           'description' => 'desc3',
@@ -133,7 +133,7 @@ abstract class ProcessorEntity extends Entity
      *        't' => [
      *           'description' => 'desc4',
      *           'cardinality' => [0, '*'],
-     *           'limitFunctions' => ['field'],
+     *           'limitProcessors' => ['field'],
      *        ],
      *      ]
      *

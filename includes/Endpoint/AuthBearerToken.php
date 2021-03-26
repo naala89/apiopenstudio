@@ -39,7 +39,7 @@ class AuthBearerToken extends Core\ProcessorEntity
                 'description' => 'The token string (e.g. 907c762e069589c2cd2a229cdae7b8778caa9f07).',
                 'cardinality' => [1, 1],
                 'literalAllowed' => false,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',

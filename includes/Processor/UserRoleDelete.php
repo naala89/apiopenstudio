@@ -40,7 +40,7 @@ class UserRoleDelete extends Core\ProcessorEntity
                 'description' => 'The user role ID.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
                 'default' => '',

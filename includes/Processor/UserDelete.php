@@ -40,7 +40,7 @@ class UserDelete extends Core\ProcessorEntity
                 'description' => 'The user ID of the user to delete.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
                 'default' => ''

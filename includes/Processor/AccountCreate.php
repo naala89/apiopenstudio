@@ -41,7 +41,7 @@ class AccountCreate extends Core\ProcessorEntity
                 'description' => 'The name of the account. This must contain alphanumeric characters only.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',

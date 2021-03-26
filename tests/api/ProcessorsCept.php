@@ -130,10 +130,10 @@ foreach (\GuzzleHttp\json_decode($I->getResponse()) as $index => $processor) {
                 'the processor: ' . $processor->name . " literalAllowed must be a boolean on its input: $key"
             );
         }
-        if (!isset($val->limitFunctions)) {
+        if (!isset($val->limitProcessors)) {
             \PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " needs a limitFunctions  on its input: $key"
+                'the processor: ' . $processor->name . " needs a limitProcessors  on its input: $key"
             );
         }
         if (!isset($val->limitTypes)) {

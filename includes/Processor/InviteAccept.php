@@ -55,7 +55,7 @@ class InviteAccept extends Core\ProcessorEntity
                 'description' => 'The invite token.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
-                'limitFunctions' => [],
+                'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
