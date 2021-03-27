@@ -14,6 +14,20 @@ with the project.
 For more detailed notes of the contributing process, please
 visit [Contributing][contributing]
 
+Request access
+--------------
+
+To be able to contribute to the ApiOpenStudio project, you need
+to ```Request Access```.
+
+Visit the [GitLab][gitlab] home page, and click on the ```Request Access```
+link:
+
+![Request Access screenshot][request_access_screenshot]
+
+The maintainer will review and grant you access. You will then be able to
+create, edit and assign tickets, and create merge requests.
+
 Merge Request Process
 ---------------------
 
@@ -81,9 +95,8 @@ further defined and clarified by project maintainers.
 ### Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting the project team
-at [Suppport][support]. All complaints will
-be reviewed and investigated and will result in a response that is deemed
+reported by contacting the project team at [Suppport][support]. All complaints
+will be reviewed and investigated and will result in a response that is deemed
 necessary and appropriate to the circumstances. The project team is obligated to
 maintain confidentiality with regard to the reporter of an incident. Further
 details of specific enforcement policies may be posted separately.
@@ -108,3 +121,5 @@ version 1.4, available at [contributor-covenant.org][version]
 [github]: https://github.com/naala89/apiopenstudio
 
 [support]: mailto:support@apiopenstudio.com
+
+[request_access_screenshot]: includes/wiki/developers/images/contributing-request-access.png
