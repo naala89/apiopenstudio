@@ -8,6 +8,20 @@ The [GitHub][github] read-only repository is only a mirror for visibility.
 
 Please ensure that all work is done in [GitLab][gitlab].
 
+Request access
+--------------
+
+To be able to contribute to the ApiOpenStudio project, you need
+to ```Request Access```.
+
+Visit the [GitLab][gitlab] home page, and click on the ```Request Access```
+link:
+
+![Request Access screenshot][request_access_screenshot]
+
+The maintainer will review and grant you access. You will then be able to
+create, edit and assign tickets, and create merge requests.
+
 Reporting an issue
 ------------------
 
@@ -57,13 +71,14 @@ merging:
 
 ### Rebase off develop
 
-Rebase your branch off develop (this will ensure that git replays all of your
-commits on top of the latest code in develop):
+Before creating a merge request, rebase your branch off develop (this will
+ensure that git replays all of your commits on top of the latest code in
+develop):
 
-    git checkout feature/103-my-ticket-title
+    git checkout feature/my-branch
     git fetch origin develop
     git rebase origin/develop
-    git push origin feature/103-my-ticket-title
+    git push origin feature/my-branch
 
 ### Test
 
@@ -80,17 +95,17 @@ By prefixing your comment with ```#<ticket_no>``` (e.g. #103), the commit will
 be added to your ticket.:
 
     git commit -a -m "#<ticket_no> <commit_comment>"
-    git push origin feature/103-my-ticket-title
+    git push origin feature/my-branch
 
-### Create a PR
+### Create a Merge Request
 
-Nasvigate to [merge requests][merge_requests].
+Navigate to [merge requests][merge_requests].
 
 Click on ```New merge request```.
 
 Select your source branch.
 
-Target branch is ```develop```.
+Target branch is always ```develop```.
 
 Click on ```Compare branches and continue```.
 
@@ -101,8 +116,7 @@ Process
 
 All Pull requests should be made against the develop branch.
 
-To set up a local Docker instance of ApiOpenStudio, please
-visit [ApiOpenStudio docker][docker].
+To set up a local Docker instance of ApiOpenStudio to local testing and development, please visit [ApiOpenStudio docker][docker].
 
 Once you are happy with your changes, you can create a patch for other
 developers to validate in your ticket:
@@ -141,8 +155,10 @@ Master branch phpdoc is deployed to [prod phpdoc][prod_phpdoc].
 Linting and Coding standards
 ----------------------------
 
-We adhere to PSR12 standards. See [Developer environment](/installation/docker/developer-environment.html) for details on
-using a docker for spinning up a phpdoc local site and linting for simplicity.
+We adhere to PSR12 standards.
+See [Developer environment](/installation/docker/developer-environment.html) for
+details on using a docker for spinning up a phpdoc local site and linting for
+simplicity.
 
 All commits and merges go through a linting process, using phpcs. If the linting
 fails, the CI will not deploy the phpdoc or wiki changes.
@@ -171,3 +187,5 @@ should run:
 [dev_phpdoc]: https://dev.phpdoc.apiopenstudio.com
 
 [prod_phpdoc]: https://phpdoc.apiopenstudio.com
+
+[request_access_screenshot]: images/contributing-request-access.png
