@@ -11,31 +11,11 @@ to make via issues before making a change.
 Please note we have a code of conduct, please follow it in all your interactions
 with the project.
 
+Process
+-------
+
 For more detailed notes of the contributing process, please
 visit [Contributing][contributing]
-
-Request access
---------------
-
-To be able to contribute to the ApiOpenStudio project, you need
-to ```Request Access```.
-
-Visit the [GitLab][gitlab] home page, and click on the ```Request Access```
-link:
-
-![Request Access screenshot][request_access_screenshot]
-
-The maintainer will review and grant you access. You will then be able to
-create, edit and assign tickets, and create merge requests.
-
-Merge Request Process
----------------------
-
-1. Update the README.md with details of changes to the interface, this includes
-   new environment variables, exposed ports, useful file locations and container
-   parameters.
-3. Once you have created a merge request, you must request a review before it is
-   merged. The project maintainer will merge the PR once it is reviewed.
 
 Code of Conduct
 ---------------
@@ -121,5 +101,3 @@ version 1.4, available at [contributor-covenant.org][version]
 [github]: https://github.com/naala89/apiopenstudio
 
 [support]: mailto:support@apiopenstudio.com
-
-[request_access_screenshot]: includes/wiki/developers/images/contributing-request-access.png
