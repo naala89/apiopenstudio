@@ -99,6 +99,7 @@ wiki_prod:
     - chmod 644 ~/.ssh/known_hosts
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/wiki/" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
     - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_WIKI_PATH/*"
+    - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "php $SITEMAP_GENERATOR file=$PROD_WIKI_PATH/sitemap.xml site=https://$PROD_WIKI_URL"
 
 ##################################
 ## PHPDOC
@@ -131,3 +132,4 @@ phpdoc_prod:
     - chmod 644 ~/.ssh/known_hosts
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL":"$PROD_PHPDOC_PATH/"
     - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_PHPDOC_PATH/*"
+    - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "php $SITEMAP_GENERATOR file=$PROD_PHPDOC_PATH/sitemap.xml site=https://$PROD_PHPDOC_URL"

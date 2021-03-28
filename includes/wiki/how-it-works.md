@@ -7,7 +7,7 @@ to them.
 Only specific roles have the permissions to create, edit or delete elements from
 these layers.
 
-The base ApiOpenStdio package is a completely headless API, and is the core of
+The base ApiOpenStudio package is a completely headless API, and is the core of
 the suite. It is self-contained and provides all of the logic and resources that
 you will need to run ApiOpenStudio. This is available at
 
