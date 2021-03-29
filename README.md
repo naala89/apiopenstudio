@@ -1,6 +1,6 @@
 # ![ApiOpenStudio][logo]
 
-[![License: MPL 2.0][license_logo]][license]
+[![ApiOpenStudio Public License][license_logo]][license]
 
 Introduction
 ============
@@ -184,9 +184,9 @@ development occurs on Gitlab, so you will need to create a GitLab account,
 create a fork of the project, and submit your changes in a PR. See [wiki][wiki]
 for more details.
 
-[license_logo]: https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg
+[license_logo]: https://badgen.net/badge/License/ApiOpenStudio%20Public%20License/green?icon=gitlab
 
-[license]: https://opensource.org/licenses/MPL-2.0
+[license]: https://www.apiopenstudio.com/license/
 
 [wiki]: https://wiki.apiopenstudio.com
 
