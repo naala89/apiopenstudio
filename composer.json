@@ -1,7 +1,6 @@
 {
   "name": "apiopenstudio/apiopenstudio",
   "description": "Build APIs faster & at less cost",
-  "license": "ApiOpenStudio Public License based on Mozilla Public License 2.0",
   "keywords": [
     "api",
     "open-source",
