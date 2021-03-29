@@ -10,6 +10,7 @@
     "open",
     "community"
   ],
+  "license": "NOASSERTION",
   "type": "project",
   "homepage": "https://www.apiopenstudio.com/",
   "readme": "./README.md",
