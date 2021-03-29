@@ -116,6 +116,9 @@ ApiOpenStudio v1.0.0-alpha2
 - Replaced all references to 'function' with 'processor', to remove all
   ambiguity.
 - Updated the docblock in all files to point to the correct copyright entity.
+- Finalised the Public license.
+- Updated the contributing notes.
+- Misc. devops and pipelines fixes.
 
 v1.0.0-beta1 (in progress)
 ==========================
