@@ -1,5 +1,5 @@
-Mozilla Public License Version 2.0
-==================================
+“ApiOpenStudio Public License” based on Mozilla Public License 2.0
+==================================================================
 
 ### 1. Definitions
 
@@ -119,6 +119,9 @@ Contributor:
     Version); or
 * **(c)** under Patent Claims infringed by Covered Software in the absence of
     its Contributions.
+* **(d)** this License does not grant any rights or consent of use or
+    exploitation of the Covered Software for any purpose that competes with the
+    Enterprise offering on our website.
 
 This License does not grant any rights in the trademarks, service marks,
 or logos of any Contributor (except as may be necessary to comply with
