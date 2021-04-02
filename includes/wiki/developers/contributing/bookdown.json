@@ -1,0 +1,11 @@
+{
+  "title": "Contributing",
+  "content": [
+    "introduction.md",
+    "creating-and-assigning-issues.md",
+    "working-on-issues.md",
+    "feature-branch-naming.md",
+    "rebasing.md"
+  ],
+  "tocDepth": 1
+}
