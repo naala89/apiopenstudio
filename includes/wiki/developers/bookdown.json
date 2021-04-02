@@ -7,17 +7,17 @@
     }
   },
   "content": [
+    "contributing/bookdown.json",
     "coding-standards.md",
-    "configuring-debug-levels.md",
-    "contributing.md",
     "linting.md",
+    "testing.md",
+    "xdebug.md",
+    "configuring-debug-levels.md",
     "processors.md",
     "creating-processors.md",
     "error-responses.md",
     "resources.md",
-    "testing.md",
-    "sys-admin/bookdown.json",
-    "xdebug.md"
+    "sys-admin/bookdown.json"
   ],
   "tocDepth": 1
 }

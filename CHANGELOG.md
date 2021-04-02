@@ -126,3 +126,4 @@ v1.0.0-beta1 (in progress)
 - Updated .gitlab-ci so that tests run on all merge requests and deploy to
   wiki/phpdoc on merges.
 - Updated notes for contributing
+- Moved code of conduct into CODE_OF_CONDUCT.md.
