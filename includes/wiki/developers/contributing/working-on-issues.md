@@ -30,6 +30,23 @@ In your fork, navigate to settings -> Repository.
 
 Set ```Default branch``` to develop.
 
+### Create and set the SSH_PRIVATE_KEY variable
+
+This is required so that the GitLab CI runner can run in your fork. The runner instance needs to install the composer dependencies in order to run.
+
+GitLab is configured to prevent any merge requests being merged until tests are passed.
+
+This variable is safe and masked, and will never be revealed in your runner logs.
+
+* Navigate to ```Settings``` -> ```CI/CD```.
+* Expand the ```Variables``` section.
+* Click on ```Add Variable```.
+* Enter ```SSH_PRIVATE_KEY``` in ```Key```.
+* Generate a new private/public key, especially for this purpose. See [Keygen][keygen] for more details.
+* Paste the new private key into ```Value```.
+* Uncheck the ```Protect variable``` flag. This will allow the variable tio be used in the feature branch CI.
+* Save
+
 Clone the fork
 --------------
 
@@ -95,3 +112,5 @@ Review your changes and submit.
 [gitlab]: https://gitlab.com/john89/api_open_studio
 
 [create_fork]: images/create-fork.png
+
+[keygen]: https://www.ssh.com/ssh/keygen/]
