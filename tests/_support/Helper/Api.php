@@ -207,7 +207,7 @@ class Api extends \Codeception\Module
         $this->haveHttpHeader('Accept', 'application/json');
         $this->haveHttpHeader('Authorization', 'Bearer ' . $this->getMyStoredToken());
         $this->getModule('REST')->sendGET(
-            $this->getCoreBaseUri() . '/resource',
+            $this->getCoreBaseUri() . '/resource/',
             ['appid' => $yamlArr['appid']]
         );
         $resources = json_decode($this->getModule('REST')->response, true);
@@ -223,9 +223,7 @@ class Api extends \Codeception\Module
             }
             $this->getModule('REST')->sendDELETE(
                 $this->getCoreBaseUri() . '/resource/' . $resid,
-                [
-
-                ]
+                []
             );
         }
     }

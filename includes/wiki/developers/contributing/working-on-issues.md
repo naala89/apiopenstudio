@@ -30,22 +30,52 @@ In your fork, navigate to settings -> Repository.
 
 Set ```Default branch``` to develop.
 
-### Create and set the SSH_PRIVATE_KEY variable
+Create and set the SSH_PRIVATE_KEY and CI_MYSQL_ROOT_PASSWORD variables
+-----------------------------------------------------------------------
 
-This is required so that the GitLab CI runner can run in your fork. The runner instance needs to install the composer dependencies in order to run.
+This is required so that the GitLab CI runner can run in your fork. The runner
+instance needs to install the composer dependencies in order to run.
 
-GitLab is configured to prevent any merge requests being merged until tests are passed.
+GitLab is configured to prevent any merge requests being merged until tests are
+passed.
 
-This variable is safe and masked, and will never be revealed in your runner logs.
+This variable is safe and masked, and will never be revealed in your runner
+logs.
 
 * Navigate to ```Settings``` -> ```CI/CD```.
 * Expand the ```Variables``` section.
 * Click on ```Add Variable```.
-* Enter ```SSH_PRIVATE_KEY``` in ```Key```.
-* Generate a new private/public key, especially for this purpose. See [Keygen][keygen] for more details.
-* Paste the new private key into ```Value```.
-* Uncheck the ```Protect variable``` flag. This will allow the variable tio be used in the feature branch CI.
-* Save
+    * Enter ```SSH_PRIVATE_KEY``` in ```Key```.
+    * Generate a new private/public key, especially for this purpose.
+      See [Keygen][keygen] for more details.
+    * Paste the new private key into ```Value```.
+    * Uncheck the ```Protect variable``` flag. This will allow the variable to
+      be used in the feature branch CI.
+    * Click on ```Add Variable```.
+* Click on ```Add Variable```.
+    * Enter ```CI_MYSQL_ROOT_PASSWORD``` in ```Key```.
+    * Paste the DB root password ```Value```.
+    * Uncheck the ```Protect variable``` flag. This will allow the variable to
+      be used in the feature branch CI.
+    * Check the ```Mask variable``` flag. This will mask the variable in the
+      logs.
+    * Click on ```Add Variable```.
+
+### Optional
+
+For added security, you can add the following custom environment variables for
+the CI testing:
+
+* CI_MYSQL_USERNAME
+    * DB username
+* CI_MYSQL_PASSWORD
+    * DB password
+* CI_ADMIN_NAME
+    * ApiOpenStudio admin username
+* CI_ADMIN_PASS
+    * ApiOpenStudio admin password
+* CI_ADMIN_EMAIL
+    * ApiOpenStudio admin email
 
 Clone the fork
 --------------

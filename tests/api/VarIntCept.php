@@ -6,7 +6,7 @@ $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->createResourceFromYaml('varInt.yaml');
 $I->deleteHeader('Authorization');
 
-$uri = $I->getMyBaseUri() . '/varint';
+$uri = $I->getMyBaseUri() . '/varint/';
 
 $I->wantTo('populate a VarInt with text and see the result.');
 $I->sendGet($uri, ['token' => $I->getMyStoredToken(), 'value' => 'text']);

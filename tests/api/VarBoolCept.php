@@ -1,12 +1,14 @@
 <?php
 
+$yamlFilename = 'varBool.yaml';
+
 $I = new ApiTester($scenario);
 $I->performLogin();
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
-$I->createResourceFromYaml('varBool.yaml');
+$I->createResourceFromYaml($yamlFilename);
 $I->deleteHeader('Authorization');
 
-$uri = $I->getMyBaseUri() . '/varbool';
+$uri = $I->getMyBaseUri() . '/varbool/';
 
 $I->wantTo('populate a VarBool with 1 and see the result.');
 $I->sendGet($uri, ['token' => $I->getMyStoredToken(), 'value' => '1']);
@@ -81,5 +83,5 @@ $I->seeResponseContainsJson(
 );
 
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
-$I->tearDownTestFromYaml('varBool.yaml');
+$I->tearDownTestFromYaml($yamlFilename);
 $I->deleteHeader('Authorization');

@@ -25,7 +25,7 @@ debug:
       level: DEBUG
       formatter: api_open_studio
       bubble: true
-      stream: logs/api.error.log
+      stream: api/error.log
     db_file_handler:
       class: Monolog\Handler\StreamHandler
       level: DEBUG
@@ -46,7 +46,7 @@ debug:
       processors: [web_processor]
 
 db:
-  definition_path: "includes/db/dbDefinition.yaml"
+  definition_path: "includes/Db/dbDefinition.yaml"
   driver: mysqli
   host: mariadb
   root_password: apiopenstudio
@@ -73,11 +73,3 @@ api:
   dir_resources: "includes/resources/"
   dir_uploads: "uploads/"
   dir_tmp: "/tmp/"
-
-email:
-  host: apiopenstudio-email
-  username: "admin@apiopenstudio.com"
-  password: "secret"
-  from:
-    email: "admin@apiopenstudio.com"
-    name: "ApiOpenStudio admin"

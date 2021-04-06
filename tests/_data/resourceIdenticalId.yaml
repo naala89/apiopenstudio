@@ -1,6 +1,6 @@
-name: test resource identical IDs
+name: Testing resource identical IDs
 
-description: test resource identical IDs
+description: Test resource identical IDs
 
 uri: resource/identical/ids
 

@@ -1,6 +1,6 @@
-name: resource no uri
+name: Testing resource no uri
 
-description: test new resource with missing uri
+description: Test new resource with missing uri
 
 method: get
 

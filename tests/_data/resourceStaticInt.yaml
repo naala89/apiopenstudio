@@ -1,6 +1,6 @@
-name: resource static int
+name: Testing resource static int
 
-description: test resource with static integer in process
+description: Test resource with static integer in process
 
 uri: resource/static/int
 

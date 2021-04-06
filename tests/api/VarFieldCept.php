@@ -4,7 +4,7 @@ $I = new ApiTester($scenario);
 
 $I->performLogin();
 
-$uri = $I->getMyBaseUri() . '/field';
+$uri = $I->getMyBaseUri() . '/field/';
 
 $I->wantTo('create a VarField processor of literals and vars and see result');
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());

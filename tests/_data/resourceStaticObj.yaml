@@ -1,6 +1,6 @@
-name: resource static object
+name: Testing resource static object
 
-description: test resource with static object in process
+description: Test resource with static object in process
 
 uri: resource/static/object
 

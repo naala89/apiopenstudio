@@ -2,7 +2,7 @@
 
 $I = new ApiTester($scenario);
 $I->performLogin();
-$uri = $I->getMyBaseUri() . '/sort/collection';
+$uri = $I->getMyBaseUri() . '/sort/collection/';
 
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->createResourceFromYaml('sortCollection.yaml');
@@ -103,7 +103,7 @@ $I->deleteHeader('Authorization');
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->createResourceFromYaml('sortArray.yaml');
 $I->deleteHeader('Authorization');
-$uri = $I->getMyBaseUri() . '/sort/array';
+$uri = $I->getMyBaseUri() . '/sort/array/';
 
 $I->wantTo('Sort multiple values by value in ascending order and see the result.');
 $I->sendGet(
@@ -200,7 +200,7 @@ $I->deleteHeader('Authorization');
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->createResourceFromYaml('sortObject.yaml');
 $I->deleteHeader('Authorization');
-$uri = $I->getMyBaseUri() . '/sort/object';
+$uri = $I->getMyBaseUri() . '/sort/object/';
 
 $I->wantTo('Sort an Object by value in ascending order and see the result.');
 $I->sendGet(

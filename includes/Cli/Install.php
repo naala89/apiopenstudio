@@ -164,7 +164,7 @@ class Install extends Script
             }
         } else {
             if (!$this->db->connect($host, $username, $password, $database)) {
-                echo "Error: DB connection failed.\n";
+                echo "Error: DB connection failed with database.\n";
                 echo $this->db->errorMsg() . "\n";
                 exit;
             }
@@ -204,7 +204,7 @@ class Install extends Script
             exit;
         }
 
-        echo "Creating the `$database` Database...\n";
+        echo "Creating the Database...\n";
 
         $sql = "CREATE DATABASE IF NOT EXISTS `$database`";
         if (!$this->db->execute($sql)) {
@@ -213,7 +213,7 @@ class Install extends Script
             exit;
         }
 
-        echo "Database `$database` created successfully!\n";
+        echo "Database created successfully!\n";
     }
 
     /**
@@ -260,16 +260,16 @@ class Install extends Script
             exit;
         }
 
-        echo "Using the `$database` Database...\n";
+        echo "Using the Database...\n";
 
         $sql = "USE `$database`";
         if (!$this->db->execute($sql)) {
             echo "$sql\n";
-            echo "Error: Use database `$database` Failed, please check your logs.\n";
+            echo "Error: Use database Failed, please check your logs.\n";
             exit;
         }
 
-        echo "Using Database `$database` successful!\n";
+        echo "Use Database successful!\n";
     }
 
     /**
@@ -294,23 +294,23 @@ class Install extends Script
             exit;
         }
 
-        echo "Creating the `$username` user...\n";
+        echo "Creating the database user...\n";
         $sql = "CREATE USER IF NOT EXISTS '$username'@'%' IDENTIFIED BY '$password'";
         if (!$this->db->execute($sql)) {
             echo "$sql\n";
             echo "Error: Create user `$username` failed, please check your logs.\n";
             exit;
         }
-        echo "Successfully created the `$username` user!\n";
+        echo "Successfully created the user for the database!\n";
 
-        echo "Granting `$database` database on `%` privileges to `$username`...\n";
+        echo "Granting database privileges to the user...\n";
         $sql = "GRANT ALL PRIVILEGES ON $database.* TO '$username'@'%'";
         if (!$this->db->execute($sql)) {
             echo "$sql\n";
             echo "Error: Grant privileges failed, please check your logs.\n";
             exit;
         }
-        echo "Successfully granted privileges for `$username` user!\n";
+        echo "Successfully granted privileges for the user!\n";
 
         $sql = 'FLUSH PRIVILEGES';
         if (!$this->db->execute($sql)) {
@@ -319,7 +319,7 @@ class Install extends Script
             exit;
         }
 
-        echo "User `$username` created successfully!\n";
+        echo "Database user created successfully!\n";
     }
 
     /**
@@ -513,7 +513,7 @@ class Install extends Script
      */
     public function createAdminUser(string $username = '', string $password = '', string $email = '')
     {
-        echo "Creating the admin user...\n";
+        echo "Creating the ApiOpenStudio admin user...\n";
 
         while ($username == '') {
             $prompt = 'Enter the admin users username: ';
@@ -561,10 +561,10 @@ class Install extends Script
             echo $e->getMessage() . "\n";
             exit;
         }
-        echo "User $username created!\n";
+        echo "ApiOpenStudio admin user created!\n";
 
         // Assign administrator role.
-        echo "Assigning the administrator role to your use...\n";
+        echo "Assigning the administrator role to your user...\n";
         try {
             $user = $userMapper->findByUsername($username);
             $uid = $user->getUid();
@@ -594,6 +594,6 @@ class Install extends Script
             exit;
         }
 
-        echo "Administrator role successfully added to $username!\n\n";
+        echo "Administrator role successfully added to ApiOpenStudio admin user!\n\n";
     }
 }

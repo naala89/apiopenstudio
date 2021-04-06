@@ -44,11 +44,12 @@ tests:
   services:
     - mariadb:latest
   variables:
-    MYSQL_HOST: $CI_MYSQL_HOST
     MYSQL_ROOT_PASSWORD: $CI_MYSQL_ROOT_PASSWORD
-    MYSQL_DATABASE: $CI_MYSQL_DATABASE
-    MYSQL_USER: $CI_MYSQL_USER
+    MYSQL_USERNAME: $CI_MYSQL_USERNAME
     MYSQL_PASSWORD: $CI_MYSQL_PASSWORD
+    ADMIN_NAME: $CI_ADMIN_NAME
+    ADMIN_PASS: $CI_ADMIN_PASS
+    ADMIN_EMAIL: $CI_ADMIN_EMAIL
   only:
     - merge_request
   artifacts:
@@ -58,19 +59,42 @@ tests:
       - tests/_output/
       - logs/
   script:
+    - echo "Setting up for unit tests."
+    - touch .env
+    - echo "API_DOMAIN=localhost:8085" >> .env
+    - cp tests/ci.settings.yml settings.yml
+    - >
+      if [ $MYSQL_USERNAME != null ]; then
+        sed -i -e "s/username: apiopenstudio/username: ${MYSQL_USERNAME}/g" settings.yml
+      fi
+    - >
+      if [ $MYSQL_PASSWORD != null ]; then
+        sed -i -e "s/password: apiopenstudio/password: ${MYSQL_PASSWORD}/g" settings.yml
+      fi
+    - >
+      if [ -z "$ADMIN_NAME" ]; then
+        ADMIN_NAME="admin"
+      fi
+    - >
+      if [ -z "$ADMIN_PASS" ]; then
+        ADMIN_PASS="secret"
+      fi
+    - >
+      if [ -z "$ADMIN_EMAIL" ]; then
+        ADMIN_EMAIL="deadletter@apiopenstudio.com"
+      fi
     - echo "Linting the codebase."
     - ./vendor/bin/phpcs --standard=PSR12 --report-file=phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
-#    - echo "Setting up for unit and functional tests."
-#    - touch .env
-#    - echo "API_DOMAIN=localhost:8085" >> .env
-#    - cp tests/ci.settings.yml settings.yml
-#    - apt-get install -y mariadb-client iproute2
-#    - docker-php-ext-install mysqli
-#    - mysql --version
-#    - php tests/runner_generate_db.php
-#    - php -S localhost:8085 tests/routing.php &>/dev/null&
-#    - ./vendor/bin/codecept run unit --env ci
-#    - ./vendor/bin/codecept run api --env ci
+    - echo "Running api unit tests."
+    - ./vendor/bin/codecept run unit --env ci
+    - echo "Setting up for functional tests."
+    - apt-get install -y mariadb-client iproute2
+    - docker-php-ext-install mysqli
+    - mysql --version
+    - php tests/runner_generate_db.php
+    - echo "Running api functional tests."
+    - PHP_CLI_SERVER_WORKERS=10 php -S localhost:8085 -t public/ tests/routing.php &>/dev/null&
+    - ./vendor/bin/codecept run api --env ci
 
 ##################################
 ## WIKI

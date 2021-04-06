@@ -1,6 +1,6 @@
-name: test resource w no id
+name: Testing resource w no id
 
-description: test resource with no id
+description: Test resource with no id
 
 uri: resource/processor/noid
 

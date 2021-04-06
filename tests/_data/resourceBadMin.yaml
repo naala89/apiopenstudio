@@ -1,6 +1,6 @@
-name: test resource with bad min
+name: Testing resource with bad min
 
-description: test resource with bad min
+description: Test resource with bad min
 
 uri: resource/badmin
 

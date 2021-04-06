@@ -9,7 +9,7 @@
  *            You can obtain one at https://www.apiopenstudio.com/license/.
  * @author    john89 (https://gitlab.com/john89)
  * @copyright 2020-2030 Naala Pty Ltd
- * @link      http://www.hashbangcode.com/
+ * @link      https://www.apiopenstudio.com
  */
 
 /**
@@ -20,22 +20,32 @@
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-global $argv;
+//global $argv;
 
 $install = new \ApiOpenStudio\Cli\Install();
+$config = new \ApiOpenStudio\Core\Config();
+
+$driver = $config->__get(['db', 'driver']);
+$host = $config->__get(['db', 'host']);
+$database = $config->__get(['db', 'database']);
+$username = $config->__get(['db', 'username']);
+$password = $config->__get(['db', 'password']);
+$basePath = dirname(__DIR__) . '/';
+$resources = $config->__get(['api', 'dir_resources']);
+$dbDefinition = $config->__get(['db', 'definition_path']);
 
 $install->createLink(
-    getenv('CI_MYSQL_DRIVER'),
-    getenv('CI_MYSQL_HOST'),
-    getenv('CI_MYSQL_DATABASE'),
+    null,
+    null,
+    '',
     'root',
-    getenv('CI_MYSQL_PASSWORD')
+    getenv('MYSQL_ROOT_PASSWORD')
 );
-$install->createDatabase(getenv('CI_MYSQL_DATABASE'));
-$install->createUser(getenv('CI_MYSQL_DATABASE'), getenv('CI_MYSQL_USER'), getenv('CI_MYSQL_PASSWORD'));
-$install->useDatabase(getenv('CI_MYSQL_DATABASE'));
-$install->createTables(getcwd(), '/includes/Db/dbDefinition.yaml', true);
-$install->createResources(getcwd(), '/includes/resources');
-$install->createAdminUser(getenv('CI_MYSQL_ADMIN_NAME'), getenv('CI_MYSQL_ADMIN_PASS'), getenv('CI_MYSQL_ADMIN_EMAIL'));
+$install->createDatabase($database);
+$install->createUser($database, $username, $password);
+$install->useDatabase($database);
+$install->createTables($basePath, $dbDefinition, true);
+$install->createResources($basePath, $resources);
+$install->createAdminUser(getenv('ADMIN_NAME'), getenv('ADMIN_PASS'), getenv('ADMIN_EMAIL'));
 
 echo "Test database successfully setup.\n";
