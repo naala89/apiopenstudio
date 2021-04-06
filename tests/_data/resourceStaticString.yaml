@@ -1,6 +1,6 @@
-name: resource static string
+name: Testing resource static string
 
-description: test resource with static string in process
+description: Test resource with static string in process
 
 uri: resource/static/string
 

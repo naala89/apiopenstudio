@@ -1,6 +1,6 @@
-name: resource static array
+name: Testing resource static array
 
-description: test resource with static array in process
+description: Test resource with static array in process
 
 uri: resource/static/array
 

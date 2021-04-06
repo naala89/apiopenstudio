@@ -1,6 +1,6 @@
-name: test resource w good fragment
+name: Testing resource w good fragment
 
-description: test resource with good fragment
+description: Test resource with good fragment
 
 uri: resource/fragment/good
 

@@ -1,6 +1,6 @@
-name: resource application no developer role
+name: Testing resource application no developer role
 
-description: test create resource with no developer role for application
+description: Test create resource with no developer role for application
 
 uri: processors
 

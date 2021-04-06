@@ -1,6 +1,6 @@
-name: resource no ttl
+name: Testing resource no ttl
 
-description: test new resource with missing ttl
+description: Test new resource with missing ttl
 
 uri: resource/missing/ttl
 

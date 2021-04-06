@@ -6,7 +6,7 @@ $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->createResourceFromYaml('url.yaml');
 $I->deleteHeader('Authorization');
 
-$uri = $I->getMyBaseUri() . '/url';
+$uri = $I->getMyBaseUri() . '/url/';
 
 $I->wantTo('populate a Url with correct inputs (no auth) and see the result.');
 $I->sendGet(

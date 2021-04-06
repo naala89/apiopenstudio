@@ -1,6 +1,6 @@
-name: resource required func type
+name: Testing resource required func type
 
-description: test resource with required funciton type
+description: Test resource with required funciton type
 
 uri: resource/output/assoc
 

@@ -1,6 +1,6 @@
-name: test resource with bad max
+name: Testing resource with bad max
 
-description: test resource with bad max
+description: Test resource with bad max
 
 uri: resource/badmax
 

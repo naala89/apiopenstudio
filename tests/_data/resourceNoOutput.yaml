@@ -1,6 +1,6 @@
-name: resource no output
+name: Testing resource no output
 
-description: test new resource with missing output
+description: Test new resource with missing output
 
 uri: resource/missing/output
 

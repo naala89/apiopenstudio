@@ -1,6 +1,6 @@
-name: resource output response
+name: Testing resource output response
 
-description: test resource with output response only
+description: Test resource with output response only
 
 uri: resource/output/response
 

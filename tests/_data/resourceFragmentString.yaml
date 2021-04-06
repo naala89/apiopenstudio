@@ -1,6 +1,6 @@
-name: test resource with fragment string
+name: Testing resource with fragment string
 
-description: test resource with fragment string
+description: Test resource with fragment string
 
 uri: resource/fragment/string
 

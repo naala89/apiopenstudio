@@ -1,6 +1,6 @@
-name: test/resource/ttlnegative
+name: Testing test/resource/ttlnegative
 
-description: test
+description: Test
 
 uri: test/resource/ttlnegative
 

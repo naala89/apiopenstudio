@@ -1,6 +1,6 @@
-name: resource no security
+name: Testing resource no security
 
-description: test new resource with missing security
+description: Test new resource with missing security
 
 uri: resource/missing/security
 

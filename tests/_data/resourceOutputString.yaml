@@ -1,6 +1,6 @@
-name: resource output string
+name: Testing resource output string
 
-description: test resource with output string
+description: Test resource with output string
 
 uri: resource/output/string
 

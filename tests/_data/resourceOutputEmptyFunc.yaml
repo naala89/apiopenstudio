@@ -1,6 +1,6 @@
-name: resource output empty func
+name: Testing resource output empty func
 
-description: test resource with empty processor as output
+description: Test resource with empty processor as output
 
 uri: resource/output/empty
 

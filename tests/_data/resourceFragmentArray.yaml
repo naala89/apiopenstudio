@@ -1,6 +1,6 @@
-name: test resource w fragment array
+name: Testing resource w fragment array
 
-description: test resource with fragment array
+description: Test resource with fragment array
 
 uri: resource/fragment/array
 
