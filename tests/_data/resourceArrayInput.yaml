@@ -1,6 +1,6 @@
-name: test resource with array input
+name: Testing resource with array input
 
-description: test resource with array input
+description: Test resource with array input
 
 uri: resource/array
 

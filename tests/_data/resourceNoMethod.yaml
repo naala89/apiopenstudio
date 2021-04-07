@@ -1,6 +1,6 @@
-name: test resource w missing method
+name: Testing resource w missing method
 
-description: test resource with missing method
+description: Test resource with missing method
 
 uri: resource/missing/method
 

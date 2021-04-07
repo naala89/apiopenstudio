@@ -1,6 +1,6 @@
-name: resource output assoc array
+name: Testing resource output assoc array
 
-description: test resource with associative array output
+description: Test resource with associative array output
 
 uri: resource/output/assoc
 

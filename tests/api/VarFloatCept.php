@@ -6,7 +6,7 @@ $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->createResourceFromYaml('varFloat.yaml');
 $I->deleteHeader('Authorization');
 
-$uri = $I->getMyBaseUri() . '/varfloat';
+$uri = $I->getMyBaseUri() . '/varfloat/';
 
 $I->wantTo('populate a VarFloat with text and see the result.');
 $I->sendGet($uri, ['token' => $I->getMyStoredToken(), 'value' => 'text']);

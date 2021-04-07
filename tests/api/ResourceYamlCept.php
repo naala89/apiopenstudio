@@ -662,7 +662,7 @@ $I->tearDownTestFromYaml($yamlFilename);
 $I->seeResponseCodeIs(200);
 
 $I->wantTo('create a new resource from YAML with incorrect processor and see the result');
-$yamlFilename = 'ResourceRequireFuncType.yaml';
+$yamlFilename = 'resourceRequireFuncType.yaml';
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendPOST(
     $uri,
@@ -704,7 +704,7 @@ $I->seeResponseContainsJson(
 );
 
 $I->wantTo('create a new resource from YAML with less than min inputs and see the result');
-$yamlFilename = 'ResourceBadMin.yaml';
+$yamlFilename = 'resourceBadMin.yaml';
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendPOST(
     $uri,
@@ -744,7 +744,7 @@ $I->seeResponseContainsJson(
 );
 
 $I->wantTo('create a new resource from YAML with more than max inputs and see the result');
-$yamlFilename = 'ResourceBadMax.yaml';
+$yamlFilename = 'resourceBadMax.yaml';
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendPOST(
     $uri,
@@ -865,7 +865,7 @@ $I->seeResponseContainsJson(
 
 //$I->wantTo('create a new resource from YAML with good fragments structure and see the result');
 //$I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/ResourceFragmentGood.yaml']);
-//$yamlFilename = 'ResourceFragmentGood.yaml';
+//$yamlFilename = 'resourceFragmentGood.yaml';
 //$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 //$I->sendPOST(
 //    $uri,
@@ -920,7 +920,7 @@ $I->seeResponseContainsJson(
 //]]);
 
 //$I->wantTo('create a new resource from YAML with string in fragments structure and see the result');
-//$yamlFilename = 'ResourceFragmentString.yaml';
+//$yamlFilename = 'resourceFragmentString.yaml';
 //$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 //$I->sendPOST(
 //    $uri,

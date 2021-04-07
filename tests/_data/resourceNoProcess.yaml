@@ -1,6 +1,6 @@
-name: resource no process
+name: Testing resource no process
 
-description: test new resource with missing process
+description: Test new resource with missing process
 
 uri: resource/missing/process
 

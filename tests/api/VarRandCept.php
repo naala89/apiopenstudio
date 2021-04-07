@@ -6,7 +6,7 @@ $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->createResourceFromYaml('varRand.yaml');
 $I->deleteHeader('Authorization');
 
-$uri = $I->getMyBaseUri() . '/varrand';
+$uri = $I->getMyBaseUri() . '/varrand/';
 
 $I->wantTo('test a varRand with no settings and see the result.');
 $I->sendGet($uri, ['token' => $I->getMyStoredToken()]);
