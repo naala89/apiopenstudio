@@ -163,7 +163,7 @@ the [Docker gitlab repo][docker_gitlab]
 
 ### Setup the DB on a docker instance
 
-    docer exec -it apiopenstudio-php bash
+    docker exec -it apiopenstudio-php bash
     cd api
     ./includes/scripts/install.php
 
