@@ -72,6 +72,8 @@ class Install extends Script
      *   CLI args.
      *
      * @return void
+     *
+     * @throws ApiException
      */
     public function exec(array $argv = null)
     {
@@ -116,6 +118,8 @@ class Install extends Script
         $this->createResources();
         echo "\n";
         $this->createAdminUser();
+        echo "\n";
+        $this->generateJwtKeys();
         echo "\n";
     }
 
@@ -385,7 +389,6 @@ class Install extends Script
 
         // Parse the DB  table definition array.
         foreach ($definition as $table => $tableData) {
-            $sqlPrimary = '';
             $sqlColumns = [];
             foreach ($tableData['columns'] as $column => $columnData) {
                 // Column definitions.
@@ -595,5 +598,30 @@ class Install extends Script
         }
 
         echo "Administrator role successfully added to ApiOpenStudio admin user!\n\n";
+    }
+
+    public function generateJwtKeys($generateKeys = null)
+    {
+        $config = new Config();
+        echo "You will need the public/private keys for users to login and validate.\n";
+        echo "These can be automatically generated for you, or you can manually copy them in yourself\n\n";
+
+        $private_key_path = $config->__get(['api', 'jwt_private_key']);
+        $public_key_path = $config->__get(['api', 'jwt_public_key']);
+        echo "Private JWT key path: $private_key_path\n";
+        echo "Public JWT key path: $public_key_path\n\n";
+
+        while (!is_bool($generateKeys)) {
+            $prompt = "Automatically generate public/private keys for JWT (WARNING, this will overwrite any existing keys at the location defined in settings.yml) [y/N]: ";
+            $generateKeys = strtolower($this->readlineTerminal($prompt));
+            $generateKeys = $generateKeys === 'n' || $generateKeys === '' ? false : $generateKeys;
+            $generateKeys = $generateKeys === 'y' ? true : $generateKeys;
+        }
+
+        if ($generateKeys) {
+            echo "Generating keys...\n\n";
+            shell_exec("ssh-keygen -t rsa -y -P \"\" -b 4096 -m PEM -f $private_key_path");
+            shell_exec("ssh-keygen -e -m PEM -y -f $private_key_path > $public_key_path");
+        }
     }
 }
