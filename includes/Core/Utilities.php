@@ -15,6 +15,17 @@
 
 namespace ApiOpenStudio\Core;
 
+use DateInterval;
+use DateTimeZone;
+use Lcobucci\Clock\SystemClock;
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Signer\Key\LocalFileReference;
+use Lcobucci\JWT\UnencryptedToken;
+use Lcobucci\JWT\Validation\Constraint\IssuedBy;
+use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
+use Lcobucci\JWT\Validation\Constraint\PermittedFor;
+use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
+
 /**
  * Class Utilities
  *
@@ -27,35 +38,35 @@ class Utilities
      *
      * @var string Lower case characters.
      */
-    public static $lower_case = 'abcdefghijklmnopqrstuvwxyz';
+    public static string $lower_case = 'abcdefghijklmnopqrstuvwxyz';
 
     /**
      * String of capital letters for random().
      *
      * @var string Upper case characters.
      */
-    public static $upper_case = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    public static string $upper_case = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
     /**
      * String of numbers for random().
      *
      * @var string Real numbers.
      */
-    public static $number = '0123456789';
+    public static string $number = '0123456789';
 
     /**
      * String of special characters for random().
      *
      * @var string Special characters.
      */
-    public static $special = '!@#$%^&*()';
+    public static string $special = '!@#$%^&*()';
 
     /**
      * Returns system time in micro secs.
      *
      * @return float
      **/
-    public static function getMicrotime()
+    public static function getMicrotime(): float
     {
         list($usec, $sec) = explode(" ", microtime());
         return ((float)$usec + (float)$sec);
@@ -66,26 +77,27 @@ class Utilities
      *
      * Contents of string specified by $lower, $upper, $number and $non_alphanum.
      *
-     * @param integer $length Length of the string.
-     * @param boolean $lower Include lower case alpha.
-     * @param boolean $upper Include upper case alpha.
-     * @param boolean $number Include integers.
-     * @param boolean $special Include special characters.
+     * @param int|null $length Length of the string.
+     * @param boolean|null $lower Include lower case alpha.
+     * @param boolean|null $upper Include upper case alpha.
+     * @param boolean|null $number Include integers.
+     * @param boolean|null $special Include special characters.
      *
      * @return string
-     **/
+     */
     public static function randomString(
         int $length = null,
         bool $lower = null,
         bool $upper = null,
         bool $number = null,
         bool $special = null
-    ) {
+    ): string
+    {
         $length = empty($length) ? 8 : $length;
-        $lower = $lower === null ? true : $lower;
-        $upper = $upper === null ? true : $upper;
-        $number = $number === null ? true : $number;
-        $special = $special === null ? false : $special;
+        $lower = $lower === null || $lower;
+        $upper = $upper === null || $upper;
+        $number = $number === null || $number;
+        $special = !($special === null) && $special;
         $chars = '';
         if ($lower) {
             $chars .= self::$lower_case;
@@ -117,7 +129,7 @@ class Utilities
      *
      * @return string
      **/
-    public static function datePhp2mysql(int $phpdate)
+    public static function datePhp2mysql(int $phpdate): string
     {
         return date('Y-m-d H:i:s', $phpdate);
     }
@@ -129,7 +141,7 @@ class Utilities
      *
      * @return string
      **/
-    public static function dateMysql2php(int $mysqldate)
+    public static function dateMysql2php(int $mysqldate): string
     {
         return strtotime($mysqldate);
     }
@@ -139,7 +151,7 @@ class Utilities
      *
      * @return string
      */
-    public static function mysqlNow()
+    public static function mysqlNow(): string
     {
         return self::datePhp2mysql(time());
     }
@@ -151,7 +163,7 @@ class Utilities
      *
      * @return boolean
      **/
-    public static function isAssoc($m_array)
+    public static function isAssoc($m_array): bool
     {
         if (!is_array($m_array)) {
             return false;
@@ -165,7 +177,7 @@ class Utilities
      * @return string ip address
      *  IP address of the user
      */
-    public static function getUserIp()
+    public static function getUserIp(): string
     {
         $ip = $_SERVER["REMOTE_ADDR"];
         $proxy = $_SERVER["HTTP_X_FORWARDED_FOR"];
@@ -193,8 +205,7 @@ class Utilities
         if (!$returnArray) {
             return $protocol . '://' . $address . (($port == 80) ? '' : ":$port") . $uri;
         }
-        $ret_array = array('protocol' => $protocol, 'port' => $port, 'address' => $address, 'uri' => $uri);
-        return $ret_array;
+        return array('protocol' => $protocol, 'port' => $port, 'address' => $address, 'uri' => $uri);
     }
 
     /**
@@ -205,7 +216,7 @@ class Utilities
      *
      * @return string substring left of $s2
      */
-    public static function strleft(string $s1, string $s2)
+    public static function strleft(string $s1, string $s2): string
     {
         return substr($s1, 0, strpos($s1, $s2));
     }
@@ -246,7 +257,7 @@ class Utilities
      *
      * @return boolean
      */
-    public static function doesUrlExist(string $url)
+    public static function doesUrlExist(string $url): bool
     {
         $headers = @get_headers($url);
         if (strpos($headers[0], '200') === false) {
@@ -260,7 +271,7 @@ class Utilities
      *
      * @return boolean
      */
-    public static function isSecure()
+    public static function isSecure(): bool
     {
         $isSecure = false;
         if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
@@ -280,8 +291,8 @@ class Utilities
      * Recursively set access rights on a directory.
      *
      * @param string $dir Directory string.
-     * @param integer $dirAccess Directory permission to set.
-     * @param integer $fileAccess File permission to set.
+     * @param int|null $dirAccess Directory permission to set.
+     * @param int|null $fileAccess File permission to set.
      * @param array $nomask Nomask permission to set.
      *
      * @return void
@@ -293,8 +304,7 @@ class Utilities
         array $nomask = array('.', '..')
     ) {
         $dirAccess = empty($dirAccess) ? 0777 : $dirAccess;
-        $fileAccess = empty($dirAccess) ? 0666 : $dirAccess;
-        //error_log("Make writable: $dir");
+        $fileAccess = empty($dirAccess) ? 0666 : $fileAccess;
         if (is_dir($dir)) {
             // Try to make each directory world writable.
             if (@chmod($dir, $dirAccess)) {
@@ -318,5 +328,140 @@ class Utilities
             }
             closedir($handle);
         }
+    }
+
+    /**
+     * Get Authorization header bearer token.
+     *
+     * @return mixed|string|null
+     */
+    public static function getAuthHeaderToken()
+    {
+        $headers = '';
+
+        if (isset($_SERVER['Authorization'])) {
+            $headers = trim($_SERVER["Authorization"]);
+        } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            // Nginx or fast CGI.
+            $headers = trim($_SERVER["HTTP_AUTHORIZATION"]);
+        } elseif (function_exists('apache_request_headers')) {
+            $requestHeaders = apache_request_headers();
+            // Server-side fix for bug in old Android versions (a nice side-effect of this fix means we don't care about
+            // capitalization for Authorization)
+            $requestHeaders = array_combine(
+                array_map(
+                    'ucwords',
+                    array_keys($requestHeaders)
+                ),
+                array_values($requestHeaders)
+            );
+            if (isset($requestHeaders['Authorization'])) {
+                $headers = trim($requestHeaders['Authorization']);
+            }
+        }
+
+        $headerParts = explode(' ', $headers);
+        return array_pop($headerParts);
+    }
+
+    /**
+     * Decrypt and validate the JWT token.
+     *
+     * @param string|null $rawToken
+     *
+     * @return UnencryptedToken
+     *
+     * @throws ApiException
+     */
+    public static function decryptToken(string $rawToken = null): UnencryptedToken
+    {
+        $config = new Config();
+        if (empty($rawToken)) {
+            $rawToken = self::getAuthHeaderToken();
+        }
+
+        $algorithm =
+            "Lcobucci\\JWT\\Signer\\" .
+            $config->__get(['api', 'jwt_alg_type']) .
+            "\\" .
+            $config->__get(['api', 'jwt_alg']);
+        $jwtConfig = Configuration::forAsymmetricSigner(
+            new $algorithm(),
+            LocalFileReference::file($config->__get(['api', 'jwt_private_key'])),
+            LocalFileReference::file($config->__get(['api', 'jwt_public_key']))
+        );
+        $clock = new SystemClock(new DateTimeZone(date('T')));
+        $leeway = new DateInterval('PT60S');
+        $jwtConfig->setValidationConstraints(
+            new IssuedBy($config->__get(['api', 'jwt_issuer'])),
+            new PermittedFor($config->__get(['api', 'jwt_permitted_for'])),
+            new LooseValidAt($clock, $leeway)
+        );
+        $constraints = $jwtConfig->validationConstraints();
+
+        $decryptedToken = $jwtConfig->parser()->parse($rawToken);
+        if (!assert($decryptedToken instanceof UnencryptedToken)) {
+            throw new ApiException('invalid token', 4, -1, 401);
+        }
+
+        try {
+            $jwtConfig->validator()->assert($decryptedToken, ...$constraints);
+        } catch (RequiredConstraintsViolated $e) {
+            throw new ApiException('invalid token', 4, -1, 401);
+        }
+
+        return $decryptedToken;
+    }
+
+    /**
+     * Get the User ID from the JWT token.
+     *
+     * @param UnencryptedToken|null $decryptedToken Decrypted JWT token.
+     *
+     * @return int
+     *
+     * @throws ApiException
+     */
+    public static function getUidFromToken(UnencryptedToken $decryptedToken = null): int
+    {
+        if (empty($decryptedToken)) {
+            $decryptedToken = self::decryptToken();
+        }
+        try {
+            $uid = $decryptedToken->claims()->get('uid');
+            if (!assert(!empty($uid))) {
+                throw new ApiException('user ID not included in the claim', 4, -1, 401);
+            }
+        } catch (RequiredConstraintsViolated $e) {
+            throw new ApiException('Invalid token', 4, -1, 401);
+        }
+
+        return $uid;
+    }
+
+    /**
+     * Get the User roles from the JWT token.
+     *
+     * @param UnencryptedToken|null $decryptedToken Decrypted JWT token.
+     *
+     * @return array
+     *
+     * @throws ApiException
+     */
+    public static function getRolesFromToken(UnencryptedToken $decryptedToken = null): array
+    {
+        if (empty($decryptedToken)) {
+            $decryptedToken = self::decryptToken();
+        }
+        try {
+            $roles = $decryptedToken->claims()->get('roles');
+            if (!assert(!empty($roles))) {
+                throw new ApiException('user roles not included in the claim', 4, -1, 401);
+            }
+        } catch (RequiredConstraintsViolated $e) {
+            throw new ApiException('Invalid token', 4, -1, 401);
+        }
+
+        return $roles;
     }
 }
