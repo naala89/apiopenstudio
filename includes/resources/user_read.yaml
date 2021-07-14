@@ -21,7 +21,7 @@ appid: 1
 ttl: 0
 
 security:
-  processor: token
+  processor: validate_token
   id: user_read_security
   token:
     processor: bearer_token

@@ -21,12 +21,10 @@ appid: 1
 ttl: 0
 
 security:
-  processor: token_role
   id: resource_create_security
-  token:
-    processor: bearer_token
-    id: resource_create_token
-  role: Developer
+  processor: validate_token_roles
+  roles:
+    - Developer
   validate_account: false
   validate_application: false
 

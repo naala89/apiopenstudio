@@ -21,12 +21,10 @@ appid: 1
 ttl: 0
 
 security:
-  processor: token_role
-  id: account_delete_security
-  token:
-    processor: bearer_token
-    id: account_delete_bearer_token
-  role: Administrator
+  id: delete_account_security
+  processor: validate_token_roles
+  roles:
+    - Administrator
 
 process:
   processor: account_delete

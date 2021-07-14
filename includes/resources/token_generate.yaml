@@ -1,4 +1,4 @@
-# User login resource.
+# Generate a JWT token for a valid user.
 #
 # @package   ApiOpenStudio
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -8,11 +8,11 @@
 # @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
-name: User login
+name: Generate token
 
-description: Login a user to ApiOpenStudio using username/password.
+description: Fetch a JWT token, user validated by username/password.
 
-uri: login
+uri: auth/token
 
 method: post
 
@@ -21,13 +21,13 @@ appid: 1
 ttl: 0
 
 process:
-  processor: user_login
-  id: user_login_process
+  processor: generate_token
+  id: generate_token_process
   username:
     processor: var_post
-    id: user_login_username
+    id: generate_token_username
     key: username
   password:
     processor: var_post
-    id: user_login_password
+    id: generate_token_password
     key: password

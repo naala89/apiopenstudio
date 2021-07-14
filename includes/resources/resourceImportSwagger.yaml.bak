@@ -21,12 +21,10 @@ appid: 1
 ttl: 0
 
 security:
-  processor: token_role
+  processor: validate_token_role
   id: resource_import_swagger_security
-  token:
-    processor: bearer_token
-    id: resource_import_swagger_token
-  role: Developer
+  roles:
+    - Developer
 
 process:
   processor: resourceSwagger

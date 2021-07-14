@@ -21,18 +21,12 @@ appid: 1
 ttl: 0
 
 security:
-  processor: token
   id: user_role_read_security
-  token:
-    processor: bearer_token
-    id: user_role_read_security_token
+  processor: validate_token
 
 process:
-  processor: user_role_read
   id: user_role_read_process
-  token:
-    processor: bearer_token
-    id: user_role_read_token
+  processor: user_role_read
   uid:
     processor: var_get
     id: user_role_read_uid

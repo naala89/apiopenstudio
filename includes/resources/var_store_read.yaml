@@ -21,11 +21,8 @@ appid: 1
 ttl: 0
 
 security:
-  processor: token_roles
+  processor: validate_token_roles
   id: var_store_read_security
-  token:
-    processor: bearer_token
-    id: var_store_read_security_token
   roles:
     - Application manager
     - Developer
@@ -33,9 +30,6 @@ security:
 process:
   processor: var_store_read
   id: var_store_read_process
-  token:
-    processor: bearer_token
-    id: var_store_read_token
   vid:
     processor: var_get
     id: var_store_read_vid

@@ -21,11 +21,8 @@ appid: 1
 ttl: 0
 
 security:
-  processor: token_roles
+  processor: validate_token_roles
   id: validate_user_has_access_rights
-  token:
-    processor: bearer_token
-    id: header_bearer_security_token
   roles:
     - Application manager
     - Developer
@@ -33,9 +30,6 @@ security:
 process:
   processor: var_store_delete
   id: delete_the_var
-  token:
-    processor: bearer_token
-    id: header_bearer_token
   vid:
     processor: var_uri
     id: get_the_vid
