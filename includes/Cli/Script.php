@@ -55,7 +55,7 @@ abstract class Script
      *
      * @var array Command argument map.
      */
-    protected $argMap;
+    protected array $argMap;
 
     /**
      * Script constructor.
