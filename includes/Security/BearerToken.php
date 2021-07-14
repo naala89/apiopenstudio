@@ -29,7 +29,7 @@ class BearerToken extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Bearer Token',
         'machineName' => 'bearer_token',
         // phpcs:ignore

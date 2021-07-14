@@ -29,7 +29,7 @@ class VarStr extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Var (String)',
         'machineName' => 'var_str',
         'description' => 'A string variable. It validates the input and returns an error if it is not a string.',
@@ -56,7 +56,7 @@ class VarStr extends Core\ProcessorEntity
      */
     public function process()
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $string = $this->val('value', true);
         if (!is_string($string)) {

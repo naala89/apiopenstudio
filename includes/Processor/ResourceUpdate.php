@@ -15,6 +15,7 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db\AccountMapper;
@@ -39,71 +40,54 @@ class ResourceUpdate extends Core\ProcessorEntity
      *
      * @var Config
      */
-    private $settings;
-
-    /**
-     * User mapper class.
-     *
-     * @var UserMapper
-     */
-    private $userMapper;
+    private Config $settings;
 
     /**
      * User role mapper class.
      *
      * @var UserRoleMapper
      */
-    private $userRoleMapper;
+    private UserRoleMapper $userRoleMapper;
 
     /**
      * Resource mapper class.
      *
      * @var ResourceMapper
      */
-    private $resourceMapper;
+    private ResourceMapper $resourceMapper;
 
     /**
      * Account mapper class.
      *
      * @var AccountMapper
      */
-    private $accountMapper;
+    private AccountMapper $accountMapper;
 
     /**
      * Application mapper class.
      *
      * @var ApplicationMapper
      */
-    private $applicationMapper;
+    private ApplicationMapper $applicationMapper;
 
     /**
      * Resource validator class.
      *
      * @var ResourceValidator
      */
-    private $validator;
+    private ResourceValidator $validator;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Resource update',
         'machineName' => 'resource_update',
         'description' => 'Update a resource.',
         'menu' => 'Admin',
         'input' => [
-            'token' => [
-                // phpcs:ignore
-                'description' => 'The token of the user making the call. This is used to validate the user permissions.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => false,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
             'resid' => [
                 'description' => 'The resource ID.',
                 'cardinality' => [1, 1],
@@ -193,14 +177,15 @@ class ResourceUpdate extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Logger $logger Logger object.
+     *
+     * @throws Core\ApiException
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Config();
-        $this->userMapper = new UserMapper($db);
         $this->userRoleMapper = new UserRoleMapper($db);
         $this->accountMapper = new AccountMapper($this->db);
         $this->applicationMapper = new ApplicationMapper($db);
@@ -215,12 +200,11 @@ class ResourceUpdate extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
-        $token = $this->val('token', true);
-        $currentUser = $this->userMapper->findBytoken($token);
+        $uid = Core\Utilities::getUidFromToken();
         $resid = $this->val('resid', true);
         $name = $this->val('name', true);
         $description = $this->val('description', true);
@@ -241,12 +225,12 @@ class ResourceUpdate extends Core\ProcessorEntity
 
         // Validate user role access to the resource or the proposed resource.
         $existingResourceRoles = $this->userRoleMapper->findByUidAppidRolename(
-            $currentUser->getUid(),
+            $uid,
             $application->getAppid(),
             'Developer'
         );
         $proposedResourceRoles = $this->userRoleMapper->findByUidAppidRolename(
-            $currentUser->getUid(),
+            $uid,
             $appid,
             'Developer'
         );
@@ -292,16 +276,16 @@ class ResourceUpdate extends Core\ProcessorEntity
     }
 
     /**
-     * Covert a string in a format into an associative array.
+     * Covert a string in a format into a JSON encoded string.
      *
      * @param string $format The format of the input string.
      * @param string $string The metadata string.
      *
-     * @return array|mixed Normalised string format.
+     * @return string|false Normalised string format.
      *
      * @throws Core\ApiException Invalid data.
      */
-    private function translateMetaString(string $format, string $string)
+    private function translateMetaString(string $format, string $string): ?string
     {
         $array = [];
         switch ($format) {
@@ -349,7 +333,7 @@ class ResourceUpdate extends Core\ProcessorEntity
         int $appid,
         int $ttl,
         string $meta
-    ) {
+    ): Core\DataContainer {
         $resource = new Resource(
             $resid,
             $appid,

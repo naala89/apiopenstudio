@@ -15,6 +15,7 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db;
 use Swift_SmtpTransport;
@@ -32,51 +33,51 @@ class InviteCreate extends Core\ProcessorEntity
     /**
      * Config class.
      *
-     * @var Config
+     * @var Core\Config
      */
-    private $settings;
+    private Core\Config $settings;
 
     /**
      * User mapper class.
      *
-     * @var UserMapper
+     * @var Db\UserMapper
      */
-    private $userMapper;
+    private Db\UserMapper $userMapper;
 
     /**
      * Invite mapper class.
      *
      * @var Db\InviteMapper
      */
-    private $inviteMapper;
+    private Db\InviteMapper $inviteMapper;
 
     /**
      * Var store mapper class.
      *
      * @var Db\VarStoreMapper
      */
-    private $varStoreMapper;
+    private Db\VarStoreMapper $varStoreMapper;
 
     /**
      * Account mapper class.
      *
      * @var Db\AccountMapper
      */
-    private $accountMapper;
+    private Db\AccountMapper $accountMapper;
 
     /**
      * Application mapper class.
      *
      * @var Db\ApplicationMapper
      */
-    private $applicationMapper;
+    private Db\ApplicationMapper $applicationMapper;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Create a user invite',
         'machineName' => 'invite_create',
         'description' => 'Invite a user to ApiOpenStudio.',
@@ -99,10 +100,12 @@ class InviteCreate extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Logger $logger Logger object.
+     *
+     * @throws Core\ApiException
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Core\Config();
@@ -120,9 +123,9 @@ class InviteCreate extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $emailString = $this->val('email', true);
 

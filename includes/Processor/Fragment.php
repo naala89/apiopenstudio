@@ -30,7 +30,7 @@ class Fragment extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Fragment',
         'machineName' => 'fragment',
         'description' => 'Insert the result of a fragment declaration.',
@@ -55,9 +55,9 @@ class Fragment extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $name = $this->val('name');
         $fragments = $this->request->getFragments();

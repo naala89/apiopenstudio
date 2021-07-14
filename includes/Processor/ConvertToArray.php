@@ -15,9 +15,11 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Output\Output;
 use Monolog\Logger;
+use SimpleXMLElement;
 
 /**
  * Class ConvertToArray
@@ -36,16 +38,16 @@ class ConvertToArray extends Output
     /**
      * Logging class.
      *
-     * @var \Monolog\Logger
+     * @var Logger
      */
-    protected $logger;
+    protected Logger $logger;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Convert to array',
         'machineName' => 'convert_to_array',
         'description' => 'Convert an input data into an array data type (i.e. JSON, XML or object) into an array.',
@@ -64,29 +66,18 @@ class ConvertToArray extends Output
     ];
 
     /**
-     * ConvertToArray constructor.
-     *
-     * @param mixed $meta Output meta.
-     * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
-     */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
-    {
-        Core\ProcessorEntity::__construct($meta, $request, $db, $logger);
-    }
-
-    /**
      * {@inheritDoc}
      *
      * @return Core\DataContainer Result of the processor.
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
+
         $this->data = $this->val('source');
+
         return new Core\DataContainer($this->getData(), 'array');
     }
 
@@ -95,11 +86,11 @@ class ConvertToArray extends Output
      *
      * @param boolean $data The data to convert.
      *
-     * @return mixed
+     * @return bool[]
      */
-    protected function fromBoolean(bool &$data)
+    protected function fromBoolean(bool &$data): array
     {
-        return [$data ? true : false];
+        return [(bool) $data];
     }
 
     /**
@@ -107,9 +98,9 @@ class ConvertToArray extends Output
      *
      * @param integer $data The data to convert.
      *
-     * @return mixed
+     * @return int[]
      */
-    protected function fromInteger(int &$data)
+    protected function fromInteger(int &$data): array
     {
         return [$data];
     }
@@ -119,9 +110,9 @@ class ConvertToArray extends Output
      *
      * @param float $data The data to convert.
      *
-     * @return mixed
+     * @return float[]
      */
-    protected function fromFloat(float &$data)
+    protected function fromFloat(float &$data): array
     {
         return [$data];
     }
@@ -131,13 +122,15 @@ class ConvertToArray extends Output
      *
      * @param string $data The data to convert.
      *
-     * @return mixed
+     * @return array
      */
-    protected function fromXml(string &$data)
+    protected function fromXml(string &$data): array
     {
         $xml = simplexml_load_string($data);
         $json = $this->xml2json($xml);
-        return json_decode($json, true);
+        $result = json_decode($json, true);
+
+        return !is_array($result) ? [$result] : $result;
     }
 
     /**
@@ -145,9 +138,9 @@ class ConvertToArray extends Output
      *
      * @param string $data The data to convert.
      *
-     * @return mixed
+     * @return array
      */
-    protected function fromHtml(string &$data)
+    protected function fromHtml(string &$data): array
     {
         return $this->fromXml($data);
     }
@@ -157,9 +150,9 @@ class ConvertToArray extends Output
      *
      * @param string $data The data to convert.
      *
-     * @return mixed
+     * @return array|string[]
      */
-    protected function fromText(string &$data)
+    protected function fromText(string &$data): array
     {
         if (empty($data)) {
             return [];
@@ -179,9 +172,9 @@ class ConvertToArray extends Output
      *
      * @param array $data The data to convert.
      *
-     * @return mixed
+     * @return array
      */
-    protected function fromArray(array &$data)
+    protected function fromArray(array &$data): array
     {
         return $data;
     }
@@ -191,9 +184,9 @@ class ConvertToArray extends Output
      *
      * @param mixed $data The data to convert.
      *
-     * @return mixed
+     * @return string[]
      */
-    protected function fromImage(&$data)
+    protected function fromImage(&$data): array
     {
         return $this->fromText($data);
     }
@@ -203,21 +196,23 @@ class ConvertToArray extends Output
      *
      * @param string $data The data to convert.
      *
-     * @return mixed
+     * @return array
      */
-    protected function fromJson(string &$data)
+    protected function fromJson(string &$data): array
     {
-        return json_decode($data, true);
+        $result = json_decode($data, true);
+
+        return !is_array($result) ? [$result] : $result;
     }
 
     /**
      * Convert an XML doc to json string.
      *
-     * @param \SimpleXMLElement $xml XML element.
+     * @param SimpleXMLElement $xml XML element.
      *
-     * @return array|false|string
+     * @return array
      */
-    private function xml2json(SimpleXMLElement &$xml)
+    private function xml2json(SimpleXMLElement &$xml): array
     {
         $root = (func_num_args() > 1 ? false : true);
         $jsnode = [];
@@ -247,7 +242,8 @@ class ConvertToArray extends Output
             $nodename = $xml->getName();
             $jsnode[$nodename] = [];
             array_push($jsnode[$nodename], $this->xml2json($xml, true));
-            return json_encode($jsnode);
+            $result = json_encode($jsnode);
+            return !is_array($result) ? [$result] : $result;
         }
     }
 }

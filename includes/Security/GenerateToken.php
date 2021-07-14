@@ -34,7 +34,7 @@ class GenerateToken extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Generate token',
         'machineName' => 'generate_token',
         'description' => 'Generate a JWT token. Token, uid and expires returned.',

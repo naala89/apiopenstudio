@@ -15,6 +15,7 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db;
 use Monolog\Logger;
@@ -31,14 +32,14 @@ class InviteDelete extends Core\ProcessorEntity
      *
      * @var Db\InviteMapper
      */
-    private $inviteMapper;
+    private Db\InviteMapper $inviteMapper;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Invite delete',
         'machineName' => 'invite_delete',
         'description' => 'Delete an invite by ID.',
@@ -61,10 +62,12 @@ class InviteDelete extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Logger $logger Logger object.
+     *
+     * @throws Core\ApiException
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->inviteMapper = new Db\InviteMapper($db);
@@ -77,9 +80,9 @@ class InviteDelete extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $iid = $this->val('iid', true);
 

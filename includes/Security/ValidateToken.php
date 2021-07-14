@@ -32,30 +32,31 @@ class ValidateToken extends Core\ProcessorEntity
     /**
      * @var int $uid User ID.
      */
-    protected $uid;
+    protected int $uid;
     /**
      * @var array $roles User roles.
      */
-    protected $roles;
+    protected array $roles;
     /**
      * @var UnencryptedToken $token Decrypted token.
      */
-    protected $token;
+    protected UnencryptedToken $token;
     /**
      * @var Db\UserMapper User mapper class.
      */
-    protected $userMapper;
+    protected Db\UserMapper $userMapper;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Validate Token',
         'machineName' => 'validate_token',
         'description' => 'Validate that the user has a valid JWT token.',
         'menu' => 'Security',
+        'input' => [],
     ];
 
     /**
@@ -107,7 +108,7 @@ class ValidateToken extends Core\ProcessorEntity
                 throw new RequiredConstraintsViolated('invalid token');
             }
         } catch (RequiredConstraintsViolated $e) {
-            throw new Core\ApiException($e->getMessage(), 4, -1, 401);
+            throw new Core\ApiException($e->getMessage(), 4, $this->id, 401);
         }
     }
 }

@@ -15,6 +15,7 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db;
 use Monolog\Logger;
@@ -31,35 +32,26 @@ class UserRoleRead extends Core\ProcessorEntity
      *
      * @var Db\UserMapper
      */
-    protected $userMapper;
+    protected Db\UserMapper $userMapper;
 
     /**
      * User role mapper class.
      *
      * @var Db\UserRoleMapper
      */
-    protected $userRoleMapper;
+    protected Db\UserRoleMapper $userRoleMapper;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'User Role read',
         'machineName' => 'user_role_read',
         'description' => 'Fetch a single or all user roles (this is limited by the calling users permissions).',
         'menu' => 'Admin',
         'input' => [
-            'token' => [
-                'description' => 'The requesting users token.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => false,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
             'uid' => [
                 'description' => 'The user id of the user.',
                 'cardinality' => [0, 1],
@@ -122,10 +114,12 @@ class UserRoleRead extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Logger $logger Logger object.
+     *
+     * @throws Core\ApiException
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->userMapper = new Db\UserMapper($db);
@@ -139,12 +133,11 @@ class UserRoleRead extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
-        $token = $this->val('token', true);
-        $currentUser = $this->userMapper->findBytoken($token);
+        $currentUser = $this->userMapper->findByUid(Core\Utilities::getUidFromToken());
         $uid = $this->val('uid', true);
         $accid = $this->val('accid', true);
         $appid = $this->val('appid', true);

@@ -29,7 +29,7 @@ class VarPost extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Var (Post)',
         'machineName' => 'var_post',
         'description' => 'A "post" variable. It fetches a variable from the post request.',
@@ -63,9 +63,9 @@ class VarPost extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $key = $this->val('key', true);
         $nullable = $this->val('nullable', true);

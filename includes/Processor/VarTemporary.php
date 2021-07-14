@@ -29,7 +29,7 @@ class VarTemporary extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Var (Temporary)',
         'machineName' => 'var_temporary',
         // phpcs:ignore
@@ -85,7 +85,7 @@ class VarTemporary extends Core\ProcessorEntity
      */
     public function process()
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $name = $this->val('name');
         $strict = !empty($this->meta->strict) ? $this->val('strict') : 1;

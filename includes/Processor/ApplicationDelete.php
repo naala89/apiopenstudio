@@ -15,6 +15,7 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Db;
@@ -32,49 +33,40 @@ class ApplicationDelete extends Core\ProcessorEntity
      *
      * @var Db\UserRoleMapper
      */
-    protected $userRoleMapper;
+    protected Db\UserRoleMapper $userRoleMapper;
 
     /**
      * User mapper class.
      *
      * @var Db\UserMapper
      */
-    protected $userMapper;
+    protected Db\UserMapper $userMapper;
 
     /**
      * Application mapper class.
      *
-     * @var Db\UserRoleMapper
+     * @var Db\ApplicationMapper
      */
-    protected $applicationMapper;
+    protected Db\ApplicationMapper $applicationMapper;
 
     /**
      * Resource mapper class.
      *
      * @var Db\ResourceMapper
      */
-    protected $resourceMapper;
+    protected Db\ResourceMapper $resourceMapper;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Application delete',
         'machineName' => 'application_delete',
         'description' => 'Delete an application.',
         'menu' => 'Admin',
         'input' => [
-            'token' => [
-                'description' => 'Request token of the user making the call.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => 0,
-            ],
             'applicationId' => [
                 'description' => 'The appication ID of the application.',
                 'cardinality' => [1, 1],
@@ -92,10 +84,12 @@ class ApplicationDelete extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Logger $logger Logger object.
+     *
+     * @throws ApiException
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->userRoleMapper = new Db\UserRoleMapper($this->db);
@@ -111,18 +105,17 @@ class ApplicationDelete extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
-        $token = $this->val('token', true);
-        $user = $this->userMapper->findBytoken($token);
+        $uid = Core\Utilities::getUidFromToken();
         $appid = $this->val('applicationId', true);
         $application = $this->applicationMapper->findByAppid($appid);
         $accid = $application->getAccid();
         if (
-            !$this->userRoleMapper->hasRole($user->getUid(), 'Administrator')
-            && !$this->userRoleMapper->hasAccidRole($user->getUid(), $accid, 'Account manager')
+            !$this->userRoleMapper->hasRole($uid, 'Administrator')
+            && !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')
         ) {
             throw new ApiException("Permission denied.", 6, $this->id, 417);
         }
@@ -154,6 +147,6 @@ class ApplicationDelete extends Core\ProcessorEntity
             );
         }
 
-        return $this->applicationMapper->delete($application);
+        return new Core\DataContainer($this->applicationMapper->delete($application), 'boolean');
     }
 }

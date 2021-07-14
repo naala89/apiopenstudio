@@ -15,6 +15,7 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db;
 use Monolog\Logger;
@@ -38,7 +39,7 @@ class UserCreate extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'User create',
         'machineName' => 'user_create',
         'description' => 'Create a user.',
@@ -205,10 +206,12 @@ class UserCreate extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Logger $logger Logger object.
+     *
+     * @throws Core\ApiException
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->userMapper = new Db\UserMapper($db);
@@ -221,9 +224,9 @@ class UserCreate extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $username = $this->val('username', true);
         $email = $this->val('email', true);
@@ -245,8 +248,7 @@ class UserCreate extends Core\ProcessorEntity
         }
         $active = $this->val('active', true);
         $bool = ($active === 'true') ? true : ($active === 'false' ? false : $active);
-        $user->setTokenTtl(null);
-        $user->setActive((bool) $bool ? 1 : 0);
+        $user->setActive($bool);
         $user->setHonorific($this->val('honorific', true));
         $user->setNameFirst($this->val('name_first', true));
         $user->setNameLast($this->val('name_last', true));
@@ -260,8 +262,8 @@ class UserCreate extends Core\ProcessorEntity
         $user->setAddressPostcode($this->val('address_postcode', true));
         $user->setPhoneMobile($this->val('phone_mobile', true));
         $user->setPhoneWork($this->val('phone_work', true));
-        $user->setPasswordReset(null);
-        $user->setPasswordResetTtl(null);
+        $user->setPasswordReset();
+        $user->setPasswordResetTtl();
 
         $this->userMapper->save($user);
         $user = $this->userMapper->findByUsername($username);

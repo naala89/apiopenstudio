@@ -31,7 +31,7 @@ class VarBody extends VarLooselyTyped
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Var (Body)',
         'machineName' => 'var_body',
         'description' => 'Fetch the entire body of a post.',
@@ -78,7 +78,7 @@ class VarBody extends VarLooselyTyped
      */
     public function process()
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $type = $this->val('type', true);
         $nullable = $this->val('nullable', true);

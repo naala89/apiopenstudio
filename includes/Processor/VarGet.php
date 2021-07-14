@@ -29,7 +29,7 @@ class VarGet extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Var (Get)',
         'machineName' => 'var_get',
         'description' => 'A "get" variable. It fetches a urldecoded variable from the get request.',
@@ -63,9 +63,9 @@ class VarGet extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $key = $this->val('key', true);
         $vars = $this->request->getGetVars();

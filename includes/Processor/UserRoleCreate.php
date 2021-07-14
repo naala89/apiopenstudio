@@ -30,7 +30,7 @@ class UserRoleCreate extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'User Role create',
         'machineName' => 'user_role_create',
         'description' => 'Create a role for a user.',
@@ -84,7 +84,7 @@ class UserRoleCreate extends Core\ProcessorEntity
      */
     public function process()
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $uid = $this->val('uid', true);
         $accid = $this->val('accid', true);

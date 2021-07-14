@@ -29,7 +29,7 @@ class GeoPoint extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Geo-Point',
         'machineName' => 'geoPoint',
         // phpcs:ignore
@@ -64,9 +64,9 @@ class GeoPoint extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $lat = $this->val('lat', true);
         $lon = $this->val('lon', true);

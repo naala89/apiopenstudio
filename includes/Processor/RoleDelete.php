@@ -15,6 +15,7 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db\RoleMapper;
 use Monolog\Logger;
@@ -38,7 +39,7 @@ class RoleDelete extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Role delete',
         'machineName' => 'role_delete',
         'description' => 'Delete a role.',
@@ -61,10 +62,10 @@ class RoleDelete extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Logger $logger Logger object.
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
     }
@@ -76,9 +77,9 @@ class RoleDelete extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $rid = $this->val('rid', true);
 
@@ -91,6 +92,6 @@ class RoleDelete extends Core\ProcessorEntity
             throw new Core\ApiException("A role with RID: $rid does not exist", 7, $this->id);
         }
 
-        return $this->roleMapper->delete($role);
+        return new Core\DataContainer($this->roleMapper->delete($role), 'boolean');
     }
 }

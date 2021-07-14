@@ -29,7 +29,7 @@ class Concatenate extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Concatenate',
         'machineName' => 'concatenate',
         'description' => 'Concatenate a series of strings or numbers into a single string.',
@@ -54,9 +54,9 @@ class Concatenate extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $sources = $this->val('sources');
         $result = '';

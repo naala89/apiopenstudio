@@ -29,7 +29,7 @@ class Replace extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Replace',
         'machineName' => 'replace',
         'description' => 'Replace a substring in a string.',
@@ -81,9 +81,9 @@ class Replace extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $haystack = $this->val('haystack');
         $needle = $this->val('needle', true);

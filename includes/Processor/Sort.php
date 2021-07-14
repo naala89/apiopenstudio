@@ -29,7 +29,7 @@ class Sort extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Sort',
         'machineName' => 'sort',
         // phpcs:ignore
@@ -75,7 +75,7 @@ class Sort extends Core\ProcessorEntity
      */
     public function process()
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $values = $this->val('values', true);
 

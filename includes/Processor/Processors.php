@@ -32,15 +32,15 @@ class Processors extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Processors',
         'machineName' => 'processors',
         'description' => 'Fetch data on a single or all Processors.',
         'menu' => 'System',
         'input' => [
             'machine_name' => [
-                'description' => 'The resource machine_name or "all" for all processors.',
-                'cardinality' => [1, 1],
+                'description' => 'The resource machine_name or "all" or empty for all processors.',
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
@@ -55,7 +55,7 @@ class Processors extends Core\ProcessorEntity
      *
      * @var array list of namespaces to fetch.
      */
-    private $namespaces = [
+    private array $namespaces = [
         'Endpoint',
         'Output',
         'Processor',
@@ -69,9 +69,9 @@ class Processors extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
         $machineName = $this->val('machine_name', true);
         $details = [];
 
@@ -86,8 +86,8 @@ class Processors extends Core\ProcessorEntity
         }
         sort($details);
 
-        if ($machineName == 'all') {
-            return $details;
+        if (empty($machineName) || $machineName == 'all') {
+            return new Core\DataContainer($details, 'array');
         }
 
         $result = [];
@@ -101,7 +101,7 @@ class Processors extends Core\ProcessorEntity
             throw new Core\ApiException("Invalid machine name: $machineName", 6, $this->id, 401);
         }
 
-        return $result;
+        return new Core\DataContainer($result, 'array');
     }
 
     /**
@@ -111,7 +111,7 @@ class Processors extends Core\ProcessorEntity
      *
      * @return array The list of class names.
      */
-    private function getClassList(string $namespace)
+    private function getClassList(string $namespace): array
     {
         $iterator = new RecursiveIteratorIterator(new \RecursiveDirectoryIterator(__DIR__ . '/../' . $namespace));
         $objects = new RegexIterator($iterator, '/[a-z0-9]+\.php/i', \RecursiveRegexIterator::GET_MATCH);
@@ -129,9 +129,7 @@ class Processors extends Core\ProcessorEntity
      * @param string $namespace The namespace that the class belongs to.
      * @param string $className The classname.
      *
-     * @return array The details array.
-     *
-     * @throws \ReflectionException Error.
+     * @return array|false
      */
     private function getDetails(string $namespace, string $className)
     {

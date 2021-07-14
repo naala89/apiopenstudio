@@ -30,7 +30,7 @@ class UserDelete extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'User delete',
         'machineName' => 'user_delete',
         'description' => 'Delete a user.',
@@ -57,7 +57,7 @@ class UserDelete extends Core\ProcessorEntity
      */
     public function process()
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         if (empty($uid = $this->val('uid', true))) {
             throw new Core\ApiException("Cannot process - no uid supplied", 6, $this->id, 400);

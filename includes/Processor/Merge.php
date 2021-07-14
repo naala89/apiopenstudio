@@ -29,7 +29,7 @@ class Merge extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Merge',
         'machineName' => 'merge',
         'description' => 'Merge multiple data-sets.',
@@ -72,9 +72,9 @@ class Merge extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $sources = $this->val('sources', true);
         $unique = $this->val('unique', true);
