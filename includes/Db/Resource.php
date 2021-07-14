@@ -25,70 +25,70 @@ class Resource
     /**
      * Resource ID.
      *
-     * @var integer Resource ID.
+     * @var integer|null Resource ID.
      */
-    protected $resid;
+    protected ?int $resid;
 
     /**
      * Resource application ID.
      *
-     * @var integer Application ID.
+     * @var integer|null Application ID.
      */
-    protected $appid;
+    protected ?int $appid;
 
     /**
      * Resource name.
      *
-     * @var string Resource name.
+     * @var string|null Resource name.
      */
-    protected $name;
+    protected ?string $name;
 
     /**
      * Resource description.
      *
-     * @var string Resource description.
+     * @var string|null Resource description.
      */
-    protected $description;
+    protected ?string $description;
 
     /**
      * Resource request method.
      *
-     * @var string Resource method.
+     * @var string|null Resource method.
      */
-    protected $method;
+    protected ?string $method;
 
     /**
      * Resource URI.
      *
-     * @var string Resource URI.
+     * @var string|null Resource URI.
      */
-    protected $uri;
+    protected ?string $uri;
 
     /**
      * Resource Metadata.
      *
-     * @var string Resource metadata.
+     * @var string|null Resource metadata.
      */
-    protected $meta;
+    protected ?string $meta;
 
     /**
      * Resource TTL.
      *
-     * @var string Resource time to live.
+     * @var string|null Resource time to live.
      */
-    protected $ttl;
+    protected ?string $ttl;
 
     /**
      * Resource constructor.
      *
-     * @param integer $resid The resource ID.
-     * @param integer $appid The application ID.
-     * @param string $name The resource name.
-     * @param string $description The resource description.
-     * @param string $method The resource method.
-     * @param string $uri The resource URI.
-     * @param string $meta The resource metadata.
-     * @param string $ttl The resource TTL.
+     * @param int|null $resid The resource ID.
+     * @param int|null $appid The application ID.
+     * @param string|null $name The resource name.
+     * @param string|null $description The resource description.
+     * @param string|null $method The resource method.
+     * @param string|null $uri The resource URI.
+     * @param string|null $meta The resource metadata.
+     * @param string|null $ttl The resource TTL.
      */
     public function __construct(
         int $resid = null,
@@ -113,9 +113,9 @@ class Resource
     /**
      * Get the resource ID.
      *
-     * @return integer The resource ID
+     * @return int The resource ID
      */
-    public function getResid()
+    public function getResid(): ?int
     {
         return $this->resid;
     }
@@ -123,7 +123,7 @@ class Resource
     /**
      * Set the resource ID.
      *
-     * @param integer $resid The resource ID.
+     * @param int $resid The resource ID.
      *
      * @return void
      */
@@ -135,9 +135,9 @@ class Resource
     /**
      * Get the application ID.
      *
-     * @return integer The application ID.
+     * @return int The application ID.
      */
-    public function getAppId()
+    public function getAppId(): ?int
     {
         return $this->appid;
     }
@@ -145,7 +145,7 @@ class Resource
     /**
      * Set the resource application ID.
      *
-     * @param integer $appid The application ID.
+     * @param int $appid The application ID.
      *
      * @return void
      */
@@ -159,7 +159,7 @@ class Resource
      *
      * @return string The resource name.
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -181,7 +181,7 @@ class Resource
      *
      * @return string The resource description.
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -203,7 +203,7 @@ class Resource
      *
      * @return string Resource method.
      */
-    public function getMethod()
+    public function getMethod(): ?string
     {
         return $this->method;
     }
@@ -225,7 +225,7 @@ class Resource
      *
      * @return string The  resource URI.
      */
-    public function getUri()
+    public function getUri(): ?string
     {
         return $this->uri;
     }
@@ -247,7 +247,7 @@ class Resource
      *
      * @return string Json encoded resource metadata.
      */
-    public function getMeta()
+    public function getMeta(): ?string
     {
         return $this->meta;
     }
@@ -269,7 +269,7 @@ class Resource
      *
      * @return string Time to live.
      */
-    public function getTtl()
+    public function getTtl(): ?string
     {
         return $this->ttl;
     }
@@ -291,7 +291,7 @@ class Resource
      *
      * @return array Api resource.
      */
-    public function dump()
+    public function dump(): array
     {
         return [
             'resid' => $this->resid,

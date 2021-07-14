@@ -15,6 +15,8 @@
 
 namespace ApiOpenStudio\Db;
 
+use ApiOpenStudio\Core\ApiException;
+
 /**
  * Class VarStoreMapper.
  *
@@ -25,13 +27,13 @@ class VarStoreMapper extends Mapper
     /**
      * Save the var.
      *
-     * @param \ApiOpenStudio\Db\VarStore $varStore VarStore object.
+     * @param VarStore $varStore VarStore object.
      *
      * @return boolean Success.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function save(VarStore $varStore)
+    public function save(VarStore $varStore): bool
     {
         if ($varStore->getVid() == null) {
             $sql = 'INSERT INTO `var_store` (`appid`, `key`, `val`) VALUES (?, ?, ?)';
@@ -56,13 +58,13 @@ class VarStoreMapper extends Mapper
     /**
      * Delete the vars.
      *
-     * @param \ApiOpenStudio\Db\VarStore $varStore VarStore object.
+     * @param VarStore $varStore VarStore object.
      *
      * @return boolean Success.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function delete(VarStore $varStore)
+    public function delete(VarStore $varStore): bool
     {
         if ($varStore->getVid() === null) {
             throw new ApiException('cannot delete var - empty ID', 2);
@@ -77,11 +79,11 @@ class VarStoreMapper extends Mapper
      *
      * @param integer $vid Var ID.
      *
-     * @return array Array of varStore objects.
+     * @return VarStore Find a varStore by its ID.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByVid(int $vid)
+    public function findByVid(int $vid): VarStore
     {
         $sql = 'SELECT * FROM `var_store` WHERE `vid` = ?';
         $bindParams = [$vid];
@@ -95,9 +97,9 @@ class VarStoreMapper extends Mapper
      *
      * @return array Array of varStore objects.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findAll(array $params = [])
+    public function findAll(array $params = []): array
     {
         $sql = 'SELECT * FROM var_store';
 
@@ -112,9 +114,9 @@ class VarStoreMapper extends Mapper
      *
      * @return array Array of varStore objects.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByUid(int $uid, array $params = [])
+    public function findByUid(int $uid, array $params = []): array
     {
         $sql = 'SELECT *';
         $sql .= ' FROM var_store';
@@ -137,11 +139,11 @@ class VarStoreMapper extends Mapper
      * @param array $roles Role IDs.
      * @param integer $vid Var ID.
      *
-     * @return array Array of varStore objects.
+     * @return VarStore A VarStore object.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByUidRolesVid(int $uid, array $roles, int $vid)
+    public function findByUidRolesVid(int $uid, array $roles, int $vid): VarStore
     {
         $sql = 'SELECT vs.* FROM `var_store` AS vs';
         $sql .= ' INNER JOIN `user_role` AS ur ON vs.`appid` = ur.`appid`';
@@ -168,9 +170,9 @@ class VarStoreMapper extends Mapper
      *
      * @return array
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByUidRolesAll(int $uid, array $roles, array $params)
+    public function findByUidRolesAll(int $uid, array $roles, array $params): array
     {
         $sql = 'SELECT vs.* FROM `var_store` AS vs';
         $sql .= ' INNER JOIN `user_role` AS ur ON vs.`appid` = ur.`appid`';
@@ -195,9 +197,9 @@ class VarStoreMapper extends Mapper
      *
      * @return VarStore VarStore object.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByAppIdKey(int $appId, string $key)
+    public function findByAppIdKey(int $appId, string $key): VarStore
     {
         $sql = 'SELECT * FROM `var_store` WHERE `appid` = ? AND `key` = ?';
         $bindParams = [$appId, $key];
@@ -211,9 +213,9 @@ class VarStoreMapper extends Mapper
      *
      * @return array Array of VarStore objects.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByAppId(int $appId)
+    public function findByAppId(int $appId): array
     {
         $sql = 'SELECT * FROM `var_store` WHERE `appid` = ?';
         $bindParams = [$appId];
@@ -227,7 +229,7 @@ class VarStoreMapper extends Mapper
      *
      * @return VarStore Mapped row.
      */
-    protected function mapArray(array $row)
+    protected function mapArray(array $row): VarStore
     {
         $varStore = new VarStore();
 

@@ -27,13 +27,13 @@ class InviteMapper extends Mapper
     /**
      * Save an Invite.
      *
-     * @param \ApiOpenStudio\Db\Invite $invite Invite object.
+     * @param Invite $invite Invite object.
      *
      * @return boolean Success.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function save(Invite $invite)
+    public function save(Invite $invite): bool
     {
         if ($invite->getIid() == null) {
             $sql = 'INSERT INTO invite (created, email, token) VALUES (NOW(), ?, ?)';
@@ -61,7 +61,7 @@ class InviteMapper extends Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function delete(Invite $invite)
+    public function delete(Invite $invite): bool
     {
         $sql = 'DELETE FROM invite WHERE iid = ?';
         $bindParams = [$invite->getIid()];
@@ -77,7 +77,7 @@ class InviteMapper extends Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findAll(array $params)
+    public function findAll(array $params): array
     {
         $sql = 'SELECT * FROM invite';
         return $this->fetchRows($sql, [], $params);
@@ -92,7 +92,7 @@ class InviteMapper extends Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByIid(int $iid)
+    public function findByIid(int $iid): Invite
     {
         $sql = 'SELECT * FROM invite WHERE iid = ?';
         $bindParams = [$iid];
@@ -104,11 +104,11 @@ class InviteMapper extends Mapper
      *
      * @param string $email Invite email.
      *
-     * @return array Array of Invite.
+     * @return Invite Array of Invite.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByEmail(string $email)
+    public function findByEmail(string $email): Invite
     {
         $sql = 'SELECT * FROM invite WHERE email = ?';
         $bindParams = [$email];
@@ -124,7 +124,7 @@ class InviteMapper extends Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByToken(string $token)
+    public function findByToken(string $token): Invite
     {
         $sql = 'SELECT * FROM invite WHERE token = ?';
         $bindParams = [$token];
@@ -141,7 +141,7 @@ class InviteMapper extends Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByEmailToken(string $email, string $token)
+    public function findByEmailToken(string $email, string $token): Invite
     {
         $sql = 'SELECT * FROM invite WHERE email = ? AND token = ?';
         $bindParams = [$email, $token];
@@ -155,7 +155,7 @@ class InviteMapper extends Mapper
      *
      * @return Invite Invite object.
      */
-    protected function mapArray(array $row)
+    protected function mapArray(array $row): Invite
     {
         $invite = new Invite();
 

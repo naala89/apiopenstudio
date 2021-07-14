@@ -15,6 +15,8 @@
 
 namespace ApiOpenStudio\Db;
 
+use ApiOpenStudio\Core\ApiException;
+
 /**
  * Class AccountMapper.
  *
@@ -25,13 +27,13 @@ class AccountMapper extends Mapper
     /**
      * Save an Account.
      *
-     * @param \ApiOpenStudio\Db\Account $account Account object.
+     * @param Account $account Account object.
      *
      * @return boolean Success.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function save(Account $account)
+    public function save(Account $account): bool
     {
         if ($account->getAccid() == null) {
             $sql = 'INSERT INTO account (name) VALUES (?)';
@@ -49,13 +51,13 @@ class AccountMapper extends Mapper
     /**
      * Delete an account.
      *
-     * @param \ApiOpenStudio\Db\Account $account Account object.
+     * @param Account $account Account object.
      *
      * @return boolean Success.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function delete(Account $account)
+    public function delete(Account $account): bool
     {
         $sql = 'DELETE FROM account WHERE accid = ?';
         $bindParams = [$account->getAccid()];
@@ -69,9 +71,9 @@ class AccountMapper extends Mapper
      *
      * @return array array Account objects.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findAll(array $params = [])
+    public function findAll(array $params = []): array
     {
         $sql = 'SELECT * FROM account';
         return $this->fetchRows($sql, [], $params);
@@ -82,11 +84,11 @@ class AccountMapper extends Mapper
      *
      * @param integer $accid Account Id.
      *
-     * @return \ApiOpenStudio\Db\Account Account object.
+     * @return Account Account object.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByAccid(int $accid)
+    public function findByAccid(int $accid): Account
     {
         $sql = 'SELECT * FROM account WHERE accid = ?';
         $bindParams = [$accid];
@@ -100,19 +102,19 @@ class AccountMapper extends Mapper
      *
      * @return array Array of Account objects.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByAccids(array $accids)
+    public function findByAccids(array $accids): array
     {
         $inAccid = [];
-        foreach ($accids as $accid) {
+        for ($count = 0; $count < sizeof($accids); $count++) {
             $inAccid[] = '?';
         }
         $sql = 'SELECT * FROM account';
         if (!empty($inAccid)) {
             $sql .= ' WHERE accid IN (' . implode(', ', $inAccid) . ')';
         }
-        return $this->fetchRow($sql, $accids);
+        return $this->fetchRows($sql, $accids);
     }
 
     /**
@@ -120,11 +122,11 @@ class AccountMapper extends Mapper
      *
      * @param string $name Account name.
      *
-     * @return \ApiOpenStudio\Db\Account Account object.
+     * @return Account Account object.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByName(string $name)
+    public function findByName(string $name): Account
     {
         $sql = 'SELECT * FROM account WHERE name = ?';
         $bindParams = [$name];
@@ -136,19 +138,18 @@ class AccountMapper extends Mapper
      *
      * @param array $names Account names.
      *
-     * @return \ApiOpenStudio\Db\Account Account object.
+     * @return array array of Account object.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByNames(array $names = [])
+    public function findByNames(array $names = []): array
     {
         $arr = [];
-        foreach ($names as $name) {
+        for ($count = 0; $count < sizeof($names); $count++) {
             $arr[] = '?';
         }
         $sql = 'SELECT * FROM account WHERE name IN (' . implode(', ', $arr) . ')';
-        $bindParams = $names;
-        return $this->fetchRows($sql, $bindParams);
+        return $this->fetchRows($sql, $names);
     }
 
     /**
@@ -159,9 +160,9 @@ class AccountMapper extends Mapper
      *
      * @return array Array of Account objects.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findAllForUser(int $uid, array $params = [])
+    public function findAllForUser(int $uid, array $params = []): array
     {
         $sql = 'SELECT *';
         $sql .= ' FROM account';
@@ -194,9 +195,9 @@ class AccountMapper extends Mapper
      *
      * @param array $row DB row object.
      *
-     * @return \ApiOpenStudio\Db\Account Account object.
+     * @return Account Account object.
      */
-    protected function mapArray(array $row)
+    protected function mapArray(array $row): Account
     {
         $account = new Account();
 

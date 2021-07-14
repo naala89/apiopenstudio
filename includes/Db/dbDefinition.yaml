@@ -111,8 +111,24 @@ user:
     password_reset_ttl: { type: timestamp, default: NULL, comment: end of life for passowrd reset token }
   data:
     -
-      username: tester
-      email: tester@testerton.com
+      username: tester_administrator
+      email: tester+administrator@testerton.com
+      hash: $2y$12$YIgdjM6Vb4szSyHB0psGTu4GEhoimX.bKPjdIbWD2i/FgwOi9iiay
+    -
+      username: tester_account_manager
+      email: tester+account_manager@testerton.com
+      hash: $2y$12$YIgdjM6Vb4szSyHB0psGTu4GEhoimX.bKPjdIbWD2i/FgwOi9iiay
+    -
+      username: tester_application_manager
+      email: tester+application_manager@testerton.com
+      hash: $2y$12$YIgdjM6Vb4szSyHB0psGTu4GEhoimX.bKPjdIbWD2i/FgwOi9iiay
+    -
+      username: tester_developer
+      email: tester+developer@testerton.com
+      hash: $2y$12$YIgdjM6Vb4szSyHB0psGTu4GEhoimX.bKPjdIbWD2i/FgwOi9iiay
+    -
+      username: tester_consumer
+      email: tester+consumer@testerton.com
       hash: $2y$12$YIgdjM6Vb4szSyHB0psGTu4GEhoimX.bKPjdIbWD2i/FgwOi9iiay
 
 user_role:
@@ -127,15 +143,24 @@ user_role:
       uid: 1
       rid: 1
     -
+      uid: 2
+      rid: 2
       accid: 1
-      appid: 2
-      uid: 1
-      rid: 4
     -
+      uid: 3
+      rid: 3
       accid: 1
       appid: 2
-      uid: 1
+    -
+      uid: 4
+      rid: 4
+      accid: 1
+      appid: 2
+    -
+      uid: 5
       rid: 5
+      accid: 1
+      appid: 2
 
 var_store:
   columns:

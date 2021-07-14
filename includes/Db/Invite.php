@@ -25,37 +25,37 @@ class Invite
     /**
      * Invite ID.
      *
-     * @var integer Inivite ID.
+     * @var integer|null Inivite ID.
      */
-    protected $iid;
+    protected ?int $iid;
 
     /**
      * Invite email.
      *
-     * @var string Email.
+     * @var string|null Email.
      */
-    protected $created;
+    protected ?string $created;
 
     /**
      * Invite created date.
      *
-     * @var string Created.
+     * @var string|null Created.
      */
-    protected $email;
+    protected ?string $email;
 
     /**
      * Invite token.
      *
-     * @var string Invite token.
+     * @var string|null Invite token.
      */
-    protected $token;
+    protected ?string $token;
 
     /**
      * Invite constructor.
      *
-     * @param integer $iid Invite ID.
-     * @param string $email Invite email.
-     * @param string $token Invite token.
+     * @param int|null $iid Invite ID.
+     * @param string|null $email Invite email.
+     * @param string|null $token Invite token.
      */
     public function __construct(int $iid = null, string $email = null, string $token = null)
     {
@@ -70,7 +70,7 @@ class Invite
      *
      * @return integer Invite ID.
      */
-    public function getIid()
+    public function getIid(): ?int
     {
         return $this->iid;
     }
@@ -92,7 +92,7 @@ class Invite
      *
      * @return string Created date time.
      */
-    public function getCreated()
+    public function getCreated(): ?string
     {
         return $this->created;
     }
@@ -114,7 +114,7 @@ class Invite
      *
      * @return string Invite email.
      */
-    public function getEmail()
+    public function getEmail(): ?string
     {
         return $this->email;
     }
@@ -136,7 +136,7 @@ class Invite
      *
      * @return string Invite token.
      */
-    public function getToken()
+    public function getToken(): ?string
     {
         return $this->token;
     }
@@ -158,7 +158,7 @@ class Invite
      *
      * @return array Invite.
      */
-    public function dump()
+    public function dump(): array
     {
         return [
             'iid' => $this->iid,

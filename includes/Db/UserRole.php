@@ -25,46 +25,46 @@ class UserRole
     /**
      * User role ID.
      *
-     * @var integer User role ID.
+     * @var integer|null User role ID.
      */
-    protected $urid;
+    protected ?int $urid;
 
     /**
      * User role account ID.
      *
-     * @var integer Account ID.
+     * @var integer|null Account ID.
      */
-    protected $accid;
+    protected ?int $accid;
 
     /**
      * User role application ID.
      *
-     * @var integer Application ID.
+     * @var integer|null Application ID.
      */
-    protected $appid;
+    protected ?int $appid;
 
     /**
      * User role user ID.
      *
-     * @var integer User ID.
+     * @var integer|null User ID.
      */
-    protected $uid;
+    protected ?int $uid;
 
     /**
      * User role role ID.
      *
-     * @var integer Role ID.
+     * @var integer|null Role ID.
      */
-    protected $rid;
+    protected ?int $rid;
 
     /**
      * UserRole constructor.
      *
-     * @param integer $urid User role ID.
-     * @param integer $accid Account ID.
-     * @param integer $appid Application ID.
-     * @param integer $uid User ID.
-     * @param integer $rid The role ID.
+     * @param int|null $urid User role ID.
+     * @param int|null $accid Account ID.
+     * @param int|null $appid Application ID.
+     * @param int|null $uid User ID.
+     * @param int|null $rid The role ID.
      */
     public function __construct(
         int $urid = null,
@@ -85,7 +85,7 @@ class UserRole
      *
      * @return integer user role ID.
      */
-    public function getUrid()
+    public function getUrid(): ?int
     {
         return $this->urid;
     }
@@ -107,7 +107,7 @@ class UserRole
      *
      * @return integer Account ID.
      */
-    public function getAccid()
+    public function getAccid(): ?int
     {
         return $this->accid;
     }
@@ -129,7 +129,7 @@ class UserRole
      *
      * @return integer Application ID.
      */
-    public function getAppid()
+    public function getAppid(): ?int
     {
         return $this->appid;
     }
@@ -151,7 +151,7 @@ class UserRole
      *
      * @return integer User ID.
      */
-    public function getUid()
+    public function getUid(): ?int
     {
         return $this->uid;
     }
@@ -173,7 +173,7 @@ class UserRole
      *
      * @return integer The role ID.
      */
-    public function getRid()
+    public function getRid(): ?int
     {
         return $this->rid;
     }
@@ -195,7 +195,7 @@ class UserRole
      *
      * @return array Associative array.
      */
-    public function dump()
+    public function dump(): array
     {
         return [
             'urid' => $this->urid,
