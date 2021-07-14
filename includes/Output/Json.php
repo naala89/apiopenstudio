@@ -15,6 +15,8 @@
 
 namespace ApiOpenStudio\Output;
 
+use ApiOpenStudio\Core\DataContainer;
+
 /**
  * Class Json
  *
@@ -27,14 +29,14 @@ class Json extends Output
      *
      * @var string The string to contain the content type header value.
      */
-    protected $header = 'Content-Type: application/json';
+    protected string $header = 'Content-Type: application/json';
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Json',
         'machineName' => 'json',
         'description' => 'Output in the results of the resource in JSON format to a remote server.',
@@ -74,12 +76,12 @@ class Json extends Output
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      */
-    public function process()
+    public function process(): DataContainer
     {
         $this->logger->info('Output: ' . $this->details()['machineName']);
-        return parent::process();
+        return new DataContainer(parent::process(), 'text');
     }
 
     /**
@@ -89,7 +91,7 @@ class Json extends Output
      *
      * @return string JSON string.
      */
-    protected function fromBoolean(bool &$data)
+    protected function fromBoolean(bool &$data): string
     {
         return $data ? 'true' : 'false';
     }
@@ -97,11 +99,11 @@ class Json extends Output
     /**
      * {@inheritDoc}
      *
-     * @param integer $data Integer data.
+     * @param int $data Integer data.
      *
-     * @return string JSON string.
+     * @return int JSON string.
      */
-    protected function fromInteger(int &$data)
+    protected function fromInteger(int &$data): int
     {
         return $data;
     }
@@ -111,9 +113,9 @@ class Json extends Output
      *
      * @param float $data Float data.
      *
-     * @return string JSON string.
+     * @return float JSON string.
      */
-    protected function fromFloat(float &$data)
+    protected function fromFloat(float &$data): float
     {
         return $data;
     }
@@ -150,7 +152,7 @@ class Json extends Output
      *
      * @return string JSON string.
      */
-    protected function fromText(string &$data)
+    protected function fromText(string &$data): string
     {
         if ($data == '') {
             // Empty string should be returned as double quotes so that it is not returned as null.
@@ -173,7 +175,7 @@ class Json extends Output
      *
      * @return string JSON string.
      */
-    protected function fromArray(array &$data)
+    protected function fromArray(array &$data): string
     {
         return \json_encode($data);
     }
@@ -185,7 +187,7 @@ class Json extends Output
      *
      * @return string JSON string.
      */
-    protected function fromJson(string &$data)
+    protected function fromJson(string &$data): string
     {
         return is_string($data) ? $data : \json_encode($data);
     }
@@ -197,7 +199,7 @@ class Json extends Output
      *
      * @return string JSON string.
      */
-    protected function fromImage(&$data)
+    protected function fromImage(&$data): string
     {
         return $this->fromText($data);
     }
@@ -211,7 +213,7 @@ class Json extends Output
      */
     private function xml2json(\SimpleXMLElement &$xml)
     {
-        $root = (func_num_args() > 1 ? false : true);
+        $root = !(func_num_args() > 1);
         $jsnode = array();
 
         if (!$root) {
@@ -232,13 +234,13 @@ class Json extends Output
                 if (!array_key_exists($childname, $jsnode)) {
                     $jsnode[$childname] = array();
                 }
-                array_push($jsnode[$childname], $this->xml2json($childxmlnode, true));
+                array_push($jsnode[$childname], $this->xml2json($childxmlnode));
             }
             return $jsnode;
         } else {
             $nodename = $xml->getName();
             $jsnode[$nodename] = array();
-            array_push($jsnode[$nodename], $this->xml2json($xml, true));
+            array_push($jsnode[$nodename], $this->xml2json($xml));
             return json_encode($jsnode);
         }
     }

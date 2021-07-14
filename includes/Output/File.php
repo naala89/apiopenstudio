@@ -15,6 +15,8 @@
 
 namespace ApiOpenStudio\Output;
 
+use ApiOpenStudio\Core\ApiException;
+
 /**
  * Class File
  *
@@ -27,14 +29,14 @@ class File extends Output
      *
      * @var string The string to contain the content type header value.
      */
-    protected $header = 'Content-Type: application/octet-stream';
+    protected string $header = 'Content-Type: application/octet-stream';
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'File',
         'machineName' => 'file',
         'description' => 'Output a file.',
@@ -84,6 +86,8 @@ class File extends Output
      * Set the Content-Type header.
      *
      * @return void
+     *
+     * @throws ApiException
      */
     public function setHeader()
     {
@@ -100,7 +104,7 @@ class File extends Output
      *
      * @return string Boolean as a string.
      */
-    protected function fromBoolean(bool &$data)
+    protected function fromBoolean(bool &$data): string
     {
         return $data ? 'true' : 'false';
     }
@@ -112,7 +116,7 @@ class File extends Output
      *
      * @return string Integer as a string.
      */
-    protected function fromInteger(int &$data)
+    protected function fromInteger(int &$data): string
     {
         return (string) $data;
     }
@@ -124,7 +128,7 @@ class File extends Output
      *
      * @return string Float as a string.
      */
-    protected function fromFloat(float &$data)
+    protected function fromFloat(float &$data): string
     {
         return $data;
     }
@@ -136,7 +140,7 @@ class File extends Output
      *
      * @return string XML string.
      */
-    protected function fromXml(string &$data)
+    protected function fromXml(string &$data): string
     {
         return $data;
     }
@@ -148,7 +152,7 @@ class File extends Output
      *
      * @return string HTML string.
      */
-    protected function fromHtml(string &$data)
+    protected function fromHtml(string &$data): string
     {
         return $data;
     }
@@ -160,7 +164,7 @@ class File extends Output
      *
      * @return string Text string.
      */
-    protected function fromText(string &$data)
+    protected function fromText(string &$data): string
     {
         return $data;
     }
@@ -172,9 +176,9 @@ class File extends Output
      *
      * @return string JSON encoded array string.
      */
-    protected function fromArray(array &$data)
+    protected function fromArray(array &$data): string
     {
-        return \json_encode($data);
+        return json_encode($data);
     }
 
     /**
@@ -184,9 +188,9 @@ class File extends Output
      *
      * @return string JSON string.
      */
-    protected function fromJson(string &$data)
+    protected function fromJson(string &$data): string
     {
-        return is_string($data) ? $data : \json_encode($data);
+        return is_string($data) ? $data : json_encode($data);
     }
 
     /**
@@ -196,7 +200,7 @@ class File extends Output
      *
      * @return string Image string.
      */
-    protected function fromImage(&$data)
+    protected function fromImage(&$data): string
     {
         return $data;
     }

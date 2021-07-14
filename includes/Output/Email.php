@@ -15,7 +15,6 @@
 
 namespace ApiOpenStudio\Output;
 
-use ApiOpenStudio\Config;
 use ApiOpenStudio\Core;
 use Swift_Mailer;
 use Swift_Message;
@@ -29,22 +28,11 @@ use Swift_SmtpTransport;
 class Email extends Output
 {
     /**
-     * Default email values.
-     *
-     * @var array default email values.
-     */
-    private $defaults = array(
-        'subject' => 'Datagator resourve result',
-        'from' => 'resource@datagator.com.au',
-        'format' => 'json',
-    );
-
-    /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Email',
         'machineName' => 'email',
         'description' => 'Output the results of the resource into an email.',
@@ -114,15 +102,16 @@ class Email extends Output
      *
      * @throws Core\ApiException Exception if email send failed.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
         $this->logger->info('Output: ' . $this->details()['machineName']);
+        $config = new Core\Config();
 
         $to = $this->val('to', true);
         $fromEmail = $this->val('from_email', true);
-        $fromEmail = empty($fromEmail) ? Core\Config::__get(['email', 'from', 'email']) : $fromEmail;
+        $fromEmail = empty($fromEmail) ? $config->__get(['email', 'from', 'email']) : $fromEmail;
         $fromName = $this->val('from_name', true);
-        $fromName = empty($fromName) ? Core\Config::__get(['email', 'from', 'name']) : $fromName;
+        $fromName = empty($fromName) ? $config->__get(['email', 'from', 'name']) : $fromName;
         $subject = $this->val('subject', true);
         $message = $this->val('message', true);
         $format = $this->val('format', true);
@@ -131,9 +120,9 @@ class Email extends Output
         $obj = new $class($message, 200, '');
         $message = $obj->getData();
 
-        $transport = (new Swift_SmtpTransport(Core\Config::__get(['email', 'host']), 25))
-            ->setUsername(Core\Config::__get(['email', 'username']))
-            ->setPassword(Core\Config::__get(['email', 'password']));
+        $transport = (new Swift_SmtpTransport($config->__get(['email', 'host']), 25))
+            ->setUsername($config->__get(['email', 'username']))
+            ->setPassword($config->__get(['email', 'password']));
         $mailer = new Swift_Mailer($transport);
         $email = (new Swift_Message($subject))
             ->setFrom([$fromEmail => $fromName])
@@ -144,7 +133,7 @@ class Email extends Output
         if (!$result) {
             throw new Core\ApiException('Email message send failed', 1, $this->id, 500);
         }
-        return "$result messages sent.";
+        return new Core\DataContainer("$result messages sent.", 'text');
     }
 
     /**
