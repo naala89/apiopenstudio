@@ -50,11 +50,11 @@ abstract class ProcessorEntity extends Entity
     protected $request;
 
     /**
-     * Logget object.
+     * Logger object.
      *
      * @var Logger
      */
-    protected $logger;
+    protected Logger $logger;
 
     /**
      * An array of details of the processor, used to configure the frontend GUI and metadata construction.
@@ -147,7 +147,7 @@ abstract class ProcessorEntity extends Entity
      *              with no limit on value
      *          t, which can take or or many input of Processor Field.
      */
-    protected $details = array();
+    protected array $details = array();
 
     /**
      * DB connections.
@@ -187,7 +187,8 @@ abstract class ProcessorEntity extends Entity
      *
      * @return mixed
      */
-    public function process() {
+    public function process()
+    {
         $this->logger->info('Processor: ' . $this->details()['machineName']);
         return;
     }
@@ -405,8 +406,7 @@ abstract class ProcessorEntity extends Entity
         array $limitTypes,
         int $min,
         string $key
-    ): bool
-    {
+    ): bool {
         if (empty($limitTypes) || ($min < 1 && $type == 'empty')) {
             return true;
         }

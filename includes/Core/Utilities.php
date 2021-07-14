@@ -91,8 +91,7 @@ class Utilities
         bool $upper = null,
         bool $number = null,
         bool $special = null
-    ): string
-    {
+    ): string {
         $length = empty($length) ? 8 : $length;
         $lower = $lower === null || $lower;
         $upper = $upper === null || $upper;

@@ -15,6 +15,7 @@
 
 namespace ApiOpenStudio\Core;
 
+use ADOConnection;
 use Monolog\Logger;
 use ADODB_mysqli;
 
@@ -49,10 +50,10 @@ class ResourceValidator
     /**
      * Constructor. Store processor metadata and request data in object.
      *
-     * @param ADODB_mysqli $db Database.
+     * @param ADOConnection $db Database.
      * @param Logger $logger Logger.
      */
-    public function __construct(ADODB_mysqli $db, Logger $logger)
+    public function __construct(ADOConnection $db, Logger $logger)
     {
         $this->helper = new ProcessorHelper();
         $this->db = $db;
