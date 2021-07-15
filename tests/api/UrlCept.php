@@ -1,10 +1,10 @@
 <?php
 
 $I = new ApiTester($scenario);
-$I->performLogin();
-$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
+$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 $I->createResourceFromYaml('url.yaml');
 $I->deleteHeader('Authorization');
+$I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
 
 $uri = $I->getMyBaseUri() . '/url/';
 
@@ -12,7 +12,6 @@ $I->wantTo('populate a Url with correct inputs (no auth) and see the result.');
 $I->sendGet(
     $uri,
     [
-        'token' => $I->getMyStoredToken(),
         'method' => 'get',
         'url' => 'jsonplaceholder.typicode.com/posts/1',
         'source_type' => 'json',
@@ -33,6 +32,7 @@ $I->seeResponseContainsJson([
     ]
 );
 
-$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
+$I->deleteHeader('Authorization');
+$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 $I->tearDownTestFromYaml('url.yaml');
 $I->deleteHeader('Authorization');

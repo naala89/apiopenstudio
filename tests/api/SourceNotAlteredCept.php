@@ -17,10 +17,10 @@ curl_setopt_array($curl, array(
     CURLOPT_CUSTOMREQUEST => 'GET',
 ));
 
-$I->performLogin();
-$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
+$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 $I->createResourceFromYaml($yamlFilename);
 $I->deleteHeader('Authorization');
+$I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
 
 $I->wantTo('populate a Url with sample xml and Accept:application/xml in header see the result.');
 curl_setopt_array($curl, array(
@@ -31,7 +31,6 @@ $I->haveHttpHeader('Accept', 'application/xml');
 $I->sendGet(
     $uri,
     [
-        'token' => $I->getMyStoredToken(),
         'method' => 'get',
         'url' => $xml_path,
         'source_type' => 'xml',
@@ -53,7 +52,6 @@ $I->haveHttpHeader('Accept', 'application/json');
 $I->sendGet(
     $uri,
     [
-        'token' => $I->getMyStoredToken(),
         'method' => 'get',
         'url' => $json_path,
         'source_type' => 'json',
@@ -66,6 +64,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContains($comparison);
 
-$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
+$I->deleteHeader('Authorization');
+$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 $I->tearDownTestFromYaml($yamlFilename);
 $I->deleteHeader('Authorization');

@@ -11,13 +11,10 @@ appid: 2
 ttl: 0
 
 security:
-  processor: token_role
+  processor: validate_token_roles
   id: resource identical ids security
-  token:
-    processor: var_get
-    id: resource identical ids token
-    key: token
-  role: Consumer
+  roles:
+    - Consumer
 
 process:
   processor: processors

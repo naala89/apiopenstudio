@@ -11,13 +11,10 @@ appid: 2
 ttl: 0
 
 security:
-  processor: token_role
+  processor: validate_token_roles
   id: test bad resource with processor without id security
-  token:
-    processor: var_get
-    id: test bad resource with processor without id token
-    key: token
-  role: Consumer
+  roles:
+    - Consumer
 
 process:
   processor: processors

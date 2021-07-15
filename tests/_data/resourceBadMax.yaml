@@ -11,13 +11,10 @@ appid: 2
 ttl: 0
 
 security:
-  processor: token_role
+  processor: validate_token_roles
   id: test resource with bad max security
-  token:
-    processor: var_get
-    id: test resource with bad max token
-    key: token
-  role: Consumer
+  roles:
+    - Consumer
 
 process:
   processor: var_field
