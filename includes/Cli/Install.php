@@ -411,8 +411,9 @@ class Install extends Script
             $sqlDrop = "DROP TABLE IF EXISTS `$table`";
             if (!$this->db->execute($sqlDrop)) {
                 echo "Error: Failed to drop table `$table`, please check the logs.\n";
+                exit;
             }
-            $sqlCreate = "CREATE TABLE IF NOT EXISTS `$table` (" . implode(', ', $sqlColumns) . ');';
+            $sqlCreate = "CREATE TABLE `$table` (" . implode(', ', $sqlColumns) . ');';
             if (!($this->db->execute($sqlCreate))) {
                 // Stop if table create fails.
                 echo "$sqlCreate\n";
