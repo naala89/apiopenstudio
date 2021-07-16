@@ -86,6 +86,7 @@ tests:
     - echo "Linting the codebase."
     - ./vendor/bin/phpcs --standard=PSR12 --report-file=phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
     - echo "Running api unit tests."
+    - cp ./example.env .env
     - ./vendor/bin/codecept run unit --env ci
     - echo "Setting up for functional tests."
     - apt-get install -y mariadb-client iproute2
