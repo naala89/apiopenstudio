@@ -60,8 +60,7 @@ tests:
       - logs/
   script:
     - echo "Setting up for unit tests."
-    - touch .env
-    - echo "API_DOMAIN=localhost:8085" >> .env
+    - cp ./example.env .env
     - cp tests/ci.settings.yml settings.yml
     - >
       if [ $MYSQL_USERNAME != null ]; then
@@ -86,7 +85,6 @@ tests:
     - echo "Linting the codebase."
     - ./vendor/bin/phpcs --standard=PSR12 --report-file=phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
     - echo "Running api unit tests."
-    - cp ./example.env .env
     - ./vendor/bin/codecept run unit --env ci
     - echo "Setting up for functional tests."
     - apt-get install -y mariadb-client iproute2
