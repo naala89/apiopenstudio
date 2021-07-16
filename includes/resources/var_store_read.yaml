@@ -24,6 +24,8 @@ security:
   processor: validate_token_roles
   id: var_store_read_security
   roles:
+    - Administrator
+    - Account manager
     - Application manager
     - Developer
 

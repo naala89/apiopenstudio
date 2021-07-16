@@ -24,6 +24,8 @@ security:
   processor: validate_token_roles
   id: validate_user_has_access_rights
   roles:
+    - Administrator
+    - Account manager
     - Application manager
     - Developer
 
