@@ -45,7 +45,9 @@ function change_to_auth_process_101(ADODB_mysqli $db)
 
     // Update all core resources.
     echo "Removing all core resources from the DB...\n";
-    $sql = 'DELETE FROM resource WHERE appid = (SELECT appid from application where appid = (SELECT accid FROM account WHERE name="apiopenstudio") AND name = "core")';
+    $sql = 'DELETE FROM resource WHERE appid = ';
+    $sql .= '(SELECT appid from application where appid = (SELECT accid FROM account WHERE name="apiopenstudio") ';
+    $sql .= 'AND name = "core")';
     if (!$db->execute($sql)) {
         echo "Deleting core resources failed, please check the logs\n";
         exit;
