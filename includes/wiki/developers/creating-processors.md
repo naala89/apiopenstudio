@@ -71,7 +71,7 @@ Example:
     /**
      * {@inheritDoc}
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Example processor',
         'machineName' => 'example_processor',
         'description' => 'This is for an example detail.',

@@ -96,30 +96,21 @@ However, it does nothing and has no security yet.
 
 Add the following snippet to the Security section:
 
-    processor: token_role
+    processor: validate_token_roles
     id: security
-    token:
-      processor: bearer_token
-      id: security_token
-    role: Developer
+    roles:
+         - Developer
 
-This calls the processor ```token_role```. We're giving the processor an ID name
+This calls the processor ```validate_token_roles```. We're giving the processor an ID name
 of "security", so that if there are any bugs we can see where the error is in
 the result.
 
-The ```token_role``` processor requires 2 inpute:
+The ```validate_token_roles``` processor requires 1 input:
 
-* token - the requesting user's token.
-* role - the role to validate the requesting user against.
+* roles - the roles to validate the requesting user against.
 
-```token``` will use another processor to pass its result into token_role. This
-is ```bearer_token```. This will return the bearer token value from the request
-header. We will assign this an ID name of "security_token".
-
-```role``` will not require processing from another processor, because this does
+```roles``` will not require processing from another processor, because this does
 not need to be dynamic. So we're using a static string: "Developer".
-
-![Resource security](images/resource_definition_2.png)
 
 #### Define the process
 
@@ -159,12 +150,10 @@ select YAML format, it should look like this:
     appid: 2
     ttl: ''
     security:
-        processor: token_role
+        processor: validate_token_role
         id: security
-        token:
-            processor: bearer_token
-            id: security_token
-        role: Developer
+        roles:
+            - Developer
     process:
         processor: var_str
         id: process

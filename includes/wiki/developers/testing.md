@@ -3,13 +3,13 @@ Testing
 
 Testing is done with [Codeception](http://codeception.com/). From Docroot, run:
 
-```$ vendor/bin/codecept -v```
+    $ vendor/bin/codecept -v
 
 If you are running testcase first time in api suite, then in your api directory
 you will not have api tester file. You need to generate that so run following
 command:
 
-```$ vendor/bin/codecept build```
+    $ vendor/bin/codecept build
 
 Config
 ------
@@ -39,12 +39,12 @@ the prompt.
 Creating Tests
 --------------
 
-```$ vendor/bin/codecept generate:cept TestName```
+    $ vendor/bin/codecept generate:cept TestName
 
 Create api test
 ---------------
 
-```$ vendor/bin/codecept generate:cept api TestName```
+    $ vendor/bin/codecept generate:cept api TestName
 
 Test YAML files
 ---------------
@@ -56,20 +56,20 @@ Running tests
 
 ### Run all tests
 
-```vendor/bin/codecept run --env staging|local|prod```
+    $ ./vendor/bin/codecept run --env staging|local|prod
 
 ### Run all api tests
 
-```vendor/bin/codecept run --env staging|local|prod api```
+    $ ./vendor/bin/codecept run --env staging|local|prod api
 
 ### Run a specific test
 
-```vendor/bin/codecept run --env staging|local|prod api testName```
+    $ ./vendor/bin/codecept run --env staging|local|prod api testName
 
 ### Run all unit tests
 
-```vendor/bin/codecept run unit --env staging|local|prod```
+    $ ./vendor/bin/codecept run unit --env staging|local|prod
 
 ### Run all functional api tests
 
-```vendor/bin/codecept run api --env staging|local|prod```
+    $ ./vendor/bin/codecept run api --env staging|local|prod
