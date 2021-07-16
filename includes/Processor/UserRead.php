@@ -45,15 +45,6 @@ class UserRead extends Core\ProcessorEntity
         'description' => 'Fetch a single or multiple users. Admin',
         'menu' => 'Admin',
         'input' => [
-            'token' => [
-                'description' => 'The current token of the user.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
             'uid' => [
                 'description' => 'Filter the results by user ID.',
                 'cardinality' => [0, 1],

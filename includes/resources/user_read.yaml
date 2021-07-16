@@ -23,16 +23,10 @@ ttl: 0
 security:
   processor: validate_token
   id: user_read_security
-  token:
-    processor: bearer_token
-    id: user_read_security_token
 
 process:
   processor: user_read
   id: user_read_process
-  token:
-    processor: bearer_token
-    id: user_read_token
   uid:
     processor: var_get
     id: user_read_uid
