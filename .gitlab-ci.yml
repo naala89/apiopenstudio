@@ -62,8 +62,8 @@ tests:
     - echo "Setting up for unit tests."
     - cp tests/ci.env .env
     - cp tests/ci.settings.yml settings.yml
-    - ssh-keygen -t rsa -y -P "" -b 4096 -m PEM -f ./jwtRS256.key
-    - ssh-keygen -e -m PEM -y -f ./jwtRS256.key" > ./jwtRS256.key.pub
+    - ssh-keygen -t rsa -b 4096 -P "" -m PEM -f jwt.key
+    - openssl rsa -in jwt.key -pubout -outform PEM -out jwt.key.pub
     - >
       if [ $MYSQL_USERNAME != null ]; then
         sed -i -e "s/username: apiopenstudio/username: ${MYSQL_USERNAME}/g" settings.yml

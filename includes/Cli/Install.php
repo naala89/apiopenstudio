@@ -631,8 +631,8 @@ class Install extends Script
 
         if ($generateKeys) {
             echo "Generating keys...\n\n";
-            shell_exec("ssh-keygen -t rsa -y -P \"\" -b 4096 -m PEM -f $private_key_path");
-            shell_exec("ssh-keygen -e -m PEM -y -f $private_key_path > $public_key_path");
+            shell_exec("ssh-keygen -t rsa -b 4096 -P \"\" -m PEM -f $private_key_path");
+            shell_exec("openssl rsa -in $private_key_path -pubout -outform PEM -out $public_key_path");
         }
     }
 }

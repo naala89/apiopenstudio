@@ -12,8 +12,8 @@ settings.yml
 public/wiki/
 public/phpdoc/
 dbdata/
-/*.key
-/*.key.pub
+*.key
+*.key.pub
 
 #3rd-party
 /vendor
