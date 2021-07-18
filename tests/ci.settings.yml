@@ -65,7 +65,6 @@ api:
   url: "localhost"
   cache: false
   default_format: json
-  token_life: "+6 hour"
   core_account: apiopenstudio
   core_application: core
   core_resource_lock: false
@@ -73,3 +72,10 @@ api:
   dir_resources: "includes/resources/"
   dir_uploads: "uploads/"
   dir_tmp: "/tmp/"
+  jwt_private_key: "/var/www/html/api/jwtRS256.key"
+  jwt_public_key: "/var/www/html/api/jwtRS256.key.pub"
+  jwt_alg_type: "Rsa"
+  jwt_alg: "Sha256"
+  jwt_life: "+6 hour"
+  jwt_issuer: "localhost"
+  jwt_permitted_for: "localhost"

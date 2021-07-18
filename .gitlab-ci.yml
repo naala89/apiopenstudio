@@ -60,8 +60,10 @@ tests:
       - logs/
   script:
     - echo "Setting up for unit tests."
-    - cp ./example.env .env
+    - cp tests/ci.env .env
     - cp tests/ci.settings.yml settings.yml
+    - ssh-keygen -t rsa -y -P \"\" -b 4096 -m PEM -f $private_key_path
+    - ssh-keygen -e -m PEM -y -f $private_key_path > $public_key_path
     - >
       if [ $MYSQL_USERNAME != null ]; then
         sed -i -e "s/username: apiopenstudio/username: ${MYSQL_USERNAME}/g" settings.yml
