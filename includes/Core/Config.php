@@ -65,6 +65,9 @@ class Config
             $val = $this->conf;
             while ($index = array_shift($key)) {
                 if (!array_key_exists($index, $val)) {
+                    print_r($key, true);
+                    print_r($index, true);
+                    print_r($val, true);
                     throw new ApiException("Invalid configuration option: $index");
                 }
                 $val = $val[$index];
