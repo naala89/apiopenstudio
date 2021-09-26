@@ -30,8 +30,8 @@ In your fork, navigate to settings -> Repository.
 
 Set ```Default branch``` to develop.
 
-Create and set the SSH_PRIVATE_KEY and CI_MYSQL_ROOT_PASSWORD variables
------------------------------------------------------------------------
+Create and set the SSH_PRIVATE_KEY variable
+-------------------------------------------
 
 This is required so that the GitLab CI runner can run in your fork. The runner
 instance needs to install the composer dependencies in order to run.
@@ -53,7 +53,6 @@ logs.
       be used in the feature branch CI.
     * Click on ```Add Variable```.
 * Click on ```Add Variable```.
-    * Enter ```CI_MYSQL_ROOT_PASSWORD``` in ```Key```.
     * Paste the DB root password ```Value```.
     * Uncheck the ```Protect variable``` flag. This will allow the variable to
       be used in the feature branch CI.

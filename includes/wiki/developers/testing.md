@@ -1,9 +1,48 @@
 Testing
 =======
 
-Testing is done with [Codeception](http://codeception.com/). From Docroot, run:
+The test suite is designed to be run locally and on GitLab CI.
 
-    $ vendor/bin/codecept -v
+Running locally
+---------------
+
+There are 2 ways of running the test suite locally...
+
+### Using GitLab runner
+
+See
+[Setting up a local GitLab runner](/developers/sys-admin/setting-up-local-gitlab-runner)
+for details on how to setup a local GitLab runner instance.
+
+You will need to add the following config to the root level of
+```gitlab-ci.yml```:
+
+    variables:
+        SSH_PRIVATE_KEY: "<flattened SSH key>"
+
+Add the following to the ```tests``` section of ```gitlab-ci.yml```:
+
+    variables:
+        MYSQL_ROOT_PASSWORD: apiopenstudio
+        MYSQL_USERNAME: apiopenstudio
+        MYSQL_PASSWORD: apiopenstudio
+
+Once set up, you can run the tests like so:
+
+    $ gitlab-runner exec docker tests
+
+#### Config
+
+Running the test suite will overwrite the ```.env``` and ```settings.yml```
+files.
+
+**MAKE SURE YOU BACKUP YOUR MAIN ```.env``` AND ```settings.yml```
+FILES BEFORE RUNNING TESTS.**
+
+### Using the locally installed codecept
+
+You need to have a fully functioning ApiOpenStudio, with test users installed in
+the database.
 
 If you are running testcase first time in api suite, then in your api directory
 you will not have api tester file. You need to generate that so run following
@@ -11,30 +50,31 @@ command:
 
     $ vendor/bin/codecept build
 
-Config
-------
+Testing is done with [Codeception](http://codeception.com/). From Docroot, run:
 
-Domains for testing in environments are stored in ```/tests/api.suite.yml```
+    $ vendor/bin/codecept -v
 
-Tests require a .env file:
+#### Running tests
 
-    API_DOMAIN=api.apiopenstudio.local
+##### Run all tests
 
-The configuration defined in ```api.suite.yml``` will dynamically pull the
-domain name for the local domain for the API from the ```.env``` file.
+    $ ./vendor/bin/codecept run --env staging|local|prod
 
-Testing user
-------------
+##### Run all api tests
 
-The following testing credentials are stored in /tests/_support/Helper/api.php
+    $ ./vendor/bin/codecept run --env staging|local|prod api
 
-* Account: apiopenstudio
-* Application: Testing
-* Username: tester
-* Password: tester_pass
+##### Run a specific test
 
-When you create the database, ensure that you include the tester credentials at
-the prompt.
+    $ ./vendor/bin/codecept run --env staging|local|prod api testName
+
+##### Run all unit tests
+
+    $ ./vendor/bin/codecept run unit --env staging|local|prod
+
+##### Run all functional api tests
+
+    $ ./vendor/bin/codecept run api --env staging|local|prod
 
 Creating Tests
 --------------
@@ -50,26 +90,3 @@ Test YAML files
 ---------------
 
 These are in ```/tests/_data/```
-
-Running tests
--------------
-
-### Run all tests
-
-    $ ./vendor/bin/codecept run --env staging|local|prod
-
-### Run all api tests
-
-    $ ./vendor/bin/codecept run --env staging|local|prod api
-
-### Run a specific test
-
-    $ ./vendor/bin/codecept run --env staging|local|prod api testName
-
-### Run all unit tests
-
-    $ ./vendor/bin/codecept run unit --env staging|local|prod
-
-### Run all functional api tests
-
-    $ ./vendor/bin/codecept run api --env staging|local|prod

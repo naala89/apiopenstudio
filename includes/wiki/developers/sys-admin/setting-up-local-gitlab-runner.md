@@ -42,38 +42,6 @@ Select the executor:
 
 The runner will now appear in GitLab: Settings -> CI / CD -> Runners
 
-Edit configuration for env variables
-------------------------------------
-
-In theory, we should be able to set the values in ```config.toml```. However,
-there is currently a bug in gitlab-runner, where this does not work.
-
-This would have been, get the config file:
-
-    gitlab-runner list
-
-Edit the ```config.toml``` file and set the variables in the ```environment```
-key.
-
-As a work-around, update ```.gitlab-ci.yml``` and paste the following variable
-into the root of the ```gitlab-ci.yml``` definition:
-
-    variables:
-        CI_MYSQL_ROOT_PASSWORD: <mysql_root_password>
-        SSH_PRIVATE_KEY: |
-            <private_ssh_key>
-
-### Optional
-
-The following environment variables have default values, but for extra security,
-you can define them:
-
-    CI_MYSQL_USERNAME: <mysql_username>
-    CI_MYSQL_PASSWORD: <mysql_password>
-    CI_ADMIN_NAME: <apiopenstudio_admin_username>
-    CI_ADMIN_PASS: <apiopenstudio_admin_password>
-    CI_ADMIN_EMAIL: <apiopenstudio_admin_email>
-
 Run a CI job
 ------------
 
