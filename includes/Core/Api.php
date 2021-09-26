@@ -425,15 +425,14 @@ class Api
     {
         $result = true;
         $resource = $this->request->getMeta();
-        $outputs = $data->output;
 
-        if (empty($outputs)) {
+        if (!isset($data->output)) {
             // Default response output if no output defined.
             $this->logger->notice('no output section defined - returning the result in the response');
             $outputs = ['response'];
-        } elseif (Utilities::isAssoc($outputs)) {
-            // Single output defined.
-            $outputs = [$outputs];
+        } else {
+            // Test for single output defined.
+            $outputs = Utilities::isAssoc($data->output) ? [$data->output] : $data->output;
         }
 
         foreach ($outputs as $index => $output) {
