@@ -20,6 +20,10 @@ You will need to add the following config to the root level of
     variables:
         SSH_PRIVATE_KEY: "<flattened SSH key>"
 
+e.g.:
+
+    SSH_PRIVATE_KEY: "-----BEGIN OPENSSH PRIVATE KEY-----\nfoobar\n-----END OPENSSH PRIVATE KEY-----\n"
+
 Add the following to the ```tests``` section of ```gitlab-ci.yml```:
 
     variables:
