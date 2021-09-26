@@ -569,7 +569,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
             }
         }
         if (!$valid) {
-            $message = 'invalid literal in new resource (' . print_r($element) . '. only "' .
+            $message = 'invalid literal in new resource (' . print_r($element, true) . '. only "' .
                 implode("', '", $accepts) . '" accepted';
             throw new Core\ApiException($message, 6, $id, 406);
         }
