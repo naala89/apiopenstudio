@@ -196,7 +196,8 @@ class ResourceValidator
                 if (in_array('ApiOpenStudio\Output\Output', $parents)) {
                     $class = new $classStr([], 0, $this->logger, []);
                 } else {
-                    $class = new $classStr($meta, new Request(), $this->db, $this->logger);
+                    $request = new Request();
+                    $class = new $classStr($meta, $request, $this->db, $this->logger);
                 }
                 $details = $class->details();
                 $id = $node['id'];
