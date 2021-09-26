@@ -242,7 +242,11 @@ abstract class ProcessorEntity extends Entity
         }
 
         // Set data to default if empty.
-        $test = $this->isDataContainer($this->meta->$key) ? $this->meta->$key->getData() : $this->meta->$key;
+        if (!isset($this->meta->$key)) {
+            $test = null;
+        } else {
+            $test = $this->isDataContainer($this->meta->$key) ? $this->meta->$key->getData() : $this->meta->$key;
+        }
         if ($test === null || $test === '') {
             $this->meta->$key = new DataContainer($default);
         }
@@ -254,7 +258,7 @@ abstract class ProcessorEntity extends Entity
         $this->validateAllowedValues($container->getData(), $limitValues, $min, $key);
         $this->validateAllowedTypes($container->getType(), $limitTypes, $min, $key);
 
-        $this->logger->debug('Value: ' . $container->getData());
+        $this->logger->debug('Value: ' . print_r($container->getData(), true));
 
         return $realValue ? $container->getData() : $container;
     }
