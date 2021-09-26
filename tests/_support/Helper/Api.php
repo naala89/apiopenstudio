@@ -111,8 +111,6 @@ class Api extends Module
      */
     public function performLogin(string $username, string $password)
     {
-        print_r($username, true);
-        print_r($password, true);
         $this->getModule('REST')->sendPost(
             $this->getCoreBaseUri() . '/auth/token',
             ['username' => $username, 'password' => $password]
