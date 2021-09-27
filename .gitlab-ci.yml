@@ -91,6 +91,7 @@ wiki_dev:
     - develop
   script:
     - echo "Compile and deploy the wiki to dev."
+    - composer install
     - ./vendor/bin/bookdown includes/wiki/bookdown.json
     - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
@@ -103,6 +104,7 @@ wiki_prod:
     - master
   script:
     - echo "Compile and deploy the wiki to prod."
+    - composer install
     - ./vendor/bin/bookdown includes/wiki/bookdown.json
     - ssh-keyscan "$PROD_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
