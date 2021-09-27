@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-
 /**
  * Script to install the ApiOpenStudio DB.
  *

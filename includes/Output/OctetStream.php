@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Class OctetStream.
  *

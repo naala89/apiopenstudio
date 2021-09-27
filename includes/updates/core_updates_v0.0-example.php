@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Update functions for ApiOpenStudio v0.0-example
  *
