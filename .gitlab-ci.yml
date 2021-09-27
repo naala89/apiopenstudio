@@ -22,6 +22,12 @@ stages:
   - deploy_wiki
   - deploy_phpdoc
 
+before_script:
+  - eval $(ssh-agent -s)
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+
 ##################################
 ## TESTS
 ##################################
