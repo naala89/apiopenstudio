@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Update functions for ApiOpenStudio v1.0
+ * Update functions for ApiOpenStudio v1.0-alpha
  *
  * @package    ApiOpenStudio
  * @subpackage Updates
@@ -13,17 +13,8 @@
  * @link       https://www.apiopenstudio.com
  */
 
-/**
- * Example update function.
- *
- * @param ADODB_mysqli $db
- *
- * @version V0.0.0
- */
-function example_update(ADODB_mysqli $db)
-{
-    // Do Something
-}
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\Config;
 
 /**
  * Update all resource meta to use the 'processor' keyword instead of 'function'.
@@ -65,15 +56,17 @@ function update_all_resources_54_part_1(ADODB_mysqli $db)
  *
  * @param ADODB_mysqli $db
  *
- * @version V1.0.0-alpha2
+ * @throws ApiException
  *
  * @see https://gitlab.com/john89/api_open_studio/-/issues/54
+ * @version V1.0.0-alpha2
+ *
  */
 function update_all_resources_54_part_2(ADODB_mysqli $db)
 {
     echo "Updating the Core 'Functions' resource\n";
 
-    $config = new \ApiOpenStudio\Core\Config();
+    $config = new Config();
     $coreAccount = $config->__get(['api', 'core_account']);
     $coreApplication = $config->__get(['api', 'core_application']);
     $basePath = $config->__get(['api', 'base_path']);
@@ -96,12 +89,11 @@ function update_all_resources_54_part_2(ADODB_mysqli $db)
 
     // Load the data from the new Processors processor file.
     $file = $basePath . $dirResources . 'processors.yaml';
-    $yaml = $name = $description = $uri = $method = $appid = $ttl = $meta = '';
     if (!$contents = file_get_contents($file)) {
         echo "Error: unable to find the new $file file!\n";
         exit();
     }
-    $yaml = \Spyc::YAMLLoadString($contents);
+    $yaml = Spyc::YAMLLoadString($contents);
     $name = $yaml['name'];
     $description = $yaml['description'];
     $uri = $yaml['uri'];

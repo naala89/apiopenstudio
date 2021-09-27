@@ -15,6 +15,7 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ProcessorHelper;
@@ -33,14 +34,14 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @var ProcessorHelper
      */
-    protected $helper;
+    protected ProcessorHelper $helper;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Resource',
         'machineName' => 'resource_base',
         // phpcs:ignore
@@ -112,10 +113,10 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param \Monolog\Logger $logger Logger object.
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->helper = new ProcessorHelper();
@@ -128,9 +129,9 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $accName = $this->val('accName', true);
         $appName = $this->val('appName', true);
@@ -568,7 +569,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
             }
         }
         if (!$valid) {
-            $message = 'invalid literal in new resource (' . print_r($element) . '. only "' .
+            $message = 'invalid literal in new resource (' . print_r($element, true) . '. only "' .
                 implode("', '", $accepts) . '" accepted';
             throw new Core\ApiException($message, 6, $id, 406);
         }

@@ -15,11 +15,9 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
-use ApiOpenStudio\Db\AccountMapper;
-use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\ResourceMapper;
-use ApiOpenStudio\Db\UserMapper;
 use ApiOpenStudio\Db\UserRoleMapper;
 use Symfony\Component\Yaml\Yaml;
 use Monolog\Logger;
@@ -32,68 +30,30 @@ use Monolog\Logger;
 class ResourceExport extends Core\ProcessorEntity
 {
     /**
-     * Config class.
-     *
-     * @var Config
-     */
-    private $settings;
-
-    /**
-     * User mapper class.
-     *
-     * @var UserMapper
-     */
-    private $userMapper;
-
-    /**
      * User role mapper class.
      *
      * @var UserRoleMapper
      */
-    private $userRoleMapper;
+    private UserRoleMapper $userRoleMapper;
 
     /**
      * Resource mapper class.
      *
      * @var ResourceMapper
      */
-    private $resourceMapper;
-
-    /**
-     * Application mapper class.
-     *
-     * @var ApplicationMapper
-     */
-    private $applicationMapper;
-
-    /**
-     * Account mapper class.
-     *
-     * @var AccountMapper
-     */
-    private $accountMapper;
+    private ResourceMapper $resourceMapper;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Resource export',
         'machineName' => 'resource_export',
         'description' => 'Export a resource file.',
         'menu' => 'Admin',
         'input' => [
-            'token' => [
-                // phpcs:ignore
-                'description' => 'The token of the user making the call. This is used to validate the user permissions.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => false,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
             'resid' => [
                 'description' => 'The Resource ID.',
                 'cardinality' => [1, 1],
@@ -120,18 +80,16 @@ class ResourceExport extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Logger $logger Logger object.
+     *
+     * @throws Core\ApiException
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->userMapper = new UserMapper($db);
         $this->userRoleMapper = new UserRoleMapper($db);
-        $this->accountMapper = new AccountMapper($db);
-        $this->applicationMapper = new ApplicationMapper($db);
         $this->resourceMapper = new ResourceMapper($db);
-        $this->settings = new Core\Config();
     }
 
     /**
@@ -141,12 +99,11 @@ class ResourceExport extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
-        $token = $this->val('token', true);
-        $currentUser = $this->userMapper->findBytoken($token);
+        $uid = Core\Utilities::getUidFromToken();
         $resid = $this->val('resid', true);
         $format = $this->val('format', true);
 
@@ -156,7 +113,7 @@ class ResourceExport extends Core\ProcessorEntity
         }
 
         $role = $this->userRoleMapper->findByUidAppidRolename(
-            $currentUser->getUid(),
+            $uid,
             $resource->getAppid(),
             'Developer'
         );
@@ -172,13 +129,15 @@ class ResourceExport extends Core\ProcessorEntity
         switch ($format) {
             case 'yaml':
                 header('Content-Disposition: attachment; filename="resource.twig"');
-                return $this->getYaml($resource);
+                return new Core\DataContainer($this->getYaml($resource), 'text');
                 break;
             case 'json':
                 header('Content-Disposition: attachment; filename="resource.json"');
-                return $this->getJson($resource);
+                return new Core\DataContainer($this->getJson($resource), 'text');
                 break;
         }
+
+        throw new Core\ApiException("Invalid format: $format", 6, $this->id, 400);
     }
 
     /**
@@ -188,15 +147,16 @@ class ResourceExport extends Core\ProcessorEntity
      *
      * @return string A YAML string.
      */
-    private function getYaml($resource)
+    private function getYaml($resource): string
     {
-        $obj = [];
-        $obj['name'] = $resource->getName();
-        $obj['description'] = $resource->getDescription();
-        $obj['uri'] = $resource->getUri();
-        $obj['method'] = $resource->getMethod();
-        $obj['appid'] = $resource->getAppId();
-        $obj['ttl'] = $resource->getTtl();
+        $obj = [
+            'name' => $resource->getName(),
+            'description' => $resource->getDescription(),
+            'uri' => $resource->getUri(),
+            'method' => $resource->getMethod(),
+            'appid' => $resource->getAppId(),
+            'ttl' => $resource->getTtl(),
+        ];
         $obj = array_merge($obj, json_decode($resource->getMeta(), true));
         return  Yaml::dump($obj, Yaml::PARSE_OBJECT);
     }
@@ -208,7 +168,7 @@ class ResourceExport extends Core\ProcessorEntity
      *
      * @return string A YAML string.
      */
-    private function getJson($resource)
+    private function getJson($resource): string
     {
         $obj = [];
         $obj['name'] = $resource->getName();

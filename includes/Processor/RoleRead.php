@@ -15,6 +15,7 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db\RoleMapper;
 use Monolog\Logger;
@@ -38,7 +39,7 @@ class RoleRead extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Role read',
         'machineName' => 'role_read',
         'description' => 'List a single or all roles.',
@@ -88,10 +89,12 @@ class RoleRead extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Logger $logger Logger object.
+     *
+     * @throws Core\ApiException
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->roleMapper = new RoleMapper($db);
@@ -104,9 +107,9 @@ class RoleRead extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $rid = $this->val('rid', true);
         $keyword = $this->val('keyword', true);
@@ -130,7 +133,7 @@ class RoleRead extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Error.
      */
-    private function findByRid(int $rid)
+    private function findByRid(int $rid): Core\DataContainer
     {
         $role = $this->roleMapper->findByRid($rid);
         if (empty($role->getRid())) {
@@ -144,11 +147,11 @@ class RoleRead extends Core\ProcessorEntity
      *
      * @param array $params SQL query params.
      *
-     * @return array An array of associative arrays of a roles rows.
+     * @return Core\DataContainer An array of associative arrays of a roles rows.
      *
      * @throws Core\ApiException Error.
      */
-    private function findAll(array $params)
+    private function findAll(array $params): Core\DataContainer
     {
         $result = $this->roleMapper->findAll($params);
         $roles = [];

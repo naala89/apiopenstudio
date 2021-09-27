@@ -11,13 +11,10 @@ appid: 2
 ttl: 0
 
 security:
-  processor: token_role
   id: test resource required func type security
-  token:
-    processor: var_get
-    id: test resource required func type token
-    key: token
-  role: Consumer
+  processor: validate_token_roles
+  roles:
+    - Consumer
 
 process:
   processor: processors

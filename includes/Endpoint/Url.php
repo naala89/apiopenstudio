@@ -29,7 +29,7 @@ class Url extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Url',
         'machineName' => 'url',
         'description' => 'Fetch the result form an external URL.',
@@ -120,9 +120,9 @@ class Url extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $method = $this->val('method', true);
         $connectTimeout = $this->val('connectTimeout', true);

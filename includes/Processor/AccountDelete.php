@@ -30,7 +30,7 @@ class AccountDelete extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Account delete',
         'machineName' => 'account_delete',
         'description' => 'Delete an account.',
@@ -55,12 +55,11 @@ class AccountDelete extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $accid = $this->val('accid', true);
-        $this->logger->debug('Deleting account' . $accid);
 
         $accountMapper = new Db\AccountMapper($this->db);
         $account = $accountMapper->findByAccid($accid);
@@ -76,6 +75,6 @@ class AccountDelete extends Core\ProcessorEntity
             throw new Core\ApiException($message, 6, $this->id, 400);
         }
 
-        return $accountMapper->delete($account);
+        return new Core\DataContainer($accountMapper->delete($account), 'boolean');
     }
 }

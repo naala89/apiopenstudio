@@ -65,7 +65,6 @@ api:
   url: "api.apiopenstudio.local"
   cache: false
   default_format: json
-  token_life: "+6 hour"
   core_account: apiopenstudio
   core_application: core
   core_resource_lock: false
@@ -73,6 +72,13 @@ api:
   dir_resources: "includes/resources/"
   dir_uploads: "uploads/"
   dir_tmp: "/tmp/"
+  jwt_private_key: "/var/www/html/api/jwt.key"
+  jwt_public_key: "/var/www/html/api/jwt.key.pub"
+  jwt_alg_type: "Rsa"
+  jwt_alg: "Sha256"
+  jwt_life: "+1 hour"
+  jwt_issuer: "api.apiopenstudio.local"
+  jwt_permitted_for: "api.apiopenstudio.local"
 
 email:
   host: apiopenstudio-email

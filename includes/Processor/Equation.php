@@ -16,6 +16,7 @@
 namespace ApiOpenStudio\Processor;
 
 use ApiOpenStudio\Core;
+use Exception;
 use jlawrence\eos\Parser;
 
 /**
@@ -30,7 +31,7 @@ class Equation extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Equation',
         'machineName' => 'equation',
         // phpcs:ignore
@@ -65,16 +66,16 @@ class Equation extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $eq = $this->val('equation', true);
         $vars = $this->val('variables', true);
 
         try {
             $result = Parser::solve($eq, $vars);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new Core\ApiException($e->getMessage(), 0, $this->id);
         }
 

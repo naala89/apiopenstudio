@@ -29,7 +29,7 @@ class VarUri extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Var (URI)',
         'machineName' => 'var_uri',
         // phpcs:ignore
@@ -64,9 +64,9 @@ class VarUri extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $index = intval($this->val('index', true));
         $nullable = $this->val('nullable', true);

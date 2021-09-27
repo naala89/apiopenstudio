@@ -25,23 +25,23 @@ class VarStore
     /**
      * The varstore ID.
      *
-     * @var integer Var store ID.
+     * @var integer|null Var store ID.
      */
-    protected $vid;
+    protected ?int $vid;
 
     /**
      * The application ID.
      *
-     * @var integer Application ID.
+     * @var integer|null Application ID.
      */
-    protected $appid;
+    protected ?int $appid;
 
     /**
      * The var key.
      *
-     * @var string Var key.
+     * @var string|null Var key.
      */
-    protected $key;
+    protected ?string $key;
 
     /**
      * The var value.
@@ -53,9 +53,9 @@ class VarStore
     /**
      * VarStore constructor.
      *
-     * @param integer $vid The var ID.
-     * @param integer $appid The var application ID.
-     * @param string $key The var key.
+     * @param int|null $vid The var ID.
+     * @param int|null $appid The var application ID.
+     * @param string|null $key The var key.
      * @param mixed $val The var value.
      */
     public function __construct(int $vid = null, int $appid = null, string $key = null, $val = null)
@@ -71,7 +71,7 @@ class VarStore
      *
      * @return integer The var ID.
      */
-    public function getVid()
+    public function getVid(): ?int
     {
         return $this->vid;
     }
@@ -93,7 +93,7 @@ class VarStore
      *
      * @return integer The var application ID.
      */
-    public function getAppid()
+    public function getAppid(): ?int
     {
         return $this->appid;
     }
@@ -116,7 +116,7 @@ class VarStore
      * @return string
      *   The var key.
      */
-    public function getKey()
+    public function getKey(): ?string
     {
         return $this->key;
     }
@@ -139,7 +139,7 @@ class VarStore
      * @return string
      *   The var value.
      */
-    public function getVal()
+    public function getVal(): string
     {
         return $this->val;
     }
@@ -161,7 +161,7 @@ class VarStore
      *
      * @return array Associative array of var attributes.
      */
-    public function dump()
+    public function dump(): array
     {
         return [
             'vid' => $this->vid,

@@ -29,7 +29,7 @@ class VarInt extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
     'name' => 'Var (Integer)',
         'machineName' => 'var_int',
         'description' => 'An integer variable. It validates the input and returns an error if it is not a integer.',
@@ -56,7 +56,7 @@ class VarInt extends Core\ProcessorEntity
      */
     public function process()
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $result = $this->val('value');
         if (!$this->isDataContainer($result)) {

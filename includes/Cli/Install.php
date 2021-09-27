@@ -15,9 +15,11 @@
 
 namespace ApiOpenStudio\Cli;
 
+use ADOConnection;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Db;
+use Spyc;
 
 /**
  * Class Install
@@ -29,7 +31,7 @@ class Install extends Script
     /**
      * {@inheritDoc}
      */
-    protected $argMap = [
+    protected array $argMap = [
         'options' => [],
         'flags' => [],
     ];
@@ -37,12 +39,12 @@ class Install extends Script
     /**
      * @var Config Config class.
      */
-    protected $config;
+    protected Config $config;
 
     /**
-     * @var ADONewConnection database connection.
+     * @var ADOConnection database connection.
      */
-    protected $db;
+    protected ADOConnection $db;
 
     /**
      * Install constructor.
@@ -72,6 +74,8 @@ class Install extends Script
      *   CLI args.
      *
      * @return void
+     *
+     * @throws ApiException
      */
     public function exec(array $argv = null)
     {
@@ -117,6 +121,8 @@ class Install extends Script
         echo "\n";
         $this->createAdminUser();
         echo "\n";
+        $this->generateJwtKeys();
+        echo "\n";
     }
 
     /**
@@ -155,7 +161,7 @@ class Install extends Script
         }
 
         // DB link.
-        $this->db = adoNewConnection($driver);
+        $this->db = ADONewConnection($driver);
         if (empty($database)) {
             if (!$this->db->connect($host, $username, $password)) {
                 echo "Error: DB connection failed.\n";
@@ -381,11 +387,10 @@ class Install extends Script
         }
         $path = $basePath . $definitionPath;
         $yaml = file_get_contents($path);
-        $definition = \Spyc::YAMLLoadString($yaml);
+        $definition = Spyc::YAMLLoadString($yaml);
 
         // Parse the DB  table definition array.
         foreach ($definition as $table => $tableData) {
-            $sqlPrimary = '';
             $sqlColumns = [];
             foreach ($tableData['columns'] as $column => $columnData) {
                 // Column definitions.
@@ -406,8 +411,9 @@ class Install extends Script
             $sqlDrop = "DROP TABLE IF EXISTS `$table`";
             if (!$this->db->execute($sqlDrop)) {
                 echo "Error: Failed to drop table `$table`, please check the logs.\n";
+                exit;
             }
-            $sqlCreate = "CREATE TABLE IF NOT EXISTS `$table` (" . implode(', ', $sqlColumns) . ');';
+            $sqlCreate = "CREATE TABLE `$table` (" . implode(', ', $sqlColumns) . ');';
             if (!($this->db->execute($sqlCreate))) {
                 // Stop if table create fails.
                 echo "$sqlCreate\n";
@@ -435,6 +441,7 @@ class Install extends Script
                     $sqlRow = "INSERT INTO `$table` (" . implode(', ', $keys) . ')';
                     $sqlRow .= 'VALUES (' . implode(', ', $values) . ');';
                     if (!($this->db->execute($sqlRow))) {
+                        print_r($sqlRow, true);
                         echo "$sqlRow\n";
                         echo "Error: failed to insert a row into `$table`, please check the logs.\n";
                         exit;
@@ -474,7 +481,7 @@ class Install extends Script
             if (pathinfo($filename, PATHINFO_EXTENSION) != 'yaml') {
                 continue;
             }
-            $yaml = \Spyc::YAMLLoadString(file_get_contents("$dir/$filename"));
+            $yaml = Spyc::YAMLLoadString(file_get_contents("$dir/$filename"));
             $name = $yaml['name'];
             $description = $yaml['description'];
             $uri = $yaml['uri'];
@@ -535,8 +542,6 @@ class Install extends Script
                 1,
                 $username,
                 null,
-                null,
-                null,
                 $email,
                 null,
                 null,
@@ -552,7 +557,7 @@ class Install extends Script
                 null,
                 null,
                 null,
-                null,
+                null
             );
             $user->setPassword($password);
             $userMapper->save($user);
@@ -595,5 +600,39 @@ class Install extends Script
         }
 
         echo "Administrator role successfully added to ApiOpenStudio admin user!\n\n";
+    }
+
+    /**
+     * Generate the JWT keys.
+     *
+     * @param null $generateKeys Force generation of keys.
+     *
+     * @throws ApiException
+     */
+    public function generateJwtKeys($generateKeys = null)
+    {
+        $config = new Config();
+        echo "You will need the public/private keys for users to login and validate.\n";
+        echo "These can be automatically generated for you, or you can manually copy them in yourself\n\n";
+
+        $private_key_path = $config->__get(['api', 'jwt_private_key']);
+        $public_key_path = $config->__get(['api', 'jwt_public_key']);
+        echo "Private JWT key path: $private_key_path\n";
+        echo "Public JWT key path: $public_key_path\n\n";
+
+        while (!is_bool($generateKeys)) {
+            $prompt = "Automatically generate public/private keys for JWT ";
+            $prompt .= "(WARNING, this will overwrite any existing keys at ";
+            $prompt .= "the location defined in settings.yml) [y/N]: ";
+            $generateKeys = strtolower($this->readlineTerminal($prompt));
+            $generateKeys = $generateKeys === 'n' || $generateKeys === '' ? false : $generateKeys;
+            $generateKeys = $generateKeys === 'y' ? true : $generateKeys;
+        }
+
+        if ($generateKeys) {
+            echo "Generating keys...\n\n";
+            shell_exec("ssh-keygen -t rsa -b 4096 -P \"\" -m PEM -f $private_key_path");
+            shell_exec("openssl rsa -in $private_key_path -pubout -outform PEM -out $public_key_path");
+        }
     }
 }

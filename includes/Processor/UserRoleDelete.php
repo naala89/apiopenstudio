@@ -30,7 +30,7 @@ class UserRoleDelete extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'User Role delete',
         'machineName' => 'user_role_delete',
         'description' => 'Delete a role for a user.',
@@ -57,7 +57,7 @@ class UserRoleDelete extends Core\ProcessorEntity
      */
     public function process()
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $urid = $this->val('urid', true);
 

@@ -28,13 +28,13 @@ class ExternalUserMapper extends Mapper
     /**
      * Save an external user object.
      *
-     * @param \ApiOpenStudio\Db\ExternalUser $user ExternalUser object.
+     * @param ExternalUser $user ExternalUser object.
      *
      * @return boolean Success.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function save(ExternalUser $user)
+    public function save(ExternalUser $user): bool
     {
         if ($user->getId() == null) {
             $sql = 'INSERT INTO external_user (appid, external_id, external_entity, data_field_1, data_field_2, ';
@@ -66,13 +66,13 @@ class ExternalUserMapper extends Mapper
     /**
      * Delete an external user.
      *
-     * @param \ApiOpenStudio\Db\ExternalUser $externalUser ExternalUser object.
+     * @param ExternalUser $externalUser ExternalUser object.
      *
      * @return boolean Success.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function delete(ExternalUser $externalUser)
+    public function delete(ExternalUser $externalUser): bool
     {
         $sql = 'DELETE FROM external_user WHERE id = ?';
         $bindParams = [$externalUser->getId()];
@@ -84,11 +84,11 @@ class ExternalUserMapper extends Mapper
      *
      * @param integer $id External user ID.
      *
-     * @return \ApiOpenStudio\Db\ExternalUser External user object.
+     * @return ExternalUser External user object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findById(int $id)
+    public function findById(int $id): ExternalUser
     {
         $sql = 'SELECT * FROM external_user WHERE id = ?';
         $bindParams = [$id];
@@ -102,11 +102,11 @@ class ExternalUserMapper extends Mapper
      * @param string $externalEntity External entity name.
      * @param integer $externalId External ID.
      *
-     * @return \ApiOpenStudio\Db\ExternalUser External user object.
+     * @return ExternalUser External user object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByAppIdEntityExternalId(int $appId, string $externalEntity, int $externalId)
+    public function findByAppIdEntityExternalId(int $appId, string $externalEntity, int $externalId): ExternalUser
     {
         $sql = 'SELECT * FROM external_user WHERE appid = ? AND external_entity = ? AND external_id = ?';
         $bindParams = [
@@ -126,7 +126,7 @@ class ExternalUserMapper extends Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByAppid(int $appId)
+    public function findByAppid(int $appId): array
     {
         $sql = 'SELECT * FROM external_user WHERE appid = ?';
         $bindParams = [$appId];
@@ -138,9 +138,9 @@ class ExternalUserMapper extends Mapper
      *
      * @param array $row DB row results object.
      *
-     * @return \ApiOpenStudio\Db\ExternalUser ExternalUser object.
+     * @return ExternalUser ExternalUser object.
      */
-    protected function mapArray(array $row)
+    protected function mapArray(array $row): ExternalUser
     {
         $user = new ExternalUser();
 

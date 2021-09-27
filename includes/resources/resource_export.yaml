@@ -21,21 +21,16 @@ appid: 1
 ttl: 0
 
 security:
-  processor: token_role
   id: resource_export_security
-  token:
-    processor: bearer_token
-    id: resource_export_security_token
-  role: Developer
+  processor: validate_token_roles
+  roles:
+    - Developer
   validate_account: false
   validate_application: false
 
 process:
   processor: resource_export
   id: resource_export_process
-  token:
-    processor: bearer_token
-    id: resource_export_token
   format:
     processor: var_uri
     id: resource_export_format

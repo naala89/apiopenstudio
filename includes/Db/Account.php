@@ -25,22 +25,22 @@ class Account
     /**
      * Account ID.
      *
-     * @var integer Account ID.
+     * @var integer|null Account ID.
      */
-    protected $accid;
+    protected ?int $accid;
 
     /**
      * Account name.
      *
-     * @var string Account name.
+     * @var string|null Account name.
      */
-    protected $name;
+    protected ?string $name;
 
     /**
      * Account constructor.
      *
-     * @param integer $accid Account ID.
-     * @param string $name Account name.
+     * @param int|null $accid Account ID.
+     * @param string|null $name Account name.
      */
     public function __construct(int $accid = null, string $name = null)
     {
@@ -53,7 +53,7 @@ class Account
      *
      * @return integer Account ID.
      */
-    public function getAccid()
+    public function getAccid(): ?int
     {
         return $this->accid;
     }
@@ -75,7 +75,7 @@ class Account
      *
      * @return string Account name.
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -97,7 +97,7 @@ class Account
      *
      * @return array Account.
      */
-    public function dump()
+    public function dump(): array
     {
         return [
             'accid' => $this->accid,

@@ -15,6 +15,9 @@
 
 namespace ApiOpenStudio\Core;
 
+use ApiOpenStudio\Db\Resource;
+use stdClass;
+
 /**
  * Class Request
  *
@@ -95,7 +98,7 @@ class Request
     /**
      * The request metadata.
      *
-     * @var \stdClass Request metadata.
+     * @var stdClass Request metadata.
      */
     private $meta;
 
@@ -121,9 +124,9 @@ class Request
     private $postVars;
 
     /**
-     * Resource metadata string.
+     * The resource called.
      *
-     * @var string Resource JSON string.
+     * @var Resource Resource object.
      */
     private $resource;
 
@@ -156,9 +159,9 @@ class Request
     /**
      * Get the account ID.
      *
-     * @return integer
+     * @return int
     */
-    public function getAccId()
+    public function getAccId(): int
     {
         return $this->accId;
     }
@@ -180,7 +183,7 @@ class Request
      *
      * @return string
      */
-    public function getAccName()
+    public function getAccName(): string
     {
         return $this->accName;
     }
@@ -200,9 +203,9 @@ class Request
     /**
      * Get the application ID.
      *
-     * @return integer
+     * @return int
      */
-    public function getAppId()
+    public function getAppId(): int
     {
         return $this->appId;
     }
@@ -224,7 +227,7 @@ class Request
      *
      * @return string
      */
-    public function getAppName()
+    public function getAppName(): string
     {
         return $this->appName;
     }
@@ -246,7 +249,7 @@ class Request
      *
      * @return string
      */
-    public function getUri()
+    public function getUri(): string
     {
         return $this->uri;
     }
@@ -268,7 +271,7 @@ class Request
      *
      * @return string
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }
@@ -290,7 +293,7 @@ class Request
      *
      * @return array
      */
-    public function getArgs()
+    public function getArgs(): array
     {
         return $this->args;
     }
@@ -312,7 +315,7 @@ class Request
      *
      * @return array
      */
-    public function getGetVars()
+    public function getGetVars(): array
     {
         return $this->getVars;
     }
@@ -334,7 +337,7 @@ class Request
      *
      * @return array
      */
-    public function getPostVars()
+    public function getPostVars(): array
     {
         return $this->postVars;
     }
@@ -356,7 +359,7 @@ class Request
      *
      * @return array
      */
-    public function getFiles()
+    public function getFiles(): array
     {
         return $this->files;
     }
@@ -378,7 +381,7 @@ class Request
      *
      * @return string
      */
-    public function getIp()
+    public function getIp(): string
     {
         return $this->ip;
     }
@@ -400,19 +403,19 @@ class Request
      *
      * @return string
      */
-    public function getOutFormat()
+    public function getOutFormat(): string
     {
         return $this->outFormat;
     }
 
     /**
-     * Set the resource JSON.
+     * Set the resource object.
      *
-     * @param object $var Resource JSON.
+     * @param Resource $var Resource object.
      *
      * @return void
      */
-    public function setResource(object $var)
+    public function setResource(Resource $var)
     {
         $this->resource = $var;
     }
@@ -420,9 +423,9 @@ class Request
     /**
      * Get the resource.
      *
-     * @return string
+     * @return Resource
      */
-    public function getResource()
+    public function getResource(): Resource
     {
         return $this->resource;
     }
@@ -430,11 +433,11 @@ class Request
     /**
      * Set the metadata.
      *
-     * @param \stdClass $var Resource metadata.
+     * @param stdClass $var Resource metadata.
      *
      * @return void
      */
-    public function setMeta(\stdClass $var)
+    public function setMeta(stdClass $var)
     {
         $this->meta = $var;
     }
@@ -442,9 +445,9 @@ class Request
     /**
      * Get the metadata,
      *
-     * @return \stdClass
+     * @return stdClass
      */
-    public function getMeta()
+    public function getMeta(): stdClass
     {
         return $this->meta;
     }
@@ -452,7 +455,7 @@ class Request
     /**
      * Set the cache TTL.
      *
-     * @param integer $var Cache TTL.
+     * @param int $var Cache TTL.
      *
      * @return void
      */
@@ -464,9 +467,9 @@ class Request
     /**
      * Get the cache TTL.
      *
-     * @return integer
+     * @return int
      */
-    public function getTtl()
+    public function getTtl(): int
     {
         return $this->ttl;
     }
@@ -488,7 +491,7 @@ class Request
      *
      * @return array
      */
-    public function getFragments()
+    public function getFragments(): array
     {
         return $this->fragments;
     }
@@ -510,7 +513,7 @@ class Request
      *
      * @return string
      */
-    public function getCacheKey()
+    public function getCacheKey(): string
     {
         return $this->cacheKey;
     }

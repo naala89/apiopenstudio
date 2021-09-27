@@ -29,7 +29,7 @@ class VarRand extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Var (Rand)',
         'machineName' => 'var_rand',
         // phpcs:ignore
@@ -93,7 +93,7 @@ class VarRand extends Core\ProcessorEntity
      */
     public function process()
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $length = $this->val('length', true);
         $lower = $this->val('lower', true);

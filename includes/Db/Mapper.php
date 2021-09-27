@@ -15,10 +15,11 @@
 
 namespace ApiOpenStudio\Db;
 
+use ADOConnection;
 use ApiOpenStudio\Core\ApiException;
 use Cascade\Cascade;
-use ADODB_mysqli;
 use ApiOpenStudio\Core\Config;
+use Monolog\Logger;
 
 /**
  * Abstract class Mapper.
@@ -30,23 +31,25 @@ abstract class Mapper
     /**
      * DB connector.
      *
-     * @var ADODB_mysqli DB Instance.
+     * @var ADOConnection DB Instance.
      */
-    protected $db;
+    protected ADOConnection $db;
 
     /**
      * Logger object.
      *
-     * @var \Monolog\Logger
+     * @var Logger
      */
-    protected $logger;
+    protected Logger $logger;
 
     /**
      * Mapper constructor.
      *
-     * @param ADODB_mysqli $dbLayer DB connection object.
+     * @param ADOConnection $dbLayer DB connection object.
+     *
+     * @throws ApiException
      */
-    public function __construct(ADODB_mysqli $dbLayer)
+    public function __construct(ADOConnection $dbLayer)
     {
         $this->db = $dbLayer;
         $config = new Config();
@@ -73,13 +76,13 @@ abstract class Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    protected function saveDelete(string $sql, array $bindParams)
+    protected function saveDelete(string $sql, array $bindParams): bool
     {
         $this->logger->debug("INSERT or DROP SQL...");
         $this->logger->debug("SQL: $sql");
         $this->logger->debug('Bind Params: ' . print_r($bindParams, true));
         $this->db->Execute($sql, $bindParams);
-        if ($this->db->affected_rows() !== 0) {
+        if ($this->db->affected_rows() != 0) {
             return true;
         }
         if (empty($this->db->ErrorMsg())) {
@@ -98,7 +101,7 @@ abstract class Mapper
      * @param string $sql        Query string.
      * @param array  $bindParams Array of bind params.
      *
-     * @return array Mapped row.
+     * @return mixed Mapped row.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
@@ -147,7 +150,7 @@ abstract class Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    protected function fetchRows(string $sql, array $bindParams = [], array $params = [])
+    protected function fetchRows(string $sql, array $bindParams = [], array $params = []): array
     {
         $this->logger->debug("SELECT multiple rows SQL...");
         // Add filter by keyword.

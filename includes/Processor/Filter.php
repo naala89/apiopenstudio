@@ -16,6 +16,7 @@
 namespace ApiOpenStudio\Processor;
 
 use ApiOpenStudio\Core;
+use Closure;
 
 /**
  * Class Filter
@@ -29,7 +30,7 @@ class Filter extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Filter',
         'machineName' => 'filter',
         'description' => 'Filter values from a data-set.',
@@ -102,9 +103,9 @@ class Filter extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $filter = $this->val('filter', true);
         $keyOrValue = $this->val('keyOrValue', true);
@@ -148,7 +149,7 @@ class Filter extends Core\ProcessorEntity
      * @see https://wpscholar.com/blog/filter-multidimensional-array-php/
      * @see http://www.phptherightway.com/pages/Functional-Programming.html
      */
-    private function filterByKeyNonrecursive($data, $callback)
+    private function filterByKeyNonrecursive($data, $callback): array
     {
         if (!is_array($data)) {
             return $data;
@@ -165,7 +166,7 @@ class Filter extends Core\ProcessorEntity
      *
      * @return array
      */
-    private function filterByKeyRecursive($data, $callback)
+    private function filterByKeyRecursive($data, $callback): array
     {
         if (!is_array($data)) {
             return $data;
@@ -188,9 +189,9 @@ class Filter extends Core\ProcessorEntity
      * @param mixed $data Data to filter.
      * @param mixed $callback Callback function.
      *
-     * @return array
+     * @return array|null
      */
-    private function filterByValueNonrecursive($data, $callback)
+    private function filterByValueNonrecursive($data, $callback): ?array
     {
         if (!is_array($data)) {
             return !$callback($data) ? null : $data;
@@ -212,9 +213,9 @@ class Filter extends Core\ProcessorEntity
      * @param mixed $data Data to filter.
      * @param mixed $callback Callback function.
      *
-     * @return array
+     * @return array|null
      */
-    private function filterByValueRecursive($data, $callback)
+    private function filterByValueRecursive($data, $callback): ?array
     {
         if (!is_array($data)) {
             return $callback($data) ? null : $data;
@@ -238,9 +239,9 @@ class Filter extends Core\ProcessorEntity
      *
      * @param array $filter Filter regex.
      *
-     * @return \Closure
+     * @return Closure
      */
-    private function callbackNoninverseNonregex(array $filter)
+    private function callbackNoninverseNonregex(array $filter): Closure
     {
         return function ($item) use ($filter) {
             return !in_array($item, $filter);
@@ -252,9 +253,9 @@ class Filter extends Core\ProcessorEntity
      *
      * @param array $filter Filter regex.
      *
-     * @return \Closure
+     * @return Closure
      */
-    private function callbackInverseNonregex(array $filter)
+    private function callbackInverseNonregex(array $filter): Closure
     {
         return function ($item) use ($filter) {
             return in_array($item, $filter);
@@ -266,9 +267,9 @@ class Filter extends Core\ProcessorEntity
      *
      * @param array $filter Filter regex.
      *
-     * @return \Closure
+     * @return Closure
      */
-    private function callbackNoninverseRegex(array $filter)
+    private function callbackNoninverseRegex(array $filter): Closure
     {
         return function ($item) use ($filter) {
             return preg_match($filter, $item) == 0;
@@ -280,9 +281,9 @@ class Filter extends Core\ProcessorEntity
      *
      * @param array $filter Filter regex.
      *
-     * @return \Closure
+     * @return Closure
      */
-    private function callbackInverseRegex(array $filter)
+    private function callbackInverseRegex(array $filter): Closure
     {
         return function ($item) use ($filter) {
             return preg_match($filter, $item) > 0;

@@ -29,7 +29,7 @@ class AuthDigest extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Auth (Digest User/Pass)',
         'machineName' => 'auth_digest',
         'description' => 'Digest authentication for remote server, using username/password.',
@@ -60,10 +60,12 @@ class AuthDigest extends Core\ProcessorEntity
      * {@inheritDoc}
      *
      * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $username = $this->val('username', true);
         $password = $this->val('password', true);

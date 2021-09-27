@@ -1,4 +1,4 @@
-# User logout resource.
+# Generate a JWT token for a valid user.
 #
 # @package   ApiOpenStudio
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -8,11 +8,11 @@
 # @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
-name: User logout
+name: Generate token
 
-description: Logout a user to ApiOpenStudio using their current token
+description: Fetch a JWT token, user validated by username/password.
 
-uri: logout
+uri: auth/token
 
 method: post
 
@@ -20,16 +20,14 @@ appid: 1
 
 ttl: 0
 
-security:
-  processor: token
-  id: user_logout_security
-  token:
-    processor: bearer_token
-    id: user_logout_security_token
-
 process:
-  processor: user_logout
-  id: user_logout_process
-  token:
-    processor: bearer_token
-    id: user_logout_process_token
+  processor: generate_token
+  id: generate_token_process
+  username:
+    processor: var_post
+    id: generate_token_username
+    key: username
+  password:
+    processor: var_post
+    id: generate_token_password
+    key: password

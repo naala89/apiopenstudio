@@ -1,22 +1,23 @@
 <?php
 
 $I = new ApiTester($scenario);
-
-$I->performLogin();
-
 $uri = $I->getMyBaseUri() . '/field/';
+$yamlFilename = 'varField.yaml';
+
+$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
+$I->createResourceFromYaml($yamlFilename);
+$I->deleteHeader('Authorization');
+$I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
 
 $I->wantTo('create a VarField processor of literals and vars and see result');
-$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
-$I->createResourceFromYaml('varField.yaml');
-$I->deleteHeader('Authorization');
-$I->sendGet($uri, ['token' => $I->getMyStoredToken()]);
+$I->sendGet($uri);
 $I->seeResponseContainsJson(
     [
-    'my_test_var' => 'my_test_val',
+        'my_test_var' => 'my_test_val',
     ]
 );
 
-$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
-$I->tearDownTestFromYaml('varField.yaml');
+$I->deleteHeader('Authorization');
+$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
+$I->tearDownTestFromYaml($yamlFilename);
 $I->deleteHeader('Authorization');

@@ -25,16 +25,16 @@ class ExternalUser
     /**
      * External user ID.
      *
-     * @var integer External entity ID.
+     * @var integer|null External entity ID.
      */
-    protected $id;
+    protected ?int $id;
 
     /**
      * External application ID.
      *
-     * @var integer Application ID.
+     * @var integer|null Application ID.
      */
-    protected $appId;
+    protected ?int $appId;
 
     /**
      * External user external ID.
@@ -74,13 +74,13 @@ class ExternalUser
     /**
      * ExternalUser constructor.
      *
-     * @param integer $id External entity ID.
-     * @param integer $appId Application ID.
-     * @param integer $externalId External ID.
-     * @param string $externalEntity External entity name.
-     * @param string $dataField1 Spare data field 1.
-     * @param string $dataField2 Spare data field 2.
-     * @param string $dataField3 Spare data field 3.
+     * @param int|null $id External entity ID.
+     * @param int|null $appId Application ID.
+     * @param int|null $externalId External ID.
+     * @param string|null $externalEntity External entity name.
+     * @param string|null $dataField1 Spare data field 1.
+     * @param string|null $dataField2 Spare data field 2.
+     * @param string|null $dataField3 Spare data field 3.
      */
     public function __construct(
         int $id = null,
@@ -105,7 +105,7 @@ class ExternalUser
      *
      * @return integer External user ID.
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -127,7 +127,7 @@ class ExternalUser
      *
      * @return integer Application ID.
      */
-    public function getAppId()
+    public function getAppId(): ?int
     {
         return $this->appId;
     }
@@ -259,10 +259,10 @@ class ExternalUser
      *
      * @return array External user.
      */
-    public function dump()
+    public function dump(): array
     {
         return [
-            'uid' => $this->uid,
+            'id' => $this->id,
             'appId' => $this->appId,
             'externalId' => $this->externalId,
             'externalEntity' => $this->externalEntity,

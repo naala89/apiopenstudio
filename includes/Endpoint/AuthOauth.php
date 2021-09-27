@@ -29,7 +29,7 @@ class AuthOAuth extends Core\ProcessorEntity
    *
    * @var array Details of the processor.
    */
-    protected $details = [
+    protected array $details = [
         'name' => 'Auth (OAuth)',
         'machineName' => 'auth_oauth',
         'description' => 'Authentication for remote server, using OAuth signature in the header.',
@@ -83,14 +83,16 @@ class AuthOAuth extends Core\ProcessorEntity
         ],
     ];
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return Core\DataContainer Result of the processor.
-   */
-    public function process()
+    /**
+     * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException
+     */
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $headers = array(
             Authorization => OAuth,

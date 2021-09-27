@@ -29,7 +29,7 @@ class Collection extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Collection',
         'machineName' => 'collection',
         'description' => 'Collection contains multiple values, like an array or list.',
@@ -54,9 +54,9 @@ class Collection extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $items = $this->val('items', true);
 

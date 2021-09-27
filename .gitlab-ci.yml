@@ -8,7 +8,7 @@
 # @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
-image: php:7.4
+image: naala89/aos-nginx-php:7.4
 
 #cache:
 #  key: "$CI_COMMIT_REF_SLUG"
@@ -16,19 +16,6 @@ image: php:7.4
 #    - vendor/
 #    - .composer/
 #    - composer.lock
-
-before_script:
-  - apt-get update
-  - apt-get install -y libzip-dev openssh-client rsync libxslt-dev unzip
-  - docker-php-ext-install zip xsl
-  - eval $(ssh-agent -s)
-  - mkdir -p ~/.ssh
-  - chmod 700 ~/.ssh
-  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-  - php composer-setup.php
-  - php -r "unlink('composer-setup.php');"
-  - php composer.phar install
 
 stages:
   - test
@@ -44,12 +31,9 @@ tests:
   services:
     - mariadb:latest
   variables:
-    MYSQL_ROOT_PASSWORD: $CI_MYSQL_ROOT_PASSWORD
-    MYSQL_USERNAME: $CI_MYSQL_USERNAME
-    MYSQL_PASSWORD: $CI_MYSQL_PASSWORD
-    ADMIN_NAME: $CI_ADMIN_NAME
-    ADMIN_PASS: $CI_ADMIN_PASS
-    ADMIN_EMAIL: $CI_ADMIN_EMAIL
+    MYSQL_ROOT_PASSWORD: apiopenstudio
+    MYSQL_USERNAME: apiopenstudio
+    MYSQL_PASSWORD: apiopenstudio
   only:
     - merge_request
   artifacts:
@@ -59,42 +43,43 @@ tests:
       - tests/_output/
       - logs/
   script:
-    - echo "Setting up for unit tests."
-    - touch .env
-    - echo "API_DOMAIN=localhost:8085" >> .env
+    - echo "Setting up for tests."
+    - cp -Rp ${CI_PROJECT_DIR}/* /www/
+    - cd /www
+# set ApiOpenStudio test .env and settings.yml
+    - cp tests/ci.env .env
     - cp tests/ci.settings.yml settings.yml
     - >
-      if [ $MYSQL_USERNAME != null ]; then
-        sed -i -e "s/username: apiopenstudio/username: ${MYSQL_USERNAME}/g" settings.yml
-      fi
-    - >
-      if [ $MYSQL_PASSWORD != null ]; then
-        sed -i -e "s/password: apiopenstudio/password: ${MYSQL_PASSWORD}/g" settings.yml
-      fi
-    - >
       if [ -z "$ADMIN_NAME" ]; then
-        ADMIN_NAME="admin"
+        eval export ADMIN_NAME="admin"
       fi
     - >
       if [ -z "$ADMIN_PASS" ]; then
-        ADMIN_PASS="secret"
+        eval export ADMIN_PASS="secret"
       fi
     - >
       if [ -z "$ADMIN_EMAIL" ]; then
-        ADMIN_EMAIL="deadletter@apiopenstudio.com"
+        eval export ADMIN_EMAIL="deadletter@apiopenstudio.com"
       fi
+    - composer install
+# Linting
     - echo "Linting the codebase."
     - ./vendor/bin/phpcs --standard=PSR12 --report-file=phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
+# Unit tests
     - echo "Running api unit tests."
-    - ./vendor/bin/codecept run unit --env ci
-    - echo "Setting up for functional tests."
-    - apt-get install -y mariadb-client iproute2
-    - docker-php-ext-install mysqli
+    - ./vendor/bin/codecept run --env ci unit
+# Install MySQL
+    - echo "Setting up the DB for functional tests."
     - mysql --version
     - php tests/runner_generate_db.php
+# Create JWT token keys
+    - ssh-keygen -t rsa -b 4096 -P "" -m PEM -f jwt.key
+    - openssl rsa -in jwt.key -pubout -outform PEM -out jwt.key.pub
+    - chmod 777 jwt.key.pub jwt.key
+# Run functional tests
     - echo "Running api functional tests."
-    - PHP_CLI_SERVER_WORKERS=10 php -S localhost:8085 -t public/ tests/routing.php &>/dev/null&
-    - ./vendor/bin/codecept run api --env ci
+    - ./vendor/bin/codecept build
+    - ./vendor/bin/codecept run --env ci api
 
 ##################################
 ## WIKI

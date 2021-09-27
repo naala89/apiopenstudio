@@ -18,9 +18,9 @@ namespace ApiOpenStudio\Security;
 use ApiOpenStudio\Core;
 
 /**
- * Class BearerToken
+ * Class BearerToken.
  *
- * Security class to process a bearer token.
+ * Security class to return a bearer token from the current call.
  */
 class BearerToken extends Core\ProcessorEntity
 {
@@ -29,7 +29,7 @@ class BearerToken extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Bearer Token',
         'machineName' => 'bearer_token',
         // phpcs:ignore
@@ -42,36 +42,11 @@ class BearerToken extends Core\ProcessorEntity
      * {@inheritDoc}
      *
      * @return Core\DataContainer Result of the processor.
-     *
-     * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Security: ' . $this->details()['machineName']);
+        parent::process();
 
-        $headers = '';
-
-        if (isset($_SERVER['Authorization'])) {
-            $headers = trim($_SERVER["Authorization"]);
-        } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            // Nginx or fast CGI.
-            $headers = trim($_SERVER["HTTP_AUTHORIZATION"]);
-        } elseif (function_exists('apache_request_headers')) {
-            $requestHeaders = apache_request_headers();
-            // Server-side fix for bug in old Android versions (a nice side-effect of this fix means we don't care about
-            // capitalization for Authorization)
-            $requestHeaders = array_combine(
-                array_map(
-                    'ucwords',
-                    array_keys($requestHeaders)
-                ),
-                array_values($requestHeaders)
-            );
-            if (isset($requestHeaders['Authorization'])) {
-                $headers = trim($requestHeaders['Authorization']);
-            }
-        }
-        $headerParts = explode(' ', $headers);
-        return array_pop($headerParts);
+        return new Core\DataContainer(Core\Utilities::getAuthHeaderToken(), 'text');
     }
 }

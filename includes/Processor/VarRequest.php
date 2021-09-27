@@ -29,7 +29,7 @@ class VarRequest extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Var (Request)',
         'machineName' => 'var_request',
         'description' => 'A "get" or "post" variable. It fetches a variable from the get or post requests.',
@@ -65,7 +65,7 @@ class VarRequest extends Core\ProcessorEntity
      */
     public function process()
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $key = $this->val('key', true);
         $vars = array_merge($this->request->getGetVars(), $this->request->getPostVars());

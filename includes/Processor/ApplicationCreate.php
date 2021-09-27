@@ -15,6 +15,7 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Db;
@@ -32,49 +33,40 @@ class ApplicationCreate extends Core\ProcessorEntity
      *
      * @var Db\UserRoleMapper
      */
-    protected $userRoleMapper;
+    protected Db\UserRoleMapper $userRoleMapper;
 
     /**
      * User mapper class.
      *
      * @var Db\UserMapper
      */
-    protected $userMapper;
+    protected Db\UserMapper $userMapper;
 
     /**
      * Account mapper class.
      *
      * @var Db\AccountMapper
      */
-    protected $accountMapper;
+    protected Db\AccountMapper $accountMapper;
 
     /**
      * Application mapper class.
      *
      * @var Db\ApplicationMapper
      */
-    protected $applicationMapper;
+    protected Db\ApplicationMapper $applicationMapper;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Application create',
         'machineName' => 'application_create',
         'description' => 'Create an application.',
         'menu' => 'Admin',
         'input' => [
-            'token' => [
-                'description' => 'Request token of the user making the call.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => 0,
-            ],
             'accid' => [
                 'description' => 'The parent account ID for the application.',
                 'cardinality' => [1, 1],
@@ -101,10 +93,12 @@ class ApplicationCreate extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Logger $logger Logger object.
+     *
+     * @throws ApiException
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->userRoleMapper = new Db\UserRoleMapper($this->db);
@@ -120,24 +114,24 @@ class ApplicationCreate extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
-        $token = $this->val('token', true);
-        $user = $this->userMapper->findBytoken($token);
+        $uid = Core\Utilities::getUidFromToken();
         $accid = $this->val('accid', true);
+        $name = $this->val('name', true);
+
         if (
-            !$this->userRoleMapper->hasRole($user->getUid(), 'Administrator')
-            && !$this->userRoleMapper->hasAccidRole($user->getUid(), $accid, 'Account manager')
+            !$this->userRoleMapper->hasRole($uid, 'Administrator')
+            && !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')
         ) {
             throw new ApiException('Permission denied.', 6, $this->id, 417);
         }
 
-        $name = $this->val('name', true);
         if (preg_match('/[^a-z_\-0-9]/i', $name)) {
             throw new Core\ApiException(
-                "Invalid application name: $name. Only underscore, hyphen or alhpanumeric characters permitted.",
+                "Invalid application name: $name. Only underscore, hyphen or alphanumeric characters permitted.",
                 6,
                 $this->id,
                 400
@@ -160,6 +154,6 @@ class ApplicationCreate extends Core\ProcessorEntity
 
 
         $application = new Db\Application(null, $accid, $name);
-        return $this->applicationMapper->save($application);
+        return new Core\DataContainer($this->applicationMapper->save($application), 'boolean');
     }
 }

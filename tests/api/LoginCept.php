@@ -1,85 +1,131 @@
 <?php
 
 $I = new ApiTester($scenario);
-$I->wantTo('perform a successful login and see result');
+$I->wantTo('perform a successful login as administrator and see result');
 $I->haveHttpHeader('Accept', 'application/json');
 $I->sendPOST(
-    $I->getCoreBaseUri() . '/login',
+    $I->getCoreBaseUri() . '/auth/token',
     [
-        'username' => $I->getMyUsername(),
-        'password' => $I->getMyPassword()
+        'username' => getenv('TESTER_ADMINISTRATOR_NAME'),
+        'password' => getenv('TESTER_ADMINISTRATOR_PASS'),
     ]
 );
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseMatchesJsonType(array('token' => 'string'));
-$I->storeMyToken();
+$I->seeResponseMatchesJsonType([
+    'token' => 'string',
+    'uid' => 'integer',
+    'expires' => 'string',
+]);
+
+$I->wantTo('perform a successful login as account manager and see result');
+$I->haveHttpHeader('Accept', 'application/json');
+$I->sendPOST(
+    $I->getCoreBaseUri() . '/auth/token',
+    [
+        'username' => getenv('TESTER_ACCOUNT_MANAGER_NAME'),
+        'password' => getenv('TESTER_ACCOUNT_MANAGER_PASS'),
+    ]
+);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'token' => 'string',
+    'uid' => 'integer',
+    'expires' => 'string',
+]);
+
+$I->wantTo('perform a successful login as application manager and see result');
+$I->haveHttpHeader('Accept', 'application/json');
+$I->sendPOST(
+    $I->getCoreBaseUri() . '/auth/token',
+    [
+        'username' => getenv('TESTER_APPLICATION_MANAGER_NAME'),
+        'password' => getenv('TESTER_APPLICATION_MANAGER_PASS'),
+    ]
+);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'token' => 'string',
+    'uid' => 'integer',
+    'expires' => 'string',
+]);
+
+$I->wantTo('perform a successful login as developer and see result');
+$I->haveHttpHeader('Accept', 'application/json');
+$I->sendPOST(
+    $I->getCoreBaseUri() . '/auth/token',
+    [
+        'username' => getenv('TESTER_DEVELOPER_NAME'),
+        'password' => getenv('TESTER_DEVELOPER_PASS'),
+    ]
+);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'token' => 'string',
+    'uid' => 'integer',
+    'expires' => 'string',
+]);
+
+$I->wantTo('perform a successful login as consumer and see result');
+$I->haveHttpHeader('Accept', 'application/json');
+$I->sendPOST(
+    $I->getCoreBaseUri() . '/auth/token',
+    [
+        'username' => getenv('TESTER_CONSUMER_NAME'),
+        'password' => getenv('TESTER_CONSUMER_PASS'),
+    ]
+);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'token' => 'string',
+    'uid' => 'integer',
+    'expires' => 'string',
+]);
 
 $I = new ApiTester($scenario);
 $I->wantTo('perform a login with bad password see 401 with error object');
 $I->haveHttpHeader('Accept', 'application/json');
 $I->sendPOST(
-    $I->getCoreBaseUri() . '/login',
+    $I->getCoreBaseUri() . '/auth/token',
     [
-        'username' => $I->getMyUsername(),
-        'password' => 'badpassword'
+        'username' => getenv('TESTER_ADMINISTRATOR_NAME'),
+        'password' => 'badpassword',
     ]
 );
 $I->seeResponseCodeIs(401);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
-    array(
-    'error' => array(
-    'code' => 4,
-    'message' => 'Invalid username or password.',
-    'id' => 'user_login_process'
-    )
-    )
+    [
+        'error' => [
+            'code' => 4,
+            'message' => 'Invalid username or password.',
+            'id' => 'generate_token_process',
+        ],
+    ]
 );
 
 $I = new ApiTester($scenario);
 $I->wantTo('perform a login with bad username see 401 with error object');
 $I->haveHttpHeader('Accept', 'application/json');
 $I->sendPOST(
-    $I->getCoreBaseUri() . '/login',
+    $I->getCoreBaseUri() . '/auth/token',
     [
         'username' => 'badusername',
-        'password' => $I->getMyPassword()
+        'password' => getenv('TESTER_ADMINISTRATOR_PASS'),
     ]
 );
 $I->seeResponseCodeIs(401);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
-    array(
-    'error' => array(
-    'code' => 4,
-    'message' => 'Invalid username or password.',
-    'id' => 'user_login_process'
-    )
-    )
-);
-
-$I = new ApiTester($scenario);
-$I->wantTo('validate that token is not recreated before ttl expires');
-$I->haveHttpHeader('Accept', 'application/json');
-$I->sendPOST(
-    $I->getCoreBaseUri() . '/login',
     [
-        'username' => $I->getMyUsername(),
-        'password' => $I->getMyPassword()
+        'error' => [
+            'code' => 4,
+            'message' => 'Invalid username or password.',
+            'id' => 'generate_token_process',
+        ],
     ]
 );
-$I->seeResponseCodeIs(200);
-$I->seeResponseIsJson();
-$I->seeResponseMatchesJsonType(array('token' => 'string'));
-$I->storeMyToken();
-$I->sendPOST(
-    $I->getCoreBaseUri() . '/login',
-    [
-        'username' => $I->getMyUsername(),
-        'password' => $I->getMyPassword()
-    ]
-);
-$I->seeResponseCodeIs(200);
-$I->seeResponseIsJson();
-$I->seeTokenIsSameAsStoredToken();

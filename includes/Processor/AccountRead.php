@@ -15,6 +15,7 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db;
 use Monolog\Logger;
@@ -31,43 +32,19 @@ class AccountRead extends Core\ProcessorEntity
      *
      * @var Db\AccountMapper
      */
-    private $accountMapper;
-
-    /**
-     * User role mapper class.
-     *
-     * @var Db\UserRoleMapper
-     */
-    private $userRoleMapper;
-
-    /**
-     * User mapper class.
-     *
-     * @var Db\UserMapper
-     */
-    private $userMapper;
+    private Db\AccountMapper $accountMapper;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Account read',
         'machineName' => 'account_read',
         'description' => 'Fetch a single or all accounts.',
         'menu' => 'Admin',
         'input' => [
-            'token' => [
-                // phpcs:ignore
-                'description' => 'Request token of the user making the call. This is used to limit the accounts viewable whilst and still have access by all admin roles.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => 0,
-            ],
             'accid' => [
                 'description' => 'Filter by accid. If empty then all accounts the user has access to will be returned.',
                 'cardinality' => [0, 1],
@@ -113,15 +90,15 @@ class AccountRead extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Logger $logger Logger object.
+     *
+     * @throws Core\ApiException
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->accountMapper = new Db\AccountMapper($db);
-        $this->userMapper = new Db\UserMapper($db);
-        $this->userRoleMapper = new Db\UserRoleMapper($db);
     }
 
     /**
@@ -131,12 +108,11 @@ class AccountRead extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
-        $token = $this->val('token', true);
-        $user = $this->userMapper->findBytoken($token);
+        $uid = Core\Utilities::getUidFromToken();
         $accid = $this->val('accid', true);
         $keyword = $this->val('keyword', true);
         $orderBy = $this->val('order_by', true);
@@ -152,7 +128,7 @@ class AccountRead extends Core\ProcessorEntity
         if (!empty($accid)) {
             $params['filter'][] = [
                 'keyword' => $accid,
-                'column' => 'a.accid',
+                'column' => 'accid',
             ];
         }
         if (!empty($orderBy)) {
@@ -162,7 +138,7 @@ class AccountRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        $accounts = $this->accountMapper->findAllForUser($user->getUid(), $params);
+        $accounts = $this->accountMapper->findAllForUser($uid, $params);
 
         if (empty($accounts)) {
             throw new Core\ApiException('No accounts found', 6, $this->id, 400);

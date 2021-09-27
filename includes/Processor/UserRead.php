@@ -15,6 +15,7 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db;
 use Monolog\Logger;
@@ -38,21 +39,12 @@ class UserRead extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'User read',
         'machineName' => 'user_read',
         'description' => 'Fetch a single or multiple users. Admin',
         'menu' => 'Admin',
         'input' => [
-            'token' => [
-                'description' => 'The current token of the user.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
             'uid' => [
                 'description' => 'Filter the results by user ID.',
                 'cardinality' => [0, 1],
@@ -116,10 +108,12 @@ class UserRead extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Logger $logger Logger object.
+     *
+     * @throws Core\ApiException
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->userMapper = new Db\UserMapper($db);
@@ -132,11 +126,10 @@ class UserRead extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
-        $token = $this->val('token', true);
         $uid = $this->val('uid', true);
         $username = $this->val('username', true);
         $email = $this->val('email', true);
@@ -145,7 +138,7 @@ class UserRead extends Core\ProcessorEntity
         $orderBy = empty($orderBy) ? 'uid' : $orderBy;
         $direction = $this->val('direction', true);
 
-        $currentUser = $this->userMapper->findBytoken($token);
+        $currentUser = $this->userMapper->findByUid(Core\Utilities::getUidFromToken());
 
         $params = [];
         if ($uid > 0) {

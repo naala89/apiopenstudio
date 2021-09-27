@@ -48,7 +48,8 @@
     "guzzlehttp/guzzle": "^6.3",
     "symfony/yaml": "^3.0",
     "swiftmailer/swiftmailer": "^6.0",
-    "berlioz/php-doc": "^1.1"
+    "berlioz/php-doc": "^1.1",
+    "lcobucci/jwt": "^4.1"
   },
   "autoload": {
     "psr-4": {

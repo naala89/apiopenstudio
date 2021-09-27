@@ -21,11 +21,8 @@ appid: 1
 ttl: 0
 
 security:
-  processor: token_roles
   id: application_update_security
-  token:
-    processor: bearer_token
-    id: application_update_security_token
+  processor: validate_token_roles
   roles:
     - Administrator
     - Account manager
@@ -33,9 +30,6 @@ security:
 process:
   processor: application_update
   id: application_update_process
-  token:
-    processor: bearer_token
-    id: application_update_token
   appid:
     processor: var_uri
     id: application_update_appid

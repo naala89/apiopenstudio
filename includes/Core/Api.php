@@ -15,10 +15,12 @@
 
 namespace ApiOpenStudio\Core;
 
+use ADOConnection;
 use ApiOpenStudio\Db;
-use ApiOpenStudio\Resource;
+use Monolog\Logger;
 use Spyc;
 use Cascade\Cascade;
+use ADONewConnection;
 
 /**
  * Class Api
@@ -32,35 +34,35 @@ class Api
      *
      * @var Cache
      */
-    private $cache;
+    private Cache $cache;
 
     /**
      * Request object class.
      *
      * @var Request
      */
-    private $request;
+    private Request $request;
 
     /**
      * Processor helper class.
      *
      * @var ProcessorHelper
      */
-    private $helper;
+    private ProcessorHelper $helper;
 
     /**
      * Test for resource direct from file.
      *
      * @var boolean
      */
-    private $test = false; // false or filename in /yaml/test
+    private bool $test = false; // false or filename in /yaml/test
 
     /**
      * DB connection object.
      *
-     * @var \ADOConnection
+     * @var ADOConnection
      */
-    private $db;
+    private ADOConnection $db;
 
     /**
      * Config class.
@@ -72,16 +74,14 @@ class Api
     /**
      * Logging class.
      *
-     * @var \Monolog\Logger
+     * @var Logger
      */
-    private $logger;
+    private Logger $logger;
 
     /**
      * Api constructor.
      *
      * @param array $config Config array.
-     *
-     * @throws ApiException Exception flowing though.
      */
     public function __construct(array $config)
     {
@@ -95,11 +95,11 @@ class Api
     /**
      * Process the rest request.
      *
-     * @return mixed
+     * @return DataContainer
      *
      * @throws ApiException Exception flowing though.
      */
-    public function process()
+    public function process(): DataContainer
     {
         // DB link.
         $dsnOptionsArr = [];
@@ -113,7 +113,7 @@ class Api
             . $this->settings['db']['host'] . '/'
             . $this->settings['db']['database']
             . $dsnOptions;
-        $this->db = \ADONewConnection($dsn);
+        $this->db = ADONewConnection($dsn);
         if (!$this->db) {
             $this->logger->error('DB connection failed');
             throw new ApiException('DB connection failed', 2, -1, 500);
@@ -137,7 +137,7 @@ class Api
         $result = $this->getCache($this->request->getCacheKey());
         if ($result !== false) {
             $this->logger->info('Returning cached rsults');
-            return $this->getOutput($result);
+            return $this->getOutput(true);
         }
         // set fragments in Meta class
         if (isset($meta->fragments)) {
@@ -174,7 +174,7 @@ class Api
      *
      * @throws ApiException Invalid request or exception flowing though.
      */
-    private function getData()
+    private function getData(): Request
     {
         $method = $this->getMethod();
         if ($method == 'options') {
@@ -205,7 +205,7 @@ class Api
             }
 
             $result = $this->getResource($appId, $method, $uriParts);
-        } catch (ApiEception $e) {
+        } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), 3 - 1, 404);
         }
 
@@ -241,7 +241,7 @@ class Api
      * @param string $method Request HTTP method.
      * @param array $uriParts Request URI parts.
      *
-     * @return array|Db\ApiResource
+     * @return array|Db\Resource
      *
      * @throws ApiException Exception flowing throuigh, ot invalid test YAML.
      */
@@ -425,15 +425,14 @@ class Api
     {
         $result = true;
         $resource = $this->request->getMeta();
-        $outputs = $data->output;
 
-        if (empty($outputs)) {
+        if (!isset($data->output)) {
             // Default response output if no output defined.
             $this->logger->notice('no output section defined - returning the result in the response');
             $outputs = ['response'];
-        } elseif (Utilities::isAssoc($outputs)) {
-            // Single output defined.
-            $outputs = [$outputs];
+        } else {
+            // Test for single output defined.
+            $outputs = Utilities::isAssoc($data->output) ? [$data->output] : $data->output;
         }
 
         foreach ($outputs as $index => $output) {

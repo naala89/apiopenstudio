@@ -29,7 +29,7 @@ class VarLooselyTyped extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Var (loosely typed)',
         'machineName' => 'var_loosely_typed',
         'description' => 'A loosely typed variable (i.e. not strictly typed).',
@@ -56,7 +56,7 @@ class VarLooselyTyped extends Core\ProcessorEntity
      */
     public function process()
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $result = $this->val('value');
         $result->setType('text');

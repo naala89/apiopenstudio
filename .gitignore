@@ -12,6 +12,8 @@ settings.yml
 public/wiki/
 public/phpdoc/
 dbdata/
+*.key
+*.key.pub
 
 #3rd-party
 /vendor
@@ -20,3 +22,4 @@ composer.lock
 node_modules
 npm-debug.log
 package-lock.json
+/build

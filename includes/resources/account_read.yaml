@@ -10,7 +10,7 @@
 
 name: Account read
 
-description: Fetch a single or multiple accounts.
+description: Fetch a single or multiple accounts that the user has access to.
 
 uri: account
 
@@ -21,25 +21,12 @@ appid: 1
 ttl: 0
 
 security:
-  processor: token_roles
   id: account_read_security
-  token:
-    processor: bearer_token
-    id: account_read_security_token
-  roles:
-    - Administrator
-    - Account manager
-    - Application manager
-    - Developer
-  validate_account: false
-  validate_application: false
+  processor: validate_token
 
 process:
   processor: account_read
   id: account_read_process
-  token:
-    processor: bearer_token
-    id: account_read_token
   accid:
     processor: var_uri
     id: account_read_accid

@@ -15,12 +15,11 @@
 
 namespace ApiOpenStudio\Core;
 
-use ApiOpenStudio\Config;
+use ADOConnection;
 use ApiOpenStudio\Db\AccountMapper;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\UserRoleMapper;
 use Monolog\Logger;
-use phpDocumentor\Reflection\Types\Boolean;
 
 /**
  * Class ProcessorEntity
@@ -51,11 +50,11 @@ abstract class ProcessorEntity extends Entity
     protected $request;
 
     /**
-     * Logget object.
+     * Logger object.
      *
-     * @var \Monolog\Logger
+     * @var Logger
      */
-    protected $logger;
+    protected Logger $logger;
 
     /**
      * An array of details of the processor, used to configure the frontend GUI and metadata construction.
@@ -148,12 +147,12 @@ abstract class ProcessorEntity extends Entity
      *              with no limit on value
      *          t, which can take or or many input of Processor Field.
      */
-    protected $details = array();
+    protected array $details = array();
 
     /**
      * DB connections.
      *
-     * @var \ADOConnection $dbLayer
+     * @var ADOConnection $dbLayer
      */
     protected $db;
 
@@ -164,16 +163,16 @@ abstract class ProcessorEntity extends Entity
      *   Metadata for the processor.
      * @param Request $request
      *   The full request object.
-     * @param \ADOConnection|null $db
+     * @param ADOConnection|null $db
      *   The DB connection object.
      * @param Logger|null $logger
      *   The logger.
      */
-    public function __construct($meta, Request &$request, $db = null, Logger $logger = null)
+    public function __construct($meta, Request &$request, ADOConnection $db = null, Logger $logger = null)
     {
         $this->meta = $meta;
         $this->request = $request;
-        $this->id = isset($meta->id) ? $meta->id : -1;
+        $this->id = $meta->id ?? -1;
         $this->db = $db;
         $this->logger = $logger;
     }
@@ -186,16 +185,20 @@ abstract class ProcessorEntity extends Entity
      * Fetches and process the processor described in the metadata.
      * It is also the 1st stop to recursive processing of processors, so the place validate user credentials.
      *
-     * @return array|Error
+     * @return mixed
      */
-    abstract public function process();
+    public function process()
+    {
+        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        return;
+    }
 
     /**
      * Return details for processor.
      *
      * @return array
      */
-    public function details()
+    public function details(): array
     {
         return $this->details;
     }
@@ -210,7 +213,7 @@ abstract class ProcessorEntity extends Entity
      * Setting $realValue to true will force the value to be the actual value, rather than a potential dataContainer.
      *
      * @param string $key The key for the input variable in the meta.
-     * @param boolean $realValue Return the real value or a dataContainer.
+     * @param bool|null $realValue Return the real value or a dataContainer.
      *
      * @return mixed|DataContainer
      *
@@ -239,7 +242,11 @@ abstract class ProcessorEntity extends Entity
         }
 
         // Set data to default if empty.
-        $test = $this->isDataContainer($this->meta->$key) ? $this->meta->$key->getData() : $this->meta->$key;
+        if (!isset($this->meta->$key)) {
+            $test = null;
+        } else {
+            $test = $this->isDataContainer($this->meta->$key) ? $this->meta->$key->getData() : $this->meta->$key;
+        }
         if ($test === null || $test === '') {
             $this->meta->$key = new DataContainer($default);
         }
@@ -251,7 +258,7 @@ abstract class ProcessorEntity extends Entity
         $this->validateAllowedValues($container->getData(), $limitValues, $min, $key);
         $this->validateAllowedTypes($container->getType(), $limitTypes, $min, $key);
 
-        $this->logger->debug('Value: ' . $container->getData());
+        $this->logger->debug('Value: ' . print_r($container->getData(), true));
 
         return $realValue ? $container->getData() : $container;
     }
@@ -261,9 +268,9 @@ abstract class ProcessorEntity extends Entity
      *
      * @param mixed $data DataContainer or raw data.
      *
-     * @return boolean
+     * @return bool
      */
-    protected function isDataContainer($data)
+    protected function isDataContainer($data): bool
     {
         return is_object($data) && get_class($data) == 'ApiOpenStudio\Core\DataContainer';
     }
@@ -278,7 +285,7 @@ abstract class ProcessorEntity extends Entity
      *
      * @return array
      */
-    protected function generateParams(string $keyword, array $keywordCols, string $orderBy, string $direction)
+    protected function generateParams(string $keyword, array $keywordCols, string $orderBy, string $direction): array
     {
         $params = [];
         if (!empty($keyword) && !empty($keywordCols)) {
@@ -300,12 +307,14 @@ abstract class ProcessorEntity extends Entity
      *
      * @param integer $uid User ID.
      *
-     * @return DataContainer
+     * @throws ApiException
+     *
+     * @return array
      */
-    protected function getUserAccids(int $uid)
+    protected function getUserAccids(int $uid): array
     {
         $accountMapper = new AccountMapper($this->db);
-        $accounts = $accountMapper->findByUid($uid);
+        $accounts = $accountMapper->findAllForUser($uid);
         $accids = [];
         foreach ($accounts as $account) {
             $accids[] = $account->getAccid();
@@ -322,7 +331,7 @@ abstract class ProcessorEntity extends Entity
      *
      * @throws ApiException Exception flowing though.
      */
-    protected function getUserAppids(int $uid)
+    protected function getUserAppids(int $uid): DataContainer
     {
         $userRoleMapper = new UserRoleMapper($this->db);
         $applicationMapper = new ApplicationMapper($this->db);
@@ -367,11 +376,11 @@ abstract class ProcessorEntity extends Entity
      * @param integer $min Minimum number of values.
      * @param string $key The key of the input being validated.
      *
-     * @return boolean
+     * @return bool
      *
      * @throws ApiException Invalid value.
      */
-    private function validateAllowedValues($val, array $limitValues, int $min, string $key)
+    private function validateAllowedValues($val, array $limitValues, int $min, string $key): bool
     {
         if (empty($limitValues) || ($min < 1 && empty($val))) {
             return true;
@@ -381,6 +390,7 @@ abstract class ProcessorEntity extends Entity
                 . implode("', '", $limitValues)
                 . "' allowed in input '$key'", 6, $this->id, 400);
         }
+        return true;
     }
 
     /**
@@ -391,7 +401,7 @@ abstract class ProcessorEntity extends Entity
      * @param integer $min Minimum number of values.
      * @param string $key The key of the input being validated.
      *
-     * @return boolean
+     * @return bool
      *
      * @throws ApiException Invalid data type.
      */
@@ -400,7 +410,7 @@ abstract class ProcessorEntity extends Entity
         array $limitTypes,
         int $min,
         string $key
-    ) {
+    ): bool {
         if (empty($limitTypes) || ($min < 1 && $type == 'empty')) {
             return true;
         }
@@ -412,5 +422,6 @@ abstract class ProcessorEntity extends Entity
                 400
             );
         }
+        return true;
     }
 }

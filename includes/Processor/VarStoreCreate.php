@@ -15,8 +15,8 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
-use ApiOpenStudio\Db\UserMapper;
 use ApiOpenStudio\Db\UserRoleMapper;
 use ApiOpenStudio\Db\VarStore;
 use ApiOpenStudio\Db\VarStoreMapper;
@@ -34,49 +34,26 @@ class VarStoreCreate extends Core\ProcessorEntity
      *
      * @var VarStoreMapper
      */
-    private $varStoreMapper;
-
-    /**
-     * User mapper class.
-     *
-     * @var UserMapper
-     */
-    private $userMapper;
+    private VarStoreMapper $varStoreMapper;
 
     /**
      * User role mapper class.
      *
      * @var UserRoleMapper
      */
-    private $userRoleMapper;
-
-    /**
-     * Array of roles that can access vars.
-     *
-     * @var array Roles that can access vars.
-     */
-    private $roles = ['Developer', 'Application manager'];
+    private UserRoleMapper $userRoleMapper;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Var store create',
         'machineName' => 'var_store_create',
         'description' => 'Create a variable in the var store.',
         'menu' => 'Var store',
         'input' => [
-            'token' => [
-                'description' => 'the calling Users token.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
             'validate_access' => [
                 // phpcs:ignore
                 'description' => 'If set to true, the calling users roles access will be validated. If set to false, then access is open.',
@@ -123,14 +100,15 @@ class VarStoreCreate extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Logger $logger Logger object.
+     *
+     * @throws Core\ApiException
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->varStoreMapper = new VarStoreMapper($db);
-        $this->userMapper = new UserMapper($db);
         $this->userRoleMapper = new UserRoleMapper($db);
     }
 
@@ -141,12 +119,11 @@ class VarStoreCreate extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
-        $token = $this->val('token', true);
-        $currentUser = $this->userMapper->findBytoken($token);
+        $uid = Core\Utilities::getUidFromToken();
         $validateAccess = $this->val('validate_access', true);
         $appid = $this->val('appid', true);
         $key = $this->val('key', true);
@@ -154,8 +131,8 @@ class VarStoreCreate extends Core\ProcessorEntity
 
         if ($validateAccess) {
             if (
-                !$this->userRoleMapper->findByUidAppidRolename($currentUser->getUid(), $appid, 'Application manager')
-                && !$this->userRoleMapper->findByUidAppidRolename($currentUser->getUid(), $appid, 'Developer')
+                !$this->userRoleMapper->findByUidAppidRolename($uid, $appid, 'Application manager')
+                && !$this->userRoleMapper->findByUidAppidRolename($uid, $appid, 'Developer')
             ) {
                 throw new Core\ApiException("permission denied (appid: $appid)", 6, $this->id, 400);
             }

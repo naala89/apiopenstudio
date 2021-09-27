@@ -53,7 +53,7 @@ abstract class Output extends Core\ProcessorEntity
      *
      * @var string The string to contain the content type header value.
      */
-    protected $header = '';
+    protected string $header = '';
 
     /**
      * The HTTP output status.
@@ -82,7 +82,7 @@ abstract class Output extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return mixed Result of the processor.
      *
      * @throws Core\ApiException Throw an exception if unable to precess the output.
      */

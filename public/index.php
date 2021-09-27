@@ -49,7 +49,7 @@ try {
     $error = new Error($e->getCode(), $e->getProcessor(), $e->getMessage());
     $output = new $outputClass($error->process(), $e->getHtmlCode(), $logger);
     ob_end_flush();
-    echo $output->process();
+    echo $output->process()->getData();
     exit();
 } catch (Exception $e) {
     Cascade::fileConfig($config->__get(['debug']));
@@ -62,5 +62,5 @@ try {
 
 ob_end_flush();
 
-echo $result;
+echo $result->getData();
 exit();

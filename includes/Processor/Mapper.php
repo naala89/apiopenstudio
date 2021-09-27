@@ -16,6 +16,10 @@
 namespace ApiOpenStudio\Processor;
 
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\DataContainer;
+use DOMDocument;
+use DOMNodeList;
+use DOMXPath;
 use JmesPath;
 
 /**
@@ -30,7 +34,7 @@ class Mapper extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Mapper',
         'machineName' => 'mapper',
         'description' => 'Mapper allows the mapping of elements from a source to a destination.',
@@ -70,13 +74,13 @@ class Mapper extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $source = $this->val('source');
         $type = $source->getType();
@@ -94,11 +98,11 @@ class Mapper extends Core\ProcessorEntity
                 break;
             case 'xml':
             default:
-                $this->result = new \DOMDocument();
+                $this->result = new DOMDocument();
                 $this->result->formatOutput = true;
                 if (is_string($sourceData)) {
                     $xml = $sourceData;
-                    $sourceData = new \DOMDocument();
+                    $sourceData = new DOMDocument();
                     $sourceData->loadXML($xml);
                 }
                 break;
@@ -119,11 +123,11 @@ class Mapper extends Core\ProcessorEntity
 
         switch ($format) {
             case 'json':
-                return new Core\DataContainer(\json_encode($this->result), $format);
+                return new DataContainer(\json_encode($this->result), $format);
             break;
             case 'xml':
             default:
-                return new Core\DataContainer($this->result->saveXML(), $format);
+                return new DataContainer($this->result->saveXML(), $format);
             break;
         }
     }
@@ -131,7 +135,7 @@ class Mapper extends Core\ProcessorEntity
     /**
      * Perform mappings to JSON source.
      *
-     * @param \DOMDocument $source Source data.
+     * @param DOMDocument $source Source data.
      * @param array $mappings Array of DOMDocument mapping strings.
      * @param string $format Output format for the DataContainer result.
      *
@@ -166,7 +170,7 @@ class Mapper extends Core\ProcessorEntity
      * foo[fbar] = add to object foo as index bar
      *
      * @param string $regex The regex.
-     * @param \DOMNodeList $value Data.
+     * @param DOMNodeList $value Data.
      *
      * @return void
      */
@@ -220,18 +224,18 @@ class Mapper extends Core\ProcessorEntity
     /**
      * Perform mappings to XML source.
      *
-     * @param \DOMDocument $source Source data.
+     * @param DOMDocument $source Source data.
      * @param array $mappings Array of DOMDocument mapping strings.
      * @param string $format Output format for the DataContainer result.
      *
-     * @return \ApiOpenStudio\Core\DataContainer
+     * @return DataContainer
      *
      * @throws Core\ApiException Error.
      */
-    private function mapXml(DOMDocument $source, array $mappings, string $format)
+    private function mapXml(DOMDocument $source, array $mappings, string $format): DataContainer
     {
         $resultFunc = '_addResult' . ucfirst($format);
-        $xpath = new \DOMXPath($source);
+        $xpath = new DOMXPath($source);
 
         foreach ($mappings as $index => $mapping) {
             if (empty($mapping->get) || empty($mapping->set)) {
@@ -242,7 +246,7 @@ class Mapper extends Core\ProcessorEntity
             $this->{$resultFunc}($mapping->set, $value);
         }
 
-        return new Core\DataContainer($this->result->saveXML(), strtolower($format));
+        return new DataContainer($this->result->saveXML(), strtolower($format));
     }
 
     /**
@@ -253,7 +257,7 @@ class Mapper extends Core\ProcessorEntity
      * foo[@bar] = add to node as an attribute <foo bar="value"></foo>
      *
      * @param string $regex The regex.
-     * @param \DOMNodeList $values Data.
+     * @param DOMNodeList $values Data.
      *
      * @return void
      *

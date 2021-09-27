@@ -21,8 +21,8 @@ appid: 1
 ttl: 0
 
 process:
-  processor: invite_accept
   id: user_invite_accept_process
+  processor: invite_accept
   token:
     processor: var_uri
     id: user_invite_accept_token

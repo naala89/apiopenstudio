@@ -15,6 +15,8 @@
 
 namespace ApiOpenStudio\Db;
 
+use ApiOpenStudio\Core\ApiException;
+
 /**
  * Class ApplicationMapper.
  *
@@ -25,13 +27,13 @@ class ApplicationMapper extends Mapper
     /**
      * Save an Application object.
      *
-     * @param \ApiOpenStudio\Db\Application $application The Applicationm object.
+     * @param Application $application The Applicationm object.
      *
      * @return boolean Success.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function save(Application $application)
+    public function save(Application $application): bool
     {
         if ($application->getAppid() == null) {
             $sql = 'INSERT INTO application (accid, name) VALUES (?, ?)';
@@ -53,13 +55,13 @@ class ApplicationMapper extends Mapper
     /**
      * Delete an application.
      *
-     * @param \ApiOpenStudio\Db\Application $application Application object.
+     * @param Application $application Application object.
      *
      * @return boolean Success.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function delete(Application $application)
+    public function delete(Application $application): bool
     {
         $sql = 'DELETE FROM application WHERE appid = ?';
         $bindParams = [$application->getAppid()];
@@ -73,9 +75,9 @@ class ApplicationMapper extends Mapper
      *
      * @return array Array of Application objects.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findAll(array $params = [])
+    public function findAll(array $params = []): array
     {
         $sql = 'SELECT * FROM application';
         $bindParams = [];
@@ -87,11 +89,11 @@ class ApplicationMapper extends Mapper
      *
      * @param integer $appid Application ID.
      *
-     * @return \ApiOpenStudio\Db\Application Application object.
+     * @return Application Application object.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByAppid(int $appid)
+    public function findByAppid(int $appid): Application
     {
         $sql = 'SELECT * FROM application WHERE appid = ?';
         $bindParams = [$appid];
@@ -106,9 +108,9 @@ class ApplicationMapper extends Mapper
      *
      * @return array Array of Application objects.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByUid(int $uid, array $params = [])
+    public function findByUid(int $uid, array $params = []): array
     {
         $sql = 'SELECT *';
         $sql .= ' FROM application';
@@ -150,11 +152,11 @@ class ApplicationMapper extends Mapper
      * @param integer $accid Account ID.
      * @param string $name Application name.
      *
-     * @return \ApiOpenStudio\Db\Application Application object.
+     * @return Application Application object.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByAccidAppname(int $accid, string $name)
+    public function findByAccidAppname(int $accid, string $name): Application
     {
         $sql = 'SELECT * FROM application WHERE accid = ? AND name = ?';
         $bindParams = [
@@ -171,9 +173,9 @@ class ApplicationMapper extends Mapper
      *
      * @return array array of mapped Application objects.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByAccid(int $accid)
+    public function findByAccid(int $accid): array
     {
         $sql = 'SELECT * FROM application WHERE accid = ?';
         $bindParams = [$accid];
@@ -189,9 +191,9 @@ class ApplicationMapper extends Mapper
      *
      * @return array array of mapped Application objects.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByAccidsAppnames(array $accids = [], array $appNames = [], array $params = [])
+    public function findByAccidsAppnames(array $accids = [], array $appNames = [], array $params = []): array
     {
         $byAccid = [];
         $bindParams = [];
@@ -244,7 +246,7 @@ class ApplicationMapper extends Mapper
      *
      * @param array $row DB row object.
      *
-     * @return \ApiOpenStudio\Db\Application Application object
+     * @return Application Application object
      */
     protected function mapArray(array $row)
     {

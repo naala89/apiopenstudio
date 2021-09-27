@@ -29,7 +29,7 @@ class AuthBasic extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Auth (Basic User/Pass)',
         'machineName' => 'auth_basic',
         'description' => 'Basic authentication for remote server, using username/password.',
@@ -60,10 +60,12 @@ class AuthBasic extends Core\ProcessorEntity
      * {@inheritDoc}
      *
      * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $username = $this->val('username', true);
         $password = $this->val('password', true);

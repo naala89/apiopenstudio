@@ -29,7 +29,7 @@ class AuthBearerToken extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Auth (Bearer token)',
         'machineName' => 'auth_bearer_token',
         'description' => 'Authentication for remote server, presenting a bearer token in the header.',
@@ -47,14 +47,16 @@ class AuthBearerToken extends Core\ProcessorEntity
         ],
     ];
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return Core\DataContainer Result of the processor.
-   */
-    public function process()
+    /**
+     * {@inheritDoc}
+     *
+     * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException
+     */
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $token = $this->val('token', true);
 

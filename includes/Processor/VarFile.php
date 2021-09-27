@@ -15,7 +15,9 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
+use Exception;
 use GuzzleHttp\Client;
 use Monolog\Logger;
 
@@ -31,14 +33,14 @@ class VarFile extends Core\ProcessorEntity
      *
      * @var Core\Config
      */
-    private $settings;
+    private Core\Config $settings;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Var (File)',
         'machineName' => 'var_file',
         'description' => 'Return the contents of a file or the file path.',
@@ -91,10 +93,10 @@ class VarFile extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Logger $logger Logger object.
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Core\Config();
@@ -107,9 +109,9 @@ class VarFile extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $location = $this->val('location', true);
         $filename = $this->val('filename', true);
@@ -136,13 +138,17 @@ class VarFile extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception.
      */
-    private function getFileFiles(string $filename, bool $getContents, bool $nullable)
+    private function getFileFiles(string $filename, bool $getContents, bool $nullable): Core\DataContainer
     {
         $this->validateFilesError($filename, $nullable);
         if ($getContents) {
             $dir = $this->settings->__get(['api', 'dir_tmp']);
             $extension = pathinfo($_FILES[$filename]['name'], PATHINFO_EXTENSION);
-            $basename = bin2hex(random_bytes(8));
+            try {
+                $basename = bin2hex(random_bytes(8));
+            } catch (Exception $e) {
+                throw new Core\ApiException($e->getMessage(), 5, $this->id, 417);
+            }
             $basename = sprintf('%s.%0.8s', $basename, $extension);
             $dest = $dir . $basename;
             move_uploaded_file($_FILES[$filename]['tmp_name'], $dest);
@@ -152,7 +158,11 @@ class VarFile extends Core\ProcessorEntity
         } else {
             $dir = $this->settings->__get(['api', 'dir_tmp']);
             $extension = pathinfo($_FILES[$filename]['name'], PATHINFO_EXTENSION);
-            $basename = bin2hex(random_bytes(8));
+            try {
+                $basename = bin2hex(random_bytes(8));
+            } catch (Exception $e) {
+                throw new Core\ApiException($e->getMessage(), 5, $this->id, 417);
+            }
             $basename = sprintf('%s.%0.8s', $basename, $extension);
             $dest = $dir . $basename;
             move_uploaded_file($_FILES[$filename]['tmp_name'], $dest);
@@ -172,8 +182,12 @@ class VarFile extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception.
      */
-    private function getFileRemote(string $location, string $filename, bool $getContents, bool $nullable)
-    {
+    private function getFileRemote(
+        string $location,
+        string $filename,
+        bool $getContents,
+        bool $nullable
+    ): Core\DataContainer {
         $dir = $this->settings->__get(['api', 'base_path']) . $this->settings->__get(['api', 'dirFileStorage']);
         $name = md5($filename . time());
         $extension = '.' . pathinfo($_FILES[$filename]['tmp_name'], PATHINFO_EXTENSION);
@@ -195,6 +209,7 @@ class VarFile extends Core\ProcessorEntity
                 if (empty($fileContent) && !$nullable) {
                     throw new Core\ApiException('file contents are empty', 5, $this->id, 417);
                 }
+                // todo Add a detectType function.
                 return new Core\DataContainer($fileContent, $this->detectType($fileContent));
             } catch (Exception $e) {
                 throw new Core\ApiException($e->getMessage(), 5, $this->id, 417);
@@ -208,13 +223,13 @@ class VarFile extends Core\ProcessorEntity
      * @param string $filename The filename.
      * @param boolean $nullable Empty file allowed.
      *
-     * @return boolean Valid file received.
+     * @return void Valid file received.
      *
      * @throws Core\ApiException Exception.
      *
      * @see https://www.php.net/manual/en/features.file-upload.php
      */
-    private function validateFilesError(string $filename, bool $nullable)
+    private function validateFilesError(string $filename, bool $nullable): void
     {
         if (
             !isset($_FILES[$filename]['error']) || is_array($_FILES[$filename]['error'])
@@ -238,6 +253,5 @@ class VarFile extends Core\ProcessorEntity
                 throw new Core\ApiException('Unknown errors, please check the logs', 5, $this->id, 417);
                 break;
         }
-        return true;
     }
 }

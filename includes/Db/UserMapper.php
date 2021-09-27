@@ -33,20 +33,18 @@ class UserMapper extends Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function save(User $user)
+    public function save(User $user): bool
     {
         if (empty($user->getUid())) {
-            $sql = 'INSERT INTO user (active, username, hash, token, token_ttl, email, honorific, name_first, ';
+            $sql = 'INSERT INTO user (active, username, hash, email, honorific, name_first, ';
             $sql .= 'name_last, company, website, address_street, address_suburb, address_city, address_state, ';
             $sql .= 'address_country, address_postcode, phone_mobile, phone_work, password_reset, password_reset_ttl)';
             $sql .= ' VALUES';
-            $sql .= ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            $sql .= ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
             $bindParams = [
                 $user->getActive(),
                 $user->getUsername(),
                 $user->getHash(),
-                $user->getToken(),
-                $user->getTokenTtl(),
                 $user->getEmail(),
                 $user->getHonorific(),
                 $user->getNameFirst(),
@@ -65,7 +63,7 @@ class UserMapper extends Mapper
                 $user->getPasswordResetTtl(),
             ];
         } else {
-            $sql = 'UPDATE user SET active=?, username=?, hash=?, token=?, token_ttl=?, email=?, honorific=?, ';
+            $sql = 'UPDATE user SET active=?, username=?, hash=?, email=?, honorific=?, ';
             $sql .= 'name_first=?, name_last=?, company=?, website=?, address_street=?, address_suburb=?, ';
             $sql .= 'address_city=?, address_state=?, address_country=?, address_postcode=?, phone_mobile=?, ';
             $sql .= 'phone_work=?, password_reset=?, password_reset_ttl=? WHERE uid=?';
@@ -73,8 +71,6 @@ class UserMapper extends Mapper
                 $user->getActive(),
                 $user->getUsername(),
                 $user->getHash(),
-                $user->getToken(),
-                $user->getTokenTtl(),
                 $user->getEmail(),
                 $user->getHonorific(),
                 $user->getNameFirst(),
@@ -106,7 +102,7 @@ class UserMapper extends Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function delete(User $user)
+    public function delete(User $user): bool
     {
         $sql = 'DELETE FROM user WHERE uid = ?';
         $bindParams = [$user->getUid()];
@@ -125,7 +121,7 @@ class UserMapper extends Mapper
      *
      * @see \ApiOpenStudio\Db\Mapper.
      */
-    public function findAllByPermissions(int $uid, array $params = [])
+    public function findAllByPermissions(int $uid, array $params = []): array
     {
         $elevatedRoles = ["Administrator", "Account manager", "application manager"];
         $sql = 'SELECT *';
@@ -157,7 +153,7 @@ class UserMapper extends Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findAll()
+    public function findAll(): array
     {
         $sql = 'SELECT * FROM user';
         return $this->fetchRows($sql);
@@ -168,11 +164,11 @@ class UserMapper extends Mapper
      *
      * @param integer $uid User ID.
      *
-     * @return User User object.
+     * @return User User row.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByUid(int $uid)
+    public function findByUid(int $uid): User
     {
         $sql = 'SELECT * FROM user WHERE uid = ?';
         $bindParams = [$uid];
@@ -184,11 +180,11 @@ class UserMapper extends Mapper
      *
      * @param string $email Users email.
      *
-     * @return User User object.
+     * @return User User row.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByEmail(string $email)
+    public function findByEmail(string $email): User
     {
         $sql = 'SELECT * FROM user WHERE email = ?';
         $bindParams = [$email];
@@ -198,32 +194,16 @@ class UserMapper extends Mapper
     /**
      * Find user bu username.
      *
-     * @param string $username Users usdername.
+     * @param string $username Users username.
      *
-     * @return User User object.
+     * @return User User row.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByUsername(string $username)
+    public function findByUsername(string $username): User
     {
         $sql = 'SELECT * FROM user WHERE username = ?';
         $bindParams = [$username];
-        return $this->fetchRow($sql, $bindParams);
-    }
-
-    /**
-     * Find a user by their auth token.
-     *
-     * @param string $token User auth token.
-     *
-     * @return User User object.
-     *
-     * @throws ApiException Return an ApiException on DB error.
-     */
-    public function findBytoken(string $token)
-    {
-        $sql = 'SELECT * FROM user WHERE token = ?';
-        $bindParams = [$token];
         return $this->fetchRow($sql, $bindParams);
     }
 
@@ -232,11 +212,11 @@ class UserMapper extends Mapper
      *
      * @param string $token User auth token.
      *
-     * @return User User object.
+     * @return User User row.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByPasswordToken(string $token)
+    public function findByPasswordToken(string $token): User
     {
         $sql = 'SELECT * FROM user WHERE password_reset = ?';
         $bindParams = [$token];
@@ -250,15 +230,13 @@ class UserMapper extends Mapper
      *
      * @return User Mapped User object.
      */
-    protected function mapArray(array $row)
+    protected function mapArray(array $row): User
     {
         $user = new User();
         $user->setUid(!empty($row['uid']) ? $row['uid'] : 0);
         $user->setActive(!empty($row['active']) ? $row['active'] : 0);
         $user->setUsername(!empty($row['username']) ? $row['username'] : '');
         $user->setHash(!empty($row['hash']) ? $row['hash'] : '');
-        $user->setToken(!empty($row['token']) ? $row['token'] : '');
-        $user->setTokenTtl(!empty($row['token_ttl']) ? $row['token_ttl'] : '');
         $user->setEmail(!empty($row['email']) ? $row['email'] : '');
         $user->setHonorific(!empty($row['honorific']) ? $row['honorific'] : '');
         $user->setNameFirst(!empty($row['name_first']) ? $row['name_first'] : '');

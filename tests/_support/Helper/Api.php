@@ -5,61 +5,46 @@ namespace Helper;
 // here you can define custom actions
 // all public methods declared in helper class will be available in $I
 
-class Api extends \Codeception\Module
+use Codeception\Exception\ModuleException;
+use Codeception\Module;
+use PHPUnit_Framework_Assert;
+use Spyc;
+
+class Api extends Module
 {
-    private $token = '';
-    private $accountName = 'apiopenstudio';
-    private $applicationName = 'testing';
-    private $username = 'tester';
-    private $password = 'tester_pass';
-    private $yamlFilename = '';
+    private string $token = '';
+    private string $yamlFilename = '';
 
     /**
      * @return string
      */
-    public function getMyUsername()
+    public function getMyAccountName(): string
     {
-        return $this->username;
+        return getenv('TESTING_ACCOUNT_NAME');
     }
 
     /**
      * @return string
      */
-    public function getMyPassword()
+    public function getMyApplicationName(): string
     {
-        return $this->password;
+        return getenv('TESTING_APPLICATION_NAME');
     }
 
     /**
      * @return string
      */
-    public function getMyAccountName()
+    public function getCoreBaseUri(): string
     {
-        return $this->accountName;
+        return '/' . getenv('CORE_ACCOUNT_NAME') . '/' . getenv('CORE_APPLICATION_NAME');
     }
 
     /**
      * @return string
      */
-    public function getMyApplicationName()
+    public function getMyBaseUri(): string
     {
-        return $this->applicationName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCoreBaseUri()
-    {
-        return '/apiopenstudio/core';
-    }
-
-    /**
-     * @return string
-     */
-    public function getMyBaseUri()
-    {
-        return '/' . $this->getMyAccountName() . '/' . $this->getMyApplicationName();
+        return '/' . getenv('TESTING_ACCOUNT_NAME') . '/' . getenv('TESTING_APPLICATION_NAME');
     }
 
     /**
@@ -73,7 +58,7 @@ class Api extends \Codeception\Module
     /**
      * @return string
      */
-    public function getYamlFilename()
+    public function getYamlFilename(): string
     {
         return $this->yamlFilename;
     }
@@ -81,7 +66,7 @@ class Api extends \Codeception\Module
     /**
      * @param $name
      * @param $value
-     * @throws \Codeception\Exception\ModuleException
+     * @throws ModuleException
      */
     public function haveHttpHeader($name, $value)
     {
@@ -89,8 +74,8 @@ class Api extends \Codeception\Module
     }
 
     /**
-     * @return mixed
-     * @throws \Codeception\Exception\ModuleException
+     * @return false|string
+     * @throws ModuleException
      */
     public function getBaseUrl()
     {
@@ -99,7 +84,7 @@ class Api extends \Codeception\Module
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
+     * @throws ModuleException
      */
     public function storeMyToken()
     {
@@ -116,48 +101,44 @@ class Api extends \Codeception\Module
     /**
      * @return string
      */
-    public function getMyStoredToken()
+    public function getMyStoredToken(): string
     {
         return $this->token;
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
+     * @throws ModuleException
      */
-    public function performLogin()
+    public function performLogin(string $username, string $password)
     {
         $this->getModule('REST')->sendPost(
-            $this->getCoreBaseUri() . '/login',
-            ['username' => $this->username, 'password' => $this->password]
+            $this->getCoreBaseUri() . '/auth/token',
+            ['username' => $username, 'password' => $password]
         );
         $this->getModule('REST')->seeResponseCodeIs(200);
         $this->getModule('REST')->seeResponseIsJson();
-        $this->getModule('REST')->seeResponseMatchesJsonType(array('token' => 'string'));
+        $this->getModule('REST')->seeResponseMatchesJsonType([
+            'token' => 'string',
+            'uid' => 'integer',
+            'expires' => 'string',
+        ]);
         $this->storeMyToken();
+        $this->haveHttpHeader('Authorization', 'Bearer ' . $this->getMyStoredToken());
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
-     */
-    public function seeTokenIsSameAsStoredToken()
-    {
-        $response = $this->getModule('REST')->response;
-        $arr = \GuzzleHttp\json_decode(\GuzzleHttp\json_encode(\GuzzleHttp\json_decode($response)), true);
-        \PHPUnit_Framework_Assert::assertEquals($this->token, $arr['token']);
-    }
-
-    /**
+     * @param null $yamlFilename
      * @return array
      */
-    public function getResourceFromYaml($yamlFilename = null)
+    public function getResourceFromYaml($yamlFilename = null): array
     {
         $yamlFilename = empty($yamlFilename) ? $this->yamlFilename : $yamlFilename;
         $yamlArr = file_get_contents(codecept_data_dir($yamlFilename));
-        return \Spyc::YAMLLoadString($yamlArr);
+        return Spyc::YAMLLoadString($yamlArr);
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
+     * @throws ModuleException
      */
     public function createResourceFromYaml($yamlFilename = null)
     {
@@ -182,7 +163,7 @@ class Api extends \Codeception\Module
 
     /**
      * @param array $params
-     * @throws \Codeception\Exception\ModuleException
+     * @throws ModuleException
      */
     public function callResourceFromYaml($params = array())
     {
@@ -198,7 +179,7 @@ class Api extends \Codeception\Module
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
+     * @throws ModuleException
      */
     public function tearDownTestFromYaml($yamlFilename = null)
     {
@@ -231,6 +212,7 @@ class Api extends \Codeception\Module
     /**
      * @param $yamlFilename
      * @param $params
+     * @throws ModuleException
      */
     public function doTestFromYaml($yamlFilename, $params = array())
     {
@@ -242,12 +224,12 @@ class Api extends \Codeception\Module
 
     /**
      * @param $length
-     * @throws \Codeception\Exception\ModuleException
+     * @throws ModuleException
      */
     public function seeReponseHasLength($length)
     {
         if (strlen(trim($this->getModule('REST')->response, '"')) != $length) {
-            \PHPUnit_Framework_Assert::assertTrue(
+            PHPUnit_Framework_Assert::assertTrue(
                 false,
                 'string ' . $this->getModule('REST')->response . " does not have length $length"
             );
@@ -255,7 +237,7 @@ class Api extends \Codeception\Module
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
+     * @throws ModuleException
      */
     public function seeResult()
     {
@@ -265,7 +247,7 @@ class Api extends \Codeception\Module
 
     /**
      * @return mixed
-     * @throws \Codeception\Exception\ModuleException
+     * @throws ModuleException
      */
     public function getResponse()
     {
