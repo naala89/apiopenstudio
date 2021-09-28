@@ -11,6 +11,7 @@ RUN apk -U --no-cache add \
     iproute2 \
     mariadb-client \
     php-cli \
+    php7-ctype \
     php7-curl \
     php7-openssl \
     php7-json \
