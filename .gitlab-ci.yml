@@ -22,12 +22,6 @@ stages:
   - deploy_wiki
   - deploy_phpdoc
 
-before_script:
-  - eval $(ssh-agent -s)
-  - mkdir -p ~/.ssh
-  - chmod 700 ~/.ssh
-  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-
 ##################################
 ## TESTS
 ##################################
@@ -50,6 +44,10 @@ tests:
       - logs/
   script:
     - echo "Setting up for tests."
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - cp -Rp ${CI_PROJECT_DIR}/* /www/
     - cd /www
 # set ApiOpenStudio test .env and settings.yml
@@ -97,6 +95,10 @@ wiki_dev:
     - develop
   script:
     - echo "Compile and deploy the wiki to dev."
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - composer install
     - ./vendor/bin/bookdown includes/wiki/bookdown.json
     - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
@@ -110,6 +112,10 @@ wiki_prod:
     - master
   script:
     - echo "Compile and deploy the wiki to prod."
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - composer install
     - ./vendor/bin/bookdown includes/wiki/bookdown.json
     - ssh-keyscan "$PROD_WIKI_URL" >> ~/.ssh/known_hosts
@@ -123,30 +129,86 @@ wiki_prod:
 ##################################
 
 phpdoc_dev:
+  image:
+    name: naala89/aos-phpdoc:latest
+    entrypoint: [ "" ]
   stage: deploy_phpdoc
   only:
     - develop
+  variables:
+    PHPDOC_OUTPUT: "/public/phpdoc"
+    PHPDOC_CONFIG_FILE: ""
+    PHPDOC_TITLE: "ApiOpenStudio PHPDoc"
+    PHPDOC_VERBOSITY: ""
+    PHPDOC_TEMPLATE: ""
+    PHPDOC_INCLUDE_HIDDEN: "false"
+    PHPDOC_IGNORE_SYMLINKS: "false"
+    PHPDOC_MARKERS: ""
+    PHPDOC_OPTIONS: "--ignore vendor/,tests/"
+    PROJECT_ROOT: "/"
   script:
     - echo "Compile and deploy the phpdoc to dev."
-    - php -r "copy('https://github.com/phpDocumentor/phpDocumentor/releases/download/v2.9.0/phpDocumentor.phar', 'phpDocumentor.phar');"
-    - cp phpDocumentor.phar /usr/local/bin/
-    - php /usr/local/bin/phpDocumentor.phar -d "$CI_PROJECT_DIR/" -t "$CI_PROJECT_DIR/public/phpdoc" --ignore vendor/,tests/
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
+    # Define verbosity
+    - if [ ! -z "$PHPDOC_VERBOSITY" ]; then export PHPDOC_OPTIONS="-$PHPDOC_VERBOSITY $PHPDOC_OPTIONS"; fi
+    # Define template
+    - if [ ! -z "$PHPDOC_TEMPLATE" ]; then export PHPDOC_OPTIONS="--template=$PHPDOC_TEMPLATE $PHPDOC_OPTIONS"; fi
+    # Include config file
+    - if [ ! -z "$PHPDOC_CONFIG_FILE" ]; then export PHPDOC_OPTIONS="--config=$CI_PROJECT_DIR$PHPDOC_CONFIG_FILE $PHPDOC_OPTIONS"; fi
+    # Include hidden files
+    - if [ ! "$PHPDOC_INCLUDE_HIDDEN" = "true" ]; then export PHPDOC_OPTIONS="--hidden $PHPDOC_OPTIONS"; fi
+    # Include if ignore symlinks
+    - if [ ! "$PHPDOC_IGNORE_SYMLINKS" = "true" ]; then export PHPDOC_OPTIONS="--ignore-symlinks $PHPDOC_OPTIONS"; fi
+    # Include markers
+    - if [ ! "$PHPDOC_MARKERS" = "true" ]; then export PHPDOC_OPTIONS="--markers=$PHPDOC_MARKERS $PHPDOC_OPTIONS"; fi
+    - /opt/phpdoc/bin/phpdoc -d ${CI_PROJECT_DIR}${PROJECT_ROOT} -t ${CI_PROJECT_DIR}${PHPDOC_OUTPUT} --title="$PHPDOC_TITLE" ${PHPDOC_OPTIONS}
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
 
 phpdoc_prod:
+  image:
+    name: naala89/aos-phpdoc:latest
+    entrypoint: [ "" ]
   stage: deploy_phpdoc
   only:
     - master
+  variables:
+    PHPDOC_OUTPUT: "/public/phpdoc"
+    PHPDOC_CONFIG_FILE: ""
+    PHPDOC_TITLE: "ApiOpenStudio PHPDoc"
+    PHPDOC_VERBOSITY: ""
+    PHPDOC_TEMPLATE: ""
+    PHPDOC_INCLUDE_HIDDEN: "false"
+    PHPDOC_IGNORE_SYMLINKS: "false"
+    PHPDOC_MARKERS: ""
+    PHPDOC_OPTIONS: "--ignore vendor/,tests/"
+    PROJECT_ROOT: "/"
   script:
     - echo "Compile and deploy the phpdoc to prod."
-    - php -r "copy('https://github.com/phpDocumentor/phpDocumentor/releases/download/v2.9.0/phpDocumentor.phar', 'phpDocumentor.phar');"
-    - cp phpDocumentor.phar /usr/local/bin/
-    - php /usr/local/bin/phpDocumentor.phar -d "$CI_PROJECT_DIR/" -t "$CI_PROJECT_DIR/public/phpdoc" --ignore vendor/,tests/
-    - ssh-keyscan "$PROD_PHPDOC_URL" >> ~/.ssh/known_hosts
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
+    # Define verbosity
+    - if [ ! -z "$PHPDOC_VERBOSITY" ]; then export PHPDOC_OPTIONS="-$PHPDOC_VERBOSITY $PHPDOC_OPTIONS"; fi
+    # Define template
+    - if [ ! -z "$PHPDOC_TEMPLATE" ]; then export PHPDOC_OPTIONS="--template=$PHPDOC_TEMPLATE $PHPDOC_OPTIONS"; fi
+    # Include config file
+    - if [ ! -z "$PHPDOC_CONFIG_FILE" ]; then export PHPDOC_OPTIONS="--config=$CI_PROJECT_DIR$PHPDOC_CONFIG_FILE $PHPDOC_OPTIONS"; fi
+    # Include hidden files
+    - if [ ! "$PHPDOC_INCLUDE_HIDDEN" = "true" ]; then export PHPDOC_OPTIONS="--hidden $PHPDOC_OPTIONS"; fi
+    # Include if ignore symlinks
+    - if [ ! "$PHPDOC_IGNORE_SYMLINKS" = "true" ]; then export PHPDOC_OPTIONS="--ignore-symlinks $PHPDOC_OPTIONS"; fi
+    # Include markers
+    - if [ ! "$PHPDOC_MARKERS" = "true" ]; then export PHPDOC_OPTIONS="--markers=$PHPDOC_MARKERS $PHPDOC_OPTIONS"; fi
+    - /opt/phpdoc/bin/phpdoc -d ${CI_PROJECT_DIR}${PROJECT_ROOT} -t ${PHPDOC_OUTPUT} --title="$PHPDOC_TITLE" ${PHPDOC_OPTIONS}
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL":"$PROD_PHPDOC_PATH/"
     - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_PHPDOC_PATH/*"
     - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "php $SITEMAP_GENERATOR file=$PROD_PHPDOC_PATH/sitemap.xml site=https://$PROD_PHPDOC_URL"
