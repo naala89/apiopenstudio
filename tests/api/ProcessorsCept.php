@@ -1,4 +1,5 @@
 <?php
+
 /** @var Scenario $scenario */
 
 use Codeception\Scenario;

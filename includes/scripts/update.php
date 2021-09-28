@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+
 /**
  * Script to update the ApiOpenStudio DB.
  *
