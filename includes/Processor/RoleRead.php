@@ -31,7 +31,7 @@ class RoleRead extends Core\ProcessorEntity
      *
      * @var RoleMapper
      */
-    private $roleMapper;
+    private RoleMapper $roleMapper;
 
     /**
      * {@inheritDoc}

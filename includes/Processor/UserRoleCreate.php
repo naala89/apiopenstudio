@@ -109,7 +109,7 @@ class UserRoleCreate extends Core\ProcessorEntity
             $accid = null;
         }
 
-        $userRoleMapper = new Db\UserRoleMapper($this->db);
+        $userRoleMapper = new Db\UserRoleMapper($this->db, $this->logger);
 
         $userRole = $userRoleMapper->findByFilter(['col' => [
             'uid' => $uid,

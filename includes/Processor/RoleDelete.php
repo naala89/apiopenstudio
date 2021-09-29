@@ -31,7 +31,7 @@ class RoleDelete extends Core\ProcessorEntity
      *
      * @var RoleMapper
      */
-    private $roleMapper;
+    private RoleMapper $roleMapper;
 
     /**
      * {@inheritDoc}
@@ -67,6 +67,7 @@ class RoleDelete extends Core\ProcessorEntity
     public function __construct($meta, &$request, ADOConnection $db, Core\StreamLogger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
+        $this->roleMapper = new RoleMapper($db, $logger);
     }
 
     /**

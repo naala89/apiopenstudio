@@ -87,10 +87,8 @@ class Sort extends Core\ProcessorEntity
         $sortBy = $this->val('sort_by', true);
 
         if ($sortBy == 'key') {
-            if ($direction == 'asc') {
+            if ($direction == 'desc') {
                 if (!Core\Utilities::isAssoc($values)) {
-                    // do nothing, this is a normal array
-                } else {
                     ksort($values);
                 }
             } else {

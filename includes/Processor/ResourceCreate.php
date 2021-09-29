@@ -222,7 +222,7 @@ class ResourceCreate extends Core\ProcessorEntity
      * @param string $format The format of the input string.
      * @param string $string The metadata string.
      *
-     * @return array|mixed Normalised string format.
+     * @return false|string Normalised string format.
      *
      * @throws Core\ApiException Error.
      */

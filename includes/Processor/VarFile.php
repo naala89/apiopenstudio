@@ -140,33 +140,24 @@ class VarFile extends Core\ProcessorEntity
     private function getFileFiles(string $filename, bool $getContents, bool $nullable): Core\DataContainer
     {
         $this->validateFilesError($filename, $nullable);
+        $dir = $this->settings->__get(['api', 'dir_tmp']);
+        $extension = pathinfo($_FILES[$filename]['name'], PATHINFO_EXTENSION);
+        try {
+            $basename = bin2hex(random_bytes(8));
+        } catch (Exception $e) {
+            throw new Core\ApiException($e->getMessage(), 5, $this->id, 417);
+        }
+        $basename = sprintf('%s.%0.8s', $basename, $extension);
+        $dest = $dir . $basename;
+        move_uploaded_file($_FILES[$filename]['tmp_name'], $dest);
+
         if ($getContents) {
-            $dir = $this->settings->__get(['api', 'dir_tmp']);
-            $extension = pathinfo($_FILES[$filename]['name'], PATHINFO_EXTENSION);
-            try {
-                $basename = bin2hex(random_bytes(8));
-            } catch (Exception $e) {
-                throw new Core\ApiException($e->getMessage(), 5, $this->id, 417);
-            }
-            $basename = sprintf('%s.%0.8s', $basename, $extension);
-            $dest = $dir . $basename;
-            move_uploaded_file($_FILES[$filename]['tmp_name'], $dest);
             $fileContent = file_get_contents($dest);
             unlink($dest);
             return new Core\DataContainer($fileContent, 'text');
-        } else {
-            $dir = $this->settings->__get(['api', 'dir_tmp']);
-            $extension = pathinfo($_FILES[$filename]['name'], PATHINFO_EXTENSION);
-            try {
-                $basename = bin2hex(random_bytes(8));
-            } catch (Exception $e) {
-                throw new Core\ApiException($e->getMessage(), 5, $this->id, 417);
-            }
-            $basename = sprintf('%s.%0.8s', $basename, $extension);
-            $dest = $dir . $basename;
-            move_uploaded_file($_FILES[$filename]['tmp_name'], $dest);
-            return new Core\DataContainer($dest, 'file');
         }
+
+        return new Core\DataContainer($dest, 'file');
     }
 
     /**

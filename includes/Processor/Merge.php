@@ -86,9 +86,10 @@ class Merge extends Core\ProcessorEntity
         }
 
         if ($unique === true) {
-            return array_unique($this->$method($sources));
+            return new Core\DataContainer(array_unique($this->$method($sources)), 'array');
         }
-        return $this->$method($sources);
+
+        return new Core\DataContainer($this->$method($sources), 'array');
     }
 
     /**

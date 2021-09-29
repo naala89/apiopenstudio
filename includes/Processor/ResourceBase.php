@@ -207,11 +207,11 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * @param string $method Resource method.
      * @param string $uri Resource URI.
      *
-     * @return mixed
+     * @return Core\DataContainer
      *
      * @throws ApiException Error.
      */
-    protected function read(int $appId, string $method, string $uri)
+    protected function read(int $appId, string $method, string $uri): Core\DataContainer
     {
         if (empty($appId)) {
             throw new ApiException('missing application ID, cannot find resource', 3, $this->id, 400);
@@ -251,7 +251,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @throws ApiException Error.
      */
-    protected function delete(int $appId, string $method, string $uri)
+    protected function delete(int $appId, string $method, string $uri): Core\DataContainer
     {
         if (empty($appId)) {
             throw new ApiException('missing application ID, cannot find resource', 3, $this->id, 400);
@@ -281,7 +281,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @throws ApiException Error.
      */
-    protected function create(array $data, string $accName, string $appName)
+    protected function create(array $data, string $accName, string $appName): Core\DataContainer
     {
         $this->logger->debug('api', 'New resource' . print_r($data, true));
         $this->validateData($data);
@@ -395,7 +395,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
             if (!Core\Utilities::isAssoc($data['fragments'])) {
                 throw new ApiException("invalid fragments structure in new resource", 6, -1, 406);
             }
-            foreach ($data['fragments'] as $fragKey => $fragVal) {
+            foreach ($data['fragments'] as $fragVal) {
                 $this->validateDetails($fragVal);
             }
         }
@@ -508,7 +508,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                     }
                 }
             } elseif (is_array($node)) {
-                foreach ($node as $key => $value) {
+                foreach ($node as $value) {
                     array_unshift($stack, $value);
                 }
             }
@@ -528,7 +528,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @throws ApiException Error.
      */
-    private function validateTypeValue($element, array $accepts, int $id)
+    private function validateTypeValue($element, array $accepts, int $id): bool
     {
         if (empty($accepts)) {
             return true;
@@ -568,11 +568,13 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 break;
             }
         }
+
         if (!$valid) {
             $message = 'invalid literal in new resource (' . print_r($element, true) . '. only "' .
                 implode("', '", $accepts) . '" accepted';
             throw new ApiException($message, 6, $id, 406);
         }
-        return $valid;
+
+        return true;
     }
 }

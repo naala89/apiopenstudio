@@ -16,6 +16,7 @@
 namespace ApiOpenStudio\Processor;
 
 use ApiOpenStudio\Core;
+use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
 use RegexIterator;
@@ -113,8 +114,8 @@ class Processors extends Core\ProcessorEntity
      */
     private function getClassList(string $namespace): array
     {
-        $iterator = new RecursiveIteratorIterator(new \RecursiveDirectoryIterator(__DIR__ . '/../' . $namespace));
-        $objects = new RegexIterator($iterator, '/[a-z0-9]+\.php/i', \RecursiveRegexIterator::GET_MATCH);
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__ . '/../' . $namespace));
+        $objects = new RegexIterator($iterator, '/[a-z0-9]+\.php/i', RegexIterator::GET_MATCH);
         $result = [];
         foreach ($objects as $name => $object) {
             preg_match('/([a-zA-Z0-9]+)\.php$/i', $name, $className);

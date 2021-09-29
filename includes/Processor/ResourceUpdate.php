@@ -251,7 +251,6 @@ class ResourceUpdate extends Core\ProcessorEntity
 
         // Proposed account/application are locked.
         $application = $this->applicationMapper->findByAppid($appid);
-        $account = $this->accountMapper->findByAccid($application->getAccid());
         if (
             $account->getName() == $this->settings->__get(['api', 'core_account'])
             && $application->getName() == $this->settings->__get(['api', 'core_application'])

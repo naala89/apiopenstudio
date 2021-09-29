@@ -149,6 +149,6 @@ class ResourceDelete extends Core\ProcessorEntity
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
-        return new Core\DataContainer($this->resourceMapper->delete($resource) ? 'true' : 'false');
+        return new Core\DataContainer($this->resourceMapper->delete($resource), 'bool');
     }
 }
