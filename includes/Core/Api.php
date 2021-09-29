@@ -111,7 +111,7 @@ class Api
             . $this->settings['db']['database']
             . $dsnOptions;
         $conn = ADONewConnection($dsn);
-        if (!$conn) {
+        if (empty($conn)) {
             $this->logger->error('db', 'DB connection failed');
             throw new ApiException('DB connection failed', 2, -1, 500);
         }
