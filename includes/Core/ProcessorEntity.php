@@ -162,18 +162,22 @@ abstract class ProcessorEntity extends Entity
      *   Metadata for the processor.
      * @param Request $request
      *   The full request object.
-     * @param ADOConnection $db
+     * @param ADOConnection|null $db
      *   The DB connection object.
-     * @param StreamLogger $logger
+     * @param StreamLogger|null $logger
      *   The logger.
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, StreamLogger $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db = null, StreamLogger $logger = null)
     {
         $this->meta = $meta;
         $this->request = $request;
         $this->id = $meta->id ?? -1;
-        $this->db = $db;
-        $this->logger = $logger;
+        if (!empty($db)) {
+            $this->db = $db;
+        }
+        if (!empty($logger)) {
+            $this->logger = $logger;
+        }
     }
 
     /**
