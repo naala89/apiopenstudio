@@ -59,7 +59,7 @@ class StreamLogger
      * @param Logger $logger
      *   The logger.
      */
-    public function add(String $loggerName, Logger $logger)
+    public function add(string $loggerName, Logger $logger)
     {
         $this->loggers[$loggerName] = $logger;
     }
@@ -83,7 +83,7 @@ class StreamLogger
      * @return string[]
      *   Array of logger names.
      */
-    public function loggerNames() : array
+    public function loggerNames(): array
     {
         return array_keys($this->loggers);
     }
