@@ -18,7 +18,6 @@ namespace ApiOpenStudio\Processor;
 use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db\RoleMapper;
-use Monolog\Logger;
 
 /**
  * Class RoleCreate
@@ -32,7 +31,7 @@ class RoleCreate extends Core\ProcessorEntity
      *
      * @var RoleMapper
      */
-    private $roleMapper;
+    private RoleMapper $roleMapper;
 
     /**
      * {@inheritDoc}
@@ -63,14 +62,12 @@ class RoleCreate extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Logger $logger Logger object.
-     *
-     * @throws Core\ApiException
+     * @param Core\StreamLogger $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\StreamLogger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->roleMapper = new RoleMapper($db);
+        $this->roleMapper = new RoleMapper($db, $logger);
     }
 
     /**

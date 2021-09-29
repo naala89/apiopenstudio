@@ -67,13 +67,13 @@ class ResourceMapper extends Mapper
     /**
      * Delete an API resource.
      *
-     * @param \ApiOpenStudio\Db\Resource $resource Resource object.
+     * @param ApiOpenStudio\Db\Resource $resource Resource object.
      *
      * @return boolean Success.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function delete(\ApiOpenStudio\Db\Resource $resource): bool
+    public function delete(ApiOpenStudio\Db\Resource $resource): bool
     {
         $sql = 'DELETE FROM resource WHERE resid = ?';
         $bindParams = [$resource->getResid()];
@@ -100,11 +100,11 @@ class ResourceMapper extends Mapper
      *
      * @param integer $resid Resource ID.
      *
-     * @return \ApiOpenStudio\Db\Resource Resource object.
+     * @return ApiOpenStudio\Db\Resource Resource object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByResid(int $resid): \ApiOpenStudio\Db\Resource
+    public function findByResid(int $resid): ApiOpenStudio\Db\Resource
     {
         $sql = 'SELECT * FROM resource WHERE resid = ?';
         $bindParams = [$resid];
@@ -162,7 +162,7 @@ class ResourceMapper extends Mapper
         $recordSet = $this->db->Execute($sql, $bindParams);
         if (!$recordSet) {
             $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-            $this->logger->error($message);
+            $this->logger->error('db', $message);
             throw new ApiException($message, 2);
         }
 
@@ -257,7 +257,7 @@ class ResourceMapper extends Mapper
         array $params
     ): array {
         // Find Applications for the user role.
-        $userRoleMapper = new UserRoleMapper($this->db);
+        $userRoleMapper = new UserRoleMapper($this->db, $this->logger);
         $result = $userRoleMapper->findByFilter(['col' => ['uid' => $uid, 'rid' => $rid]]);
         $appids = [];
         foreach ($result as $item) {
@@ -269,13 +269,13 @@ class ResourceMapper extends Mapper
         // Find all resources for the applications the user has rights for.
         $result = $this->findByAppId($appids, $params);
         // No further filters, so return the results.
-        if (empty($accid) && empty($accid) && empty($appid) && empty($resid)) {
+        if (empty($accid) && empty($appid) && empty($resid)) {
             return $result;
         }
         // If accid is filter, find all applications for the accid.
         $appid = empty($appid) ? [] : [$appid];
         if (!empty($accid)) {
-            $applicationMapper = new ApplicationMapper($this->db);
+            $applicationMapper = new ApplicationMapper($this->db, $this->logger);
             $applications = $applicationMapper->findByAccid($accid);
             foreach ($applications as $application) {
                 $appid[] = $application->getAppid();
@@ -308,9 +308,9 @@ class ResourceMapper extends Mapper
      *
      * @param array $row DB row object.
      *
-     * @return \ApiOpenStudio\Db\Resource Resource object.
+     * @return Resource Resource object.
      */
-    protected function mapArray(array $row): \ApiOpenStudio\Db\Resource
+    protected function mapArray(array $row): Resource
     {
         $resource = new Resource();
 

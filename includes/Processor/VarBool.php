@@ -55,7 +55,7 @@ class VarBool extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
         parent::process();
 

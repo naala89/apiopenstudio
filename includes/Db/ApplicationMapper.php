@@ -248,7 +248,7 @@ class ApplicationMapper extends Mapper
      *
      * @return Application Application object
      */
-    protected function mapArray(array $row)
+    protected function mapArray(array $row): Application
     {
         $application = new Application();
 

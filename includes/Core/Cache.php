@@ -15,7 +15,8 @@
 
 namespace ApiOpenStudio\Core;
 
-use Monolog\Logger;
+use \ApiOpenStudio\Core\StreamLogger;
+use Memcached;
 
 /**
  * Class Cache
@@ -27,16 +28,16 @@ class Cache
     /**
      * Logging class.
      *
-     * @var \Monolog\Logger
+     * @var StreamLogger
      */
-    private $logger;
+    private \ApiOpenStudio\Core\StreamLogger $logger;
 
     /**
      * Current supported caches.
      *
      * @var string[] Liust of supported caches.
      */
-    private $caches = ['memcache', 'apc'];
+    private array $caches = ['memcache', 'apc'];
 
     /**
      * Cache object.
@@ -50,14 +51,14 @@ class Cache
      *
      * @var string Caching to use.
      */
-    private $cacheType;
+    private string $cacheType;
 
     /**
      * Cache active/inactive.
      *
      * @var boolean Active status of cache.
      */
-    private $cacheActive;
+    private bool $cacheActive;
 
     /**
      * Cache host.
@@ -73,23 +74,24 @@ class Cache
      */
     public $port;
 
-  /**
-   * Constructor.
-   *
-   * @param array $config Config array.
-   * @param Monolog\Logger $logger Logging object.
-   * @param boolean $cache Set cache on or off.
-   *
-   *    False means do not cache.
-   *    True means select first available caching system.
-   *    String means select the specified caching system.
-   *
-   * @return boolean
-   */
-    public function __construct(array $config, Logger $logger, bool $cache = false)
+    /**
+     * Constructor.
+     *
+     * @param array $config Config array.
+     * @param StreamLogger $logger Logging object.
+     * @param boolean $cache Set cache on or off.
+     *
+     *    False means do not cache.
+     *    True means select first available caching system.
+     *    String means select the specified caching system.
+     *
+     * @return boolean
+     * @throws ApiException
+     */
+    public function __construct(array $config, StreamLogger $logger, bool $cache = false)
     {
         $this->logger = $logger;
-        $this->logger->info('Caching request with cache set to: ' . print_r($cache, true));
+        $this->logger->info('api', 'Caching request with cache set to: ' . print_r($cache, true));
         $this->cacheActive = false;
 
         if ($cache === true || $cache == 1) {
@@ -98,47 +100,48 @@ class Cache
             $caches = $this->caches;
             while (!$this->cacheActive && $cache = array_shift($caches)) {
                 $func = 'setup' . ucfirst($cache);
-                $this->logger->info('looking for function: ' . $func);
+                $this->logger->info('api', 'looking for function: ' . $func);
                 if (method_exists($this, $func)) {
                     $this->$func();
                 }
             }
-        } elseif ($cache === false || $cache == 0) {
-            $this->logger->info('Cache is off');
+        } elseif (!$cache) {
+            $this->logger->info('api', 'Cache is off');
             return false;
         } else {
             $func = 'setup' . ucfirst(trim($cache));
-            $this->logger->info('looking for function: ' . $func);
+            $this->logger->info('api', 'looking for function: ' . $func);
             if (method_exists($this, $func)) {
                 $this->$func();
             } else {
-                $this->logger->info('function not defined');
+                $this->logger->info('api', 'function not defined');
             }
         }
 
-        $this->logger->info('cache type enbled: ' . $this->cacheType);
-        $this->logger->info('cache status: ' . $this->cacheActive);
+        $this->logger->info('api', 'cache type enbled: ' . $this->cacheType);
+        $this->logger->info('api', 'cache status: ' . $this->cacheActive);
 
         return $this->cacheActive;
     }
 
-  /**
-   * Store a value in the cache
-   *
-   * @param string $key Cache key.
-   * @param mixed $val Value to store.
-   * @param integer $ttl Cache TTL. Time to live (in seconds). 0|-1 = no cache.
-   *
-   * @return boolean
-   */
-    public function set(string $key, $val, int $ttl)
+    /**
+     * Store a value in the cache
+     *
+     * @param string $key Cache key.
+     * @param mixed $val Value to store.
+     * @param integer $ttl Cache TTL. Time to live (in seconds). 0|-1 = no cache.
+     *
+     * @return boolean
+     * @throws ApiException
+     */
+    public function set(string $key, $val, int $ttl): bool
     {
         if (!$this->cacheActive || $ttl < 1) {
-            $this->logger->info('not caching');
+            $this->logger->info('api', 'not caching');
             return false;
         }
-        $this->logger->debug('setting in cache (key): ' . $key);
-        $this->logger->debug('setting in cache (ttl): ' . $ttl);
+        $this->logger->debug('api', 'setting in cache (key): ' . $key);
+        $this->logger->debug('api', 'setting in cache (ttl): ' . $ttl);
 
         $func = 'set' . ucfirst($this->cacheType);
         $success = false;
@@ -172,12 +175,13 @@ class Cache
      * Clear cache.
      *
      * @return false|null
+     * @throws ApiException
      */
-    public function clear()
+    public function clear(): ?bool
     {
-        $this->logger->notice('clearing cache');
+        $this->logger->notice('api', 'clearing cache');
         if (!$this->cacheActive) {
-            $this->logger->warning('could not clear cache - inactive');
+            $this->logger->warning('api', 'could not clear cache - inactive');
             return false;
         }
         $func = 'clear' . ucfirst($this->cacheType);
@@ -192,31 +196,32 @@ class Cache
    *
    * @return boolean
    */
-    public function cacheActive()
+    public function cacheActive(): bool
     {
         return $this->cacheActive;
     }
 
-  /**
-   * Setup MemCache, based on params passed in setup()
-   *
-   * @return boolean
-   */
-    private function setupMemcache()
+    /**
+     * Setup MemCache, based on params passed in setup()
+     *
+     * @return boolean
+     * @throws ApiException
+     */
+    private function setupMemcache(): bool
     {
         $this->cacheActive = false;
 
         if (class_exists('memcache')) {
-            $this->logger->info('memcache available');
+            $this->logger->info('api', 'memcache available');
             $this->cacheObj = new Memcached();
             if ($this->cacheActive = $this->cacheObj->addServer($this->host, $this->port)) {
                 $this->cacheType = 'memcache';
-                $this->logger->info('memcache enabled');
+                $this->logger->info('api', 'memcache enabled');
             } else {
-                $this->logger->error('Could not connect to Memcache');
+                $this->logger->error('api', 'Could not connect to Memcache');
             }
         } else {
-            $this->logger->info('memcache not available');
+            $this->logger->info('api', 'memcache not available');
         }
 
         return $this->cacheActive;
@@ -231,7 +236,7 @@ class Cache
    *
    * @return boolean
    */
-    private function setMemcache(string $key, $val, int $ttl)
+    private function setMemcache(string $key, $val, int $ttl): bool
     {
         return $this->cacheObj->set($key, $val, $ttl);
     }
@@ -253,27 +258,28 @@ class Cache
    *
    * @return boolean
    */
-    private function clearMemcache()
+    private function clearMemcache(): bool
     {
         return $this->cacheObj->flush();
     }
 
-  /**
-   * Setup APC, based on params passed in setup()
-   *
-   * @return boolean
-   */
-    private function setupApc()
+    /**
+     * Setup APC, based on params passed in setup()
+     *
+     * @return boolean
+     * @throws ApiException
+     */
+    private function setupApc(): bool
     {
-        $this->cacheAvailable = false;
+        $cacheAvailable = false;
 
-        if ($this->cacheAvailable = extension_loaded('apc')) {
-            $this->logger->info('apc available');
+        if ($cacheAvailable = extension_loaded('apc')) {
+            $this->logger->info('api', 'apc available');
             $this->cacheType = 'apc';
-            $this->logger->info('apc enabled');
+            $this->logger->info('api', 'apc enabled');
             $this->cacheActive = true;
         } else {
-            $this->logger->info('apc not available');
+            $this->logger->info('api', 'apc not available');
         }
 
         return $this->cacheActive;
@@ -288,7 +294,7 @@ class Cache
    *
    * @return boolean
    */
-    private function setApc(string $key, $val, int $ttl)
+    private function setApc(string $key, $val, int $ttl): bool
     {
         return apc_store($key, $val, $ttl);
     }
@@ -310,7 +316,7 @@ class Cache
    *
    * @return boolean
    */
-    private function clearApc()
+    private function clearApc(): bool
     {
         return apc_clear_cache();
     }

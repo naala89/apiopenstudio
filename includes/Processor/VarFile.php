@@ -19,7 +19,6 @@ use ADOConnection;
 use ApiOpenStudio\Core;
 use Exception;
 use GuzzleHttp\Client;
-use Monolog\Logger;
 
 /**
  * Class VarFile
@@ -94,9 +93,9 @@ class VarFile extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Logger $logger Logger object.
+     * @param Core\StreamLogger $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\StreamLogger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Core\Config();

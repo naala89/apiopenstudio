@@ -85,9 +85,8 @@ class LoginStoreDrupal extends Core\ProcessorEntity
         $externalEntity = !empty($this->meta->externalEntity) ? $this->val('externalEntity') : $this->defaultEntity;
         $externalId = $source->user->uid;
         $appid = $this->request->getAppId();
-        $db = $this->getDb();
 
-        $userMapper = new Db\ExternalUserMapper($db);
+        $userMapper = new Db\ExternalUserMapper($this->db, $this->logger);
         $user = $userMapper->findByAppIdEntityExternalId($appid, $externalEntity, $externalId);
         if ($user->getId() == null) {
             $user->setAppId($appid);

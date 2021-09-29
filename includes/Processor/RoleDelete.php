@@ -18,7 +18,6 @@ namespace ApiOpenStudio\Processor;
 use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db\RoleMapper;
-use Monolog\Logger;
 
 /**
  * Class RoleDelete
@@ -63,9 +62,9 @@ class RoleDelete extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Logger $logger Logger object.
+     * @param Core\StreamLogger $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\StreamLogger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
     }

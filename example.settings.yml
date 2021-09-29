@@ -9,41 +9,15 @@
 # @link      https://www.apiopenstudio.com
 
 debug:
-  formatters:
-    api_open_studio:
-      format: "%datetime%-%channel%.%level_name% - %message%\n"
-  handlers:
-    console:
-      class: Monolog\Handler\StreamHandler
-      level: DEBUG
-      formatter: api_open_studio
-      processors: [memory_processor]
-      bubble: true
-      stream: php://stdout
-    api_file_handler:
-      class: Monolog\Handler\StreamHandler
-      level: NOTICE
-      formatter: api_open_studio
-      bubble: true
-      stream: /var/www/html/logs/api/error.log
-    db_file_handler:
-      class: Monolog\Handler\StreamHandler
-      level: NOTICE
-      formatter: api_open_studio
-      bubble: true
-      stream: /var/www/html/logs/db/error.log
-  processors:
-    web_processor:
-      class: Monolog\Processor\WebProcessor
-    memory_processor:
-      class: Monolog\Processor\MemoryUsageProcessor
   loggers:
     api:
-      handlers: [api_file_handler]
-      processors: [web_processor]
+      class: Monolog\Handler\StreamHandler
+      stream: /var/log/api.log
+      level: NOTICE
     db:
-      handlers: [db_file_handler]
-      processors: [web_processor]
+      class: Monolog\Handler\StreamHandler
+      stream: /var/log/db.log
+      level: NOTICE
 
 db:
   definition_path: "includes/db/dbDefinition.yaml"

@@ -18,7 +18,6 @@ namespace ApiOpenStudio\Processor;
 use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db;
-use Monolog\Logger;
 
 /**
  * Class InviteDelete
@@ -63,14 +62,12 @@ class InviteDelete extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Logger $logger Logger object.
-     *
-     * @throws Core\ApiException
+     * @param Core\StreamLogger $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\StreamLogger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->inviteMapper = new Db\InviteMapper($db);
+        $this->inviteMapper = new Db\InviteMapper($db, $logger);
     }
 
     /**

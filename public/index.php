@@ -24,7 +24,7 @@ use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Api;
 use ApiOpenStudio\Core\Error;
-use Cascade\Cascade;
+use ApiOpenStudio\Core\StreamLogger;
 
 ob_start();
 
@@ -33,16 +33,17 @@ if (!array_key_exists('HTTP_ORIGIN', $_SERVER)) {
     $_SERVER['HTTP_ORIGIN'] = $_SERVER['SERVER_NAME'];
 }
 
+$config = new Config();
+
 try {
-    $config = new Config();
     $api = new Api($config->all());
     $result = $api->process();
 } catch (ApiException $e) {
-    Cascade::fileConfig($config->__get(['debug']));
-    $logger = Cascade::getLogger('api');
+    $api = new Api($config->all());
+    $logger = new StreamLogger($config->__get(['debug', 'loggers']));
     $outputClass = 'ApiOpenStudio\\Output\\' . ucfirst($api->getAccept($config->__get(['api', 'default_format'])));
     if (!class_exists($outputClass)) {
-        $logger->error('Error: no default format defined in the config!');
+        $logger->error('api', 'Error: no default format defined in the config!');
         echo 'Error: no default format defined in the config!';
         exit();
     }
@@ -52,10 +53,7 @@ try {
     echo $output->process()->getData();
     exit();
 } catch (Exception $e) {
-    Cascade::fileConfig($config->__get(['debug']));
-    $logger = Cascade::getLogger('api');
     ob_end_flush();
-    $logger->error('Error: ' . $e->getCode() . '. ' . $e->getMessage());
     echo 'Error: ' . $e->getCode() . '. ' . $e->getMessage();
     exit();
 }

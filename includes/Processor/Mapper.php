@@ -242,7 +242,7 @@ class Mapper extends Core\ProcessorEntity
                 throw new Core\ApiException("missing get or set indices a index: $index", 6, $this->id, 417);
             }
             $value = $xpath->query($mapping->get);
-            $this->logger->debug('value' . print_r($value, true));
+            $this->logger->debug('api', 'value' . print_r($value, true));
             $this->{$resultFunc}($mapping->set, $value);
         }
 

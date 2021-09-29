@@ -30,119 +30,119 @@ class Request
      *
      * @var integer Account ID.
      */
-    private $accId;
+    private int $accId;
 
     /**
      * Account name.
      *
      * @var string Account name.
      */
-    private $accName;
+    private string $accName;
 
     /**
      * Application ID.
      *
      * @var integer Application ID.
      */
-    private $appId;
+    private int $appId;
 
     /**
      * Application name.
      *
      * @var string Application name.
      */
-    private $appName;
+    private string $appName;
 
     /**
      * Request arguments.
      *
      * @var array Request arguments.
      */
-    private $args;
+    private array $args;
 
     /**
      * Cache key.
      *
      * @var string Cache key.
      */
-    private $cacheKey;
+    private string $cacheKey;
 
     /**
      * Contents of $_FILES.
      *
      * @var array Server $_FILES.
      */
-    private $files;
+    private array $files;
 
     /**
      * Fragments array.
      *
      * @var array Fragments metadata and results.
      */
-    private $fragments = [];
+    private array $fragments = [];
 
     /**
      * Contents of $_GET.
      *
      * @var array GET variables.
      */
-    private $getVars;
+    private array $getVars;
 
     /**
      * The requesting IP.
      *
      * @var string Request IP.
      */
-    private $ip;
+    private string $ip;
 
     /**
      * The request metadata.
      *
      * @var stdClass Request metadata.
      */
-    private $meta;
+    private stdClass $meta;
 
     /**
      * The request method.
      *
      * @var string Request method.
      */
-    private $method;
+    private string $method;
 
     /**
      * Request output format.
      *
      * @var string Value of the accept header, translated into readable string.
      */
-    private $outFormat;
+    private string $outFormat;
 
     /**
      * Contents of $_POST.
      *
      * @var array POST variables.
      */
-    private $postVars;
+    private array $postVars;
 
     /**
      * The resource called.
      *
      * @var Resource Resource object.
      */
-    private $resource;
+    private Resource $resource;
 
     /**
      * Resource cache TTL.
      *
      * @var integer Cache TTL.
      */
-    private $ttl = 0;
+    private int $ttl = 0;
 
     /**
      * Request URI.
      *
      * @var string Requesting URI.
      */
-    private $uri;
+    private string $uri;
 
     /**
      * Set the account ID.

@@ -79,7 +79,7 @@ class AccountUpdate extends Core\ProcessorEntity
         }
         $accid = $this->val('accid', true);
 
-        $accountMapper = new Db\AccountMapper($this->db);
+        $accountMapper = new Db\AccountMapper($this->db, $this->logger);
 
         $account = $accountMapper->findByName($name);
         if (!empty($account->getAccid())) {

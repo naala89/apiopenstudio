@@ -246,7 +246,7 @@ class ResourceSwagger extends ResourceBase
             }
             // strongly typed
             if (!empty($parameter['items']['type'])) {
-                $this->logger->info('strongly typed: ' . $parameter['items']['type']);
+                $this->logger->info('api', 'strongly typed: ' . $parameter['items']['type']);
                 $p = [
                     'meta' => [
                         'id' => $this->paramCount++,

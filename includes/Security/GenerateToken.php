@@ -73,30 +73,30 @@ class GenerateToken extends Core\ProcessorEntity
         parent::process();
         $username = $this->val('username', true);
         $password = $this->val('password', true);
-        $userMapper = new Db\UserMapper($this->db);
-        $userRoleMapper = new Db\UserRoleMapper($this->db);
-        $roleMapper = new Db\RoleMapper($this->db);
+        $userMapper = new Db\UserMapper($this->db, $this->logger);
+        $userRoleMapper = new Db\UserRoleMapper($this->db, $this->logger);
+        $roleMapper = new Db\RoleMapper($this->db, $this->logger);
         $config = new Config();
 
         // Verify User credentials.
-        $this->logger->debug("login attempt: $username");
+        $this->logger->debug('api', "login attempt: $username");
         $user = $userMapper->findByUsername($username);
         if (empty($user->getUid()) || $user->getActive() == 0) {
             // Invalid username or user inactive.
             $message = 'invalid username or password';
-            $this->logger->warning($message);
+            $this->logger->warning('api', $message);
             throw new Core\ApiException($message, 4, $this->id, 401);
         }
         if (empty($storedHash = $user->getHash())) {
             // No password hash stored yet.
             $message = 'invalid username or password';
-            $this->logger->warning($message);
+            $this->logger->warning('api', $message);
             throw new Core\ApiException($message, 4, $this->id, 401);
         }
         if (!Core\Hash::verifPassword($password, $storedHash)) {
             // Invalid password.
             $message = 'invalid username or password';
-            $this->logger->warning($message);
+            $this->logger->warning('api', $message);
             throw new Core\ApiException($message, 4, $this->id, 401);
         }
 

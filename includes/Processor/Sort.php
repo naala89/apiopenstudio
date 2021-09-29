@@ -116,7 +116,7 @@ class Sort extends Core\ProcessorEntity
             }
         }
 
-        $this->logger->debug('values after sort: ' . print_r($values, true));
+        $this->logger->debug('api', 'values after sort: ' . print_r($values, true));
 
         return $values;
     }

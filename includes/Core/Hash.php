@@ -27,7 +27,7 @@ class Hash
      *
      * @var integer Password hash cost.
      */
-    private static $cost = 12;
+    private static int $cost = 12;
 
   /**
    * Generate a sha256 salted hash of a string.
@@ -36,7 +36,7 @@ class Hash
    *
    * @return string
    */
-    public static function generateHash(string $string)
+    public static function generateHash(string $string): string
     {
         $options = [
             'cost' => self::$cost
@@ -52,7 +52,7 @@ class Hash
    *
    * @return boolean
    */
-    public static function verifPassword(string $password, string $hash)
+    public static function verifPassword(string $password, string $hash): bool
     {
         return password_verify($password, $hash);
     }
@@ -64,7 +64,7 @@ class Hash
    *
    * @return string
    */
-    public static function generateToken(string $string)
+    public static function generateToken(string $string): string
     {
         return md5(time() . $string);
     }

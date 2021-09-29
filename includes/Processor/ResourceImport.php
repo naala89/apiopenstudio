@@ -26,7 +26,6 @@ use Symfony\Component\Yaml\Exception\ParseException;
 use ApiOpenStudio\Db\UserRoleMapper;
 use ApiOpenStudio\Core\ResourceValidator;
 use Symfony\Component\Yaml\Yaml;
-use Monolog\Logger;
 
 /**
  * Class ResourceImport
@@ -120,19 +119,17 @@ class ResourceImport extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Logger $logger Logger object.
-     *
-     * @throws Core\ApiException
+     * @param Core\StreamLogger $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\StreamLogger $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Config();
-        $this->userRoleMapper = new UserRoleMapper($db);
-        $this->accountMapper = new AccountMapper($db);
-        $this->applicationMapper = new ApplicationMapper($db);
-        $this->resourceMapper = new ResourceMapper($db);
-        $this->validator = new ResourceValidator($db, $this->logger);
+        $this->userRoleMapper = new UserRoleMapper($db, $logger);
+        $this->accountMapper = new AccountMapper($db, $logger);
+        $this->applicationMapper = new ApplicationMapper($db, $logger);
+        $this->resourceMapper = new ResourceMapper($db, $logger);
+        $this->validator = new ResourceValidator($db, $logger);
     }
 
     /**
@@ -184,16 +181,16 @@ class ResourceImport extends Core\ProcessorEntity
             }
         }
 
-        $this->logger->debug('Decoded new resource: ' . print_r($resource, true));
+        $this->logger->debug('api', 'Decoded new resource: ' . print_r($resource, true));
 
         foreach ($this->requiredKeys as $requiredKey) {
             if (!isset($resource[$requiredKey])) {
-                $this->logger->error("Missing $requiredKey in new resource");
+                $this->logger->error('api', "Missing $requiredKey in new resource");
                 throw new Core\ApiException("Missing $requiredKey in new resource", 6, $this->id, 400);
             }
         }
         if ($resource['ttl'] < 0) {
-            $this->logger->error("Negative ttl in new resource");
+            $this->logger->error('api', 'Negative ttl in new resource');
             throw new Core\ApiException("Negative ttl in new resource", 6, $this->id, 400);
         }
 
@@ -203,7 +200,7 @@ class ResourceImport extends Core\ProcessorEntity
             'Developer'
         );
         if (empty($role->getUrid())) {
-            $this->logger->error("Unauthorised: you do not have permissions for this application");
+            $this->logger->error('api', 'Unauthorised: you do not have permissions for this application');
             throw new Core\ApiException(
                 "Unauthorised: you do not have permissions for this application",
                 6,
@@ -225,7 +222,7 @@ class ResourceImport extends Core\ProcessorEntity
 
         $application = $this->applicationMapper->findByAppid($resource['appid']);
         if (empty($application)) {
-            $this->logger->error('Invalid application: ' . $resource['appid']);
+            $this->logger->error('api', 'Invalid application: ' . $resource['appid']);
             throw new Core\ApiException(
                 'Invalid application: ' . $resource['appid'],
                 6,
@@ -240,7 +237,7 @@ class ResourceImport extends Core\ProcessorEntity
                 && $application->getName() == $this->settings->__get(['api', 'core_application'])
                 && $this->settings->__get(['api', 'core_resource_lock'])
         ) {
-            $this->logger->error('Unauthorised: this is the core application');
+            $this->logger->error('api', 'Unauthorised: this is the core application');
             throw new Core\ApiException(
                 'Unauthorised: this is the core application',
                 6,
@@ -255,7 +252,7 @@ class ResourceImport extends Core\ProcessorEntity
             $resource['uri']
         );
         if (!empty($resourceExists->getresid())) {
-            $this->logger->error('Resource already exists');
+            $this->logger->error('api', 'Resource already exists');
             throw new Core\ApiException('Resource already exists', 6, $this->id, 400);
         }
 
