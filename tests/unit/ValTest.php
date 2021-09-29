@@ -4,25 +4,25 @@ use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Processor\VarBool;
 use ApiOpenStudio\Core\ApiException;
-use Cascade\Cascade;
-use Monolog\Logger;
+use ApiOpenStudio\Core\StreamLogger;
+use Codeception\Test\Unit;
 
-class ValTest extends \Codeception\Test\Unit
+class ValTest extends Unit
 {
     /**
-     * @var \UnitTester
+     * @var UnitTester
      */
-    protected $tester;
+    protected UnitTester $tester;
 
     /**
      * @var Request
      */
-    protected $request;
+    protected Request $request;
 
     /**
-     * @var Logger
+     * @var StreamLogger
      */
-    protected $logger;
+    protected StreamLogger $logger;
 
     /**
      * {@inheritDoc}
@@ -31,8 +31,7 @@ class ValTest extends \Codeception\Test\Unit
     {
         $this->request = new Request();
         $config = new Config();
-        Cascade::fileConfig($config->__get('debug'));
-        $this->logger = Cascade::getLogger('api');
+        $this->logger = new StreamLogger($config->__get(['debug', 'loggers']));
     }
 
     /**
