@@ -110,11 +110,12 @@ class Api
             . $this->settings['db']['host'] . '/'
             . $this->settings['db']['database']
             . $dsnOptions;
-        $this->db = ADONewConnection($dsn);
-        if (!$this->db) {
+        $conn = ADONewConnection($dsn);
+        if (!$conn) {
             $this->logger->error('db', 'DB connection failed');
             throw new ApiException('DB connection failed', 2, -1, 500);
         }
+        $this->db = $conn;
 
         // get the request data for processing.
         $this->request = $this->getData();
