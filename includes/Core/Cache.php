@@ -15,7 +15,6 @@
 
 namespace ApiOpenStudio\Core;
 
-use \ApiOpenStudio\Core\StreamLogger;
 use Memcached;
 
 /**
@@ -30,7 +29,7 @@ class Cache
      *
      * @var StreamLogger
      */
-    private \ApiOpenStudio\Core\StreamLogger $logger;
+    private StreamLogger $logger;
 
     /**
      * Current supported caches.

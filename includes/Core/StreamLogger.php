@@ -54,7 +54,7 @@ class StreamLogger
     /**
      * Add a logger.
      *
-     * @param String $loggerName
+     * @param string $loggerName
      *   Name of the logger.
      * @param Logger $logger
      *   The logger.
@@ -67,10 +67,10 @@ class StreamLogger
     /**
      * Remove a logger.
      *
-     * @param String $loggerName
+     * @param string $loggerName
      *   Name of the logger.
      */
-    public function remove(String $loggerName)
+    public function remove(string $loggerName)
     {
         if (isset($this->loggers[$loggerName])) {
             unset($this->loggers[$loggerName]);
@@ -91,14 +91,14 @@ class StreamLogger
     /**
      * Send a debug message to a logger.
      *
-     * @param String $loggerName
+     * @param string $loggerName
      *   Name of the logger to use.
-     * @param String $message
+     * @param string $message
      *   Message to log.
      *
      * @throws ApiException
      */
-    public function debug(String $loggerName, String $message)
+    public function debug(string $loggerName, string $message)
     {
         $this->logMessage($loggerName, 'debug', $message);
     }
@@ -106,14 +106,14 @@ class StreamLogger
     /**
      * Send an info message to a logger.
      *
-     * @param String $loggerName
+     * @param string $loggerName
      *   Name of the logger to use.
-     * @param String $message
+     * @param string $message
      *   Message to log.
      *
      * @throws ApiException
      */
-    public function info(String $loggerName, String $message)
+    public function info(string $loggerName, string $message)
     {
         $this->logMessage($loggerName, 'info', $message);
     }
@@ -121,14 +121,14 @@ class StreamLogger
     /**
      * Send a notice message to a logger.
      *
-     * @param String $loggerName
+     * @param string $loggerName
      *   Name of the logger to use.
-     * @param String $message
+     * @param string $message
      *   Message to log.
      *
      * @throws ApiException
      */
-    public function notice(String $loggerName, String $message)
+    public function notice(string $loggerName, string $message)
     {
         $this->logMessage($loggerName, 'notice', $message);
     }
@@ -136,14 +136,14 @@ class StreamLogger
     /**
      * Send a warning message to a logger.
      *
-     * @param String $loggerName
+     * @param string $loggerName
      *   Name of the logger to use.
-     * @param String $message
+     * @param string $message
      *   Message to log.
      *
      * @throws ApiException
      */
-    public function warning(String $loggerName, String $message)
+    public function warning(string $loggerName, string $message)
     {
         $this->logMessage($loggerName, 'warning', $message);
     }
@@ -151,14 +151,14 @@ class StreamLogger
     /**
      * Send an error message to a logger.
      *
-     * @param String $loggerName
+     * @param string $loggerName
      *   Name of the logger to use.
-     * @param String $message
+     * @param string $message
      *   Message to log.
      *
      * @throws ApiException
      */
-    public function error(String $loggerName, String $message)
+    public function error(string $loggerName, string $message)
     {
         $this->logMessage($loggerName, 'error', $message);
     }
@@ -166,14 +166,14 @@ class StreamLogger
     /**
      * Send a critical message to a logger.
      *
-     * @param String $loggerName
+     * @param string $loggerName
      *   Name of the logger to use.
-     * @param String $message
+     * @param string $message
      *   Message to log.
      *
      * @throws ApiException
      */
-    public function critical(String $loggerName, String $message)
+    public function critical(string $loggerName, string $message)
     {
         $this->logMessage($loggerName, 'critical', $message);
     }
@@ -181,14 +181,14 @@ class StreamLogger
     /**
      * Send an alert message to a logger.
      *
-     * @param String $loggerName
+     * @param string $loggerName
      *   Name of the logger to use.
-     * @param String $message
+     * @param string $message
      *   Message to log.
      *
      * @throws ApiException
      */
-    public function alert(String $loggerName, String $message)
+    public function alert(string $loggerName, string $message)
     {
         $this->logMessage($loggerName, 'alert', $message);
     }
@@ -196,14 +196,14 @@ class StreamLogger
     /**
      * Send an emergency message to a logger.
      *
-     * @param String $loggerName
+     * @param string $loggerName
      *   Name of the logger to use.
-     * @param String $message
+     * @param string $message
      *   Message to log.
      *
      * @throws ApiException
      */
-    public function emergency(String $loggerName, String $message)
+    public function emergency(string $loggerName, string $message)
     {
         $this->logMessage($loggerName, 'emergency', $message);
     }
@@ -211,16 +211,16 @@ class StreamLogger
     /**
      * log the message.
      *
-     * @param String $loggerName
+     * @param string $loggerName
      *   Name of the logger to use.
-     * @param String $level
+     * @param string $level
      *   Log level.
-     * @param String $logMessage
+     * @param string $logMessage
      *   Log message.
      *
      * @throws ApiException
      */
-    protected function logMessage(String $loggerName, String $level, String $logMessage)
+    protected function logMessage(string $loggerName, string $level, string $logMessage)
     {
         if (!isset($this->loggers[$loggerName])) {
             throw new ApiException("invalid logger called: $loggerName");
