@@ -16,6 +16,7 @@
 namespace ApiOpenStudio\Db;
 
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Db;
 
 /**
  * Class ResourceMapper.
@@ -27,13 +28,13 @@ class ResourceMapper extends Mapper
     /**
      * Save an API Resource.
      *
-     * @param \ApiOpenStudio\Db\Resource $resource The API Resource.
+     * @param Db\Resource $resource The API Resource.
      *
      * @return boolean Success.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function save(\ApiOpenStudio\Db\Resource $resource): bool
+    public function save(Db\Resource $resource): bool
     {
         if ($resource->getResid() == null) {
             $sql = 'INSERT INTO resource (appid, name, description, method, uri, meta, ttl) VALUES ';
@@ -67,13 +68,13 @@ class ResourceMapper extends Mapper
     /**
      * Delete an API resource.
      *
-     * @param \ApiOpenStudio\Db\Resource $resource Resource object.
+     * @param Db\Resource $resource Resource object.
      *
      * @return boolean Success.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function delete(\ApiOpenStudio\Db\Resource $resource): bool
+    public function delete(Db\Resource $resource): bool
     {
         $sql = 'DELETE FROM resource WHERE resid = ?';
         $bindParams = [$resource->getResid()];
@@ -100,11 +101,11 @@ class ResourceMapper extends Mapper
      *
      * @param integer $resid Resource ID.
      *
-     * @return \ApiOpenStudio\Db\Resource Resource object.
+     * @return Db\Resource Resource object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByResid(int $resid): \ApiOpenStudio\Db\Resource
+    public function findByResid(int $resid): Db\Resource
     {
         $sql = 'SELECT * FROM resource WHERE resid = ?';
         $bindParams = [$resid];
@@ -118,11 +119,11 @@ class ResourceMapper extends Mapper
      * @param string $method API resource method.
      * @param string $uri API resource URI.
      *
-     * @return \ApiOpenStudio\Db\Resource Resource object.
+     * @return Db\Resource Resource object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByAppIdMethodUri(int $appid, string $method, string $uri): \ApiOpenStudio\Db\Resource
+    public function findByAppIdMethodUri(int $appid, string $method, string $uri): Db\Resource
     {
         $sql = 'SELECT * FROM resource WHERE appid = ? AND method = ? AND uri = ?';
         $bindParams = [$appid, $method, $uri];
@@ -194,7 +195,7 @@ class ResourceMapper extends Mapper
             $placeholders = $bindParams = [];
             foreach ($appids as $appid) {
                 if (!is_numeric($appid)) {
-                    throw new ApiException("invalid appid: $appid", 6, $this->id, 401);
+                    throw new ApiException("invalid appid: $appid", 6, -1, 401);
                 }
                 $placeholders[] = '?';
                 $bindParams[] = (int) $appid;
