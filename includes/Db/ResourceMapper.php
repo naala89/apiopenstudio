@@ -67,13 +67,13 @@ class ResourceMapper extends Mapper
     /**
      * Delete an API resource.
      *
-     * @param ApiOpenStudio\Db\Resource $resource Resource object.
+     * @param \ApiOpenStudio\Db\Resource $resource Resource object.
      *
      * @return boolean Success.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function delete(ApiOpenStudio\Db\Resource $resource): bool
+    public function delete(\ApiOpenStudio\Db\Resource $resource): bool
     {
         $sql = 'DELETE FROM resource WHERE resid = ?';
         $bindParams = [$resource->getResid()];
@@ -100,11 +100,11 @@ class ResourceMapper extends Mapper
      *
      * @param integer $resid Resource ID.
      *
-     * @return ApiOpenStudio\Db\Resource Resource object.
+     * @return \ApiOpenStudio\Db\Resource Resource object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByResid(int $resid): ApiOpenStudio\Db\Resource
+    public function findByResid(int $resid): \ApiOpenStudio\Db\Resource
     {
         $sql = 'SELECT * FROM resource WHERE resid = ?';
         $bindParams = [$resid];
