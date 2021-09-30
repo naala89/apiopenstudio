@@ -122,6 +122,6 @@ class UserRoleCreate extends Core\ProcessorEntity
         }
 
         $userRole = new Db\UserRole(null, $accid, $appid, $uid, $rid);
-        return new Core\DataContainer($userRoleMapper->save($userRole), 'bool');
+        return new Core\DataContainer($userRoleMapper->save($userRole), 'boolean');
     }
 }

@@ -79,6 +79,6 @@ class UserRoleDelete extends Core\ProcessorEntity
             }
         }
 
-        return new Core\DataContainer($userRoleMapper->delete($userRole), 'bool');
+        return new Core\DataContainer($userRoleMapper->delete($userRole), 'boolean');
     }
 }

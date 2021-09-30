@@ -108,6 +108,6 @@ class RoleUpdate extends Core\ProcessorEntity
 
         $role->setName($name);
 
-        return new Core\DataContainer($this->roleMapper->save($role), 'bool');
+        return new Core\DataContainer($this->roleMapper->save($role), 'boolean');
     }
 }

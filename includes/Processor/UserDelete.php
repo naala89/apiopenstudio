@@ -70,6 +70,6 @@ class UserDelete extends Core\ProcessorEntity
             throw new Core\ApiException("User does not exist, uid: $uid", 6, $this->id, 400);
         }
 
-        return new Core\DataContainer($userMapper->delete($user), 'bool');
+        return new Core\DataContainer($userMapper->delete($user), 'boolean');
     }
 }
