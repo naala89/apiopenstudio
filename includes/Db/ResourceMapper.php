@@ -37,8 +37,9 @@ class ResourceMapper extends Mapper
     public function save(Db\Resource $resource): bool
     {
         if ($resource->getResid() == null) {
-            $sql = 'INSERT INTO resource (appid, name, description, method, uri, meta, ttl) VALUES ';
-            $sql .= '(?, ?, ?, ?, ?, ?, ?)';
+            $sql = <<<'TAG'
+INSERT INTO resource (appid, name, description, method, uri, meta, ttl) VALUES (?, ?, ?, ?, ?, ?, ?)
+TAG;
             $bindParams = [
                 $resource->getAppId(),
                 $resource->getName(),
@@ -49,8 +50,9 @@ class ResourceMapper extends Mapper
                 $resource->getTtl(),
             ];
         } else {
-            $sql = 'UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, uri = ?, meta = ?, ttl = ? ';
-            $sql .= 'WHERE resid = ?';
+            $sql = <<<'TAG'
+UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, uri = ?, meta = ?, ttl = ? WHERE resid = ?
+TAG;
             $bindParams = [
                 $resource->getAppId(),
                 $resource->getName(),
@@ -143,7 +145,8 @@ class ResourceMapper extends Mapper
      */
     public function findByAppNamesMethodUri($appNames, string $method, string $uri): array
     {
-        $sql = 'SELECT r.* FROM resource AS r INNER JOIN application AS a ON r.appid=a.appid WHERE';
+        $sql = 'SELECT r.* FROM resource AS r INNER JOIN application AS a ON r.appid=a.appid';
+        $sql .= ' WHERE';
         $bindParams = [];
         if (is_array($appNames)) {
             $q = [];
