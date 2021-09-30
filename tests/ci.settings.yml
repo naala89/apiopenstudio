@@ -12,12 +12,12 @@ debug:
   loggers:
     api:
       class: Monolog\Handler\StreamHandler
-      stream: /var/log/api.log
-      level: NOTICE
+      stream: log/api.log
+      level: DEBUG
     db:
       class: Monolog\Handler\StreamHandler
-      stream: /var/log/db.log
-      level: NOTICE
+      stream: log/db.log
+      level: DEBUG
 
 db:
   definition_path: includes/Db/dbDefinition.yaml
