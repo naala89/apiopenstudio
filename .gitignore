@@ -6,12 +6,13 @@
 #tests
 tests/_support/_generated/
 
-#apioopenstudio
-.env
-settings.yml
+#apiopenstudio
 public/wiki/
 public/phpdoc/
 dbdata/
+log/
+.env
+settings.yml
 *.key
 *.key.pub
 

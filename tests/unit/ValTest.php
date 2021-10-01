@@ -26,6 +26,8 @@ class ValTest extends Unit
 
     /**
      * {@inheritDoc}
+     *
+     * @throws ApiException
      */
     protected function _before()
     {

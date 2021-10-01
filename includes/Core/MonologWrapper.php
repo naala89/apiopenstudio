@@ -255,7 +255,7 @@ class MonologWrapper
         try {
             $this->loggers[$loggerName]->{$level}($logMessage);
         } catch (Exception $e) {
-            throw new ApiException("invalid logger called: $loggerName. " . $e->getMessage());
+            throw new ApiException("Logger exception ($loggerName): " . $e->getMessage());
         }
     }
 
