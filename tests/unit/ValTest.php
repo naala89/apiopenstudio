@@ -74,8 +74,12 @@ class ValTest extends Unit
                 ],
             ],
             'loggers' => [
-                'api' => ['api_log_file'],
-                'db' => ['db_log_file'],
+                'api' => [
+                    'handlers' => ['api_log_file'],
+                ],
+                'db' => [
+                    'handlers' => ['db_log_file'],
+                ],
             ],
         ];
     }
