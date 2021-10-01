@@ -409,7 +409,9 @@ class MonologWrapper
     protected function mongoDBHandler(string $handlerName, array $definition): MongoDBHandler
     {
         if (!isset($definition['mongodb']) || !isset($definition['collection']) || !isset($definition['level'])) {
-            throw new ApiException("Missing mongodb, level or collection attribute in $handlerName handler in the settings");
+            throw new ApiException(
+                "Missing mongodb, level or collection attribute in $handlerName handler in the settings"
+            );
         }
         return new MongoDBHandler($definition['mongodb'], $definition['collection'], $definition['level']);
     }
