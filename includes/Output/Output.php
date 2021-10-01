@@ -66,10 +66,10 @@ abstract class Output extends Core\ProcessorEntity
      *
      * @param mixed $data Output data.
      * @param integer $status Output status.
-     * @param Core\StreamLogger $logger Output status.
+     * @param Core\MonologWrapper $logger Output status.
      * @param mixed|null $meta Output meta.
      */
-    public function __construct($data, int $status, Core\StreamLogger $logger, $meta = null)
+    public function __construct($data, int $status, Core\MonologWrapper $logger, $meta = null)
     {
         $this->settings = new Core\Config();
         $this->status = $status;

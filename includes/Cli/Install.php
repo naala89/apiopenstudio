@@ -18,7 +18,7 @@ namespace ApiOpenStudio\Cli;
 use ADOConnection;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
-use ApiOpenStudio\Core\StreamLogger;
+use ApiOpenStudio\Core\MonologWrapper;
 use ApiOpenStudio\Db;
 use Spyc;
 
@@ -537,7 +537,7 @@ class Install extends Script
         }
 
         print_r($this->config->all());
-        $logger = new StreamLogger($this->config->__get(['debug', 'loggers']));
+        $logger = new MonologWrapper($this->config->__get(['debug']));
         try {
             $userMapper = new Db\UserMapper($this->db, $logger);
             $user = new Db\User(

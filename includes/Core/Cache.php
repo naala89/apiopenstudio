@@ -27,9 +27,9 @@ class Cache
     /**
      * Logging class.
      *
-     * @var StreamLogger
+     * @var MonologWrapper
      */
-    private StreamLogger $logger;
+    private MonologWrapper $logger;
 
     /**
      * Current supported caches.
@@ -77,7 +77,7 @@ class Cache
      * Constructor.
      *
      * @param array $config Config array.
-     * @param StreamLogger $logger Logging object.
+     * @param MonologWrapper $logger Logging object.
      * @param boolean $cache Set cache on or off.
      *
      *    False means do not cache.
@@ -87,7 +87,7 @@ class Cache
      * @return boolean
      * @throws ApiException
      */
-    public function __construct(array $config, StreamLogger $logger, bool $cache = false)
+    public function __construct(array $config, MonologWrapper $logger, bool $cache = false)
     {
         $this->logger = $logger;
         $this->logger->info('api', 'Caching request with cache set to: ' . print_r($cache, true));

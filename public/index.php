@@ -24,7 +24,7 @@ use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Api;
 use ApiOpenStudio\Core\Error;
-use ApiOpenStudio\Core\StreamLogger;
+use ApiOpenStudio\Core\MonologWrapper;
 
 ob_start();
 
@@ -40,7 +40,7 @@ try {
     $result = $api->process();
 } catch (ApiException $e) {
     $api = new Api($config->all());
-    $logger = new StreamLogger($config->__get(['debug', 'loggers']));
+    $logger = new MonologWrapper($config->__get(['debug']));
     $outputClass = 'ApiOpenStudio\\Output\\' . ucfirst($api->getAccept($config->__get(['api', 'default_format'])));
     if (!class_exists($outputClass)) {
         $logger->error('api', 'Error: no default format defined in the config!');

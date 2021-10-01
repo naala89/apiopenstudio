@@ -9,15 +9,56 @@
 # @link      https://www.apiopenstudio.com
 
 debug:
+  formatters:
+    default:
+      format: null
+      date_format: null
+      allow_inline_line_breaks: false
+      ignore_empty_context_and_extra: true
+  handlers:
+    api_log_file:
+      class: StreamHandler
+      formatter: default
+      level: DEBUG
+      stream: /var/log/api.log
+    db_log_file:
+      class: StreamHandler
+      formatter: default
+      level: DEBUG
+      stream: /var/log/db.log
+  #    fire_php:
+  #      class: FirePHPHandler
+  #      formatter: default
+  #    chrome_php:
+  #      class: ChromePHPHandler
+  #      formatter: default
+  #    syslog:
+  #      class: SyslogHandler
+  #      ident: ApiOpenStudio
+  #      facility: local6
+  #      level: DEBUG
+  #      formatter: default
+  #    error_log:
+  #      class: ErrorLogHandler
+  #      formatter: default
+  #    processor:
+  #      class: ProcessHandler
+  #      command: '/usr/bin/php /var/www/monolog/someScript.php'
+  #      level: DEBUG
+  #      formatter: default
+  #    mongo_db:
+  #      class: MongoDBHandler
+  #      mongodb: client
+  #      collection: logs
+  #      level: DEBUG
+  #      formatter: default
   loggers:
     api:
-      class: Monolog\Handler\StreamHandler
-      stream: /var/log/api.log
-      level: NOTICE
+      handlers:
+        - api_log_file
     db:
-      class: Monolog\Handler\StreamHandler
-      stream: /var/log/db.log
-      level: NOTICE
+      handlers:
+        - db_log_file
 
 db:
   definition_path: "includes/db/dbDefinition.yaml"

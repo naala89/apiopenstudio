@@ -71,9 +71,9 @@ class Api
     /**
      * Logging class.
      *
-     * @var StreamLogger $logger
+     * @var MonologWrapper $logger
      */
-    private StreamLogger $logger;
+    private MonologWrapper $logger;
 
     /**
      * Api constructor.
@@ -84,7 +84,7 @@ class Api
     public function __construct(array $config)
     {
         $this->settings = $config;
-        $this->logger = new StreamLogger($config['debug']['loggers']);
+        $this->logger = new MonologWrapper($config['debug']);
         $this->cache = new Cache($this->settings, $this->logger, $this->settings['api']['cache']);
         $this->helper = new ProcessorHelper();
     }

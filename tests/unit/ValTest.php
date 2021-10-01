@@ -4,7 +4,7 @@ use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Processor\VarBool;
 use ApiOpenStudio\Core\ApiException;
-use ApiOpenStudio\Core\StreamLogger;
+use ApiOpenStudio\Core\MonologWrapper;
 use Codeception\Test\Unit;
 
 class ValTest extends Unit
@@ -20,9 +20,9 @@ class ValTest extends Unit
     protected Request $request;
 
     /**
-     * @var StreamLogger
+     * @var MonologWrapper
      */
-    protected StreamLogger $logger;
+    protected MonologWrapper $logger;
 
     /**
      * {@inheritDoc}
@@ -31,7 +31,7 @@ class ValTest extends Unit
     {
         $this->request = new Request();
         $config = new Config();
-        $this->logger = new StreamLogger($config->__get(['debug', 'loggers']));
+        $this->logger = new MonologWrapper($config->__get(['debug']));
     }
 
     /**

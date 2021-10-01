@@ -37,9 +37,9 @@ class ConvertToArray extends Output
     /**
      * Logging class.
      *
-     * @var Core\StreamLogger
+     * @var Core\MonologWrapper
      */
-    protected Core\StreamLogger $logger;
+    protected Core\MonologWrapper $logger;
 
     /**
      * {@inheritDoc}

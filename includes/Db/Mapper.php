@@ -17,7 +17,7 @@ namespace ApiOpenStudio\Db;
 
 use ADOConnection;
 use ApiOpenStudio\Core\ApiException;
-use ApiOpenStudio\Core\StreamLogger;
+use ApiOpenStudio\Core\MonologWrapper;
 
 /**
  * Abstract class Mapper.
@@ -36,19 +36,19 @@ abstract class Mapper
     /**
      * Logger object.
      *
-     * @var StreamLogger
+     * @var MonologWrapper
      */
-    protected StreamLogger $logger;
+    protected MonologWrapper $logger;
 
     /**
      * Mapper constructor.
      *
      * @param ADOConnection $dbLayer DB connection object.
      *
-     * @param StreamLogger $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      *
      */
-    public function __construct(ADOConnection $dbLayer, StreamLogger $logger)
+    public function __construct(ADOConnection $dbLayer, MonologWrapper $logger)
     {
         $this->db = $dbLayer;
         $this->logger = $logger;

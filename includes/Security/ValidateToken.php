@@ -64,9 +64,9 @@ class ValidateToken extends Core\ProcessorEntity
      * @param mixed $meta The processor metadata.
      * @param mixed $request Request object.
      * @param ADODB_mysqli $db Database object.
-     * @param Core\StreamLogger $logger Logger object.
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADODB_mysqli $db, Core\StreamLogger $logger)
+    public function __construct($meta, &$request, ADODB_mysqli $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
     }

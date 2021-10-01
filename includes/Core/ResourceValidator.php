@@ -42,17 +42,17 @@ class ResourceValidator
     /**
      * Logging class.
      *
-     * @var StreamLogger
+     * @var MonologWrapper
      */
-    private StreamLogger $logger;
+    private MonologWrapper $logger;
 
     /**
      * Constructor. Store processor metadata and request data in object.
      *
      * @param ADOConnection $db Database.
-     * @param StreamLogger $logger Logger.
+     * @param MonologWrapper $logger Logger.
      */
-    public function __construct(ADOConnection $db, StreamLogger $logger)
+    public function __construct(ADOConnection $db, MonologWrapper $logger)
     {
         $this->helper = new ProcessorHelper();
         $this->db = $db;

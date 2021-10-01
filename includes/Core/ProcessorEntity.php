@@ -51,9 +51,9 @@ abstract class ProcessorEntity extends Entity
     /**
      * Logger object.
      *
-     * @var StreamLogger
+     * @var MonologWrapper
      */
-    protected StreamLogger $logger;
+    protected MonologWrapper $logger;
 
     /**
      * An array of details of the processor, used to configure the frontend GUI and metadata construction.
@@ -164,10 +164,10 @@ abstract class ProcessorEntity extends Entity
      *   The full request object.
      * @param ADOConnection|null $db
      *   The DB connection object.
-     * @param StreamLogger|null $logger
+     * @param MonologWrapper|null $logger
      *   The logger.
      */
-    public function __construct($meta, Request &$request, ADOConnection $db = null, StreamLogger $logger = null)
+    public function __construct($meta, Request &$request, ADOConnection $db = null, MonologWrapper $logger = null)
     {
         $this->meta = $meta;
         $this->request = $request;
