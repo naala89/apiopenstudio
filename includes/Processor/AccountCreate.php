@@ -69,7 +69,7 @@ class AccountCreate extends Core\ProcessorEntity
             );
         }
 
-        $accountMapper = new Db\AccountMapper($this->db);
+        $accountMapper = new Db\AccountMapper($this->db, $this->logger);
 
         $account = $accountMapper->findByName($name);
         if (!empty($account->getAccid())) {

@@ -82,7 +82,7 @@ class UserRoleCreate extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
         parent::process();
 
@@ -109,7 +109,7 @@ class UserRoleCreate extends Core\ProcessorEntity
             $accid = null;
         }
 
-        $userRoleMapper = new Db\UserRoleMapper($this->db);
+        $userRoleMapper = new Db\UserRoleMapper($this->db, $this->logger);
 
         $userRole = $userRoleMapper->findByFilter(['col' => [
             'uid' => $uid,
@@ -122,6 +122,6 @@ class UserRoleCreate extends Core\ProcessorEntity
         }
 
         $userRole = new Db\UserRole(null, $accid, $appid, $uid, $rid);
-        return $userRoleMapper->save($userRole);
+        return new Core\DataContainer($userRoleMapper->save($userRole), 'boolean');
     }
 }

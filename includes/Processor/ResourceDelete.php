@@ -22,7 +22,6 @@ use ApiOpenStudio\Db\AccountMapper;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\ResourceMapper;
 use ApiOpenStudio\Db\UserRoleMapper;
-use Monolog\Logger;
 
 /**
  * Class ResourceDelete
@@ -95,17 +94,15 @@ class ResourceDelete extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Logger $logger Logger object.
-     *
-     * @throws Core\ApiException
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->applicationMapper = new ApplicationMapper($db);
-        $this->userRoleMapper = new UserRoleMapper($db);
-        $this->accountMapper = new AccountMapper($db);
-        $this->resourceMapper = new ResourceMapper($db);
+        $this->applicationMapper = new ApplicationMapper($db, $logger);
+        $this->userRoleMapper = new UserRoleMapper($db, $logger);
+        $this->accountMapper = new AccountMapper($db, $logger);
+        $this->resourceMapper = new ResourceMapper($db, $logger);
         $this->settings = new Config();
     }
 
@@ -152,6 +149,6 @@ class ResourceDelete extends Core\ProcessorEntity
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
-        return new Core\DataContainer($this->resourceMapper->delete($resource) ? 'true' : 'false');
+        return new Core\DataContainer($this->resourceMapper->delete($resource), 'boolean');
     }
 }

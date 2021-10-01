@@ -18,14 +18,14 @@ namespace ApiOpenStudio\Db;
 /**
  * Class Invite.
  *
- * DB class for for storing resource row data.
+ * DB class for storing invite row data.
  */
 class Invite
 {
     /**
      * Invite ID.
      *
-     * @var integer|null Inivite ID.
+     * @var integer|null Invite ID.
      */
     protected ?int $iid;
 

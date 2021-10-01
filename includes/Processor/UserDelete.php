@@ -55,7 +55,7 @@ class UserDelete extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
         parent::process();
 
@@ -63,13 +63,13 @@ class UserDelete extends Core\ProcessorEntity
             throw new Core\ApiException("Cannot process - no uid supplied", 6, $this->id, 400);
         }
 
-        $userMapper = new Db\UserMapper($this->db);
+        $userMapper = new Db\UserMapper($this->db, $this->logger);
 
         $user = $userMapper->findByUid($uid);
         if (empty($user->getUid())) {
             throw new Core\ApiException("User does not exist, uid: $uid", 6, $this->id, 400);
         }
 
-        return $userMapper->delete($user);
+        return new Core\DataContainer($userMapper->delete($user), 'boolean');
     }
 }

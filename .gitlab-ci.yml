@@ -41,7 +41,7 @@ tests:
     paths:
       - phpcs.txt
       - tests/_output/
-      - logs/
+      - log/
   script:
     - echo "Setting up for tests."
     - eval $(ssh-agent -s)

@@ -19,7 +19,6 @@ use ADODB_mysqli;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db;
 use Lcobucci\JWT\UnencryptedToken;
-use Monolog\Logger;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 
 /**
@@ -65,9 +64,9 @@ class ValidateToken extends Core\ProcessorEntity
      * @param mixed $meta The processor metadata.
      * @param mixed $request Request object.
      * @param ADODB_mysqli $db Database object.
-     * @param Logger $logger Logger object.
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADODB_mysqli $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
     }

@@ -18,6 +18,7 @@ namespace ApiOpenStudio\Cli;
 use ADOConnection;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
+use ApiOpenStudio\Core\MonologWrapper;
 use ApiOpenStudio\Db;
 use Spyc;
 
@@ -535,8 +536,10 @@ class Install extends Script
             $email = $this->readlineTerminal($prompt);
         }
 
+        print_r($this->config->all());
+        $logger = new MonologWrapper($this->config->__get(['debug']));
         try {
-            $userMapper = new Db\UserMapper($this->db);
+            $userMapper = new Db\UserMapper($this->db, $logger);
             $user = new Db\User(
                 null,
                 1,
@@ -577,7 +580,7 @@ class Install extends Script
                 echo "Error: Could not find the newly created user, please check the logs.\n";
                 exit;
             }
-            $roleMapper = new Db\RoleMapper($this->db);
+            $roleMapper = new Db\RoleMapper($this->db, $logger);
             $role = $roleMapper->findByName('Administrator');
             if (empty($uid)) {
                 echo "Error: Could not find the administrator role, please check the logs.\n";
@@ -591,7 +594,7 @@ class Install extends Script
                 $uid,
                 $rid
             );
-            $userRoleMapper = new Db\UserRoleMapper($this->db);
+            $userRoleMapper = new Db\UserRoleMapper($this->db, $logger);
             $userRoleMapper->save($userRole);
         } catch (ApiException $e) {
             echo "Error: An error occurred creating your Administrator role, please check the logs.\n";

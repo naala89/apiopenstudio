@@ -91,7 +91,7 @@ class File extends Output
      */
     public function setHeader()
     {
-        $this->logger->info('Output: ' . $this->details()['machineName']);
+        $this->logger->info('api', 'Output: ' . $this->details()['machineName']);
         parent::setHeader();
         $filename = $this->val('filename', true);
         header("Content-Disposition: attachment; filename='$filename'");

@@ -55,13 +55,13 @@ class UserRoleDelete extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
         parent::process();
 
         $urid = $this->val('urid', true);
 
-        $userRoleMapper = new Db\UserRoleMapper($this->db);
+        $userRoleMapper = new Db\UserRoleMapper($this->db, $this->logger);
 
         $userRoles = $userRoleMapper->findByFilter(['col' => [
         'urid' => $urid,
@@ -79,6 +79,6 @@ class UserRoleDelete extends Core\ProcessorEntity
             }
         }
 
-        return $userRoleMapper->delete($userRole);
+        return new Core\DataContainer($userRoleMapper->delete($userRole), 'boolean');
     }
 }

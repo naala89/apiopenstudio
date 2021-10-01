@@ -20,7 +20,6 @@ use ApiOpenStudio\Core;
 use ApiOpenStudio\Db\UserRoleMapper;
 use ApiOpenStudio\Db\VarStore;
 use ApiOpenStudio\Db\VarStoreMapper;
-use Monolog\Logger;
 
 /**
  * Class VarStoreCreate
@@ -101,15 +100,13 @@ class VarStoreCreate extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Logger $logger Logger object.
-     *
-     * @throws Core\ApiException
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->varStoreMapper = new VarStoreMapper($db);
-        $this->userRoleMapper = new UserRoleMapper($db);
+        $this->varStoreMapper = new VarStoreMapper($db, $logger);
+        $this->userRoleMapper = new UserRoleMapper($db, $logger);
     }
 
     /**

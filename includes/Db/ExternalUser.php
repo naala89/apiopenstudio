@@ -18,7 +18,7 @@ namespace ApiOpenStudio\Db;
 /**
  * Class ExternalUser.
  *
- * DB class for for storing external_user row data.
+ * DB class for storing external_user row data.
  */
 class ExternalUser
 {

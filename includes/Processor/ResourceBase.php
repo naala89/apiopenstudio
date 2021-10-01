@@ -16,11 +16,11 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ProcessorHelper;
 use ApiOpenStudio\Db;
-use Monolog\Logger;
 
 /**
  * Class ResourceBase
@@ -114,9 +114,9 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param \Monolog\Logger $logger Logger object.
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->helper = new ProcessorHelper();
@@ -127,7 +127,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @return Core\DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
     public function process(): Core\DataContainer
     {
@@ -139,10 +139,10 @@ abstract class ResourceBase extends Core\ProcessorEntity
         switch ($this->request->getMethod()) {
             case 'post':
                 if (empty($accName)) {
-                    throw new Core\ApiException('Missing accName', 1, $this->id);
+                    throw new ApiException('Missing accName', 1, $this->id);
                 }
                 if (empty($appName)) {
-                    throw new Core\ApiException('Missing appName', 1, $this->id);
+                    throw new ApiException('Missing appName', 1, $this->id);
                 }
                 $string = $this->val('resourceString', true);
                 $resource = $this->importData($string);
@@ -153,10 +153,10 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 $method = $this->val('method', true);
                 $uri = $this->val('uri', true);
                 if (empty($method)) {
-                    throw new Core\ApiException('Missing method attribute in new resource', 1, $this->id);
+                    throw new ApiException('Missing method attribute in new resource', 1, $this->id);
                 }
                 if (empty($uri)) {
-                    throw new Core\ApiException('Missing uri attribute in new resource', 1, $this->id);
+                    throw new ApiException('Missing uri attribute in new resource', 1, $this->id);
                 }
                 $result = $this->read($appId, $method, $uri);
                 break;
@@ -165,15 +165,15 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 $method = $this->val('method', true);
                 $uri = $this->val('uri', true);
                 if (empty($method)) {
-                    throw new Core\ApiException('Missing method attribute in new resource', 1, $this->id);
+                    throw new ApiException('Missing method attribute in new resource', 1, $this->id);
                 }
                 if (empty($uri)) {
-                    throw new Core\ApiException('Missing uri attribute in new resource', 1, $this->id);
+                    throw new ApiException('Missing uri attribute in new resource', 1, $this->id);
                 }
                 $result = $this->delete($appId, $method, $uri);
                 break;
             default:
-                throw new Core\ApiException('unknown method value in new resource', 3, $this->id);
+                throw new ApiException('unknown method value in new resource', 3, $this->id);
                 break;
         }
 
@@ -207,31 +207,31 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * @param string $method Resource method.
      * @param string $uri Resource URI.
      *
-     * @return mixed
+     * @return Core\DataContainer
      *
-     * @throws Core\ApiException Error.
+     * @throws ApiException Error.
      */
-    protected function read(int $appId, string $method, string $uri)
+    protected function read(int $appId, string $method, string $uri): Core\DataContainer
     {
         if (empty($appId)) {
-            throw new Core\ApiException('missing application ID, cannot find resource', 3, $this->id, 400);
+            throw new ApiException('missing application ID, cannot find resource', 3, $this->id, 400);
         }
         if (empty($method)) {
-            throw new Core\ApiException('missing method parameter, cannot find resource', 1, $this->id, 400);
+            throw new ApiException('missing method parameter, cannot find resource', 1, $this->id, 400);
         }
         if (empty($uri)) {
-            throw new Core\ApiException('missing $uri parameter, cannot find resource', 1, $this->id, 400);
+            throw new ApiException('missing $uri parameter, cannot find resource', 1, $this->id, 400);
         }
-        $identifier = strtolower($uri);
+        $uri = strtolower($uri);
 
-        $mapper = new Db\ResourceMapper($this->db);
-        $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
+        $mapper = new Db\ResourceMapper($this->db, $this->logger);
+        $resource = $mapper->findByAppIdMethodUri($appId, $method, $uri);
         if (empty($resource->getId())) {
-            throw new Core\ApiException('Resource not found', 1, $this->id, 200);
+            throw new ApiException('Resource not found', 1, $this->id, 200);
         }
 
         $result = json_decode($resource->getMeta(), true);
-        $result['uri'] = $resource->getIdentifier();
+        $result['uri'] = $resource->getUri();
         $result['name'] = $resource->getName();
         $result['description'] = $resource->getDescription();
         $result['method'] = $resource->getMethod();
@@ -249,23 +249,23 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @return Core\DataContainer
      *
-     * @throws Core\ApiException Error.
+     * @throws ApiException Error.
      */
-    protected function delete(int $appId, string $method, string $uri)
+    protected function delete(int $appId, string $method, string $uri): Core\DataContainer
     {
         if (empty($appId)) {
-            throw new Core\ApiException('missing application ID, cannot find resource', 3, $this->id, 400);
+            throw new ApiException('missing application ID, cannot find resource', 3, $this->id, 400);
         }
         if (empty($method)) {
-            throw new Core\ApiException('missing method parameter, cannot find resource', 1, $this->id, 400);
+            throw new ApiException('missing method parameter, cannot find resource', 1, $this->id, 400);
         }
         if (empty($uri)) {
-            throw new Core\ApiException('missing uri parameter, cannot find resource', 1, $this->id, 400);
+            throw new ApiException('missing uri parameter, cannot find resource', 1, $this->id, 400);
         }
 
-        $identifier = strtolower($uri);
-        $mapper = new Db\ResourceMapper($this->db);
-        $resource = $mapper->findByAppIdMethodIdentifier($appId, $method, $identifier);
+        $uri = strtolower($uri);
+        $mapper = new Db\ResourceMapper($this->db, $this->logger);
+        $resource = $mapper->findByAppIdMethodUri($appId, $method, $uri);
 
         return new Core\DataContainer($mapper->delete($resource) ? 'true' : 'false', 'text');
     }
@@ -279,11 +279,11 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @return Core\DataContainer
      *
-     * @throws Core\ApiException Error.
+     * @throws ApiException Error.
      */
-    protected function create(array $data, string $accName, string $appName)
+    protected function create(array $data, string $accName, string $appName): Core\DataContainer
     {
-        $this->logger->debug('New resource' . print_r($data, true));
+        $this->logger->debug('api', 'New resource' . print_r($data, true));
         $this->validateData($data);
 
         $name = $data['name'];
@@ -306,12 +306,12 @@ abstract class ResourceBase extends Core\ProcessorEntity
         $coreApplicationName = $settings->__get(['api', 'core_application']);
         $coreResourceLock = $settings->__get(['api', 'core_resource_lock']);
         if ($coreResourceLock && $accName == $coreAccountName && $appName == $coreApplicationName) {
-            throw new Core\ApiException("Resources for $coreAccountName/$coreApplicationName are locked", 6, -1, 406);
+            throw new ApiException("Resources for $coreAccountName/$coreApplicationName are locked", 6, -1, 406);
         }
 
-        $accountMapper = new Db\AccountMapper($this->db);
-        $applicationMapper = new Db\ApplicationMapper($this->db);
-        $resourceMapper = new Db\ResourceMapper($this->db);
+        $accountMapper = new Db\AccountMapper($this->db, $this->logger);
+        $applicationMapper = new Db\ApplicationMapper($this->db, $this->logger);
+        $resourceMapper = new Db\ResourceMapper($this->db, $this->logger);
         $account = $accountMapper->findByName($accName);
         $accId = $account->getAccid();
         $application = $applicationMapper->findByAccidAppname($accId, $appName);
@@ -335,36 +335,36 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @return void
      *
-     * @throws Core\ApiException Error.
+     * @throws ApiException Error.
      */
     protected function validateData($data)
     {
-        $this->logger->info("Validating the new resource...");
+        $this->logger->info('api', 'Validating the new resource...');
         // check mandatory elements exists in data
         if (empty($data)) {
-            throw new Core\ApiException("empty resource uploaded", 6, $this->id, 406);
+            throw new ApiException("empty resource uploaded", 6, $this->id, 406);
         }
         if (is_array($data) && sizeof($data) == 1 && $data[0] == $this->meta->resource) {
             $message = 'Form-data element with name: "' . $this->meta->resource . '" not found.';
-            throw new Core\ApiException($message, 6, -1, 406);
+            throw new ApiException($message, 6, -1, 406);
         }
         if (!isset($data['name'])) {
-            throw new Core\ApiException("missing name in new resource", 6, -1, 406);
+            throw new ApiException("missing name in new resource", 6, -1, 406);
         }
         if (!isset($data['description'])) {
-            throw new Core\ApiException("missing description in new resource", 6, -1, 406);
+            throw new ApiException("missing description in new resource", 6, -1, 406);
         }
         if (!isset($data['uri'])) {
-            throw new Core\ApiException("missing uri in new resource", 6, -1, 406);
+            throw new ApiException("missing uri in new resource", 6, -1, 406);
         }
         if (!isset($data['method'])) {
-            throw new Core\ApiException("missing method in new resource", 6, -1, 406);
+            throw new ApiException("missing method in new resource", 6, -1, 406);
         }
         if (!isset($data['process'])) {
-            throw new Core\ApiException("missing process in new resource", 6, -1, 406);
+            throw new ApiException("missing process in new resource", 6, -1, 406);
         }
         if (!isset($data['ttl']) || strlen($data['ttl']) < 1) {
-            throw new Core\ApiException("missing or negative ttl in new resource", 6, -1, 406);
+            throw new ApiException("missing or negative ttl in new resource", 6, -1, 406);
         }
 
         // validate for identical IDs
@@ -376,26 +376,26 @@ abstract class ResourceBase extends Core\ProcessorEntity
             $this->validateDetails($data['security']);
         }
         if (!empty($data['output'])) {
-            if (!is_array($data['output']) || Core\Utilities::is_assoc($data['output'])) {
-                throw new Core\ApiException('invalid output structure in new resource', 6, -1, 406);
+            if (!is_array($data['output']) || Core\Utilities::isAssoc($data['output'])) {
+                throw new ApiException('invalid output structure in new resource', 6, -1, 406);
             }
             foreach ($data['output'] as $i => $output) {
                 if (is_array($output)) {
                     if (!$this->helper->isProcessor($output)) {
                         $message = "bad processor declaration in output at index $i in new resource";
-                        throw new Core\ApiException($message, 6, -1, 406);
+                        throw new ApiException($message, 6, -1, 406);
                     }
                     $this->validateDetails($output);
                 } elseif ($output != 'response') {
-                    throw new Core\ApiException("invalid output structure at index: $i, in new resource", 6, -1, 406);
+                    throw new ApiException("invalid output structure at index: $i, in new resource", 6, -1, 406);
                 }
             }
         }
         if (!empty($data['fragments'])) {
-            if (!Core\Utilities::is_assoc($data['fragments'])) {
-                throw new Core\ApiException("invalid fragments structure in new resource", 6, -1, 406);
+            if (!Core\Utilities::isAssoc($data['fragments'])) {
+                throw new ApiException("invalid fragments structure in new resource", 6, -1, 406);
             }
-            foreach ($data['fragments'] as $fragKey => $fragVal) {
+            foreach ($data['fragments'] as $fragVal) {
                 $this->validateDetails($fragVal);
             }
         }
@@ -409,7 +409,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @return void
      *
-     * @throws \ApiOpenStudio\Core\ApiException Error.
+     * @throws ApiException Error.
      */
     private function identicalIds(array $meta)
     {
@@ -419,7 +419,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
                 if (in_array($node['id'], $id)) {
-                    throw new Core\ApiException('identical ID in new resource: ' . $node['id'], 6, -1, 406);
+                    throw new ApiException('identical ID in new resource: ' . $node['id'], 6, -1, 406);
                 }
                 $id[] = $node['id'];
             }
@@ -438,7 +438,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @return void
      *
-     * @throws Core\ApiException Error.
+     * @throws ApiException Error.
      */
     private function validateDetails(array $meta)
     {
@@ -450,7 +450,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 $class = new $classStr($meta, new Core\Request(), $this->db);
                 $details = $class->details();
                 $id = $node['id'];
-                $this->logger->info("validating: $id");
+                $this->logger->info('api', "validating: $id");
 
                 foreach ($details['input'] as $inputKey => $inputDef) {
                     $min = $inputDef['cardinality'][0];
@@ -468,7 +468,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
                             if (!empty($limitProcessors) && !in_array($input['processor'], $limitProcessors)) {
                                 $message = 'processor ' . $input['id'] . ' is an invalid processor type (only "'
                                     . implode('", ', $limitProcessors) . '" allowed)';
-                                throw new Core\ApiException($message, 6, $id, 406);
+                                throw new ApiException($message, 6, $id, 406);
                             }
                             array_unshift($stack, $input);
                             $count = 1;
@@ -483,11 +483,11 @@ abstract class ResourceBase extends Core\ProcessorEntity
                             $count = sizeof($input);
                         } elseif (!$literalAllowed) {
                             $message = "literals not allowed as input for '$inputKey' in processor: $id";
-                            throw new Core\ApiException($message, 6, $id, 406);
+                            throw new ApiException($message, 6, $id, 406);
                         } else {
                             if (!empty($limitValues) && !in_array($input, $limitValues)) {
                                 $message = "invalid value type for '$inputKey' in processor: $id";
-                                throw new Core\ApiException($message, 6, $id, 406);
+                                throw new ApiException($message, 6, $id, 406);
                             }
                             if (!empty($limitTypes)) {
                                 $this->validateTypeValue($input, $limitTypes, $id);
@@ -500,15 +500,15 @@ abstract class ResourceBase extends Core\ProcessorEntity
                     if ($count < $min) {
                         // check for nothing to validate and if that is ok.
                         $message = "input '$inputKey' in processor '" . $node['id'] . "' requires min $min";
-                        throw new Core\ApiException($message, 6, $id, 406);
+                        throw new ApiException($message, 6, $id, 406);
                     }
                     if ($max != '*' && $count > $max) {
                         $message = "input '$inputKey' in processor '" . $node['id'] . "' requires max $max";
-                        throw new Core\ApiException($message, 6, $id, 406);
+                        throw new ApiException($message, 6, $id, 406);
                     }
                 }
             } elseif (is_array($node)) {
-                foreach ($node as $key => $value) {
+                foreach ($node as $value) {
                     array_unshift($stack, $value);
                 }
             }
@@ -526,9 +526,9 @@ abstract class ResourceBase extends Core\ProcessorEntity
      *
      * @return boolean
      *
-     * @throws Core\ApiException Error.
+     * @throws ApiException Error.
      */
-    private function validateTypeValue($element, array $accepts, int $id)
+    private function validateTypeValue($element, array $accepts, int $id): bool
     {
         if (empty($accepts)) {
             return true;
@@ -568,11 +568,13 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 break;
             }
         }
+
         if (!$valid) {
             $message = 'invalid literal in new resource (' . print_r($element, true) . '. only "' .
                 implode("', '", $accepts) . '" accepted';
-            throw new Core\ApiException($message, 6, $id, 406);
+            throw new ApiException($message, 6, $id, 406);
         }
-        return $valid;
+
+        return true;
     }
 }

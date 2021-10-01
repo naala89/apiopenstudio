@@ -17,10 +17,7 @@ namespace ApiOpenStudio\Core;
 
 use ADOConnection;
 use ApiOpenStudio\Db;
-use Monolog\Logger;
 use Spyc;
-use Cascade\Cascade;
-use ADONewConnection;
 
 /**
  * Class Api
@@ -74,20 +71,20 @@ class Api
     /**
      * Logging class.
      *
-     * @var Logger
+     * @var MonologWrapper $logger
      */
-    private Logger $logger;
+    private MonologWrapper $logger;
 
     /**
      * Api constructor.
      *
      * @param array $config Config array.
+     * @throws ApiException
      */
     public function __construct(array $config)
     {
         $this->settings = $config;
-        Cascade::fileConfig($this->settings['debug']);
-        $this->logger = Cascade::getLogger('api');
+        $this->logger = new MonologWrapper($config['debug']);
         $this->cache = new Cache($this->settings, $this->logger, $this->settings['api']['cache']);
         $this->helper = new ProcessorHelper();
     }
@@ -113,51 +110,52 @@ class Api
             . $this->settings['db']['host'] . '/'
             . $this->settings['db']['database']
             . $dsnOptions;
-        $this->db = ADONewConnection($dsn);
-        if (!$this->db) {
-            $this->logger->error('DB connection failed');
+        $conn = ADONewConnection($dsn);
+        if (empty($conn)) {
+            $this->logger->error('db', 'DB connection failed');
             throw new ApiException('DB connection failed', 2, -1, 500);
         }
+        $this->db = $conn;
 
         // get the request data for processing.
         $this->request = $this->getData();
-        $this->logger->debug('request: ' . print_r($this->request, true));
+        $this->logger->info('api', 'request: ' . print_r($this->request, true));
         $resource = $this->request->getResource();
-        $this->logger->debug('resource: ' . print_r($resource, true));
+        $this->logger->info('api', 'resource: ' . print_r($resource, true));
         $meta = json_decode($resource->getMeta());
-        $this->logger->debug('meta: ' . print_r($meta, true));
+        $this->logger->debug('api', 'meta: ' . print_r($meta, true));
 
         // validate user access rights for the call.
         if (!empty($meta->security)) {
-            $this->logger->debug('Process security: ' . print_r($meta->security, true));
+            $this->logger->debug('api', 'Process security: ' . print_r($meta->security, true));
             $this->crawlMeta($meta->security);
         }
 
         // fetch the cache of the call, and process into output if it is not stale
         $result = $this->getCache($this->request->getCacheKey());
         if ($result !== false) {
-            $this->logger->info('Returning cached rsults');
+            $this->logger->info('api', 'Returning cached results');
             return $this->getOutput(true);
         }
         // set fragments in Meta class
         if (isset($meta->fragments)) {
             $fragments = $meta->fragments;
             foreach ($fragments as $fragKey => $fragVal) {
-                $this->logger->debug('Process fragment: ' . print_r($fragVal, true));
+                $this->logger->debug('api', 'Process fragment: ' . print_r($fragVal, true));
                 $fragments->$fragKey = $this->crawlMeta($fragVal);
             }
             $this->request->setFragments($fragments);
         }
 
         // process the call
-        $this->logger->debug('Process resource: ' . print_r($meta->process, true));
+        $this->logger->debug('api', 'Process resource: ' . print_r($meta->process, true));
         $result = $this->crawlMeta($meta->process);
-        $this->logger->debug('Results: ' . print_r($result, true));
+        $this->logger->debug('api', 'Results: ' . print_r($result, true));
 
 
         // store the results in cache for next time
         if (is_object($result) && get_class($result) == 'Error') {
-            $this->logger->notice('Not caching, result is error object');
+            $this->logger->notice('api', 'Not caching, result is error object');
         } else {
             $cacheData = ['data' => $result];
             $ttl = empty($this->request->getTtl()) ? 0 : $this->request->getTtl();
@@ -191,17 +189,17 @@ class Api
             $uriParts = explode('/', trim($get['request'], '/'));
 
             $accName = array_shift($uriParts);
-            $accMapper = new Db\AccountMapper($this->db);
+            $accMapper = new Db\AccountMapper($this->db, $this->logger);
             $account = $accMapper->findByName($accName);
             if (empty($accId = $account->getAccid())) {
-                throw new ApiException("invalid request", 3, -1, 404);
+                throw new ApiException('invalid request', 3, -1, 404);
             }
 
             $appName = array_shift($uriParts);
-            $appMapper = new Db\ApplicationMapper($this->db);
+            $appMapper = new Db\ApplicationMapper($this->db, $this->logger);
             $application = $appMapper->findByAccidAppname($accId, $appName);
             if (empty($appId = $application->getAppid())) {
-                throw new ApiException("invalid request", 3, -1, 404);
+                throw new ApiException('invalid request', 3, -1, 404);
             }
 
             $result = $this->getResource($appId, $method, $uriParts);
@@ -243,12 +241,12 @@ class Api
      *
      * @return array|Db\Resource
      *
-     * @throws ApiException Exception flowing throuigh, ot invalid test YAML.
+     * @throws ApiException Exception flowing through, ot invalid test YAML.
      */
     private function getResource(int $appId, string $method, array $uriParts)
     {
         if (!$this->test) {
-            $resourceMapper = new Db\ResourceMapper($this->db);
+            $resourceMapper = new Db\ResourceMapper($this->db, $this->logger);
 
             $args = [];
             while (sizeof($uriParts) > 0) {
@@ -256,8 +254,8 @@ class Api
                 $result = $resourceMapper->findByAppIdMethodUri($appId, $method, $uri);
                 if (!empty($result->getResid())) {
                     return [
-                    'args' => $args,
-                    'resource' => $result,
+                        'args' => $args,
+                        'resource' => $result,
                     ];
                 }
                 array_unshift($args, array_pop($uriParts));
@@ -265,7 +263,7 @@ class Api
             throw new ApiException('invalid request', 3, -1, 404);
         }
 
-        $filepath = $_SERVER['DOCUMENT_ROOT'] . $this->config->__get('dir_yaml') . 'test/' . $this->test;
+        $filepath = $_SERVER['DOCUMENT_ROOT'] . $this->settings->__get('dir_yaml') . 'test/' . $this->test;
         if (!file_exists($filepath)) {
             throw new ApiException("invalid test yaml: $filepath", 1, -1, 400);
         }
@@ -281,11 +279,11 @@ class Api
         if (!empty($yaml['fragments'])) {
             $meta['fragments'] = $yaml['fragments'];
         }
-        $resource = new Db\ApiResource();
+        $resource = new Db\Resource();
         $resource->setMeta(json_encode($meta));
         $resource->setTtl($yaml['ttl']);
         $resource->setMethod($yaml['method']);
-        $resource->setIdentifier(strtolower($yaml['uri']));
+        $resource->setUri(strtolower($yaml['uri']));
         return $resource;
     }
 
@@ -295,11 +293,13 @@ class Api
      * @param array $uriParts Array of UTI fragments.
      *
      * @return string
+     *
+     * @throws ApiException
      */
     private function getCacheKey(array $uriParts)
     {
         $cacheKey = $this->cleanData($this->request->getMethod() . '_' . implode('_', $uriParts));
-        $this->logger->info('cache key: ' . $cacheKey);
+        $this->logger->info('api', 'cache key: ' . $cacheKey);
         return $cacheKey;
     }
 
@@ -312,21 +312,21 @@ class Api
      *
      * @throws ApiException Allow any exceptions to flow through.
      */
-    private function getCache(string $cacheKey)
+    private function getCache(string $cacheKey): bool
     {
         if (!$this->cache->cacheActive()) {
-            $this->logger->info('not searching for cache - inactive');
+            $this->logger->info('api', 'not searching for cache - inactive');
             return false;
         }
 
         $data = $this->cache->get($cacheKey);
 
         if (!empty($data)) {
-            $this->logger->debug('from cache: ' . $data);
-            return $this->getOutput($data, new Request());
+            $this->logger->debug('api', 'from cache: ' . $data);
+            return $this->getOutput($data);
         }
 
-        $this->logger->info('no cache entry found');
+        $this->logger->info('api', 'no cache entry found');
         return false;
     }
 
@@ -375,8 +375,6 @@ class Api
                             $processNode = false;
                         }
                     }
-                } else {
-                    // Do nothing, this is a literal.
                 }
             }
 
@@ -424,11 +422,10 @@ class Api
     private function getOutput($data)
     {
         $result = true;
-        $resource = $this->request->getMeta();
 
         if (!isset($data->output)) {
             // Default response output if no output defined.
-            $this->logger->notice('no output section defined - returning the result in the response');
+            $this->logger->notice('api', 'no output section defined - returning the result in the response');
             $outputs = ['response'];
         } else {
             // Test for single output defined.
@@ -460,7 +457,7 @@ class Api
      *
      * @param array $meta Output metadata.
      * @param mixed $data Response data.
-     * @param integer $index Index in the output array.
+     * @param int|null $index Index in the output array.
      *
      * @return mixed
      *
@@ -485,9 +482,9 @@ class Api
      *
      * @param array $meta Output mnetadata.
      * @param mixed $data Response data.
-     * @param integer $index Index in the output array.
+     * @param int|null $index Index in the output array.
      *
-     * @return mixed
+     * @return void
      *
      * @throws ApiException Invalid output processor.
      */
@@ -497,7 +494,7 @@ class Api
             throw new ApiException("No processor found in the output section: $index.", 3, -1, 400);
         }
         $outFormat = ucfirst($this->cleanData($meta['processor']));
-        $class = $this->helper->getProcessor($outFormat, ['Output']);
+        $class = $this->helper->getProcessorString($outFormat, ['Output']);
         $obj = new $class($data, 200, $meta);
         $obj->process();
     }
@@ -509,7 +506,7 @@ class Api
      *
      * @throws ApiException Thow exception for unexpected headers.
      */
-    private function getMethod()
+    private function getMethod(): string
     {
         $method = strtolower($_SERVER['REQUEST_METHOD']);
         if ($method == 'post' && array_key_exists('HTTP_X_HTTP_METHOD', $_SERVER)) {
@@ -589,7 +586,7 @@ class Api
      *
      * @return integer
      */
-    private static function sortHeadersWeight($a, $b)
+    private static function sortHeadersWeight($a, $b): int
     {
         if ($a['weight'] == $b['weight']) {
             return 0;

@@ -19,7 +19,6 @@ use ADOConnection;
 use ApiOpenStudio\Db\AccountMapper;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\UserRoleMapper;
-use Monolog\Logger;
 
 /**
  * Class ProcessorEntity
@@ -47,14 +46,14 @@ abstract class ProcessorEntity extends Entity
      *
      * @var Request Request.
      */
-    protected $request;
+    protected Request $request;
 
     /**
      * Logger object.
      *
-     * @var Logger
+     * @var MonologWrapper
      */
-    protected Logger $logger;
+    protected MonologWrapper $logger;
 
     /**
      * An array of details of the processor, used to configure the frontend GUI and metadata construction.
@@ -154,7 +153,7 @@ abstract class ProcessorEntity extends Entity
      *
      * @var ADOConnection $dbLayer
      */
-    protected $db;
+    protected ADOConnection $db;
 
     /**
      * Constructor. Store processor metadata and request data in object.
@@ -165,16 +164,20 @@ abstract class ProcessorEntity extends Entity
      *   The full request object.
      * @param ADOConnection|null $db
      *   The DB connection object.
-     * @param Logger|null $logger
+     * @param MonologWrapper|null $logger
      *   The logger.
      */
-    public function __construct($meta, Request &$request, ADOConnection $db = null, Logger $logger = null)
+    public function __construct($meta, Request &$request, ADOConnection $db = null, MonologWrapper $logger = null)
     {
         $this->meta = $meta;
         $this->request = $request;
         $this->id = $meta->id ?? -1;
-        $this->db = $db;
-        $this->logger = $logger;
+        if (!empty($db)) {
+            $this->db = $db;
+        }
+        if (!empty($logger)) {
+            $this->logger = $logger;
+        }
     }
 
     /**
@@ -186,10 +189,11 @@ abstract class ProcessorEntity extends Entity
      * It is also the 1st stop to recursive processing of processors, so the place validate user credentials.
      *
      * @return mixed
+     * @throws ApiException
      */
     public function process()
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        $this->logger->info('api', 'Processor: ' . $this->details()['machineName']);
         return;
     }
 
@@ -221,8 +225,8 @@ abstract class ProcessorEntity extends Entity
      */
     public function val(string $key, bool $realValue = null)
     {
-        $this->logger->debug("Fetching val for: $key");
-        $this->logger->debug("Real value: $realValue");
+        $this->logger->debug('api', "Fetching val for: $key");
+        $this->logger->debug('api', "Real value: $realValue");
         $inputDet = $this->details['input'];
         if (!isset($inputDet[$key])) {
             // undefined input key for this processor type
@@ -258,7 +262,7 @@ abstract class ProcessorEntity extends Entity
         $this->validateAllowedValues($container->getData(), $limitValues, $min, $key);
         $this->validateAllowedTypes($container->getType(), $limitTypes, $min, $key);
 
-        $this->logger->debug('Value: ' . print_r($container->getData(), true));
+        $this->logger->debug('api', 'Value: ' . print_r($container->getData(), true));
 
         return $realValue ? $container->getData() : $container;
     }
@@ -313,7 +317,7 @@ abstract class ProcessorEntity extends Entity
      */
     protected function getUserAccids(int $uid): array
     {
-        $accountMapper = new AccountMapper($this->db);
+        $accountMapper = new AccountMapper($this->db, $this->logger);
         $accounts = $accountMapper->findAllForUser($uid);
         $accids = [];
         foreach ($accounts as $account) {
@@ -333,8 +337,8 @@ abstract class ProcessorEntity extends Entity
      */
     protected function getUserAppids(int $uid): DataContainer
     {
-        $userRoleMapper = new UserRoleMapper($this->db);
-        $applicationMapper = new ApplicationMapper($this->db);
+        $userRoleMapper = new UserRoleMapper($this->db, $this->logger);
+        $applicationMapper = new ApplicationMapper($this->db, $this->logger);
         $userRoles = $userRoleMapper->findByFilter(['col' => ['uid' => $uid]]);
         $appids = [];
 

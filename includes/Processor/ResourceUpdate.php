@@ -22,11 +22,9 @@ use ApiOpenStudio\Db\AccountMapper;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
-use ApiOpenStudio\Db\UserMapper;
 use ApiOpenStudio\Db\UserRoleMapper;
 use ApiOpenStudio\Core\ResourceValidator;
 use Spyc;
-use Monolog\Logger;
 
 /**
  * Class ResourceUpdate
@@ -178,19 +176,17 @@ class ResourceUpdate extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Logger $logger Logger object.
-     *
-     * @throws Core\ApiException
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Config();
-        $this->userRoleMapper = new UserRoleMapper($db);
-        $this->accountMapper = new AccountMapper($this->db);
-        $this->applicationMapper = new ApplicationMapper($db);
-        $this->resourceMapper = new ResourceMapper($db);
-        $this->validator = new ResourceValidator($db, $this->logger);
+        $this->userRoleMapper = new UserRoleMapper($db, $logger);
+        $this->accountMapper = new AccountMapper($this->db, $logger);
+        $this->applicationMapper = new ApplicationMapper($db, $logger);
+        $this->resourceMapper = new ResourceMapper($db, $logger);
+        $this->validator = new ResourceValidator($db, $logger);
     }
 
     /**
@@ -255,7 +251,6 @@ class ResourceUpdate extends Core\ProcessorEntity
 
         // Proposed account/application are locked.
         $application = $this->applicationMapper->findByAppid($appid);
-        $account = $this->accountMapper->findByAccid($application->getAccid());
         if (
             $account->getName() == $this->settings->__get(['api', 'core_account'])
             && $application->getName() == $this->settings->__get(['api', 'core_application'])

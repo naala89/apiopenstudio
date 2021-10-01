@@ -21,7 +21,6 @@ use ApiOpenStudio\Db;
 use Swift_SmtpTransport;
 use Swift_Mailer;
 use Swift_Message;
-use Monolog\Logger;
 
 /**
  * Class PasswordReset
@@ -112,18 +111,16 @@ class PasswordReset extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Logger $logger Logger object.
-     *
-     * @throws Core\ApiException
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->userMapper = new Db\UserMapper($db);
-        $this->varStoreMapper = new Db\VarStoreMapper($db);
+        $this->userMapper = new Db\UserMapper($db, $logger);
+        $this->varStoreMapper = new Db\VarStoreMapper($db, $logger);
         $this->settings = new Core\Config();
-        $this->accountMapper = new Db\AccountMapper($db);
-        $this->applicationMapper = new Db\ApplicationMapper($db);
+        $this->accountMapper = new Db\AccountMapper($db, $logger);
+        $this->applicationMapper = new Db\ApplicationMapper($db, $logger);
     }
 
     /**

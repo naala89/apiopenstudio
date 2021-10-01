@@ -27,28 +27,28 @@ abstract class Script
      *
      * @var array Current executed arg.
      */
-    protected $exec;
+    protected array $exec;
 
     /**
      * The command options array.
      *
      * @var array Command options.
      */
-    protected $options;
+    protected array $options;
 
     /**
      * The command flags array.
      *
      * @var array Command flags.
      */
-    protected $flags;
+    protected array $flags;
 
     /**
      * The command arguments array.
      *
      * @var array Command args.
      */
-    protected $arguments;
+    protected array $arguments;
 
     /**
      * The command argument map array.
@@ -116,7 +116,7 @@ abstract class Script
      * @return false|string
      *   Response in from the user.
      */
-    protected function readlineTerminal($prompt = '')
+    protected function readlineTerminal(string $prompt = '')
     {
         $prompt && print $prompt;
         $terminal_device = '/dev/tty';
@@ -133,11 +133,11 @@ abstract class Script
     /**
      * Helper function to die.
      *
-     * @param string $msg Log message.
+     * @param string|array $msg Log message.
      *
      * @return void
      */
-    protected function timeToDie(string $msg)
+    protected function timeToDie($msg)
     {
         if (is_array($msg)) {
             foreach ($msg as $m) {

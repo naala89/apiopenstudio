@@ -19,7 +19,6 @@ use ADOConnection;
 use ApiOpenStudio\Core;
 use Exception;
 use GuzzleHttp\Client;
-use Monolog\Logger;
 
 /**
  * Class VarFile
@@ -94,9 +93,9 @@ class VarFile extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Logger $logger Logger object.
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Core\Config();
@@ -141,33 +140,24 @@ class VarFile extends Core\ProcessorEntity
     private function getFileFiles(string $filename, bool $getContents, bool $nullable): Core\DataContainer
     {
         $this->validateFilesError($filename, $nullable);
+        $dir = $this->settings->__get(['api', 'dir_tmp']);
+        $extension = pathinfo($_FILES[$filename]['name'], PATHINFO_EXTENSION);
+        try {
+            $basename = bin2hex(random_bytes(8));
+        } catch (Exception $e) {
+            throw new Core\ApiException($e->getMessage(), 5, $this->id, 417);
+        }
+        $basename = sprintf('%s.%0.8s', $basename, $extension);
+        $dest = $dir . $basename;
+        move_uploaded_file($_FILES[$filename]['tmp_name'], $dest);
+
         if ($getContents) {
-            $dir = $this->settings->__get(['api', 'dir_tmp']);
-            $extension = pathinfo($_FILES[$filename]['name'], PATHINFO_EXTENSION);
-            try {
-                $basename = bin2hex(random_bytes(8));
-            } catch (Exception $e) {
-                throw new Core\ApiException($e->getMessage(), 5, $this->id, 417);
-            }
-            $basename = sprintf('%s.%0.8s', $basename, $extension);
-            $dest = $dir . $basename;
-            move_uploaded_file($_FILES[$filename]['tmp_name'], $dest);
             $fileContent = file_get_contents($dest);
             unlink($dest);
             return new Core\DataContainer($fileContent, 'text');
-        } else {
-            $dir = $this->settings->__get(['api', 'dir_tmp']);
-            $extension = pathinfo($_FILES[$filename]['name'], PATHINFO_EXTENSION);
-            try {
-                $basename = bin2hex(random_bytes(8));
-            } catch (Exception $e) {
-                throw new Core\ApiException($e->getMessage(), 5, $this->id, 417);
-            }
-            $basename = sprintf('%s.%0.8s', $basename, $extension);
-            $dest = $dir . $basename;
-            move_uploaded_file($_FILES[$filename]['tmp_name'], $dest);
-            return new Core\DataContainer($dest, 'file');
         }
+
+        return new Core\DataContainer($dest, 'file');
     }
 
     /**

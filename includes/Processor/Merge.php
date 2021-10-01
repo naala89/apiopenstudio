@@ -86,9 +86,10 @@ class Merge extends Core\ProcessorEntity
         }
 
         if ($unique === true) {
-            return array_unique($this->$method($sources));
+            return new Core\DataContainer(array_unique($this->$method($sources)), 'array');
         }
-        return $this->$method($sources);
+
+        return new Core\DataContainer($this->$method($sources), 'array');
     }
 
     /**
@@ -96,9 +97,9 @@ class Merge extends Core\ProcessorEntity
      *
      * @param array $values Data sets to merge.
      *
-     * @return array|mixed
+     * @return array
      */
-    private function union(array $values)
+    private function union(array $values): array
     {
         $result = array_shift($values);
         $result = is_array($result) ? $result : array($result);
@@ -132,9 +133,9 @@ class Merge extends Core\ProcessorEntity
      *
      * @param array $values Data sets to outer join.
      *
-     * @return array|mixed
+     * @return array
      */
-    private function difference(array $values)
+    private function difference(array $values): array
     {
         $result = array_shift($values);
         $result = is_array($result) ? $result : array($result);

@@ -19,7 +19,6 @@ use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Db;
-use Monolog\Logger;
 
 /**
  * Class ApplicationDelete
@@ -85,17 +84,15 @@ class ApplicationDelete extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Logger $logger Logger object.
-     *
-     * @throws ApiException
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->userRoleMapper = new Db\UserRoleMapper($this->db);
-        $this->userMapper = new Db\UserMapper($this->db);
-        $this->applicationMapper = new Db\ApplicationMapper($this->db);
-        $this->resourceMapper = new Db\ResourceMapper($this->db);
+        $this->userRoleMapper = new Db\UserRoleMapper($this->db, $logger);
+        $this->userMapper = new Db\UserMapper($this->db, $logger);
+        $this->applicationMapper = new Db\ApplicationMapper($this->db, $logger);
+        $this->resourceMapper = new Db\ResourceMapper($this->db, $logger);
     }
 
     /**

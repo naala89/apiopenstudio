@@ -43,13 +43,12 @@
     "mtdowling/jmespath.php": "^2.4",
     "jlawrence/eos": "^3.2",
     "eloquent/pbkdf2-compat": "^1.0",
-    "monolog/monolog": "^1.23",
-    "theorchard/monolog-cascade": "^0.5.0",
     "guzzlehttp/guzzle": "^6.3",
     "symfony/yaml": "^3.0",
     "swiftmailer/swiftmailer": "^6.0",
     "berlioz/php-doc": "^1.1",
-    "lcobucci/jwt": "^4.1"
+    "lcobucci/jwt": "^4.1",
+    "monolog/monolog": "^2.3"
   },
   "autoload": {
     "psr-4": {

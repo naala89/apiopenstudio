@@ -80,7 +80,7 @@ class Plain extends Text
      */
     public function process(): DataContainer
     {
-        $this->logger->info('Output: ' . $this->details()['machineName']);
+        $this->logger->info('api', 'Output: ' . $this->details()['machineName']);
         return parent::process();
     }
 }

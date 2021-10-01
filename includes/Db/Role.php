@@ -18,7 +18,7 @@ namespace ApiOpenStudio\Db;
 /**
  * Class Role.
  *
- * DB class for for storing role row data.
+ * DB class for storing role row data.
  */
 class Role
 {

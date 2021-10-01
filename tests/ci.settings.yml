@@ -10,41 +10,29 @@
 
 debug:
   formatters:
-    api_open_studio:
-      format: "%datetime%-%channel%.%level_name% - %message%\n"
+    default:
+      format: null
+      date_format: null
+      allow_inline_line_breaks: false
+      ignore_empty_context_and_extra: true
   handlers:
-    console:
-      class: Monolog\Handler\StreamHandler
+    api_log_file:
+      class: StreamHandler
+      formatter: default
       level: DEBUG
-      formatter: api_open_studio
-      processors: [memory_processor]
-      bubble: true
-      stream: php://stdout
-    api_file_handler:
-      class: Monolog\Handler\StreamHandler
+      stream: log/api.log
+    db_log_file:
+      class: StreamHandler
+      formatter: default
       level: DEBUG
-      formatter: api_open_studio
-      bubble: true
-      stream: api/error.log
-    db_file_handler:
-      class: Monolog\Handler\StreamHandler
-      level: DEBUG
-      formatter: api_open_studio
-      bubble: true
-      stream: logs/db.error.log
-  processors:
-    web_processor:
-      class: Monolog\Processor\WebProcessor
-    memory_processor:
-      class: Monolog\Processor\MemoryUsageProcessor
+      stream: log/db.log
   loggers:
     api:
-      handlers: [api_file_handler]
-      processors: [web_processor]
+      handlers:
+        - api_log_file
     db:
-      handlers: [db_file_handler]
-      processors: [web_processor]
-
+      handlers:
+        - db_log_file
 db:
   definition_path: includes/Db/dbDefinition.yaml
   driver: mysqli

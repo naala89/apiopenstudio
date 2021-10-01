@@ -146,7 +146,7 @@ class Update extends Script
     }
 
     /**
-     * Setup the DB connection.
+     * Set up the DB connection.
      *
      * @throws ApiException
      */
@@ -274,7 +274,7 @@ class Update extends Script
      * @return array
      *   Array of function names.
      */
-    protected function getDefinedFunctionsInFile($file): array
+    protected function getDefinedFunctionsInFile(string $file): array
     {
         $source = file_get_contents($file);
         $tokens = token_get_all($source);
@@ -338,7 +338,7 @@ class Update extends Script
      *
      * @return int
      */
-    public function sortByVersion($a, $b): int
+    public function sortByVersion(string $a, string $b): int
     {
         if ($a == $b) {
             return 0;

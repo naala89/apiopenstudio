@@ -4,35 +4,36 @@ use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Processor\VarBool;
 use ApiOpenStudio\Core\ApiException;
-use Cascade\Cascade;
-use Monolog\Logger;
+use ApiOpenStudio\Core\MonologWrapper;
+use Codeception\Test\Unit;
 
-class ValTest extends \Codeception\Test\Unit
+class ValTest extends Unit
 {
     /**
-     * @var \UnitTester
+     * @var UnitTester
      */
-    protected $tester;
+    protected UnitTester $tester;
 
     /**
      * @var Request
      */
-    protected $request;
+    protected Request $request;
 
     /**
-     * @var Logger
+     * @var MonologWrapper
      */
-    protected $logger;
+    protected MonologWrapper $logger;
 
     /**
      * {@inheritDoc}
+     *
+     * @throws ApiException
      */
     protected function _before()
     {
         $this->request = new Request();
         $config = new Config();
-        Cascade::fileConfig($config->__get('debug'));
-        $this->logger = Cascade::getLogger('api');
+        $this->logger = new MonologWrapper($this->debugSettings());
     }
 
     /**
@@ -40,6 +41,47 @@ class ValTest extends \Codeception\Test\Unit
      */
     protected function _after()
     {
+    }
+
+    /**
+     * Base config object after issues in GitLab CI.
+     *
+     * @return array
+     */
+    protected function debugSettings(): array
+    {
+        return [
+            'formatters' => [
+                'default' => [
+                    'format' => null,
+                    'date_format' => null,
+                    'allow_inline_line_breaks' => false,
+                    'ignore_empty_context_and_extra' => true,
+                ],
+            ],
+            'handlers' => [
+                'api_log_file' => [
+                    'class' => 'StreamHandler',
+                    'formatter' => 'default',
+                    'level' => 'DEBUG',
+                    'stream' => 'log/api.log',
+                ],
+                'db_log_file' => [
+                    'class' => 'StreamHandler',
+                    'formatter' => 'default',
+                    'level' => 'DEBUG',
+                    'stream' => 'log/db.log',
+                ],
+            ],
+            'loggers' => [
+                'api' => [
+                    'handlers' => ['api_log_file'],
+                ],
+                'db' => [
+                    'handlers' => ['db_log_file'],
+                ],
+            ],
+        ];
     }
 
     /**

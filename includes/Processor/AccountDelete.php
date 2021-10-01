@@ -61,14 +61,14 @@ class AccountDelete extends Core\ProcessorEntity
 
         $accid = $this->val('accid', true);
 
-        $accountMapper = new Db\AccountMapper($this->db);
+        $accountMapper = new Db\AccountMapper($this->db, $this->logger);
         $account = $accountMapper->findByAccid($accid);
 
         if (empty($account->getAccid())) {
             throw new Core\ApiException("Account does not exist: $accid", 6, $this->id, 400);
         }
         // Do not delete if applications are attached to the account.
-        $applicationMapper = new Db\ApplicationMapper($this->db);
+        $applicationMapper = new Db\ApplicationMapper($this->db, $this->logger);
         $applications = $applicationMapper->findByAccid($accid);
         if (!empty($applications)) {
             $message = 'Cannot delete the account, applications are assigned to the account';

@@ -36,16 +36,16 @@ class ApiException extends Exception
      *
      * @var integer HTML response code.
      */
-    private $htmlCode;
+    private int $htmlCode;
 
     /**
      * Throw an API exception. This will return a standard error object in the format requested in the header.
      *
-     * @param string $message The Exception message to throw.
-     * @param integer $code The Exception code.
+     * @param string|null $message The Exception message to throw.
+     * @param int|null $code The Exception code.
      * @param mixed $processor The processor where the error occurred.
-     * @param integer $htmlCode The HTML return code.
-     * @param \Exception $previous The previous exception used for the exception chaining. Since 5.3.0.
+     * @param int|null $htmlCode The HTML return code.
+     * @param Exception|null $previous The previous exception used for the exception chaining. Since 5.3.0.
      */
     public function __construct(
         string $message = null,
@@ -77,7 +77,7 @@ class ApiException extends Exception
      *
      * @return integer Get the HTML return code.
      */
-    public function getHtmlCode()
+    public function getHtmlCode(): int
     {
         return $this->htmlCode;
     }

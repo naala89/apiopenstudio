@@ -24,7 +24,6 @@ use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
 use ApiOpenStudio\Core\ResourceValidator;
 use Spyc;
-use Monolog\Logger;
 
 /**
  * Class ResourceCreate
@@ -160,17 +159,15 @@ class ResourceCreate extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Logger $logger Logger object.
-     *
-     * @throws Core\ApiException
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->applicationMapper = new ApplicationMapper($db);
-        $this->accountMapper = new AccountMapper($db);
-        $this->resourceMapper = new ResourceMapper($db);
-        $this->validator = new ResourceValidator($db, $this->logger);
+        $this->applicationMapper = new ApplicationMapper($db, $logger);
+        $this->accountMapper = new AccountMapper($db, $logger);
+        $this->resourceMapper = new ResourceMapper($db, $logger);
+        $this->validator = new ResourceValidator($db, $logger);
         $this->settings = new Config();
     }
 
@@ -225,7 +222,7 @@ class ResourceCreate extends Core\ProcessorEntity
      * @param string $format The format of the input string.
      * @param string $string The metadata string.
      *
-     * @return array|mixed Normalised string format.
+     * @return false|string Normalised string format.
      *
      * @throws Core\ApiException Error.
      */

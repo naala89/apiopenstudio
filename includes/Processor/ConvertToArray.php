@@ -18,7 +18,6 @@ namespace ApiOpenStudio\Processor;
 use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Output\Output;
-use Monolog\Logger;
 use SimpleXMLElement;
 
 /**
@@ -38,9 +37,9 @@ class ConvertToArray extends Output
     /**
      * Logging class.
      *
-     * @var Logger
+     * @var Core\MonologWrapper
      */
-    protected Logger $logger;
+    protected Core\MonologWrapper $logger;
 
     /**
      * {@inheritDoc}

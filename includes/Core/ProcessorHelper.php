@@ -27,19 +27,19 @@ class ProcessorHelper
      *
      * @var string[]
      */
-    private $namespaces = array('Security', 'Endpoint', 'Output', 'Processor', 'Core');
+    private array $namespaces = array('Security', 'Endpoint', 'Output', 'Processor', 'Core');
 
     /**
      * Return processor namespace and class name string.
      *
      * @param string $className Class name of processor.
-     * @param array $namespaces Namepsaces to search.
+     * @param array|null $namespaces Namepsaces to search.
      *
      * @return string Class string.
      *
      * @throws ApiException Unknown Processor.
      */
-    public function getProcessorString(string $className, array $namespaces = null)
+    public function getProcessorString(string $className, array $namespaces = null): string
     {
         if (empty($className)) {
             throw new ApiException('empty processor name', 1, -1, 406);
@@ -70,7 +70,7 @@ class ProcessorHelper
      *
      * @return boolean
      */
-    public function isProcessor(&$obj)
+    public function isProcessor(&$obj): bool
     {
         if (is_object($obj)) {
             return (isset($obj->processor) && isset($obj->id));

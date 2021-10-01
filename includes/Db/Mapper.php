@@ -17,9 +17,7 @@ namespace ApiOpenStudio\Db;
 
 use ADOConnection;
 use ApiOpenStudio\Core\ApiException;
-use Cascade\Cascade;
-use ApiOpenStudio\Core\Config;
-use Monolog\Logger;
+use ApiOpenStudio\Core\MonologWrapper;
 
 /**
  * Abstract class Mapper.
@@ -38,23 +36,22 @@ abstract class Mapper
     /**
      * Logger object.
      *
-     * @var Logger
+     * @var MonologWrapper
      */
-    protected Logger $logger;
+    protected MonologWrapper $logger;
 
     /**
      * Mapper constructor.
      *
      * @param ADOConnection $dbLayer DB connection object.
      *
-     * @throws ApiException
+     * @param MonologWrapper $logger Logger object.
+     *
      */
-    public function __construct(ADOConnection $dbLayer)
+    public function __construct(ADOConnection $dbLayer, MonologWrapper $logger)
     {
         $this->db = $dbLayer;
-        $config = new Config();
-        Cascade::fileConfig($config->__get(['debug']));
-        $this->logger = Cascade::getLogger('db');
+        $this->logger = $logger;
     }
 
     /**
@@ -78,20 +75,20 @@ abstract class Mapper
      */
     protected function saveDelete(string $sql, array $bindParams): bool
     {
-        $this->logger->debug("INSERT or DROP SQL...");
-        $this->logger->debug("SQL: $sql");
-        $this->logger->debug('Bind Params: ' . print_r($bindParams, true));
+        $this->logger->debug('db', 'INSERT or DROP SQL...');
+        $this->logger->debug('db', "SQL: $sql");
+        $this->logger->debug('db', 'Bind Params: ' . print_r($bindParams, true));
         $this->db->Execute($sql, $bindParams);
         if ($this->db->affected_rows() != 0) {
             return true;
         }
         if (empty($this->db->ErrorMsg())) {
             $message = 'Affected rows: 0, no error message returned. There was possibly nothing to update';
-            $this->logger->warning($message);
+            $this->logger->warning('db', $message);
             return true;
         }
         $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-        $this->logger->error($message);
+        $this->logger->error('db', $message);
         throw new ApiException($message, 2);
     }
 
@@ -107,13 +104,14 @@ abstract class Mapper
      */
     protected function fetchRow(string $sql, array $bindParams)
     {
-        $this->logger->debug("SELECT single row SQL...");
-        $this->logger->debug("SQL: $sql");
-        $this->logger->debug('Bind Params: ' . print_r($bindParams, true));
+        $this->logger->debug('db', 'SELECT single row SQL...');
+        $this->logger->debug('db', "SQL: $sql");
+        $this->logger->debug('db', 'Bind Params: ' . print_r($bindParams, true));
         $row = $this->db->GetRow($sql, $bindParams);
+        $this->logger->info('db', print_r($row, true));
         if ($row === false) {
             $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-            $this->logger->error($message);
+            $this->logger->error('db', $message);
             throw new ApiException($message, 2);
         }
         return $this->mapArray($row);
@@ -152,7 +150,7 @@ abstract class Mapper
      */
     protected function fetchRows(string $sql, array $bindParams = [], array $params = []): array
     {
-        $this->logger->debug("SELECT multiple rows SQL...");
+        $this->logger->debug('db', 'SELECT multiple rows SQL...');
         // Add filter by keyword.
         if (!empty($params['filter'])) {
             $arr = [];
@@ -186,8 +184,8 @@ abstract class Mapper
         }
 
         // Add limit.
-        $this->logger->debug("SQL: $sql");
-        $this->logger->debug('Bind Params: ' . print_r($bindParams, true));
+        $this->logger->debug('db', "SQL: $sql");
+        $this->logger->debug('db', 'Bind Params: ' . print_r($bindParams, true));
         if (!empty($params['offset']) || !empty($params['limit'])) {
             if (stripos($sql, ' limit ') !== false) {
                 throw new ApiException('Trying to limit params on SQL with LIMIT clause: ' . $sql);
@@ -204,7 +202,7 @@ abstract class Mapper
 
         if (!$recordSet) {
             $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-            $this->logger->error($message);
+            $this->logger->error('db', $message);
             throw new ApiException($message, 2);
         }
 
