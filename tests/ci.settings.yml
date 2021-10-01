@@ -33,7 +33,6 @@ debug:
     db:
       handlers:
         - db_log_file
-        -
 db:
   definition_path: includes/Db/dbDefinition.yaml
   driver: mysqli
