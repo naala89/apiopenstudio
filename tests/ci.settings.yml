@@ -9,16 +9,31 @@
 # @link      https://www.apiopenstudio.com
 
 debug:
+  formatters:
+    default:
+      format: null
+      date_format: null
+      allow_inline_line_breaks: false
+      ignore_empty_context_and_extra: true
+  handlers:
+    api_log_file:
+      class: StreamHandler
+      formatter: default
+      level: DEBUG
+      stream: log/api.log
+    db_log_file:
+      class: StreamHandler
+      formatter: default
+      level: DEBUG
+      stream: log/db.log
   loggers:
     api:
-      class: Monolog\Handler\StreamHandler
-      stream: log/api.log
-      level: DEBUG
+      handlers:
+        - api_log_file
     db:
-      class: Monolog\Handler\StreamHandler
-      stream: log/db.log
-      level: DEBUG
-
+      handlers:
+        - db_log_file
+        -
 db:
   definition_path: includes/Db/dbDefinition.yaml
   driver: mysqli
