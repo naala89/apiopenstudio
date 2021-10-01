@@ -33,7 +33,7 @@ class ValTest extends Unit
     {
         $this->request = new Request();
         $config = new Config();
-        $this->logger = new MonologWrapper($config->__get(['debug']));
+        $this->logger = new MonologWrapper($this->debugSettings());
     }
 
     /**
@@ -41,6 +41,43 @@ class ValTest extends Unit
      */
     protected function _after()
     {
+    }
+
+    /**
+     * Base config object after issues in GitLab CI.
+     *
+     * @return array
+     */
+    protected function debugSettings(): array
+    {
+        return [
+            'formatters' => [
+                'default' => [
+                    'format' => null,
+                    'date_format' => null,
+                    'allow_inline_line_breaks' => false,
+                    'ignore_empty_context_and_extra' => true,
+                ],
+            ],
+            'handlers' => [
+                'api_log_file' => [
+                    'class' => 'StreamHandler',
+                    'formatter' => 'default',
+                    'level' => 'DEBUG',
+                    'stream' => 'log/api.log',
+                ],
+                'db_log_file' => [
+                    'class' => 'StreamHandler',
+                    'formatter' => 'default',
+                    'level' => 'DEBUG',
+                    'stream' => 'log/db.log',
+                ],
+            ],
+            'loggers' => [
+                'api' => ['api_log_file'],
+                'db' => ['db_log_file'],
+            ],
+        ];
     }
 
     /**
