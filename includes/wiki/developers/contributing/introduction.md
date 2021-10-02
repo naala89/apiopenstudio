@@ -16,7 +16,7 @@ All development work and maintenance is performed in the [GitLab][gitlab]
 repository.
 
 The [GitHub][github] read-only repository is only a mirror for visibility and
-composer. Please ensure that all work is done in [ApiOpenStudio][gitlab].
+composer. Please ensure that all work is done in [GitLab][gitlab].
 
 Working on issues
 -----------------
@@ -37,8 +37,8 @@ All wiki text is stored in markdown format in ```includes/wiki/```.
 
 We use bookdown to compile the markdown to html.
 
-Any changed that you want to make to the wiki will be instantly visible once
-merged.
+Any changes that you want to make to the wiki will be instantly visible on the
+dev wiki once your merge is complete.
 
 The develop branch wiki is deployed to [dev wiki][dev_wiki].
 
