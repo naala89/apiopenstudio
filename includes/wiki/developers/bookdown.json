@@ -8,15 +8,15 @@
   },
   "content": [
     "contributing/bookdown.json",
+    "error-responses.md",
+    "testing/bookdown.json",
     "coding-standards.md",
+    "configuring-debug.md",
     "linting.md",
-    "testing.md",
-    "xdebug.md",
-    "configuring-debug-levels.md",
     "processors.md",
     "creating-processors.md",
-    "error-responses.md",
-    "resources.md"
+    "resources.md",
+    "xdebug.md"
   ],
   "tocDepth": 1
 }
