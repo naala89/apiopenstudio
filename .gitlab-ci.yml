@@ -98,9 +98,9 @@ wiki_dev:
   only:
     - develop
   variables:
-    - CSS_BOOTSWATCH: ${CSS_BOOTSWATCH}
-    - CSS_PRISM: ${CSS_PRISM}
-    - MENU_LOGO: ${MENU_LOGO}
+    CSS_BOOTSWATCH: ${CSS_BOOTSWATCH}
+    CSS_PRISM: ${CSS_PRISM}
+    MENU_LOGO: ${MENU_LOGO}
   script:
     - echo "Compile and deploy the wiki to dev."
     - eval $(ssh-agent -s)
@@ -119,9 +119,9 @@ wiki_prod:
   only:
     - master
   variables:
-    - CSS_BOOTSWATCH: ${CSS_BOOTSWATCH}
-    - CSS_PRISM: ${CSS_PRISM}
-    - MENU_LOGO: ${MENU_LOGO}
+    CSS_BOOTSWATCH: ${CSS_BOOTSWATCH}
+    CSS_PRISM: ${CSS_PRISM}
+    MENU_LOGO: ${MENU_LOGO}
   script:
     - echo "Compile and deploy the wiki to prod."
     - eval $(ssh-agent -s)
