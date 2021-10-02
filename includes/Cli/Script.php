@@ -25,9 +25,9 @@ abstract class Script
     /**
      * The current executed argument.
      *
-     * @var array Current executed arg.
+     * @var string Current executed arg.
      */
-    protected array $exec;
+    protected string $exec;
 
     /**
      * The command options array.
