@@ -39,7 +39,6 @@ tests:
   artifacts:
     when: on_failure
     paths:
-      - phpcs.txt
       - tests/_output/
       - log/
   script:
@@ -48,11 +47,11 @@ tests:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - cp -Rp ${CI_PROJECT_DIR}/* /www/
-    - cd /www
 # set ApiOpenStudio test .env and settings.yml
     - cp tests/ci.env .env
     - cp tests/ci.settings.yml settings.yml
+    - CI_ESCAPED_PROJECT_DIR="$(echo "$CI_PROJECT_DIR" | sed -e 's/[\/]/\\&/g')"
+    - sed -i 's/CI_PROJECT_DIR/'"${CI_ESCAPED_PROJECT_DIR}"'/g' settings.yml
     - >
       if [ -z "$ADMIN_NAME" ]; then
         eval export ADMIN_NAME="admin"
@@ -68,9 +67,13 @@ tests:
     - composer install
 # Linting
     - echo "Linting the codebase."
-    - ./vendor/bin/phpcs --standard=PSR12 --report-file=phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
+    - ./vendor/bin/phpcs --standard=PSR12 --report-file=tests/_output/phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
 # Unit tests
     - echo "Running api unit tests."
+    - mkdir log
+    - touch log/api.log
+    - touch log/db.log
+    - chmod -R 777 log
     - ./vendor/bin/codecept run --env ci unit
 # Install MySQL
     - echo "Setting up the DB for functional tests."
@@ -82,6 +85,7 @@ tests:
     - chmod 777 jwt.key.pub jwt.key
 # Run functional tests
     - echo "Running api functional tests."
+    - cp -Rp ./* /www/
     - ./vendor/bin/codecept build
     - ./vendor/bin/codecept run --env ci api
 
@@ -93,6 +97,10 @@ wiki_dev:
   stage: deploy_wiki
   only:
     - develop
+  variables:
+    CSS_BOOTSWATCH: ${CSS_BOOTSWATCH}
+    CSS_PRISM: ${CSS_PRISM}
+    MENU_LOGO: ${MENU_LOGO}
   script:
     - echo "Compile and deploy the wiki to dev."
     - eval $(ssh-agent -s)
@@ -110,6 +118,10 @@ wiki_prod:
   stage: deploy_wiki
   only:
     - master
+  variables:
+    CSS_BOOTSWATCH: ${CSS_BOOTSWATCH}
+    CSS_PRISM: ${CSS_PRISM}
+    MENU_LOGO: ${MENU_LOGO}
   script:
     - echo "Compile and deploy the wiki to prod."
     - eval $(ssh-agent -s)
