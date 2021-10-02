@@ -12,6 +12,9 @@ branches,
 Rebase develop
 --------------
 
+This will bring in all the latest changes from the main develop branch into
+your develop branch and then replay all your changes on top of that,
+
     git checkout develop
     git fetch upstream develop
     git rebase upstream/develop

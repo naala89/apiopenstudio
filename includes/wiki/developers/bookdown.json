@@ -16,8 +16,7 @@
     "processors.md",
     "creating-processors.md",
     "error-responses.md",
-    "resources.md",
-    "sys-admin/bookdown.json"
+    "resources.md"
   ],
   "tocDepth": 1
 }
