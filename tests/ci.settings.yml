@@ -20,12 +20,12 @@ debug:
       class: StreamHandler
       formatter: default
       level: DEBUG
-      stream: log/api.log
+      stream: CI_PROJECT_DIR/log/api.log
     db_log_file:
       class: StreamHandler
       formatter: default
       level: DEBUG
-      stream: log/db.log
+      stream: CI_PROJECT_DIR/log/db.log
   loggers:
     api:
       handlers:
@@ -50,7 +50,7 @@ api:
   protocols:
     - http
     - https
-  base_path: /www/
+  base_path: CI_PROJECT_DIR/
   url: localhost
   cache: false
   default_format: json
@@ -61,8 +61,8 @@ api:
   dir_resources: includes/resources/
   dir_uploads: uploads/
   dir_tmp: /tmp/
-  jwt_private_key: /www/jwt.key
-  jwt_public_key: /www/jwt.key.pub
+  jwt_private_key: CI_PROJECT_DIR/jwt.key
+  jwt_public_key: CI_PROJECT_DIR/jwt.key.pub
   jwt_alg_type: Rsa
   jwt_alg: Sha256
   jwt_life: "+6 hour"
