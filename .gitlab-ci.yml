@@ -107,10 +107,10 @@ wiki_dev:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - composer install
-    - ./vendor/bin/bookdown includes/wiki/bookdown.json
     - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
+    - composer install
+    - ./vendor/bin/bookdown includes/wiki/bookdown.json
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
 
@@ -128,10 +128,10 @@ wiki_prod:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - composer install
-    - ./vendor/bin/bookdown includes/wiki/bookdown.json
     - ssh-keyscan "$PROD_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
+    - composer install
+    - ./vendor/bin/bookdown includes/wiki/bookdown.json
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/wiki/" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
     - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_WIKI_PATH/*"
     - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "php $SITEMAP_GENERATOR file=$PROD_WIKI_PATH/sitemap.xml site=https://$PROD_WIKI_URL"
@@ -206,7 +206,7 @@ phpdoc_prod:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
+    - ssh-keyscan "$PROD_PHPDOC_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     # Define verbosity
     - if [ ! -z "$PHPDOC_VERBOSITY" ]; then export PHPDOC_OPTIONS="-$PHPDOC_VERBOSITY $PHPDOC_OPTIONS"; fi
