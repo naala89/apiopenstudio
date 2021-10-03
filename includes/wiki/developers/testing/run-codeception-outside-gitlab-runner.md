@@ -7,7 +7,7 @@ docker.
 Running tests inside docker
 ---------------------------
 
-clone, configure and run the [ApiOpenStudio docker][api_open_studio_docker]
+clone, configure and run the [ApiOpenStudio docker dev][apiopenstudio_docker_dev]
 repository.
 
 At a bare minimum, you will need the following containers:
@@ -60,5 +60,5 @@ Links
 
 - [codeception docs][codeception_docs]
 
-[api_open_studio_docker]: https://github.com/naala89/api_open_studio_docker
+[apiopenstudio_docker_dev]: https://github.com/naala89/apiopenstudio_docker_dev
 [codeception_docs]: https://codeception.com/docs/

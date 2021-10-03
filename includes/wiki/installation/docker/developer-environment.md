@@ -12,7 +12,7 @@ code-bases with the correct ```.env``` file settings.
 Checkout the docker repo
 ------------------------
 
-    git clone https://github.com/naala89/api_open_studio_docker
+    git clone https://github.com/naala89/apiopenstudio_docker_dev
 
 Configuration
 -------------
@@ -31,8 +31,8 @@ If you want to host the wiki and/or PHPDoc, uncomment:
     PHPDOC_DOMAIN=phpdoc.apiopenstudio.local
 
 It will work out of the box. However, if you change any settings in
-api_open_studio or api_open_studio_admin, such as the domains or SQL settings,
-you will need to edit these in the ```.env``` file too.
+```apiopenstudio``` or ```apiopenstudio_admin```, such as the domains or SQL
+settings, you will need to edit these in the ```.env``` file too.
 
 SSL certificates
 ----------------
@@ -73,7 +73,7 @@ Optionally add:
 Spinning up docker
 ------------------
 
-    cd api_open_studio_docker
+    cd apiopenstudio_docker_dev
     docker-compose up -d
     docker exec -it apiopenstudio-php /bin/bash
     cd api

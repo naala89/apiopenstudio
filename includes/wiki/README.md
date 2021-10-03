@@ -34,8 +34,8 @@ This will automatically deploy and serve the wiki HTML from ```public/wiki/```
 
 Visit [wiki.apiopenstudio.local][wiki_local].
 
-[docker_github]: https://github.com/naala89/api_open_studio_docker
+[docker_github]: https://github.com/naala89/apiopenstudio_docker_dev
 
-[docker_gitlab]: https://gitlab.com/john89/api_open_studio_docker
+[docker_gitlab]: https://gitlab.com/apiopenstudio/apiopenstudio_docker_dev
 
 [wiki_local]: https://wiki.apiopenstudio.local

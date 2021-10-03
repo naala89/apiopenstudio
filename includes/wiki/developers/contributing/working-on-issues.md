@@ -42,8 +42,8 @@ Add [ApiOpenStudio][gitlab] as an ```upstream``` remote
 This will allow you to regularly rebase and ensure that you have the latest
 version of master and develop branch from the main repository:
 
-    cd /path/to/api_open_studio
-    git remote add upstream git@gitlab.com:john89/api_open_studio.git
+    cd /path/to/apiopenstudio
+    git remote add upstream git@gitlab.com:apiopenstudio/apiopenstudio.git
     git fetch upstream
 
 Create and set the SSH_PRIVATE_KEY variable got GitLab CI to use
@@ -120,7 +120,7 @@ Click on the ```New merge request``` button.
 Select your source and target branch by clicking on the ```Change branches```
 link.
 
-The target branch is always ```john89/api_open_studio``` ```develop```. If you
+The target branch is always ```apiopenstudio/apiopenstudio``` ```develop```. If you
 select ```master``` as your target, your merge request will be denied, and you
 will need to make another.
 
@@ -140,7 +140,7 @@ Your changes will then be reviewed and hopefully merged.
 
 
 
-[gitlab]: https://gitlab.com/john89/api_open_studio
+[gitlab]: https://gitlab.com/apiopenstudio/apiopenstudio
 [create_fork]: images/create-fork.png
 [keygen]: https://www.ssh.com/ssh/keygen/]
 [happy_developer]: images/happy-developer.jpeg

@@ -30,8 +30,8 @@ Submit the issue.
 
 Visit [ApiOpenStudio issue tracker][issues] and assign a ticket to yourself
 
-[gitlab]: https://gitlab.com/john89/api_open_studio
+[gitlab]: https://gitlab.com/apiopenstudio/apiopenstudio
 
-[issues]: https://gitlab.com/john89/api_open_studio/-/issues
+[issues]: https://gitlab.com/apiopenstudio/apiopenstudio/-/issues
 
 [request_access_screenshot]: images/contributing-request-access.png

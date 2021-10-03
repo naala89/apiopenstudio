@@ -8,7 +8,7 @@
 # @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
-image: naala89/aos-nginx-php:7.4
+image: naala89/aos-nginx-php-7-4:latest
 
 #cache:
 #  key: "$CI_COMMIT_REF_SLUG"

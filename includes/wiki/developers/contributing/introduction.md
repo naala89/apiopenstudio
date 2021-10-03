@@ -54,9 +54,9 @@ Develop branch phpdoc is deployed to [dev phpdoc][dev_phpdoc].
 
 Master branch phpdoc is deployed to [prod phpdoc][prod_phpdoc].
 
-[gitlab]: https://gitlab.com/john89/api_open_studio
+[gitlab]: https://gitlab.com/apiopenstudio/apiopenstudio
 
-[github]: https://github.com/naala89/api_open_studio
+[github]: https://github.com/naala89/apiopenstudio
 
 [dev_wiki]: https://dev.wiki.apiopenstudio.com
 
