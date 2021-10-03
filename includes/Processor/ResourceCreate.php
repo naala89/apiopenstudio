@@ -15,6 +15,7 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db\AccountMapper;
@@ -23,7 +24,6 @@ use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
 use ApiOpenStudio\Core\ResourceValidator;
 use Spyc;
-use Monolog\Logger;
 
 /**
  * Class ResourceCreate
@@ -37,42 +37,42 @@ class ResourceCreate extends Core\ProcessorEntity
      *
      * @var Config
      */
-    private $settings;
+    private Config $settings;
 
     /**
      * Resource mapper class.
      *
      * @var ResourceMapper
      */
-    private $resourceMapper;
+    private ResourceMapper $resourceMapper;
 
     /**
      * Account mapper class.
      *
      * @var AccountMapper
      */
-    private $accountMapper;
+    private AccountMapper $accountMapper;
 
     /**
      * Application mapper class.
      *
      * @var ApplicationMapper
      */
-    private $applicationMapper;
+    private ApplicationMapper $applicationMapper;
 
     /**
      * Resource validator class.
      *
      * @var ResourceValidator
      */
-    private $validator;
+    private ResourceValidator $validator;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Resource create',
         'machineName' => 'resource_create',
         'description' => 'Create a resource.',
@@ -158,16 +158,16 @@ class ResourceCreate extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->applicationMapper = new ApplicationMapper($db);
-        $this->accountMapper = new AccountMapper($db);
-        $this->resourceMapper = new ResourceMapper($db);
-        $this->validator = new ResourceValidator($db, $this->logger);
+        $this->applicationMapper = new ApplicationMapper($db, $logger);
+        $this->accountMapper = new AccountMapper($db, $logger);
+        $this->resourceMapper = new ResourceMapper($db, $logger);
+        $this->validator = new ResourceValidator($db, $logger);
         $this->settings = new Config();
     }
 
@@ -178,9 +178,9 @@ class ResourceCreate extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $name = $this->val('name', true);
         $description = $this->val('description', true);
@@ -222,7 +222,7 @@ class ResourceCreate extends Core\ProcessorEntity
      * @param string $format The format of the input string.
      * @param string $string The metadata string.
      *
-     * @return array|mixed Normalised string format.
+     * @return false|string Normalised string format.
      *
      * @throws Core\ApiException Error.
      */
@@ -272,7 +272,7 @@ class ResourceCreate extends Core\ProcessorEntity
         int $appid,
         int $ttl,
         string $meta
-    ) {
+    ): Core\DataContainer {
         $resource = new Resource(
             null,
             $appid,

@@ -15,10 +15,9 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db\ResourceMapper;
-use ApiOpenStudio\Db\UserMapper;
-use Monolog\Logger;
 
 /**
  * Class ResourceRead
@@ -32,35 +31,19 @@ class ResourceRead extends Core\ProcessorEntity
      *
      * @var ResourceMapper
      */
-    private $resourceMapper;
-
-    /**
-     * User mapper class.
-     *
-     * @var UserMapper
-     */
-    private $userMapper;
+    private ResourceMapper $resourceMapper;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Resource read',
         'machineName' => 'resource_read',
         'description' => 'List resources. If no appid/s ir resid is defined, all will be returned.',
         'menu' => 'Admin',
         'input' => [
-            'token' => [
-                'description' => 'The token of the user making the call. This is used to limit the resources viewable',
-                'cardinality' => [1, 1],
-                'literalAllowed' => false,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
             'resid' => [
                 'description' => 'The Resource ID to filter by.',
                 'cardinality' => [0, 1],
@@ -114,14 +97,13 @@ class ResourceRead extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->userMapper = new UserMapper($db);
-        $this->resourceMapper = new ResourceMapper($db);
+        $this->resourceMapper = new ResourceMapper($db, $logger);
     }
 
     /**
@@ -131,17 +113,16 @@ class ResourceRead extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
-        $token = $this->val('token', true);
-        $currentUser = $this->userMapper->findBytoken($token);
         $resid = $this->val('resid', true);
         $appid = $this->val('appid', true);
         $keyword = $this->val('keyword', true);
         $orderBy = $this->val('order_by', true);
         $direction = $this->val('direction', true);
+        $uid = Core\Utilities::getUidFromToken();
 
         $params = [];
         if (!empty($resid)) {
@@ -169,7 +150,7 @@ class ResourceRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        $result = $this->resourceMapper->findByUid($currentUser->getUid(), $params);
+        $result = $this->resourceMapper->findByUid($uid, $params);
         if (empty($result)) {
             throw new Core\ApiException('No resources found or insufficient privileges', 6, $this->id);
         }

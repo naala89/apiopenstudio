@@ -71,7 +71,7 @@ Example:
     /**
      * {@inheritDoc}
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Example processor',
         'machineName' => 'example_processor',
         'description' => 'This is for an example detail.',
@@ -99,7 +99,7 @@ You should always log the start of the processor processing and the processor
 name. Because there are potentially a lot of processors in a resource metadata
 tree, this helps developrs debug and find where an issue is occuring:
 
-    $this->logger->info('Processor: ' . $this->details()['machineName']);
+    $this->logger->info('api', Processor: ' . $this->details()['machineName']);
 
 It will fetch it's values defined in the $details attribute, using
 the ```val()``` function.
@@ -144,7 +144,7 @@ debugging:
 
 The logger is available as an attribute in all processors:
 
-    $this->logger->info('My message');
+    $this->logger->info('api', My message');
 
 Database
 --------

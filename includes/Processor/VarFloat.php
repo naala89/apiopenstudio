@@ -29,7 +29,7 @@ class VarFloat extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Var (Float)',
         'machineName' => 'var_float',
         'description' => 'A float variable. It validates the input and returns an error if it is not a float.',
@@ -54,9 +54,9 @@ class VarFloat extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $value = $this->val('value');
         if (!is_numeric($value->getData())) {

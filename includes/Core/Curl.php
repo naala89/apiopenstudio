@@ -42,42 +42,42 @@ class Curl
      *
      * @var integer Curl result HTTP status code.
      */
-    public $httpStatus;
+    public int $httpStatus;
 
     /**
      * Curl status code.
      *
      * @var integer Curl result status code.
      */
-    public $curlStatus;
+    public int $curlStatus;
 
     /**
      * Curl error message.
      *
      * @var string Curl result error message.
      */
-    public $errorMsg;
+    public string $errorMsg;
 
     /**
      * Result content-type.
      *
      * @var string Curl result content-type.
      */
-    public $type;
+    public string $type;
 
     /**
      * Request options.
      *
      * @var array Request options.
      */
-    public $options = [CURLOPT_RETURNTRANSFER => true];
+    public array $options = [CURLOPT_RETURNTRANSFER => true];
 
     /**
      * Request URL.
      *
      * @var string Request URL.
      */
-    public $url;
+    public string $url;
 
     /**
      * Send a GET request using cURL.
@@ -87,7 +87,7 @@ class Curl
      *
      * @return string
      */
-    public function get(string $url, array $options = [])
+    public function get(string $url, array $options = []): string
     {
         $options[CURLOPT_HTTPGET] = true;
         return $this->exec($url, $options);
@@ -101,7 +101,7 @@ class Curl
      *
      * @return string
      */
-    public function post(string $url, array $options = array())
+    public function post(string $url, array $options = array()): string
     {
         $options[CURLOPT_POST] = true;
         return $this->exec($url, $options);
@@ -115,7 +115,7 @@ class Curl
      *
      * @return array Array of options
      */
-    private function getCurlOptions(string $url, array $options = [])
+    private function getCurlOptions(string $url, array $options = []): array
     {
         return $this->options + array(CURLOPT_URL => $url) + $options;
     }
@@ -128,7 +128,7 @@ class Curl
      *
      * @return string
      */
-    private function exec(string $url, array $options = [])
+    private function exec(string $url, array $options = []): string
     {
         $options = $this->getCurlOptions($url, $options);
 

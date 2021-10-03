@@ -15,10 +15,9 @@
 
 namespace ApiOpenStudio\Db;
 
+use ADOConnection;
 use ApiOpenStudio\Core\ApiException;
-use Cascade\Cascade;
-use ADODB_mysqli;
-use ApiOpenStudio\Core\Config;
+use ApiOpenStudio\Core\MonologWrapper;
 
 /**
  * Abstract class Mapper.
@@ -30,28 +29,29 @@ abstract class Mapper
     /**
      * DB connector.
      *
-     * @var ADODB_mysqli DB Instance.
+     * @var ADOConnection DB Instance.
      */
-    protected $db;
+    protected ADOConnection $db;
 
     /**
      * Logger object.
      *
-     * @var \Monolog\Logger
+     * @var MonologWrapper
      */
-    protected $logger;
+    protected MonologWrapper $logger;
 
     /**
      * Mapper constructor.
      *
-     * @param ADODB_mysqli $dbLayer DB connection object.
+     * @param ADOConnection $dbLayer DB connection object.
+     *
+     * @param MonologWrapper $logger Logger object.
+     *
      */
-    public function __construct(ADODB_mysqli $dbLayer)
+    public function __construct(ADOConnection $dbLayer, MonologWrapper $logger)
     {
         $this->db = $dbLayer;
-        $config = new Config();
-        Cascade::fileConfig($config->__get(['debug']));
-        $this->logger = Cascade::getLogger('db');
+        $this->logger = $logger;
     }
 
     /**
@@ -73,22 +73,22 @@ abstract class Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    protected function saveDelete(string $sql, array $bindParams)
+    protected function saveDelete(string $sql, array $bindParams): bool
     {
-        $this->logger->debug("INSERT or DROP SQL...");
-        $this->logger->debug("SQL: $sql");
-        $this->logger->debug('Bind Params: ' . print_r($bindParams, true));
+        $this->logger->debug('db', 'INSERT or DROP SQL...');
+        $this->logger->debug('db', "SQL: $sql");
+        $this->logger->debug('db', 'Bind Params: ' . print_r($bindParams, true));
         $this->db->Execute($sql, $bindParams);
-        if ($this->db->affected_rows() !== 0) {
+        if ($this->db->affected_rows() != 0) {
             return true;
         }
         if (empty($this->db->ErrorMsg())) {
             $message = 'Affected rows: 0, no error message returned. There was possibly nothing to update';
-            $this->logger->warning($message);
+            $this->logger->warning('db', $message);
             return true;
         }
         $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-        $this->logger->error($message);
+        $this->logger->error('db', $message);
         throw new ApiException($message, 2);
     }
 
@@ -98,19 +98,20 @@ abstract class Mapper
      * @param string $sql        Query string.
      * @param array  $bindParams Array of bind params.
      *
-     * @return array Mapped row.
+     * @return mixed Mapped row.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
     protected function fetchRow(string $sql, array $bindParams)
     {
-        $this->logger->debug("SELECT single row SQL...");
-        $this->logger->debug("SQL: $sql");
-        $this->logger->debug('Bind Params: ' . print_r($bindParams, true));
+        $this->logger->debug('db', 'SELECT single row SQL...');
+        $this->logger->debug('db', "SQL: $sql");
+        $this->logger->debug('db', 'Bind Params: ' . print_r($bindParams, true));
         $row = $this->db->GetRow($sql, $bindParams);
+        $this->logger->info('db', print_r($row, true));
         if ($row === false) {
             $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-            $this->logger->error($message);
+            $this->logger->error('db', $message);
             throw new ApiException($message, 2);
         }
         return $this->mapArray($row);
@@ -147,9 +148,9 @@ abstract class Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    protected function fetchRows(string $sql, array $bindParams = [], array $params = [])
+    protected function fetchRows(string $sql, array $bindParams = [], array $params = []): array
     {
-        $this->logger->debug("SELECT multiple rows SQL...");
+        $this->logger->debug('db', 'SELECT multiple rows SQL...');
         // Add filter by keyword.
         if (!empty($params['filter'])) {
             $arr = [];
@@ -183,8 +184,8 @@ abstract class Mapper
         }
 
         // Add limit.
-        $this->logger->debug("SQL: $sql");
-        $this->logger->debug('Bind Params: ' . print_r($bindParams, true));
+        $this->logger->debug('db', "SQL: $sql");
+        $this->logger->debug('db', 'Bind Params: ' . print_r($bindParams, true));
         if (!empty($params['offset']) || !empty($params['limit'])) {
             if (stripos($sql, ' limit ') !== false) {
                 throw new ApiException('Trying to limit params on SQL with LIMIT clause: ' . $sql);
@@ -201,7 +202,7 @@ abstract class Mapper
 
         if (!$recordSet) {
             $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-            $this->logger->error($message);
+            $this->logger->error('db', $message);
             throw new ApiException($message, 2);
         }
 

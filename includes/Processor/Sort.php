@@ -29,7 +29,7 @@ class Sort extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Sort',
         'machineName' => 'sort',
         // phpcs:ignore
@@ -75,7 +75,7 @@ class Sort extends Core\ProcessorEntity
      */
     public function process()
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $values = $this->val('values', true);
 
@@ -87,10 +87,8 @@ class Sort extends Core\ProcessorEntity
         $sortBy = $this->val('sort_by', true);
 
         if ($sortBy == 'key') {
-            if ($direction == 'asc') {
+            if ($direction == 'desc') {
                 if (!Core\Utilities::isAssoc($values)) {
-                    // do nothing, this is a normal array
-                } else {
                     ksort($values);
                 }
             } else {
@@ -116,7 +114,7 @@ class Sort extends Core\ProcessorEntity
             }
         }
 
-        $this->logger->debug('values after sort: ' . print_r($values, true));
+        $this->logger->debug('api', 'values after sort: ' . print_r($values, true));
 
         return $values;
     }

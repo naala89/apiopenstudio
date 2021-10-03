@@ -18,29 +18,29 @@ namespace ApiOpenStudio\Db;
 /**
  * Class Role.
  *
- * DB class for for storing role row data.
+ * DB class for storing role row data.
  */
 class Role
 {
     /**
      * Role ID.
      *
-     * @var integer Role ID.
+     * @var integer|null Role ID.
      */
-    protected $rid;
+    protected ?int $rid;
 
     /**
      * Role name.
      *
-     * @var string Role name.
+     * @var string|null Role name.
      */
-    protected $name;
+    protected ?string $name;
 
     /**
      * Role constructor.
      *
-     * @param integer $rid Role ID.
-     * @param string $name Role name.
+     * @param int|null $rid Role ID.
+     * @param string|null $name Role name.
      */
     public function __construct(int $rid = null, string $name = null)
     {
@@ -51,9 +51,9 @@ class Role
     /**
      * Get the role ID.
      *
-     * @return integer Role ID.
+     * @return int Role ID.
      */
-    public function getRid()
+    public function getRid(): ?int
     {
         return $this->rid;
     }
@@ -61,7 +61,7 @@ class Role
     /**
      * Set the role ID.
      *
-     * @param integer $rid Role ID.
+     * @param int $rid Role ID.
      *
      * @return void
      */
@@ -73,9 +73,9 @@ class Role
     /**
      * Get the role name.
      *
-     * @return integer Name
+     * @return string Name
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -97,7 +97,7 @@ class Role
      *
      * @return array Role object.
      */
-    public function dump()
+    public function dump(): array
     {
         return [
             'rid' => $this->rid,

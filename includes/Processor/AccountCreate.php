@@ -17,7 +17,6 @@ namespace ApiOpenStudio\Processor;
 
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db;
-use Monolog\Logger;
 
 /**
  * Class AccountCreate
@@ -31,7 +30,7 @@ class AccountCreate extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Account create',
         'machineName' => 'account_create',
         'description' => 'Create an account.',
@@ -56,21 +55,21 @@ class AccountCreate extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $name = $this->val('name', true);
         if (preg_match('/[^a-z_\-0-9]/i', $name)) {
             throw new Core\ApiException(
-                "Invalid account name: $name. Only underscore, hyphen or alhpanumeric characters permitted.",
+                "Invalid account name: $name. Only underscore, hyphen or alphanumeric characters permitted.",
                 6,
                 $this->id,
                 400
             );
         }
 
-        $accountMapper = new Db\AccountMapper($this->db);
+        $accountMapper = new Db\AccountMapper($this->db, $this->logger);
 
         $account = $accountMapper->findByName($name);
         if (!empty($account->getAccid())) {
@@ -78,6 +77,6 @@ class AccountCreate extends Core\ProcessorEntity
         }
 
         $account->setName($name);
-        return $accountMapper->save($account);
+        return new Core\DataContainer($accountMapper->save($account), 'boolean');
     }
 }

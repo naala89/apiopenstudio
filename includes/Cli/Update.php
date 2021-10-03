@@ -15,9 +15,14 @@
 
 namespace ApiOpenStudio\Cli;
 
+use ADOConnection;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
+use Berlioz\PhpDoc\Exception\PhpDocException;
 use Berlioz\PhpDoc\PhpDocFactory;
+use Psr\SimpleCache\CacheException;
+
+use function ADONewConnection;
 
 /**
  * Class Install
@@ -29,12 +34,12 @@ class Update extends Script
     /**
      * @var string Relative path to updates directory.
      */
-    protected $updateDir = 'includes/updates/';
+    protected string $updateDir = 'includes/updates/';
 
     /**
      * {@inheritDoc}
      */
-    protected $argMap = [
+    protected array $argMap = [
         'options' => [
             'd' => [
                 'required' => false,
@@ -47,17 +52,17 @@ class Update extends Script
     /**
      * @var Config Config class.
      */
-    protected $config;
+    protected Config $config;
 
     /**
-     * @var ADODB_mysqli database connection.
+     * @var ADOConnection database connection.
      */
-    protected $db;
+    protected ADOConnection $db;
 
     /**
      * @var string Last update run.
      */
-    protected $lastUpdateVersionRun;
+    protected string $lastUpdateVersionRun;
 
     /**
      * Install constructor.
@@ -92,6 +97,8 @@ class Update extends Script
      *   CLI args.
      *
      * @return void
+     *
+     * @throws ApiException
      */
     public function exec(array $argv = null)
     {
@@ -122,7 +129,13 @@ class Update extends Script
 
         $currentVersion = $this->getCurrentVersion();
         echo "\n";
-        $functions = $this->findUpdates($currentVersion);
+        try {
+            $functions = $this->findUpdates($currentVersion);
+        } catch (PhpDocException $e) {
+        } catch (CacheException $e) {
+            echo "An exception was thrown while searching for updates: " . $e->getMessage() . "\n";
+            exit;
+        }
         echo "\n";
         if (empty($functions)) {
             echo "No updates to run!\n";
@@ -133,7 +146,7 @@ class Update extends Script
     }
 
     /**
-     * Setup the DB connection.
+     * Set up the DB connection.
      *
      * @throws ApiException
      */
@@ -150,7 +163,7 @@ class Update extends Script
             . $this->config->__get(['db', 'host']) . '/'
             . $this->config->__get(['db', 'database'])
             . $dsnOptions;
-        if (!$this->db = \ADONewConnection($dsn)) {
+        if (!$this->db = ADONewConnection($dsn)) {
             echo "Error: DB connection failed, please check your settings.yml file.\n";
             exit;
         }
@@ -185,10 +198,10 @@ class Update extends Script
      * @return array
      *   All functions with meta.
      * @return array
-     * @throws \Berlioz\PhpDoc\Exception\PhpDocException
-     * @throws \Psr\SimpleCache\CacheException
+     * @throws PhpDocException
+     * @throws CacheException
      */
-    protected function findUpdates(string $currentVersion)
+    protected function findUpdates(string $currentVersion): array
     {
         echo "Scanning " . $this->updateDir . " for updates...\n";
         $currentVersion = trim(str_ireplace('v', '', $currentVersion));
@@ -248,7 +261,7 @@ class Update extends Script
                     exit;
                 }
             }
-            echo "Update $function complete\n\n";
+            echo "Update $function complete\n";
         }
     }
 
@@ -261,7 +274,7 @@ class Update extends Script
      * @return array
      *   Array of function names.
      */
-    protected function getDefinedFunctionsInFile($file)
+    protected function getDefinedFunctionsInFile(string $file): array
     {
         $source = file_get_contents($file);
         $tokens = token_get_all($source);
@@ -325,7 +338,7 @@ class Update extends Script
      *
      * @return int
      */
-    public function sortByVersion($a, $b)
+    public function sortByVersion(string $a, string $b): int
     {
         if ($a == $b) {
             return 0;

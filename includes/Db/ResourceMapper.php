@@ -16,6 +16,7 @@
 namespace ApiOpenStudio\Db;
 
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Db;
 
 /**
  * Class ResourceMapper.
@@ -27,17 +28,18 @@ class ResourceMapper extends Mapper
     /**
      * Save an API Resource.
      *
-     * @param resource $resource The API Resource.
+     * @param Db\Resource $resource The API Resource.
      *
      * @return boolean Success.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function save($resource)
+    public function save(Db\Resource $resource): bool
     {
         if ($resource->getResid() == null) {
-            $sql = 'INSERT INTO resource (appid, name, description, method, uri, meta, ttl) VALUES ';
-            $sql .= '(?, ?, ?, ?, ?, ?, ?)';
+            $sql = <<<'TAG'
+INSERT INTO resource (appid, name, description, method, uri, meta, ttl) VALUES (?, ?, ?, ?, ?, ?, ?)
+TAG;
             $bindParams = [
                 $resource->getAppId(),
                 $resource->getName(),
@@ -48,8 +50,9 @@ class ResourceMapper extends Mapper
                 $resource->getTtl(),
             ];
         } else {
-            $sql = 'UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, uri = ?, meta = ?, ttl = ? ';
-            $sql .= 'WHERE resid = ?';
+            $sql = <<<'TAG'
+UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, uri = ?, meta = ?, ttl = ? WHERE resid = ?
+TAG;
             $bindParams = [
                 $resource->getAppId(),
                 $resource->getName(),
@@ -67,17 +70,17 @@ class ResourceMapper extends Mapper
     /**
      * Delete an API resource.
      *
-     * @param resource $resource Resource object.
+     * @param Db\Resource $resource Resource object.
      *
      * @return boolean Success.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function delete($resource)
+    public function delete(Db\Resource $resource): bool
     {
         $sql = 'DELETE FROM resource WHERE resid = ?';
         $bindParams = [$resource->getResid()];
-        return $this->fetchRow($sql, $bindParams);
+        return $this->saveDelete($sql, $bindParams);
     }
 
     /**
@@ -85,11 +88,11 @@ class ResourceMapper extends Mapper
      *
      * @param array $params Filter and order params.
      *
-     * @return resource Resource object.
+     * @return array Resource object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function all(array $params = [])
+    public function all(array $params = []): array
     {
         $sql = 'SELECT * FROM resource';
         return $this->fetchRows($sql, [], $params);
@@ -100,11 +103,11 @@ class ResourceMapper extends Mapper
      *
      * @param integer $resid Resource ID.
      *
-     * @return resource Resource object.
+     * @return Db\Resource Resource object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByResid(int $resid)
+    public function findByResid(int $resid): Db\Resource
     {
         $sql = 'SELECT * FROM resource WHERE resid = ?';
         $bindParams = [$resid];
@@ -118,11 +121,11 @@ class ResourceMapper extends Mapper
      * @param string $method API resource method.
      * @param string $uri API resource URI.
      *
-     * @return resource Resource object.
+     * @return Db\Resource Resource object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByAppIdMethodUri(int $appid, string $method, string $uri)
+    public function findByAppIdMethodUri(int $appid, string $method, string $uri): Db\Resource
     {
         $sql = 'SELECT * FROM resource WHERE appid = ? AND method = ? AND uri = ?';
         $bindParams = [$appid, $method, $uri];
@@ -140,9 +143,10 @@ class ResourceMapper extends Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByAppNamesMethodUri($appNames, string $method, string $uri)
+    public function findByAppNamesMethodUri($appNames, string $method, string $uri): array
     {
-        $sql = 'SELECT r.* FROM resource AS r INNER JOIN application AS a ON r.appid=a.appid WHERE';
+        $sql = 'SELECT r.* FROM resource AS r INNER JOIN application AS a ON r.appid=a.appid';
+        $sql .= ' WHERE';
         $bindParams = [];
         if (is_array($appNames)) {
             $q = [];
@@ -162,7 +166,7 @@ class ResourceMapper extends Mapper
         $recordSet = $this->db->Execute($sql, $bindParams);
         if (!$recordSet) {
             $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
-            $this->logger->error($message);
+            $this->logger->error('db', $message);
             throw new ApiException($message, 2);
         }
 
@@ -185,7 +189,7 @@ class ResourceMapper extends Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByAppId($appids, array $params = [])
+    public function findByAppId($appids, array $params = []): array
     {
         if (!is_array($appids)) {
             $sql = 'SELECT * FROM resource WHERE appid = ?';
@@ -194,7 +198,7 @@ class ResourceMapper extends Mapper
             $placeholders = $bindParams = [];
             foreach ($appids as $appid) {
                 if (!is_numeric($appid)) {
-                    throw new ApiException("invalid appid: $appid", 6, $this->id, 401);
+                    throw new ApiException("invalid appid: $appid", 6, -1, 401);
                 }
                 $placeholders[] = '?';
                 $bindParams[] = (int) $appid;
@@ -215,7 +219,7 @@ class ResourceMapper extends Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByUid(int $uid, array $params = [])
+    public function findByUid(int $uid, array $params = []): array
     {
         $privilegedRoles = ['Developer'];
 
@@ -248,10 +252,16 @@ class ResourceMapper extends Mapper
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByUidRidAccidAppidResid(int $uid, int $rid, int $accid, int $appid, int $resid, array $params)
-    {
+    public function findByUidRidAccidAppidResid(
+        int $uid,
+        int $rid,
+        int $accid,
+        int $appid,
+        int $resid,
+        array $params
+    ): array {
         // Find Applications for the user role.
-        $userRoleMapper = new UserRoleMapper($this->db);
+        $userRoleMapper = new UserRoleMapper($this->db, $this->logger);
         $result = $userRoleMapper->findByFilter(['col' => ['uid' => $uid, 'rid' => $rid]]);
         $appids = [];
         foreach ($result as $item) {
@@ -263,13 +273,13 @@ class ResourceMapper extends Mapper
         // Find all resources for the applications the user has rights for.
         $result = $this->findByAppId($appids, $params);
         // No further filters, so return the results.
-        if (empty($accid) && empty($accid) && empty($appid) && empty($resid)) {
+        if (empty($accid) && empty($appid) && empty($resid)) {
             return $result;
         }
         // If accid is filter, find all applications for the accid.
         $appid = empty($appid) ? [] : [$appid];
         if (!empty($accid)) {
-            $applicationMapper = new ApplicationMapper($this->db);
+            $applicationMapper = new ApplicationMapper($this->db, $this->logger);
             $applications = $applicationMapper->findByAccid($accid);
             foreach ($applications as $application) {
                 $appid[] = $application->getAppid();
@@ -302,9 +312,9 @@ class ResourceMapper extends Mapper
      *
      * @param array $row DB row object.
      *
-     * @return mixed Resource object.
+     * @return Resource Resource object.
      */
-    protected function mapArray(array $row)
+    protected function mapArray(array $row): Resource
     {
         $resource = new Resource();
 

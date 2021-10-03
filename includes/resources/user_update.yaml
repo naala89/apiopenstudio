@@ -21,18 +21,12 @@ appid: 1
 ttl: 0
 
 security:
-  processor: token
   id: user_update_security
-  token:
-    processor: bearer_token
-    id: user_update_security_token
+  processor: validate_token
 
 process:
   processor: user_update
   id: user_update_process
-  token:
-    processor: bearer_token
-    id: user_update_token
   uid:
     processor: var_uri
     id: user_update_uid

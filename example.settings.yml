@@ -10,40 +10,55 @@
 
 debug:
   formatters:
-    api_open_studio:
-      format: "%datetime%-%channel%.%level_name% - %message%\n"
+    default:
+      format: null
+      date_format: null
+      allow_inline_line_breaks: false
+      ignore_empty_context_and_extra: true
   handlers:
-    console:
-      class: Monolog\Handler\StreamHandler
+    api_log_file:
+      class: StreamHandler
+      formatter: default
       level: DEBUG
-      formatter: api_open_studio
-      processors: [memory_processor]
-      bubble: true
-      stream: php://stdout
-    api_file_handler:
-      class: Monolog\Handler\StreamHandler
-      level: NOTICE
-      formatter: api_open_studio
-      bubble: true
-      stream: /var/www/html/logs/api/error.log
-    db_file_handler:
-      class: Monolog\Handler\StreamHandler
-      level: NOTICE
-      formatter: api_open_studio
-      bubble: true
-      stream: /var/www/html/logs/db/error.log
-  processors:
-    web_processor:
-      class: Monolog\Processor\WebProcessor
-    memory_processor:
-      class: Monolog\Processor\MemoryUsageProcessor
+      stream: /var/log/api.log
+    db_log_file:
+      class: StreamHandler
+      formatter: default
+      level: DEBUG
+      stream: /var/log/db.log
+  #    fire_php:
+  #      class: FirePHPHandler
+  #      formatter: default
+  #    chrome_php:
+  #      class: ChromePHPHandler
+  #      formatter: default
+  #    syslog:
+  #      class: SyslogHandler
+  #      ident: ApiOpenStudio
+  #      facility: local6
+  #      level: DEBUG
+  #      formatter: default
+  #    error_log:
+  #      class: ErrorLogHandler
+  #      formatter: default
+  #    processor:
+  #      class: ProcessHandler
+  #      command: '/usr/bin/php /var/www/monolog/someScript.php'
+  #      level: DEBUG
+  #      formatter: default
+  #    mongo_db:
+  #      class: MongoDBHandler
+  #      mongodb: client
+  #      collection: logs
+  #      level: DEBUG
+  #      formatter: default
   loggers:
     api:
-      handlers: [api_file_handler]
-      processors: [web_processor]
+      handlers:
+        - api_log_file
     db:
-      handlers: [db_file_handler]
-      processors: [web_processor]
+      handlers:
+        - db_log_file
 
 db:
   definition_path: "includes/db/dbDefinition.yaml"
@@ -65,7 +80,6 @@ api:
   url: "api.apiopenstudio.local"
   cache: false
   default_format: json
-  token_life: "+6 hour"
   core_account: apiopenstudio
   core_application: core
   core_resource_lock: false
@@ -73,6 +87,13 @@ api:
   dir_resources: "includes/resources/"
   dir_uploads: "uploads/"
   dir_tmp: "/tmp/"
+  jwt_private_key: "/var/www/html/api/jwt.key"
+  jwt_public_key: "/var/www/html/api/jwt.key.pub"
+  jwt_alg_type: "Rsa"
+  jwt_alg: "Sha256"
+  jwt_life: "+1 hour"
+  jwt_issuer: "api.apiopenstudio.local"
+  jwt_permitted_for: "api.apiopenstudio.local"
 
 email:
   host: apiopenstudio-email

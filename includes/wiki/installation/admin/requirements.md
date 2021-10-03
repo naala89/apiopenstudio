@@ -2,6 +2,6 @@ Requirements
 ============
 
 * apache/nginx
-* php >= 7.0
+* php >= 7.4
 * composer
 * npm

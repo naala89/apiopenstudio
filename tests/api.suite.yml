@@ -1,22 +1,22 @@
 class_name: ApiTester
 modules:
-    enabled:
-        - \Helper\Api
-        - REST:
-            url: "https://%API_DOMAIN%"
-            depends: PhpBrowser
-        - Filesystem
+  enabled:
+    - \Helper\Api
+    - REST:
+        url: "https://%API_DOMAIN%"
+        depends: PhpBrowser
+    - Filesystem
 env:
-    local:
-        modules:
-            config:
-                REST:
-                    url: "https://%API_DOMAIN%"
-                    depends: PhpBrowser
-    ci:
-        modules:
-            config:
-                REST:
-                    url: "http://%API_DOMAIN%"
-                    depends: PhpBrowser
+  local:
+    modules:
+      config:
+        REST:
+          url: "https://%API_DOMAIN%"
+          depends: PhpBrowser
+  ci:
+    modules:
+      config:
+        REST:
+          url: "http://%API_DOMAIN%"
+          depends: PhpBrowser
 

@@ -26,25 +26,18 @@ use ApiOpenStudio\Db;
 class LoginStoreDrupal extends Core\ProcessorEntity
 {
     /**
-     * User DB object.
-     *
-     * @var array
-     */
-    private $user;
-
-    /**
      * Default external entity type.
      *
      * @var string
      */
-    private $defaultEntity = 'drupal';
+    private string $defaultEntity = 'drupal';
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Login Store Drupal',
         'machineName' => 'loginStoreDrupal',
         // phpcs:ignore
@@ -80,9 +73,9 @@ class LoginStoreDrupal extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $source = $this->val('source');
         $source = json_decode($source);
@@ -92,9 +85,8 @@ class LoginStoreDrupal extends Core\ProcessorEntity
         $externalEntity = !empty($this->meta->externalEntity) ? $this->val('externalEntity') : $this->defaultEntity;
         $externalId = $source->user->uid;
         $appid = $this->request->getAppId();
-        $db = $this->getDb();
 
-        $userMapper = new Db\ExternalUserMapper($db);
+        $userMapper = new Db\ExternalUserMapper($this->db, $this->logger);
         $user = $userMapper->findByAppIdEntityExternalId($appid, $externalEntity, $externalId);
         if ($user->getId() == null) {
             $user->setAppId($appid);
@@ -107,6 +99,6 @@ class LoginStoreDrupal extends Core\ProcessorEntity
 
         $userMapper->save($user);
 
-        return $source;
+        return new Core\DataContainer($source, 'text');
     }
 }

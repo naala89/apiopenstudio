@@ -29,7 +29,7 @@ class VarField extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Var (field)',
         'machineName' => 'var_field',
         // phpcs:ignore
@@ -73,9 +73,9 @@ class VarField extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $array = $this->val('array', true);
         $key = $this->val('key', true);

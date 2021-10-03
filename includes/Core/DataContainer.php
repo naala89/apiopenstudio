@@ -29,7 +29,7 @@ class DataContainer extends Entity
      *
      * @var array Data types.
      */
-    private $types = [
+    private array $types = [
         'boolean',
         'integer',
         'float',
@@ -47,7 +47,7 @@ class DataContainer extends Entity
      *
      * @var string Default data type
      */
-    private $type = 'empty';
+    private string $type = 'empty';
 
     /**
      * Data.
@@ -60,7 +60,7 @@ class DataContainer extends Entity
      * DataContainer constructor.
      *
      * @param mixed $data Data stored in the container.
-     * @param string $dataType Data type.
+     * @param string|null $dataType Data type.
      */
     public function __construct($data, string $dataType = null)
     {
@@ -96,7 +96,7 @@ class DataContainer extends Entity
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -118,7 +118,7 @@ class DataContainer extends Entity
      *
      * @return array
      */
-    public function getTypes()
+    public function getTypes(): array
     {
         return $this->types;
     }
@@ -130,7 +130,7 @@ class DataContainer extends Entity
      *
      * @return string The data type.
      */
-    private function detectType($data)
+    private function detectType($data): string
     {
         if ($this->isEmpty($data)) {
             return 'empty';
@@ -166,7 +166,7 @@ class DataContainer extends Entity
      *
      * @return boolean
      */
-    private function isEmpty($var)
+    private function isEmpty($var): bool
     {
         return $var !== 0 && $var !== '0' && $var !== false && empty($var);
     }
@@ -178,7 +178,7 @@ class DataContainer extends Entity
      *
      * @return boolean
      */
-    private function isBool($var)
+    private function isBool($var): bool
     {
         return $var === "true" || $var === "false" || is_bool($var);
     }
@@ -190,7 +190,7 @@ class DataContainer extends Entity
      *
      * @return boolean
      */
-    private function isInt($var)
+    private function isInt($var): bool
     {
         if (is_array($var)) {
             return false;
@@ -211,7 +211,7 @@ class DataContainer extends Entity
      *
      * @return boolean
      */
-    private function isFloat($var)
+    private function isFloat($var): bool
     {
         return is_float(filter_var($var, FILTER_VALIDATE_FLOAT, ['default' => null]));
     }
@@ -223,7 +223,7 @@ class DataContainer extends Entity
      *
      * @return boolean
      */
-    private function isArray($var)
+    private function isArray($var): bool
     {
         return is_array($var);
     }
@@ -235,7 +235,7 @@ class DataContainer extends Entity
      *
      * @return boolean
      */
-    private function isJson($var)
+    private function isJson($var): bool
     {
         json_decode($var);
         return (json_last_error() == JSON_ERROR_NONE);
@@ -248,7 +248,7 @@ class DataContainer extends Entity
      *
      * @return boolean
      */
-    private function isHtml($var)
+    private function isHtml($var): bool
     {
         $var = trim($var);
 
@@ -276,7 +276,7 @@ class DataContainer extends Entity
      *
      * @return boolean
      */
-    private function isXml($var)
+    private function isXml($var): bool
     {
         libxml_use_internal_errors(true);
         $testXml = simplexml_load_string($var);

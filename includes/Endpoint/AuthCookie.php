@@ -29,7 +29,7 @@ class AuthCookie extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Auth (Cookie)',
         'machineName' => 'auth_cookie',
         'description' => 'Authentication for remote server, using a cookie.',
@@ -51,10 +51,12 @@ class AuthCookie extends Core\ProcessorEntity
      * {@inheritDoc}
      *
      * @return Core\DataContainer Result of the processor.
+     *
+     * @throws Core\ApiException
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $cookie = $this->val('cookie', true);
 

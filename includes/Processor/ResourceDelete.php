@@ -15,14 +15,13 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db\AccountMapper;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\ResourceMapper;
-use ApiOpenStudio\Db\UserMapper;
 use ApiOpenStudio\Db\UserRoleMapper;
-use Monolog\Logger;
 
 /**
  * Class ResourceDelete
@@ -36,64 +35,47 @@ class ResourceDelete extends Core\ProcessorEntity
      *
      * @var Config
      */
-    private $settings;
+    private Config $settings;
 
     /**
      * Resource mapper class.
      *
      * @var ResourceMapper
      */
-    private $resourceMapper;
+    private ResourceMapper $resourceMapper;
 
     /**
      * Account mapper class.
      *
      * @var AccountMapper
      */
-    private $accountMapper;
+    private AccountMapper $accountMapper;
 
     /**
      * Application mapper class.
      *
      * @var ApplicationMapper
      */
-    private $applicationMapper;
-
-    /**
-     * User mapper class.
-     *
-     * @var UserMapper
-     */
-    private $userMapper;
+    private ApplicationMapper $applicationMapper;
 
     /**
      * User role mapper class.
      *
      * @var UserRoleMapper
      */
-    private $userRoleMapper;
+    private UserRoleMapper $userRoleMapper;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Resource delete',
         'machineName' => 'resource_delete',
         'description' => 'Delete a resource.',
         'menu' => 'Admin',
         'input' => [
-            'token' => [
-                // phpcs:ignore
-                'description' => 'The token of the user making the call. This is used to validate the user permissions.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => false,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
             'resid' => [
                 'description' => 'The resource ID.',
                 'cardinality' => [1, 1],
@@ -111,17 +93,16 @@ class ResourceDelete extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->applicationMapper = new ApplicationMapper($db);
-        $this->userMapper = new UserMapper($db);
-        $this->userRoleMapper = new UserRoleMapper($db);
-        $this->accountMapper = new AccountMapper($db);
-        $this->resourceMapper = new ResourceMapper($db);
+        $this->applicationMapper = new ApplicationMapper($db, $logger);
+        $this->userRoleMapper = new UserRoleMapper($db, $logger);
+        $this->accountMapper = new AccountMapper($db, $logger);
+        $this->resourceMapper = new ResourceMapper($db, $logger);
         $this->settings = new Config();
     }
 
@@ -132,13 +113,12 @@ class ResourceDelete extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $resid = $this->val('resid', true);
-        $token = $this->val('token', true);
-        $currentUser = $this->userMapper->findBytoken($token);
+        $uid = Core\Utilities::getUidFromToken();
 
         $resource = $this->resourceMapper->findByResid($resid);
         if (empty($resource->getResid())) {
@@ -146,7 +126,7 @@ class ResourceDelete extends Core\ProcessorEntity
         }
 
         $role = $this->userRoleMapper->findByUidAppidRolename(
-            $currentUser->getUid(),
+            $uid,
             $resource->getAppid(),
             'Developer'
         );
@@ -169,6 +149,6 @@ class ResourceDelete extends Core\ProcessorEntity
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
-        return new Core\DataContainer($this->resourceMapper->delete($resource) ? 'true' : 'false');
+        return new Core\DataContainer($this->resourceMapper->delete($resource), 'boolean');
     }
 }

@@ -29,14 +29,14 @@ class Xml extends Output
      *
      * @var string The string to contain the content type header value.
      */
-    protected $header = 'Content-Type:application/xml';
+    protected string $header = 'Content-Type:application/xml';
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Xml',
         'machineName' => 'xml',
         'description' => 'Output in the results of the resource in XML format to a remote server.',
@@ -78,10 +78,10 @@ class Xml extends Output
      *
      * @return Core\DataContainer Result of the processor.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Output: ' . $this->details()['machineName']);
-        return parent::process();
+        $this->logger->info('api', 'Output: ' . $this->details()['machineName']);
+        return new Core\DataContainer(parent::process(), 'xml');
     }
 
     /**
@@ -91,7 +91,7 @@ class Xml extends Output
      *
      * @return string XML string.
      */
-    protected function fromBoolean(bool &$data)
+    protected function fromBoolean(bool &$data): string
     {
         return '<?xml version="1.0"?><apiOpenStudioWrapper>' . $data ? 'true' : 'false' . '</apiOpenStudioWrapper>';
     }
@@ -103,7 +103,7 @@ class Xml extends Output
      *
      * @return string XML string.
      */
-    protected function fromInteger(int &$data)
+    protected function fromInteger(int &$data): string
     {
         return '<?xml version="1.0"?><apiOpenStudioWrapper>' . $data . '</apiOpenStudioWrapper>';
     }
@@ -115,7 +115,7 @@ class Xml extends Output
      *
      * @return string XML string.
      */
-    protected function fromFloat(float &$data)
+    protected function fromFloat(float &$data): string
     {
         return '<?xml version="1.0"?><apiOpenStudioWrapper>' . $data . '</apiOpenStudioWrapper>';
     }
@@ -127,7 +127,7 @@ class Xml extends Output
      *
      * @return string XML string.
      */
-    protected function fromXml(string &$data)
+    protected function fromXml(string &$data): string
     {
         libxml_use_internal_errors(true);
         $doc = simplexml_load_string($data);
@@ -146,7 +146,7 @@ class Xml extends Output
      *
      * @return string XML string.
      */
-    protected function fromHtml(string &$data)
+    protected function fromHtml(string &$data): string
     {
         return $data;
     }

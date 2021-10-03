@@ -29,7 +29,7 @@ class Literal extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Literal',
         'machineName' => 'literal',
         'description' => 'A literal string or value.',
@@ -63,9 +63,9 @@ class Literal extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $value = $this->val('value');
         $type = $this->val('type');

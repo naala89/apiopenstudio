@@ -34,14 +34,14 @@ class Error
      *
      * @var integer Error code.
      */
-    private $code;
+    private int $code;
 
     /**
      * Error message.
      *
      * @var string Error message.
      */
-    private $message;
+    private string $message;
 
     /**
      * Error constructor.

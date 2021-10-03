@@ -9,28 +9,12 @@ appid: 2
 ttl: 0
 
 security:
-  processor: token_role
+  processor: validate_token_roles
   id: test resource with no name security
-  token:
-    processor: var_get
-    id: test resource with no name token
-    key: token
-  role: Consumer
+  roles:
+    - Consumer
 
 process:
   processor: processors
   id: test resource with no name process
   machine_name: all
-
-output:
-  -
-    response
-  -
-    processor: email
-    to: john@naala.com.au
-    subject: "test email"
-    format: html
-  -
-    processor: xml
-    destination: www.foo.bar
-    method: post

@@ -7,11 +7,11 @@ Installing the codebase
 
 ### Git
 
-    git clone git@gitlab.com:john89/api_open_studio.git
+    git clone git@gitlab.com:apiopenstudio/apiopenstudio.git
 
 or
 
-    git clone git@github.com:naala89/api_open_studio.git
+    git clone git@github.com:naala89/apiopenstudio.git
 
 Settings
 --------

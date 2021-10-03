@@ -30,7 +30,7 @@ class UserRoleDelete extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'User Role delete',
         'machineName' => 'user_role_delete',
         'description' => 'Delete a role for a user.',
@@ -55,13 +55,13 @@ class UserRoleDelete extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $urid = $this->val('urid', true);
 
-        $userRoleMapper = new Db\UserRoleMapper($this->db);
+        $userRoleMapper = new Db\UserRoleMapper($this->db, $this->logger);
 
         $userRoles = $userRoleMapper->findByFilter(['col' => [
         'urid' => $urid,
@@ -79,6 +79,6 @@ class UserRoleDelete extends Core\ProcessorEntity
             }
         }
 
-        return $userRoleMapper->delete($userRole);
+        return new Core\DataContainer($userRoleMapper->delete($userRole), 'boolean');
     }
 }

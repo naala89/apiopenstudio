@@ -15,6 +15,8 @@
 
 namespace ApiOpenStudio\Core;
 
+use stdClass;
+
 /**
  * Class Normalise
  *
@@ -34,14 +36,14 @@ class Normalise
      *
      * @var string
      */
-    private $format;
+    private string $format;
 
     /**
      * Default result format for normalise.
      *
      * @var string
      */
-    public $defaultNormalise = 'array';
+    public string $defaultNormalise = 'array';
 
     /**
      * Set the data to be processed.
@@ -60,7 +62,7 @@ class Normalise
     /**
      * Call the default normalise function
      *
-     * @param string $into Format to normalize to.
+     * @param string|null $into Format to normalize to.
      *
      * @return mixed
      *
@@ -118,11 +120,11 @@ class Normalise
     /**
      * Convert constructs and text to stdClass.
      *
-     * @return \stdClass
+     * @return stdClass
      *
      * @throws ApiException Exception.
      */
-    public function toStdClass()
+    public function toStdClass(): stdClass
     {
         $format = !$this->format ? $this->calcFormat() : $this->getFormat();
         switch ($format) {
@@ -133,12 +135,12 @@ class Normalise
                 $data = $this->jsonToStdClass();
                 break;
             case 'array':
-                $data = new \stdClass();
+                $data = new stdClass();
                 $data->data = (object) $this->data;
                 break;
             case 'text':
             default:
-                $data = new \stdClass();
+                $data = new stdClass();
                 $data->data = $this->data;
                 break;
         }
@@ -202,7 +204,7 @@ class Normalise
      *
      * @return string
      */
-    private function calcFormat()
+    private function calcFormat(): string
     {
         $data = $this->data;
         // test for array
@@ -295,7 +297,7 @@ class Normalise
      *
      * @return array
      */
-    private function jsonToArray()
+    private function jsonToArray(): array
     {
         return json_decode($this->data, true); // Convert to array
     }
@@ -303,9 +305,9 @@ class Normalise
     /**
      * Convert XML to stdClass.
      *
-     * @return \stdClass
+     * @return stdClass
      */
-    private function xmlToStdClass()
+    private function xmlToStdClass(): stdClass
     {
         $obj = simplexml_load_string($this->data); // Parse XML
         return json_decode(json_encode($obj)); // Convert to stdclass
@@ -315,9 +317,9 @@ class Normalise
     /**
      * Convert JSON to stdClass.
      *
-     * @return \stdClass
+     * @return stdClass
      */
-    private function jsonToStdClass()
+    private function jsonToStdClass(): stdClass
     {
         return json_decode($this->data); // Convert to stdclass
     }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class TokenRoles.
+ * Class ValidateTokenRoles.
  *
  * @package    ApiOpenStudio
  * @subpackage Security
@@ -16,40 +16,30 @@
 namespace ApiOpenStudio\Security;
 
 use ApiOpenStudio\Core;
-use ApiOpenStudio\Db;
 
 /**
- * Class TokenRoles
+ * Class ValidateTokenRoles
  *
  * Provide token authentication based and the user's role.
  *
  * Validation:
- *   * If user is Administrator then only against role.
- *   * If user is Account manager then against role and account.
- *   * All others against role and application.
+ *   If user is Administrator then only against role.
+ *   If user is Account manager then against role and account.
+ *   All other users against role and application.
  */
-class TokenRoles extends TokenRole
+class ValidateTokenRoles extends ValidateToken
 {
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
-        'name' => 'Token (Roles)',
-        'machineName' => 'token_roles',
-        'description' => 'Validate that the user has a valid token and roles.',
+    protected array $details = [
+        'name' => 'Validate token roles',
+        'machineName' => 'validate_token_roles',
+        'description' => 'Validate that the user has a valid token and role.',
         'menu' => 'Security',
         'input' => [
-            'token' => [
-                'description' => 'The users token.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => false,
-                'limitProcessors' => [],
-                'limitTypes' => ['text', 'empty'],
-                'limitValues' => [],
-                'default' => '',
-            ],
             'roles' => [
                 'description' => 'User roles that are permitted.',
                 'cardinality' => [1, '*'],
@@ -89,35 +79,54 @@ class TokenRoles extends TokenRole
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Security: ' . $this->details()['machineName']);
+        parent::process();
 
-        $token = $this->val('token', true);
+        $permittedRoles = $this->val('roles', true);
         $validateAccount = $this->val('validate_account', true);
         $validateApplication = $this->val('validate_application', true);
 
-        // no token
-        if (empty($token)) {
-            throw new Core\ApiException('permission denied', 4, -1, 401);
+
+        // Get roles and validate the user against them.
+        if ($this->validateUserRoles($permittedRoles, $validateAccount, $validateApplication)) {
+            return new Core\DataContainer(true, 'boolean');
         }
 
-        // invalid token or user not active
-        $userMapper = new Db\UserMapper($this->db);
-        $user = $userMapper->findBytoken($token);
-        $uid = $user->getUid();
-        if (empty($uid) || $user->getActive() == 0) {
-            throw new Core\ApiException('permission denied', 4, -1, 401);
-        }
+        throw new Core\ApiException('unauthorized for this call', 4, $this->id, 401);
+    }
 
-        // Get roles and validate the user.
-        $roleNames = $this->val('roles', true);
-        foreach ($roleNames as $roleName) {
-            if ($this->validateUser($uid, $roleName, $validateAccount, $validateApplication) == true) {
-                return new Core\DataContainer(true, 'boolean');
+    /**
+     * Validate a user against roles and the account/application of the resource.
+     *
+     * @param array $permittedRoles Permitted roles for the call.
+     * @param bool $validateAccount Validate account.
+     * @param bool $validateApplication Validate application.
+     *
+     * @return boolean
+     */
+    protected function validateUserRoles(array $permittedRoles, bool $validateAccount, bool $validateApplication): bool
+    {
+        foreach ($this->roles as $userRole) {
+            // Do not validate accid or appid for Administrator role.
+            if ($userRole['role_name'] == 'Administrator') {
+                $validateAccount = false;
+                $validateApplication = false;
+            }
+            // Only validate accid for Account manager role.
+            if ($userRole['role_name'] == 'Account manager') {
+                $validateAccount = false;
+            }
+            // Normal user, validate role, accid, appid
+            if (
+                in_array($userRole['role_name'], $permittedRoles)
+                && (!$validateAccount || $this->request->getAccId() == $userRole['accid'])
+                && (!$validateApplication || $this->request->getAppId() == $userRole['appid'])
+            ) {
+                return true;
             }
         }
 
-        throw new Core\ApiException('permission denied', 4, $this->id, 401);
+        return false;
     }
 }

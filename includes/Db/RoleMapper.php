@@ -15,6 +15,8 @@
 
 namespace ApiOpenStudio\Db;
 
+use ApiOpenStudio\Core\ApiException;
+
 /**
  * Class RoleMapper.
  *
@@ -25,13 +27,13 @@ class RoleMapper extends Mapper
     /**
      * Save a Role object into the DB.
      *
-     * @param \ApiOpenStudio\Db\Role $role Role object.
+     * @param Role $role Role object.
      *
      * @return boolean Success.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function save(Role $role)
+    public function save(Role $role): bool
     {
         if ($role->getRid() == null) {
             $sql = 'INSERT INTO role (name) VALUES (?)';
@@ -51,13 +53,13 @@ class RoleMapper extends Mapper
     /**
      * Delete a Role.
      *
-     * @param \ApiOpenStudio\Db\Role $role Role object.
+     * @param Role $role Role object.
      *
      * @return boolean Success.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function delete(Role $role)
+    public function delete(Role $role): bool
     {
         $sql = 'DELETE FROM role WHERE rid = ?';
         $bindParams = [$role->getRid()];
@@ -71,9 +73,9 @@ class RoleMapper extends Mapper
      *
      * @return array Array of role objects.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findAll(array $params = [])
+    public function findAll(array $params = []): array
     {
         $sql = 'SELECT * FROM role';
         return $this->fetchRows($sql, [], $params);
@@ -84,11 +86,11 @@ class RoleMapper extends Mapper
      *
      * @param integer $rid Role ID.
      *
-     * @return \ApiOpenStudio\Db\Role Role object.
+     * @return Role Role object.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByRid(int $rid)
+    public function findByRid(int $rid): Role
     {
         $sql = 'SELECT * FROM role WHERE rid = ?';
         $bindParams = [$rid];
@@ -100,11 +102,11 @@ class RoleMapper extends Mapper
      *
      * @param string $name Role name.
      *
-     * @return \ApiOpenStudio\Db\Role Role object.
+     * @return Role Role object.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByName(string $name)
+    public function findByName(string $name): Role
     {
         $sql = 'SELECT * FROM role WHERE name = ?';
         $bindParams = [$name];
@@ -118,9 +120,9 @@ class RoleMapper extends Mapper
      *
      * @return array Array of role objects.
      *
-     * @throws \ApiOpenStudio\Core\ApiException Return an ApiException on DB error.
+     * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByUid(int $uid)
+    public function findByUid(int $uid): array
     {
         $sql = 'SELECT DISTINCT r.* FROM role r INNER JOIN user_role ur ON ur.rid = r.rid WHERE ur.uid = ?';
         $bindParams = [$uid];
@@ -132,10 +134,10 @@ class RoleMapper extends Mapper
      *
      * @param array $row DB row.
      *
-     * @return \ApiOpenStudio\Db\Role
+     * @return Role
      *   Role object.
      */
-    protected function mapArray(array $row)
+    protected function mapArray(array $row): Role
     {
         $role = new Role();
 

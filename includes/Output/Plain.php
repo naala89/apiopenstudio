@@ -15,6 +15,8 @@
 
 namespace ApiOpenStudio\Output;
 
+use ApiOpenStudio\Core\DataContainer;
+
 /**
  * Class Plain
  *
@@ -27,14 +29,14 @@ class Plain extends Text
      *
      * @var string The string to contain the content type header value.
      */
-    protected $header = 'Content-Type:text/plain';
+    protected string $header = 'Content-Type:text/plain';
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Plain',
         'machineName' => 'plain',
         'description' => 'Output in the results of the resource in plain-text format to a remote server.',
@@ -74,11 +76,11 @@ class Plain extends Text
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      */
-    public function process()
+    public function process(): DataContainer
     {
-        $this->logger->info('Output: ' . $this->details()['machineName']);
+        $this->logger->info('api', 'Output: ' . $this->details()['machineName']);
         return parent::process();
     }
 }

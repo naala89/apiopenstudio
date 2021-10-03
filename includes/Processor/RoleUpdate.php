@@ -15,9 +15,9 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db\RoleMapper;
-use Monolog\Logger;
 
 /**
  * Class RoleUpdate
@@ -31,14 +31,14 @@ class RoleUpdate extends Core\ProcessorEntity
      *
      * @var RoleMapper
      */
-    private $roleMapper;
+    private RoleMapper $roleMapper;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Role update',
         'machineName' => 'role_update',
         'description' => 'Update a role.',
@@ -70,13 +70,13 @@ class RoleUpdate extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->roleMapper = new RoleMapper($db);
+        $this->roleMapper = new RoleMapper($db, $logger);
     }
 
     /**
@@ -86,9 +86,9 @@ class RoleUpdate extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $rid = $this->val('rid', true);
         $name = $this->val('name', true);
@@ -108,6 +108,6 @@ class RoleUpdate extends Core\ProcessorEntity
 
         $role->setName($name);
 
-        return $this->roleMapper->save($role);
+        return new Core\DataContainer($this->roleMapper->save($role), 'boolean');
     }
 }

@@ -29,7 +29,7 @@ class IfThenElse extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'If Then Else',
         'machineName' => 'ifThenElse',
         'description' => 'An if then else logic gate.',
@@ -90,9 +90,9 @@ class IfThenElse extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $lhs = $this->val('lhs', true);
         $rhs = $this->val('rhs', true);

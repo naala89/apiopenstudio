@@ -15,6 +15,7 @@
 
 namespace ApiOpenStudio\Output;
 
+use ApiOpenStudio\Core\DataContainer;
 use phpDocumentor\Reflection\Types\Boolean;
 
 /**
@@ -29,14 +30,14 @@ class Text extends Output
      *
      * @var string The string to contain the content type header value.
      */
-    protected $header = 'Content-Type:text/text';
+    protected string $header = 'Content-Type:text/text';
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Text',
         'machineName' => 'text',
         'description' => 'Output in the results of the resource in text format to a remote server.',
@@ -76,12 +77,12 @@ class Text extends Output
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      */
-    public function process()
+    public function process(): DataContainer
     {
-        $this->logger->info('Output: ' . $this->details()['machineName']);
-        return parent::process();
+        $this->logger->info('api', 'Output: ' . $this->details()['machineName']);
+        return new DataContainer(parent::process(), 'text');
     }
 
     /**
@@ -89,9 +90,9 @@ class Text extends Output
      *
      * @param boolean $data Boolean data.
      *
-     * @return mixed
+     * @return string
      */
-    protected function fromBoolean(bool &$data)
+    protected function fromBoolean(bool &$data): string
     {
         return $data ? 'true' : 'false';
     }
@@ -101,9 +102,9 @@ class Text extends Output
      *
      * @param integer $data Integer data.
      *
-     * @return mixed
+     * @return int
      */
-    protected function fromInteger(int &$data)
+    protected function fromInteger(int &$data): int
     {
         return $data;
     }
@@ -113,9 +114,9 @@ class Text extends Output
      *
      * @param float $data Float data.
      *
-     * @return mixed
+     * @return float
      */
-    protected function fromFloat(float &$data)
+    protected function fromFloat(float &$data): float
     {
         return $data;
     }
@@ -125,9 +126,9 @@ class Text extends Output
      *
      * @param string $data XML data.
      *
-     * @return mixed
+     * @return string
      */
-    protected function fromXml(string &$data)
+    protected function fromXml(string &$data): string
     {
         return $data;
     }
@@ -137,9 +138,9 @@ class Text extends Output
      *
      * @param string $data HTML data.
      *
-     * @return mixed
+     * @return string
      */
-    protected function fromHtml(string &$data)
+    protected function fromHtml(string &$data): string
     {
         return $data;
     }
@@ -149,9 +150,9 @@ class Text extends Output
      *
      * @param string $data Text data.
      *
-     * @return mixed
+     * @return string
      */
-    protected function fromText(string &$data)
+    protected function fromText(string &$data): string
     {
         return $data;
     }
@@ -163,7 +164,7 @@ class Text extends Output
      *
      * @return string
      */
-    protected function fromArray(array &$data)
+    protected function fromArray(array &$data): string
     {
         return json_encode($data);
     }
@@ -173,9 +174,9 @@ class Text extends Output
      *
      * @param string $data Json data.
      *
-     * @return mixed
+     * @return string
      */
-    protected function fromJson(string &$data)
+    protected function fromJson(string &$data): string
     {
         return $data;
     }
@@ -185,9 +186,9 @@ class Text extends Output
      *
      * @param mixed $data Image data.
      *
-     * @return mixed
+     * @return string
      */
-    protected function fromImage(&$data)
+    protected function fromImage(&$data): string
     {
         return $data;
     }

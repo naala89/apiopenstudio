@@ -21,14 +21,9 @@ appid: 1
 ttl: 3600
 
 security:
-  processor: token_roles
   id: processors_security
-  token:
-    processor: bearer_token
-    id: processors_token
+  processor: validate_token_roles
   roles:
-    - Account manager
-    - Application manager
     - Developer
   validate_account: false
   validate_application: false
@@ -40,3 +35,4 @@ process:
     processor: var_uri
     id: processors_machine_name
     index: 0
+    nullable: true

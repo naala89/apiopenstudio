@@ -1,12 +1,13 @@
 <?php
 
 $I = new ApiTester($scenario);
-$I->performLogin();
 $uri = $I->getMyBaseUri() . '/sort/collection/';
 
-$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
+$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 $I->createResourceFromYaml('sortCollection.yaml');
 $I->deleteHeader('Authorization');
+
+$I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
 
 $I->wantTo('Sort a Collection by value in ascending order and see the result.');
 $I->sendGet(
@@ -34,7 +35,6 @@ $I->wantTo('Sort a Collection by value in descending order and see the result.')
 $I->sendGet(
     $uri,
     [
-        'token' => $I->getMyStoredToken(),
         'direction' => 'desc',
         'sort_by' => 'value',
     ]
@@ -56,7 +56,6 @@ $I->wantTo('Sort a Collection by key in ascending order and see the result.');
 $I->sendGet(
     $uri,
     [
-        'token' => $I->getMyStoredToken(),
         'direction' => 'asc',
         'sort_by' => 'key',
     ]
@@ -78,7 +77,6 @@ $I->wantTo('Sort a Collection by key in descending order and see the result.');
 $I->sendGet(
     $uri,
     [
-        'token' => $I->getMyStoredToken(),
         'direction' => 'desc',
         'sort_by' => 'key',
     ]
@@ -96,20 +94,19 @@ $I->seeResponseContainsJson(
     ]
 );
 
-$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
-$I->tearDownTestFromYaml('sortCollection.yaml');
 $I->deleteHeader('Authorization');
-
-$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
+$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
+$I->tearDownTestFromYaml('sortCollection.yaml');
 $I->createResourceFromYaml('sortArray.yaml');
 $I->deleteHeader('Authorization');
+
+$I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
 $uri = $I->getMyBaseUri() . '/sort/array/';
 
 $I->wantTo('Sort multiple values by value in ascending order and see the result.');
 $I->sendGet(
     $uri,
     [
-        'token' => $I->getMyStoredToken(),
         'direction' => 'asc',
         'sort_by' => 'value',
     ]
@@ -131,7 +128,6 @@ $I->wantTo('Sort multiple values by value in descending order and see the result
 $I->sendGet(
     $uri,
     [
-        'token' => $I->getMyStoredToken(),
         'direction' => 'desc',
         'sort_by' => 'value',
     ]
@@ -153,7 +149,6 @@ $I->wantTo('Sort multiple values by key in ascending order and see the result.')
 $I->sendGet(
     $uri,
     [
-        'token' => $I->getMyStoredToken(),
         'direction' => 'asc',
         'sort_by' => 'key',
     ]
@@ -175,7 +170,6 @@ $I->wantTo('Sort multiple values by key in descending order and see the result.'
 $I->sendGet(
     $uri,
     [
-        'token' => $I->getMyStoredToken(),
         'direction' => 'desc',
         'sort_by' => 'key',
     ]
@@ -193,20 +187,18 @@ $I->seeResponseContainsJson(
     ]
 );
 
-$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
-$I->tearDownTestFromYaml('sortArray.yaml');
 $I->deleteHeader('Authorization');
-
-$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
+$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
+$I->tearDownTestFromYaml('sortArray.yaml');
 $I->createResourceFromYaml('sortObject.yaml');
 $I->deleteHeader('Authorization');
+$I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
 $uri = $I->getMyBaseUri() . '/sort/object/';
 
 $I->wantTo('Sort an Object by value in ascending order and see the result.');
 $I->sendGet(
     $uri,
     [
-        'token' => $I->getMyStoredToken(),
         'direction' => 'asc',
         'sort_by' => 'value',
     ]
@@ -227,7 +219,6 @@ $I->wantTo('Sort an Object by value in descending order and see the result.');
 $I->sendGet(
     $uri,
     [
-        'token' => $I->getMyStoredToken(),
         'direction' => 'desc',
         'sort_by' => 'value',
     ]
@@ -248,7 +239,6 @@ $I->wantTo('Sort an Object by key in asscending order and see the result.');
 $I->sendGet(
     $uri,
     [
-        'token' => $I->getMyStoredToken(),
         'direction' => 'asc',
         'sort_by' => 'key',
     ]
@@ -269,7 +259,6 @@ $I->wantTo('Sort an Object by key in descending order and see the result.');
 $I->sendGet(
     $uri,
     [
-        'token' => $I->getMyStoredToken(),
         'direction' => 'desc',
         'sort_by' => 'key',
     ]
@@ -286,6 +275,7 @@ $I->seeResponseContainsJson(
     ]
 );
 
-$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
+$I->deleteHeader('Authorization');
+$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 $I->tearDownTestFromYaml('sortObject.yaml');
 $I->deleteHeader('Authorization');

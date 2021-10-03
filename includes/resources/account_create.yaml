@@ -21,12 +21,10 @@ appid: 1
 ttl: 0
 
 security:
-  processor: token_role
-  id: security
-  token:
-    processor: bearer_token
-    id: security_token
-  role: Administrator
+  id: create_account_security
+  processor: validate_token_roles
+  roles:
+    - Administrator
 
 process:
   processor: account_create

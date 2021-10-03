@@ -15,12 +15,12 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db;
 use Swift_SmtpTransport;
 use Swift_Mailer;
 use Swift_Message;
-use Monolog\Logger;
 
 /**
  * Class PasswordReset
@@ -34,42 +34,42 @@ class PasswordReset extends Core\ProcessorEntity
      *
      * @var Db\UserMapper
      */
-    private $userMapper;
+    private Db\UserMapper $userMapper;
 
     /**
      * Config class.
      *
      * @var Core\Config
      */
-    private $settings;
+    private Core\Config $settings;
 
     /**
      * Var store mapper class.
      *
      * @var Db\VarStoreMapper
      */
-    private $varStoreMapper;
+    private Db\VarStoreMapper $varStoreMapper;
 
     /**
      * Account mapper class.
      *
      * @var Db\AccountMapper
      */
-    private $accountMapper;
+    private Db\AccountMapper $accountMapper;
 
     /**
      * Application mapper class.
      *
      * @var Db\ApplicationMapper
      */
-    private $applicationMapper;
+    private Db\ApplicationMapper $applicationMapper;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Password reset',
         'machineName' => 'password_reset',
         'description' => 'Reset a users password',
@@ -110,17 +110,17 @@ class PasswordReset extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->userMapper = new Db\UserMapper($db);
-        $this->varStoreMapper = new Db\VarStoreMapper($db);
+        $this->userMapper = new Db\UserMapper($db, $logger);
+        $this->varStoreMapper = new Db\VarStoreMapper($db, $logger);
         $this->settings = new Core\Config();
-        $this->accountMapper = new Db\AccountMapper($db);
-        $this->applicationMapper = new Db\ApplicationMapper($db);
+        $this->accountMapper = new Db\AccountMapper($db, $logger);
+        $this->applicationMapper = new Db\ApplicationMapper($db, $logger);
     }
 
     /**
@@ -130,9 +130,9 @@ class PasswordReset extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $email = $this->val('email', true);
         $token = $this->val('token', true);

@@ -15,9 +15,9 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Output\Json;
-use Monolog\Logger;
 
 /**
  * Class ConvertToJson
@@ -38,7 +38,7 @@ class ConvertToJson extends Json
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Convert to JSON',
         'machineName' => 'convert_to_json',
         // phpcs:ignore
@@ -62,10 +62,10 @@ class ConvertToJson extends Json
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         Core\ProcessorEntity::__construct($meta, $request, $db, $logger);
     }
@@ -77,10 +77,12 @@ class ConvertToJson extends Json
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
+
         $this->data = $this->val('source');
+
         return new Core\DataContainer($this->getData(), 'json');
     }
 }

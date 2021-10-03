@@ -15,9 +15,9 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db;
-use Monolog\Logger;
 
 /**
  * Class ApplicationUpdate
@@ -31,49 +31,40 @@ class ApplicationUpdate extends Core\ProcessorEntity
      *
      * @var Db\AccountMapper
      */
-    protected $accountMapper;
+    protected Db\AccountMapper $accountMapper;
 
     /**
      * Application mapper class.
      *
      * @var Db\ApplicationMapper
      */
-    protected $applicationMapper;
+    protected Db\ApplicationMapper $applicationMapper;
 
     /**
      * User role mapper class.
      *
      * @var Db\UserRoleMapper
      */
-    protected $userRoleMapper;
+    protected Db\UserRoleMapper $userRoleMapper;
 
     /**
      * User mapper class.
      *
      * @var Db\UserMapper
      */
-    protected $userMapper;
+    protected Db\UserMapper $userMapper;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Application update',
         'machineName' => 'application_update',
         'description' => 'Update an application.',
         'menu' => 'Admin',
         'input' => [
-            'token' => [
-                'description' => 'Request token of the user making the call.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => 0,
-            ],
             'appid' => [
                 'description' => 'The application iD.',
                 'cardinality' => [1, 1],
@@ -109,60 +100,59 @@ class ApplicationUpdate extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->accountMapper = new Db\AccountMapper($this->db);
-        $this->applicationMapper = new Db\ApplicationMapper($this->db);
-        $this->userRoleMapper = new Db\UserRoleMapper($this->db);
-        $this->userMapper = new Db\UserMapper($this->db);
+        $this->accountMapper = new Db\AccountMapper($this->db, $logger);
+        $this->applicationMapper = new Db\ApplicationMapper($this->db, $logger);
+        $this->userRoleMapper = new Db\UserRoleMapper($this->db, $logger);
+        $this->userMapper = new Db\UserMapper($this->db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return array|boolean|Core\Error Result of the processor.
+     * @return Core\DataContainer Result of the processor.
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
-        $token = $this->val('token', true);
-        $user = $this->userMapper->findBytoken($token);
+        $uid = Core\Utilities::getUidFromToken();
         $appid = $this->val('appid', true);
         $accid = $this->val('accid', true);
         $name = $this->val('name', true);
 
         $application = $this->applicationMapper->findByAppid($appid);
         if (empty($application->getAccid())) {
-            throw new ApiException("Application ID does not exist: $appid", 6, $this->id, 417);
+            throw new Core\ApiException("Application ID does not exist: $appid", 6, $this->id, 417);
         }
 
-        if (!$this->userRoleMapper->hasRole($user->getUid(), 'Administrator')) {
+        if (!$this->userRoleMapper->hasRole($uid, 'Administrator')) {
             if (
                 (
                     !empty($accid)
-                    && $this->userRoleMapper->findByUidAppidRolename($user->getUid(), $appid, 'Account manager')
+                    && $this->userRoleMapper->findByUidAppidRolename($uid, $appid, 'Account manager')
                 )
                 && !$this->userRoleMapper->findByUidAppidRolename(
-                    $user->getUid(),
+                    $uid,
                     $application->getAccid(),
                     'Account manager'
                 )
             ) {
-                throw new ApiException("Permission denied.", 6, $this->id, 417);
+                throw new Core\ApiException("Permission denied.", 6, $this->id, 417);
             }
         }
 
         if (!empty($accid)) {
             $account = $this->accountMapper->findByAccid($accid);
             if (empty($account->getAccid())) {
-                throw new ApiException("Account ID does not exist: $accid", 6, $this->id, 417);
+                throw new Core\ApiException("Account ID does not exist: $accid", 6, $this->id, 417);
             }
             $application->setAccid($accid);
         }
@@ -178,6 +168,6 @@ class ApplicationUpdate extends Core\ProcessorEntity
             $application->setName($name);
         }
 
-        return $this->applicationMapper->save($application);
+        return new Core\DataContainer($this->applicationMapper->save($application), 'boolean');
     }
 }

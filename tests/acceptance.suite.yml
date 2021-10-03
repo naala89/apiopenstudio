@@ -8,5 +8,5 @@ class_name: AcceptanceTester
 modules:
     enabled:
         - PhpBrowser:
-            url: https://api.apiopenstudio.local
+            url: "http://%API_DOMAIN%"
         - \Helper\Acceptance

@@ -11,13 +11,10 @@ appid: 2
 ttl: 0
 
 security:
-  processor: token_role
   id: test var_post security
-  token:
-    processor: var_post
-    id: test var_post token
-    key: token
-  role: Consumer
+  processor: validate_token_roles
+  roles:
+    - Consumer
 
 process:
   processor: var_post

@@ -30,7 +30,7 @@ class Image extends Output
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Image',
         'machineName' => 'image',
         'description' => 'Output in the results of the resource in image format to a remote server.',
@@ -72,10 +72,10 @@ class Image extends Output
      *
      * @return Core\DataContainer Result of the processor.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Output: ' . $this->details()['machineName']);
-        return parent::process();
+        $this->logger->info('api', 'Output: ' . $this->details()['machineName']);
+        return new Core\DataContainer(parent::process(), 'image');
     }
 
     /**
@@ -83,7 +83,7 @@ class Image extends Output
      *
      * @param string $data Image data.
      *
-     * @return mixed
+     * @return void
      *
      * @throws Core\ApiException Throw an exception if invalid input.
      */
@@ -97,7 +97,7 @@ class Image extends Output
      *
      * @param float $data Image data.
      *
-     * @return mixed
+     * @return void
      *
      * @throws Core\ApiException Throw an exception if invalid input.
      */
@@ -111,7 +111,7 @@ class Image extends Output
      *
      * @param boolean $data Image data.
      *
-     * @return mixed
+     * @return void
      *
      * @throws Core\ApiException Throw an exception if invalid input.
      */
@@ -125,7 +125,7 @@ class Image extends Output
      *
      * @param integer $data Image data.
      *
-     * @return mixed
+     * @return void
      *
      * @throws Core\ApiException Throw an exception if invalid input.
      */
@@ -139,7 +139,7 @@ class Image extends Output
      *
      * @param string $data Image data.
      *
-     * @return mixed
+     * @return void
      *
      * @throws Core\ApiException Throw an exception if invalid input.
      */
@@ -153,7 +153,7 @@ class Image extends Output
      *
      * @param string $data Image data.
      *
-     * @return mixed
+     * @return void
      *
      * @throws Core\ApiException Throw an exception if invalid input.
      */
@@ -167,9 +167,9 @@ class Image extends Output
      *
      * @param string $data Image data.
      *
-     * @return mixed
+     * @return string
      */
-    protected function fromText(string &$data)
+    protected function fromText(string &$data): string
     {
         return $data;
     }
@@ -179,7 +179,7 @@ class Image extends Output
      *
      * @param array $data Image data.
      *
-     * @return mixed
+     * @return void
      *
      * @throws Core\ApiException Throw an exception if invalid input.
      */

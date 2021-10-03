@@ -29,7 +29,7 @@ class FieldValue extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Field value',
         'machineName' => 'field_value',
         'description' => 'Returns the key oy value from a field.',
@@ -63,9 +63,9 @@ class FieldValue extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $field = $this->val('field', true);
         $keyValue = $this->val('key_value', true);

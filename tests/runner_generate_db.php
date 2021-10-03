@@ -30,7 +30,7 @@ $host = $config->__get(['db', 'host']);
 $database = $config->__get(['db', 'database']);
 $username = $config->__get(['db', 'username']);
 $password = $config->__get(['db', 'password']);
-$basePath = dirname(__DIR__) . '/';
+$basePath = $config->__get(['api', 'base_path']);
 $resources = $config->__get(['api', 'dir_resources']);
 $dbDefinition = $config->__get(['db', 'definition_path']);
 

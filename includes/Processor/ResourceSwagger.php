@@ -17,6 +17,7 @@ namespace ApiOpenStudio\Processor;
 
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db\ResourceMapper;
+use Spyc;
 
 /**
  * Class ResourceSwagger
@@ -30,7 +31,7 @@ class ResourceSwagger extends ResourceBase
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
     'name' => 'Import Swagger',
         'machineName' => 'resourceSwagger',
         'description' => 'Create a custom API resource using a Swagger YAML document.',
@@ -53,7 +54,7 @@ class ResourceSwagger extends ResourceBase
      *
      * @var integer
      */
-    private $paramCount;
+    private int $paramCount;
 
     /**
      * {@inheritDoc}
@@ -62,9 +63,9 @@ class ResourceSwagger extends ResourceBase
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $this->paramCount = 2;
         $resources = array();
@@ -126,7 +127,7 @@ class ResourceSwagger extends ResourceBase
             }
         }
 
-        return $resources;
+        return new Core\DataContainer($resources, 'array');
     }
 
     /**
@@ -140,7 +141,7 @@ class ResourceSwagger extends ResourceBase
      *
      * @throws Core\ApiException Error.
      */
-    protected function save($data)
+    protected function save($data): bool
     {
         $this->validateData($data);
 
@@ -176,7 +177,7 @@ class ResourceSwagger extends ResourceBase
      */
     protected function importData($data)
     {
-        return \Spyc::YAMLLoadString($data);
+        return Spyc::YAMLLoadString($data);
     }
 
     /**
@@ -199,7 +200,7 @@ class ResourceSwagger extends ResourceBase
      *
      * @throws \ApiOpenStudio\Core\ApiException Error.
      */
-    protected function extractUriParams(array $uriParams)
+    protected function extractUriParams(array $uriParams): array
     {
         $result = array();
         foreach ($uriParams as $key => $val) {
@@ -226,7 +227,7 @@ class ResourceSwagger extends ResourceBase
      *
      * @throws Core\ApiException Error.
      */
-    protected function extractParameters(array $parameters, string $method)
+    protected function extractParameters(array $parameters, string $method): array
     {
         $result = [];
         foreach ($parameters as $parameter) {
@@ -245,7 +246,7 @@ class ResourceSwagger extends ResourceBase
             }
             // strongly typed
             if (!empty($parameter['items']['type'])) {
-                $this->logger->info('strongly typed: ' . $parameter['items']['type']);
+                $this->logger->info('api', 'strongly typed: ' . $parameter['items']['type']);
                 $p = [
                     'meta' => [
                         'id' => $this->paramCount++,

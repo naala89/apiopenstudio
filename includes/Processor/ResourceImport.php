@@ -15,17 +15,17 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db\AccountMapper;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
-use ApiOpenStudio\Db\UserMapper;
+use Symfony\Component\Yaml\Exception\ParseException;
 use ApiOpenStudio\Db\UserRoleMapper;
 use ApiOpenStudio\Core\ResourceValidator;
 use Symfony\Component\Yaml\Yaml;
-use Monolog\Logger;
 
 /**
  * Class ResourceImport
@@ -39,7 +39,7 @@ class ResourceImport extends Core\ProcessorEntity
      *
      * @var string[]
      */
-    private $requiredKeys = [
+    private array $requiredKeys = [
         'name',
         'description',
         'uri',
@@ -53,71 +53,54 @@ class ResourceImport extends Core\ProcessorEntity
      *
      * @var Config
      */
-    private $settings;
-
-    /**
-     * User mapper class.
-     *
-     * @var UserMapper
-     */
-    private $userMapper;
+    private Config $settings;
 
     /**
      * User role mapper class.
      *
      * @var UserRoleMapper
      */
-    private $userRoleMapper;
+    private UserRoleMapper $userRoleMapper;
 
     /**
      * Resource mapper class.
      *
      * @var ResourceMapper
      */
-    private $resourceMapper;
+    private ResourceMapper $resourceMapper;
 
     /**
      * Account mapper class.
      *
      * @var AccountMapper
      */
-    private $accountMapper;
+    private AccountMapper $accountMapper;
 
     /**
      * Application mapper class.
      *
      * @var ApplicationMapper
      */
-    private $applicationMapper;
+    private ApplicationMapper $applicationMapper;
 
     /**
      * Resource validator class.
      *
      * @var ResourceValidator
      */
-    private $validator;
+    private ResourceValidator $validator;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Resource import',
         'machineName' => 'resource_import',
         'description' => 'Import a resource from a file.',
         'menu' => 'Admin',
         'input' => [
-            'token' => [
-                // phpcs:ignore
-                'description' => 'The token of the user making the call. This is used to validate the user permissions.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => false,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
             'resource' => [
                 'description' => 'The resource file file. This can be YAML or JSON.',
                 'cardinality' => [1, 1],
@@ -135,19 +118,18 @@ class ResourceImport extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Config();
-        $this->userMapper = new UserMapper($db);
-        $this->userRoleMapper = new UserRoleMapper($db);
-        $this->accountMapper = new AccountMapper($db);
-        $this->applicationMapper = new ApplicationMapper($db);
-        $this->resourceMapper = new ResourceMapper($db);
-        $this->validator = new ResourceValidator($db, $this->logger);
+        $this->userRoleMapper = new UserRoleMapper($db, $logger);
+        $this->accountMapper = new AccountMapper($db, $logger);
+        $this->applicationMapper = new ApplicationMapper($db, $logger);
+        $this->resourceMapper = new ResourceMapper($db, $logger);
+        $this->validator = new ResourceValidator($db, $logger);
     }
 
     /**
@@ -157,13 +139,29 @@ class ResourceImport extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
-        $token = $this->val('token', true);
-        $currentUser = $this->userMapper->findBytoken($token);
+        $uid = Core\Utilities::getUidFromToken();
+        $roles = Core\Utilities::getRolesFromToken();
         $resource = $this->val('resource');
+
+        // Only developer role permitted to upload resource.
+        $permitted = false;
+        foreach ($roles as $role) {
+            if ($role['role_name'] == 'Developer') {
+                $permitted = true;
+            }
+        }
+        if (!$permitted) {
+            throw new Core\ApiException(
+                'unauthorized for this call',
+                4,
+                $this->id,
+                401
+            );
+        }
 
         $resource = $resource->getType() == 'file' ? file_get_contents($resource->getData()) : $resource->getData();
         if ($value = json_decode($resource, true)) {
@@ -173,9 +171,9 @@ class ResourceImport extends Core\ProcessorEntity
                 $value = Yaml::parse($resource);
                 $resource = $value;
             } catch (ParseException $exception) {
+                $message = 'Unable to parse the YAML string: ' . $exception->getMessage();
                 throw new Core\ApiException(
-                    'Unable to parse the YAML string: ',
-                    $exception->getMessage(),
+                    $message,
                     6,
                     $this->id,
                     400
@@ -183,26 +181,26 @@ class ResourceImport extends Core\ProcessorEntity
             }
         }
 
-        $this->logger->debug('Decoded new resource: ' . print_r($resource, true));
+        $this->logger->debug('api', 'Decoded new resource: ' . print_r($resource, true));
 
         foreach ($this->requiredKeys as $requiredKey) {
             if (!isset($resource[$requiredKey])) {
-                $this->logger->error("Missing $requiredKey in new resource");
+                $this->logger->error('api', "Missing $requiredKey in new resource");
                 throw new Core\ApiException("Missing $requiredKey in new resource", 6, $this->id, 400);
             }
         }
         if ($resource['ttl'] < 0) {
-            $this->logger->error("Negative ttl in new resource");
+            $this->logger->error('api', 'Negative ttl in new resource');
             throw new Core\ApiException("Negative ttl in new resource", 6, $this->id, 400);
         }
 
         $role = $this->userRoleMapper->findByUidAppidRolename(
-            $currentUser->getUid(),
+            $uid,
             $resource['appid'],
             'Developer'
         );
         if (empty($role->getUrid())) {
-            $this->logger->error("Unauthorised: you do not have permissions for this application");
+            $this->logger->error('api', 'Unauthorised: you do not have permissions for this application');
             throw new Core\ApiException(
                 "Unauthorised: you do not have permissions for this application",
                 6,
@@ -224,7 +222,7 @@ class ResourceImport extends Core\ProcessorEntity
 
         $application = $this->applicationMapper->findByAppid($resource['appid']);
         if (empty($application)) {
-            $this->logger->error('Invalid application: ' . $resource['appid']);
+            $this->logger->error('api', 'Invalid application: ' . $resource['appid']);
             throw new Core\ApiException(
                 'Invalid application: ' . $resource['appid'],
                 6,
@@ -239,7 +237,7 @@ class ResourceImport extends Core\ProcessorEntity
                 && $application->getName() == $this->settings->__get(['api', 'core_application'])
                 && $this->settings->__get(['api', 'core_resource_lock'])
         ) {
-            $this->logger->error('Unauthorised: this is the core application');
+            $this->logger->error('api', 'Unauthorised: this is the core application');
             throw new Core\ApiException(
                 'Unauthorised: this is the core application',
                 6,
@@ -254,7 +252,7 @@ class ResourceImport extends Core\ProcessorEntity
             $resource['uri']
         );
         if (!empty($resourceExists->getresid())) {
-            $this->logger->error('Resource already exists');
+            $this->logger->error('api', 'Resource already exists');
             throw new Core\ApiException('Resource already exists', 6, $this->id, 400);
         }
 
@@ -283,6 +281,8 @@ class ResourceImport extends Core\ProcessorEntity
      * @param string $meta The resource metadata json encoded string.
      *
      * @return Core\DataContainer Create resource result.
+     *
+     * @throws Core\ApiException
      */
     private function create(
         string $name,
@@ -292,7 +292,7 @@ class ResourceImport extends Core\ProcessorEntity
         int $appid,
         int $ttl,
         string $meta
-    ) {
+    ): Core\DataContainer {
         $resource = new Resource(
             null,
             $appid,

@@ -21,21 +21,16 @@ appid: 1
 ttl: 0
 
 security:
-  processor: token_role
   id: resource_update_security
-  token:
-    processor: bearer_token
-    id: resource_update_security_token
-  role: Developer
+  processor: validate_token_roles
+  roles:
+    - Developer
   validate_account: false
   validate_application: false
 
 process:
-  processor: resource_update
   id: resource_update_process
-  token:
-    processor: bearer_token
-    id: resource_update_token
+  processor: resource_update
   resid:
     processor: field_value
     id: resource_update_resid

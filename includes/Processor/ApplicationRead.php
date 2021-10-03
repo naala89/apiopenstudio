@@ -15,9 +15,9 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Db;
-use Monolog\Logger;
 
 /**
  * Class ApplicationRead
@@ -31,42 +31,33 @@ class ApplicationRead extends Core\ProcessorEntity
      *
      * @var Db\ApplicationMapper
      */
-    protected $applicationMapper;
+    protected Db\ApplicationMapper $applicationMapper;
 
     /**
      * User role mapper class.
      *
      * @var Db\UserRoleMapper
      */
-    protected $userRoleMapper;
+    protected Db\UserRoleMapper $userRoleMapper;
 
     /**
      * User mapper class.
      *
      * @var Db\UserMapper
      */
-    protected $userMapper;
+    protected Db\UserMapper $userMapper;
 
     /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Application read',
         'machineName' => 'application_read',
         'description' => 'Fetch a single or multiple applications.',
         'menu' => 'Admin',
         'input' => [
-            'token' => [
-                'description' => 'Token of the user making the call. This is used to limit access.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
             'accountId' => [
                 // phpcs:ignore
                 'description' => 'Account ID to fetch to filter by. NULL or empty will not filter by account.',
@@ -122,15 +113,15 @@ class ApplicationRead extends Core\ProcessorEntity
      *
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
-     * @param \ADODB_mysqli $db DB object.
-     * @param \Monolog\Logger $logger Logget object.
+     * @param ADOConnection $db DB object.
+     * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, \ADODB_mysqli $db, Logger $logger)
+    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->applicationMapper = new Db\ApplicationMapper($this->db);
-        $this->userRoleMapper = new Db\UserRoleMapper($this->db);
-        $this->userMapper = new Db\UserMapper($this->db);
+        $this->applicationMapper = new Db\ApplicationMapper($this->db, $logger);
+        $this->userRoleMapper = new Db\UserRoleMapper($this->db, $logger);
+        $this->userMapper = new Db\UserMapper($this->db, $logger);
     }
 
     /**
@@ -140,12 +131,11 @@ class ApplicationRead extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
-        $token = $this->val('token', true);
-        $user = $this->userMapper->findBytoken($token);
+        $uid = Core\Utilities::getUidFromToken();
         $accountId = $this->val('accountId', true);
         $applicationId = $this->val('applicationId', true);
         $keyword = $this->val('keyword', true);
@@ -179,15 +169,7 @@ class ApplicationRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        if (!empty($token)) {
-            $u = $this->userMapper->findBytoken($token);
-            if (empty($user->getUid())) {
-                throw new Core\ApiException('Invalid token.', 6, $this->id, 403);
-            }
-            $applications = $this->applicationMapper->findByUid($user->getUid(), $params);
-        } else {
-            $applications = $this->applicationMapper->findAll($params);
-        }
+        $applications = $this->applicationMapper->findByUid($uid, $params);
 
         $result = [];
         foreach ($applications as $application) {

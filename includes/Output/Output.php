@@ -17,7 +17,6 @@ namespace ApiOpenStudio\Output;
 
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Config;
-use Monolog\Logger;
 use phpDocumentor\Reflection\Types\Boolean;
 
 /**
@@ -32,7 +31,7 @@ abstract class Output extends Core\ProcessorEntity
      *
      * @var Core\Config
      */
-    protected $settings;
+    protected Core\Config $settings;
 
     /**
      * The output data.
@@ -53,7 +52,7 @@ abstract class Output extends Core\ProcessorEntity
      *
      * @var string The string to contain the content type header value.
      */
-    protected $header = '';
+    protected string $header = '';
 
     /**
      * The HTTP output status.
@@ -67,10 +66,10 @@ abstract class Output extends Core\ProcessorEntity
      *
      * @param mixed $data Output data.
      * @param integer $status Output status.
-     * @param \Monolog\Logger $logger Output status.
+     * @param Core\MonologWrapper $logger Output status.
      * @param mixed|null $meta Output meta.
      */
-    public function __construct($data, int $status, Logger $logger, $meta = null)
+    public function __construct($data, int $status, Core\MonologWrapper $logger, $meta = null)
     {
         $this->settings = new Core\Config();
         $this->status = $status;
@@ -82,7 +81,7 @@ abstract class Output extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return mixed Result of the processor.
      *
      * @throws Core\ApiException Throw an exception if unable to precess the output.
      */
@@ -93,7 +92,7 @@ abstract class Output extends Core\ProcessorEntity
 
         if (!empty($this->meta)) {
             if (empty($this->meta->destination)) {
-                $this->logger->alert('no destinations defined for output');
+                $this->logger->alert('api', 'no destinations defined for output');
                 throw new Core\ApiException('no destinations defined for output', 1, $this->id);
             }
             $method = $this->val('method');
@@ -111,11 +110,11 @@ abstract class Output extends Core\ProcessorEntity
                 $result = $curl->{$method}($url, $curlOpts);
                 if ($result === false) {
                     $message = 'could not get response from remote server: ' . $curl->errorMsg;
-                    $this->logger->alert($message);
+                    $this->logger->alert('api', $message);
                     throw new Core\ApiException($message, 5, $this->id, $curl->httpStatus);
                 }
                 if ($curl->httpStatus != 200) {
-                    $this->logger->alert('Failed to send data: ' . json_encode($result));
+                    $this->logger->alert('api', 'Failed to send data: ' . json_encode($result));
                     throw new Core\ApiException(json_encode($result), 5, $this->id, $curl->httpStatus);
                 }
             }

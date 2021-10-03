@@ -21,11 +21,8 @@ appid: 1
 ttl: 0
 
 security:
-  processor: token_roles
   id: application_create_security
-  token:
-    processor: bearer_token
-    id: application_create_security_token
+  processor: validate_token_roles
   roles:
     - Administrator
     - Account manager
@@ -33,9 +30,6 @@ security:
 process:
   processor: application_create
   id: application_create_process
-  token:
-    processor: bearer_token
-    id: account_create_token
   accid:
     processor: var_post
     id: application_create_accid

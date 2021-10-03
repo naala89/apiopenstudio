@@ -21,11 +21,8 @@ appid: 1
 ttl: 0
 
 security:
-  processor: token_roles
   id: role_delete_security
-  token:
-    processor: bearer_token
-    id: role_delete_token
+  processor: validate_token_roles
   roles:
     - Administrator
     - Account manager

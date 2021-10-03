@@ -30,7 +30,7 @@ class AccountDelete extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Account delete',
         'machineName' => 'account_delete',
         'description' => 'Delete an account.',
@@ -55,27 +55,26 @@ class AccountDelete extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $accid = $this->val('accid', true);
-        $this->logger->debug('Deleting account' . $accid);
 
-        $accountMapper = new Db\AccountMapper($this->db);
+        $accountMapper = new Db\AccountMapper($this->db, $this->logger);
         $account = $accountMapper->findByAccid($accid);
 
         if (empty($account->getAccid())) {
             throw new Core\ApiException("Account does not exist: $accid", 6, $this->id, 400);
         }
         // Do not delete if applications are attached to the account.
-        $applicationMapper = new Db\ApplicationMapper($this->db);
+        $applicationMapper = new Db\ApplicationMapper($this->db, $this->logger);
         $applications = $applicationMapper->findByAccid($accid);
         if (!empty($applications)) {
             $message = 'Cannot delete the account, applications are assigned to the account';
             throw new Core\ApiException($message, 6, $this->id, 400);
         }
 
-        return $accountMapper->delete($account);
+        return new Core\DataContainer($accountMapper->delete($account), 'boolean');
     }
 }

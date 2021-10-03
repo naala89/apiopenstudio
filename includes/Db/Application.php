@@ -25,30 +25,30 @@ class Application
     /**
      * Application ID.
      *
-     * @var integer Application ID.
+     * @var integer|null Application ID.
      */
-    protected $appid;
+    protected ?int $appid;
 
     /**
      * Account ID the application belongs to.
      *
-     * @var integer Account ID.
+     * @var integer|null Account ID.
      */
-    protected $accid;
+    protected ?int $accid;
 
     /**
      * Application name.
      *
-     * @var string Application name.
+     * @var string|null Application name.
      */
-    protected $name;
+    protected ?string $name;
 
     /**
      * Application constructor.
      *
-     * @param integer $appid Application ID.
-     * @param integer $accid Account ID.
-     * @param string $name Application name.
+     * @param int|null $appid Application ID.
+     * @param int|null $accid Account ID.
+     * @param string|null $name Application name.
      */
     public function __construct(int $appid = null, int $accid = null, string $name = null)
     {
@@ -62,7 +62,7 @@ class Application
      *
      * @return integer Application ID.
      */
-    public function getAppid()
+    public function getAppid(): ?int
     {
         return $this->appid;
     }
@@ -84,7 +84,7 @@ class Application
      *
      * @return integer Account ID.
      */
-    public function getAccid()
+    public function getAccid(): ?int
     {
         return $this->accid;
     }
@@ -106,7 +106,7 @@ class Application
      *
      * @return string Application name.
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -128,7 +128,7 @@ class Application
      *
      * @return array Application.
      */
-    public function dump()
+    public function dump(): array
     {
         return [
             'appid' => $this->appid,

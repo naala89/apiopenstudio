@@ -29,7 +29,7 @@ class Config
      *
      * @var array
      */
-    private $conf;
+    private array $conf;
 
     /**
      * Config constructor.
@@ -37,9 +37,9 @@ class Config
      * @param string $settingsFile
      *   Optional path to the settings file.
      */
-    public function __construct($settingsFile = '')
+    public function __construct(string $settingsFile = '')
     {
-        $settingsFile = empty($settingsFile) ? dirname(dirname(__DIR__)) . '/settings.yml' : $settingsFile;
+        $settingsFile = empty($settingsFile) ? dirname(__DIR__, 2) . '/settings.yml' : $settingsFile;
         $this->conf = Spyc::YAMLLoad($settingsFile);
     }
 
@@ -65,6 +65,9 @@ class Config
             $val = $this->conf;
             while ($index = array_shift($key)) {
                 if (!array_key_exists($index, $val)) {
+                    print_r($key, true);
+                    print_r($index, true);
+                    print_r($val, true);
                     throw new ApiException("Invalid configuration option: $index");
                 }
                 $val = $val[$index];
@@ -78,9 +81,9 @@ class Config
     /**
      * Fetch all config values.
      *
-     * @return array|false Config file values.
+     * @return array Config file values.
      */
-    public function all()
+    public function all(): array
     {
         return $this->conf;
     }

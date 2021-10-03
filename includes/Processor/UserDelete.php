@@ -30,7 +30,7 @@ class UserDelete extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'User delete',
         'machineName' => 'user_delete',
         'description' => 'Delete a user.',
@@ -55,21 +55,21 @@ class UserDelete extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         if (empty($uid = $this->val('uid', true))) {
             throw new Core\ApiException("Cannot process - no uid supplied", 6, $this->id, 400);
         }
 
-        $userMapper = new Db\UserMapper($this->db);
+        $userMapper = new Db\UserMapper($this->db, $this->logger);
 
         $user = $userMapper->findByUid($uid);
         if (empty($user->getUid())) {
             throw new Core\ApiException("User does not exist, uid: $uid", 6, $this->id, 400);
         }
 
-        return $userMapper->delete($user);
+        return new Core\DataContainer($userMapper->delete($user), 'boolean');
     }
 }

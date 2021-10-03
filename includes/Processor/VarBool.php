@@ -29,7 +29,7 @@ class VarBool extends Core\ProcessorEntity
      *
      * @var array Details of the processor.
      */
-    protected $details = [
+    protected array $details = [
         'name' => 'Var (Boolean)',
         'machineName' => 'var_bool',
         'description' => 'A boolean variable. It validates the input (0,1,yes,no,true,false) into a boolean value, and \
@@ -55,9 +55,9 @@ class VarBool extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
-        $this->logger->info('Processor: ' . $this->details()['machineName']);
+        parent::process();
 
         $value = $this->val('value', true);
         switch ($value) {

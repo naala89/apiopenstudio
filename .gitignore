@@ -6,12 +6,15 @@
 #tests
 tests/_support/_generated/
 
-#apioopenstudio
-.env
-settings.yml
+#apiopenstudio
 public/wiki/
 public/phpdoc/
 dbdata/
+log/
+.env
+settings.yml
+*.key
+*.key.pub
 
 #3rd-party
 /vendor
@@ -20,3 +23,4 @@ composer.lock
 node_modules
 npm-debug.log
 package-lock.json
+/build
