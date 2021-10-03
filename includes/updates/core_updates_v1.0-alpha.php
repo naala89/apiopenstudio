@@ -25,7 +25,7 @@ use ApiOpenStudio\Core\Config;
  *
  * @version V1.0.0-alpha2
  *
- * @see https://gitlab.com/john89/api_open_studio/-/issues/54
+ * @see https://gitlab.com/apiopenstudio/apiopenstudio/-/issues/54
  */
 function update_all_resources_54_part_1(ADODB_mysqli $db)
 {
@@ -58,7 +58,7 @@ function update_all_resources_54_part_1(ADODB_mysqli $db)
  *
  * @throws ApiException
  *
- * @see https://gitlab.com/john89/api_open_studio/-/issues/54
+ * @see https://gitlab.com/apiopenstudio/apiopenstudio/-/issues/54
  * @version V1.0.0-alpha2
  *
  */

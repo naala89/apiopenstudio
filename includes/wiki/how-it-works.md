@@ -11,7 +11,7 @@ The base ApiOpenStudio package is a completely headless API, and is the core of
 the suite. It is self-contained and provides all of the logic and resources that
 you will need to run ApiOpenStudio. This is available at
 
-* https://gitlab.com/john89/api_open_studio
+* https://gitlab.com/apiopenstudio/apiopenstudio
 * https://github.com/naala89/api_open_studio
 
 There is another package that will enable you to administer the headless
@@ -74,6 +74,6 @@ There are many processors available with ApiOpenStudio core, but you can add mor
 processors from the community, or even create custom ones yourself. These can all
 me maintained using composer.
 
-[gitlab_admin]: https://gitlab.com/john89/api_open_studio_admin
+[gitlab_admin]: https://gitlab.com/apiopenstudio/apiopenstudio_admin
 
 [github_admin]: https://github.com/naala89/api_open_studio_admin

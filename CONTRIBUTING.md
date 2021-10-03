@@ -19,7 +19,7 @@ visit [Contributing][contributing]
 
 [contributing]: https://wiki.apiopenstudio.com/developers/contributing.html
 
-[gitlab]: https://gitlab.com/john89/api_open_studio
+[gitlab]: https://gitlab.com/apiopenstudio/apiopenstudio
 
 [github]: https://github.com/naala89/apiopenstudio
 

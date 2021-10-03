@@ -24,7 +24,7 @@ use ApiOpenStudio\Cli\Install;
  *
  * @version V1.0.0-beta1
  *
- * @see https://gitlab.com/john89/api_open_studio/-/issues/101
+ * @see https://gitlab.com/apiopenstudio/apiopenstudio/-/issues/101
  */
 function change_to_auth_process_101(ADODB_mysqli $db)
 {
