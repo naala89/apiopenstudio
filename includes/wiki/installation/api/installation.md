@@ -11,7 +11,7 @@ Installing the codebase
 
 or
 
-    git clone git@github.com:naala89/api_open_studio.git
+    git clone git@github.com:naala89/apiopenstudio.git
 
 Settings
 --------

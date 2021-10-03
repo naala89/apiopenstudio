@@ -11,7 +11,7 @@ Installing the codebase
 
 or
 
-    git clone git@github.com:naala89/api_open_studio_admin.git
+    git clone git@github.com:naala89/apiopenstudio_admin.git
 
 Settings
 --------
@@ -27,7 +27,7 @@ Server
 1. Install [Composer][composer].
 2. Install [npm][nodejs].
 3. Set the file permissions:
-    1. ```cd /path/to/api_open_studio```
+    1. ```cd /path/to/apiopenstudio```
     2. ```chown -R www-data:<my_group> ./*```
 4. Run composer install in the docroot:
     1. ```composer install```

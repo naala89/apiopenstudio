@@ -11,25 +11,25 @@ Install [git](https://github.com/git-guides/install-git).
     cd /path/to/my/development/directory
     composer create-project apiopenstudio/apiopenstudio:1.0.0-alpha
     composer create-project apiopenstudio/apiopenstudio_admin:1.0.0-alpha
-    git clone git@github.com:naala89/api_open_studio_docker.git
+    git clone git@github.com:naala89/apiopenstudio_docker_dev.git
 
 ### Setup ApiOpenStudio
 
-    cd /path/to/my/development/directory/api_open_studio
+    cd /path/to/my/development/directory/apiopenstudio
     cp example.settings.yml settings.yml
 
 Leave all settings as default
 
 ### Setup ApiOpenStudio Admin
 
-    cd /path/to/my/development/directory/api_open_studio_admin
+    cd /path/to/my/development/directory/apiopenstudio_admin
     cp example.settings.yml settings.yml
 
 Leave all settings as default
 
 ### Setup Docker
 
-    cd /path/to/my/development/directory/api_open_studio_docker
+    cd /path/to/my/development/directory/apiopenstudio_docker_dev
     cp example.env .env
 
 Edit ```.env```
@@ -37,8 +37,8 @@ Edit ```.env```
 Set to values for ```API_CODEBASE``` and ```ADMIN_CODEBASE``` to point to your
 git clones, e.g.:
 
-    API_CODEBASE=/path/to/my/development/directory/api_open_studio
-    ADMIN_CODEBASE=/path/to/my/development/directory/api_open_studio_admin
+    API_CODEBASE=/path/to/my/development/directory/apiopenstudio
+    ADMIN_CODEBASE=/path/to/my/development/directory/apiopenstudio_admin
 
 ### Setup SSL certificates
 

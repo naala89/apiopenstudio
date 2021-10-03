@@ -12,13 +12,13 @@ the suite. It is self-contained and provides all of the logic and resources that
 you will need to run ApiOpenStudio. This is available at
 
 * https://gitlab.com/apiopenstudio/apiopenstudio
-* https://github.com/naala89/api_open_studio
+* https://github.com/naala89/apiopenstudio
 
 There is another package that will enable you to administer the headless
 ApiOpenStudio through an admin interface:
 
-* [api_open_studio_admin (GitLab)][gitlab_admin]
-  or [api_open_studio_admin (GitHub)][github_admin]
+* [apiopenstudio_admin (GitLab)][gitlab_admin]
+  or [apiopenstudio_admin (GitHub)][github_admin]
     * An administration GUI interface designed to make it easy to manage your
       accounts, applications, users and resources, as well as an area where you
       can directly create, edit and delete resources.
@@ -76,4 +76,4 @@ me maintained using composer.
 
 [gitlab_admin]: https://gitlab.com/apiopenstudio/apiopenstudio_admin
 
-[github_admin]: https://github.com/naala89/api_open_studio_admin
+[github_admin]: https://github.com/naala89/apiopenstudio_admin

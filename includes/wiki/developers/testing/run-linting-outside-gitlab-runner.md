@@ -15,7 +15,7 @@ Run the following command:
 Running them inside docker
 --------------------------
 
-Clone, configure and run the [ApiOpenStudio docker][api_open_studio_docker]
+Clone, configure and run the [ApiOpenStudio docker dev][apiopenstudio_docker_dev]
 repository.
 
 SSH into the php container:
@@ -27,4 +27,4 @@ Navigate to the API docroot and run ```phpcs``` linting:
     $ cd api
     $ ./vendor/bin/phpcs --standard=PSR12 includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
 
-[api_open_studio_docker]: https://github.com/naala89/api_open_studio_docker
+[apiopenstudio_docker_dev]: https://github.com/naala89/apiopenstudio_docker_dev

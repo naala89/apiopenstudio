@@ -42,7 +42,7 @@ Add [ApiOpenStudio][gitlab] as an ```upstream``` remote
 This will allow you to regularly rebase and ensure that you have the latest
 version of master and develop branch from the main repository:
 
-    cd /path/to/api_open_studio
+    cd /path/to/apiopenstudio
     git remote add upstream git@gitlab.com:apiopenstudio/apiopenstudio.git
     git fetch upstream
 

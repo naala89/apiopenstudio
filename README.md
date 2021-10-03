@@ -146,7 +146,7 @@ The quickest way to install ApiOpenStudio is to create a project with composer:
 
 Or checkout the repository [GitHub mirror][studio_github]:
 
-    git clone https://github.com/naala89/api_open_studio
+    git clone https://github.com/naala89/apiopenstudio
 
 Or checkout the main repository [Gitlab][studio_gitlab]:
 
@@ -158,7 +158,7 @@ the [Docker gitlab repo][docker_gitlab]
 
 ### Setup the DB on a standalone server
 
-    cd /var/www/api_open_studio
+    cd /var/www/apiopenstudio
     ./includes/scripts/install.php
 
 ### Setup the DB on a docker instance
@@ -194,13 +194,13 @@ for more details.
 
 [admin_gitlab]: https://gitlab.com/apiopenstudio/apiopenstudio_admin
 
-[admin_github]: https://github.com/naala89/api_open_studio_admin
+[admin_github]: https://github.com/naala89/apiopenstudio_admin
 
-[docker_github]: https://github.com/naala89/api_open_studio_docker
+[docker_github]: https://github.com/naala89/apiopenstudio_docker_dev
 
 [docker_gitlab]: https://gitlab.com/apiopenstudio/apiopenstudio_docker_dev
 
-[studio_github]: https://github.com/naala89/api_open_studio
+[studio_github]: https://github.com/naala89/apiopenstudio
 
 [studio_gitlab]: https://gitlab.com/apiopenstudio/apiopenstudio
 

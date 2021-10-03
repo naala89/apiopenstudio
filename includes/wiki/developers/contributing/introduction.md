@@ -56,7 +56,7 @@ Master branch phpdoc is deployed to [prod phpdoc][prod_phpdoc].
 
 [gitlab]: https://gitlab.com/apiopenstudio/apiopenstudio
 
-[github]: https://github.com/naala89/api_open_studio
+[github]: https://github.com/naala89/apiopenstudio
 
 [dev_wiki]: https://dev.wiki.apiopenstudio.com
 
