@@ -220,7 +220,7 @@ phpdoc_prod:
     - if [ ! "$PHPDOC_IGNORE_SYMLINKS" = "true" ]; then export PHPDOC_OPTIONS="--ignore-symlinks $PHPDOC_OPTIONS"; fi
     # Include markers
     - if [ ! "$PHPDOC_MARKERS" = "true" ]; then export PHPDOC_OPTIONS="--markers=$PHPDOC_MARKERS $PHPDOC_OPTIONS"; fi
-    - /opt/phpdoc/bin/phpdoc -d ${CI_PROJECT_DIR}${PROJECT_ROOT} -t ${PHPDOC_OUTPUT} --title="$PHPDOC_TITLE" ${PHPDOC_OPTIONS}
+    - /opt/phpdoc/bin/phpdoc -d ${CI_PROJECT_DIR}${PROJECT_ROOT} -t ${CI_PROJECT_DIR}${PHPDOC_OUTPUT} --title="$PHPDOC_TITLE" ${PHPDOC_OPTIONS}
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL":"$PROD_PHPDOC_PATH/"
     - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_PHPDOC_PATH/*"
     - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "php $SITEMAP_GENERATOR file=$PROD_PHPDOC_PATH/sitemap.xml site=https://$PROD_PHPDOC_URL"
