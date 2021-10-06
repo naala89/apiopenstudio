@@ -12,20 +12,14 @@
     <version number="3.0.0">
         <api>
             <source dsn=".">
-                <path>includes/*</path>
-                <path>public/*</path>
-                <path>src/*</path>
+                <path>includes/</path>
+                <path>public/</path>
             </source>
             <ignore hidden="true" symlinks="true">
-                <path>public/phpdoc/*</path>
-                <path>public/wiki/*</path>
-                <path>public/admin/css/*</path>
-                <path>public/admin/images/*</path>
-                <path>public/admin/js/*</path>
-                <path>public/admin/sample/*</path>
-                <path>src/images/*</path>
-                <path>src/vendor/*</path>
-                <path>tests/*</path>
+                <path>public/phpdoc/**/*</path>
+                <path>public/wiki/**/*</path>
+                <path>vendor/**/*</path>
+                <path>tests/**/*</path>
             </ignore>
         </api>
     </version>
