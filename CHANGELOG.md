@@ -104,13 +104,13 @@ ApiOpenStudio v1.0.0-alpha
 
 - Additional script for updating.
 
-ApiOpenStudio v1.0.0-alpha1
-===========================
+ApiOpenStudio 1.0.0-alpha1
+==========================
 
 - Fixed release issue where core version was not updated in DB definitions.
 
-ApiOpenStudio v1.0.0-alpha2
-=========================
+ApiOpenStudio 1.0.0-alpha2
+==========================
 
 - Added support for alpha/beta/RC release tags to the update script.
 - Replaced all references to 'function' with 'processor', to remove all
@@ -120,10 +120,18 @@ ApiOpenStudio v1.0.0-alpha2
 - Updated the contributing notes.
 - Misc. devops and pipelines fixes.
 
-v1.0.0-beta1 (in progress)
-==========================
+In development
+==============
 
 - Updated .gitlab-ci so that tests run on all merge requests and deploy to
   wiki/phpdoc on merges.
-- Updated notes for contributing
+- Wholesale changes in the wiki
 - Moved code of conduct into CODE_OF_CONDUCT.md.
+- Migrated the apiopenstudio projects in the apiopenstudio group in GitLab.
+- Changed the token auth to JWT tokens.
+- Deprecated Cascade logger and created a wrapper for Monolog.
+- Fixed gitlab runner artifacts.
+- Deprecated .env file.
+- Removed ```bookdown/bookdown``` from the composer dev dependencies.
+- Updated gitlab-ci the use the new ```naala89/bookdown-rsync```, 
+```naala89/phpdoc-rsync```& ```naala89/apiopenstudio-nginx-php-7.4``` images.
