@@ -173,8 +173,12 @@ class Api extends Module
         $uri = '/' . $this->applicationName . '/' . $yamlArr['uri'];
         if ($method == 'get') {
             $this->getModule('REST')->sendGet($uri, $params);
-        } else {
+        } elseif ($method == 'post') {
             $this->getModule('REST')->sendPost($uri, $params);
+        } elseif ($method == 'delete') {
+            $this->getModule('REST')->sendDelete($uri, $params);
+        } elseif ($method == 'put') {
+            $this->getModule('REST')->sendPut($uri, $params);
         }
     }
 
