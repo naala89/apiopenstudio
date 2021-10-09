@@ -518,6 +518,7 @@ class Install extends Script
      *   Admin user password.
      * @param string $email
      *   Admin user email.
+     * @throws ApiException
      */
     public function createAdminUser(string $username = '', string $password = '', string $email = '')
     {
@@ -536,7 +537,6 @@ class Install extends Script
             $email = $this->readlineTerminal($prompt);
         }
 
-        print_r($this->config->all());
         $logger = new MonologWrapper($this->config->__get(['debug']));
         try {
             $userMapper = new Db\UserMapper($this->db, $logger);
