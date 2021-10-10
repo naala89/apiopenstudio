@@ -572,6 +572,5 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 implode("', '", $accepts) . '" accepted';
             throw new ApiException($message, 6, $id, 406);
         }
-
     }
 }
