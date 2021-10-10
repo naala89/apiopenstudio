@@ -7,7 +7,7 @@ $yamlFilename = 'url.yaml';
 $xml_path = 'https://www.w3schools.com/xml/cd_catalog.xml';
 $json_path = 'https://jsonplaceholder.typicode.com/users';
 $curl = curl_init();
-curl_setopt_array($curl, array(
+curl_setopt_array($curl, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_ENCODING => '',
     CURLOPT_MAXREDIRS => 10,
@@ -15,7 +15,7 @@ curl_setopt_array($curl, array(
     CURLOPT_FOLLOWLOCATION => true,
     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
     CURLOPT_CUSTOMREQUEST => 'GET',
-));
+]);
 
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 $I->createResourceFromYaml($yamlFilename);
@@ -54,9 +54,9 @@ $I->sendGet(
     [
         'method' => 'get',
         'url' => $json_path,
-        'source_type' => 'json',
-        'report_error' => true,
-        'connect_timeout' => 10,
+        'sourceType' => 'json',
+        'reportError' => true,
+        'connectTimeout' => 10,
         'timeout' => 30
     ]
 );

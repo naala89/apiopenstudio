@@ -106,7 +106,7 @@ abstract class Output extends Core\ProcessorEntity
                     $url .= http_build_query($data, '?', '&');
                 }
 
-                $curl = new Core\Curl();
+                $curl = new Core\Curl($this->logger);
                 $result = $curl->{$method}($url, $curlOpts);
                 if ($result === false) {
                     $message = 'could not get response from remote server: ' . $curl->errorMsg;

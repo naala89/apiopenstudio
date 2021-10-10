@@ -114,6 +114,11 @@ class Url extends Core\ProcessorEntity
     ];
 
     /**
+     * @var string Curl response.
+     */
+    protected string $data;
+
+    /**
      * {@inheritDoc}
      *
      * @return Core\DataContainer Result of the processor.
@@ -134,15 +139,15 @@ class Url extends Core\ProcessorEntity
         $auth = $this->val('auth', true);
 
         //get static curl options for this call
-        $curlOpts = array();
+        $curlOpts = [];
         if ($connectTimeout > 0) {
-            $curlOpts[] = [CURLOPT_CONNECTTIMEOUT => $connectTimeout];
+            $curlOpts += [CURLOPT_CONNECTTIMEOUT => $connectTimeout];
         }
         if ($timeout > 0) {
-            $curlOpts[] = [CURLOPT_TIMEOUT => $timeout];
+            $curlOpts += [CURLOPT_TIMEOUT => $timeout];
         }
         if (!empty($body)) {
-            $curlOpts[] = [CURLOPT_POSTFIELDS => $body];
+            $curlOpts += [CURLOPT_POSTFIELDS => $body];
         }
 
         //get auth
@@ -151,7 +156,7 @@ class Url extends Core\ProcessorEntity
         }
 
         //send request
-        $curl = new Core\Curl();
+        $curl = new Core\Curl($this->logger);
         $this->data = $curl->$method($url, $curlOpts);
         if ($this->data === false) {
             throw new Core\ApiException('could not get response from remote server: '
@@ -173,20 +178,19 @@ class Url extends Core\ProcessorEntity
      *
      * @return string
      */
-    private function calcFormat()
+    private function calcFormat(): string
     {
-        $data = $this->data;
         // test for array
-        if (is_array($data)) {
+        if (is_array($this->data)) {
             return 'array';
         }
         // test for JSON
-        json_decode($data);
+        json_decode($this->data);
         if (json_last_error() == JSON_ERROR_NONE) {
             return 'json';
         }
         // test for XML
-        if (simplexml_load_string($data) !== false) {
+        if (simplexml_load_string($this->data) !== false) {
             return 'xml';
         }
         return 'text';
