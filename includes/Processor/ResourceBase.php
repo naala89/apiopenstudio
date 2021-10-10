@@ -135,6 +135,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
 
         $accName = $this->val('accName', true);
         $appName = $this->val('appName', true);
+        $appId = $this->request->getAppId();
 
         switch ($this->request->getMethod()) {
             case 'post':
@@ -149,7 +150,6 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 $result = $this->create($resource, $accName, $appName);
                 break;
             case 'get':
-                $appId = $this->request->getAppId();
                 $method = $this->val('method', true);
                 $uri = $this->val('uri', true);
                 if (empty($method)) {
@@ -161,7 +161,6 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 $result = $this->read($appId, $method, $uri);
                 break;
             case 'delete':
-                $appId = $this->request->getAppId();
                 $method = $this->val('method', true);
                 $uri = $this->val('uri', true);
                 if (empty($method)) {
@@ -174,7 +173,6 @@ abstract class ResourceBase extends Core\ProcessorEntity
                 break;
             default:
                 throw new ApiException('unknown method value in new resource', 3, $this->id);
-                break;
         }
 
         return $result;
@@ -226,7 +224,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
 
         $mapper = new Db\ResourceMapper($this->db, $this->logger);
         $resource = $mapper->findByAppIdMethodUri($appId, $method, $uri);
-        if (empty($resource->getId())) {
+        if (empty($resource->getResid())) {
             throw new ApiException('Resource not found', 1, $this->id, 200);
         }
 
@@ -524,14 +522,14 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * @param array $accepts Array of accepted data types.
      * @param integer $id Processor ID.
      *
-     * @return boolean
+     * @return void
      *
      * @throws ApiException Error.
      */
-    private function validateTypeValue($element, array $accepts, int $id): bool
+    private function validateTypeValue($element, array $accepts, int $id): void
     {
         if (empty($accepts)) {
-            return true;
+            return;
         }
         $valid = false;
 
@@ -575,6 +573,5 @@ abstract class ResourceBase extends Core\ProcessorEntity
             throw new ApiException($message, 6, $id, 406);
         }
 
-        return true;
     }
 }
