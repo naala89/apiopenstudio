@@ -50,13 +50,21 @@ workflow:
 ## RULES
 ##################################
 
-.is_merge_to_apiopenstudio_develop:
+.merge_request_to_apiopenstudio_develop:
   rules:
     - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
       when: always
-.is_merge_to_apiopenstudio_master:
+.merge_request_to_apiopenstudio_master:
   rules:
     - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+      when: always
+.push_to_apiopenstudio_develop:
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $merge_request_event == "push" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: always
+.push_to_apiopenstudio_master:
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $merge_request_event == "push" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
       when: always
 
 ##################################
@@ -75,8 +83,8 @@ stages:
 test-7.4:
   stage: test
   rules:
-    - !reference [.is_merge_to_apiopenstudio_develop, rules]
-    - !reference [.is_merge_to_apiopenstudio_master, rules]
+    - !reference [.merge_request_to_apiopenstudio_develop, rules]
+    - !reference [.merge_request_to_apiopenstudio_master, rules]
   image: naala89/apiopenstudio-nginx-php-7.4:1.0
   services:
     - mariadb:latest
@@ -140,8 +148,8 @@ test-7.4:
 test-8.0:
   stage: test
   rules:
-    - !reference [.is_merge_to_apiopenstudio_develop, rules]
-    - !reference [.is_merge_to_apiopenstudio_master, rules]
+    - !reference [.merge_request_to_apiopenstudio_develop, rules]
+    - !reference [.merge_request_to_apiopenstudio_master, rules]
   image: naala89/apiopenstudio-nginx-php-8.0:1.0
   services:
     - mariadb:latest
@@ -209,7 +217,7 @@ test-8.0:
 wiki-dev:
   stage: deploy_wiki
   rules:
-    - !reference [.is_merge_to_apiopenstudio_develop, rules]
+    - !reference [.push_to_apiopenstudio_develop, rules]
   image:
     name: naala89/bookdown-rsync:1.0
     entrypoint: [ "" ]
@@ -228,7 +236,7 @@ wiki-dev:
 wiki-prod:
   stage: deploy_wiki
   rules:
-    - !reference [.is_merge_to_apiopenstudio_master, rules]
+    - !reference [.push_to_apiopenstudio_master, rules]
   image:
     name: naala89/bookdown-rsync:1.0
     entrypoint: [ "" ]
@@ -253,7 +261,7 @@ wiki-prod:
 phpdoc-dev:
   stage: deploy_phpdoc
   rules:
-    - !reference [.is_merge_to_apiopenstudio_develop, rules]
+    - !reference [.push_to_apiopenstudio_develop, rules]
   image:
     name: naala89/phpdoc-rsync:3.1
     entrypoint: [ "" ]
@@ -284,7 +292,7 @@ phpdoc-dev:
 phpdoc-prod:
   stage: deploy_phpdoc
   rules:
-    - !reference [.is_merge_to_apiopenstudio_master, rules]
+    - !reference [.push_to_apiopenstudio_master, rules]
   image:
     name: naala89/phpdoc-rsync:3.1
     entrypoint: [ "" ]
