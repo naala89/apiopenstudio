@@ -34,6 +34,35 @@ variables:
   CSS_PRISM: "prism"
   MENU_LOGO: "/img/api_open_studio_logo_name_colour.png"
 
+##################################
+## WORKFLOW
+##################################
+
+workflow:
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE != "apiopenstudio" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+    - if: '$CI_PROJECT_NAMESPACE != "apiopenstudio" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+      when: never
+    - when: always
+
+##################################
+## RULES
+##################################
+
+.is_merge_to_apiopenstudio_develop:
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: always
+.is_merge_to_apiopenstudio_master:
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+      when: always
+
+##################################
+## STAGES
+##################################
+
 stages:
   - test
   - deploy_wiki
@@ -45,9 +74,10 @@ stages:
 
 test-7.4:
   stage: test
+  rules:
+    - !reference [.is_merge_to_apiopenstudio_develop, rules]
+    - !reference [.is_merge_to_apiopenstudio_master, rules]
   image: naala89/apiopenstudio-nginx-php-7.4:1.0
-  only:
-    - merge_request
   services:
     - mariadb:latest
   variables:
@@ -109,9 +139,10 @@ test-7.4:
 
 test-8.0:
   stage: test
+  rules:
+    - !reference [.is_merge_to_apiopenstudio_develop, rules]
+    - !reference [.is_merge_to_apiopenstudio_master, rules]
   image: naala89/apiopenstudio-nginx-php-8.0:1.0
-  only:
-    - merge_request
   services:
     - mariadb:latest
   variables:
@@ -177,11 +208,11 @@ test-8.0:
 
 wiki-dev:
   stage: deploy_wiki
+  rules:
+    - !reference [.is_merge_to_apiopenstudio_develop, rules]
   image:
     name: naala89/bookdown-rsync:1.0
     entrypoint: [ "" ]
-  only:
-    - develop
   script:
     - echo "Compile and deploy the wiki to dev."
     - eval $(ssh-agent -s)
@@ -196,11 +227,11 @@ wiki-dev:
 
 wiki-prod:
   stage: deploy_wiki
+  rules:
+    - !reference [.is_merge_to_apiopenstudio_master, rules]
   image:
     name: naala89/bookdown-rsync:1.0
     entrypoint: [ "" ]
-  only:
-    - master
   script:
     - echo "Compile and deploy the wiki to prod."
     - eval $(ssh-agent -s)
@@ -220,12 +251,12 @@ wiki-prod:
 ##################################
 
 phpdoc-dev:
+  stage: deploy_phpdoc
+  rules:
+    - !reference [.is_merge_to_apiopenstudio_develop, rules]
   image:
     name: naala89/phpdoc-rsync:3.1
     entrypoint: [ "" ]
-  stage: deploy_phpdoc
-  only:
-    - develop
   script:
     - echo "Compile and deploy the phpdoc to dev."
     - eval $(ssh-agent -s)
@@ -251,12 +282,12 @@ phpdoc-dev:
     - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
 
 phpdoc-prod:
+  stage: deploy_phpdoc
+  rules:
+    - !reference [.is_merge_to_apiopenstudio_master, rules]
   image:
     name: naala89/phpdoc-rsync:3.1
     entrypoint: [ "" ]
-  stage: deploy_phpdoc
-  only:
-    - master
   script:
     - echo "Compile and deploy the phpdoc to prod."
     - eval $(ssh-agent -s)
