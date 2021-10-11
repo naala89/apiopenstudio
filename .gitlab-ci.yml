@@ -60,11 +60,11 @@ workflow:
       when: always
 .push_to_apiopenstudio_develop:
   rules:
-    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $merge_request_event == "push" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $MERGE_REQUEST_EVENT == "push" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
       when: always
 .push_to_apiopenstudio_master:
   rules:
-    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $merge_request_event == "push" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $MERGE_REQUEST_EVENT == "push" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
       when: always
 
 ##################################
