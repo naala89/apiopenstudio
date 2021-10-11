@@ -58,13 +58,13 @@ workflow:
   rules:
     - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
       when: always
-.push_to_apiopenstudio_develop:
+.commit_to_apiopenstudio_develop:
   rules:
-    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_PIPELINE_SOURCE == "push" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_COMMIT_BRANCH == "develop"'
       when: always
-.push_to_apiopenstudio_master:
+.commit_to_apiopenstudio_master:
   rules:
-    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_PIPELINE_SOURCE == "push" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_COMMIT_BRANCH == "master"'
       when: always
 
 ##################################
@@ -217,7 +217,7 @@ test-8.0:
 wiki-dev:
   stage: deploy_wiki
   rules:
-    - !reference [.push_to_apiopenstudio_develop, rules]
+    - !reference [.commit_to_apiopenstudio_develop, rules]
   image:
     name: naala89/bookdown-rsync:1.0
     entrypoint: [ "" ]
@@ -236,7 +236,7 @@ wiki-dev:
 wiki-prod:
   stage: deploy_wiki
   rules:
-    - !reference [.push_to_apiopenstudio_master, rules]
+    - !reference [.commit_to_apiopenstudio_master, rules]
   image:
     name: naala89/bookdown-rsync:1.0
     entrypoint: [ "" ]
@@ -261,7 +261,7 @@ wiki-prod:
 phpdoc-dev:
   stage: deploy_phpdoc
   rules:
-    - !reference [.push_to_apiopenstudio_develop, rules]
+    - !reference [.commit_to_apiopenstudio_develop, rules]
   image:
     name: naala89/phpdoc-rsync:3.1
     entrypoint: [ "" ]
@@ -292,7 +292,7 @@ phpdoc-dev:
 phpdoc-prod:
   stage: deploy_phpdoc
   rules:
-    - !reference [.push_to_apiopenstudio_master, rules]
+    - !reference [.commit_to_apiopenstudio_master, rules]
   image:
     name: naala89/phpdoc-rsync:3.1
     entrypoint: [ "" ]
