@@ -144,7 +144,7 @@ abstract class ProcessorEntity extends Entity
      *              0 or many values
      *              Must be an integer
      *              with no limit on value
-     *          t, which can take or or many input of Processor Field.
+     *          t, which can take or many input of Processor Field.
      */
     protected array $details = array();
 
