@@ -21,27 +21,34 @@ appid: 1
 ttl: 0
 
 security:
-  processor: validate_token_roles
   id: var_store_read_security
-  roles:
-    - Administrator
-    - Account manager
-    - Application manager
-    - Developer
+  processor: validate_token
 
 process:
   processor: var_store_read
   id: var_store_read_process
+  validate_access:
+    processor: literal
+    id: var_store_read_validate_access
+    value: true
+    type: boolean
   vid:
     processor: var_get
     id: var_store_read_vid
     nullable: true
+    expected_type: integer
     key: vid
   appid:
     processor: var_get
     id: var_store_read_appid
     nullable: true
     key: appid
+  key:
+    processor: var_get
+    id: var_store_read_key
+    key: key
+    expected_type: integer
+    nullable: true
   keyword:
     processor: var_get
     id: var_store_read_keyword
