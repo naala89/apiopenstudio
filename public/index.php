@@ -41,7 +41,14 @@ try {
 } catch (ApiException $e) {
     $api = new Api($config->all());
     $logger = new MonologWrapper($config->__get(['debug']));
-    $outputClass = 'ApiOpenStudio\\Output\\' . ucfirst($api->getAccept($config->__get(['api', 'default_format'])));
+    $defaultFormat = $config->__get(['api', 'default_format']);
+    $outputClass = ucfirst($api->getAccept($defaultFormat));
+    if ($outputClass == 'Text' || $outputClass == 'Plain') {
+        $logger->error('api', $e->getMessage());
+        echo 'Error: ' . $e->getMessage();
+        exit();
+    }
+    $outputClass = 'ApiOpenStudio\\Output\\' . $outputClass;
     if (!class_exists($outputClass)) {
         $logger->error('api', 'Error: no default format defined in the config!');
         echo 'Error: no default format defined in the config!';
