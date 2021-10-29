@@ -62,8 +62,7 @@ $I->seeResponseContains('0');
 $I->wantTo('populate a VarGet with wrong varname and nullable true and see the result.');
 $I->sendGet($uri, ['values' => 'test', 'nullable' => true]);
 $I->seeResponseCodeIs(200);
-$I->seeResponseIsJson();
-$I->seeResponseEquals('""');
+$I->seeResponseEquals('');
 
 $I->wantTo('populate a VarGet with wrong varname and nullable false and see the result.');
 $I->sendGet($uri, ['values' => 'test', 'nullable' => false]);
@@ -73,7 +72,7 @@ $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 6,
-            'message' => "GET variable (value) not received.",
+            'message' => "GET variable (value) does not exist or is empty.",
             'id' => 'test var_get process',
         ],
     ]
@@ -87,7 +86,7 @@ $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 6,
-            'message' => "GET variable (value) not received.",
+            'message' => "GET variable (value) does not exist or is empty.",
             'id' => 'test var_get process',
         ],
     ]

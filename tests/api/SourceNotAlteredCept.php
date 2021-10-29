@@ -36,7 +36,7 @@ $I->sendGet(
         'source_type' => 'xml',
         'report_error' => true,
         'connect_timeout' => 10,
-        'timeout' => 30
+        'timeout' => 30,
     ]
 );
 $I->seeResponseCodeIs(200);

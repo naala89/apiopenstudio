@@ -17,8 +17,8 @@ $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 6,
-            'message' => "Invalid type (text), only 'integer' allowed in input 'index'.",
-            'id' => 'test varuri processor process',
+            'message' => "Failed to convert text to integer.",
+            'id' => 'test varuri processor varget',
         ],
     ]
 );
@@ -31,8 +31,8 @@ $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 6,
-            'message' => "Invalid type (boolean), only 'integer' allowed in input 'index'.",
-            'id' => 'test varuri processor process',
+            'message' => "Failed to convert text to integer.",
+            'id' => 'test varuri processor varget',
         ],
     ]
 );
@@ -45,8 +45,8 @@ $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 6,
-            'message' => "Invalid type (float), only 'integer' allowed in input 'index'.",
-            'id' => 'test varuri processor process'
+            'message' => "Failed to convert text to integer.",
+            'id' => 'test varuri processor varget'
         ],
     ]
 );
@@ -59,8 +59,8 @@ $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 6,
-            'message' => "Invalid type (float), only 'integer' allowed in input 'index'.",
-            'id' => 'test varuri processor process',
+            'message' => "Failed to convert text to integer.",
+            'id' => 'test varuri processor varget',
         ],
     ]
 );
@@ -85,7 +85,7 @@ $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 6,
-            'message' => "URI index 3 does not exist.",
+            'message' => "URI var does not exist or is empty: 3.",
             'id' => 'test varuri processor process',
         ],
     ]
@@ -99,8 +99,8 @@ $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 6,
-            'message' => "Invalid type (float), only 'integer' allowed in input 'index'.",
-            'id' => 'test varuri processor process',
+            'message' => "Failed to convert text to integer.",
+            'id' => 'test varuri processor varget',
         ],
     ]
 );

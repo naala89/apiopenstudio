@@ -17,8 +17,8 @@ $I->seeResponseContainsJson(
     [
         "error" => [
             "code" => 6,
-            "message" => "Invalid type (text), only 'float', 'integer' allowed in input 'value'.",
-            "id" => 'test var_float process',
+            "message" => "Failed to convert text to float.",
+            "id" => 'test var_float value',
         ],
     ]
 );
@@ -31,8 +31,8 @@ $I->seeResponseContainsJson(
     [
         "error" => [
             "code" => 6,
-            "message" => "Invalid type (boolean), only 'float', 'integer' allowed in input 'value'.",
-            "id" => 'test var_float process',
+            "message" => "Failed to convert text to float.",
+            "id" => 'test var_float value',
         ],
     ]
 );

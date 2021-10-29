@@ -133,7 +133,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->sendPOST(
         $I->getCoreBaseUri() . '/resource',
         [
-            'name' => 'allowed to create a resource',
+            'name' => 'Test allowed to create a resource',
             'description' => 'test allowed to create a resource',
             'uri' => 'test/resource_create/allowed',
             'method' => 'post',
@@ -189,7 +189,7 @@ process:
         $I->getCoreBaseUri() . "/resource/$resid",
     );
     $I->seeResponseCodeIs(200);
-    $I->seeResponseContainsJson([true]);
+    $I->seeResponseContainsJson(['true']);
 
     $I->wantTo('create a new resource from YAML missing name attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceNoName.yaml';
@@ -426,7 +426,6 @@ process:
     );
     $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
-    $I->seeResponseContains('true');
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(200);
     $I->seeResponseContains('true');
@@ -453,8 +452,8 @@ process:
             'error' => [
                 'code' => 6,
                 'message' => 'Missing process in new resource.',
-                'id' => -1
-            ]
+                'id' => 'resource_import_process',
+            ],
         ]
     );
     $I->tearDownTestFromYaml($yamlFilename);
@@ -486,7 +485,6 @@ process:
     );
     $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
-    $I->seeResponseContains('true');
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(200);
     $I->seeResponseContains('true');
@@ -513,7 +511,7 @@ process:
             "error" => [
                 "code" => 6,
                 "message" => "Invalid process declaration, only processors allowed.",
-                "id" => -1,
+                "id" => 'resource_import_process',
             ],
         ]
     );
@@ -551,7 +549,7 @@ process:
             "error" => [
                 "code" => 6,
                 "message" => "Invalid process declaration, only processors allowed.",
-                "id" => -1,
+                "id" => 'resource_import_process',
             ],
         ]
     );
@@ -589,7 +587,7 @@ process:
             "error" => [
                 "code" => 6,
                 "message" => "Invalid process declaration, only processors allowed.",
-                "id" => -1,
+                "id" => 'resource_import_process',
             ],
         ]
     );
@@ -627,7 +625,7 @@ process:
             "error" => [
                 "code" => 6,
                 "message" => "Invalid process declaration, only processors allowed.",
-                "id" => -1,
+                "id" => 'resource_import_process',
             ],
         ]
     );
@@ -665,8 +663,8 @@ process:
             "error" => [
                 "code" => 6,
                 "message" => 'Invalid output declaration. Only processor, array of processors or "response" allowed.',
-                "id" => -1
-            ]
+                "id" => 'resource_import_process',
+            ],
         ]
     );
     $I->tearDownTestFromYaml($yamlFilename);
@@ -703,8 +701,8 @@ process:
             "error" => [
                 "code" => 6,
                 "message" => 'Invalid output declaration. Only processor, array of processors or "response" allowed.',
-                "id" => -1
-            ]
+                "id" => 'resource_import_process',
+            ],
         ]
     );
     $I->tearDownTestFromYaml($yamlFilename);
@@ -741,8 +739,8 @@ process:
             "error" => [
                 "code" => 6,
                 "message" => 'Invalid output declaration. Only processor, array of processors or "response" allowed.',
-                "id" => -1
-            ]
+                "id" => 'resource_import_process',
+            ],
         ]
     );
     $I->tearDownTestFromYaml($yamlFilename);
@@ -774,7 +772,6 @@ process:
     );
     $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
-    $I->seeResponseContains('true');
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(200);
 
@@ -802,7 +799,7 @@ process:
             "error" => [
                 "code" => 6,
                 "message" => $message,
-                "id" => 'test resource required func type xml',
+                "id" => 'resource_import_process',
             ]
         ]
     );
@@ -840,7 +837,7 @@ process:
             "error" => [
                 "code" => 6,
                 "message" => "Input 'sources' in processor 'test resource with bad min process' requires min 2.",
-                "id" => 'test resource with bad min process'
+                "id" => 'resource_import_process'
             ]
         ]
     );
@@ -878,7 +875,7 @@ process:
             "error" => [
                 "code" => 6,
                 "message" => "Input 'value' in processor 'test resource with bad max process' requires max 1.",
-                "id" => 'test resource with bad max process',
+                "id" => 'resource_import_process',
             ]
         ]
     );
@@ -954,8 +951,8 @@ process:
             "error" => [
                 "code" => 6,
                 "message" => 'Identical IDs in new resource: resource identical ids.',
-                "id" => -1,
-            ]
+                "id" => 'resource_import_process',
+            ],
         ]
     );
     $I->tearDownTestFromYaml($yamlFilename);
