@@ -15,8 +15,10 @@
 
 namespace ApiOpenStudio\Output;
 
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\ConvertToTextTrait;
 use ApiOpenStudio\Core\DataContainer;
-use phpDocumentor\Reflection\Types\Boolean;
+use ApiOpenStudio\Core\DetectTypeTrait;
 
 /**
  * Class Text
@@ -25,6 +27,9 @@ use phpDocumentor\Reflection\Types\Boolean;
  */
 class Text extends Output
 {
+    use ConvertToTextTrait;
+    use DetectTypeTrait;
+
     /**
      * {@inheritDoc}
      *
@@ -75,121 +80,21 @@ class Text extends Output
     ];
 
     /**
-     * {@inheritDoc}
+     * Cast the data to text.
      *
-     * @return DataContainer Result of the processor.
+     * @throws ApiException
+     *   Throw an exception if unable to convert the data.
      */
-    public function process(): DataContainer
+    protected function castData(): void
     {
-        $this->logger->info('api', 'Output: ' . $this->details()['machineName']);
-        return new DataContainer(parent::process(), 'text');
-    }
+        $currentType = $this->data->getType();
+        $method = 'from' . ucfirst(strtolower($currentType)) . 'ToText';
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param boolean $data Boolean data.
-     *
-     * @return string
-     */
-    protected function fromBoolean(bool &$data): string
-    {
-        return $data ? 'true' : 'false';
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param integer $data Integer data.
-     *
-     * @return int
-     */
-    protected function fromInteger(int &$data): int
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param float $data Float data.
-     *
-     * @return float
-     */
-    protected function fromFloat(float &$data): float
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data XML data.
-     *
-     * @return string
-     */
-    protected function fromXml(string &$data): string
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data HTML data.
-     *
-     * @return string
-     */
-    protected function fromHtml(string &$data): string
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data Text data.
-     *
-     * @return string
-     */
-    protected function fromText(string &$data): string
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param array $data Array data.
-     *
-     * @return string
-     */
-    protected function fromArray(array &$data): string
-    {
-        return json_encode($data);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data Json data.
-     *
-     * @return string
-     */
-    protected function fromJson(string &$data): string
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param mixed $data Image data.
-     *
-     * @return string
-     */
-    protected function fromImage(&$data): string
-    {
-        return $data;
+        try {
+            $this->data->setData($this->$method($this->data->getData()));
+            $this->data->setType('text');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), 6, $this->id, 400);
+        }
     }
 }

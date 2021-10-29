@@ -72,15 +72,4 @@ class Plain extends Text
             ],
         ],
     ];
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return DataContainer Result of the processor.
-     */
-    public function process(): DataContainer
-    {
-        $this->logger->info('api', 'Output: ' . $this->details()['machineName']);
-        return parent::process();
-    }
 }
