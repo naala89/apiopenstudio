@@ -120,25 +120,25 @@ class ResourceDelete extends Core\ProcessorEntity
         $resid = $this->val('resid', true);
         $uid = Core\Utilities::getUidFromToken();
 
+        // Validate resource exists.
         $resource = $this->resourceMapper->findByResid($resid);
         if (empty($resource->getResid())) {
             throw new Core\ApiException("Invalid resource: $resid", 6, $this->id, 400);
         }
 
-        $role = $this->userRoleMapper->findByUidAppidRolename(
-            $uid,
-            $resource->getAppid(),
-            'Developer'
-        );
-        if (empty($role->getUrid())) {
-            throw new Core\ApiException(
-                "Unauthorised: you do not have permissions for this application",
-                6,
-                $this->id,
-                400
-            );
+        // Validate user has Developer access to its application.
+        $userRoles = Core\Utilities::getRolesFromToken();
+        $userHasAccess = false;
+        foreach ($userRoles as $userRole) {
+            if ($userRole['role_name'] == 'Developer' && $userRole['appid'] == $resource->getAppId()) {
+                $userHasAccess = true;
+            }
+        }
+        if (!$userHasAccess) {
+            throw new Core\ApiException('Permission denied', 6, $this->id, 400);
         }
 
+        // Validate deleting core resource and core resources not locked.
         $application = $this->applicationMapper->findByAppid($resource->getAppid());
         $account = $this->accountMapper->findByAccid($application->getAccid());
         if (

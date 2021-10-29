@@ -44,12 +44,13 @@ process:
         filter: resid
         inverse: true
         source:
-          processor: convert_to_array
-          id: resource_update_array_resid
-          source:
+          processor: cast
+          id: resource_update_cast_resid_to_array
+          data:
             processor: var_body
             id: resource_update_body_resid
             nullable: false
+          data_type: array
   name:
     processor: field_value
     id: resource_update_name
@@ -63,12 +64,13 @@ process:
         filter: name
         inverse: true
         source:
-          processor: convert_to_array
-          id: resource_update_array_name
-          source:
+          processor: cast
+          id: resource_update_cast_filter_name_to_array
+          data:
             processor: var_body
             id: resource_update_body_name
             nullable: false
+          data_type: array
   description:
     processor: field_value
     id: resource_update_description
@@ -82,12 +84,13 @@ process:
         filter: description
         inverse: true
         source:
-          processor: convert_to_array
-          id: resource_update_array_description
-          source:
+          processor: cast
+          id: resource_update_cast_description_to_array
+          data:
             processor: var_body
             id: resource_update_body_description
             nullable: false
+          data_type: array
   appid:
     processor: field_value
     id: resource_update_appid
@@ -101,12 +104,13 @@ process:
         filter: appid
         inverse: true
         source:
-          processor: convert_to_array
-          id: resource_update_array_appid
-          source:
+          processor: cast
+          id: resource_update_cast_appid_to_array
+          data:
             processor: var_body
             id: resource_update_body_appid
             nullable: false
+          data_type: array
   method:
     processor: field_value
     id: resource_update_method
@@ -120,12 +124,13 @@ process:
         filter: method
         inverse: true
         source:
-          processor: convert_to_array
-          id: resource_update_array_method
-          source:
+          processor: cast
+          id: resource_update_cast_method_to_array
+          data:
             processor: var_body
             id: resource_update_body_method
             nullable: false
+          data_type: array
   uri:
     processor: field_value
     id: resource_update_uri
@@ -139,12 +144,13 @@ process:
         filter: uri
         inverse: true
         source:
-          processor: convert_to_array
-          id: resource_update_array_uri
-          source:
+          processor: cast
+          id: resource_update_cast_uri_to_array
+          data:
             processor: var_body
             id: resource_update_body_uri
             nullable: false
+          data_type: array
   ttl:
     processor: field_value
     id: resource_update_ttl
@@ -158,12 +164,13 @@ process:
         filter: ttl
         inverse: true
         source:
-          processor: convert_to_array
-          id: resource_update_array_ttl
-          source:
+          processor: cast
+          id: resource_update_cast_ttl_to_array
+          data:
             processor: var_body
             id: resource_update_body_ttl
             nullable: false
+          data_type: array
   format:
     processor: field_value
     id: resource_update_format
@@ -177,12 +184,13 @@ process:
         filter: format
         inverse: true
         source:
-          processor: convert_to_array
-          id: resource_update_array_format
-          source:
+          processor: cast
+          id: resource_update_cast_format_to_array
+          data:
             processor: var_body
             id: resource_update_body_format
             nullable: false
+          data_type: array
   meta:
     processor: field_value
     id: resource_update_meta
@@ -196,9 +204,10 @@ process:
         filter: meta
         inverse: true
         source:
-          processor: convert_to_array
-          id: resource_update_array_meta
-          source:
+          processor: cast
+          id: resource_update_cast_meta_to_array
+          data:
             processor: var_body
             id: resource_update_body_meta
             nullable: false
+          data_type: array
