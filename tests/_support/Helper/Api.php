@@ -158,7 +158,6 @@ class Api extends Module
         );
         $this->getModule('REST')->seeResponseCodeIs(200);
         $this->getModule('REST')->seeResponseIsJson();
-        $this->getModule('REST')->seeResponseContains('true');
     }
 
     /**
