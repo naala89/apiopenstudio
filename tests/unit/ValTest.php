@@ -143,12 +143,7 @@ class ValTest extends Unit
      */
     public function testInvalidValueArray()
     {
-        $this->expectException("Exception");
-        $this->expectExceptionCode(6);
-        $this->expectExceptionMessage(
-            "invalid type (array), only 'boolean', 'integer', 'text' allowed in input 'value'"
-        );
-
+        $this->expectException(ApiException::class);
         $meta = json_decode(json_encode([
             'processor' => 'var_bool',
             'id' => 'var_bool literal true',
@@ -165,10 +160,7 @@ class ValTest extends Unit
      */
     public function testInvalidNumberInputs()
     {
-        $this->expectException("Exception");
-        $this->expectExceptionCode(7);
-        $this->expectExceptionMessage("invalid number of inputs (2) in value, requires 1 - 1");
-
+        $this->expectException(ApiException::class);
         $meta = json_decode(json_encode([
             'processor' => 'var_bool',
             'id' => 'var_bool literal true',
