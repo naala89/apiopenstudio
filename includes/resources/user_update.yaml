@@ -44,12 +44,13 @@ process:
         filter: active
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_active
-          source:
+          processor: cast
+          id: user_update_cast_active_to_array
+          data:
             processor: var_body
             id: user_update_body_active
             nullable: false
+          data_type: array
   username:
     processor: field_value
     id: user_update_username
@@ -63,12 +64,13 @@ process:
         filter: username
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_username
-          source:
+          processor: cast
+          id: user_update_cast_username_to_array
+          data:
             processor: var_body
             id: user_update_body_username
             nullable: false
+          data_type: array
   password:
     processor: field_value
     id: user_update_password
@@ -82,12 +84,13 @@ process:
         filter: password
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_password
-          source:
+          processor: cast
+          id: user_update_cast_password_to_array
+          data:
             processor: var_body
             id: user_update_body_password
             nullable: false
+          data_type: array
   honorific:
     processor: field_value
     id: user_update_honorific
@@ -101,12 +104,13 @@ process:
         filter: honorific
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_honorific
-          source:
+          processor: cast
+          id: user_update_cast_honorific_to_array
+          data:
             processor: var_body
             id: user_update_body_honorific
             nullable: false
+          data_type: array
   name_first:
     processor: field_value
     id: user_update_name_first
@@ -120,12 +124,13 @@ process:
         filter: name_first
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_name_first
-          source:
+          processor: cast
+          id: user_update_cast_name_first_to_array
+          data:
             processor: var_body
             id: user_update_body_name_first
             nullable: false
+          data_type: array
   name_last:
     processor: field_value
     id: user_update_name_last
@@ -139,12 +144,13 @@ process:
         filter: name_last
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_name_last
-          source:
+          processor: cast
+          id: user_update_cast_name_last_to_array
+          data:
             processor: var_body
             id: user_update_body_name_last
             nullable: false
+          data_type: array
   email:
     processor: field_value
     id: user_update_email
@@ -158,12 +164,13 @@ process:
         filter: email
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_email
-          source:
+          processor: cast
+          id: user_update_cast_email_to_array
+          data:
             processor: var_body
             id: user_update_body_email
             nullable: false
+          data_type: array
   company:
     processor: field_value
     id: user_update_company
@@ -177,12 +184,13 @@ process:
         filter: company
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_company
-          source:
+          processor: cast
+          id: user_update_cast_company_to_array
+          data:
             processor: var_body
             id: user_update_body_company
             nullable: false
+          data_type: array
   website:
     processor: field_value
     id: user_update_website
@@ -196,12 +204,13 @@ process:
         filter: website
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_website
-          source:
+          processor: cast
+          id: user_update_cast_website_to_array
+          data:
             processor: var_body
             id: user_update_body_website
             nullable: false
+          data_type: array
   address_street:
     processor: field_value
     id: user_update_address_street
@@ -215,12 +224,13 @@ process:
         filter: address_street
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_address_street
-          source:
+          processor: cast
+          id: user_update_cast_address_street_to_array
+          data:
             processor: var_body
             id: user_update_body_address_street
             nullable: false
+          data_type: array
   address_suburb:
     processor: field_value
     id: user_update_address_suburb
@@ -234,12 +244,13 @@ process:
         filter: address_suburb
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_address_suburb
-          source:
+          processor: cast
+          id: user_update_cast_address_suburb_to_array
+          data:
             processor: var_body
             id: user_update_body_address_suburb
             nullable: false
+          data_type: array
   address_city:
     processor: field_value
     id: user_update_address_city
@@ -253,12 +264,13 @@ process:
         filter: address_city
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_address_city
-          source:
+          processor: cast
+          id: user_update_cast_address_city_to_array
+          data:
             processor: var_body
             id: user_update_body_address_city
             nullable: false
+          data_type: array
   address_state:
     processor: field_value
     id: user_update_address_state
@@ -272,12 +284,13 @@ process:
         filter: address_state
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_address_state
-          source:
+          processor: cast
+          id: user_update_cast_address_state_to_array
+          data:
             processor: var_body
             id: user_update_body_address_state
             nullable: false
+          data_type: array
   address_country:
     processor: field_value
     id: user_update_address_country
@@ -291,12 +304,13 @@ process:
         filter: address_country
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_address_country
-          source:
+          processor: cast
+          id: user_update_cast_address_country_to_array
+          data:
             processor: var_body
             id: user_update_body_address_country
             nullable: false
+          data_type: array
   address_postcode:
     processor: field_value
     id: user_update_address_postcode
@@ -310,12 +324,13 @@ process:
         filter: address_postcode
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_address_postcode
-          source:
+          processor: cast
+          id: user_update_cast_address_postcode_to_array
+          data:
             processor: var_body
             id: user_update_body_address_postcode
             nullable: false
+          data_type: array
   phone_mobile:
     processor: field_value
     id: user_update_phone_mobile
@@ -329,12 +344,13 @@ process:
         filter: phone_mobile
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_phone_mobile
-          source:
+          processor: cast
+          id: user_update_cast_phone_mobile_to_array
+          data:
             processor: var_body
             id: user_update_body_phone_mobile
             nullable: false
+          data_type: array
   phone_work:
     processor: field_value
     id: user_update_phone_work
@@ -348,9 +364,10 @@ process:
         filter: phone_work
         inverse: true
         source:
-          processor: convert_to_array
-          id: user_update_array_phone_work
-          source:
+          processor: cast
+          id: user_update_cast_phone_work_to_array
+          data:
             processor: var_body
             id: user_update_body_phone_work
             nullable: false
+          data_type: array

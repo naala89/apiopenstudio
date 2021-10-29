@@ -44,12 +44,13 @@ process:
         filter: rid
         inverse: true
         source:
-          processor: convert_to_array
-          id: role_update_array_rid
-          source:
+          processor: cast
+          id: role_update_cast_rid_to_array
+          data:
             processor: var_body
             id: role_update_body_rid
             nullable: false
+          data_type: array
   name:
     processor: field_value
     id: role_update_name
@@ -63,9 +64,10 @@ process:
         filter: name
         inverse: true
         source:
-          processor: convert_to_array
-          id: role_update_array_name
-          source:
+          processor: cast
+          id: role_update_cast_name_to_array
+          data:
             processor: var_body
             id: role_update_body_name
             nullable: false
+          data_type: array
