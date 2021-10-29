@@ -44,12 +44,34 @@ class VarPost extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => '',
             ],
+            'expected_type' => [
+                // phpcs:ignore
+                'description' => 'The expected input data type. ApiOpenStudio will attempt to cast the input to this data type. If type is not defined, then ApiOpenStudio will attempt automatically set the data type.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => [],
+                'limitValues' => [
+                    'boolean',
+                    'integer',
+                    'float',
+                    'text',
+                    'array',
+                    'json',
+                    'xml',
+                    'html',
+                    'image',
+                    'file',
+                    'empty',
+                ],
+                'default' => '',
+            ],
             'nullable' => [
                 'description' => 'Allow the processing to continue if the POST variable does not exist.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => ['boolean', 'integer'],
+                'limitTypes' => ['boolean'],
                 'limitValues' => [],
                 'default' => true,
             ],
@@ -69,14 +91,25 @@ class VarPost extends Core\ProcessorEntity
 
         $key = $this->val('key', true);
         $nullable = $this->val('nullable', true);
+        $expectedType = $this->val('expected_type', true);
         $vars = $this->request->getPostVars();
 
-        if (isset($vars[$key])) {
-            return new Core\DataContainer($vars[$key]);
-        } elseif ($nullable) {
-            return new Core\DataContainer('', 'text');
+        $data = $vars[$key] ?? '';
+
+        if (!empty($expectedType)) {
+            try {
+                $result = new Core\DataContainer($data, $expectedType);
+            } catch (Core\ApiException $e) {
+                throw new Core\ApiException($e->getMessage(), 6, $this->id, 400);
+            }
+        } else {
+            $result = new Core\DataContainer($data);
         }
 
-        throw new Core\ApiException("post variable ($key) not received", 6, $this->id, 400);
+        if (!$nullable && $result->getType() == 'empty') {
+            throw new Core\ApiException("POST var does not exist or is empty: $key", 6, $this->id, 400);
+        }
+
+        return $result;
     }
 }

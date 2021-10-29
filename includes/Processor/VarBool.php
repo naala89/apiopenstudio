@@ -59,22 +59,11 @@ class VarBool extends Core\ProcessorEntity
     {
         parent::process();
 
-        $value = $this->val('value', true);
-        switch ($value) {
-            case 'yes':
-            case 'true':
-                $value = true;
-                break;
-            case 'no':
-            case 'false':
-                $value = false;
-                break;
-        }
-        $boolean = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-        if (is_null($boolean)) {
-            throw new Core\ApiException("$value is not boolean", 6, $this->id, 400);
+        $container = $this->val('value');
+        if ($container->getType() != 'boolean') {
+            $container->setType('boolean');
         }
 
-        return new Core\DataContainer($boolean, 'boolean');
+        return $container;
     }
 }

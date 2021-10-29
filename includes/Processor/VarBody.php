@@ -24,7 +24,7 @@ use ApiOpenStudio\Core\Debug;
  *
  * Processor class to return the contents of the body as a variable.
  */
-class VarBody extends VarLooselyTyped
+class VarBody extends Core\ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -37,7 +37,7 @@ class VarBody extends VarLooselyTyped
         'description' => 'Fetch the entire body of a post.',
         'menu' => 'Primitive',
         'input' => [
-            'type' => [
+            'expected_type' => [
                 // phpcs:ignore
                 'description' => 'The expected data type in the body. If type is not defined, then ApiOpenStudio will attempt automatically set the data type.',
                 'cardinality' => [0, 1],
@@ -48,12 +48,14 @@ class VarBody extends VarLooselyTyped
                     'boolean',
                     'integer',
                     'float',
-                    'json',
-                    'html',
-                    'xml',
                     'text',
+                    'array',
+                    'json',
+                    'xml',
+                    'html',
                     'image',
                     'file',
+                    'empty',
                 ],
                 'default' => '',
             ],
@@ -80,14 +82,17 @@ class VarBody extends VarLooselyTyped
     {
         parent::process();
 
-        $type = $this->val('type', true);
+        $expectedType = $this->val('expected_type', true);
         $nullable = $this->val('nullable', true);
         $data = file_get_contents('php://input');
 
-        if (!$nullable && empty($data)) {
+        if (empty($data) && !$nullable) {
             throw new ApiException("Body is empty", 6, $this->id);
         }
 
-        return new Core\DataContainer($data, $type);
+        if (!empty($expectedType)) {
+            return new Core\DataContainer($data, $expectedType);
+        }
+        return new Core\DataContainer($data);
     }
 }

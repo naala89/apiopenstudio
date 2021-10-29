@@ -45,6 +45,22 @@ class VarUri extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => 0,
             ],
+            'expected_type' => [
+                // phpcs:ignore
+                'description' => 'The expected input data type. If type is not defined, then ApiOpenStudio will attempt automatically set the data type.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => [],
+                'limitValues' => [
+                    'boolean',
+                    'integer',
+                    'float',
+                    'text',
+                    'empty',
+                ],
+                'default' => '',
+            ],
             'nullable' => [
                 'description' => 'Allow the processing to continue if the URI index does not exist (returns "").',
                 'cardinality' => [0, 1],
@@ -70,16 +86,25 @@ class VarUri extends Core\ProcessorEntity
 
         $index = intval($this->val('index', true));
         $nullable = $this->val('nullable', true);
+        $expectedType = $this->val('expected_type', true);
         $args = $this->request->getArgs();
 
-        if (!isset($args[$index])) {
-            if ($nullable) {
-                return new Core\DataContainer('', 'text');
-            } else {
-                throw new Core\ApiException("URI index $index does not exist", 6, $this->id, 400);
+        $data = $args[$index] ?? '';
+
+        if (!empty($expectedType)) {
+            try {
+                $result = new Core\DataContainer($data, $expectedType);
+            } catch (Core\ApiException $e) {
+                throw new Core\ApiException($e->getMessage(), 6, $this->id, 400);
             }
+        } else {
+            $result = new Core\DataContainer($data);
         }
 
-        return new Core\DataContainer(urldecode($args[$index]));
+        if (!$nullable && $result->getType() == 'empty') {
+            throw new Core\ApiException("URI var does not exist or is empty: $index", 6, $this->id, 400);
+        }
+
+        return $result;
     }
 }

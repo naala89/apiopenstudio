@@ -36,14 +36,17 @@ process:
     processor: var_get
     id: test url report_error
     key: repor_error
+    expected_type: boolean
     nullable: true
   connectTimeout:
     processor: var_get
     id: test url connect_timeout
     key: connect_timeout
+    expected_type: integer
     nullable: true
   timeout:
     processor: var_get
     id: test url timeout
     key: timeout
+    expected_type: integer
     nullable: true

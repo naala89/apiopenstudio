@@ -44,12 +44,32 @@ class VarGet extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => '',
             ],
+            'expected_type' => [
+                // phpcs:ignore
+                'description' => 'The expected incoming data type. This will cause ApiOpenStudio to explicitly cast the data to the type. If unable to cast (and nullable set to false), then an exception will be thrown.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [
+                    'boolean',
+                    'integer',
+                    'float',
+                    'text',
+                    'array',
+                    'json',
+                    'xml',
+                    'html',
+                    'empty',
+                ],
+                'default' => '',
+            ],
             'nullable' => [
                 'description' => 'Allow the processing to continue if the GET variable does not exist.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => ['boolean', 'integer'],
+                'limitTypes' => ['boolean'],
                 'limitValues' => [],
                 'default' => false,
             ],
@@ -68,6 +88,8 @@ class VarGet extends Core\ProcessorEntity
         parent::process();
 
         $key = $this->val('key', true);
+        $expectedType = $this->val('expected_type', true);
+        $nullable = $this->val('nullable', true);
         $vars = $this->request->getGetVars();
 
         if (isset($vars[$key])) {
@@ -75,14 +97,28 @@ class VarGet extends Core\ProcessorEntity
                 foreach ($vars[$key] as $index => $val) {
                     $vars[$key][$index] = urldecode($val);
                 }
-                return new Core\DataContainer($vars[$key], 'array');
+                $data = $vars[$key];
+            } else {
+                $data = urldecode($vars[$key]);
             }
-            return new Core\DataContainer(urldecode($vars[$key]));
-        }
-        if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
-            return new Core\DataContainer('', 'text');
+        } else {
+            $data = '';
         }
 
-        throw new Core\ApiException("GET variable ($key) not received", 6, $this->id, 400);
+        if (!empty($expectedType)) {
+            try {
+                $result = new Core\DataContainer($data, $expectedType);
+            } catch (Core\ApiException $e) {
+                throw new Core\ApiException($e->getMessage(), 6, $this->id, 400);
+            }
+        } else {
+            $result = new Core\DataContainer($data);
+        }
+
+        if (!$nullable && $result->getType() == 'empty') {
+            throw new Core\ApiException("GET variable ($key) does not exist or is empty", 6, $this->id, 400);
+        }
+
+        return $result;
     }
 }
