@@ -56,18 +56,12 @@ class VarInt extends Core\ProcessorEntity
      */
     public function process(): Core\DataContainer
     {
-        parent::process();
 
-        $result = $this->val('value');
-        if (!$this->isDataContainer($result)) {
-            $result = new Core\DataContainer($result, 'integer');
+        $container = $this->val('value');
+        if ($container->getType() != 'integer') {
+            $container->setType('integer');
         }
-        $integer = filter_var($result->getData(), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-        if (is_null($integer)) {
-            throw new Core\ApiException($result->getData() . ' is not integer', 6, $this->id, 400);
-        }
-        $result->setData($integer);
-        $result->setType('integer');
-        return $result;
+
+        return $container;
     }
 }

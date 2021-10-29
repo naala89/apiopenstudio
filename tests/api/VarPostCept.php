@@ -42,7 +42,7 @@ $I->seeResponseContains('1');
 $I->wantTo('populate a varPost with 1.0 and see the result.');
 $I->sendPOST($uri, ['value' => 1.0]);
 $I->seeResponseCodeIs(200);
-$I->seeResponseIsJson();
+//$I->seeResponseIsJson();
 $I->seeResponseContains('1');
 
 $I->wantTo('populate a varPost with -11 and see the result.');
@@ -72,8 +72,7 @@ $I->seeResponseContains('0');
 $I->wantTo('populate a varPost with wrong varname and see the result.');
 $I->sendPOST($uri, ['values' => 'test']);
 $I->seeResponseCodeIs(200);
-$I->seeResponseIsJson();
-$I->seeResponseEquals('""');
+$I->seeResponseEquals('');
 
 $I->deleteHeader('Authorization');
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));

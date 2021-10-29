@@ -104,23 +104,22 @@ class ResourceExport extends Core\ProcessorEntity
         $resid = $this->val('resid', true);
         $format = $this->val('format', true);
 
+        // Validate resource exists.
         $resource = $this->resourceMapper->findByResid($resid);
         if (empty($resource->getResid())) {
             throw new Core\ApiException('Invalid resource', 6, $this->id, 400);
         }
 
-        $role = $this->userRoleMapper->findByUidAppidRolename(
-            $uid,
-            $resource->getAppid(),
-            'Developer'
-        );
-        if (empty($role->getUrid())) {
-            throw new Core\ApiException(
-                "Unauthorised: you do not have permissions for this application",
-                6,
-                $this->id,
-                400
-            );
+        // Validate user has Developer access to its application.
+        $userRoles = Core\Utilities::getRolesFromToken();
+        $userHasAccess = false;
+        foreach ($userRoles as $userRole) {
+            if ($userRole['role_name'] == 'Developer' && $userRole['appid'] == $resource->getAppId()) {
+                $userHasAccess = true;
+            }
+        }
+        if (!$userHasAccess) {
+            throw new Core\ApiException('Permission denied', 6, $this->id, 400);
         }
 
         switch ($format) {
@@ -130,11 +129,12 @@ class ResourceExport extends Core\ProcessorEntity
                 break;
             case 'json':
                 header('Content-Disposition: attachment; filename="resource.json"');
-                return new Core\DataContainer($this->getJson($resource), 'text');
+                return new Core\DataContainer($this->getJson($resource), 'json');
+                break;
+            default:
+                throw new Core\ApiException("Invalid format: $format", 6, $this->id, 400);
                 break;
         }
-
-        throw new Core\ApiException("Invalid format: $format", 6, $this->id, 400);
     }
 
     /**

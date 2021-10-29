@@ -239,7 +239,7 @@ class ResourceUpdate extends Core\ProcessorEntity
             );
         }
 
-        // Resource is locked.
+        // Update to core application and is locked.
         $account = $this->accountMapper->findByAccid($application->getAccid());
         if (
             $account->getName() == $this->settings->__get(['api', 'core_account'])
@@ -249,25 +249,15 @@ class ResourceUpdate extends Core\ProcessorEntity
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
-        // Proposed account/application are locked.
-        $application = $this->applicationMapper->findByAppid($appid);
-        if (
-            $account->getName() == $this->settings->__get(['api', 'core_account'])
-            && $application->getName() == $this->settings->__get(['api', 'core_application'])
-            && $this->settings->__get(['api', 'core_resource_lock'])
-        ) {
-            throw new Core\ApiException(
-                "Unauthorised: this is a core resource",
-                6,
-                $this->id,
-                400
-            );
-        }
-
         $meta = $this->translateMetaString($format, $meta);
         $this->validator->validate(json_decode($meta, true));
 
-        return $this->update($resid, $name, $description, $method, $uri, $appid, $ttl, $meta);
+        if (!$this->update($resid, $name, $description, $method, $uri, $appid, $ttl, $meta)) {
+            throw new Core\ApiException(false, 'boolean');
+        }
+        $result = $this->resourceMapper->findByResid($resid);
+
+        return new Core\DataContainer($result->dump(), 'array');
     }
 
     /**

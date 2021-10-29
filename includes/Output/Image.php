@@ -15,8 +15,9 @@
 
 namespace ApiOpenStudio\Output;
 
-use ApiOpenStudio\Core;
-use phpDocumentor\Reflection\Types\Boolean;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\ConvertToImageTrait;
+use ApiOpenStudio\Core\DetectTypeTrait;
 
 /**
  * Class Image
@@ -25,6 +26,9 @@ use phpDocumentor\Reflection\Types\Boolean;
  */
 class Image extends Output
 {
+    use ConvertToImageTrait;
+    use DetectTypeTrait;
+
     /**
      * {@inheritDoc}
      *
@@ -68,135 +72,21 @@ class Image extends Output
     ];
 
     /**
-     * {@inheritDoc}
+     * Cast the data to JSON.
      *
-     * @return Core\DataContainer Result of the processor.
+     * @throws ApiException
+     *   Throw an exception if unable to convert the data.
      */
-    public function process(): Core\DataContainer
+    protected function castData(): void
     {
-        $this->logger->info('api', 'Output: ' . $this->details()['machineName']);
-        return new Core\DataContainer(parent::process(), 'image');
-    }
+        $currentType = $this->data->getType();
+        $method = 'from' . ucfirst(strtolower($currentType)) . 'ToImage';
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data Image data.
-     *
-     * @return void
-     *
-     * @throws Core\ApiException Throw an exception if invalid input.
-     */
-    protected function fromXml(string &$data)
-    {
-        throw new Core\ApiException('Cannot convert XML to image format');
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param float $data Image data.
-     *
-     * @return void
-     *
-     * @throws Core\ApiException Throw an exception if invalid input.
-     */
-    protected function fromFloat(float &$data)
-    {
-        throw new Core\ApiException('Cannot convert a float to image format');
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param boolean $data Image data.
-     *
-     * @return void
-     *
-     * @throws Core\ApiException Throw an exception if invalid input.
-     */
-    protected function fromBoolean(bool &$data)
-    {
-        throw new Core\ApiException('Cannot convert a boolean to image format');
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param integer $data Image data.
-     *
-     * @return void
-     *
-     * @throws Core\ApiException Throw an exception if invalid input.
-     */
-    protected function fromInteger(int &$data)
-    {
-        throw new Core\ApiException('Cannot convert an integer to image format');
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data Image data.
-     *
-     * @return void
-     *
-     * @throws Core\ApiException Throw an exception if invalid input.
-     */
-    protected function fromJson(string &$data)
-    {
-        throw new Core\ApiException('Cannot convert JSON to image format');
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data Image data.
-     *
-     * @return void
-     *
-     * @throws Core\ApiException Throw an exception if invalid input.
-     */
-    protected function fromHtml(string &$data)
-    {
-        throw new Core\ApiException('Cannot convert HTML to image format');
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data Image data.
-     *
-     * @return string
-     */
-    protected function fromText(string &$data): string
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param array $data Image data.
-     *
-     * @return void
-     *
-     * @throws Core\ApiException Throw an exception if invalid input.
-     */
-    protected function fromArray(array &$data)
-    {
-        throw new Core\ApiException('Cannot convert an array to image format');
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param mixed $data Image data.
-     *
-     * @return mixed
-     */
-    protected function fromImage(&$data)
-    {
-        return $data;
+        try {
+            $this->data->setData($this->$method($this->data->getData()));
+            $this->data->setType('image');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), 6, $this->id, 400);
+        }
     }
 }

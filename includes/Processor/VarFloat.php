@@ -56,13 +56,12 @@ class VarFloat extends Core\ProcessorEntity
      */
     public function process(): Core\DataContainer
     {
-        parent::process();
 
-        $value = $this->val('value');
-        if (!is_numeric($value->getData())) {
-            throw new Core\ApiException($value->getData() . ' is not float', 6, $this->id, 400);
+        $container = $this->val('value');
+        if ($container->getType() != 'float') {
+            $container->setType('float');
         }
-        $value->setType('float');
-        return $value;
+
+        return $container;
     }
 }

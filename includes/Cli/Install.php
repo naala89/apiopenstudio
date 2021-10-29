@@ -425,7 +425,11 @@ class Install extends Script
             // Add data if required.
             if (isset($tableData['data'])) {
                 foreach ($tableData['data'] as $row) {
-                    if ($table == 'application' && $row['name'] == 'testing' && !$includeTest) {
+                    if ($table == 'account' && $row['name'] == 'testing_acc' && !$includeTest) {
+                        // Do not create the testing account.
+                        continue;
+                    }
+                    if ($table == 'application' && $row['name'] == 'testing_app' && !$includeTest) {
                         // Do not create the testing application.
                         continue;
                     }

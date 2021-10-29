@@ -15,7 +15,9 @@
 
 namespace ApiOpenStudio\Output;
 
-use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\ConvertToJsonTrait;
+use ApiOpenStudio\Core\DetectTypeTrait;
 
 /**
  * Class Json
@@ -24,6 +26,9 @@ use ApiOpenStudio\Core\DataContainer;
  */
 class Json extends Output
 {
+    use ConvertToJsonTrait;
+    use DetectTypeTrait;
+
     /**
      * {@inheritDoc}
      *
@@ -74,174 +79,21 @@ class Json extends Output
     ];
 
     /**
-     * {@inheritDoc}
+     * Cast the data to JSON.
      *
-     * @return DataContainer Result of the processor.
+     * @throws ApiException
+     *   Throw an exception if unable to convert the data.
      */
-    public function process(): DataContainer
+    protected function castData(): void
     {
-        $this->logger->info('api', 'Output: ' . $this->details()['machineName']);
-        return new DataContainer(parent::process(), 'text');
-    }
+        $currentType = $this->data->getType();
+        $method = 'from' . ucfirst(strtolower($currentType)) . 'ToJson';
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param boolean $data Boolean data.
-     *
-     * @return string JSON string.
-     */
-    protected function fromBoolean(bool &$data): string
-    {
-        return $data ? 'true' : 'false';
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param int $data Integer data.
-     *
-     * @return int JSON string.
-     */
-    protected function fromInteger(int &$data): int
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param float $data Float data.
-     *
-     * @return float JSON string.
-     */
-    protected function fromFloat(float &$data): float
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data XML data.
-     *
-     * @return string JSON string.
-     */
-    protected function fromXml(string &$data)
-    {
-        $xml = simplexml_load_string($data);
-        return $this->xml2json($xml);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data HTML data.
-     *
-     * @return string JSON string.
-     */
-    protected function fromHtml(string &$data)
-    {
-        return $this->fromXml($data);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data Text data.
-     *
-     * @return string JSON string.
-     */
-    protected function fromText(string &$data): string
-    {
-        if ($data == '') {
-            // Empty string should be returned as double quotes so that it is not returned as null.
-            return '""';
-        }
-        // Wrap in double quotes if not already present.
-        if (substr($data, 0, 1) != '"' && substr($data, 0, 6) != '&quot;') {
-            $data = '"' . $data;
-        }
-        if (substr($data, -1, 1) != '"' && substr($data, -6, 6) != '&quot;') {
-            $data = $data . '"';
-        }
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param array $data Array data.
-     *
-     * @return string JSON string.
-     */
-    protected function fromArray(array &$data): string
-    {
-        return \json_encode($data);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data Json data.
-     *
-     * @return string JSON string.
-     */
-    protected function fromJson(string &$data): string
-    {
-        return is_string($data) ? $data : \json_encode($data);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param mixed $data Image data.
-     *
-     * @return string JSON string.
-     */
-    protected function fromImage(&$data): string
-    {
-        return $this->fromText($data);
-    }
-
-    /**
-     * Convert XML data to JSON format.
-     *
-     * @param \SimpleXMLElement $xml XML element.
-     *
-     * @return array|false|string
-     */
-    private function xml2json(\SimpleXMLElement &$xml)
-    {
-        $root = !(func_num_args() > 1);
-        $jsnode = array();
-
-        if (!$root) {
-            if (count($xml->attributes()) > 0) {
-                $jsnode["$"] = array();
-                foreach ($xml->attributes() as $key => $value) {
-                    $jsnode["$"][$key] = (string)$value;
-                }
-            }
-
-            $textcontent = trim((string)$xml);
-            if (count($textcontent) > 0) {
-                $jsnode["_"] = $textcontent;
-            }
-
-            foreach ($xml->children() as $childxmlnode) {
-                $childname = $childxmlnode->getName();
-                if (!array_key_exists($childname, $jsnode)) {
-                    $jsnode[$childname] = array();
-                }
-                array_push($jsnode[$childname], $this->xml2json($childxmlnode));
-            }
-            return $jsnode;
-        } else {
-            $nodename = $xml->getName();
-            $jsnode[$nodename] = array();
-            array_push($jsnode[$nodename], $this->xml2json($xml));
-            return json_encode($jsnode);
+        try {
+            $this->data->setData($this->$method($this->data->getData()));
+            $this->data->setType('json');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), 6, $this->id, 400);
         }
     }
 }

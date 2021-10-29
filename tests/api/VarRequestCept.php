@@ -78,8 +78,7 @@ $I->seeResponseContains('0');
 $I->wantTo('populate a varRequest with wrong varname and see the result.');
 $I->sendGet($uri, ['values' => 'test']);
 $I->seeResponseCodeIs(200);
-$I->seeResponseIsJson();
-$I->seeResponseEquals('""');
+$I->seeResponseEquals('');
 
 $I->deleteHeader('Authorization');
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));

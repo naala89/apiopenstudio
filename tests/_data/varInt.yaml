@@ -22,4 +22,5 @@ process:
   value:
     processor: var_get
     id: test var_int value
+    expected_type: integer
     key: value

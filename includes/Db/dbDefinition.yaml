@@ -14,6 +14,7 @@ account:
     name: { type: varchar(255), notnull: true, comment: account name }
   data:
     - { name: apiopenstudio }
+    - { name: testing_acc }
 
 application:
   columns:
@@ -22,7 +23,7 @@ application:
     name: { type: varchar(255), notnull: true, comment: application name }
   data:
     - { accid: 1, name: core }
-    - { accid: 1, name: testing }
+    - { accid: 2, name: testing_app }
 
 blacklist:
   columns:
@@ -143,21 +144,21 @@ user_role:
     -
       uid: 2
       rid: 2
-      accid: 1
+      accid: 2
     -
       uid: 3
       rid: 3
-      accid: 1
+      accid: 2
       appid: 2
     -
       uid: 4
       rid: 4
-      accid: 1
+      accid: 2
       appid: 2
     -
       uid: 5
       rid: 5
-      accid: 1
+      accid: 2
       appid: 2
 
 var_store:

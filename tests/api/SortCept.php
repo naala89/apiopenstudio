@@ -13,7 +13,6 @@ $I->wantTo('Sort a Collection by value in ascending order and see the result.');
 $I->sendGet(
     $uri,
     [
-        'token' => $I->getMyStoredToken(),
         'direction' => 'asc',
         'sort_by' => 'value',
     ]

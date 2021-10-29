@@ -107,7 +107,7 @@ class VarStoreMapper extends Mapper
     }
 
     /**
-     * Return all vars that a a user has access to.
+     * Return all vars that a user has access to.
      *
      * @param integer $uid User ID.
      * @param array $params Filter params.
@@ -118,16 +118,26 @@ class VarStoreMapper extends Mapper
      */
     public function findByUid(int $uid, array $params = []): array
     {
-        $sql = 'SELECT *';
-        $sql .= ' FROM var_store';
-        $sql .= ' WHERE appid IN (';
-        $sql .= ' SELECT DISTINCT appid';
-        $sql .= ' FROM user_role AS ur';
-        $sql .= ' INNER JOIN role AS r';
-        $sql .= ' ON ur.rid = r.rid';
-        $sql .= ' WHERE ur.uid = ?';
-        $sql .= ' AND r.name IN ("Application manager", "Developer"))';
-        $bindParams = [$uid];
+        $sql = <<<QUERY
+SELECT vs.* FROM var_store AS vs WHERE vs.appid in (
+    SELECT app.appid FROM application AS app WHERE (
+        SELECT ur.urid FROM user_role AS ur INNER JOIN role AS r ON ur.rid = r.rid 
+            WHERE r.name = "Administrator" AND ur.uid = ?)
+    UNION ALL
+    SELECT app.appid FROM application AS app WHERE app.accid IN (
+        SELECT ur.accid FROM user_role AS ur INNER JOIN role AS r ON ur.rid = r.rid
+            WHERE r.name = "Account manager" AND ur.uid = ?
+    )
+    UNION ALL
+    SELECT app.appid FROM application AS app WHERE app.appid IN (
+        SELECT ur.appid FROM user_role AS ur INNER JOIN role AS r ON ur.rid = r.rid WHERE r.name IN (
+            "Application manager", "Developer"
+        ) AND ur.uid = ?
+    )
+)
+QUERY;
+
+        $bindParams = [$uid, $uid, $uid];
 
         return $this->fetchRows($sql, $bindParams, $params);
     }

@@ -62,29 +62,15 @@ $I->wantTo('populate a VarBool with 6 and see the result.');
 $I->sendGet($uri, ['value' => 6]);
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(
-    [
-        "error" => [
-            "code" => 6,
-            "message" => "6 is not boolean.",
-            "id" => 'test var_bool process',
-        ],
-    ]
-);
+$I->seeResponseJsonMatchesJsonPath('error.message');
+$I->seeResponseJsonMatchesJsonPath('error.id');
 
 $I->wantTo('populate a VarBool with fales and see the result.');
 $I->sendGet($uri, ['value' => 'fales']);
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(
-    [
-        "error" => [
-            "code" => 6,
-            "message" => "Fales is not boolean.",
-            "id" => 'test var_bool process',
-        ],
-    ]
-);
+$I->seeResponseJsonMatchesJsonPath('error.message');
+$I->seeResponseJsonMatchesJsonPath('error.id');
 
 $I->deleteHeader('Authorization');
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));

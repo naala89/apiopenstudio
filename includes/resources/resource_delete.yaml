@@ -35,3 +35,4 @@ process:
     id: resource_delete_resid
     processor: var_uri
     index: 0
+    expected_type: integer

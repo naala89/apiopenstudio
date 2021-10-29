@@ -24,4 +24,5 @@ process:
     processor: var_get
     id: test var_get nullable
     key: nullable
+    expected_type: boolean
     nullable: true

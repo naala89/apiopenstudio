@@ -21,19 +21,14 @@ appid: 1
 ttl: 0
 
 security:
-  processor: validate_token_roles
-  id: validate_user_has_access_rights
-  roles:
-    - Administrator
-    - Account manager
-    - Application manager
-    - Developer
+  id: var_store_delete_security
+  processor: validate_token
 
 process:
+  id: var_store_delete_process
   processor: var_store_delete
-  id: delete_the_var
   vid:
+    id: var_store_delete_vid
     processor: var_uri
-    id: get_the_vid
     nullable: false
     index: 0

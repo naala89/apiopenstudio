@@ -191,20 +191,34 @@ class ResourceCreate extends Core\ProcessorEntity
         $format = $this->val('format', true);
         $meta = $this->val('meta', true);
 
+        // Validate the application exists.
         $application = $this->applicationMapper->findByAppid($appid);
-        if (empty($application)) {
+        if (empty($application->getAppid())) {
             throw new Core\ApiException("Invalid application: $appid", 6, $this->id, 400);
         }
 
+        // Validate application is not core and core not locked.
         $account = $this->accountMapper->findByAccid($application->getAccid());
-        if (
-            $account->getName() == $this->settings->__get(['api', 'core_account'])
-            && $application->getName() == $this->settings->__get(['api', 'core_application'])
-            && $this->settings->__get(['api', 'core_resource_lock'])
-        ) {
+        $coreAccount = $this->settings->__get(['api', 'core_account']);
+        $coreApplication = $this->settings->__get(['api', 'core_application']);
+        $coreLock = $this->settings->__get(['api', 'core_resource_lock']);
+        if ($account->getName() == $coreAccount && $application->getName() == $coreApplication && $coreLock) {
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
+        // Validate user has developer role for the application
+        $userRoles = Core\Utilities::getRolesFromToken();
+        $userHasAccess = false;
+        foreach ($userRoles as $userRole) {
+            if ($userRole['role_name'] == 'Developer' && $userRole['appid'] == $appid) {
+                $userHasAccess = true;
+            }
+        }
+        if (!$userHasAccess) {
+            throw new Core\ApiException('Permission denied', 6, $this->id, 400);
+        }
+
+        // Validate the resource does not already exist.
         $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
         if (!empty($resource->getresid())) {
             throw new Core\ApiException('Resource already exists', 6, $this->id, 400);

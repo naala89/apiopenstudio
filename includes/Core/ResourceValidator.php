@@ -17,6 +17,8 @@ namespace ApiOpenStudio\Core;
 
 use ADOConnection;
 use ADODB_mysqli;
+use ReflectionClass;
+use ReflectionException;
 
 /**
  * Class ResourceValidator
@@ -66,7 +68,8 @@ class ResourceValidator
      *
      * @return void
      *
-     * @throws ApiException Input data not well formed.
+     * @throws ApiException|ReflectionException
+     *   Input data not well formed.
      */
     public function validate(array $data)
     {
@@ -75,12 +78,12 @@ class ResourceValidator
         if (empty($data)) {
             $message = 'Empty resource uploaded';
             $this->logger->error('api', $message);
-            throw new ApiException($message, 6, -1, 400);
+            throw new ApiException($message);
         }
         if (!isset($data['process'])) {
             $message = 'Missing process in new resource';
             $this->logger->error('api', $message);
-            throw new ApiException($message, 6, -1, 400);
+            throw new ApiException($message);
         }
 
         // Validate for identical IDs.
@@ -94,7 +97,7 @@ class ResourceValidator
             if (!Utilities::isAssoc($data['fragments'])) {
                 $message = 'Invalid fragments structure in new resource';
                 $this->logger->error('api', $message);
-                throw new ApiException($message, 6, -1, 400);
+                throw new ApiException($message);
             }
             foreach ($data['fragments'] as $fragKey => $fragVal) {
                 $this->validateDetails($fragVal);
@@ -104,7 +107,7 @@ class ResourceValidator
         if (!$this->helper->isProcessor($data['process'])) {
             $message = 'Invalid process declaration, only processors allowed';
             $this->logger->error('api', $message);
-            throw new ApiException($message, 6, -1, 400);
+            throw new ApiException($message);
         }
         $this->validateDetails($data['process']);
 
@@ -119,7 +122,7 @@ class ResourceValidator
                         $message = 'Invalid output declaration. ';
                         $message .= 'Only processor, array of processors or "response" allowed';
                         $this->logger->error('api', $message);
-                        throw new ApiException($message, 6, -1, 400);
+                        throw new ApiException($message);
                     }
                 }
             } else {
@@ -127,7 +130,7 @@ class ResourceValidator
                     $message = 'Invalid output declaration. ';
                     $message .= 'Only processor, array of processors or "response" allowed';
                     $this->logger->error('api', $message);
-                    throw new ApiException($message, 6, -1, 400);
+                    throw new ApiException($message);
                 }
             }
         }
@@ -151,12 +154,7 @@ class ResourceValidator
             if ($this->helper->isProcessor($node)) {
                 if (in_array($node['id'], $id)) {
                     $this->logger->error('api', 'identical IDs in new resource: ' . $node['id']);
-                    throw new ApiException(
-                        'identical IDs in new resource: ' . $node['id'],
-                        6,
-                        -1,
-                        400
-                    );
+                    throw new ApiException('identical IDs in new resource: ' . $node['id']);
                 }
                 $id[] = $node['id'];
             }
@@ -177,7 +175,7 @@ class ResourceValidator
      *
      * @return void
      *
-     * @throws ApiException|\ReflectionException Error found in validating the resource.
+     * @throws ApiException|ReflectionException Error found in validating the resource.
      */
     private function validateDetails(array $meta)
     {
@@ -186,14 +184,14 @@ class ResourceValidator
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
                 $classStr = $this->helper->getProcessorString($node['processor']);
-                $class = new \ReflectionClass($classStr);
+                $class = new ReflectionClass($classStr);
                 $parents = [];
                 while ($parent = $class->getParentClass()) {
                     $parents[] = $parent->getName();
                     $class = $parent;
                 }
                 if (in_array('ApiOpenStudio\Output\Output', $parents)) {
-                    $class = new $classStr([], 0, $this->logger, []);
+                    $class = new $classStr(new DataContainer(''), 0, $this->logger, []);
                 } else {
                     $request = new Request();
                     $class = new $classStr($meta, $request, $this->db, $this->logger);
@@ -219,7 +217,7 @@ class ResourceValidator
                                 $message = 'processor ' . $input['id'] . ' is an invalid processor type (only "'
                                     . implode('", ', $limitProcessors) . '" allowed)';
                                 $this->logger->error('api', $message);
-                                throw new ApiException($message, 6, $id, 400);
+                                throw new ApiException($message);
                             }
                             array_unshift($stack, $input);
                             $count = 1;
@@ -235,12 +233,12 @@ class ResourceValidator
                         } elseif (!$literalAllowed) {
                             $message = "literals not allowed as input for '$inputKey' in processor: $id";
                             $this->logger->error('api', $message);
-                            throw new ApiException($message, 6, $id, 400);
+                            throw new ApiException($message);
                         } else {
                             if (!empty($limitValues) && !in_array($input, $limitValues)) {
                                 $message = "invalid value type for '$inputKey' in processor: $id";
                                 $this->logger->error('api', $message);
-                                throw new ApiException($message, 6, $id, 400);
+                                throw new ApiException($message);
                             }
                             if (!empty($limitTypes)) {
                                 $this->validateTypeValue($input, $limitTypes, $id);
@@ -254,18 +252,18 @@ class ResourceValidator
                         // check for nothing to validate and if that is ok.
                         $message = "input '$inputKey' in processor '" . $node['id'] . "' requires min $min";
                         $this->logger->error('api', $message);
-                        throw new ApiException($message, 6, $id, 400);
+                        throw new ApiException($message);
                     }
                     if ($max != '*' && $count > $max) {
                         $message = "input '$inputKey' in processor '" . $node['id'] . "' requires max $max";
                         $this->logger->error('api', $message);
-                        throw new ApiException($message, 6, $id, 400);
+                        throw new ApiException($message);
                     }
                 }
             } elseif (is_array($node)) {
                 if (isset($node['processor']) && empty($node['id'])) {
                     $this->logger->error('api', 'Invalid processor, id attribute missing');
-                    throw new ApiException('Invalid processor, id attribute missing', 6, -1, 400);
+                    throw new ApiException('Invalid processor, id attribute missing');
                 }
                 foreach ($node as $key => $value) {
                     array_unshift($stack, $value);
@@ -331,7 +329,7 @@ class ResourceValidator
             $message = 'invalid literal in new resource (' . print_r($element) . '. only "' .
                 implode("', '", $accepts) . '" accepted';
             $this->logger->error('api', $message);
-            throw new ApiException($message, 6, $id, 400);
+            throw new ApiException($message);
         }
         return true;
     }

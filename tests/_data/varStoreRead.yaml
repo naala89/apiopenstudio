@@ -1,0 +1,53 @@
+name: Testing VarStoreRead
+
+description: Test var_store read processor within a custom request
+
+uri: testing_var_store
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+process:
+  id: test var store read processor process
+  processor: var_store_read
+  validate_access:
+    processor: var_get
+    id: test var store read processor validate_access
+    key: validate_access
+    expected_type: boolean
+    nullable: true
+  vid:
+    processor: var_get
+    id: test var store read processor vid
+    key: vid
+    expected_type: integer
+    nullable: true
+  appid:
+    processor: var_get
+    id: test var store read processor appid
+    key: appid
+    expected_type: integer
+    nullable: true
+  key:
+    processor: var_get
+    id: test var store read processor key
+    key: key
+    nullable: true
+  keyword:
+    processor: var_get
+    id: test var store read processor keyword
+    key: keyword
+    nullable: true
+  order_by:
+    processor: var_get
+    id: test var store read processor order_by
+    key: order_by
+    nullable: true
+  direction:
+    processor: var_get
+    id: test var store read processor direction
+    key: direction
+    nullable: true

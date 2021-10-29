@@ -16,6 +16,9 @@
 namespace ApiOpenStudio\Output;
 
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\ConvertToXmlTrait;
+use ApiOpenStudio\Core\DetectTypeTrait;
 
 /**
  * Class Xml
@@ -24,6 +27,9 @@ use ApiOpenStudio\Core;
  */
 class Xml extends Output
 {
+    use ConvertToXmlTrait;
+    use DetectTypeTrait;
+
     /**
      * {@inheritDoc}
      *
@@ -74,154 +80,21 @@ class Xml extends Output
     ];
 
     /**
-     * {@inheritDoc}
+     * Cast the data to XML.
      *
-     * @return Core\DataContainer Result of the processor.
+     * @throws ApiException
+     *   Throw an exception if unable to convert the data.
      */
-    public function process(): Core\DataContainer
+    protected function castData(): void
     {
-        $this->logger->info('api', 'Output: ' . $this->details()['machineName']);
-        return new Core\DataContainer(parent::process(), 'xml');
-    }
+        $currentType = $this->data->getType();
+        $method = 'from' . ucfirst(strtolower($currentType)) . 'ToXml';
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param boolean $data Boolean data.
-     *
-     * @return string XML string.
-     */
-    protected function fromBoolean(bool &$data): string
-    {
-        return '<?xml version="1.0"?><apiOpenStudioWrapper>' . $data ? 'true' : 'false' . '</apiOpenStudioWrapper>';
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param integer $data Integer data.
-     *
-     * @return string XML string.
-     */
-    protected function fromInteger(int &$data): string
-    {
-        return '<?xml version="1.0"?><apiOpenStudioWrapper>' . $data . '</apiOpenStudioWrapper>';
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param float $data Float data.
-     *
-     * @return string XML string.
-     */
-    protected function fromFloat(float &$data): string
-    {
-        return '<?xml version="1.0"?><apiOpenStudioWrapper>' . $data . '</apiOpenStudioWrapper>';
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data XML data.
-     *
-     * @return string XML string.
-     */
-    protected function fromXml(string &$data): string
-    {
-        libxml_use_internal_errors(true);
-        $doc = simplexml_load_string($data);
-        if (!$doc) {
-            libxml_clear_errors();
-            return '<?xml version="1.0"?><apiOpenStudioWrapper>' . $data . '</apiOpenStudioWrapper>';
-        } else {
-            return $data;
+        try {
+            $this->data->setData($this->$method($this->data->getData()));
+            $this->data->setType('xml');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), 6, 'output: XML', 400);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data HTML data.
-     *
-     * @return string XML string.
-     */
-    protected function fromHtml(string &$data): string
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data Text data.
-     *
-     * @return string XML string.
-     */
-    protected function fromText(string &$data)
-    {
-        return '<?xml version="1.0"?><apiOpenStudioWrapper>' . $data . '</apiOpenStudioWrapper>';
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param array $data Array data.
-     *
-     * @return string XML string.
-     */
-    protected function fromArray(array &$data)
-    {
-        $xml_data = new \SimpleXMLElement('<?xml version="1.0"?><apiOpenStudioWrapper></apiOpenStudioWrapper>');
-        $this->array2xml($data, $xml_data);
-        return $xml_data->asXML();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data Json data.
-     *
-     * @return string XML string.
-     */
-    protected function fromJson(string &$data)
-    {
-        $data = json_decode($data, true);
-        return $this->fromArray($data);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param mixed $data Image data.
-     *
-     * @return string XML string.
-     */
-    protected function fromImage(&$data)
-    {
-        return $this->fromText($data);
-    }
-
-    /**
-     * Recursive method to convert an array into XML format.
-     *
-     * @param array $array Input array.
-     * @param \SimpleXMLElement $xml A SimpleXMLElement element.
-     *
-     * @return \SimpleXMLElement A populated SimpleXMLElement.
-     */
-    private function array2xml(array $array, \SimpleXMLElement $xml)
-    {
-        foreach ($array as $key => $value) {
-            if (is_numeric($key)) {
-                $key = "item$key";
-            }
-            if (is_array($value)) {
-                $this->array2xml($value, $xml->addChild($key));
-            } else {
-                $xml->addchild($key, htmlentities($value));
-            }
-        }
-        return $xml->asXML();
     }
 }

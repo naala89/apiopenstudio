@@ -28,18 +28,21 @@ use ApiOpenStudio\Db\VarStoreMapper;
 class VarStoreUpdate extends Core\ProcessorEntity
 {
     /**
+     * @var array|string[] Array of permitted roles
+     */
+    protected array $permittedRoles = [
+        'Administrator',
+        'Account manager',
+        'Application manager',
+        'Developer',
+    ];
+
+    /**
      * Var store mapper class.
      *
      * @var VarStoreMapper
      */
     private VarStoreMapper $varStoreMapper;
-
-    /**
-     * User role mapper class.
-     *
-     * @var UserRoleMapper
-     */
-    private UserRoleMapper $userRoleMapper;
 
     /**
      * {@inheritDoc}
@@ -52,16 +55,6 @@ class VarStoreUpdate extends Core\ProcessorEntity
         'description' => 'Update a var store variable.',
         'menu' => 'Var store',
         'input' => [
-            'validate_access' => [
-                // phpcs:ignore
-                'description' => 'If set to true, the calling users roles access will be validated. If set to false, then access is open.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['boolean'],
-                'limitValues' => [],
-                'default' => true,
-            ],
             'vid' => [
                 'description' => 'Var store ID.',
                 'cardinality' => [1, 1],
@@ -71,9 +64,27 @@ class VarStoreUpdate extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => 'all',
             ],
+            'key' => [
+                'description' => 'Var store key.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['integer', 'text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'appid' => [
+                'description' => 'Var store appid.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => 0,
+            ],
             'val' => [
                 'description' => 'New value for the var.',
-                'cardinality' => [1, 1],
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => [],
@@ -95,7 +106,6 @@ class VarStoreUpdate extends Core\ProcessorEntity
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->varStoreMapper = new VarStoreMapper($db, $logger);
-        $this->userRoleMapper = new UserRoleMapper($db, $logger);
     }
 
     /**
@@ -109,9 +119,9 @@ class VarStoreUpdate extends Core\ProcessorEntity
     {
         parent::process();
 
-        $uid = Core\Utilities::getUidFromToken();
-        $validateAccess = $this->val('validate_access', true);
         $vid = $this->val('vid', true);
+        $key = $this->val('key', true);
+        $appid = $this->val('appid', true);
         $val = $this->val('val', true);
 
         $var = $this->varStoreMapper->findByVid($vid);
@@ -119,25 +129,44 @@ class VarStoreUpdate extends Core\ProcessorEntity
             throw new Core\ApiException("unknown vid: $vid", 6, $this->id, 400);
         }
 
-        if ($validateAccess) {
-            if (
-                !$this->userRoleMapper->findByUidAppidRolename(
-                    $uid,
-                    $var->getAppid(),
-                    'Application manager'
-                )
-                    && !$this->userRoleMapper->findByUidAppidRolename(
-                        $uid,
-                        $var->getAppid(),
-                        'Developer'
-                    )
-            ) {
-                throw new Core\ApiException('permission denied (appid: ' . $var->getAppid() . ')', 6, $this->id, 400);
+        // Validate access to the existing var's application
+        $permitted = false;
+        $currentAppid = $var->getAppid();
+        $roles = Core\Utilities::getRolesFromToken();
+        foreach ($roles as $role) {
+            if ($role['appid'] == $currentAppid && in_array($role['role_name'], $this->permittedRoles)) {
+                $permitted = true;
+            }
+        }
+        if (!$permitted) {
+            throw new Core\ApiException("permission denied", 6, $this->id, 400);
+        }
+
+        // Validate access to the var's NEW application
+        if (!empty($appid)) {
+            $permitted = false;
+            foreach ($roles as $role) {
+                if ($role['appid'] == $appid && in_array($role['role_name'], $this->permittedRoles)) {
+                    $permitted = true;
+                }
+            }
+            if (!$permitted) {
+                throw new Core\ApiException("permission denied", 6, $this->id, 400);
             }
         }
 
-        $var->setVal($val);
+        if (!empty($val)) {
+            $var->setVal($val);
+        }
+        if ($appid > 0) {
+            $var->setAppid($appid);
+        }
+        if (!empty($key)) {
+            $var->setKey($key);
+        }
 
-        return new Core\DataContainer($this->varStoreMapper->save($var), 'text');
+        $this->varStoreMapper->save($var);
+
+        return new Core\DataContainer($var->dump(), 'array');
     }
 }
