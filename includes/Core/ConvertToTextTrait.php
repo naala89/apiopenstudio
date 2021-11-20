@@ -27,11 +27,11 @@ trait ConvertToTextTrait
      *
      * @param $data
      *
-     * @return string
+     * @return string|null
      */
-    public function fromEmptyToText($data): string
+    public function fromEmptyToText($data): ?string
     {
-        return '';
+        return null;
     }
 
     /**
@@ -88,12 +88,10 @@ trait ConvertToTextTrait
      * @param $data
      *
      * @return string
-     *
-     * @throws ApiException
      */
     public function fromArrayToText($data): string
     {
-        throw new ApiException('cannot convert array to text, please convert to JSON or XML');
+        return json_encode($data);
     }
 
     /**
@@ -102,12 +100,10 @@ trait ConvertToTextTrait
      * @param $data
      *
      * @return string
-     *
-     * @throws ApiException
      */
     public function fromJsonToText($data): string
     {
-        throw new ApiException('cannot convert JSON to text, this will already be JSON string');
+        return $data;
     }
 
     /**
@@ -116,12 +112,10 @@ trait ConvertToTextTrait
      * @param $data
      *
      * @return string
-     *
-     * @throws ApiException
      */
     public function fromXmlToText($data): string
     {
-        throw new ApiException('cannot convert XML to text, this will already be XML string');
+        return $data;
     }
 
     /**
@@ -130,12 +124,10 @@ trait ConvertToTextTrait
      * @param $data
      *
      * @return string
-     *
-     * @throws ApiException
      */
     public function fromHtmlToText($data): string
     {
-        throw new ApiException('cannot convert HTML to text, this will already be HTML string');
+        return $data;
     }
 
     /**
@@ -144,12 +136,10 @@ trait ConvertToTextTrait
      * @param $data
      *
      * @return string
-     *
-     * @throws ApiException
      */
     public function fromImageToText($data): string
     {
-        throw new ApiException('cannot convert image to text');
+        return $data;
     }
 
     /**
@@ -158,11 +148,9 @@ trait ConvertToTextTrait
      * @param $data
      *
      * @return string
-     *
-     * @throws ApiException
      */
     public function fromFileToText($data): string
     {
-        throw new ApiException('cannot convert file to text');
+        return $data;
     }
 }
