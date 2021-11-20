@@ -63,13 +63,9 @@ process:
     nullable: false
     key: ttl
     expected_type: integer
-  format:
-    processor: var_post
-    id: resource_create_format
-    nullable: false
-    key: format
-  meta:
+  metadata:
     processor: var_post
     id: resource_create_meta
+    expected_type: json
     nullable: false
-    key: meta
+    key: metadata

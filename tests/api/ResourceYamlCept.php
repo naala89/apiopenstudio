@@ -139,21 +139,33 @@ foreach ($goodIdentities as $goodIdentity) {
             'method' => 'post',
             'appid' => 2,
             'ttl' => 0,
-            'format' => 'yaml',
-            'meta' => 'security:
-  function: validate_token_roles
-  id: test_security
-  roles:
-    - Consumer
-
-process:
-  processor: var_int
-  id: test allowed to create process
-  value: 32'
+            "metadata" => [
+                "security" => [
+                    "function" => "validate_token_roles",
+                    "id" => "test_security",
+                    "roles" => ["Consumer"]
+                ],
+                "process" => [
+                    "processor" => "var_int",
+                    "id" => "test allowed to create process",
+                    "value" => 32
+                ]
+            ]
         ]
     );
     $I->seeResponseCodeIs(200);
-    $I->seeResponseContainsJson(["true"]);
+    $I->seeResponseMatchesJsonType(
+        [
+            'resid' => 'integer',
+            'name' => 'string',
+            'description' => 'string',
+            'appid' => 'integer',
+            'method' => 'string',
+            'uri' => 'string',
+            'ttl' => 'integer',
+            'meta' => 'string',
+        ]
+    );
 
     $I->wantTo('Test resource read for ' . $goodIdentity[0]);
     $I->sendGet(
@@ -169,20 +181,91 @@ process:
             'appid' => 'integer',
             'method' => 'string',
             'uri' => 'string',
-            'ttl' => 'string',
+            'ttl' => 'integer',
+            'meta' => 'string',
+        ]
+    );
+    $json = json_decode($I->getResponse(), true);
+    $resid = $json[0]['resid'];
+
+    $I->wantTo('Test resource update for ' . $goodIdentity[0]);
+    $I->sendPut(
+        $I->getCoreBaseUri() . "/resource/$resid",
+        json_encode([
+            "name" => "Test allowed to update a resource",
+            "description" => "test allowed to update a resource",
+            "uri" => "test/resource_update/allowed",
+            "method" => "post",
+            "appid" => 2,
+            "ttl" => 0,
+            "metadata" => [
+                "security" => [
+                    "function" => "validate_token_roles",
+                    "id" => "test_security",
+                    "roles" => ["Consumer"]
+                ],
+                "process" => [
+                    "processor" => "var_int",
+                    "id" => "test allowed to update process",
+                    "value" => 32
+                ]
+            ]
+        ])
+    );
+    $I->seeResponseCodeIs(200);
+    $I->seeResponseMatchesJsonType(
+        [
+            'resid' => 'integer',
+            'name' => 'string',
+            'description' => 'string',
+            'appid' => 'integer',
+            'method' => 'string',
+            'uri' => 'string',
+            'ttl' => 'integer',
             'meta' => 'string',
         ]
     );
 
-    $json = json_decode($I->getResponse(), true);
-    $resid = $json[0]['resid'];
-
-    $I->wantTo('Test resource export for ' . $goodIdentity[0]);
+    $I->wantTo('Test resource JSON export for ' . $goodIdentity[0]);
     $I->sendGet(
         $I->getCoreBaseUri() . "/resource/export/json/$resid",
     );
     $I->seeResponseCodeIs(200);
-//    $I->seeResponseIsJson();
+    $I->seeResponseMatchesJsonType(
+        [
+            'resid' => 'integer',
+            'name' => 'string',
+            'description' => 'string',
+            'appid' => 'integer',
+            'method' => 'string',
+            'uri' => 'string',
+            'ttl' => 'integer',
+            'meta' => 'string',
+        ]
+    );
+
+    $I->wantTo('Test resource YAML export for ' . $goodIdentity[0]);
+    $I->sendGet(
+        $I->getCoreBaseUri() . "/resource/export/yaml/$resid",
+    );
+    $I->seeResponseCodeIs(200);
+    $I->seeResponseContains("resid:");
+    $I->seeResponseContains("name: 'Test allowed to update a resource'");
+    $I->seeResponseContains("description: 'test allowed to update a resource");
+    $I->seeResponseContains("appid: 2");
+    $I->seeResponseContains("method: post");
+    $I->seeResponseContains("uri: test/resource_update/allowed");
+    $I->seeResponseContains("ttl: 0");
+    $I->seeResponseContains("meta:");
+    $I->seeResponseContains("    security:");
+    $I->seeResponseContains("        function: validate_token_roles");
+    $I->seeResponseContains("        id: test_security");
+    $I->seeResponseContains("        roles:");
+    $I->seeResponseContains("            - Consumer");
+    $I->seeResponseContains("    process:");
+    $I->seeResponseContains("        processor: var_int");
+    $I->seeResponseContains("        id: 'test allowed to update process'");
+    $I->seeResponseContains("        value: 32");
 
     $I->wantTo('Test resource delete for ' . $goodIdentity[0]);
     $I->sendDelete(
@@ -246,15 +329,8 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ]
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 
     $I->wantTo('create a new resource from YAML missing description attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceNoDescription.yaml';
@@ -285,15 +361,8 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ]
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 
     $I->wantTo('create a new resource from YAML missing method attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceNoMethod.yaml';
@@ -321,17 +390,8 @@ process:
             ],
         ]
     );
-    $I->tearDownTestFromYaml($yamlFilename);
-    $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ]
-        ]
-    );
+    // We cannot test tearing down the resource here,
+    // because we will be unable to fetch the resource due to missing method attr.
 
     $I->wantTo('create a new resource from YAML missing ttl attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceNoTtl.yaml';
@@ -361,15 +421,8 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ],
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 
     $I->wantTo('create a new resource from YAML negative ttl attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceTtl-1.yaml';
@@ -399,15 +452,8 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ],
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 
     $I->wantTo('create a new resource from YAML missing security attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceNoSecurity.yaml';
@@ -458,15 +504,8 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ],
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 
     $I->wantTo('create a new resource from YAML missing output attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceNoOutput.yaml';
@@ -517,15 +556,8 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ]
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 
     $I->wantTo('create a new resource from YAML with an integer value in process attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceStaticInt.yaml';
@@ -555,15 +587,8 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ]
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 
     $I->wantTo('create a new resource from YAML with an array value in process attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceStaticArray.yaml';
@@ -593,15 +618,8 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ]
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 
     $I->wantTo('create a new resource from YAML with an object value in process attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceStaticObj.yaml';
@@ -631,15 +649,8 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ]
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 
     $I->wantTo('create a new resource from YAML with an non array output structure for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceOutputString.yaml';
@@ -669,15 +680,8 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ]
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 
     $I->wantTo('create a new resource from YAML with an associative array output structure for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceOutputAssocArr.yaml';
@@ -707,15 +711,8 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ]
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 
     $I->wantTo('create a new resource from YAML with a func val missing in output structure for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceOutputEmptyFunc.yaml';
@@ -745,15 +742,8 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ]
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 
     $I->wantTo('create a new resource from YAML with resource only output for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceOutputResponseOnly.yaml';
@@ -805,15 +795,8 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ]
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 
     $I->wantTo('create a new resource from YAML with less than min inputs for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceBadMin.yaml';
@@ -843,15 +826,8 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ]
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 
     $I->wantTo('create a new resource from YAML with more than max inputs for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceBadMax.yaml';
@@ -881,15 +857,8 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ]
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 
     $I->wantTo('create a new resource from YAML for an account without developer access for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceAccountNoAccess.yaml';
@@ -919,15 +888,8 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ]
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 
     $I->wantTo('create a new resource from YAML with identical Ids in processors for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceIdenticalId.yaml';
@@ -957,151 +919,9 @@ process:
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'No resources found or insufficient privileges.',
-                'id' => 'resource_read_process',
-            ]
-        ]
-    );
+    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
+    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
 }
 
-//$I->wantTo('create a new resource from YAML missing an id attr and see the result');
-//$yamlFilename = 'resourceFunctionNoId.yaml';
-//$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
-//$I->sendPOST(
-//    $uri,
-//    [],
-//    [
-//        'resource_file' => [
-//            'name' => $yamlFilename,
-//            'type' => 'file',
-//            'error' => UPLOAD_ERR_OK,
-//            'size' => filesize(codecept_data_dir($yamlFilename)),
-//            'tmp_name' => codecept_data_dir($yamlFilename),
-//        ],
-//    ]
-//);
-//$I->seeResponseCodeIs(400);
-//$I->seeResponseIsJson();
-//$I->seeResponseContainsJson([
-//        "error" => [
-//        "code" => 6,
-//        "message" => "Invalid processor, id attribute missing.",
-//        "id" => -1,
-//    ],
-//]);
-//$I->tearDownTestFromYaml($yamlFilename);
-//$I->seeResponseCodeIs(400);
-//$I->seeResponseContainsJson([
-//    'error' => [
-//        'code' => 6,
-//        'message' => 'No resources found or insufficient privileges.',
-//        'id' => 'resource_read_process',
-//    ],
-//]);
-
-//$I->wantTo('create a new resource from YAML with good fragments structure and see the result');
-//$I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/ResourceFragmentGood.yaml']);
-//$yamlFilename = 'resourceFragmentGood.yaml';
-//$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
-//$I->sendPOST(
-//    $uri,
-//    [],
-//    [
-//        'resource_file' => [
-//            'name' => $yamlFilename,
-//            'type' => 'file',
-//            'error' => UPLOAD_ERR_OK,
-//            'size' => filesize(codecept_data_dir($yamlFilename)),
-//            'tmp_name' => codecept_data_dir($yamlFilename),
-//        ],
-//    ]
-//);
-//$I->seeResponseCodeIs(200);
-//$I->seeResponseIsJson();
-//$I->seeResponseContains('true');
-//$I->tearDownTestFromYaml($yamlFilename);
-//$I->seeResponseCodeIs(200);
-
-//$I->wantTo('create a new resource from YAML with string in fragments structure and see the result');
-//$I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/ResourceFragmentString.yaml']);
-//$yamlFilename = 'resourceFragmentString.yaml';
-//$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
-//$I->sendPOST(
-//    $uri,
-//    [],
-//    [
-//        'resource_file' => [
-//            'name' => $yamlFilename,
-//            'type' => 'file',
-//            'error' => UPLOAD_ERR_OK,
-//            'size' => filesize(codecept_data_dir($yamlFilename)),
-//            'tmp_name' => codecept_data_dir($yamlFilename),
-//        ],
-//    ]
-//);
-//$I->seeResponseCodeIs(400);
-//$I->seeResponseIsJson();
-//$I->seeResponseContainsJson(["error" => [
-//    "code" => 6,
-//    "message" => 'Invalid fragments structure in new resource.',
-//    "id" => -1
-//]]);
-//$I->setYamlFilename('ResourceFragmentString.yaml');
-//$I->tearDownTestFromYaml(400, ['error' => [
-//    'code' => 2,
-//    'message' => 'Could not delete resource, not found.',
-//    'id' => -1
-//]]);
-
-//$I->wantTo('create a new resource from YAML with string in fragments structure and see the result');
-//$yamlFilename = 'resourceFragmentString.yaml';
-//$I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
-//$I->sendPOST(
-//    $uri,
-//    [],
-//    [
-//        'resource_file' => [
-//            'name' => $yamlFilename,
-//            'type' => 'file',
-//            'error' => UPLOAD_ERR_OK,
-//            'size' => filesize(codecept_data_dir($yamlFilename)),
-//            'tmp_name' => codecept_data_dir($yamlFilename),
-//        ],
-//    ]
-//);
-//$I->seeResponseCodeIs(406);
-//$I->seeResponseIsJson();
-//$I->seeResponseContainsJson(["error" => [
-//    "code" => 6,
-//    "message" => 'Invalid fragments structure in new resource.',
-//    "id" => -1
-//]]);
-//$I->tearDownTestFromYaml($yamlFilename);
-//$I->seeResponseCodeIs(400);
-//$I->seeResponseContainsJson([
-//    'error' => [
-//        'code' => 6,
-//        'message' => 'No resources found or insufficient privileges.',
-//        'id' => 'resource_read_process',
-//    ]
-//]);
-
-//$I->wantTo('create a new resource from YAML with normal array in fragments structure and see the result');
-//$I->sendPOST($uri, ['token' => $I->getMyStoredToken()], ['resource' => 'tests/_data/ResourceFragmentArray.yaml']);
-//$I->seeResponseCodeIs(406);
-//$I->seeResponseIsJson();
-//$I->seeResponseContainsJson(["error" => [
-//    "code" => 6,
-//    "message" => 'Invalid fragments structure in new resource.',
-//    "id" => -1
-//]]);
-//$I->setYamlFilename('ResourceFragmentArray.yaml');
-//$I->tearDownTestFromYaml(400, ['error' => [
-//    'code' => 2,
-//    'message' => 'Could not delete resource, not found.',
-//    'id' => -1
-//]]);
+// Tear down the ResourceYaml test resource.
+$I->deleteResource(2, 'post', 'test/resource_create/allowed');

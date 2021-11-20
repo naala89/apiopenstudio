@@ -123,7 +123,7 @@ class ResourceDelete extends Core\ProcessorEntity
         // Validate resource exists.
         $resource = $this->resourceMapper->findByResid($resid);
         if (empty($resource->getResid())) {
-            throw new Core\ApiException("Invalid resource: $resid", 6, $this->id, 400);
+            throw new Core\ApiException("no resources found or insufficient privileges", 6, $this->id, 400);
         }
 
         // Validate user has Developer access to its application.
