@@ -74,9 +74,9 @@ class Resource
     /**
      * Resource TTL.
      *
-     * @var string|null Resource time to live.
+     * @var int|null Resource time to live.
      */
-    protected ?string $ttl;
+    protected ?int $ttl;
 
     /**
      * Resource constructor.
@@ -88,7 +88,7 @@ class Resource
      * @param string|null $method The resource method.
      * @param string|null $uri The resource URI.
      * @param string|null $meta The resource metadata.
-     * @param string|null $ttl The resource TTL.
+     * @param int|null $ttl The resource TTL.
      */
     public function __construct(
         int $resid = null,
@@ -98,7 +98,7 @@ class Resource
         string $method = null,
         string $uri = null,
         string $meta = null,
-        string $ttl = null
+        int $ttl = null
     ) {
         $this->resid = $resid;
         $this->appid = $appid;
@@ -267,9 +267,9 @@ class Resource
     /**
      * Get the resource TTL.
      *
-     * @return string Time to live.
+     * @return int Time to live.
      */
-    public function getTtl(): ?string
+    public function getTtl(): ?int
     {
         return $this->ttl;
     }
@@ -277,11 +277,11 @@ class Resource
     /**
      * Set the TTL.
      *
-     * @param string $ttl Time to live.
+     * @param int $ttl Time to live.
      *
      * @return void
      */
-    public function setTtl(string $ttl)
+    public function setTtl(int $ttl)
     {
         $this->ttl = $ttl;
     }

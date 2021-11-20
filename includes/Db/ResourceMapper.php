@@ -325,7 +325,7 @@ TAG;
         $resource->setMethod(!empty($row['method']) ? $row['method'] : '');
         $resource->setUri(!empty($row['uri']) ? $row['uri'] : '');
         $resource->setMeta(!empty($row['meta']) ? $row['meta'] : '');
-        $resource->setTtl(!empty($row['ttl']) ? $row['ttl'] : '');
+        $resource->setTtl(!empty($row['ttl']) ? $row['ttl'] : 0);
 
         return $resource;
     }
