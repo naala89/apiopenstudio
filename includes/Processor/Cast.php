@@ -111,10 +111,6 @@ class Cast extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), 6, $this->id, 400);
         }
 
-        if (!$inputIsNull && $container->getData() === null) {
-            throw new ApiException('casting data resulted un null, something went wrong.', 6, $this->id, 400);
-        }
-
         return $container;
     }
 }
