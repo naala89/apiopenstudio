@@ -31,19 +31,23 @@ process:
     processor: var_uri
     id: account_read_accid
     nullable: true
+    expected_type: integer
     index: 0
   keyword:
     processor: var_get
     id: account_read_keyword
     key: keyword
+    expected_type: text
     nullable: true
   order_by:
     processor: var_get
     id: account_read_order_by
     key: order_by
+    expected_type: text
     nullable: true
   direction:
     processor: var_get
     id: account_read_direction
     key: direction
+    expected_type: text
     nullable: true

@@ -35,9 +35,11 @@ process:
   accid:
     processor: var_uri
     id: account_update_accid
+    expected_type: integer
     index: 0
   name:
     processor: var_uri
     id: account_update_name
+    expected_type: text
     index: 1
 
