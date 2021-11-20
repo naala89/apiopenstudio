@@ -15,7 +15,6 @@
 
 namespace ApiOpenStudio\Output;
 
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\ConvertToXmlTrait;
 use ApiOpenStudio\Core\DetectTypeTrait;
@@ -88,6 +87,10 @@ class Xml extends Output
     protected function castData(): void
     {
         $currentType = $this->data->getType();
+        if ($currentType == 'xml') {
+            return;
+        }
+
         $method = 'from' . ucfirst(strtolower($currentType)) . 'ToXml';
 
         try {
