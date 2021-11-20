@@ -255,6 +255,7 @@ foreach (\GuzzleHttp\json_decode($I->getResponse()) as $index => $processor) {
                 'text',
                 'array',
                 'json',
+                'html',
                 'xml',
                 'image',
                 'file',
