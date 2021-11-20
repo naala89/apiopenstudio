@@ -27,6 +27,8 @@ security:
     - Administrator
     - Account manager
     - Application manager
+  validate_account: false
+  validate_application: false
 
 process:
   processor: user_create
@@ -45,6 +47,7 @@ process:
     processor: var_post
     id: user_create_active
     nullable: true
+    expected_type: boolean
     key: active
   honorific:
     processor: var_post

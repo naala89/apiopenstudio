@@ -31,29 +31,35 @@ process:
     processor: var_get
     id: user_read_uid
     nullable: true
+    expected_type: integer
     key: uid
   username:
     processor: var_get
     id: user_read_username
     nullable: true
+    expected_type: text
     key: username
   email:
     processor: var_get
     id: user_read_email
     nullable: true
+    expected_type: text
     key: email
   keyword:
     processor: var_get
     id: user_read_keyword
     nullable: true
+    expected_type: text
     key: keyword
   orderBy:
     processor: var_get
     id: user_read_order_by
     nullable: true
+    expected_type: text
     key: order_by
   direction:
     processor: var_get
     id: user_read_direction
+    expected_type: text
     nullable: true
     key: direction
