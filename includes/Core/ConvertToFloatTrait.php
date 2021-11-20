@@ -27,11 +27,11 @@ trait ConvertToFloatTrait
      *
      * @param $data
      *
-     * @return float
+     * @return float|null
      */
-    public function fromEmptyToFloat($data): float
+    public function fromEmptyToFloat($data): ?float
     {
-        return 0.0;
+        return null;
     }
 
     /**
