@@ -16,6 +16,8 @@ class Api extends Module
     private string $yamlFilename = '';
 
     /**
+     * Get the test acc name.
+     *
      * @return string
      */
     public function getMyAccountName(): string
@@ -24,6 +26,8 @@ class Api extends Module
     }
 
     /**
+     * Get the test app name.
+     *
      * @return string
      */
     public function getMyApplicationName(): string
@@ -32,6 +36,8 @@ class Api extends Module
     }
 
     /**
+     * Get the base URI (domain/core_acc_name/core_app_name).
+     *
      * @return string
      */
     public function getCoreBaseUri(): string
@@ -40,6 +46,8 @@ class Api extends Module
     }
 
     /**
+     * Get the base URI (domain/test_acc_name/test_app_name).
+     *
      * @return string
      */
     public function getMyBaseUri(): string
@@ -48,6 +56,8 @@ class Api extends Module
     }
 
     /**
+     * Set the store YAML filename.
+     *
      * @param $yamlFilename
      */
     public function setYamlFilename($yamlFilename)
@@ -56,6 +66,8 @@ class Api extends Module
     }
 
     /**
+     * Return the store YAML filename.
+     *
      * @return string
      */
     public function getYamlFilename(): string
@@ -64,8 +76,11 @@ class Api extends Module
     }
 
     /**
+     * Set a header & value.
+     *
      * @param $name
      * @param $value
+     *
      * @throws ModuleException
      */
     public function haveHttpHeader($name, $value)
@@ -74,7 +89,10 @@ class Api extends Module
     }
 
     /**
+     * Return the base URL for the test API server
+     *
      * @return false|string
+     *
      * @throws ModuleException
      */
     public function getBaseUrl()
@@ -84,6 +102,8 @@ class Api extends Module
     }
 
     /**
+     * Store a login token for future use.
+     *
      * @throws ModuleException
      */
     public function storeMyToken()
@@ -99,6 +119,8 @@ class Api extends Module
     }
 
     /**
+     * Return the stored user access token.
+     *
      * @return string
      */
     public function getMyStoredToken(): string
@@ -107,6 +129,11 @@ class Api extends Module
     }
 
     /**
+     * Login a user and store the token.
+     *
+     * @param string $username
+     * @param string $password
+     *
      * @throws ModuleException
      */
     public function performLogin(string $username, string $password)
@@ -127,7 +154,10 @@ class Api extends Module
     }
 
     /**
+     * Get a resource from a YAML file.
+     *
      * @param null $yamlFilename
+     *
      * @return array
      */
     public function getResourceFromYaml($yamlFilename = null): array
@@ -138,6 +168,10 @@ class Api extends Module
     }
 
     /**
+     * Create a resource from a YAML file.
+     *
+     * @param null $yamlFilename
+     *
      * @throws ModuleException
      */
     public function createResourceFromYaml($yamlFilename = null)
@@ -161,7 +195,10 @@ class Api extends Module
     }
 
     /**
+     * Call a resource from a YAML file.
+     *
      * @param array $params
+     *
      * @throws ModuleException
      */
     public function callResourceFromYaml($params = array())
@@ -182,6 +219,10 @@ class Api extends Module
     }
 
     /**
+     * Delete a resource from an input YAML file.
+     *
+     * @param null $yamlFilename
+     *
      * @throws ModuleException
      */
     public function tearDownTestFromYaml($yamlFilename = null)
@@ -213,8 +254,48 @@ class Api extends Module
     }
 
     /**
+     * Delete a resource by its appid, method & uri.
+     *
+     * @param int $appid
+     * @param string $method
+     * @param string $uri
+     *
+     * @throws ModuleException
+     */
+    public function deleteResource(int $appid, string $method, string $uri)
+    {
+        $this->haveHttpHeader('Accept', 'application/json');
+        $this->haveHttpHeader('Authorization', 'Bearer ' . $this->getMyStoredToken());
+        $this->getModule('REST')->sendGET(
+            $this->getCoreBaseUri() . '/resource/',
+            [
+                'appid' => $appid,
+                'method' => $method,
+                'uri' => $uri,
+            ]
+        );
+        $resources = json_decode($this->getModule('REST')->response, true);
+        if (!isset($resources['error'])) {
+            foreach ($resources as $resource) {
+                if (
+                    strtolower($resource['method']) == strtolower($method)
+                    && $resource['uri'] == $uri
+                ) {
+                    $this->getModule('REST')->sendDELETE(
+                        $this->getCoreBaseUri() . '/resource/' . $resource['resid'],
+                        []
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * Perform a test from a YAML file.
+     *
      * @param $yamlFilename
-     * @param $params
+     * @param array $params
+     *
      * @throws ModuleException
      */
     public function doTestFromYaml($yamlFilename, $params = array())
@@ -226,7 +307,10 @@ class Api extends Module
     }
 
     /**
+     * Test the response length.
+     *
      * @param $length
+     *
      * @throws ModuleException
      */
     public function seeReponseHasLength($length)
@@ -240,6 +324,8 @@ class Api extends Module
     }
 
     /**
+     * Debugger method to output a response and stop processing.
+     *
      * @throws ModuleException
      */
     public function seeResult()
@@ -249,7 +335,10 @@ class Api extends Module
     }
 
     /**
+     * Get the API response.
+     *
      * @return mixed
+     *
      * @throws ModuleException
      */
     public function getResponse()

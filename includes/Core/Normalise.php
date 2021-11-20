@@ -90,7 +90,7 @@ class Normalise
      *
      * @throws ApiException Exception.
      */
-    public function toArray()
+    public function toArray(): array
     {
         $format = empty($this->format) ? $this->calcFormat() : $this->getFormat();
         switch ($format) {
@@ -230,7 +230,7 @@ class Normalise
      *
      * @see https://github.com/gaarf/XML-string-to-PHP-array
      */
-    private function xmlToArray()
+    private function xmlToArray(): array
     {
         $doc = new \DOMDocument();
         $doc->loadXML($this->data);
@@ -247,7 +247,7 @@ class Normalise
      *
      * @return array
      */
-    private function domNodeToArray(object $node)
+    private function domNodeToArray(object $node): array
     {
         $output = array();
         switch ($node->nodeType) {
