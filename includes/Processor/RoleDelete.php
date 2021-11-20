@@ -17,6 +17,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Db\RoleMapper;
 
 /**
@@ -57,6 +58,11 @@ class RoleDelete extends Core\ProcessorEntity
     ];
 
     /**
+     * @var Config ApiOpenStudio settings.
+     */
+    private Config $settings;
+
+    /**
      * RoleDelete constructor.
      *
      * @param mixed $meta Output meta.
@@ -68,6 +74,7 @@ class RoleDelete extends Core\ProcessorEntity
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->roleMapper = new RoleMapper($db, $logger);
+        $this->settings = new Config();
     }
 
     /**
@@ -83,8 +90,9 @@ class RoleDelete extends Core\ProcessorEntity
 
         $rid = $this->val('rid', true);
 
-        if ($rid < 6) {
-            throw new Core\ApiException("Cannot delete core roles.", 7, $this->id);
+        // Update to core application and is locked.
+        if ($this->settings->__get(['api', 'core_resource_lock']) && $rid < 6) {
+            throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
         $role = $this->roleMapper->findByRid($rid);

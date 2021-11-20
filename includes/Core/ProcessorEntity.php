@@ -42,7 +42,7 @@ abstract class ProcessorEntity extends Entity
     protected $meta;
 
     /**
-     * All of the request details.
+     * All the request details.
      *
      * @var Request Request.
      */
@@ -188,13 +188,11 @@ abstract class ProcessorEntity extends Entity
      * Fetches and process the processor described in the metadata.
      * It is also the 1st stop to recursive processing of processors, so the place validate user credentials.
      *
-     * @return mixed
      * @throws ApiException
      */
     public function process()
     {
         $this->logger->info('api', 'Processor: ' . $this->details()['machineName']);
-        return;
     }
 
     /**
@@ -380,21 +378,20 @@ abstract class ProcessorEntity extends Entity
      * @param integer $min Minimum number of values.
      * @param string $key The key of the input being validated.
      *
-     * @return bool
+     * @return void
      *
      * @throws ApiException Invalid value.
      */
-    private function validateAllowedValues($val, array $limitValues, int $min, string $key): bool
+    private function validateAllowedValues($val, array $limitValues, int $min, string $key): void
     {
         if (empty($limitValues) || ($min < 1 && empty($val))) {
-            return true;
+            return;
         }
         if (!in_array($val, $limitValues)) {
             throw new ApiException("invalid value ($val). Only '"
                 . implode("', '", $limitValues)
                 . "' allowed in input '$key'", 6, $this->id, 400);
         }
-        return true;
     }
 
     /**
@@ -405,7 +402,7 @@ abstract class ProcessorEntity extends Entity
      * @param integer $min Minimum number of values.
      * @param string $key The key of the input being validated.
      *
-     * @return bool
+     * @return void
      *
      * @throws ApiException Invalid data type.
      */
@@ -414,9 +411,9 @@ abstract class ProcessorEntity extends Entity
         array $limitTypes,
         int $min,
         string $key
-    ): bool {
+    ): void {
         if (empty($limitTypes) || ($min < 1 && $type == 'empty')) {
-            return true;
+            return;
         }
         if (!in_array($type, $limitTypes)) {
             throw new ApiException(
@@ -426,6 +423,5 @@ abstract class ProcessorEntity extends Entity
                 400
             );
         }
-        return true;
     }
 }

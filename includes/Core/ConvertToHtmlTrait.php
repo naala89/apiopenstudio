@@ -27,11 +27,11 @@ trait ConvertToHtmlTrait
      *
      * @param $data
      *
-     * @return string
+     * @return string|null
      */
-    public function fromEmptyToHtml($data): string
+    public function fromEmptyToHtml($data): ?string
     {
-        return '';
+        return null;
     }
 
     /**

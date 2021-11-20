@@ -39,7 +39,6 @@
   "require": {
     "adodb/adodb-php": "^5.20",
     "mustangostang/spyc": "^0.6.2",
-    "mtdowling/jmespath.php": "^2.4",
     "jlawrence/eos": "^3.2",
     "eloquent/pbkdf2-compat": "^1.0",
     "guzzlehttp/guzzle": "^6.3",
@@ -47,7 +46,8 @@
     "swiftmailer/swiftmailer": "^6.0",
     "berlioz/php-doc": "^1.1",
     "lcobucci/jwt": "^4.1",
-    "monolog/monolog": "^2.3"
+    "monolog/monolog": "^2.3",
+    "galbar/jsonpath": "^2.0"
   },
   "autoload": {
     "psr-4": {

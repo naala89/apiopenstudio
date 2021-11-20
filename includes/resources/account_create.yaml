@@ -32,4 +32,5 @@ process:
   name:
     processor: var_post
     id: account_create_name
+    expected_type: text
     key: name

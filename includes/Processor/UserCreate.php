@@ -262,9 +262,11 @@ class UserCreate extends Core\ProcessorEntity
         $user->setPasswordReset();
         $user->setPasswordResetTtl();
 
-        $this->userMapper->save($user);
-        $user = $this->userMapper->findByUsername($username);
+        if (!$this->userMapper->save($user)) {
+            throw new Core\ApiException('failed to create the new user, please check the logs', 6, $this->id, 400);
+        }
 
+        $user = $this->userMapper->findByUsername($username);
         return new Core\DataContainer($user->dump(), 'array');
     }
 }

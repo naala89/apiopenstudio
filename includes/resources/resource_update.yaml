@@ -32,182 +32,118 @@ process:
   id: resource_update_process
   processor: resource_update
   resid:
-    processor: field_value
+    processor: var_uri
     id: resource_update_resid
-    key_value: value
-    field:
-      processor: var_field
-      id: resource_update_field_resid
-      array:
-        processor: filter
-        id: resource_update_filter_resid
-        filter: resid
-        inverse: true
-        source:
-          processor: cast
-          id: resource_update_cast_resid_to_array
-          data:
-            processor: var_body
-            id: resource_update_body_resid
-            nullable: false
-          data_type: array
+    index: 0
+    nullable: false
+    expected_type: integer
   name:
-    processor: field_value
-    id: resource_update_name
-    key_value: value
-    field:
-      processor: var_field
-      id: resource_update_field_name
-      array:
-        processor: filter
-        id: resource_update_filter_name
-        filter: name
-        inverse: true
-        source:
-          processor: cast
-          id: resource_update_cast_filter_name_to_array
-          data:
-            processor: var_body
-            id: resource_update_body_name
-            nullable: false
-          data_type: array
+    processor: cast
+    id: resource_update_cast_name
+    data_type: text
+    data:
+      processor: json_path
+      id: resource_update_name
+      data:
+        processor: var_body
+        id: resource_update_body_name
+        expected_type: json
+        nullable: false
+      expression: '$.name'
+      operation: get
+      remove_wrapping_quotes: true
+      stripslashes: true
   description:
-    processor: field_value
-    id: resource_update_description
-    key_value: value
-    field:
-      processor: var_field
-      id: resource_update_field_description
-      array:
-        processor: filter
-        id: resource_update_filter_description
-        filter: description
-        inverse: true
-        source:
-          processor: cast
-          id: resource_update_cast_description_to_array
-          data:
-            processor: var_body
-            id: resource_update_body_description
-            nullable: false
-          data_type: array
+    processor: cast
+    id: resource_update_cast_description
+    data_type: text
+    data:
+      processor: json_path
+      id: resource_update_description
+      data:
+        processor: var_body
+        id: resource_update_body_description
+        expected_type: json
+        nullable: false
+      expression: '$.description'
+      operation: get
+      remove_wrapping_quotes: true
+      stripslashes: true
   appid:
-    processor: field_value
-    id: resource_update_appid
-    key_value: value
-    field:
-      processor: var_field
-      id: resource_update_field_appid
-      array:
-        processor: filter
-        id: resource_update_filter_appid
-        filter: appid
-        inverse: true
-        source:
-          processor: cast
-          id: resource_update_cast_appid_to_array
-          data:
-            processor: var_body
-            id: resource_update_body_appid
-            nullable: false
-          data_type: array
+    processor: cast
+    id: resource_update_cast_appid
+    data_type: integer
+    data:
+      processor: json_path
+      id: resource_update_appid
+      data:
+        processor: var_body
+        id: resource_update_body_appid
+        expected_type: json
+        nullable: false
+      expression: '$.appid'
+      operation: get
+      remove_wrapping_quotes: true
+      stripslashes: true
   method:
-    processor: field_value
-    id: resource_update_method
-    key_value: value
-    field:
-      processor: var_field
-      id: resource_update_field_method
-      array:
-        processor: filter
-        id: resource_update_filter_method
-        filter: method
-        inverse: true
-        source:
-          processor: cast
-          id: resource_update_cast_method_to_array
-          data:
-            processor: var_body
-            id: resource_update_body_method
-            nullable: false
-          data_type: array
+    processor: cast
+    id: resource_update_cast_method
+    data_type: text
+    data:
+      processor: json_path
+      id: resource_update_method
+      data:
+        processor: var_body
+        id: resource_update_body_method
+        expected_type: json
+        nullable: false
+      expression: '$.method'
+      operation: get
+      remove_wrapping_quotes: true
+      stripslashes: true
   uri:
-    processor: field_value
-    id: resource_update_uri
-    key_value: value
-    field:
-      processor: var_field
-      id: resource_update_field_uri
-      array:
-        processor: filter
-        id: resource_update_filter_uri
-        filter: uri
-        inverse: true
-        source:
-          processor: cast
-          id: resource_update_cast_uri_to_array
-          data:
-            processor: var_body
-            id: resource_update_body_uri
-            nullable: false
-          data_type: array
+    processor: cast
+    id: resource_update_cast_uri
+    data_type: text
+    data:
+      processor: json_path
+      id: resource_update_uri
+      data:
+        processor: var_body
+        id: resource_update_body_uri
+        expected_type: json
+        nullable: false
+      expression: '$.uri'
+      operation: get
+      remove_wrapping_quotes: true
+      stripslashes: true
   ttl:
-    processor: field_value
-    id: resource_update_ttl
-    key_value: value
-    field:
-      processor: var_field
-      id: resource_update_field_ttl
-      array:
-        processor: filter
-        id: resource_update_filter_ttl
-        filter: ttl
-        inverse: true
-        source:
-          processor: cast
-          id: resource_update_cast_ttl_to_array
-          data:
-            processor: var_body
-            id: resource_update_body_ttl
-            nullable: false
-          data_type: array
-  format:
-    processor: field_value
-    id: resource_update_format
-    key_value: value
-    field:
-      processor: var_field
-      id: resource_update_field_format
-      array:
-        processor: filter
-        id: resource_update_filter_format
-        filter: format
-        inverse: true
-        source:
-          processor: cast
-          id: resource_update_cast_format_to_array
-          data:
-            processor: var_body
-            id: resource_update_body_format
-            nullable: false
-          data_type: array
-  meta:
-    processor: field_value
-    id: resource_update_meta
-    key_value: value
-    field:
-      processor: var_field
-      id: resource_update_field_meta
-      array:
-        processor: filter
-        id: resource_update_filter_meta
-        filter: meta
-        inverse: true
-        source:
-          processor: cast
-          id: resource_update_cast_meta_to_array
-          data:
-            processor: var_body
-            id: resource_update_body_meta
-            nullable: false
-          data_type: array
+    processor: cast
+    id: resource_update_cast_ttl
+    data_type: integer
+    data:
+      processor: json_path
+      id: resource_update_ttl
+      operation: get
+      expression: '$.ttl'
+      data:
+        processor: var_body
+        id: resource_update_body_ttl
+        expected_type: json
+        nullable: false
+      remove_wrapping_quotes: true
+      stripslashes: true
+  metadata:
+    processor: cast
+    id: resource_update_cast_metadata
+    data_type: json
+    data:
+      processor: json_path
+      id: resource_update_metadata
+      operation: get
+      expression: '$.metadata'
+      data:
+        processor: var_body
+        id: resource_update_body_metadata
+        expected_type: json
+        nullable: false

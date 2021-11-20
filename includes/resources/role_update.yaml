@@ -27,47 +27,42 @@ security:
     - Administrator
     - Account manager
     - Application manager
+  validate_account: false
+  validate_application: false
 
 process:
   processor: role_update
   id: role_update_process
+
   rid:
-    processor: field_value
-    id: role_update_rid
-    key_value: value
-    field:
-      processor: var_field
-      id: role_update_field_rid
-      array:
-        processor: filter
-        id: role_update_filter_rid
-        filter: rid
-        inverse: true
-        source:
-          processor: cast
-          id: role_update_cast_rid_to_array
-          data:
-            processor: var_body
-            id: role_update_body_rid
-            nullable: false
-          data_type: array
+    processor: cast
+    id: role_update_cast_rid
+    data_type: integer
+    data:
+      processor: json_path
+      id: role_update_rid
+      data:
+        processor: var_body
+        id: role_update_body_rid
+        expected_type: json
+        nullable: false
+      expression: '$.rid'
+      operation: get
+      remove_wrapping_quotes: true
+      stripslashes: true
   name:
-    processor: field_value
-    id: role_update_name
-    key_value: value
-    field:
-      processor: var_field
-      id: role_update_field_name
-      array:
-        processor: filter
-        id: role_update_filter_name
-        filter: name
-        inverse: true
-        source:
-          processor: cast
-          id: role_update_cast_name_to_array
-          data:
-            processor: var_body
-            id: role_update_body_name
-            nullable: false
-          data_type: array
+    processor: cast
+    id: role_update_cast_name
+    data_type: text
+    data:
+      processor: json_path
+      id: role_update_name
+      data:
+        processor: var_body
+        id: role_update_body_name
+        expected_type: json
+        nullable: false
+      expression: '$.name'
+      operation: get
+      remove_wrapping_quotes: true
+      stripslashes: true

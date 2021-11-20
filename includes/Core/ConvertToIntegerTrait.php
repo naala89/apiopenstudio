@@ -27,11 +27,11 @@ trait ConvertToIntegerTrait
      *
      * @param $data
      *
-     * @return int
+     * @return int|null
      */
-    public function fromEmptyToInteger($data): int
+    public function fromEmptyToInteger($data): ?int
     {
-        return 0;
+        return null;
     }
 
     /**
@@ -40,16 +40,10 @@ trait ConvertToIntegerTrait
      * @param $data
      *
      * @return int
-     *
-     * @throws ApiException
      */
     public function fromBooleanToInteger($data): int
     {
-        $result = filter_var($data, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-        if ($result === null) {
-            throw new ApiException('Failed to convert boolean to integer');
-        }
-        return $result;
+        return (int) $data;
     }
 
     /**
@@ -58,10 +52,16 @@ trait ConvertToIntegerTrait
      * @param $data
      *
      * @return int
+     *
+     * @throws ApiException
      */
     public function fromIntegerToInteger($data): int
     {
-        return $data;
+        $result = filter_var($data, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+        if ($result === null) {
+            throw new ApiException('Failed to convert float to integer');
+        }
+        return $result;
     }
 
     /**

@@ -94,26 +94,16 @@ class Install extends Script
             exit;
         }
 
-        $createDb = '';
-        while (!is_bool($createDb)) {
-            $prompt = "Recreate or create new database, user and user permissions (Y/n)?";
-            $response = strtolower($this->readlineTerminal($prompt));
-            $createDb = $response === 'y' || empty($response) ? true : $createDb;
-            $createDb = $response === 'n' ? false : $createDb;
-        }
-
-        if ($createDb) {
-            $this->createLink(null, null, '', 'root', $this->config->__get(['db', 'root_password']));
-            echo "\n";
-            $this->dropDatabase();
-            echo "\n";
-            $this->dropUser($this->config->__get(['db', 'username']));
-            echo "\n";
-            $this->createDatabase();
-            echo "\n";
-            $this->createUser();
-            echo "\n";
-        }
+        $this->createLink(null, null, '', 'root', $this->config->__get(['db', 'root_password']));
+        echo "\n";
+        $this->dropDatabase();
+        echo "\n";
+        $this->dropUser($this->config->__get(['db', 'username']));
+        echo "\n";
+        $this->createDatabase();
+        echo "\n";
+        $this->createUser();
+        echo "\n";
         $this->useDatabase();
         echo "\n";
         $this->createTables();

@@ -1,0 +1,50 @@
+name: Testing json_path
+
+description: Test json_path
+
+appid: 2
+
+uri: jsonpath
+
+method: post
+
+ttl: 0
+
+security:
+  processor: validate_token_roles
+  id: test json_path security
+  roles:
+    - Consumer
+
+process:
+  processor: json_path
+  id: test json_path
+  data:
+    processor: var_post
+    id: test json_path data
+    key: data
+    expected_type: json
+    nullable: false
+  expression:
+    processor: var_post
+    id: test json_path expression
+    key: expression
+    expected_type: text
+    nullable: false
+  operation:
+    processor: var_post
+    id: test json_path operation
+    key: operation
+    expected_type: text
+    nullable: false
+  field_name:
+    processor: var_post
+    id: test json_path field_name
+    key: field_name
+    expected_type: text
+    nullable: true
+  value:
+    processor: var_post
+    id: test json_path value
+    key: value
+    nullable: true

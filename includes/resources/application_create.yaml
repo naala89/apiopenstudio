@@ -33,8 +33,10 @@ process:
   accid:
     processor: var_post
     id: application_create_accid
+    expected_type: integer
     key: accid
   name:
     processor: var_post
     id: application_create_name
+    expected_type: text
     key: name

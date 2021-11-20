@@ -27,6 +27,8 @@ security:
     - Administrator
     - Account manager
     - Application manager
+  validate_account: false
+  validate_application: false
 
 process:
   processor: role_delete
@@ -34,4 +36,5 @@ process:
   rid:
     processor: var_uri
     id: role_delete_rid
+    expected_type: integer
     index: 0

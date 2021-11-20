@@ -45,7 +45,11 @@ trait ConvertToXmlTrait
      */
     public function fromBooleanToXml($data): string
     {
-        return $this->wrapDataXmlFormat($data ? 'true' : 'false');
+        $xml = $this->getBaseXmlWrapper();
+        $node = $xml->xpath('//');
+        $node = $node[0];
+        $node->{0} = $data;
+        return $xml->asXML();
     }
 
     /**
@@ -57,7 +61,11 @@ trait ConvertToXmlTrait
      */
     public function fromIntegerToXml($data): string
     {
-        return $this->wrapDataXmlFormat($data);
+        $xml = $this->getBaseXmlWrapper();
+        $node = $xml->xpath('//');
+        $node = $node[0];
+        $node->{0} = $data;
+        return $xml->asXML();
     }
 
     /**
@@ -69,7 +77,11 @@ trait ConvertToXmlTrait
      */
     public function fromFloatToXml($data): string
     {
-        return $this->wrapDataXmlFormat($data);
+        $xml = $this->getBaseXmlWrapper();
+        $node = $xml->xpath('//');
+        $node = $node[0];
+        $node->{0} = $data;
+        return $xml->asXML();
     }
 
     /**
@@ -81,7 +93,11 @@ trait ConvertToXmlTrait
      */
     public function fromTextToXml($data): string
     {
-        return $this->wrapDataXmlFormat($data);
+        $xml = $this->getBaseXmlWrapper();
+        $node = $xml->xpath('//apiOpenStudioWrapper');
+        $node = $node[0];
+        $node->{0} = $data;
+        return $xml->asXML();
     }
 
     /**
@@ -95,11 +111,7 @@ trait ConvertToXmlTrait
      */
     public function fromArrayToXml($data): string
     {
-        try {
-            $xml_data = new SimpleXMLElement($this->wrapDataXmlFormat(''));
-        } catch (\Exception $e) {
-            throw new ApiException($e->getMessage());
-        }
+        $xml_data = $this->getBaseXmlWrapper();
         $this->array2xml($data, $xml_data);
         return $xml_data->asXML();
     }
@@ -168,6 +180,23 @@ trait ConvertToXmlTrait
     }
 
     /**
+     * Get the base SimpleXMLElement wrapper for XML for converting non XML inputs to XML output.
+     *
+     * @return SimpleXMLElement
+     *
+     * @throws ApiException
+     */
+    protected function getBaseXmlWrapper(): SimpleXMLElement
+    {
+        try {
+            $xml = new SimpleXMLElement('<apiOpenStudioWrapper/>');
+        } catch (\Exception $e) {
+            throw new ApiException($e->getMessage());
+        }
+        return $xml;
+    }
+
+    /**
      * Wrap Data in MML string wrapper.
      *
      * @param $data
@@ -176,6 +205,8 @@ trait ConvertToXmlTrait
      */
     protected function wrapDataXmlFormat($data): string
     {
+        $data = str_replace('<apiOpenStudioWrapper>', '', $data);
+        $data = str_replace('</apiOpenStudioWrapper>', '', $data);
         return '<?xml version="1.0"?><apiOpenStudioWrapper>' . $data . '</apiOpenStudioWrapper>';
     }
 
@@ -187,7 +218,7 @@ trait ConvertToXmlTrait
      *
      * @return string A populated SimpleXMLElement.
      */
-    public function array2xml(array $array, SimpleXMLElement $xml): string
+    protected function array2xml(array $array, SimpleXMLElement $xml): string
     {
         foreach ($array as $key => $value) {
             if (is_numeric($key)) {

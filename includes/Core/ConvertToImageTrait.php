@@ -27,11 +27,11 @@ trait ConvertToImageTrait
      *
      * @param $data
      *
-     * @return string
+     * @return string|null
      */
-    public function fromEmptyToImage($data): string
+    public function fromEmptyToImage($data): ?string
     {
-        return '';
+        return null;
     }
 
     /**

@@ -252,7 +252,7 @@ class UserUpdate extends Core\ProcessorEntity
         ) {
             // Non-privileged accounts can only edit their own accounts.
             if (!empty($uid) && $uid != $currentUser->getUid()) {
-                throw new Core\ApiException("Permission denied", 6, $this->id, 400);
+                throw new Core\ApiException("Permission denied", 6, $this->id, 401);
             }
             $uid = $currentUser->getUid();
         }
@@ -261,9 +261,8 @@ class UserUpdate extends Core\ProcessorEntity
         if (empty($user->getUid())) {
             throw new Core\ApiException("User not found: $uid", 6, $this->id, 400);
         }
-
-        if (!empty($active = $this->val('active', true))) {
-            $active = $active === 'true' ? true : ($active === 'false' ? false : $active);
+        $active = (int) $this->val('active', true);
+        if ($active === 0 || $active === 1) {
             $user->setActive($active);
         }
         if (!empty($username = $this->val('username', true)) && $user->getUsername() != $username) {
@@ -323,7 +322,9 @@ class UserUpdate extends Core\ProcessorEntity
             $user->setPhoneWork($phoneWork);
         }
 
-        $this->userMapper->save($user);
+        if (!$this->userMapper->save($user)) {
+            throw new Core\ApiException('failed to update the new user, please check the logs', 6, $this->id, 400);
+        }
 
         return new Core\DataContainer($user->dump(), 'array');
     }

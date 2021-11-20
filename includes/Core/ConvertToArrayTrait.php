@@ -15,6 +15,8 @@
 
 namespace ApiOpenStudio\Core;
 
+use SimpleXMLElement;
+
 /**
  * Trait ConvertToArrayTrait.
  *

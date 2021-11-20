@@ -31,29 +31,35 @@ process:
     processor: var_get
     id: user_role_read_uid
     nullable: true
+    expected_type: integer
     key: uid
   accid:
     processor: var_get
     id: user_role_read_accid
     nullable: true
+    expected_type: integer
     key: accid
   appid:
     processor: var_get
     id: user_role_read_appid
     nullable: true
+    expected_type: integer
     key: appid
   rid:
     processor: var_get
     id: user_role_read_rid
     nullable: true
+    expected_type: integer
     key: rid
   order_by:
     processor: var_get
     id: user_role_read_order_by
     nullable: true
+    expected_type: text
     key: order_by
   direction:
     processor: var_get
     id: user_role_read_direction
     nullable: true
+    expected_type: text
     key: direction

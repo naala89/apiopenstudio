@@ -32,4 +32,5 @@ process:
   accid:
     processor: var_uri
     id: account_delete_accid
+    expected_type: integer
     index: 0

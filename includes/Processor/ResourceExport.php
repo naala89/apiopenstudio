@@ -17,6 +17,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
 use ApiOpenStudio\Db\UserRoleMapper;
 use Symfony\Component\Yaml\Yaml;
@@ -100,7 +101,6 @@ class ResourceExport extends Core\ProcessorEntity
     {
         parent::process();
 
-        $uid = Core\Utilities::getUidFromToken();
         $resid = $this->val('resid', true);
         $format = $this->val('format', true);
 
@@ -140,41 +140,26 @@ class ResourceExport extends Core\ProcessorEntity
     /**
      * Create a YAML string from a resource.
      *
-     * @param mixed $resource The resource.
+     * @param Resource $resource The resource.
      *
      * @return string A YAML string.
      */
-    private function getYaml($resource): string
+    private function getYaml(Resource $resource): string
     {
-        $obj = [
-            'name' => $resource->getName(),
-            'description' => $resource->getDescription(),
-            'uri' => $resource->getUri(),
-            'method' => $resource->getMethod(),
-            'appid' => $resource->getAppId(),
-            'ttl' => $resource->getTtl(),
-        ];
-        $obj = array_merge($obj, json_decode($resource->getMeta(), true));
+        $obj = $resource->dump();
+        $obj['meta'] = json_decode($resource->getMeta(), true);
         return  Yaml::dump($obj, Yaml::PARSE_OBJECT);
     }
 
     /**
      * Create a JSON string from a resource.
      *
-     * @param mixed $resource The resource.
+     * @param Resource $resource The resource.
      *
      * @return string A YAML string.
      */
-    private function getJson($resource): string
+    private function getJson(Resource $resource): string
     {
-        $obj = [];
-        $obj['name'] = $resource->getName();
-        $obj['description'] = $resource->getDescription();
-        $obj['uri'] = $resource->getUri();
-        $obj['method'] = $resource->getMethod();
-        $obj['appid'] = $resource->getAppId();
-        $obj['ttl'] = $resource->getTtl();
-        $obj = array_merge($obj, json_decode($resource->getMeta(), true));
-        return json_encode($obj);
+        return json_encode($resource->dump());
     }
 }

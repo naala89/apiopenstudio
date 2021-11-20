@@ -87,7 +87,6 @@ class ValidateTokenRoles extends ValidateToken
         $validateAccount = $this->val('validate_account', true);
         $validateApplication = $this->val('validate_application', true);
 
-
         // Get roles and validate the user against them.
         if ($this->validateUserRoles($permittedRoles, $validateAccount, $validateApplication)) {
             return new Core\DataContainer(true, 'boolean');

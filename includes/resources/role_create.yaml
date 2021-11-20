@@ -27,6 +27,8 @@ security:
     - Administrator
     - Account manager
     - Application manager
+  validate_account: false
+  validate_application: false
 
 process:
   processor: role_create
