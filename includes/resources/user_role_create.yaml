@@ -35,19 +35,23 @@ process:
     processor: var_post
     id: user_role_create_uid
     nullable: false
+    expected_type: integer
     key: uid
   accid:
     processor: var_post
     id: user_role_create_accid
     nullable: true
+    expected_type: integer
     key: accid
   appid:
     processor: var_post
     id: user_role_create_appid
     nullable: true
+    expected_type: integer
     key: appid
   rid:
     processor: var_post
     id: user_role_create_rid
     nullable: false
+    expected_type: integer
     key: rid

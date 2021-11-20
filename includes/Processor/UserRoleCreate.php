@@ -15,7 +15,10 @@
 
 namespace ApiOpenStudio\Processor;
 
+use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db;
 
 /**
@@ -76,6 +79,35 @@ class UserRoleCreate extends Core\ProcessorEntity
     ];
 
     /**
+     * @var Db\UserRoleMapper User Role Mapper.
+     */
+    private Db\UserRoleMapper $userRoleMapper;
+
+    /**
+     * @var Db\UserMapper User Mapper.
+     */
+    private Db\UserMapper $userMapper;
+    private Db\AccountMapper $accountMapper;
+    private Db\ApplicationMapper $applicationMapper;
+    private Db\RoleMapper $roleMapper;
+
+    /**
+     * @param $meta
+     * @param Request $request
+     * @param ADOConnection|null $db
+     * @param MonologWrapper|null $logger
+     */
+    public function __construct($meta, Request &$request, ADOConnection $db = null, MonologWrapper $logger = null)
+    {
+        parent::__construct($meta, $request, $db, $logger);
+        $this->userRoleMapper = new Db\UserRoleMapper($this->db, $this->logger);
+        $this->userMapper = new Db\UserMapper($this->db, $this->logger);
+        $this->accountMapper = new Db\AccountMapper($this->db, $this->logger);
+        $this->applicationMapper = new Db\ApplicationMapper($this->db, $this->logger);
+        $this->roleMapper = new Db\RoleMapper($this->db, $this->logger);
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @return Core\DataContainer Result of the processor.
@@ -93,35 +125,68 @@ class UserRoleCreate extends Core\ProcessorEntity
         $appid = !empty($appid) ? $appid : null;
         $rid = $this->val('rid', true);
 
-        if ($rid > 2 && empty($appid)) {
-            $message = 'Only Administrator or Account manager roles can have NULL assigned to application';
+        // Validate user role attributes exist.
+        $user = $this->userMapper->findByUid($uid);
+        if (empty($user->getUid())) {
+            throw new Core\ApiException('invalid user ID', 6, $this->id, 400);
+        }
+        if ($accid !== null) {
+            $account = $this->accountMapper->findByAccid($accid);
+            if (empty($account->getAccid())) {
+                throw new Core\ApiException('invalid account ID', 6, $this->id, 400);
+            }
+        }
+        if ($appid !== null) {
+            $application = $this->applicationMapper->findByAppid($appid);
+            if (empty($application->getAppid())) {
+                throw new Core\ApiException('invalid application ID', 6, $this->id, 400);
+            }
+        }
+        $role = $this->roleMapper->findByRid($rid);
+        if (empty($role->getRid())) {
+            throw new Core\ApiException('invalid role ID', 6, $this->id, 400);
+        }
+
+        // Validate roles that do not need appid or accid
+        $roleName = $role->getName();
+        if ($roleName != 'Administrator' && $roleName != 'Account manager' && empty($appid)) {
+            $message = 'only Administrator or Account manager roles can have NULL assigned to application';
             throw new Core\ApiException($message, 6, $this->id, 400);
         }
-        if ($rid > 1 && empty($accid)) {
-            throw new Core\ApiException('Only Administrator role can have NULL assigned to account', 6, $this->id, 400);
+        if ($roleName != 'Administrator' && empty($accid)) {
+            throw new Core\ApiException('only Administrator role can have NULL assigned to account', 6, $this->id, 400);
         }
-        if ($rid < 3) {
+        if ($roleName == 'Administrator' || $roleName == 'Account manager') {
             // Administrator or Account manager should not be assigned an appid.
             $appid = null;
         }
-        if ($rid < 2) {
+        if ($roleName == 'Administrator') {
             // Administrator should not be assigned an accid.
             $accid = null;
         }
 
-        $userRoleMapper = new Db\UserRoleMapper($this->db, $this->logger);
-
-        $userRole = $userRoleMapper->findByFilter(['col' => [
+        $userRole = $this->userRoleMapper->findByFilter(['col' => [
             'uid' => $uid,
             'accid' => $accid,
             'appid' => $appid,
             'rid' => $rid,
         ]]);
         if (!empty($userRole)) {
-            throw new Core\ApiException('User role already exists', 6, $this->id, 400);
+            throw new Core\ApiException('user role already exists', 6, $this->id, 400);
         }
 
         $userRole = new Db\UserRole(null, $accid, $appid, $uid, $rid);
-        return new Core\DataContainer($userRoleMapper->save($userRole), 'boolean');
+        if (!$this->userRoleMapper->save($userRole)) {
+            throw new Core\ApiException('user role save failed, please check the logs', 6, $this->id, 400);
+        }
+
+        $userRole = $this->userRoleMapper->findByFilter(['col' => [
+            'uid' => $uid,
+            'accid' => $accid,
+            'appid' => $appid,
+            'rid' => $rid,
+        ]]);
+        $userRole = $userRole[0];
+        return new Core\DataContainer($userRole->dump(), 'array');
     }
 }
