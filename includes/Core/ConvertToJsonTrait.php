@@ -29,11 +29,11 @@ trait ConvertToJsonTrait
      *
      * @param $data
      *
-     * @return string
+     * @return string|null
      */
-    public function fromEmptyToJson($data): string
+    public function fromEmptyToJson($data): ?string
     {
-        return '';
+        return null;
     }
 
     /**
@@ -86,10 +86,10 @@ trait ConvertToJsonTrait
             return '""';
         }
         // Wrap in double quotes if not already present.
-        if (substr($data, 0, 1) != '"' && substr($data, 0, 6) != '&quot;') {
+        if (substr($data, 0, 1) != '"') {
             $data = '"' . $data;
         }
-        if (substr($data, -1, 1) != '"' && substr($data, -6, 6) != '&quot;') {
+        if (substr($data, -1, 1) != '"') {
             $data = $data . '"';
         }
         return $data;
@@ -104,7 +104,7 @@ trait ConvertToJsonTrait
      */
     public function fromArrayToJson($data): string
     {
-        return json_encode($data);
+        return json_encode($data, true);
     }
 
     /**
@@ -128,7 +128,8 @@ trait ConvertToJsonTrait
      */
     public function fromXmlToJson($data): string
     {
-        return $this->xml2json($data);
+        $xml = simplexml_load_string($data);
+        return  json_encode($xml);
     }
 
     /**
@@ -140,7 +141,7 @@ trait ConvertToJsonTrait
      */
     public function fromHtmlToJson($data): string
     {
-        return $this->xml2json($data);
+        return $this->fromXmlToJson($data);
     }
 
     /**
@@ -190,7 +191,7 @@ trait ConvertToJsonTrait
             }
 
             $textcontent = trim((string)$xml);
-            if (count($textcontent) > 0) {
+            if (!empty($textcontent)) {
                 $jsnode["_"] = $textcontent;
             }
 
