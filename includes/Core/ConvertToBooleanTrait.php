@@ -27,9 +27,9 @@ trait ConvertToBooleanTrait
      *
      * @param $data
      *
-     * @return null
+     * @return boolean|null
      */
-    public function fromEmptyToBoolean($data)
+    public function fromEmptyToBoolean($data): ?bool
     {
         return null;
     }
@@ -127,7 +127,7 @@ trait ConvertToBooleanTrait
     {
         $result = filter_var($data, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         if ($result === null) {
-            throw new ApiException('Failed to convert integer to boolean');
+            throw new ApiException('Failed to convert JSON to boolean');
         }
         return $result;
     }
