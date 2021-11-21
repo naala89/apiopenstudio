@@ -120,18 +120,27 @@ ApiOpenStudio 1.0.0-alpha2
 - Updated the contributing notes.
 - Misc. devops and pipelines fixes.
 
-In development
-==============
+ApiOpenStudio 1.0.0-alpha3
+==========================
 
-- Updated .gitlab-ci so that tests run on all merge requests and deploy to
-  wiki/phpdoc on merges.
 - Wholesale changes in the wiki
-- Moved code of conduct into CODE_OF_CONDUCT.md.
-- Migrated the apiopenstudio projects in the apiopenstudio group in GitLab.
 - Changed the token auth to JWT tokens.
+- Moved code of conduct into CODE_OF_CONDUCT.md.
+- Updated gitlab-ci:
+  - Updated gitlab-ci the use the new ```naala89/bookdown-rsync```,
+    ```naala89/phpdoc-rsync```& ```naala89/apiopenstudio-nginx-php-7.4```
+    images.
+  - Fixed gitlab runner artifacts.
+  - tests run on all merge requests and deploy to wiki/phpdoc on merges.
+  - Updated gitlab-ci the use the new ```naala89/bookdown-rsync```,
+    ```naala89/phpdoc-rsync```& ```naala89/apiopenstudio-nginx-php-7.4```
+    images.
 - Deprecated Cascade logger and created a wrapper for Monolog.
-- Fixed gitlab runner artifacts.
-- Deprecated .env file.
-- Removed ```bookdown/bookdown``` from the composer dev dependencies.
-- Updated gitlab-ci the use the new ```naala89/bookdown-rsync```, 
-```naala89/phpdoc-rsync```& ```naala89/apiopenstudio-nginx-php-7.4``` images.
+- Wiki, Removed ```bookdown/bookdown``` from the composer dev dependencies.
+- Deprecated the Mapper processors.
+- Created new JsonPath and XmlPath processors.
+- Added functional tests for user and role.
+- Created new traits for datatype conversion.
+- Implemented casting on all input vars like VarPost.
+- Create/update CRUD processors now return the value result, rather than 
+  true/false.
