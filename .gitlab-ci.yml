@@ -54,17 +54,21 @@ workflow:
   rules:
     - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
       when: always
+.commit_to_apiopenstudio_develop:
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_COMMIT_BRANCH == "develop" && $CI_COMMIT_TAG == null'
+      when: always
 .merge_request_to_apiopenstudio_master:
   rules:
     - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
       when: always
-.commit_to_apiopenstudio_develop:
-  rules:
-    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_COMMIT_BRANCH == "develop"'
-      when: always
 .commit_to_apiopenstudio_master:
   rules:
-    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_COMMIT_BRANCH == "master" && $CI_COMMIT_TAG == null'
+      when: always
+.tag_to_apiopenstudio_master:
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_COMMIT_BRANCH == "master" && $CI_COMMIT_TAG != null'
       when: always
 
 ##################################
@@ -248,10 +252,11 @@ wiki-prod:
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - ssh-keyscan "$PROD_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - composer install
-    - ./vendor/bin/bookdown includes/wiki/bookdown.json
+    - /composer/vendor/bin/bookdown includes/wiki/bookdown.json
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/wiki/" "$PROD_DEPLOYER"@"$PROD_WIKI_URL":"$PROD_WIKI_PATH/"
+    - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "sudo touch $PROD_WIKI_PATH/sitemap.xml"
     - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_WIKI_PATH/*"
+    - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "sudo chmod 664 $PROD_WIKI_PATH/sitemap.xml"
     - ssh "$PROD_DEPLOYER"@"$PROD_WIKI_URL" "php $SITEMAP_GENERATOR file=$PROD_WIKI_PATH/sitemap.xml site=https://$PROD_WIKI_URL"
 
 ##################################
@@ -316,7 +321,9 @@ phpdoc-prod:
     - if [ ! "$PHPDOC_IGNORE_SYMLINKS" = "true" ]; then export PHPDOC_OPTIONS="--ignore-symlinks $PHPDOC_OPTIONS"; fi
     # Include markers
     - if [ ! "$PHPDOC_MARKERS" = "true" ]; then export PHPDOC_OPTIONS="--markers=$PHPDOC_MARKERS $PHPDOC_OPTIONS"; fi
-    - /opt/phpdoc/bin/phpdoc -d ${CI_PROJECT_DIR}${PHPDOC_PROJECT_ROOT} -t ${PHPDOC_OUTPUT} --title="$PHPDOC_TITLE" ${PHPDOC_OPTIONS}
+    - /opt/phpdoc/bin/phpdoc -d "$CI_PROJECT_DIR$PHPDOC_PROJECT_ROOT" -t "$CI_PROJECT_DIR$PHPDOC_OUTPUT" --title="$PHPDOC_TITLE" ${PHPDOC_OPTIONS}
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL":"$PROD_PHPDOC_PATH/"
+    - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "sudo touch $PROD_PHPDOC_PATH/sitemap.xml"
     - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_PHPDOC_PATH/*"
+    - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "sudo chmod 664 $PROD_PHPDOC_PATH/sitemap.xml"
     - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "php $SITEMAP_GENERATOR file=$PROD_PHPDOC_PATH/sitemap.xml site=https://$PROD_PHPDOC_URL"
