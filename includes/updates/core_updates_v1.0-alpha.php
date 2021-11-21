@@ -13,6 +13,7 @@
  * @link       https://www.apiopenstudio.com
  */
 
+use ApiOpenStudio\Cli\Install;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
 
@@ -58,9 +59,9 @@ function update_all_resources_54_part_1(ADODB_mysqli $db)
  *
  * @throws ApiException
  *
- * @see https://gitlab.com/apiopenstudio/apiopenstudio/-/issues/54
  * @version V1.0.0-alpha2
  *
+ * @see https://gitlab.com/apiopenstudio/apiopenstudio/-/issues/54
  */
 function update_all_resources_54_part_2(ADODB_mysqli $db)
 {
@@ -126,4 +127,79 @@ function update_all_resources_54_part_2(ADODB_mysqli $db)
         echo "Error: insert resource `$name` failed, please check your logs.\n";
         exit;
     }
+}
+
+/**
+ * Change to authentication token processes.
+ *
+ * @param ADODB_mysqli $db
+ *
+ * @throws ApiException
+ *
+ * @version v1.0.0-alpha3
+ *
+ * @see https://gitlab.com/apiopenstudio/apiopenstudio/-/issues/101
+ */
+function change_to_auth_process_101(ADODB_mysqli $db)
+{
+    $config = new Config();
+    // Drop the unused token coumns from the user table.
+    echo "Dropping old/unused user token columns\n";
+    echo "Dropping user.token...\n";
+    $sql = "SELECT * FROM information_schema.COLUMNS ";
+    $sql .= "WHERE TABLE_SCHEMA = '" . $config->__get(['db', 'database']) . "' ";
+    $sql .= "AND TABLE_NAME = 'user' ";
+    $sql .= "AND COLUMN_NAME = 'token'";
+    $result = $db->execute($sql);
+    if ($result->recordCount() === 0) {
+        echo "Cannot drop user.token, it does not exist\n";
+    } else {
+        $sql = "ALTER TABLE user DROP COLUMN token";
+        if (!$db->execute($sql)) {
+            echo "Deleting column failed, please check the logs\n";
+            exit;
+        }
+    }
+    echo "Dropping user.token_ttl...\n";
+    $sql = "SELECT * FROM information_schema.COLUMNS ";
+    $sql .= "WHERE TABLE_SCHEMA = '" . $config->__get(['db', 'database']) . "' ";
+    $sql .= "AND TABLE_NAME = 'user' ";
+    $sql .= "AND COLUMN_NAME = 'token_ttl'";
+    $result = $db->execute($sql);
+    if ($result->recordCount() === 0) {
+        echo "Cannot drop user.token_ttl, it does not exist\n";
+    } else {
+        $sql = "ALTER TABLE user DROP COLUMN token_ttl";
+        if (!$db->execute($sql)) {
+            echo "Deleting column failed, please check the logs\n";
+            exit;
+        }
+    }
+}
+
+/**
+ * Update all core resources.
+ *
+ * @param ADODB_mysqli $db
+ *
+ * @version v1.0.0-alpha3
+ *
+ * @see https://gitlab.com/apiopenstudio/apiopenstudio/-/issues/127
+ */
+function change_to_auth_process_127(ADODB_mysqli $db)
+{
+    // Update all core resources.
+    echo "Removing all core resources from the DB...\n";
+    $sql = 'DELETE FROM resource WHERE appid = ';
+    $sql .= '(SELECT appid from application where accid = (SELECT accid FROM account WHERE name="apiopenstudio") ';
+    $sql .= 'AND name = "core")';
+    if (!$db->execute($sql)) {
+        echo "Deleting core resources failed, please check the logs\n";
+        exit;
+    }
+    echo "Regenerating all Core resources\n";
+    $install = new Install();
+    $install->createLink();
+    $install->useDatabase();
+    $install->createResources();
 }
