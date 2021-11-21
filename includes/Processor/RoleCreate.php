@@ -89,7 +89,11 @@ class RoleCreate extends Core\ProcessorEntity
         }
 
         $role->setName($name);
+        if (!$this->roleMapper->save($role)) {
+            throw new Core\ApiException("Failed to create role, please check the logs.", 7, $this->id, 400);
+        }
 
-        return new Core\DataContainer($this->roleMapper->save($role), 'boolean');
+        $role = $this->roleMapper->findByName($name);
+        return new Core\DataContainer($role->dump(), 'array');
     }
 }

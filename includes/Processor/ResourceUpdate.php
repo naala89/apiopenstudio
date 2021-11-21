@@ -24,6 +24,7 @@ use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
 use ApiOpenStudio\Db\UserRoleMapper;
 use ApiOpenStudio\Core\ResourceValidator;
+use ReflectionException;
 use Spyc;
 
 /**
@@ -149,21 +150,12 @@ class ResourceUpdate extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => 0,
             ],
-            'format' => [
-                'description' => 'The resource metadata format type (json or yaml).',
+            'metadata' => [
+                'description' => 'The resource metadata (security and process sections) as a JSON string',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => ['json', 'yaml'],
-                'default' => 'yaml',
-            ],
-            'meta' => [
-                'description' => 'The resource metadata (security and process sections) as a YAML or JSON string',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['json', 'text'],
+                'limitTypes' => ['json'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -206,10 +198,9 @@ class ResourceUpdate extends Core\ProcessorEntity
         $description = $this->val('description', true);
         $appid = $this->val('appid', true);
         $method = $this->val('method', true);
-        $uri = $this->val('uri', true);
+        $uri = str_replace("\\/", '/', $this->val('uri', true));
         $ttl = $this->val('ttl', true);
-        $format = $this->val('format', true);
-        $meta = $this->val('meta', true);
+        $metadata = $this->val('metadata', true);
 
         $resource = $this->resourceMapper->findByResid($resid);
         $application = $this->applicationMapper->findByAppid($resource->getAppId());
@@ -239,7 +230,7 @@ class ResourceUpdate extends Core\ProcessorEntity
             );
         }
 
-        // Resource is locked.
+        // Update to core application and is locked.
         $account = $this->accountMapper->findByAccid($application->getAccid());
         if (
             $account->getName() == $this->settings->__get(['api', 'core_account'])
@@ -249,57 +240,18 @@ class ResourceUpdate extends Core\ProcessorEntity
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
-        // Proposed account/application are locked.
-        $application = $this->applicationMapper->findByAppid($appid);
-        if (
-            $account->getName() == $this->settings->__get(['api', 'core_account'])
-            && $application->getName() == $this->settings->__get(['api', 'core_application'])
-            && $this->settings->__get(['api', 'core_resource_lock'])
-        ) {
-            throw new Core\ApiException(
-                "Unauthorised: this is a core resource",
-                6,
-                $this->id,
-                400
-            );
+        try {
+            $this->validator->validate(json_decode($metadata, true));
+        } catch (ReflectionException $e) {
+            throw new Core\ApiException($e->getMessage(), 6, $this->id, 400);
         }
 
-        $meta = $this->translateMetaString($format, $meta);
-        $this->validator->validate(json_decode($meta, true));
-
-        return $this->update($resid, $name, $description, $method, $uri, $appid, $ttl, $meta);
-    }
-
-    /**
-     * Covert a string in a format into a JSON encoded string.
-     *
-     * @param string $format The format of the input string.
-     * @param string $string The metadata string.
-     *
-     * @return string|false Normalised string format.
-     *
-     * @throws Core\ApiException Invalid data.
-     */
-    private function translateMetaString(string $format, string $string): ?string
-    {
-        $array = [];
-        switch ($format) {
-            case 'yaml':
-                $array = Spyc::YAMLLoadString($string);
-                if (empty($array)) {
-                    throw new Core\ApiException('Invalid or no YAML supplied', 6, $this->id, 417);
-                }
-                break;
-            case 'json':
-                $array = json_decode(json_encode($string), true);
-                if (empty($array)) {
-                    throw new Core\ApiException('Invalid or no JSON supplied', 6, $this->id, 417);
-                }
-                break;
-            default:
-                break;
+        if (!$this->update($resid, $name, $description, $method, $uri, $appid, $ttl, $metadata)) {
+            throw new Core\ApiException(false, 'boolean');
         }
-        return json_encode($array);
+        $result = $this->resourceMapper->findByResid($resid);
+
+        return new Core\DataContainer($result->dump(), 'array');
     }
 
     /**
@@ -314,7 +266,7 @@ class ResourceUpdate extends Core\ProcessorEntity
      * @param integer $ttl The resource application TTL.
      * @param string $meta The resource metadata json encoded string.
      *
-     * @return Core\DataContainer
+     * @return boolean
      *   Create resource result.
      *
      * @throws Core\ApiException DB exception.
@@ -328,7 +280,7 @@ class ResourceUpdate extends Core\ProcessorEntity
         int $appid,
         int $ttl,
         string $meta
-    ): Core\DataContainer {
+    ): bool {
         $resource = new Resource(
             $resid,
             $appid,
@@ -340,6 +292,6 @@ class ResourceUpdate extends Core\ProcessorEntity
             $ttl
         );
 
-        return new Core\DataContainer($this->resourceMapper->save($resource) ? 'true' : 'false', 'text');
+        return $this->resourceMapper->save($resource);
     }
 }

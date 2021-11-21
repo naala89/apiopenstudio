@@ -198,7 +198,6 @@ class Filter extends Core\ProcessorEntity
         }
 
         foreach ($data as $key => $item) {
-            var_dump($key);
             if (!is_array($item) && !$callback($item)) {
                 unset($data[$key]);
             }

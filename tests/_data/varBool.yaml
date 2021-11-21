@@ -22,4 +22,5 @@ process:
   value:
     processor: var_get
     id: test var_bool value
+    expected_type: boolean
     key: value

@@ -73,7 +73,7 @@ class Sort extends Core\ProcessorEntity
      *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): Core\DataContainer
     {
         parent::process();
 
@@ -116,6 +116,6 @@ class Sort extends Core\ProcessorEntity
 
         $this->logger->debug('api', 'values after sort: ' . print_r($values, true));
 
-        return $values;
+        return new Core\DataContainer($values);
     }
 }

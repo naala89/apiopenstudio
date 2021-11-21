@@ -67,8 +67,8 @@ class Literal extends Core\ProcessorEntity
     {
         parent::process();
 
-        $value = $this->val('value');
-        $type = $this->val('type');
+        $value = $this->val('value', true);
+        $type = $this->val('type', true);
 
         return new Core\DataContainer($value, $type);
     }

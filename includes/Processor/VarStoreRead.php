@@ -47,7 +47,7 @@ class VarStoreRead extends Core\ProcessorEntity
         'input' => [
             'validate_access' => [
                 // phpcs:ignore
-                'description' => 'If set to true, the calling users roles access will be validated. If set to false, then access is open.',
+                'description' => 'If set to true, the calling users roles access will be validated. If set to false, then access is open. By default this is true for security reasons, but to allow consumers to use this in a resource, you will need to set it to false (otherwise access will be denied).',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
@@ -73,12 +73,21 @@ class VarStoreRead extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => '',
             ],
+            'key' => [
+                'description' => 'Var key. If empty, all vars that the user has access to will be returned.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
             'keyword' => [
                 'description' => 'Keyword search',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => [],
+                'limitTypes' => ['integer', 'text'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -131,16 +140,62 @@ class VarStoreRead extends Core\ProcessorEntity
         $validateAccess = $this->val('validate_access', true);
         $vid = $this->val('vid', true);
         $appid = $this->val('appid', true);
+        $key = $this->val('key', true);
         $keyword = $this->val('keyword', true);
         $orderBy = $this->val('order_by', true);
         $direction = $this->val('direction', true);
 
+        if ($validateAccess) {
+            $vars = $this->fetchWithValidation($vid, $appid, $key, $keyword, $orderBy, $direction);
+            if (empty($vars)) {
+                throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
+            }
+        } else {
+            $vars = $this->fetchWithoutValidation($vid, $appid, $key, $keyword, $orderBy, $direction);
+            if (empty($vars)) {
+                throw new Core\ApiException('no results found', 6, $this->id, 400);
+            }
+        }
+
+        $result = [];
+        foreach ($vars as $var) {
+            $result[] = $var->dump();
+        }
+
+        return new Core\DataContainer($result, 'array');
+    }
+
+    /**
+     * Fetch all variables for the search without any user role validation.
+     *
+     * @param $vid
+     *   Var ID filter.
+     * @param $appid
+     *   App ID filter.
+     * @param $key
+     *   Var name filter.
+     * @param $keyword
+     *   Var name search filter.
+     * @param $orderBy
+     *   Order by filter.
+     * @param $direction
+     *   Direction filter.
+     *
+     * @return array
+     *
+     * @throws Core\ApiException
+     */
+    protected function fetchWithoutValidation($vid, $appid, $key, $keyword, $orderBy, $direction): array
+    {
         $params = [];
         if (!empty($vid)) {
-            $params['filter'][] = ['keyword' => $vid, 'column' => 'vid`'];
+            $params['filter'][] = ['value' => (int) $vid, 'column' => '`vid`'];
         }
         if (!empty($appid)) {
             $params['filter'][] = ['value' => (int) $appid, 'column' => 'appid'];
+        }
+        if (!empty($key)) {
+            $params['filter'][] = ['value' => $key, 'column' => 'key'];
         }
         if (!empty($keyword)) {
             $params['filter'][] = ['keyword' => "%$keyword%", 'column' => '`key`'];
@@ -152,17 +207,51 @@ class VarStoreRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        if ($validateAccess) {
-            // return vars in the applications where the user has required app/role access.
-            $vars = $this->varStoreMapper->findByUid(Core\Utilities::getUidFromToken(), $params);
-        } else {
-            $vars = $this->varStoreMapper->findAll($params);
+        return $this->varStoreMapper->findAll($params);
+    }
+
+    /**
+     * Fetch all variables for the search with user role validation.
+     *
+     * @param $vid
+     *   Var ID filter.
+     * @param $appid
+     *   App ID filter.
+     * @param $key
+     *   Var name filter.
+     * @param $keyword
+     *   Var name search filter.
+     * @param $orderBy
+     *   Order by filter.
+     * @param $direction
+     *   Direction filter.
+     *
+     * @return array
+     *
+     * @throws Core\ApiException
+     */
+    protected function fetchWithValidation($vid, $appid, $key, $keyword, $orderBy, $direction): array
+    {
+        $params = [];
+        if (!empty($vid)) {
+            $params['filter'][] = ['value' => (int) $vid, 'column' => 'vs.vid'];
         }
-        $result = [];
-        foreach ($vars as $var) {
-            $result[] = $var->dump();
+        if (!empty($appid)) {
+            $params['filter'][] = ['value' => (int) $appid, 'column' => 'vs.appid'];
+        }
+        if (!empty($key)) {
+            $params['filter'][] = ['value' => $key, 'column' => 'vs.key'];
+        }
+        if (!empty($keyword)) {
+            $params['filter'][] = ['keyword' => "%$keyword%", 'column' => 'vs.key'];
+        }
+        if (!empty($orderBy)) {
+            $params['order_by'] = "vs.$orderBy";
+        }
+        if (!empty($direction)) {
+            $params['direction'] = $direction;
         }
 
-        return new Core\DataContainer($result, 'array');
+        return $this->varStoreMapper->findByUid(Core\Utilities::getUidFromToken(), $params);
     }
 }

@@ -32,7 +32,8 @@ class VarLooselyTyped extends Core\ProcessorEntity
     protected array $details = [
         'name' => 'Var (loosely typed)',
         'machineName' => 'var_loosely_typed',
-        'description' => 'A loosely typed variable (i.e. not strictly typed).',
+        // phpcs:ignore
+        'description' => 'A loosely typed variable (i.e. not strictly typed). There are no restrictions on the input, however the result will have type calculated.',
         'menu' => 'Primitive',
         'input' => [
             'value' => [
@@ -58,9 +59,6 @@ class VarLooselyTyped extends Core\ProcessorEntity
     {
         parent::process();
 
-        $result = $this->val('value');
-        $result->setType('text');
-
-        return $result;
+        return $this->val('value');
     }
 }

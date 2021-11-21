@@ -46,6 +46,7 @@ process:
     id: resource_create_appid
     nullable: false
     key: appid
+    expected_type: integer
   method:
     processor: var_post
     id: resource_create_method
@@ -61,13 +62,10 @@ process:
     id: resource_create_ttl
     nullable: false
     key: ttl
-  format:
-    processor: var_post
-    id: resource_create_format
-    nullable: false
-    key: format
-  meta:
+    expected_type: integer
+  metadata:
     processor: var_post
     id: resource_create_meta
+    expected_type: json
     nullable: false
-    key: meta
+    key: metadata

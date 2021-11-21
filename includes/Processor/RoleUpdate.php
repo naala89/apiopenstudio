@@ -17,6 +17,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Db\RoleMapper;
 
 /**
@@ -66,6 +67,11 @@ class RoleUpdate extends Core\ProcessorEntity
     ];
 
     /**
+     * @var Config ApiOpenStudio settings.
+     */
+    private Config $settings;
+
+    /**
      * RoleUpdate constructor.
      *
      * @param mixed $meta Output meta.
@@ -77,6 +83,7 @@ class RoleUpdate extends Core\ProcessorEntity
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->roleMapper = new RoleMapper($db, $logger);
+        $this->settings = new Config();
     }
 
     /**
@@ -93,8 +100,9 @@ class RoleUpdate extends Core\ProcessorEntity
         $rid = $this->val('rid', true);
         $name = $this->val('name', true);
 
-        if ($rid < 6) {
-            throw new Core\ApiException("Cannot update core roles.", 7, $this->id);
+        // Update to core application and is locked.
+        if ($this->settings->__get(['api', 'core_resource_lock']) && $rid < 6) {
+            throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
         $role = $this->roleMapper->findByName($name);
@@ -107,7 +115,10 @@ class RoleUpdate extends Core\ProcessorEntity
         }
 
         $role->setName($name);
+        if (!$this->roleMapper->save($role)) {
+            throw new Core\ApiException("Failed to update role, please check the logs.", 7, $this->id, 400);
+        }
 
-        return new Core\DataContainer($this->roleMapper->save($role), 'boolean');
+        return new Core\DataContainer($role->dump(), 'array');
     }
 }

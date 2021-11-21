@@ -94,26 +94,16 @@ class Install extends Script
             exit;
         }
 
-        $createDb = '';
-        while (!is_bool($createDb)) {
-            $prompt = "Recreate or create new database, user and user permissions (Y/n)?";
-            $response = strtolower($this->readlineTerminal($prompt));
-            $createDb = $response === 'y' || empty($response) ? true : $createDb;
-            $createDb = $response === 'n' ? false : $createDb;
-        }
-
-        if ($createDb) {
-            $this->createLink(null, null, '', 'root', $this->config->__get(['db', 'root_password']));
-            echo "\n";
-            $this->dropDatabase();
-            echo "\n";
-            $this->dropUser($this->config->__get(['db', 'username']));
-            echo "\n";
-            $this->createDatabase();
-            echo "\n";
-            $this->createUser();
-            echo "\n";
-        }
+        $this->createLink(null, null, '', 'root', $this->config->__get(['db', 'root_password']));
+        echo "\n";
+        $this->dropDatabase();
+        echo "\n";
+        $this->dropUser($this->config->__get(['db', 'username']));
+        echo "\n";
+        $this->createDatabase();
+        echo "\n";
+        $this->createUser();
+        echo "\n";
         $this->useDatabase();
         echo "\n";
         $this->createTables();
@@ -425,7 +415,11 @@ class Install extends Script
             // Add data if required.
             if (isset($tableData['data'])) {
                 foreach ($tableData['data'] as $row) {
-                    if ($table == 'application' && $row['name'] == 'testing' && !$includeTest) {
+                    if ($table == 'account' && $row['name'] == 'testing_acc' && !$includeTest) {
+                        // Do not create the testing account.
+                        continue;
+                    }
+                    if ($table == 'application' && $row['name'] == 'testing_app' && !$includeTest) {
                         // Do not create the testing application.
                         continue;
                     }
@@ -518,6 +512,7 @@ class Install extends Script
      *   Admin user password.
      * @param string $email
      *   Admin user email.
+     * @throws ApiException
      */
     public function createAdminUser(string $username = '', string $password = '', string $email = '')
     {
@@ -536,7 +531,6 @@ class Install extends Script
             $email = $this->readlineTerminal($prompt);
         }
 
-        print_r($this->config->all());
         $logger = new MonologWrapper($this->config->__get(['debug']));
         try {
             $userMapper = new Db\UserMapper($this->db, $logger);

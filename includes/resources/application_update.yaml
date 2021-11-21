@@ -33,10 +33,12 @@ process:
   appid:
     processor: var_uri
     id: application_update_appid
+    expected_type: integer
     index: 0
   accid:
     processor: var_uri
     id: application_update_accid
+    expected_type: integer
     index: 1
   name:
     processor: var_uri

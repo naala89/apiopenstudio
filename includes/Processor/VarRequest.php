@@ -44,12 +44,34 @@ class VarRequest extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => '',
             ],
+            'expected_type' => [
+                // phpcs:ignore
+                'description' => 'The expected input data type. If type is not defined, then ApiOpenStudio will attempt automatically set the data type.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => [],
+                'limitValues' => [
+                    'boolean',
+                    'integer',
+                    'float',
+                    'text',
+                    'array',
+                    'json',
+                    'xml',
+                    'html',
+                    'image',
+                    'file',
+                    'empty',
+                ],
+                'default' => '',
+            ],
             'nullable' => [
                 'description' => 'Allow the processing to continue if the GET or POST variable does not exist.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => ['boolean', 'integer'],
+                'limitTypes' => ['boolean'],
                 'limitValues' => [],
                 'default' => true,
             ],
@@ -68,14 +90,18 @@ class VarRequest extends Core\ProcessorEntity
         parent::process();
 
         $key = $this->val('key', true);
+        $nullable = $this->val('nullable', true);
+        $expectedType = $this->val('expected_type', true);
         $vars = array_merge($this->request->getGetVars(), $this->request->getPostVars());
 
-        if (isset($vars[$key])) {
-            return new Core\DataContainer($vars[$key], 'text');
+        $data = $vars[$key] ?? '';
+        if (!$nullable && empty($data)) {
+            throw new Core\ApiException("Request var does not exist or is empty: $key", 6, 400);
         }
-        if (filter_var($this->val('nullable', true), FILTER_VALIDATE_BOOLEAN)) {
-            return new Core\DataContainer('', 'text');
+
+        if (!empty($expectedType)) {
+            return new Core\DataContainer($data, $expectedType);
         }
-        throw new Core\ApiException("request var $key not available", 6, $this->id, 400);
+        return new Core\DataContainer($data);
     }
 }

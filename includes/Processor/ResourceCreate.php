@@ -23,6 +23,7 @@ use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
 use ApiOpenStudio\Core\ResourceValidator;
+use ReflectionException;
 use Spyc;
 
 /**
@@ -132,21 +133,12 @@ class ResourceCreate extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => 0,
             ],
-            'format' => [
-                'description' => 'The resource metadata format type (json or yaml).',
+            'metadata' => [
+                'description' => 'The resource metadata (security and process sections) as a JSON string',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => ['json', 'yaml'],
-                'default' => '',
-            ],
-            'meta' => [
-                'description' => 'The resource metadata (security and process sections) as a YAML or JSON string',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['json', 'text'],
+                'limitTypes' => ['json'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -188,64 +180,53 @@ class ResourceCreate extends Core\ProcessorEntity
         $method = $this->val('method', true);
         $uri = $this->val('uri', true);
         $ttl = $this->val('ttl', true);
-        $format = $this->val('format', true);
-        $meta = $this->val('meta', true);
+        $metadata = $this->val('metadata', true);
 
+        // Validate the application exists.
         $application = $this->applicationMapper->findByAppid($appid);
-        if (empty($application)) {
+        if (empty($application->getAppid())) {
             throw new Core\ApiException("Invalid application: $appid", 6, $this->id, 400);
         }
 
+        // Validate application is not core and core not locked.
         $account = $this->accountMapper->findByAccid($application->getAccid());
-        if (
-            $account->getName() == $this->settings->__get(['api', 'core_account'])
-            && $application->getName() == $this->settings->__get(['api', 'core_application'])
-            && $this->settings->__get(['api', 'core_resource_lock'])
-        ) {
+        $coreAccount = $this->settings->__get(['api', 'core_account']);
+        $coreApplication = $this->settings->__get(['api', 'core_application']);
+        $coreLock = $this->settings->__get(['api', 'core_resource_lock']);
+        if ($account->getName() == $coreAccount && $application->getName() == $coreApplication && $coreLock) {
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
+        // Validate user has developer role for the application
+        $userRoles = Core\Utilities::getRolesFromToken();
+        $userHasAccess = false;
+        foreach ($userRoles as $userRole) {
+            if ($userRole['role_name'] == 'Developer' && $userRole['appid'] == $appid) {
+                $userHasAccess = true;
+            }
+        }
+        if (!$userHasAccess) {
+            throw new Core\ApiException('Permission denied', 6, $this->id, 400);
+        }
+
+        // Validate the resource does not already exist.
         $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
         if (!empty($resource->getresid())) {
             throw new Core\ApiException('Resource already exists', 6, $this->id, 400);
         }
 
-        $meta = $this->translateMetaString($format, $meta);
-        $this->validator->validate(json_decode($meta, true));
-
-        return $this->create($name, $description, $method, $uri, $appid, $ttl, $meta);
-    }
-
-    /**
-     * Covert a string in a format into an associative array.
-     *
-     * @param string $format The format of the input string.
-     * @param string $string The metadata string.
-     *
-     * @return false|string Normalised string format.
-     *
-     * @throws Core\ApiException Error.
-     */
-    private function translateMetaString(string $format, string $string)
-    {
-        $array = [];
-        switch ($format) {
-            case 'yaml':
-                $array = Spyc::YAMLLoadString($string);
-                if (empty($array)) {
-                    throw new Core\ApiException('Invalid or no YAML supplied', 6, $this->id, 417);
-                }
-                break;
-            case 'json':
-                $array = json_decode(json_encode($string), true);
-                if (empty($array)) {
-                    throw new Core\ApiException('Invalid or no JSON supplied', 6, $this->id, 417);
-                }
-                break;
-            default:
-                break;
+        try {
+            $this->validator->validate(json_decode($metadata, true));
+        } catch (ReflectionException $e) {
+            throw new Core\ApiException($e->getMessage(), 6, $this->id, 400);
         }
-        return json_encode($array);
+
+        if (!$this->create($name, $description, $method, $uri, $appid, $ttl, $metadata)) {
+            throw new Core\ApiException('Failed to create the resource, please check the logs', 6, $this->id, 400);
+        }
+
+        $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
+        return new Core\DataContainer($resource->dump(), 'array');
     }
 
     /**
@@ -259,7 +240,7 @@ class ResourceCreate extends Core\ProcessorEntity
      * @param integer $ttl The resource application TTL.
      * @param string $meta The resource metadata json encoded string.
      *
-     * @return Core\DataContainer
+     * @return bool
      *   Create resource result.
      *
      * @throws Core\ApiException Error.
@@ -272,7 +253,7 @@ class ResourceCreate extends Core\ProcessorEntity
         int $appid,
         int $ttl,
         string $meta
-    ): Core\DataContainer {
+    ): bool {
         $resource = new Resource(
             null,
             $appid,
@@ -283,6 +264,6 @@ class ResourceCreate extends Core\ProcessorEntity
             $meta,
             $ttl
         );
-        return new Core\DataContainer($this->resourceMapper->save($resource) ? 'true' : 'false', 'text');
+        return $this->resourceMapper->save($resource);
     }
 }

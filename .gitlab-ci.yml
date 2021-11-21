@@ -8,14 +8,68 @@
 # @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
-image: naala89/aos-nginx-php-7-4:latest
-
 #cache:
 #  key: "$CI_COMMIT_REF_SLUG"
 #  paths:
 #    - vendor/
 #    - .composer/
 #    - composer.lock
+
+##################################
+## GLOBAL VARIABLES
+##################################
+
+variables:
+  PHPDOC_OUTPUT: "/public/phpdoc"
+  PHPDOC_CONFIG_FILE: ""
+  PHPDOC_TITLE: "ApiOpenStudio PHPDoc"
+  PHPDOC_VERBOSITY: ""
+  PHPDOC_TEMPLATE: ""
+  PHPDOC_INCLUDE_HIDDEN: "false"
+  PHPDOC_IGNORE_SYMLINKS: "false"
+  PHPDOC_MARKERS: ""
+  PHPDOC_OPTIONS: ""
+  PHPDOC_PROJECT_ROOT: "/"
+  CSS_BOOTSWATCH: "spacelab"
+  CSS_PRISM: "prism"
+  MENU_LOGO: "/img/api_open_studio_logo_name_colour.png"
+
+##################################
+## WORKFLOW
+##################################
+
+workflow:
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE != "apiopenstudio" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+    - if: '$CI_PROJECT_NAMESPACE != "apiopenstudio" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+      when: never
+    - when: always
+
+##################################
+## RULES
+##################################
+
+.merge_request_to_apiopenstudio_develop:
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: always
+.merge_request_to_apiopenstudio_master:
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+      when: always
+.commit_to_apiopenstudio_develop:
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_COMMIT_BRANCH == "develop"'
+      when: always
+.commit_to_apiopenstudio_master:
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE == "apiopenstudio" && $CI_COMMIT_BRANCH == "master"'
+      when: always
+
+##################################
+## STAGES
+##################################
 
 stages:
   - test
@@ -26,16 +80,18 @@ stages:
 ## TESTS
 ##################################
 
-tests:
+test-7.4:
   stage: test
+  rules:
+    - !reference [.merge_request_to_apiopenstudio_develop, rules]
+    - !reference [.merge_request_to_apiopenstudio_master, rules]
+  image: naala89/apiopenstudio-nginx-php-7.4:1.0
   services:
     - mariadb:latest
   variables:
     MYSQL_ROOT_PASSWORD: apiopenstudio
     MYSQL_USERNAME: apiopenstudio
     MYSQL_PASSWORD: apiopenstudio
-  only:
-    - merge_request
   artifacts:
     when: on_failure
     paths:
@@ -47,7 +103,7 @@ tests:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-# set ApiOpenStudio test .env and settings.yml
+    # set ApiOpenStudio test .env and settings.yml
     - cp tests/ci.env .env
     - cp tests/ci.settings.yml settings.yml
     - CI_ESCAPED_PROJECT_DIR="$(echo "$CI_PROJECT_DIR" | sed -e 's/[\/]/\\&/g')"
@@ -65,25 +121,90 @@ tests:
         eval export ADMIN_EMAIL="deadletter@apiopenstudio.com"
       fi
     - composer install
-# Linting
+    # Linting
     - echo "Linting the codebase."
     - ./vendor/bin/phpcs --standard=PSR12 --report-file=tests/_output/phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
-# Unit tests
+    # Unit tests
     - echo "Running api unit tests."
     - mkdir log
     - touch log/api.log
     - touch log/db.log
     - chmod -R 777 log
     - ./vendor/bin/codecept run --env ci unit
-# Install MySQL
+    # Install MySQL
     - echo "Setting up the DB for functional tests."
     - mysql --version
     - php tests/runner_generate_db.php
-# Create JWT token keys
+    # Create JWT token keys
     - ssh-keygen -t rsa -b 4096 -P "" -m PEM -f jwt.key
     - openssl rsa -in jwt.key -pubout -outform PEM -out jwt.key.pub
     - chmod 777 jwt.key.pub jwt.key
-# Run functional tests
+    # Run functional tests
+    - echo "Running api functional tests."
+    - cp -Rp ./* /www/
+    - ./vendor/bin/codecept build
+    - ./vendor/bin/codecept run --env ci api
+
+test-8.0:
+  stage: test
+  rules:
+    - !reference [.merge_request_to_apiopenstudio_develop, rules]
+    - !reference [.merge_request_to_apiopenstudio_master, rules]
+  image: naala89/apiopenstudio-nginx-php-8.0:1.0
+  services:
+    - mariadb:latest
+  variables:
+    MYSQL_ROOT_PASSWORD: apiopenstudio
+    MYSQL_USERNAME: apiopenstudio
+    MYSQL_PASSWORD: apiopenstudio
+  artifacts:
+    when: on_failure
+    paths:
+      - tests/_output/
+      - log/
+  script:
+    - echo "Setting up for tests."
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    # set ApiOpenStudio test .env and settings.yml
+    - cp tests/ci.env .env
+    - cp tests/ci.settings.yml settings.yml
+    - CI_ESCAPED_PROJECT_DIR="$(echo "$CI_PROJECT_DIR" | sed -e 's/[\/]/\\&/g')"
+    - sed -i 's/CI_PROJECT_DIR/'"${CI_ESCAPED_PROJECT_DIR}"'/g' settings.yml
+    - >
+      if [ -z "$ADMIN_NAME" ]; then
+        eval export ADMIN_NAME="admin"
+      fi
+    - >
+      if [ -z "$ADMIN_PASS" ]; then
+        eval export ADMIN_PASS="secret"
+      fi
+    - >
+      if [ -z "$ADMIN_EMAIL" ]; then
+        eval export ADMIN_EMAIL="deadletter@apiopenstudio.com"
+      fi
+    - composer install
+    # Linting
+    - echo "Linting the codebase."
+    - ./vendor/bin/phpcs --standard=PSR12 --report-file=tests/_output/phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
+    # Unit tests
+    - echo "Running api unit tests."
+    - mkdir log
+    - touch log/api.log
+    - touch log/db.log
+    - chmod -R 777 log
+    - ./vendor/bin/codecept run --env ci unit
+    # Install MySQL
+    - echo "Setting up the DB for functional tests."
+    - mysql --version
+    - php tests/runner_generate_db.php
+    # Create JWT token keys
+    - ssh-keygen -t rsa -b 4096 -P "" -m PEM -f jwt.key
+    - openssl rsa -in jwt.key -pubout -outform PEM -out jwt.key.pub
+    - chmod 777 jwt.key.pub jwt.key
+    # Run functional tests
     - echo "Running api functional tests."
     - cp -Rp ./* /www/
     - ./vendor/bin/codecept build
@@ -93,14 +214,13 @@ tests:
 ## WIKI
 ##################################
 
-wiki_dev:
+wiki-dev:
   stage: deploy_wiki
-  only:
-    - develop
-  variables:
-    CSS_BOOTSWATCH: ${CSS_BOOTSWATCH}
-    CSS_PRISM: ${CSS_PRISM}
-    MENU_LOGO: ${MENU_LOGO}
+  rules:
+    - !reference [.commit_to_apiopenstudio_develop, rules]
+  image:
+    name: naala89/bookdown-rsync:1.0
+    entrypoint: [ "" ]
   script:
     - echo "Compile and deploy the wiki to dev."
     - eval $(ssh-agent -s)
@@ -109,19 +229,17 @@ wiki_dev:
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - ssh-keyscan "$DEV_WIKI_URL" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - composer install
-    - ./vendor/bin/bookdown includes/wiki/bookdown.json
+    - /composer/vendor/bin/bookdown includes/wiki/bookdown.json
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/wiki/" "$DEV_DEPLOYER"@"$DEV_WIKI_URL":"$DEV_WIKI_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_WIKI_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_WIKI_PATH/*"
 
-wiki_prod:
+wiki-prod:
   stage: deploy_wiki
-  only:
-    - master
-  variables:
-    CSS_BOOTSWATCH: ${CSS_BOOTSWATCH}
-    CSS_PRISM: ${CSS_PRISM}
-    MENU_LOGO: ${MENU_LOGO}
+  rules:
+    - !reference [.commit_to_apiopenstudio_master, rules]
+  image:
+    name: naala89/bookdown-rsync:1.0
+    entrypoint: [ "" ]
   script:
     - echo "Compile and deploy the wiki to prod."
     - eval $(ssh-agent -s)
@@ -140,24 +258,13 @@ wiki_prod:
 ## PHPDOC
 ##################################
 
-phpdoc_dev:
-  image:
-    name: naala89/aos-phpdoc:latest
-    entrypoint: [ "" ]
+phpdoc-dev:
   stage: deploy_phpdoc
-  only:
-    - develop
-  variables:
-    PHPDOC_OUTPUT: "/public/phpdoc"
-    PHPDOC_CONFIG_FILE: ""
-    PHPDOC_TITLE: "ApiOpenStudio PHPDoc"
-    PHPDOC_VERBOSITY: ""
-    PHPDOC_TEMPLATE: ""
-    PHPDOC_INCLUDE_HIDDEN: "false"
-    PHPDOC_IGNORE_SYMLINKS: "false"
-    PHPDOC_MARKERS: ""
-    PHPDOC_OPTIONS: "--ignore vendor/,tests/"
-    PROJECT_ROOT: "/"
+  rules:
+    - !reference [.commit_to_apiopenstudio_develop, rules]
+  image:
+    name: naala89/phpdoc-rsync:3.1
+    entrypoint: [ "" ]
   script:
     - echo "Compile and deploy the phpdoc to dev."
     - eval $(ssh-agent -s)
@@ -178,28 +285,17 @@ phpdoc_dev:
     - if [ ! "$PHPDOC_IGNORE_SYMLINKS" = "true" ]; then export PHPDOC_OPTIONS="--ignore-symlinks $PHPDOC_OPTIONS"; fi
     # Include markers
     - if [ ! "$PHPDOC_MARKERS" = "true" ]; then export PHPDOC_OPTIONS="--markers=$PHPDOC_MARKERS $PHPDOC_OPTIONS"; fi
-    - /opt/phpdoc/bin/phpdoc -d ${CI_PROJECT_DIR}${PROJECT_ROOT} -t ${CI_PROJECT_DIR}${PHPDOC_OUTPUT} --title="$PHPDOC_TITLE" ${PHPDOC_OPTIONS}
+    - /opt/phpdoc/bin/phpdoc -d ${CI_PROJECT_DIR}${PHPDOC_PROJECT_ROOT} -t ${CI_PROJECT_DIR}${PHPDOC_OUTPUT} --title="$PHPDOC_TITLE" ${PHPDOC_OPTIONS}
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
     - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
 
-phpdoc_prod:
-  image:
-    name: naala89/aos-phpdoc:latest
-    entrypoint: [ "" ]
+phpdoc-prod:
   stage: deploy_phpdoc
-  only:
-    - master
-  variables:
-    PHPDOC_OUTPUT: "/public/phpdoc"
-    PHPDOC_CONFIG_FILE: ""
-    PHPDOC_TITLE: "ApiOpenStudio PHPDoc"
-    PHPDOC_VERBOSITY: ""
-    PHPDOC_TEMPLATE: ""
-    PHPDOC_INCLUDE_HIDDEN: "false"
-    PHPDOC_IGNORE_SYMLINKS: "false"
-    PHPDOC_MARKERS: ""
-    PHPDOC_OPTIONS: "--ignore vendor/,tests/"
-    PROJECT_ROOT: "/"
+  rules:
+    - !reference [.commit_to_apiopenstudio_master, rules]
+  image:
+    name: naala89/phpdoc-rsync:3.1
+    entrypoint: [ "" ]
   script:
     - echo "Compile and deploy the phpdoc to prod."
     - eval $(ssh-agent -s)
@@ -220,7 +316,7 @@ phpdoc_prod:
     - if [ ! "$PHPDOC_IGNORE_SYMLINKS" = "true" ]; then export PHPDOC_OPTIONS="--ignore-symlinks $PHPDOC_OPTIONS"; fi
     # Include markers
     - if [ ! "$PHPDOC_MARKERS" = "true" ]; then export PHPDOC_OPTIONS="--markers=$PHPDOC_MARKERS $PHPDOC_OPTIONS"; fi
-    - /opt/phpdoc/bin/phpdoc -d ${CI_PROJECT_DIR}${PROJECT_ROOT} -t ${CI_PROJECT_DIR}${PHPDOC_OUTPUT} --title="$PHPDOC_TITLE" ${PHPDOC_OPTIONS}
+    - /opt/phpdoc/bin/phpdoc -d ${CI_PROJECT_DIR}${PHPDOC_PROJECT_ROOT} -t ${PHPDOC_OUTPUT} --title="$PHPDOC_TITLE" ${PHPDOC_OPTIONS}
     - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL":"$PROD_PHPDOC_PATH/"
     - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_PHPDOC_PATH/*"
     - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "php $SITEMAP_GENERATOR file=$PROD_PHPDOC_PATH/sitemap.xml site=https://$PROD_PHPDOC_URL"

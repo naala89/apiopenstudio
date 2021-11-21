@@ -16,6 +16,9 @@
 namespace ApiOpenStudio\Output;
 
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\ConvertToFileTrait;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\DetectTypeTrait;
 
 /**
  * Class File
@@ -24,6 +27,9 @@ use ApiOpenStudio\Core\ApiException;
  */
 class File extends Output
 {
+    use ConvertToFileTrait;
+    use DetectTypeTrait;
+
     /**
      * {@inheritDoc}
      *
@@ -91,117 +97,27 @@ class File extends Output
      */
     public function setHeader()
     {
-        $this->logger->info('api', 'Output: ' . $this->details()['machineName']);
         parent::setHeader();
         $filename = $this->val('filename', true);
         header("Content-Disposition: attachment; filename='$filename'");
     }
 
     /**
-     * {@inheritDoc}
+     * Cast the data to text.
      *
-     * @param boolean $data Boolean data.
-     *
-     * @return string Boolean as a string.
+     * @throws ApiException
+     *   Throw an exception if unable to convert the data.
      */
-    protected function fromBoolean(bool &$data): string
+    protected function castData(): void
     {
-        return $data ? 'true' : 'false';
-    }
+        $currentType = $this->data->getType();
+        $method = 'from' . ucfirst(strtolower($currentType)) . 'ToFile';
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param integer $data Integer data.
-     *
-     * @return string Integer as a string.
-     */
-    protected function fromInteger(int &$data): string
-    {
-        return (string) $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param float $data Float data.
-     *
-     * @return string Float as a string.
-     */
-    protected function fromFloat(float &$data): string
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data XML data.
-     *
-     * @return string XML string.
-     */
-    protected function fromXml(string &$data): string
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data HTML data.
-     *
-     * @return string HTML string.
-     */
-    protected function fromHtml(string &$data): string
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data Text data.
-     *
-     * @return string Text string.
-     */
-    protected function fromText(string &$data): string
-    {
-        return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param array $data Array data.
-     *
-     * @return string JSON encoded array string.
-     */
-    protected function fromArray(array &$data): string
-    {
-        return json_encode($data);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data Json data.
-     *
-     * @return string JSON string.
-     */
-    protected function fromJson(string &$data): string
-    {
-        return is_string($data) ? $data : json_encode($data);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param mixed $data Image data.
-     *
-     * @return string Image string.
-     */
-    protected function fromImage(&$data): string
-    {
-        return $data;
+        try {
+            $this->data->setData($this->$method($this->data->getData()));
+            $this->data->setType('file');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), 6, $this->id, 400);
+        }
     }
 }

@@ -21,5 +21,6 @@ process:
   id: test varuri processor process
   index:
     processor: var_get
-    id: test varuri processor process varget
+    id: test varuri processor varget
     key: index
+    expected_type: integer

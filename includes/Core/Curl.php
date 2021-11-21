@@ -80,12 +80,26 @@ class Curl
     public string $url;
 
     /**
+     * @var MonologWrapper Logger.
+     */
+    protected MonologWrapper $logger;
+
+    /**
+     * @param MonologWrapper $logger The logger.
+     */
+    public function __construct(MonologWrapper $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
      * Send a GET request using cURL.
      *
      * @param string $url Url for the curl call.
      * @param array $options Additional options.
      *
      * @return string
+     * @throws ApiException
      */
     public function get(string $url, array $options = []): string
     {
@@ -100,6 +114,7 @@ class Curl
      * @param array $options Additional options. This includes the post vars.
      *
      * @return string
+     * @throws ApiException
      */
     public function post(string $url, array $options = array()): string
     {
@@ -117,7 +132,7 @@ class Curl
      */
     private function getCurlOptions(string $url, array $options = []): array
     {
-        return $this->options + array(CURLOPT_URL => $url) + $options;
+        return $this->options + [CURLOPT_URL => $url] + $options;
     }
 
     /**
@@ -127,12 +142,15 @@ class Curl
      * @param array $options Additional options.
      *
      * @return string
+     * @throws ApiException
      */
     private function exec(string $url, array $options = []): string
     {
         $options = $this->getCurlOptions($url, $options);
 
         $ch = curl_init();
+        $this->logger->debug('api', __CLASS__ . ':URL - ' . print_r($url, true));
+        $this->logger->debug('api', __CLASS__ . ': Curl options - ' . print_r($options, true));
         curl_setopt_array($ch, $options);
         $response = curl_exec($ch);
         $this->httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);

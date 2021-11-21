@@ -17,7 +17,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
-use ApiOpenStudio\Db\UserRoleMapper;
+use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\VarStore;
 use ApiOpenStudio\Db\VarStoreMapper;
 
@@ -29,6 +29,16 @@ use ApiOpenStudio\Db\VarStoreMapper;
 class VarStoreCreate extends Core\ProcessorEntity
 {
     /**
+     * @var array|string[] Array of permitted roles
+     */
+    protected array $permittedRoles = [
+        'Administrator',
+        'Account manager',
+        'Application manager',
+        'Developer',
+    ];
+
+    /**
      * Var store mapper class.
      *
      * @var VarStoreMapper
@@ -36,11 +46,11 @@ class VarStoreCreate extends Core\ProcessorEntity
     private VarStoreMapper $varStoreMapper;
 
     /**
-     * User role mapper class.
+     * Application mapper class.
      *
-     * @var UserRoleMapper
+     * @var ApplicationMapper
      */
-    private UserRoleMapper $userRoleMapper;
+    private ApplicationMapper $applicationMapper;
 
     /**
      * {@inheritDoc}
@@ -50,19 +60,10 @@ class VarStoreCreate extends Core\ProcessorEntity
     protected array $details = [
         'name' => 'Var store create',
         'machineName' => 'var_store_create',
-        'description' => 'Create a variable in the var store.',
+        // phpcs:ignore
+        'description' => 'Create a variable in the var store. The return result is an error object (on failure) or the newly created object.',
         'menu' => 'Var store',
         'input' => [
-            'validate_access' => [
-                // phpcs:ignore
-                'description' => 'If set to true, the calling users roles access will be validated. If set to false, then access is open.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['boolean'],
-                'limitValues' => [],
-                'default' => true,
-            ],
             'appid' => [
                 'description' => 'Application ID that the var will be assigned to.',
                 'cardinality' => [1, 1],
@@ -106,7 +107,7 @@ class VarStoreCreate extends Core\ProcessorEntity
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->varStoreMapper = new VarStoreMapper($db, $logger);
-        $this->userRoleMapper = new UserRoleMapper($db, $logger);
+        $this->applicationMapper = new ApplicationMapper($db, $logger);
     }
 
     /**
@@ -120,19 +121,33 @@ class VarStoreCreate extends Core\ProcessorEntity
     {
         parent::process();
 
-        $uid = Core\Utilities::getUidFromToken();
-        $validateAccess = $this->val('validate_access', true);
         $appid = $this->val('appid', true);
         $key = $this->val('key', true);
         $val = $this->val('val', true);
 
-        if ($validateAccess) {
-            if (
-                !$this->userRoleMapper->findByUidAppidRolename($uid, $appid, 'Application manager')
-                && !$this->userRoleMapper->findByUidAppidRolename($uid, $appid, 'Developer')
-            ) {
-                throw new Core\ApiException("permission denied (appid: $appid)", 6, $this->id, 400);
+        $permitted = false;
+        $roles = Core\Utilities::getRolesFromToken();
+        $accounts = [];
+        foreach ($roles as $role) {
+            if ($role['role_name'] == 'Administrator' && in_array('Administrator', $this->permittedRoles)) {
+                $permitted = true;
+            } elseif ($role['role_name'] == 'Account manager' && in_array('Account manager', $this->permittedRoles)) {
+                $accid = $role['accid'];
+                if (!isset($accounts[$accid])) {
+                    $accountsObjects = $this->applicationMapper->findByAccid($accid);
+                    foreach ($accountsObjects as $accountObject) {
+                        $accounts[$accid][] = $accountObject->getAppid();
+                    }
+                }
+                if (in_array($appid, $accounts[$accid])) {
+                    $permitted = true;
+                }
+            } elseif ($role['appid'] == $appid && in_array($role['role_name'], $this->permittedRoles)) {
+                $permitted = true;
             }
+        }
+        if (!$permitted) {
+            throw new Core\ApiException("permission denied", 6, $this->id, 400);
         }
 
         $varStore = $this->varStoreMapper->findByAppIdKey($appid, $key);
@@ -142,6 +157,9 @@ class VarStoreCreate extends Core\ProcessorEntity
 
         $varStore = new VarStore(null, $appid, $key, $val);
 
-        return new Core\DataContainer($this->varStoreMapper->save($varStore));
+        $this->varStoreMapper->save($varStore);
+        $varStore = $this->varStoreMapper->findByAppIdKey($appid, $key);
+
+        return new Core\DataContainer($varStore->dump(), 'array');
     }
 }

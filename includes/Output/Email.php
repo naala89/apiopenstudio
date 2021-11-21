@@ -133,105 +133,16 @@ class Email extends Output
         if (!$result) {
             throw new Core\ApiException('Email message send failed', 1, $this->id, 500);
         }
+
         return new Core\DataContainer("$result messages sent.", 'text');
     }
 
     /**
-     * {@inheritDoc}
+     * Cast the data to email.
      *
-     * @param string $data Incoming data.
-     *
-     * @return void
+     * Nothing to do here.
      */
-    protected function fromXml(string &$data)
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param integer $data Incoming data.
-     *
-     * @return void
-     */
-    protected function fromInteger(int &$data)
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param boolean $data Incoming data.
-     *
-     * @return void
-     */
-    protected function fromBoolean(bool &$data)
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param float $data Incoming data.
-     *
-     * @return void
-     */
-    protected function fromFloat(float &$data)
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data Incoming data.
-     *
-     * @return void
-     */
-    protected function fromJson(string &$data)
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data Incoming data.
-     *
-     * @return void
-     */
-    protected function fromHtml(string &$data)
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $data Incoming data.
-     *
-     * @return void
-     */
-    protected function fromText(string &$data)
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param array $data Incoming data.
-     *
-     * @return void
-     */
-    protected function fromArray(array &$data)
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param mixed $data Incoming data.
-     *
-     * @return void
-     */
-    protected function fromImage(&$data)
+    protected function castData(): void
     {
     }
 }

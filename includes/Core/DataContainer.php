@@ -15,8 +15,6 @@
 
 namespace ApiOpenStudio\Core;
 
-use DOMDocument;
-
 /**
  * Class DataContainer
  *
@@ -24,6 +22,11 @@ use DOMDocument;
  */
 class DataContainer extends Entity
 {
+    // phpcs:ignore
+    use DetectTypeTrait, ConvertToBooleanTrait, ConvertToIntegerTrait, ConvertToFloatTrait, ConvertToTextTrait, ConvertToArrayTrait, ConvertToJsonTrait, ConvertToXmlTrait, ConvertToHtmlTrait, ConvertToImageTrait {
+        ConvertToJsonTrait::xml2json insteadof ConvertToArrayTrait;
+    }
+
     /**
      * All data types.
      *
@@ -37,6 +40,7 @@ class DataContainer extends Entity
         'array',
         'json',
         'xml',
+        'html',
         'image',
         'file',
         'empty',
@@ -61,56 +65,26 @@ class DataContainer extends Entity
      *
      * @param mixed $data Data stored in the container.
      * @param string|null $dataType Data type.
+     *
+     * @throws ApiException
      */
     public function __construct($data, string $dataType = null)
     {
-        $dataType = empty($dataType) ? $this->detectType($data) : $dataType;
-        $this->setType($dataType);
-        $this->setData($data);
-    }
-
-    /**
-     * Get the data.
-     *
-     * @return mixed
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    /**
-     * Set the data.
-     *
-     * @param mixed $val Data.
-     *
-     * @return void
-     */
-    public function setData($val)
-    {
-        $this->data = $val;
-    }
-
-    /**
-     * Get the data type.
-     *
-     * @return string
-     */
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    /**
-     * Set the data type.
-     *
-     * @param string $val Data type.
-     *
-     * @return void
-     */
-    public function setType(string $val)
-    {
-        $this->type = $val;
+        if (empty($dataType)) {
+            $this->setData($data);
+        } else {
+            if (!in_array($dataType, $this->types)) {
+                throw new ApiException("invalid datatype, cannot set DataContainer to: $dataType");
+            }
+            $detectedType = $this->detectType($data);
+            $method = 'from' . ucfirst(strtolower($detectedType)) . 'To' . ucfirst(strtolower($dataType));
+            if (!method_exists(__CLASS__, $method)) {
+                throw new ApiException("could not find method to cast: $method");
+            }
+            $data = $this->$method($data);
+            $this->data = $data;
+            $this->type = $dataType;
+        }
     }
 
     /**
@@ -124,165 +98,59 @@ class DataContainer extends Entity
     }
 
     /**
-     * Detect the type of data for the input string.
+     * Set the data.
      *
-     * @param mixed $data Data to test.
-     *
-     * @return string The data type.
+     * @param mixed $data
+     *   Data.
      */
-    private function detectType($data): string
+    public function setData($data)
     {
-        if ($this->isEmpty($data)) {
-            return 'empty';
-        }
-        if ($this->isBool($data)) {
-            return 'boolean';
-        }
-        if ($this->isInt($data)) {
-            return 'integer';
-        }
-        if ($this->isFloat($data)) {
-            return 'float';
-        }
-        if ($this->isArray($data)) {
-            return 'array';
-        }
-        if ($this->isJson($data)) {
-            return 'json';
-        }
-        if ($this->isHtml($data)) {
-            return 'html';
-        }
-        if ($this->isXml($data)) {
-            return 'xml';
-        }
-        return 'text';
+        $this->data = $data;
+        $this->type = $this->detectType($data);
     }
 
     /**
-     * Validate a variable is empty.
+     * Get the data.
      *
-     * @param mixed $var Variable to test.
-     *
-     * @return boolean
+     * @return mixed
      */
-    private function isEmpty($var): bool
+    public function getData()
     {
-        return $var !== 0 && $var !== '0' && $var !== false && empty($var);
+        return $this->data;
     }
 
     /**
-     * Validate a variable is boolean.
+     * Set the data type.
      *
-     * @param mixed $var Variable to test.
+     * This will also cast the data to the new type.
      *
-     * @return boolean
+     * @param string $type
+     *   Data type.
+     *
+     * @throws ApiException
      */
-    private function isBool($var): bool
+    public function setType(string $type)
     {
-        return $var === "true" || $var === "false" || is_bool($var);
-    }
-
-    /**
-     * Validate a variable is integer.
-     *
-     * @param mixed $var Variable to test.
-     *
-     * @return boolean
-     */
-    private function isInt($var): bool
-    {
-        if (is_array($var)) {
-            return false;
+        $detectedType = $this->detectType($this->data);
+        if (!in_array($type, $this->types)) {
+            throw new ApiException("invalid datatype, cannot set DataContainer to: $type");
         }
-        if ($var === 0 || $var === '0') {
-            return true;
+        $method = 'from' . ucfirst(strtolower($detectedType)) . 'To' . ucfirst(strtolower($type));
+        if (!method_exists(__CLASS__, $method)) {
+            throw new ApiException("could not find method to cast: $method");
         }
-        if ((int) ltrim($var, '0') != ltrim($var, '0')) {
-            return false;
-        }
-        return is_int(filter_var(ltrim($var, '0'), FILTER_VALIDATE_INT, ['default' => null]));
+        $data = $this->$method($this->data);
+        $this->data = $data;
+        $this->type = $type;
     }
 
     /**
-     * Validate a variable is float.
+     * Get the data type.
      *
-     * @param mixed $var Variable to test.
-     *
-     * @return boolean
+     * @return string
      */
-    private function isFloat($var): bool
+    public function getType(): string
     {
-        return is_float(filter_var($var, FILTER_VALIDATE_FLOAT, ['default' => null]));
-    }
-
-    /**
-     * Validate a variable is an array.
-     *
-     * @param mixed $var Variable to test.
-     *
-     * @return boolean
-     */
-    private function isArray($var): bool
-    {
-        return is_array($var);
-    }
-
-    /**
-     * Validate a variable is JSON.
-     *
-     * @param mixed $var Variable to test.
-     *
-     * @return boolean
-     */
-    private function isJson($var): bool
-    {
-        json_decode($var);
-        return (json_last_error() == JSON_ERROR_NONE);
-    }
-
-    /**
-     * Validate a variable is HTML.
-     *
-     * @param mixed $var Variable to test.
-     *
-     * @return boolean
-     */
-    private function isHtml($var): bool
-    {
-        $var = trim($var);
-
-        if (empty($var)) {
-            return false;
-        }
-
-        if (stripos($var, '<!DOCTYPE html>') === false) {
-            return false;
-        }
-
-        libxml_use_internal_errors(true);
-        $doc = new DOMDocument();
-        $doc->loadHTML($var);
-        $errors = libxml_get_errors();
-        libxml_clear_errors();
-
-        return empty($errors);
-    }
-
-    /**
-     * Validate a variable is XML.
-     *
-     * @param mixed $var Variable to test.
-     *
-     * @return boolean
-     */
-    private function isXml($var): bool
-    {
-        libxml_use_internal_errors(true);
-        $testXml = simplexml_load_string($var);
-        if ($testXml) {
-            return true;
-        }
-        return false;
+        return $this->type;
     }
 }

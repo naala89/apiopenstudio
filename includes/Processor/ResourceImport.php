@@ -22,6 +22,7 @@ use ApiOpenStudio\Db\AccountMapper;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
+use ReflectionException;
 use Symfony\Component\Yaml\Exception\ParseException;
 use ApiOpenStudio\Db\UserRoleMapper;
 use ApiOpenStudio\Core\ResourceValidator;
@@ -163,6 +164,7 @@ class ResourceImport extends Core\ProcessorEntity
             );
         }
 
+        // Validate the YAML/JSON.
         $resource = $resource->getType() == 'file' ? file_get_contents($resource->getData()) : $resource->getData();
         if ($value = json_decode($resource, true)) {
             $resource = $value;
@@ -183,17 +185,20 @@ class ResourceImport extends Core\ProcessorEntity
 
         $this->logger->debug('api', 'Decoded new resource: ' . print_r($resource, true));
 
+        // Validate required keys in the imported file.
         foreach ($this->requiredKeys as $requiredKey) {
             if (!isset($resource[$requiredKey])) {
                 $this->logger->error('api', "Missing $requiredKey in new resource");
                 throw new Core\ApiException("Missing $requiredKey in new resource", 6, $this->id, 400);
             }
         }
+        // Validate TTL in the imported file.
         if ($resource['ttl'] < 0) {
             $this->logger->error('api', 'Negative ttl in new resource');
             throw new Core\ApiException("Negative ttl in new resource", 6, $this->id, 400);
         }
 
+        // Validate user has developer role for the appid.
         $role = $this->userRoleMapper->findByUidAppidRolename(
             $uid,
             $resource['appid'],
@@ -209,17 +214,7 @@ class ResourceImport extends Core\ProcessorEntity
             );
         }
 
-        $meta = [];
-        if (isset($resource['security'])) {
-            $meta = array_merge($meta, ['security' => $resource['security']]);
-        }
-        if (isset($resource['process'])) {
-            $meta = array_merge($meta, ['process' => $resource['process']]);
-        }
-        if (isset($resource['output'])) {
-            $meta = array_merge($meta, ['output' => $resource['output']]);
-        }
-
+        // Validate the application exists.
         $application = $this->applicationMapper->findByAppid($resource['appid']);
         if (empty($application)) {
             $this->logger->error('api', 'Invalid application: ' . $resource['appid']);
@@ -231,11 +226,12 @@ class ResourceImport extends Core\ProcessorEntity
             );
         }
 
+        // Validate the account exists.
         $account = $this->accountMapper->findByAccid($application->getAccid());
         if (
             $account->getName() == $this->settings->__get(['api', 'core_account'])
-                && $application->getName() == $this->settings->__get(['api', 'core_application'])
-                && $this->settings->__get(['api', 'core_resource_lock'])
+            && $application->getName() == $this->settings->__get(['api', 'core_application'])
+            && $this->settings->__get(['api', 'core_resource_lock'])
         ) {
             $this->logger->error('api', 'Unauthorised: this is the core application');
             throw new Core\ApiException(
@@ -246,6 +242,7 @@ class ResourceImport extends Core\ProcessorEntity
             );
         }
 
+        // Validate the resource does not already exist.
         $resourceExists = $this->resourceMapper->findByAppIdMethodUri(
             $resource['appid'],
             $resource['method'],
@@ -256,17 +253,45 @@ class ResourceImport extends Core\ProcessorEntity
             throw new Core\ApiException('Resource already exists', 6, $this->id, 400);
         }
 
-        $this->validator->validate($meta);
+        // Merge the sections into final metadata.
+        $meta = [];
+        if (isset($resource['security'])) {
+            $meta = array_merge($meta, ['security' => $resource['security']]);
+        }
+        if (isset($resource['process'])) {
+            $meta = array_merge($meta, ['process' => $resource['process']]);
+        }
+        if (isset($resource['output'])) {
+            $meta = array_merge($meta, ['output' => $resource['output']]);
+        }
 
-        return $this->create(
-            $resource['name'],
-            $resource['description'],
-            $resource['method'],
-            $resource['uri'],
+        // Validate the metadata.
+        try {
+            $this->validator->validate($meta);
+        } catch (Core\ApiException | ReflectionException $e) {
+            throw new Core\ApiException($e->getMessage(), 6, $this->id, 400);
+        }
+
+        if (
+            !$this->create(
+                $resource['name'],
+                $resource['description'],
+                $resource['method'],
+                $resource['uri'],
+                $resource['appid'],
+                $resource['ttl'],
+                json_encode($meta)
+            )
+        ) {
+            throw new Core\ApiException(false, 'boolean');
+        }
+        $result = $this->resourceMapper->findByAppIdMethodUri(
             $resource['appid'],
-            $resource['ttl'],
-            json_encode($meta)
+            $resource['method'],
+            $resource['uri']
         );
+
+        return new Core\DataContainer($result->dump(), 'array');
     }
 
     /**
@@ -303,6 +328,10 @@ class ResourceImport extends Core\ProcessorEntity
             $meta,
             $ttl
         );
-        return new Core\DataContainer($this->resourceMapper->save($resource) ? 'true' : 'false', 'text');
+        if (!$this->resourceMapper->save($resource)) {
+            return new Core\DataContainer(false);
+        }
+        $resource = $this->resourceMapper->findByAppIdMethodUri($appid, strtolower($method), strtolower($uri));
+        return new Core\DataContainer($resource->dump(), 'array');
     }
 }

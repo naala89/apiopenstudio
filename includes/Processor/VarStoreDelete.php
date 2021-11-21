@@ -17,7 +17,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
-use ApiOpenStudio\Db\UserRoleMapper;
+use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\VarStoreMapper;
 
 /**
@@ -28,6 +28,16 @@ use ApiOpenStudio\Db\VarStoreMapper;
 class VarStoreDelete extends Core\ProcessorEntity
 {
     /**
+     * @var array|string[] Array of permitted roles
+     */
+    protected array $permittedRoles = [
+        'Administrator',
+        'Account manager',
+        'Application manager',
+        'Developer',
+    ];
+
+    /**
      * Var store mapper class.
      *
      * @var VarStoreMapper
@@ -35,11 +45,11 @@ class VarStoreDelete extends Core\ProcessorEntity
     private VarStoreMapper $varStoreMapper;
 
     /**
-     * User role mapper class.
+     * Account mapper class.
      *
-     * @var UserRoleMapper
+     * @var ApplicationMapper
      */
-    private UserRoleMapper $userRoleMapper;
+    private ApplicationMapper $applicationMapper;
 
     /**
      * {@inheritDoc}
@@ -52,16 +62,6 @@ class VarStoreDelete extends Core\ProcessorEntity
         'description' => 'Delete a var store variable.',
         'menu' => 'Var store',
         'input' => [
-            'validate_access' => [
-                // phpcs:ignore
-                'description' => 'If set to true, the calling users roles access will be validated. If set to false, then access is open.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['boolean'],
-                'limitValues' => [],
-                'default' => true,
-            ],
             'vid' => [
                 'description' => 'Var store ID.',
                 'cardinality' => [1, 1],
@@ -86,7 +86,6 @@ class VarStoreDelete extends Core\ProcessorEntity
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->varStoreMapper = new VarStoreMapper($db, $logger);
-        $this->userRoleMapper = new UserRoleMapper($db, $logger);
     }
 
     /**
@@ -100,31 +99,40 @@ class VarStoreDelete extends Core\ProcessorEntity
     {
         parent::process();
 
-        $uid = Core\Utilities::getUidFromToken();
-        $validateAccess = $this->val('validate_access', true);
         $vid = $this->val('vid', true);
 
         $var = $this->varStoreMapper->findByVid($vid);
         if (empty($var->getVid())) {
             throw new Core\ApiException("unknown vid: $vid", 6, $this->id, 400);
         }
+        $appid = $var->getAppid();
 
-        if ($validateAccess) {
-            if (
-                !$this->userRoleMapper->findByUidAppidRolename(
-                    $uid,
-                    $var->getAppid(),
-                    'Application manager'
-                ) && !$this->userRoleMapper->findByUidAppidRolename(
-                    $uid,
-                    $var->getAppid(),
-                    'Developer'
-                )
-            ) {
-                throw new Core\ApiException('permission denied (appid: ' . $var->getAppid() . ')', 6, $this->id, 400);
+        // Validate access to the existing var's application
+        $permitted = false;
+        $roles = Core\Utilities::getRolesFromToken();
+        $accounts = [];
+        foreach ($roles as $role) {
+            if ($role['role_name'] == 'Administrator' && in_array('Administrator', $this->permittedRoles)) {
+                $permitted = true;
+            } elseif ($role['role_name'] == 'Account manager' && in_array('Account manager', $this->permittedRoles)) {
+                $accid = $role['accid'];
+                if (!isset($accounts[$accid])) {
+                    $accountsObjects = $this->applicationMapper->findByAccid($accid);
+                    foreach ($accountsObjects as $accountObject) {
+                        $accounts[$accid][] = $accountObject->getAppid();
+                    }
+                }
+                if (in_array($appid, $accounts[$accid])) {
+                    $permitted = true;
+                }
+            } elseif ($role['appid'] == $appid && in_array($role['role_name'], $this->permittedRoles)) {
+                $permitted = true;
             }
         }
+        if (!$permitted) {
+            throw new Core\ApiException("permission denied", 6, $this->id, 400);
+        }
 
-        return new Core\DataContainer($this->varStoreMapper->delete($var));
+        return new Core\DataContainer($this->varStoreMapper->delete($var), 'boolean');
     }
 }

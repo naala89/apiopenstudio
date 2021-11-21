@@ -34,4 +34,5 @@ process:
   urid:
     processor: var_uri
     id: user_role_delete_urid
+    expected_type: integer
     index: 0
