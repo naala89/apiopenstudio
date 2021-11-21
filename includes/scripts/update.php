@@ -15,9 +15,11 @@
 
 require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
+use ApiOpenStudio\Cli\Update;
+
 global $argv;
 
-$install = new \ApiOpenStudio\Cli\Update();
+$install = new Update();
 
 $install->exec($argv);
 
