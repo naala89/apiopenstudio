@@ -107,20 +107,22 @@ class ValidateTokenRoles extends ValidateToken
     protected function validateUserRoles(array $permittedRoles, bool $validateAccount, bool $validateApplication): bool
     {
         foreach ($this->roles as $userRole) {
+            $tempValidateAccount = $validateAccount;
+            $tempValidateApplication = $validateApplication;
             // Do not validate accid or appid for Administrator role.
             if ($userRole['role_name'] == 'Administrator') {
-                $validateAccount = false;
-                $validateApplication = false;
+                $tempValidateAccount = false;
+                $tempValidateApplication = false;
             }
             // Only validate accid for Account manager role.
             if ($userRole['role_name'] == 'Account manager') {
-                $validateAccount = false;
+                $tempValidateApplication = false;
             }
-            // Normal user, validate role, accid, appid
+            // Validate role, accid, appid
             if (
                 in_array($userRole['role_name'], $permittedRoles)
-                && (!$validateAccount || $this->request->getAccId() == $userRole['accid'])
-                && (!$validateApplication || $this->request->getAppId() == $userRole['appid'])
+                && (!$tempValidateAccount || $this->request->getAccId() == $userRole['accid'])
+                && (!$tempValidateApplication || $this->request->getAppId() == $userRole['appid'])
             ) {
                 return true;
             }
