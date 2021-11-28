@@ -99,8 +99,6 @@ class Cast extends Core\ProcessorEntity
         $container = $this->val('data');
         $dataType = $this->val('data_type', true);
 
-        $inputIsNull = $container->getData() === null;
-
         try {
             $method = 'from' . ucfirst(strtolower($container->getType())) . 'To' . ucfirst(strtolower($dataType));
             if (!method_exists(__CLASS__, $method)) {
