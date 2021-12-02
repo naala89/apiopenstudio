@@ -68,3 +68,4 @@ api:
   jwt_life: "+6 hour"
   jwt_issuer: localhost
   jwt_permitted_for: localhost
+  openapi_version: "3.0"
