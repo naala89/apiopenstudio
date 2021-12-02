@@ -25,9 +25,9 @@ class OpenApiPath2 extends OpenApiPathAbstract
     /**
      * {@inheritDoc}
      */
-    public function setDefault(Resource $resource): array
+    public function setDefault(Resource $resource)
     {
-        return [
+        $this->definition = [
             $resource->getUri() => [
                 $resource->getMethod() => [
                     'description' => $resource->getDescription(),

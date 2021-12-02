@@ -169,7 +169,7 @@ class ApplicationCreate extends ProcessorEntity
 
         $settings = new Config();
         $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
-            substr($settings->__get(['api', 'openapi_version']), -1, 1);
+            substr($settings->__get(['api', 'openapi_version']), 0, 1);
         $openApiClass = new $openApiClassName();
         if (!empty($openApi)) {
             $openApiClass->import($openApi);

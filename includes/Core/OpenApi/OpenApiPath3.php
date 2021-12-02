@@ -22,9 +22,12 @@ use ApiOpenStudio\Db\Resource;
  */
 class OpenApiPath3 extends OpenApiPathAbstract
 {
-    public function setDefault(Resource $resource): array
+    /**
+     * {@inheritDoc}
+     */
+    public function setDefault(Resource $resource)
     {
-        return [
+        $this->definition = [
             $resource->getUri() => [
                 $resource->getMethod() => [
                     'description' => $resource->getDescription(),

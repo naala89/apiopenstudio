@@ -23,7 +23,7 @@ use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Db\Account;
 use ApiOpenStudio\Db\AccountMapper;
 use ApiOpenStudio\Db\ApplicationMapper;
-use ApiOpenStudioAdmin\Core\Config;
+use ApiOpenStudio\Core\Config;
 
 /**
  * Class AccountUpdate
@@ -135,11 +135,16 @@ class AccountUpdate extends ProcessorEntity
     {
         $settings = new Config();
         $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
-            substr($settings->__get(['api', 'openapi_version']), -1, 1);
+            substr($settings->__get(['api', 'openapi_version']), 0, 1);
         $openApi = new $openApiClassName();
         $applications = $this->applicationMapper->findByAccid($account->getAccid());
         foreach ($applications as $application) {
-            $openApi->import($application->getOpenapi());
+            $schema = $application->getOpenapi();
+            if (!empty($schema)) {
+                $openApi->import($application->getOpenapi());
+            } else {
+                $openApi->setDefault($account->getName(), $application->getName());
+            }
             $openApi->setAccount($account->getName());
             $application->setOpenapi($openApi->export());
             $this->applicationMapper->save($application);

@@ -265,8 +265,8 @@ class ResourceUpdate extends ProcessorEntity
         $schema = json_decode($resource->getOpenapi(), true);
         if (empty($schema)) {
             $settings = new Config();
-            $openApiClassName = "\\ApiOpenStudio\\\OpenApi\\OpenApi" .
-                substr($settings->__get(['api', 'openapi_version']), -1, 1);
+            $openApiClassName = "\\ApiOpenStudio\\\OpenApi\\OpenApiPath" .
+                substr($settings->__get(['api', 'openapi_version']), 0, 1);
             $openApi = new $openApiClassName();
             $schema = $openApi->getDefaultResourceSchema($resource);
             $resource->setOpenapi(json_encode($schema));

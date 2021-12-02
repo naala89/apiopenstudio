@@ -60,7 +60,7 @@ abstract class OpenApiParentAbstract
     /**
      * Export the definition.
      *
-     * @param bool $encoded
+     * @param bool $encoded JSON encoded.
      *
      * @return array|string
      *

@@ -140,7 +140,7 @@ class OpenApiParent2 extends OpenApiParentAbstract
      */
     public function setAccount(string $accountName)
     {
-        $this->definition['basePath'] = preg_replace('/.*\//', $accountName, $this->definition['basePath']);
+        $this->definition['basePath'] = preg_replace('/.*\//', "$accountName/", $this->definition['basePath']);
     }
 
     /**
@@ -155,7 +155,7 @@ class OpenApiParent2 extends OpenApiParentAbstract
             $applicationName,
             $this->definition['info']['description']
         );
-        $this->definition['basePath'] = preg_replace('/\/.*/', $applicationName, $this->definition['basePath']);
+        $this->definition['basePath'] = preg_replace('/\/.*/', "/$applicationName", $this->definition['basePath']);
     }
 
     /**

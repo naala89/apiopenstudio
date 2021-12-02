@@ -194,7 +194,7 @@ class ResourceCreate extends ProcessorEntity
         $uri = $this->val('uri', true);
         $ttl = $this->val('ttl', true);
         $metadata = $this->val('metadata', true);
-        $openapi = $this->val('openapi', true);
+        $schema = $this->val('openapi', true);
 
         // Validate the application exists.
         $application = $this->applicationMapper->findByAppid($appid);
@@ -246,12 +246,15 @@ class ResourceCreate extends ProcessorEntity
             '',
             $ttl
         );
-        if (empty($openapi)) {
+        if (empty($schema)) {
             $settings = new Config();
-            $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApi" .
-                substr($settings->__get(['api', 'openapi_version']), -1, 1);
+            $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiPath" .
+                substr($settings->__get(['api', 'openapi_version']), 0, 1);
             $openApi = new $openApiClassName();
-            $resource->setOpenapi(json_encode($openApi->getDefaultResourceSchema($resource)));
+            $openApi->setDefault($resource);
+            $resource->setOpenapi($openApi->export());
+        } else {
+            $resource->setOpenapi($schema);
         }
 
         if (!$this->resourceMapper->save($resource)) {

@@ -230,7 +230,7 @@ class ApplicationUpdate extends ProcessorEntity
     {
         $settings = new Config();
         $openApiClassName = "\\ApiOpenStudio\\\OpenApi\\OpenApiParent" .
-            substr($settings->__get(['api', 'openapi_version']), -1, 1);
+            substr($settings->__get(['api', 'openapi_version']), 0, 1);
         $openApi = new $openApiClassName();
 
         if (!empty($inputSchema)) {

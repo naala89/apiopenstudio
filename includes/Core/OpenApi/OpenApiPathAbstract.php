@@ -45,29 +45,45 @@ abstract class OpenApiPathAbstract
      *
      * @param Resource $resource
      *
-     * @return array
-     *
      * @throws ApiException
      */
-    abstract public function setDefault(Resource $resource): array;
+    abstract public function setDefault(Resource $resource);
 
     /**
      * Import an existing definition.
      *
-     * @param array $definition
+     * @param array|string $definition
+     *
+     * @throws ApiException
      */
-    public function import(array $definition)
+    public function import($definition)
     {
+        if (is_string($definition)) {
+            $definition = json_decode($definition, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new ApiException('invalid input JSON string');
+            }
+        }
         $this->definition = $definition;
     }
 
     /**
      * Export the definition.
      *
-     * @return array
+     * @param bool $encoded JSON encoded.
+     *
+     * @return array|string
+     *
+     * @throws ApiException
      */
-    public function export(): array
+    public function export(bool $encoded = true)
     {
+        if ($encoded) {
+            if (!$result = json_encode($this->definition, true)) {
+                throw new ApiException('failed to encode the JSON array');
+            }
+            return $result;
+        }
         return $this->definition;
     }
 
