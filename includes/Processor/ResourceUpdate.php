@@ -302,7 +302,6 @@ class ResourceUpdate extends ProcessorEntity
         if (!empty($description)) {
             $resource->setDescription($description);
             $schema[$resource->getUri()][$resource->getMethod()]['description'] = $description;
-
         }
         if (!empty($appid)) {
             $resource->setAppId($appid);
@@ -329,8 +328,10 @@ class ResourceUpdate extends ProcessorEntity
                 );
             }
             if (!isset($schema[$resource->getUri()][$resource->getMethod()])) {
+                $uri = $resource->getUri();
+                $method = $resource->getMethod();
                 throw new ApiException(
-                    'invalid OpenApi schema, ' . $resource->getUri() . '/' . $resource->getMethod() . ' Does not exist,',
+                    "invalid OpenApi schema, $uri/$method Does not exist",
                     6,
                     $this->id,
                     400

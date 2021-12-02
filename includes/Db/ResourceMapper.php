@@ -51,9 +51,8 @@ TAG;
                 $resource->getTtl(),
             ];
         } else {
-            $sql = <<<'TAG'
-UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, uri = ?, meta = ?, openapi = ?, ttl = ? WHERE resid = ?
-TAG;
+            // phpcs:ignore
+            $sql = 'UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, uri = ?, meta = ?, openapi = ?, ttl = ? WHERE resid = ?';
             $bindParams = [
                 $resource->getAppId(),
                 $resource->getName(),

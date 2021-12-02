@@ -175,7 +175,11 @@ class OpenApiParent3 extends OpenApiParentAbstract
     {
         $oldApplicationName = $this->definition['info']['title'];
         $this->definition['info']['title'] = $applicationName;
-        $this->definition['info']['description'] = str_replace($oldApplicationName, $applicationName, $this->definition['info']['description']);
+        $this->definition['info']['description'] = str_replace(
+            $oldApplicationName,
+            $applicationName,
+            $this->definition['info']['description']
+        );
         $this->definition['basePath'] = preg_replace('/\/.*/', $applicationName, $this->definition['basePath']);
     }
 

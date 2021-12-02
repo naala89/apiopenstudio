@@ -179,7 +179,12 @@ class ApplicationUpdate extends ProcessorEntity
         $application->setOpenapi($openApi->export());
 
         if (!$this->applicationMapper->save($application)) {
-            throw new ApiException('application update failed, please check the logs',6, $this->id, 500);
+            throw new ApiException(
+                'application update failed, please check the logs',
+                6,
+                $this->id,
+                500
+            );
         }
         $result = $application->dump();
         $result['openapi'] = json_decode($result['openapi']);
@@ -201,8 +206,8 @@ class ApplicationUpdate extends ProcessorEntity
             !$this->userRoleMapper->hasRole($uid, 'Administrator') ||
             !$this->userRoleMapper->hasAccidRole($uid, $application->getAccid(), 'Account manager') ||
             (
-                !empty($accid)
-                && !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')
+                !empty($accid) &&
+                !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')
             )
         ) {
             throw new ApiException("Permission denied.", 6, $this->id, 417);
