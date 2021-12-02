@@ -149,58 +149,16 @@ class ResourceImport extends ProcessorEntity
         parent::process();
 
         $uid = Utilities::getUidFromToken();
-        $roles = Utilities::getRolesFromToken();
+        $this->validateImportPermissions($uid);
+
         $resource = $this->val('resource');
 
-        // Only developer role permitted to upload resource.
-        $permitted = false;
-        foreach ($roles as $role) {
-            if ($role['role_name'] == 'Developer') {
-                $permitted = true;
-            }
-        }
-        if (!$permitted) {
-            throw new ApiException(
-                'unauthorized for this call',
-                4,
-                $this->id,
-                401
-            );
-        }
-
-        // Validate the YAML/JSON.
-        $resource = $resource->getType() == 'file' ? file_get_contents($resource->getData()) : $resource->getData();
-        if ($value = json_decode($resource, true)) {
-            $resource = $value;
-        } else {
-            try {
-                $value = Yaml::parse($resource);
-                $resource = $value;
-            } catch (ParseException $exception) {
-                $message = 'Unable to parse the YAML string: ' . $exception->getMessage();
-                throw new ApiException(
-                    $message,
-                    6,
-                    $this->id,
-                    400
-                );
-            }
-        }
-
+        // Extract the file contents.
+        $fileContents = $resource->getType() == 'file' ? file_get_contents($resource->getData()) : $resource->getData();
+        $resource = $this->extractNewResource($fileContents);
         $this->logger->debug('api', 'Decoded new resource: ' . print_r($resource, true));
 
-        // Validate required keys in the imported file.
-        foreach ($this->requiredKeys as $requiredKey) {
-            if (!isset($resource[$requiredKey])) {
-                $this->logger->error('api', "Missing $requiredKey in new resource");
-                throw new ApiException("Missing $requiredKey in new resource", 6, $this->id, 400);
-            }
-        }
-        // Validate TTL in the imported file.
-        if ($resource['ttl'] < 0) {
-            $this->logger->error('api', 'Negative ttl in new resource');
-            throw new ApiException("Negative ttl in new resource", 6, $this->id, 400);
-        }
+        $this->validateNewResource($resource);
 
         // Validate user has developer role for the appid.
         $role = $this->userRoleMapper->findByUidAppidRolename(
@@ -216,6 +174,143 @@ class ResourceImport extends ProcessorEntity
                 $this->id,
                 400
             );
+        }
+
+        // Merge the sections into final metadata.
+        $meta = [];
+        if (isset($resource['security'])) {
+            $meta = array_merge($meta, ['security' => $resource['security']]);
+        }
+        if (isset($resource['process'])) {
+            $meta = array_merge($meta, ['process' => $resource['process']]);
+        }
+        if (isset($resource['output'])) {
+            $meta = array_merge($meta, ['output' => $resource['output']]);
+        }
+
+        // Validate the metadata.
+        try {
+            $this->validator->validate($meta);
+        } catch (ApiException | ReflectionException $e) {
+            throw new ApiException($e->getMessage(), 6, $this->id, 400);
+        }
+
+        // Create the final Resource object for saving into the DB.
+        $resourceObj = new Resource(
+            null,
+            $resource['appid'],
+            $resource['name'],
+            $resource['description'],
+            $resource['method'],
+            $resource['uri'],
+            json_encode($meta, true),
+            '',
+            $resource['ttl']
+        );
+        if (!empty($resource['openapi'])) {
+            $resourceObj->setOpenapi($resource['openapi']);
+        } else {
+            // Generate default OpenApi fragment.
+            $settings = new Config();
+            $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiPath" .
+                substr($settings->__get(['api', 'openapi_version']), 0, 1);
+            $openApi = new $openApiClassName();
+            $openApi->setDefault($resourceObj);
+            $resourceObj->setOpenapi($openApi->export());
+        }
+
+        if (!$this->resourceMapper->save($resourceObj)) {
+            return new DataContainer(false, 'boolean');
+        }
+
+        $resourceObj = $this->resourceMapper->findByAppIdMethodUri(
+            $resourceObj->getAppId(),
+            $resourceObj->getMethod(),
+            $resourceObj->getUri()
+        );
+        $resource = $resourceObj->dump();
+        $resource['meta'] = json_decode($resource['meta'], true);
+        $resource['openapi'] = json_decode($resource['openapi'], true);
+        return new DataContainer($resource, 'array');
+    }
+
+    /**
+     * Validate user permissions to import a resource.
+     *
+     * @param int $uid
+     *
+     * @throws ApiException
+     */
+    protected function validateImportPermissions(int $uid)
+    {
+        $roles = Utilities::getRolesFromToken();
+        // Only developer role permitted to upload resource.
+        $permitted = false;
+        foreach ($roles as $role) {
+            if ($role['role_name'] == 'Developer') {
+                $permitted = true;
+            }
+        }
+        if (!$permitted) {
+            throw new ApiException(
+                'unauthorized for this call',
+                4,
+                $this->id,
+                401
+            );
+        }
+    }
+
+    /**
+     * Extract the input YAML or JSON into an array.
+     *
+     * @param string $resource
+     *
+     * @return array
+     *
+     * @throws ApiException
+     */
+    protected function extractNewResource(string $resource): array
+    {
+        if ($result = json_decode($resource, true)) {
+            return $result;
+        }
+
+        try {
+            $result = Yaml::parse($resource);
+        } catch (ParseException $exception) {
+            $message = 'Unable to parse the YAML string: ' . $exception->getMessage();
+            throw new ApiException(
+                $message,
+                6,
+                $this->id,
+                400
+            );
+        }
+
+        return $result;
+    }
+
+    /**
+     * Validate the new resource array.
+     *
+     * @param array $resource
+     *
+     * @throws ApiException
+     */
+    protected function validateNewResource(array $resource)
+    {
+        // Validate required keys in the imported file.
+        foreach ($this->requiredKeys as $requiredKey) {
+            if (!isset($resource[$requiredKey])) {
+                $this->logger->error('api', "Missing $requiredKey in new resource");
+                throw new ApiException("Missing $requiredKey in new resource", 6, $this->id, 400);
+            }
+        }
+        // Validate TTL in the imported file.
+        if ($resource['ttl'] < 0) {
+            $this->logger->error('api', 'Negative ttl in new resource');
+            throw new ApiException("Negative ttl in new resource", 6, $this->id, 400);
         }
 
         // Validate the application exists.
@@ -256,86 +351,5 @@ class ResourceImport extends ProcessorEntity
             $this->logger->error('api', 'Resource already exists');
             throw new ApiException('Resource already exists', 6, $this->id, 400);
         }
-
-        // Merge the sections into final metadata.
-        $meta = [];
-        if (isset($resource['security'])) {
-            $meta = array_merge($meta, ['security' => $resource['security']]);
-        }
-        if (isset($resource['process'])) {
-            $meta = array_merge($meta, ['process' => $resource['process']]);
-        }
-        if (isset($resource['output'])) {
-            $meta = array_merge($meta, ['output' => $resource['output']]);
-        }
-
-        // Validate the metadata.
-        try {
-            $this->validator->validate($meta);
-        } catch (ApiException | ReflectionException $e) {
-            throw new ApiException($e->getMessage(), 6, $this->id, 400);
-        }
-
-        if (
-            !$this->create(
-                $resource['name'],
-                $resource['description'],
-                $resource['method'],
-                $resource['uri'],
-                $resource['appid'],
-                $resource['ttl'],
-                json_encode($meta)
-            )
-        ) {
-            throw new ApiException(false, 'boolean');
-        }
-        $result = $this->resourceMapper->findByAppIdMethodUri(
-            $resource['appid'],
-            $resource['method'],
-            $resource['uri']
-        );
-
-        return new DataContainer($result->dump(), 'array');
-    }
-
-    /**
-     * Create the resource in the DB.
-     *
-     * @param string $name The resource name.
-     * @param string $description The resource description.
-     * @param string $method The resource method.
-     * @param string $uri The resource URI.
-     * @param integer $appid The resource application ID.
-     * @param integer $ttl The resource application TTL.
-     * @param string $meta The resource metadata json encoded string.
-     *
-     * @return DataContainer Create resource result.
-     *
-     * @throws ApiException
-     */
-    private function create(
-        string $name,
-        string $description,
-        string $method,
-        string $uri,
-        int $appid,
-        int $ttl,
-        string $meta
-    ): DataContainer {
-        $resource = new Resource(
-            null,
-            $appid,
-            $name,
-            $description,
-            strtolower($method),
-            strtolower($uri),
-            $meta,
-            $ttl
-        );
-        if (!$this->resourceMapper->save($resource)) {
-            return new DataContainer(false);
-        }
-        $resource = $this->resourceMapper->findByAppIdMethodUri($appid, strtolower($method), strtolower($uri));
-        return new DataContainer($resource->dump(), 'array');
     }
 }
