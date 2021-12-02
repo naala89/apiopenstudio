@@ -147,3 +147,17 @@ process:
         id: resource_update_body_metadata
         expected_type: json
         nullable: false
+  openapi:
+    processor: cast
+    id: resource_update_cast_openapi
+    data_type: json
+    data:
+      processor: json_path
+      id: resource_update_openapi
+      operation: get
+      expression: '$.openapi'
+      data:
+        processor: var_body
+        id: resource_update_body_openapi
+        expected_type: json
+        nullable: false

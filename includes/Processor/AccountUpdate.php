@@ -15,16 +15,33 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
-use ApiOpenStudio\Db;
+use ADOConnection;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Db\Account;
+use ApiOpenStudio\Db\AccountMapper;
+use ApiOpenStudio\Db\ApplicationMapper;
+use ApiOpenStudioAdmin\Core\Config;
 
 /**
  * Class AccountUpdate
  *
  * Processor class to update an account.
  */
-class AccountUpdate extends Core\ProcessorEntity
+class AccountUpdate extends ProcessorEntity
 {
+    /**
+     * @var AccountMapper
+     */
+    protected AccountMapper $accountMapper;
+
+    /**
+     * @var ApplicationMapper
+     */
+    protected ApplicationMapper $applicationMapper;
+
     /**
      * {@inheritDoc}
      *
@@ -58,19 +75,34 @@ class AccountUpdate extends Core\ProcessorEntity
     ];
 
     /**
+     * AccountRead constructor.
+     *
+     * @param mixed $meta Output meta.
+     * @param mixed $request Request object.
+     * @param ADOConnection $db DB object.
+     * @param MonologWrapper $logger Logger object.
+     */
+    public function __construct($meta, &$request, ADOConnection $db, MonologWrapper $logger)
+    {
+        parent::__construct($meta, $request, $db, $logger);
+        $this->accountMapper = new AccountMapper($db, $logger);
+        $this->applicationMapper = new ApplicationMapper($db, $logger);
+    }
+
+    /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
         $name = $this->val('name', true);
         if (preg_match('/[^a-z_\-0-9]/i', $name)) {
-            throw new Core\ApiException(
+            throw new ApiException(
                 "Invalid account name: $name. Only underscore, hyphen or alhpanumeric characters permitted.",
                 6,
                 $this->id,
@@ -79,18 +111,38 @@ class AccountUpdate extends Core\ProcessorEntity
         }
         $accid = $this->val('accid', true);
 
-        $accountMapper = new Db\AccountMapper($this->db, $this->logger);
-
-        $account = $accountMapper->findByName($name);
+        $account = $this->accountMapper->findByName($name);
         if (!empty($account->getAccid())) {
-            throw new Core\ApiException("Account already exists: $name", 6, $this->id, 400);
+            throw new ApiException("Account already exists: $name", 6, $this->id, 400);
         }
-        $account = $accountMapper->findByAccid($accid);
+        $account = $this->accountMapper->findByAccid($accid);
         if (empty($account->getAccid())) {
-            throw new Core\ApiException("Account does not exist: $accid", 6, $this->id, 400);
+            throw new ApiException("Account does not exist: $accid", 6, $this->id, 400);
         }
 
         $account->setName($name);
-        return new Core\DataContainer($accountMapper->save($account), 'boolean');
+        if (!$this->accountMapper->save($account)) {
+            throw new ApiException('save account failed, please check the logs', 2, $this->id, 400);
+        }
+        $this->updateOpenApiForApplications($account);
+        return new DataContainer($account->dump(), 'array');
+    }
+
+    /**
+     * @throws ApiException
+     */
+    protected function updateOpenApiForApplications(Account $account)
+    {
+        $settings = new Config();
+        $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
+            substr($settings->__get(['api', 'openapi_version']), -1, 1);
+        $openApi = new $openApiClassName();
+        $applications = $this->applicationMapper->findByAccid($account->getAccid());
+        foreach ($applications as $application) {
+            $openApi->import($application->getOpenapi());
+            $openApi->setAccount($account->getName());
+            $application->setOpenapi($openApi->export());
+            $this->applicationMapper->save($application);
+        }
     }
 }

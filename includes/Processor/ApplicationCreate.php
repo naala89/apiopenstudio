@@ -16,44 +16,52 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Core\Config;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\AccountMapper;
+use ApiOpenStudio\Db\Application;
+use ApiOpenStudio\Db\ApplicationMapper;
+use ApiOpenStudio\Db\UserMapper;
+use ApiOpenStudio\Db\UserRoleMapper;
 
 /**
  * Class ApplicationCreate
  *
  * Processor class to create an application.
  */
-class ApplicationCreate extends Core\ProcessorEntity
+class ApplicationCreate extends ProcessorEntity
 {
     /**
      * User role mapper class.
      *
-     * @var Db\UserRoleMapper
+     * @var UserRoleMapper
      */
-    protected Db\UserRoleMapper $userRoleMapper;
+    protected UserRoleMapper $userRoleMapper;
 
     /**
      * User mapper class.
      *
-     * @var Db\UserMapper
+     * @var UserMapper
      */
-    protected Db\UserMapper $userMapper;
+    protected UserMapper $userMapper;
 
     /**
      * Account mapper class.
      *
-     * @var Db\AccountMapper
+     * @var AccountMapper
      */
-    protected Db\AccountMapper $accountMapper;
+    protected AccountMapper $accountMapper;
 
     /**
      * Application mapper class.
      *
-     * @var Db\ApplicationMapper
+     * @var ApplicationMapper
      */
-    protected Db\ApplicationMapper $applicationMapper;
+    protected ApplicationMapper $applicationMapper;
 
     /**
      * {@inheritDoc}
@@ -84,6 +92,15 @@ class ApplicationCreate extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => '',
             ],
+            'openapi' => [
+                'description' => 'The OpenApi schema fragment for the application.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['json'],
+                'limitValues' => [],
+                'default' => '',
+            ],
         ],
     ];
 
@@ -93,41 +110,42 @@ class ApplicationCreate extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->userRoleMapper = new Db\UserRoleMapper($this->db, $logger);
-        $this->userMapper = new Db\UserMapper($this->db, $logger);
-        $this->accountMapper = new Db\AccountMapper($this->db, $logger);
-        $this->applicationMapper = new Db\ApplicationMapper($this->db, $logger);
+        $this->userRoleMapper = new UserRoleMapper($this->db, $logger);
+        $this->userMapper = new UserMapper($this->db, $logger);
+        $this->accountMapper = new AccountMapper($this->db, $logger);
+        $this->applicationMapper = new ApplicationMapper($this->db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
-        $uid = Core\Utilities::getUidFromToken();
         $accid = $this->val('accid', true);
         $name = $this->val('name', true);
+        $openApi = $this->val('openapi', true);
 
+        $uid = Utilities::getUidFromToken();
         if (
             !$this->userRoleMapper->hasRole($uid, 'Administrator')
             && !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')
         ) {
-            throw new ApiException('Permission denied.', 6, $this->id, 417);
+            throw new ApiException('Permission denied.', 6, $this->id, 403);
         }
 
         if (preg_match('/[^a-z_\-0-9]/i', $name)) {
-            throw new Core\ApiException(
+            throw new ApiException(
                 "Invalid application name: $name. Only underscore, hyphen or alphanumeric characters permitted.",
                 6,
                 $this->id,
@@ -149,8 +167,22 @@ class ApplicationCreate extends Core\ProcessorEntity
             );
         }
 
+        $settings = new Config();
+        $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
+            substr($settings->__get(['api', 'openapi_version']), -1, 1);
+        $openApiClass = new $openApiClassName();
+        if (!empty($openApi)) {
+            $openApiClass->import($openApi);
+        } else {
+            $openApiClass->setDefault($account->getName(), $name);
+        }
 
-        $application = new Db\Application(null, $accid, $name);
-        return new Core\DataContainer($this->applicationMapper->save($application), 'boolean');
+        $application = new Application(null, $accid, $name, $openApiClass->export());
+
+        $this->applicationMapper->save($application);
+        $application = $this->applicationMapper->findByAccidAppname($accid, $name);
+        $result = $application->dump();
+        $result['openapi'] = json_decode($result['openapi']);
+        return new DataContainer($result, 'array');
     }
 }

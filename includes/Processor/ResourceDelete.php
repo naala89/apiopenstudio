@@ -16,19 +16,22 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\AccountMapper;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\ResourceMapper;
-use ApiOpenStudio\Db\UserRoleMapper;
 
 /**
  * Class ResourceDelete
  *
  * Processor class to delete a resource.
  */
-class ResourceDelete extends Core\ProcessorEntity
+class ResourceDelete extends ProcessorEntity
 {
     /**
      * Config class.
@@ -59,13 +62,6 @@ class ResourceDelete extends Core\ProcessorEntity
     private ApplicationMapper $applicationMapper;
 
     /**
-     * User role mapper class.
-     *
-     * @var UserRoleMapper
-     */
-    private UserRoleMapper $userRoleMapper;
-
-    /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
@@ -94,13 +90,12 @@ class ResourceDelete extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->applicationMapper = new ApplicationMapper($db, $logger);
-        $this->userRoleMapper = new UserRoleMapper($db, $logger);
         $this->accountMapper = new AccountMapper($db, $logger);
         $this->resourceMapper = new ResourceMapper($db, $logger);
         $this->settings = new Config();
@@ -109,25 +104,24 @@ class ResourceDelete extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
         $resid = $this->val('resid', true);
-        $uid = Core\Utilities::getUidFromToken();
 
         // Validate resource exists.
         $resource = $this->resourceMapper->findByResid($resid);
         if (empty($resource->getResid())) {
-            throw new Core\ApiException("no resources found or insufficient privileges", 6, $this->id, 400);
+            throw new ApiException("no resources found or insufficient privileges", 6, $this->id, 400);
         }
 
         // Validate user has Developer access to its application.
-        $userRoles = Core\Utilities::getRolesFromToken();
+        $userRoles = Utilities::getRolesFromToken();
         $userHasAccess = false;
         foreach ($userRoles as $userRole) {
             if ($userRole['role_name'] == 'Developer' && $userRole['appid'] == $resource->getAppId()) {
@@ -135,7 +129,7 @@ class ResourceDelete extends Core\ProcessorEntity
             }
         }
         if (!$userHasAccess) {
-            throw new Core\ApiException('Permission denied', 6, $this->id, 400);
+            throw new ApiException('Permission denied', 6, $this->id, 400);
         }
 
         // Validate deleting core resource and core resources not locked.
@@ -146,9 +140,9 @@ class ResourceDelete extends Core\ProcessorEntity
             && $application->getName() == $this->settings->__get(['api', 'core_application'])
             && $this->settings->__get(['api', 'core_resource_lock'])
         ) {
-            throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
+            throw new ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
-        return new Core\DataContainer($this->resourceMapper->delete($resource), 'boolean');
+        return new DataContainer($this->resourceMapper->delete($resource), 'boolean');
     }
 }

@@ -16,16 +16,20 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\ResourceValidator;
+use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\AccountMapper;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
+use ApiOpenStudio\Db\UserRoleMapper;
 use ReflectionException;
 use Symfony\Component\Yaml\Exception\ParseException;
-use ApiOpenStudio\Db\UserRoleMapper;
-use ApiOpenStudio\Core\ResourceValidator;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -33,7 +37,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * Processor class to import a resource
  */
-class ResourceImport extends Core\ProcessorEntity
+class ResourceImport extends ProcessorEntity
 {
     /**
      * Required keys in a resource yaml file.
@@ -120,9 +124,9 @@ class ResourceImport extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Config();
@@ -136,16 +140,16 @@ class ResourceImport extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
-        $uid = Core\Utilities::getUidFromToken();
-        $roles = Core\Utilities::getRolesFromToken();
+        $uid = Utilities::getUidFromToken();
+        $roles = Utilities::getRolesFromToken();
         $resource = $this->val('resource');
 
         // Only developer role permitted to upload resource.
@@ -156,7 +160,7 @@ class ResourceImport extends Core\ProcessorEntity
             }
         }
         if (!$permitted) {
-            throw new Core\ApiException(
+            throw new ApiException(
                 'unauthorized for this call',
                 4,
                 $this->id,
@@ -174,7 +178,7 @@ class ResourceImport extends Core\ProcessorEntity
                 $resource = $value;
             } catch (ParseException $exception) {
                 $message = 'Unable to parse the YAML string: ' . $exception->getMessage();
-                throw new Core\ApiException(
+                throw new ApiException(
                     $message,
                     6,
                     $this->id,
@@ -189,13 +193,13 @@ class ResourceImport extends Core\ProcessorEntity
         foreach ($this->requiredKeys as $requiredKey) {
             if (!isset($resource[$requiredKey])) {
                 $this->logger->error('api', "Missing $requiredKey in new resource");
-                throw new Core\ApiException("Missing $requiredKey in new resource", 6, $this->id, 400);
+                throw new ApiException("Missing $requiredKey in new resource", 6, $this->id, 400);
             }
         }
         // Validate TTL in the imported file.
         if ($resource['ttl'] < 0) {
             $this->logger->error('api', 'Negative ttl in new resource');
-            throw new Core\ApiException("Negative ttl in new resource", 6, $this->id, 400);
+            throw new ApiException("Negative ttl in new resource", 6, $this->id, 400);
         }
 
         // Validate user has developer role for the appid.
@@ -206,7 +210,7 @@ class ResourceImport extends Core\ProcessorEntity
         );
         if (empty($role->getUrid())) {
             $this->logger->error('api', 'Unauthorised: you do not have permissions for this application');
-            throw new Core\ApiException(
+            throw new ApiException(
                 "Unauthorised: you do not have permissions for this application",
                 6,
                 $this->id,
@@ -218,7 +222,7 @@ class ResourceImport extends Core\ProcessorEntity
         $application = $this->applicationMapper->findByAppid($resource['appid']);
         if (empty($application)) {
             $this->logger->error('api', 'Invalid application: ' . $resource['appid']);
-            throw new Core\ApiException(
+            throw new ApiException(
                 'Invalid application: ' . $resource['appid'],
                 6,
                 $this->id,
@@ -234,7 +238,7 @@ class ResourceImport extends Core\ProcessorEntity
             && $this->settings->__get(['api', 'core_resource_lock'])
         ) {
             $this->logger->error('api', 'Unauthorised: this is the core application');
-            throw new Core\ApiException(
+            throw new ApiException(
                 'Unauthorised: this is the core application',
                 6,
                 $this->id,
@@ -250,7 +254,7 @@ class ResourceImport extends Core\ProcessorEntity
         );
         if (!empty($resourceExists->getresid())) {
             $this->logger->error('api', 'Resource already exists');
-            throw new Core\ApiException('Resource already exists', 6, $this->id, 400);
+            throw new ApiException('Resource already exists', 6, $this->id, 400);
         }
 
         // Merge the sections into final metadata.
@@ -268,8 +272,8 @@ class ResourceImport extends Core\ProcessorEntity
         // Validate the metadata.
         try {
             $this->validator->validate($meta);
-        } catch (Core\ApiException | ReflectionException $e) {
-            throw new Core\ApiException($e->getMessage(), 6, $this->id, 400);
+        } catch (ApiException | ReflectionException $e) {
+            throw new ApiException($e->getMessage(), 6, $this->id, 400);
         }
 
         if (
@@ -283,7 +287,7 @@ class ResourceImport extends Core\ProcessorEntity
                 json_encode($meta)
             )
         ) {
-            throw new Core\ApiException(false, 'boolean');
+            throw new ApiException(false, 'boolean');
         }
         $result = $this->resourceMapper->findByAppIdMethodUri(
             $resource['appid'],
@@ -291,7 +295,7 @@ class ResourceImport extends Core\ProcessorEntity
             $resource['uri']
         );
 
-        return new Core\DataContainer($result->dump(), 'array');
+        return new DataContainer($result->dump(), 'array');
     }
 
     /**
@@ -305,9 +309,9 @@ class ResourceImport extends Core\ProcessorEntity
      * @param integer $ttl The resource application TTL.
      * @param string $meta The resource metadata json encoded string.
      *
-     * @return Core\DataContainer Create resource result.
+     * @return DataContainer Create resource result.
      *
-     * @throws Core\ApiException
+     * @throws ApiException
      */
     private function create(
         string $name,
@@ -317,7 +321,7 @@ class ResourceImport extends Core\ProcessorEntity
         int $appid,
         int $ttl,
         string $meta
-    ): Core\DataContainer {
+    ): DataContainer {
         $resource = new Resource(
             null,
             $appid,
@@ -329,9 +333,9 @@ class ResourceImport extends Core\ProcessorEntity
             $ttl
         );
         if (!$this->resourceMapper->save($resource)) {
-            return new Core\DataContainer(false);
+            return new DataContainer(false);
         }
         $resource = $this->resourceMapper->findByAppIdMethodUri($appid, strtolower($method), strtolower($uri));
-        return new Core\DataContainer($resource->dump(), 'array');
+        return new DataContainer($resource->dump(), 'array');
     }
 }

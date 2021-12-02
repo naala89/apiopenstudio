@@ -365,6 +365,10 @@ class UserRoleMapper extends Mapper
         return $this->fetchRows($sql, $bindParams, $order);
     }
 
+    public function findByUidAccidRolename(int $uid, ?int $getAccid, string $string)
+    {
+    }
+
     /**
      * Map a DB row to a UserRole object.
      *

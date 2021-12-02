@@ -16,23 +16,25 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\ResourceValidator;
+use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\AccountMapper;
 use ApiOpenStudio\Db\ApplicationMapper;
-use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
 use ApiOpenStudio\Db\UserRoleMapper;
-use ApiOpenStudio\Core\ResourceValidator;
 use ReflectionException;
-use Spyc;
 
 /**
  * Class ResourceUpdate
  *
  * Processor class to update a resource.
  */
-class ResourceUpdate extends Core\ProcessorEntity
+class ResourceUpdate extends ProcessorEntity
 {
     /**
      * Config class.
@@ -98,52 +100,52 @@ class ResourceUpdate extends Core\ProcessorEntity
             ],
             'name' => [
                 'description' => 'The resource name.',
-                'cardinality' => [1, 1],
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'description' => [
                 'description' => 'The resource description.',
-                'cardinality' => [1, 1],
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'appid' => [
                 'description' => 'The application ID the resource is associated with.',
-                'cardinality' => [1, 1],
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => 0,
             ],
             'method' => [
                 'description' => 'The resource HTTP method.',
-                'cardinality' => [1, 1],
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => ['get', 'post', 'put', 'delete'],
-                'default' => '',
+                'default' => null,
             ],
             'uri' => [
                 'description' => 'The resource URI.',
-                'cardinality' => [1, 1],
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'ttl' => [
                 'description' => 'The resource TTL in seconds.',
-                'cardinality' => [1, 1],
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
@@ -152,12 +154,21 @@ class ResourceUpdate extends Core\ProcessorEntity
             ],
             'metadata' => [
                 'description' => 'The resource metadata (security and process sections) as a JSON string',
-                'cardinality' => [1, 1],
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => ['json'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
+            ],
+            'openapi' => [
+                'description' => 'The resource OpenApi definition partial, for this path only.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['json'],
+                'limitValues' => [],
+                'default' => null,
             ],
         ],
     ];
@@ -168,9 +179,9 @@ class ResourceUpdate extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Config();
@@ -184,15 +195,15 @@ class ResourceUpdate extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
-        $uid = Core\Utilities::getUidFromToken();
+        $uid = Utilities::getUidFromToken();
         $resid = $this->val('resid', true);
         $name = $this->val('name', true);
         $description = $this->val('description', true);
@@ -201,13 +212,14 @@ class ResourceUpdate extends Core\ProcessorEntity
         $uri = str_replace("\\/", '/', $this->val('uri', true));
         $ttl = $this->val('ttl', true);
         $metadata = $this->val('metadata', true);
+        $openapi = $this->val('openapi', true);
 
         $resource = $this->resourceMapper->findByResid($resid);
         $application = $this->applicationMapper->findByAppid($resource->getAppId());
 
         // Invalid resource.
         if (empty($resource->getResid())) {
-            throw new Core\ApiException("Resource does not exist: $resid", 6, $this->id, 400);
+            throw new ApiException("Resource does not exist: $resid", 6, $this->id, 400);
         }
 
         // Validate user role access to the resource or the proposed resource.
@@ -216,18 +228,28 @@ class ResourceUpdate extends Core\ProcessorEntity
             $application->getAppid(),
             'Developer'
         );
-        $proposedResourceRoles = $this->userRoleMapper->findByUidAppidRolename(
-            $uid,
-            $appid,
-            'Developer'
-        );
-        if (empty($existingResourceRoles) || empty($proposedResourceRoles)) {
-            throw new Core\ApiException(
+        if (empty($existingResourceRoles)) {
+            throw new ApiException(
                 "Unauthorised: you do not have permissions for this application",
                 6,
                 $this->id,
                 400
             );
+        }
+        if (!empty($appid)) {
+            $proposedResourceRoles = $this->userRoleMapper->findByUidAppidRolename(
+                $uid,
+                $appid,
+                'Developer'
+            );
+            if (empty($existingResourceRoles) || empty($proposedResourceRoles)) {
+                throw new ApiException(
+                    "Unauthorised: you do not have permissions for this application",
+                    6,
+                    $this->id,
+                    400
+                );
+            }
         }
 
         // Update to core application and is locked.
@@ -237,61 +259,111 @@ class ResourceUpdate extends Core\ProcessorEntity
             && $application->getName() == $this->settings->__get(['api', 'core_application'])
             && $this->settings->__get(['api', 'core_resource_lock'])
         ) {
-            throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
+            throw new ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
-        try {
-            $this->validator->validate(json_decode($metadata, true));
-        } catch (ReflectionException $e) {
-            throw new Core\ApiException($e->getMessage(), 6, $this->id, 400);
+        $schema = json_decode($resource->getOpenapi(), true);
+        if (empty($schema)) {
+            $settings = new Config();
+            $openApiClassName = "\\ApiOpenStudio\\\OpenApi\\OpenApi" .
+                substr($settings->__get(['api', 'openapi_version']), -1, 1);
+            $openApi = new $openApiClassName();
+            $schema = $openApi->getDefaultResourceSchema($resource);
+            $resource->setOpenapi(json_encode($schema));
         }
 
-        if (!$this->update($resid, $name, $description, $method, $uri, $appid, $ttl, $metadata)) {
-            throw new Core\ApiException(false, 'boolean');
+        if (!empty($uri)) {
+            if (isset($schema[$resource->getUri()])) {
+                $schema[$uri] = $schema[$resource->getUri()];
+                unset($schema[$resource->getUri()]);
+            } else {
+                $schema[$uri][$resource->getMethod()]['description'] = $description ?? $resource->getDescription();
+                $schema[$uri][$resource->getMethod()]['summary'] = $name ?? $resource->getName();
+            }
+            $resource->setOpenapi(json_encode($schema));
+            $resource->setUri($uri);
         }
-        $result = $this->resourceMapper->findByResid($resid);
+        if (!empty($method)) {
+            if (isset($schema[$resource->getUri()][$resource->getMethod()])) {
+                $schema[$resource->getUri()][$method] = $schema[$resource->getUri()][$resource->getMethod()];
+                unset($schema[$resource->getUri()][$resource->getMethod()]);
+            } else {
+                $schema[$uri][$resource->getMethod()]['description'] = $description ?? $resource->getDescription();
+                $schema[$uri][$resource->getMethod()]['summary'] = $name ?? $resource->getName();
+            }
+            $resource->setOpenapi(json_encode($schema));
+            $resource->setMethod($method);
+        }
+        if (!empty($name)) {
+            $resource->setName($name);
+            $schema[$resource->getUri()][$resource->getMethod()]['summary'] = $name;
+            $resource->setOpenapi(json_encode($schema));
+        }
+        if (!empty($description)) {
+            $resource->setDescription($description);
+            $schema[$resource->getUri()][$resource->getMethod()]['description'] = $description;
 
-        return new Core\DataContainer($result->dump(), 'array');
-    }
+        }
+        if (!empty($appid)) {
+            $resource->setAppId($appid);
+        }
+        if (!empty($ttl)) {
+            $resource->setTtl($ttl);
+        }
+        if (!empty($metadata)) {
+            try {
+                $this->validator->validate(json_decode($metadata, true));
+            } catch (ReflectionException $e) {
+                throw new ApiException($e->getMessage(), 6, $this->id, 400);
+            }
+            $resource->setMeta($metadata);
+        }
+        if (!empty($openapi)) {
+            $schema = json_decode($openapi);
+            if (!isset($schema[$resource->getUri()])) {
+                throw new ApiException(
+                    'invalid OpenApi schema, path ' . $resource->getUri() . ' Does not exist,',
+                    6,
+                    $this->id,
+                    400
+                );
+            }
+            if (!isset($schema[$resource->getUri()][$resource->getMethod()])) {
+                throw new ApiException(
+                    'invalid OpenApi schema, ' . $resource->getUri() . '/' . $resource->getMethod() . ' Does not exist,',
+                    6,
+                    $this->id,
+                    400
+                );
+            }
+            if (sizeof($schema) != 1) {
+                throw new ApiException(
+                    'invalid OpenApi schema, there should only be 1 OpenApi fragment assigned to a resource,',
+                    6,
+                    $this->id,
+                    400
+                );
+            }
+            if (sizeof($schema[$resource->getUri()]) != 1) {
+                throw new ApiException(
+                    'invalid OpenApi schema, there should be only 1 method inside a path assigned to a resource,',
+                    6,
+                    $this->id,
+                    400
+                );
+            }
+            $schema[$resource->getUri()][$resource->getMethod()]['summary'] = $name;
+            $schema[$resource->getUri()][$resource->getMethod()]['description'] = $description;
+        }
+        $resource->setOpenapi(json_encode($schema));
 
-    /**
-     * Create the resource in the DB.
-     *
-     * @param integer $resid The resource ID.
-     * @param string $name The resource name.
-     * @param string $description The resource description.
-     * @param string $method The resource method.
-     * @param string $uri The resource URI.
-     * @param integer $appid The resource application ID.
-     * @param integer $ttl The resource application TTL.
-     * @param string $meta The resource metadata json encoded string.
-     *
-     * @return boolean
-     *   Create resource result.
-     *
-     * @throws Core\ApiException DB exception.
-     */
-    private function update(
-        int $resid,
-        string $name,
-        string $description,
-        string $method,
-        string $uri,
-        int $appid,
-        int $ttl,
-        string $meta
-    ): bool {
-        $resource = new Resource(
-            $resid,
-            $appid,
-            $name,
-            $description,
-            strtolower($method),
-            strtolower($uri),
-            $meta,
-            $ttl
-        );
-
-        return $this->resourceMapper->save($resource);
+        if (!$this->resourceMapper->save($resource)) {
+            throw new ApiException('Failed to update the resource, please check the logs', 2, $this->id, 500);
+        }
+        $resource = $this->resourceMapper->findByResid($resid);
+        $result = $resource->dump();
+        $result['meta'] = json_decode($result['meta'], true);
+        $result['openapi'] = json_decode($result['openapi'], true);
+        return new DataContainer($result, 'array');
     }
 }

@@ -16,8 +16,12 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\AccountMapper;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\Resource;
@@ -31,7 +35,7 @@ use Spyc;
  *
  * Processor class to create a resource.
  */
-class ResourceCreate extends Core\ProcessorEntity
+class ResourceCreate extends ProcessorEntity
 {
     /**
      * Config class.
@@ -134,8 +138,17 @@ class ResourceCreate extends Core\ProcessorEntity
                 'default' => 0,
             ],
             'metadata' => [
-                'description' => 'The resource metadata (security and process sections) as a JSON string',
+                'description' => 'The resource metadata (security and process sections) as a JSON string.',
                 'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['json'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'openapi' => [
+                'description' => 'The resource OpenApi definition partial, for this path only.',
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => ['json'],
@@ -151,9 +164,9 @@ class ResourceCreate extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->applicationMapper = new ApplicationMapper($db, $logger);
@@ -166,11 +179,11 @@ class ResourceCreate extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -181,11 +194,12 @@ class ResourceCreate extends Core\ProcessorEntity
         $uri = $this->val('uri', true);
         $ttl = $this->val('ttl', true);
         $metadata = $this->val('metadata', true);
+        $openapi = $this->val('openapi', true);
 
         // Validate the application exists.
         $application = $this->applicationMapper->findByAppid($appid);
         if (empty($application->getAppid())) {
-            throw new Core\ApiException("Invalid application: $appid", 6, $this->id, 400);
+            throw new ApiException("Invalid application: $appid", 6, $this->id, 400);
         }
 
         // Validate application is not core and core not locked.
@@ -194,11 +208,11 @@ class ResourceCreate extends Core\ProcessorEntity
         $coreApplication = $this->settings->__get(['api', 'core_application']);
         $coreLock = $this->settings->__get(['api', 'core_resource_lock']);
         if ($account->getName() == $coreAccount && $application->getName() == $coreApplication && $coreLock) {
-            throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
+            throw new ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
         // Validate user has developer role for the application
-        $userRoles = Core\Utilities::getRolesFromToken();
+        $userRoles = Utilities::getRolesFromToken();
         $userHasAccess = false;
         foreach ($userRoles as $userRole) {
             if ($userRole['role_name'] == 'Developer' && $userRole['appid'] == $appid) {
@@ -206,54 +220,21 @@ class ResourceCreate extends Core\ProcessorEntity
             }
         }
         if (!$userHasAccess) {
-            throw new Core\ApiException('Permission denied', 6, $this->id, 400);
+            throw new ApiException('Permission denied', 6, $this->id, 400);
         }
 
         // Validate the resource does not already exist.
         $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
         if (!empty($resource->getresid())) {
-            throw new Core\ApiException('Resource already exists', 6, $this->id, 400);
+            throw new ApiException('Resource already exists', 6, $this->id, 400);
         }
 
         try {
             $this->validator->validate(json_decode($metadata, true));
         } catch (ReflectionException $e) {
-            throw new Core\ApiException($e->getMessage(), 6, $this->id, 400);
+            throw new ApiException($e->getMessage(), 6, $this->id, 400);
         }
 
-        if (!$this->create($name, $description, $method, $uri, $appid, $ttl, $metadata)) {
-            throw new Core\ApiException('Failed to create the resource, please check the logs', 6, $this->id, 400);
-        }
-
-        $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
-        return new Core\DataContainer($resource->dump(), 'array');
-    }
-
-    /**
-     * Create the resource in the DB.
-     *
-     * @param string $name The resource name.
-     * @param string $description The resource description.
-     * @param string $method The resource method.
-     * @param string $uri The resource URI.
-     * @param integer $appid The resource application ID.
-     * @param integer $ttl The resource application TTL.
-     * @param string $meta The resource metadata json encoded string.
-     *
-     * @return bool
-     *   Create resource result.
-     *
-     * @throws Core\ApiException Error.
-     */
-    private function create(
-        string $name,
-        string $description,
-        string $method,
-        string $uri,
-        int $appid,
-        int $ttl,
-        string $meta
-    ): bool {
         $resource = new Resource(
             null,
             $appid,
@@ -261,9 +242,25 @@ class ResourceCreate extends Core\ProcessorEntity
             $description,
             strtolower($method),
             strtolower($uri),
-            $meta,
+            $metadata,
+            '',
             $ttl
         );
-        return $this->resourceMapper->save($resource);
+        if (empty($openapi)) {
+            $settings = new Config();
+            $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApi" .
+                substr($settings->__get(['api', 'openapi_version']), -1, 1);
+            $openApi = new $openApiClassName();
+            $resource->setOpenapi(json_encode($openApi->getDefaultResourceSchema($resource)));
+        }
+
+        if (!$this->resourceMapper->save($resource)) {
+            throw new ApiException('Failed to create the resource, please check the logs', 6, $this->id, 400);
+        }
+        $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
+        $result = $resource->dump();
+        $result['meta'] = json_decode($result['meta'], true);
+        $result['openapi'] = json_decode($result['openapi'], true);
+        return new DataContainer($result, 'array');
     }
 }

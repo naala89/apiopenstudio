@@ -16,7 +16,11 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
 use ApiOpenStudio\Db\UserRoleMapper;
@@ -27,15 +31,8 @@ use Symfony\Component\Yaml\Yaml;
  *
  * Processor class to export a resource.
  */
-class ResourceExport extends Core\ProcessorEntity
+class ResourceExport extends ProcessorEntity
 {
-    /**
-     * User role mapper class.
-     *
-     * @var UserRoleMapper
-     */
-    private UserRoleMapper $userRoleMapper;
-
     /**
      * Resource mapper class.
      *
@@ -81,9 +78,9 @@ class ResourceExport extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->userRoleMapper = new UserRoleMapper($db, $logger);
@@ -93,11 +90,11 @@ class ResourceExport extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -107,11 +104,11 @@ class ResourceExport extends Core\ProcessorEntity
         // Validate resource exists.
         $resource = $this->resourceMapper->findByResid($resid);
         if (empty($resource->getResid())) {
-            throw new Core\ApiException('Invalid resource', 6, $this->id, 400);
+            throw new ApiException('Invalid resource', 6, $this->id, 400);
         }
 
         // Validate user has Developer access to its application.
-        $userRoles = Core\Utilities::getRolesFromToken();
+        $userRoles = Utilities::getRolesFromToken();
         $userHasAccess = false;
         foreach ($userRoles as $userRole) {
             if ($userRole['role_name'] == 'Developer' && $userRole['appid'] == $resource->getAppId()) {
@@ -119,20 +116,20 @@ class ResourceExport extends Core\ProcessorEntity
             }
         }
         if (!$userHasAccess) {
-            throw new Core\ApiException('Permission denied', 6, $this->id, 400);
+            throw new ApiException('Permission denied', 6, $this->id, 400);
         }
 
         switch ($format) {
             case 'yaml':
                 header('Content-Disposition: attachment; filename="resource.twig"');
-                return new Core\DataContainer($this->getYaml($resource), 'text');
+                return new DataContainer($this->getYaml($resource), 'text');
                 break;
             case 'json':
                 header('Content-Disposition: attachment; filename="resource.json"');
-                return new Core\DataContainer($this->getJson($resource), 'json');
+                return new DataContainer($this->getJson($resource), 'json');
                 break;
             default:
-                throw new Core\ApiException("Invalid format: $format", 6, $this->id, 400);
+                throw new ApiException("Invalid format: $format", 6, $this->id, 400);
                 break;
         }
     }

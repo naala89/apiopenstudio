@@ -69,3 +69,9 @@ process:
     expected_type: json
     nullable: false
     key: metadata
+  openapi:
+    processor: var_post
+    id: resource_create_openapi
+    expected_type: json
+    nullable: false
+    key: openapi

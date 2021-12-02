@@ -16,36 +16,42 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\ApplicationMapper;
+use ApiOpenStudio\Db\UserMapper;
+use ApiOpenStudio\Db\UserRoleMapper;
 
 /**
  * Class ApplicationRead
  *
  * Processor class to fetch an application.
  */
-class ApplicationRead extends Core\ProcessorEntity
+class ApplicationRead extends ProcessorEntity
 {
     /**
      * Application mapper class.
      *
-     * @var Db\ApplicationMapper
+     * @var ApplicationMapper
      */
-    protected Db\ApplicationMapper $applicationMapper;
+    protected ApplicationMapper $applicationMapper;
 
     /**
      * User role mapper class.
      *
-     * @var Db\UserRoleMapper
+     * @var UserRoleMapper
      */
-    protected Db\UserRoleMapper $userRoleMapper;
+    protected UserRoleMapper $userRoleMapper;
 
     /**
      * User mapper class.
      *
-     * @var Db\UserMapper
+     * @var UserMapper
      */
-    protected Db\UserMapper $userMapper;
+    protected UserMapper $userMapper;
 
     /**
      * {@inheritDoc}
@@ -114,28 +120,28 @@ class ApplicationRead extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->applicationMapper = new Db\ApplicationMapper($this->db, $logger);
-        $this->userRoleMapper = new Db\UserRoleMapper($this->db, $logger);
-        $this->userMapper = new Db\UserMapper($this->db, $logger);
+        $this->applicationMapper = new ApplicationMapper($this->db, $logger);
+        $this->userRoleMapper = new UserRoleMapper($this->db, $logger);
+        $this->userMapper = new UserMapper($this->db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
-        $uid = Core\Utilities::getUidFromToken();
+        $uid = Utilities::getUidFromToken();
         $accountId = $this->val('accountId', true);
         $applicationId = $this->val('applicationId', true);
         $keyword = $this->val('keyword', true);
@@ -177,9 +183,10 @@ class ApplicationRead extends Core\ProcessorEntity
                 'accid' => $application->getAccid(),
                 'appid' => $application->getAppid(),
                 'name' => $application->getName(),
+                'openapi' => json_decode($application->getOpenapi()),
             ];
         }
 
-        return new Core\DataContainer($result, 'array');
+        return new DataContainer($result, 'array');
     }
 }

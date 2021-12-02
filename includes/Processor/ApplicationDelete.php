@@ -16,44 +16,50 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\ApplicationMapper;
+use ApiOpenStudio\Db\ResourceMapper;
+use ApiOpenStudio\Db\UserMapper;
+use ApiOpenStudio\Db\UserRoleMapper;
 
 /**
  * Class ApplicationDelete
  *
  * Processor class to delete an application.
  */
-class ApplicationDelete extends Core\ProcessorEntity
+class ApplicationDelete extends ProcessorEntity
 {
     /**
      * User role mapper class.
      *
-     * @var Db\UserRoleMapper
+     * @var UserRoleMapper
      */
-    protected Db\UserRoleMapper $userRoleMapper;
+    protected UserRoleMapper $userRoleMapper;
 
     /**
      * User mapper class.
      *
-     * @var Db\UserMapper
+     * @var UserMapper
      */
-    protected Db\UserMapper $userMapper;
+    protected UserMapper $userMapper;
 
     /**
      * Application mapper class.
      *
-     * @var Db\ApplicationMapper
+     * @var ApplicationMapper
      */
-    protected Db\ApplicationMapper $applicationMapper;
+    protected ApplicationMapper $applicationMapper;
 
     /**
      * Resource mapper class.
      *
-     * @var Db\ResourceMapper
+     * @var ResourceMapper
      */
-    protected Db\ResourceMapper $resourceMapper;
+    protected ResourceMapper $resourceMapper;
 
     /**
      * {@inheritDoc}
@@ -84,29 +90,29 @@ class ApplicationDelete extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->userRoleMapper = new Db\UserRoleMapper($this->db, $logger);
-        $this->userMapper = new Db\UserMapper($this->db, $logger);
-        $this->applicationMapper = new Db\ApplicationMapper($this->db, $logger);
-        $this->resourceMapper = new Db\ResourceMapper($this->db, $logger);
+        $this->userRoleMapper = new UserRoleMapper($this->db, $logger);
+        $this->userMapper = new UserMapper($this->db, $logger);
+        $this->applicationMapper = new ApplicationMapper($this->db, $logger);
+        $this->resourceMapper = new ResourceMapper($this->db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
-        $uid = Core\Utilities::getUidFromToken();
+        $uid = Utilities::getUidFromToken();
         $appid = $this->val('applicationId', true);
         $application = $this->applicationMapper->findByAppid($appid);
         $accid = $application->getAccid();
@@ -144,6 +150,6 @@ class ApplicationDelete extends Core\ProcessorEntity
             );
         }
 
-        return new Core\DataContainer($this->applicationMapper->delete($application), 'boolean');
+        return new DataContainer($this->applicationMapper->delete($application), 'boolean');
     }
 }
