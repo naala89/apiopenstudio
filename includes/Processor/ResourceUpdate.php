@@ -24,6 +24,7 @@ use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\ResourceValidator;
 use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\AccountMapper;
+use ApiOpenStudio\Db\Application;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\ResourceMapper;
 use ApiOpenStudio\Db\UserRoleMapper;
@@ -203,7 +204,6 @@ class ResourceUpdate extends ProcessorEntity
     {
         parent::process();
 
-        $uid = Utilities::getUidFromToken();
         $resid = $this->val('resid', true);
         $name = $this->val('name', true);
         $description = $this->val('description', true);
@@ -222,54 +222,16 @@ class ResourceUpdate extends ProcessorEntity
             throw new ApiException("Resource does not exist: $resid", 6, $this->id, 400);
         }
 
-        // Validate user role access to the resource or the proposed resource.
-        $existingResourceRoles = $this->userRoleMapper->findByUidAppidRolename(
-            $uid,
-            $application->getAppid(),
-            'Developer'
-        );
-        if (empty($existingResourceRoles)) {
-            throw new ApiException(
-                "Unauthorised: you do not have permissions for this application",
-                6,
-                $this->id,
-                400
-            );
-        }
-        if (!empty($appid)) {
-            $proposedResourceRoles = $this->userRoleMapper->findByUidAppidRolename(
-                $uid,
-                $appid,
-                'Developer'
-            );
-            if (empty($existingResourceRoles) || empty($proposedResourceRoles)) {
-                throw new ApiException(
-                    "Unauthorised: you do not have permissions for this application",
-                    6,
-                    $this->id,
-                    400
-                );
-            }
-        }
+        $this->validateUserRoleAccess($application, (!empty($appid) ? $appid : null));
 
-        // Update to core application and is locked.
-        $account = $this->accountMapper->findByAccid($application->getAccid());
-        if (
-            $account->getName() == $this->settings->__get(['api', 'core_account'])
-            && $application->getName() == $this->settings->__get(['api', 'core_application'])
-            && $this->settings->__get(['api', 'core_resource_lock'])
-        ) {
-            throw new ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
-        }
-
-        $schema = json_decode($resource->getOpenapi(), true);
-        if (empty($schema)) {
+        // Generate default OpenApi fragment in the resource is it doesn't already exist.
+        if (empty($resource->getOpenapi())) {
             $settings = new Config();
             $openApiClassName = "\\ApiOpenStudio\\\OpenApi\\OpenApiPath" .
                 substr($settings->__get(['api', 'openapi_version']), 0, 1);
-            $openApi = new $openApiClassName();
-            $schema = $openApi->getDefaultResourceSchema($resource);
-            $resource->setOpenapi(json_encode($schema));
+            $openApiObj = new $openApiClassName();
+            $openApiObj->setDefault($resource);
+            $resource->setOpenapi($openApiObj->export());
         }
 
         if (!empty($uri)) {
@@ -280,7 +242,7 @@ class ResourceUpdate extends ProcessorEntity
                 $schema[$uri][$resource->getMethod()]['description'] = $description ?? $resource->getDescription();
                 $schema[$uri][$resource->getMethod()]['summary'] = $name ?? $resource->getName();
             }
-            $resource->setOpenapi(json_encode($schema));
+            $resource->setOpenapi(json_encode($schema, JSON_UNESCAPED_SLASHES));
             $resource->setUri($uri);
         }
         if (!empty($method)) {
@@ -291,7 +253,7 @@ class ResourceUpdate extends ProcessorEntity
                 $schema[$uri][$resource->getMethod()]['description'] = $description ?? $resource->getDescription();
                 $schema[$uri][$resource->getMethod()]['summary'] = $name ?? $resource->getName();
             }
-            $resource->setOpenapi(json_encode($schema));
+            $resource->setOpenapi(json_encode($schema, JSON_UNESCAPED_SLASHES));
             $resource->setMethod($method);
         }
         if (!empty($name)) {
@@ -309,7 +271,7 @@ class ResourceUpdate extends ProcessorEntity
         if (!empty($ttl)) {
             $resource->setTtl($ttl);
         }
-        if (!empty($metadata)) {
+        if (!empty($metadata) && $metadata != '"false"') {
             try {
                 $this->validator->validate(json_decode($metadata, true));
             } catch (ReflectionException $e) {
@@ -317,11 +279,11 @@ class ResourceUpdate extends ProcessorEntity
             }
             $resource->setMeta($metadata);
         }
-        if (!empty($openapi)) {
-            $schema = json_decode($openapi);
+        if (!empty($openapi) && $openapi != '"false"') {
+            $schema = json_decode($openapi, true);
             if (!isset($schema[$resource->getUri()])) {
                 throw new ApiException(
-                    'invalid OpenApi schema, path ' . $resource->getUri() . ' Does not exist,',
+                    'invalid OpenApi schema, path ' . $resource->getUri() . ' Does not exist',
                     6,
                     $this->id,
                     400
@@ -356,7 +318,7 @@ class ResourceUpdate extends ProcessorEntity
             $schema[$resource->getUri()][$resource->getMethod()]['summary'] = $name;
             $schema[$resource->getUri()][$resource->getMethod()]['description'] = $description;
         }
-        $resource->setOpenapi(json_encode($schema));
+        $resource->setOpenapi(json_encode($schema, JSON_UNESCAPED_SLASHES));
 
         if (!$this->resourceMapper->save($resource)) {
             throw new ApiException('Failed to update the resource, please check the logs', 2, $this->id, 500);
@@ -366,5 +328,63 @@ class ResourceUpdate extends ProcessorEntity
         $result['meta'] = json_decode($result['meta'], true);
         $result['openapi'] = json_decode($result['openapi'], true);
         return new DataContainer($result, 'array');
+    }
+
+    /**
+     * Validate the user has permissions on the existing or proposed application/resource.
+     *
+     * @param Application $application
+     * @param int|null $newAppid
+     *
+     * @throws ApiException
+     */
+    protected function validateUserRoleAccess(Application $application, int $newAppid = null)
+    {
+        $uid = Utilities::getUidFromToken();
+        if (
+            empty(
+                $this->userRoleMapper->findByUidAppidRolename(
+                    $uid,
+                    $application->getAppid(),
+                    'Developer'
+                )
+            )
+        ) {
+            throw new ApiException(
+                "Unauthorised: you do not have permissions for this application",
+                6,
+                $this->id,
+                400
+            );
+        }
+
+        if (!empty($newAppid)) {
+            if (
+                empty(
+                    $this->userRoleMapper->findByUidAppidRolename(
+                        $uid,
+                        $newAppid,
+                        'Developer'
+                    )
+                )
+            ) {
+                throw new ApiException(
+                    "Unauthorised: you do not have permissions for this application",
+                    6,
+                    $this->id,
+                    400
+                );
+            }
+        }
+
+        // Update to core application and is locked.
+        $account = $this->accountMapper->findByAccid($application->getAccid());
+        if (
+            $account->getName() == $this->settings->__get(['api', 'core_account'])
+            && $application->getName() == $this->settings->__get(['api', 'core_application'])
+            && $this->settings->__get(['api', 'core_resource_lock'])
+        ) {
+            throw new ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
+        }
     }
 }
