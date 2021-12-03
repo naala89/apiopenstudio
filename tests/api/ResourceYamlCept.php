@@ -163,7 +163,8 @@ foreach ($goodIdentities as $goodIdentity) {
             'method' => 'string',
             'uri' => 'string',
             'ttl' => 'integer',
-            'meta' => 'string',
+            'meta' => 'array',
+            'openapi' => 'array',
         ]
     );
 
@@ -182,7 +183,8 @@ foreach ($goodIdentities as $goodIdentity) {
             'method' => 'string',
             'uri' => 'string',
             'ttl' => 'integer',
-            'meta' => 'string',
+            'meta' => 'array',
+            'openapi' => 'array',
         ]
     );
     $json = json_decode($I->getResponse(), true);
@@ -222,7 +224,8 @@ foreach ($goodIdentities as $goodIdentity) {
             'method' => 'string',
             'uri' => 'string',
             'ttl' => 'integer',
-            'meta' => 'string',
+            'meta' => 'array',
+            'openapi' => 'array',
         ]
     );
 
@@ -240,7 +243,8 @@ foreach ($goodIdentities as $goodIdentity) {
             'method' => 'string',
             'uri' => 'string',
             'ttl' => 'integer',
-            'meta' => 'string',
+            'meta' => 'array',
+            'openapi' => 'array',
         ]
     );
 
@@ -266,6 +270,11 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContains("        processor: var_int");
     $I->seeResponseContains("        id: 'test allowed to update process'");
     $I->seeResponseContains("        value: 32");
+    $I->seeResponseContains("openapi:");
+    $I->seeResponseContains("   test/resource_update/allowed:");
+    $I->seeResponseContains("       post:");
+    $I->seeResponseContains("           summary: 'Test allowed to update a resource'");
+    $I->seeResponseContains("           description: 'test allowed to update a resource'");
 
     $I->wantTo('Test resource delete for ' . $goodIdentity[0]);
     $I->sendDelete(
