@@ -144,7 +144,8 @@ class ResourceExport extends ProcessorEntity
     private function getYaml(Resource $resource): string
     {
         $obj = $resource->dump();
-        $obj['meta'] = json_decode($resource->getMeta(), true);
+        $obj['meta'] = json_decode($obj['meta'], true);
+        $obj['openapi'] = json_decode($obj['openapi'], true);
         return  Yaml::dump($obj, Yaml::PARSE_OBJECT);
     }
 
@@ -157,6 +158,9 @@ class ResourceExport extends ProcessorEntity
      */
     private function getJson(Resource $resource): string
     {
-        return json_encode($resource->dump());
+        $obj = $resource->dump();
+        $obj['meta'] = json_decode($obj['meta'], true);
+        $obj['openapi'] = json_decode($obj['openapi'], true);
+        return json_encode($obj);
     }
 }
