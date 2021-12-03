@@ -149,8 +149,6 @@ class ResourceImport extends ProcessorEntity
         parent::process();
 
         $uid = Utilities::getUidFromToken();
-        $this->validateImportPermissions($uid);
-
         $resource = $this->val('resource');
 
         // Extract the file contents.
@@ -158,39 +156,12 @@ class ResourceImport extends ProcessorEntity
         $resource = $this->extractNewResource($fileContents);
         $this->logger->debug('api', 'Decoded new resource: ' . print_r($resource, true));
 
+        $this->validateImportPermissions($uid, $resource);
         $this->validateNewResource($resource);
-
-        // Validate user has developer role for the appid.
-        $role = $this->userRoleMapper->findByUidAppidRolename(
-            $uid,
-            $resource['appid'],
-            'Developer'
-        );
-        if (empty($role->getUrid())) {
-            $this->logger->error('api', 'Unauthorised: you do not have permissions for this application');
-            throw new ApiException(
-                "Unauthorised: you do not have permissions for this application",
-                6,
-                $this->id,
-                400
-            );
-        }
-
-        // Merge the sections into final metadata.
-        $meta = [];
-        if (isset($resource['security'])) {
-            $meta = array_merge($meta, ['security' => $resource['security']]);
-        }
-        if (isset($resource['process'])) {
-            $meta = array_merge($meta, ['process' => $resource['process']]);
-        }
-        if (isset($resource['output'])) {
-            $meta = array_merge($meta, ['output' => $resource['output']]);
-        }
 
         // Validate the metadata.
         try {
-            $this->validator->validate($meta);
+            $this->validator->validate($resource['meta']);
         } catch (ApiException | ReflectionException $e) {
             throw new ApiException($e->getMessage(), 6, $this->id, 400);
         }
@@ -203,7 +174,7 @@ class ResourceImport extends ProcessorEntity
             $resource['description'],
             $resource['method'],
             $resource['uri'],
-            json_encode($meta, true),
+            json_encode($resource['meta'], true),
             '',
             $resource['ttl']
         );
@@ -238,25 +209,35 @@ class ResourceImport extends ProcessorEntity
      * Validate user permissions to import a resource.
      *
      * @param int $uid
+     * @param array $resource
      *
      * @throws ApiException
      */
-    protected function validateImportPermissions(int $uid)
+    protected function validateImportPermissions(int $uid, array $resource)
     {
+        if (!isset($resource['appid'])) {
+            throw new ApiException(
+                'invalid resource, missing appid',
+                4,
+                $this->id,
+                401
+            );
+        }
         $roles = Utilities::getRolesFromToken();
         // Only developer role permitted to upload resource.
         $permitted = false;
         foreach ($roles as $role) {
-            if ($role['role_name'] == 'Developer') {
+            if ($role['role_name'] == 'Developer' && $role['appid'] == $resource['appid']) {
                 $permitted = true;
             }
         }
         if (!$permitted) {
+            $this->logger->error('api', "Unauthorised resource import. uid: $uid, appid: " . $resource['appid']);
             throw new ApiException(
-                'unauthorized for this call',
-                4,
+                "Unauthorised: you do not have permissions for this application",
+                6,
                 $this->id,
-                401
+                400
             );
         }
     }
@@ -264,31 +245,42 @@ class ResourceImport extends ProcessorEntity
     /**
      * Extract the input YAML or JSON into an array.
      *
-     * @param string $resource
+     * @param string $string
      *
      * @return array
      *
      * @throws ApiException
      */
-    protected function extractNewResource(string $resource): array
+    protected function extractNewResource(string $string): array
     {
-        if ($result = json_decode($resource, true)) {
-            return $result;
+        $resource = json_decode($string, true);
+        if ($resource === null) {
+            try {
+                $resource = Yaml::parse($string);
+            } catch (ParseException $exception) {
+                $message = 'Unable to parse the YAML string: ' . $exception->getMessage();
+                throw new ApiException(
+                    $message,
+                    6,
+                    $this->id,
+                    400
+                );
+            }
         }
 
-        try {
-            $result = Yaml::parse($resource);
-        } catch (ParseException $exception) {
-            $message = 'Unable to parse the YAML string: ' . $exception->getMessage();
-            throw new ApiException(
-                $message,
-                6,
-                $this->id,
-                400
-            );
+        // Merge the sections into final metadata.
+        $resource['meta'] = [];
+        if (isset($resource['security'])) {
+            $resource['meta'] = array_merge($resource['meta'], ['security' => $resource['security']]);
+        }
+        if (isset($resource['process'])) {
+            $resource['meta'] = array_merge($resource['meta'], ['process' => $resource['process']]);
+        }
+        if (isset($resource['output'])) {
+            $resource['meta'] = array_merge($resource['meta'], ['output' => $resource['output']]);
         }
 
-        return $result;
+        return $resource;
     }
 
     /**
@@ -307,6 +299,7 @@ class ResourceImport extends ProcessorEntity
                 throw new ApiException("Missing $requiredKey in new resource", 6, $this->id, 400);
             }
         }
+
         // Validate TTL in the imported file.
         if ($resource['ttl'] < 0) {
             $this->logger->error('api', 'Negative ttl in new resource');
