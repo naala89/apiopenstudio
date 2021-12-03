@@ -79,7 +79,7 @@ abstract class OpenApiPathAbstract
     public function export(bool $encoded = true)
     {
         if ($encoded) {
-            if (!$result = json_encode($this->definition, true)) {
+            if (!$result = json_encode($this->definition, JSON_UNESCAPED_SLASHES)) {
                 throw new ApiException('failed to encode the JSON array');
             }
             return $result;
