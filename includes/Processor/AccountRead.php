@@ -141,10 +141,6 @@ class AccountRead extends ProcessorEntity
 
         $accounts = $this->accountMapper->findAllForUser($uid, $params);
 
-        if (empty($accounts)) {
-            throw new ApiException('No accounts found', 6, $this->id, 400);
-        }
-
         $result = [];
         foreach ($accounts as $account) {
             $result[] = $account->dump();
