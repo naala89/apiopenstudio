@@ -83,7 +83,6 @@ class ResourceExport extends ProcessorEntity
     public function __construct($meta, &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->userRoleMapper = new UserRoleMapper($db, $logger);
         $this->resourceMapper = new ResourceMapper($db, $logger);
     }
 
@@ -119,48 +118,67 @@ class ResourceExport extends ProcessorEntity
             throw new ApiException('Permission denied', 6, $this->id, 400);
         }
 
+        $resourceExport = $this->getExportArray($resource);
+
         switch ($format) {
             case 'yaml':
                 header('Content-Disposition: attachment; filename="resource.twig"');
-                return new DataContainer($this->getYaml($resource), 'text');
+                $result = new  DataContainer($this->getYaml($resourceExport), 'text');
                 break;
             case 'json':
                 header('Content-Disposition: attachment; filename="resource.json"');
-                return new DataContainer($this->getJson($resource), 'json');
+                $result = new DataContainer($this->getJson($resourceExport), 'json');
                 break;
             default:
                 throw new ApiException("Invalid format: $format", 6, $this->id, 400);
-                break;
         }
+
+        return $result;
     }
 
     /**
-     * Create a YAML string from a resource.
+     * Construct an array of the resource for export.
      *
-     * @param Resource $resource The resource.
+     * @param Resource $resource
      *
-     * @return string A YAML string.
+     * @return array
      */
-    private function getYaml(Resource $resource): string
+    protected function getExportArray(Resource $resource): array
     {
-        $obj = $resource->dump();
-        $obj['meta'] = json_decode($obj['meta'], true);
-        $obj['openapi'] = json_decode($obj['openapi'], true);
-        return  Yaml::dump($obj, Yaml::PARSE_OBJECT);
+        $result = $resource->dump();
+        $meta = json_decode($result['meta'], true);
+        unset($result['meta']);
+
+        foreach ($meta as $key => $definition) {
+            $result[$key] = $definition;
+        }
+
+        $result['openapi'] = json_decode($result['openapi'], true);
+
+        return $result;
     }
 
     /**
-     * Create a JSON string from a resource.
+     * Create a YAML string from a resource array.
      *
-     * @param Resource $resource The resource.
+     * @param array $resource The exportable resource array.
      *
      * @return string A YAML string.
      */
-    private function getJson(Resource $resource): string
+    protected function getYaml(array $resource): string
     {
-        $obj = $resource->dump();
-        $obj['meta'] = json_decode($obj['meta'], true);
-        $obj['openapi'] = json_decode($obj['openapi'], true);
-        return json_encode($obj);
+        return  Yaml::dump($resource, Yaml::PARSE_OBJECT);
+    }
+
+    /**
+     * Create a JSON string from a resource array.
+     *
+     * @param array $resource The exportable resource array.
+     *
+     * @return string A JSON string.
+     */
+    protected function getJson(array $resource): string
+    {
+        return json_encode($resource, JSON_UNESCAPED_SLASHES);
     }
 }
