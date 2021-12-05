@@ -174,12 +174,14 @@ class ResourceImport extends ProcessorEntity
             $resource['description'],
             $resource['method'],
             $resource['uri'],
-            json_encode($resource['meta'], true),
+            json_encode($resource['meta'],JSON_UNESCAPED_SLASHES),
             '',
             $resource['ttl']
         );
+
+        // OpenApi
         if (!empty($resource['openapi'])) {
-            $resourceObj->setOpenapi($resource['openapi']);
+            $resourceObj->setOpenapi(json_encode($resource['openapi'], true));
         } else {
             // Generate default OpenApi fragment.
             $settings = new Config();
@@ -253,12 +255,16 @@ class ResourceImport extends ProcessorEntity
      */
     protected function extractNewResource(string $string): array
     {
+        // attempt string extraction as JSON.
         $resource = json_decode($string, true);
+
+        // attempt string extraction as YAML.
         if ($resource === null) {
+            $message = 'unable to parse input as JSON';
             try {
                 $resource = Yaml::parse($string);
             } catch (ParseException $exception) {
-                $message = 'Unable to parse the YAML string: ' . $exception->getMessage();
+                $message .= '. Unable to parse the YAML string: ' . $exception->getMessage();
                 throw new ApiException(
                     $message,
                     6,
@@ -272,12 +278,15 @@ class ResourceImport extends ProcessorEntity
         $resource['meta'] = [];
         if (isset($resource['security'])) {
             $resource['meta'] = array_merge($resource['meta'], ['security' => $resource['security']]);
+            unset($resource['security']);
         }
         if (isset($resource['process'])) {
             $resource['meta'] = array_merge($resource['meta'], ['process' => $resource['process']]);
+            unset($resource['process']);
         }
         if (isset($resource['output'])) {
             $resource['meta'] = array_merge($resource['meta'], ['output' => $resource['output']]);
+            unset($resource['output']);
         }
 
         return $resource;
