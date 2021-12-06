@@ -27,11 +27,27 @@ class OpenApiPath3 extends OpenApiPathAbstract
      */
     public function setDefault(Resource $resource)
     {
+        $path = '/' . $resource->getUri();
         $this->definition = [
-            $resource->getUri() => [
+            $path => [
                 $resource->getMethod() => [
-                    'description' => $resource->getDescription(),
                     'summary' => $resource->getName(),
+                    'description' => $resource->getDescription(),
+                    'tags' => [$path],
+                    'responses' => [
+                        '200' => [
+                            'description' => 'success',
+                        ],
+                        '400' => [
+                            '$ref' => '#/components/responses/GeneralError',
+                        ],
+                        '401' => [
+                            '$ref' => '#/components/responses/Unauthorised',
+                        ],
+                        '403' => [
+                            '$ref' => '#/components/responses/Forbidden',
+                        ],
+                    ]
                 ],
             ],
         ];

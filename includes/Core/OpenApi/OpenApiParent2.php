@@ -62,18 +62,50 @@ class OpenApiParent2 extends OpenApiParentAbstract
     protected function getDefaultResponses(): array
     {
         return [
-            'description' => 'General Error',
-            'schema' => [
-                '$ref' => '#/definitions/GeneralError',
+            'GeneralError' => [
+                'description' => 'General error.',
+                'schema' => [
+                    '$ref' => '#/definitions/GeneralError',
+                ],
                 'examples' => [
                     'application/json' => [
                         'error' => [
-                            'id' => 'processor_id',
+                            'id' => '<processor_id>',
                             'code' => 6,
-                            'message' => 'Error details.',
+                            'message' => 'Oops, something went wrong.',
                         ],
-                    ]
-                ]
+                    ],
+                ],
+            ],
+            'Unauthorised' => [
+                'description' => 'Unauthorised.',
+                'schema' => [
+                    '$ref' => '#/definitions/GeneralError',
+                ],
+                'examples' => [
+                    'application/json' => [
+                        'error' => [
+                            'id' => '<processor_id>',
+                            'code' => 4,
+                            'message' => 'Invalid token.',
+                        ],
+                    ],
+                ],
+            ],
+            'Forbidden' => [
+                'description' => 'Forbidden.',
+                'schema' => [
+                    '$ref' => '#/definitions/GeneralError',
+                ],
+                'examples' => [
+                    'application/json' => [
+                        'error' => [
+                            'id' => '<processor_id>',
+                            'code' => 4,
+                            'message' => 'Permission denied.',
+                        ],
+                    ],
+                ],
             ],
         ];
     }
@@ -126,7 +158,7 @@ class OpenApiParent2 extends OpenApiParentAbstract
             'swagger' => self::VERSION,
             'info' => $this->getDefaultInfo($applicationName),
             'host' => $this->settings->__get(['api', 'url']),
-            'basePath' => "$accountName/$applicationName",
+            'basePath' => "/$accountName/$applicationName",
             'schemes' => $this->settings->__get(['api', 'protocols']),
             'paths' => [],
             'definitions' => $this->getDefaultDefinitions(),

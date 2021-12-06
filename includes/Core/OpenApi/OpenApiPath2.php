@@ -27,11 +27,13 @@ class OpenApiPath2 extends OpenApiPathAbstract
      */
     public function setDefault(Resource $resource)
     {
+        $path = '/' . $resource->getUri();
         $this->definition = [
-            $resource->getUri() => [
+            $path => [
                 $resource->getMethod() => [
                     'description' => $resource->getDescription(),
                     'summary' => $resource->getName(),
+                    'tags' => [$path],
                     'produces' => [
                         'application/json',
                         'application/xml',
@@ -42,12 +44,14 @@ class OpenApiPath2 extends OpenApiPathAbstract
                         '200' => [
                             'description' => 'success response',
                         ],
-                    ],
-                    'default' => [
-                        'description' => 'General error',
-                        'schema' => [
-                            'type' => 'object',
-                            '$ref' => '#/definitions/GeneralError',
+                        '400' => [
+                            '$ref' => '#/responses/GeneralError'
+                        ],
+                        '401' => [
+                            '$ref' => '#/responses/Unauthorised'
+                        ],
+                        '403' => [
+                            '$ref' => '#/responses/Forbidden'
                         ],
                     ],
                 ],

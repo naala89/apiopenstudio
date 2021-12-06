@@ -115,6 +115,47 @@ class OpenApiParent3 extends OpenApiParentAbstract
                         'schema' => [
                             '$ref' => '#/components/schemas/GeneralError',
                         ],
+                        'example' => [
+                            'error' => [
+                                'id' => '<my_processor_id>',
+                                'code' => 6,
+                                'message' => 'Oops, something went wrong.',
+                            ]
+                        ],
+                    ],
+                ],
+            ],
+            'Unauthorised' => [
+                'description' => 'Unauthorised',
+                'content' => [
+                    'application/json' => [
+                        'schema' => [
+                            '$ref' => '#/components/schemas/GeneralError',
+                        ],
+                        'example' => [
+                            'error' => [
+                                'id' => '<my_processor_id>',
+                                'code' => 4,
+                                'message' => 'Invalid token.',
+                            ]
+                        ],
+                    ],
+                ],
+            ],
+            'Forbidden' => [
+                'description' => 'Forbidden',
+                'content' => [
+                    'application/json' => [
+                        'schema' => [
+                            '$ref' => '#/components/schemas/GeneralError',
+                        ],
+                        'example' => [
+                            'error' => [
+                                'id' => '<my_processor_id>',
+                                'code' => 6,
+                                'message' => 'Permission denied.',
+                            ]
+                        ],
                     ],
                 ],
             ],
@@ -146,18 +187,22 @@ class OpenApiParent3 extends OpenApiParentAbstract
             'openapi' => self::VERSION,
             'info' => $this->getDefaultInfo($applicationName),
             'servers' => [
-                'url' => $this->settings->__get(['api', 'url']),
+                [],
             ],
             'paths' => [],
             'components' => $this->getDefaultComponents(),
-            'security' => [
-                'bearer_token' => [],
-            ],
+            'security' => [],
             'externalDocs' => [
                 'description' => 'Find out more about ApiOpenStudio',
                 'url' => 'https://www.apiopenstudio.com',
             ],
         ];
+        foreach ($this->settings->__get(['api', 'protocols']) as $protocol) {
+            $this->definition['servers'][] = [
+                'url' => "$protocol://" . $this->settings->__get(['api', 'url']) . "/$accountName/$applicationName"
+            ];
+        }
+
     }
 
     /**
