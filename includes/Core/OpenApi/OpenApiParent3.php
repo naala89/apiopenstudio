@@ -186,9 +186,7 @@ class OpenApiParent3 extends OpenApiParentAbstract
         $this->definition = [
             'openapi' => self::VERSION,
             'info' => $this->getDefaultInfo($applicationName),
-            'servers' => [
-                [],
-            ],
+            'servers' => [],
             'paths' => [],
             'components' => $this->getDefaultComponents(),
             'security' => [],
@@ -208,9 +206,52 @@ class OpenApiParent3 extends OpenApiParentAbstract
     /**
      * {@inheritDoc}
      */
+    public function getAccount(): string
+    {
+        $servers = $this->definition['servers'];
+        $urlParts = explode('://', $servers[0]['url']);
+        if (sizeof($urlParts) != 2) {
+            throw new ApiException('invalid servers in the existing openApi schema');
+        }
+        $matches = explode('/', $urlParts[1]);
+        if (sizeof($matches) != 3) {
+            throw new ApiException('invalid servers in the existing openApi schema');
+        }
+        return $matches[1];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getApplication(): string
+    {
+        $servers = $this->definition['servers'];
+        $urlParts = explode('://', $servers[0]['url']);
+        if (sizeof($urlParts) != 2) {
+            throw new ApiException('invalid servers in the existing openApi schema');
+        }
+        $matches = explode('/', $urlParts[1]);
+        if (sizeof($matches) != 3) {
+            throw new ApiException('invalid servers in the existing openApi schema');
+        }
+        return $matches[2];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setAccount(string $accountName)
     {
-        // Do nothing;
+        $servers = $this->definition['servers'];
+        $urlParts = explode('://', $servers[0]['url']);
+        if (sizeof($urlParts) != 2) {
+            throw new ApiException('invalid servers in the existing openApi schema');
+        }
+        $matches = explode('/', $urlParts[1]);
+        if (sizeof($matches) != 3) {
+            throw new ApiException('invalid servers in the existing openApi schema');
+        }
+        $this->definition['servers'] = $urlParts[0] . '://' . $matches[0] . "/$accountName/" . $matches[2];
     }
 
     /**
@@ -218,14 +259,23 @@ class OpenApiParent3 extends OpenApiParentAbstract
      */
     public function setApplication(string $applicationName)
     {
-        $oldApplicationName = $this->definition['info']['title'];
+        $servers = $this->definition['servers'];
+        $urlParts = explode('://', $servers[0]['url']);
+        if (sizeof($urlParts) != 2) {
+            throw new ApiException('invalid servers in the existing openApi schema');
+        }
+        $matches = explode('/', $urlParts[1]);
+        if (sizeof($matches) != 3) {
+            throw new ApiException('invalid servers in the existing openApi schema');
+        }
+        $this->definition['servers'] = $urlParts[0] . '://' . $matches[0] . '/' . $matches[1] . "/$applicationName";
+
         $this->definition['info']['title'] = $applicationName;
         $this->definition['info']['description'] = str_replace(
-            $oldApplicationName,
-            $applicationName,
+            ' ' . $matches[1] . ' ',
+            " $applicationName ",
             $this->definition['info']['description']
         );
-        $this->definition['basePath'] = preg_replace('/\/.*/', $applicationName, $this->definition['basePath']);
     }
 
     /**

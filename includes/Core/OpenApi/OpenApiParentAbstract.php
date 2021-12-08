@@ -88,9 +88,29 @@ abstract class OpenApiParentAbstract
     abstract public function setDefault(string $accountName, string $applicationName);
 
     /**
+     * Get the account name from the schema
+     *
+     * @return string
+     *
+     * @throws ApiException
+     */
+    abstract public function getAccount(): string;
+
+    /**
+     * Get the application name from the schema
+     *
+     * @return string
+     *
+     * @throws ApiException
+     */
+    abstract public function getApplication(): string;
+
+    /**
      * Set the account name.
      *
      * @param string $accountName
+     *
+     * @throws ApiException
      */
     abstract public function setAccount(string $accountName);
 
@@ -98,6 +118,8 @@ abstract class OpenApiParentAbstract
      * Set the application name.
      *
      * @param string $applicationName
+     *
+     * @throws ApiException
      */
     abstract public function setApplication(string $applicationName);
 

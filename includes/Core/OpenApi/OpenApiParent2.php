@@ -170,9 +170,37 @@ class OpenApiParent2 extends OpenApiParentAbstract
     /**
      * {@inheritDoc}
      */
+    public function getAccount(): string
+    {
+        $matches = explode('/', trim($this->definition['basePath'], '/'));
+        if (sizeof($matches) != 2) {
+            throw new ApiException('invalid basePath in the existing openApi schema');
+        }
+        return $matches[0];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getApplication(): string
+    {
+        $matches = explode('/', trim($this->definition['basePath'], '/'));
+        if (sizeof($matches) != 2) {
+            throw new ApiException('invalid basePath in the existing openApi schema');
+        }
+        return $matches[0];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setAccount(string $accountName)
     {
-        $this->definition['basePath'] = preg_replace('/.*\//', "$accountName/", $this->definition['basePath']);
+        $matches = explode('/', trim($this->definition['basePath'], '/'));
+        if (sizeof($matches) != 2) {
+            throw new ApiException('invalid basePath in the existing openApi schema');
+        }
+        $this->definition['basePath'] = "/$accountName/" . $matches[1];
     }
 
     /**
@@ -180,14 +208,17 @@ class OpenApiParent2 extends OpenApiParentAbstract
      */
     public function setApplication(string $applicationName)
     {
-        $oldApplicationName = $this->definition['info']['title'];
+        $matches = explode('/', trim($this->definition['basePath'], '/'));
+        if (sizeof($matches) != 2) {
+            throw new ApiException('invalid basePath in the existing openApi schema');
+        }
         $this->definition['info']['title'] = $applicationName;
         $this->definition['info']['description'] = str_replace(
-            $oldApplicationName,
-            $applicationName,
+             " {$matches[1]} ",
+            " $applicationName ",
             $this->definition['info']['description']
         );
-        $this->definition['basePath'] = preg_replace('/\/.*/', "/$applicationName", $this->definition['basePath']);
+        $this->definition['basePath'] = '/' . $matches[0] . "/$applicationName";
     }
 
     /**
