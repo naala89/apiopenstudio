@@ -106,7 +106,7 @@ class OpenapiRead extends ProcessorEntity
         $roles = Utilities::getRolesFromToken();
         $permitted = false;
         foreach ($roles as $role) {
-            if ($role['appid'] == $appid || $role['role_name'] == 'Developer') {
+            if ($role['appid'] == $appid) {
                 $permitted = true;
             }
         }
@@ -119,38 +119,21 @@ class OpenapiRead extends ProcessorEntity
             throw new ApiException('invalid appid');
         }
 
-        $openApi = $application->getOpenapi();
-        if (empty($openApi)) {
-            $settings = new Config();
-            $account = $this->accountMapper->findByAccid($application->getAccid());
-            $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
-                substr($settings->__get(['api', 'openapi_version']), 0, 1);
-            $openApiClass = new $openApiClassName();
-            $openApiClass->setDefault($account->getName(), $application->getName());
-            $openApi = $openApiClass->export();
-            $application->setOpenapi($openApiClass->export());
-            $this->applicationMapper->save(($application));
-        }
-        $openApi = json_decode($openApi, true);
-        $openApi['paths'] = [];
+        $schema = json_decode($application->getOpenapi(), true);
 
         $resources = $this->resourceMapper->findByAppId($appid);
+        $schema['paths'] = [];
         foreach ($resources as $resource) {
             $resourceOpenApi = $resource->getOpenapi();
-            if (empty($resourceOpenApi)) {
-                $settings = new Config();
-                $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiPath" .
-                    substr($settings->__get(['api', 'openapi_version']), 0, 1);
-                $openApiClass = new $openApiClassName();
-                $openApiClass->setDefault($resource, $account->getName(), $application->getName());
-                $resourceOpenApi = $openApiClass->export();
-                $resource->setOpenapi($resourceOpenApi);
-                $this->resourceMapper->save(($resource));
-            }
-
-            $openApi['paths'] = array_merge_recursive($openApi['paths'], json_decode($resourceOpenApi, true));
+            $schema['paths'] = array_merge_recursive($schema['paths'], json_decode($resourceOpenApi, true));
+        }
+        if (empty($schema['paths'])) {
+            unset($schema['paths']);
+        }
+        if (empty($schema)) {
+            return new DataContainer("", 'json');
         }
 
-        return new DataContainer(json_encode($openApi, JSON_UNESCAPED_SLASHES), 'json');
+        return new DataContainer(json_encode($schema, JSON_UNESCAPED_SLASHES), 'json');
     }
 }
