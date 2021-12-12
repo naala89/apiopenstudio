@@ -49,7 +49,7 @@ class RoleRead extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => ['integer', 'text'],
+                'limitTypes' => ['integer'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -113,7 +113,7 @@ class RoleRead extends Core\ProcessorEntity
         $orderBy = $this->val('order_by', true);
         $direction = $this->val('direction', true);
 
-        if ($rid != 'all') {
+        if (!empty($rid)) {
             return $this->findByRid($rid);
         }
 
