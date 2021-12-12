@@ -24,10 +24,9 @@ use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\AccountMapper;
-use ApiOpenStudio\Db\Application;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\ResourceMapper;
-use mysql_xdevapi\Exception;
+use stdClass;
 
 /**
  * Class OpenapiUpdate
@@ -109,16 +108,16 @@ class OpenapiUpdate extends ProcessorEntity
     public function process(): DataContainer
     {
         parent::process();
-        $openApi = json_decode($this->val('open_api', true), true);
+        $openApi = json_decode($this->val('open_api', true));
         $appid = $this->val('appid', true);
 
         $settings = new Config();
         $openApiParentClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
-            substr($settings->__get(['api', 'openapi_version']), 0, 1);
+            str_replace('.', '_', $settings->__get(['api', 'openapi_version']));
         $openApiParentClass = new $openApiParentClassName();
 
-        $paths = $openApi['paths'];
-        $openApi['paths'] = [];
+        $paths = $openApi->paths;
+        $openApi->paths = new stdClass();
         $openApiParentClass->import($openApi);
 
         // Extract the accid and appid from the schema.
@@ -141,18 +140,18 @@ class OpenapiUpdate extends ProcessorEntity
         $application = $this->applicationMapper->findByAccidAppname($account->getAccid(), $applicationName);
         if (empty($appid) || $appid != $application->getAppid()) {
             throw new ApiException(
-                "invalid application name in the schema: $applicationName",
+                "invalid application name in the schema: $applicationName $appid " . $account->getAccid(),
                 7,
                 $this->id,
                 400
             );
         }
 
-        // Validate user has permissions.
+        // Only developers for an application can use this processor.
         $roles = Utilities::getRolesFromToken();
         $permitted = false;
         foreach ($roles as $role) {
-            if ($role['appid'] == $appid || $role['role_name'] == 'Developer') {
+            if ($role['appid'] == $appid && $role['role_name'] == 'Developer') {
                 $permitted = true;
             }
         }
@@ -160,7 +159,8 @@ class OpenapiUpdate extends ProcessorEntity
             throw new ApiException('permission denied', 4, 403);
         }
 
-        $application->setOpenapi(json_encode($openApi, JSON_UNESCAPED_SLASHES));
+        $result = $openApiParentClass->export(false);
+        $application->setOpenapi($openApiParentClass->export());
         try {
             $this->applicationMapper->save($application);
         } catch (ApiException $e) {
@@ -168,17 +168,20 @@ class OpenapiUpdate extends ProcessorEntity
         }
 
         foreach ($paths as $uri => $path) {
+            $trimmedUri = trim(preg_replace('/\/\{.*\}/', '', $uri), '/');
             foreach ($path as $method => $body) {
-                $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, trim($uri, '/'));
+                $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $trimmedUri);
                 if (empty($resource->getResid())) {
                     throw new ApiException(
-                        "invalid resource in the schema: $applicationName, $method, $uri",
+                        "invalid resource in the schema: $applicationName, $method, $trimmedUri",
                         7,
                         $this->id,
                         400
                     );
                 }
-                $resource->setOpenapi(json_encode([$uri => [$method => $body]], JSON_UNESCAPED_SLASHES));
+                $openApiResource = [$uri => [$method => $body]];
+                $result->paths->{$uri}->{$method} = $body;
+                $resource->setOpenapi(json_encode($openApiResource, JSON_UNESCAPED_SLASHES));
                 try {
                     $this->resourceMapper->save($resource);
                 } catch (ApiException $e) {
@@ -187,6 +190,6 @@ class OpenapiUpdate extends ProcessorEntity
             }
         }
 
-        return $this->val('open_api');
+        return new DataContainer(json_encode($result), 'json');
     }
 }
