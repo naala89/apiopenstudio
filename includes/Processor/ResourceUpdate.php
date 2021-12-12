@@ -228,7 +228,7 @@ class ResourceUpdate extends ProcessorEntity
         if (empty($resource->getOpenapi())) {
             $settings = new Config();
             $openApiClassName = "\\ApiOpenStudio\\\OpenApi\\OpenApiPath" .
-                substr($settings->__get(['api', 'openapi_version']), 0, 1);
+                str_replace('.', '_', $settings->__get(['api', 'openapi_version']));
             $openApiObj = new $openApiClassName();
             $openApiObj->setDefault($resource);
             $resource->setOpenapi($openApiObj->export());

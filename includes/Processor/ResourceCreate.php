@@ -249,7 +249,7 @@ class ResourceCreate extends ProcessorEntity
         if (empty($schema)) {
             $settings = new Config();
             $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiPath" .
-                substr($settings->__get(['api', 'openapi_version']), 0, 1);
+                str_replace('.', '_', $settings->__get(['api', 'openapi_version']));
             $openApi = new $openApiClassName();
             $openApi->setDefault($resource);
             $resource->setOpenapi($openApi->export());

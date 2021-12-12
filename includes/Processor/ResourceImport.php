@@ -186,7 +186,7 @@ class ResourceImport extends ProcessorEntity
             // Generate default OpenApi fragment.
             $settings = new Config();
             $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiPath" .
-                substr($settings->__get(['api', 'openapi_version']), 0, 1);
+                str_replace('.', '_', $settings->__get(['api', 'openapi_version']));
             $openApi = new $openApiClassName();
             $openApi->setDefault($resourceObj);
             $resourceObj->setOpenapi($openApi->export());

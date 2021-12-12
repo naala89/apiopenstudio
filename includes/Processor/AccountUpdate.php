@@ -135,7 +135,7 @@ class AccountUpdate extends ProcessorEntity
     {
         $settings = new Config();
         $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
-            substr($settings->__get(['api', 'openapi_version']), 0, 1);
+            str_replace('.', '_', $settings->__get(['api', 'openapi_version']));
         $openApi = new $openApiClassName();
         $applications = $this->applicationMapper->findByAccid($account->getAccid());
         foreach ($applications as $application) {
