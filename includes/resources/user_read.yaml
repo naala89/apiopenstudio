@@ -10,7 +10,7 @@
 
 name: User read
 
-description: Fetch a user.
+description: Fetch a single or multpiple users.
 
 uri: user
 

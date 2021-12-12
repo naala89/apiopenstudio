@@ -10,7 +10,7 @@
 
 name: OpenApi read
 
-description: Fetch OpenApi documentation for resources in an application that you have access to.
+description: Fetch OpenApi documentation for an application and its resources, limited by user access rights.
 
 uri: openapi
 
@@ -21,8 +21,8 @@ appid: 1
 ttl: 3600
 
 security:
-  id: processors_security
   processor: validate_token
+  id: openapi_read_security
 
 process:
   processor: openapi_read

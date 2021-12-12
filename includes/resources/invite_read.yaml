@@ -10,7 +10,7 @@
 
 name: Invite read
 
-description: Fetch user invites.
+description: Fetch a single or multiple user invites.
 
 uri: invite
 

@@ -10,7 +10,7 @@
 
 name: OpenApi update
 
-description: Fetch OpenApi documentation for an application and its resources and update their OpenApi schema fragments.
+description: Update OpenApi documentation for an application and its resources.
 
 uri: openapi
 

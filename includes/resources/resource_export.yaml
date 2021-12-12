@@ -10,7 +10,7 @@
 
 name: Resource export
 
-description: Export a resource as a file.
+description: Export a resource as a file as an attachment in the response.
 
 uri: resource/export
 

@@ -10,7 +10,7 @@
 
 name: Invite send
 
-description: Invite a user or users.
+description: Send an invite to a single user or multiple users.
 
 uri: user/invite
 

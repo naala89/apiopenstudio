@@ -10,7 +10,7 @@
 
 name: Processors
 
-description: Fetch details of processors.
+description: Fetch details of a single or all processors.
 
 uri: processors
 

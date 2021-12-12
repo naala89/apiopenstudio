@@ -1,4 +1,4 @@
-# Invite accept resource.
+# OpenApi default.
 #
 # @package   Apiopenstudio
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -8,23 +8,27 @@
 # @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
-name: Invite accept
+name: OpenApi default
 
-description: Accept a user invite, using an invite token.
+description: Generate default OpenApi documentation for an application and all its resources.
 
-uri: user/invite/accept
+uri: openapi/default
 
 method: post
 
 appid: 1
 
-ttl: 0
+ttl: 3600
+
+security:
+  processor: validate_token
+  id: openapi_default_security
 
 process:
-  id: user_invite_accept_process
-  processor: invite_accept
-  token:
+  processor: openapi_default
+  id: openapi_default_process
+  appid:
     processor: var_uri
-    id: user_invite_accept_token
+    id: openapi_default_appid
     index: 0
-    nullable: false
+    expected_type: integer
