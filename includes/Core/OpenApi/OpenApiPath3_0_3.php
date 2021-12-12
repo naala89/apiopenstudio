@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class OpenApiPath2.
+ * Class OpenApiPath3_0_3.
  *
  * @package    ApiOpenStudio
  * @subpackage Core
@@ -18,9 +18,9 @@ namespace ApiOpenStudio\Core\OpenApi;
 use ApiOpenStudio\Db\Resource;
 
 /**
- * Class to generate default path elements for OpenApi v2.0.
+ * Class to generate default elements for OpenApi v3.0.3.
  */
-class OpenApiPath2 extends OpenApiPathAbstract
+class OpenApiPath3_0_3 extends OpenApiPathAbstract
 {
     /**
      * {@inheritDoc}
@@ -28,34 +28,31 @@ class OpenApiPath2 extends OpenApiPathAbstract
     public function setDefault(Resource $resource)
     {
         $path = '/' . $resource->getUri();
-        $this->definition = [
+        $definition = [
             $path => [
                 $resource->getMethod() => [
-                    'description' => $resource->getDescription(),
                     'summary' => $resource->getName(),
+                    'description' => $resource->getDescription(),
                     'tags' => [$path],
-                    'produces' => [
-                        'application/json',
-                        'application/xml',
-                        'application/text',
-                        'text/html',
-                    ],
                     'responses' => [
                         '200' => [
-                            'description' => 'success response',
+                            'description' => 'success',
                         ],
                         '400' => [
-                            '$ref' => '#/responses/GeneralError'
+                            '$ref' => '#/components/responses/GeneralError',
                         ],
                         '401' => [
-                            '$ref' => '#/responses/Unauthorised'
+                            '$ref' => '#/components/responses/Unauthorised',
                         ],
                         '403' => [
-                            '$ref' => '#/responses/Forbidden'
+                            '$ref' => '#/components/responses/Forbidden',
                         ],
-                    ],
+                    ]
                 ],
             ],
         ];
+
+        $this->definition = json_decode(json_encode($definition, JSON_UNESCAPED_SLASHES));
     }
+
 }

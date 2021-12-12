@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class OpenApiParent2.
+ * Class OpenApiParent2_0.
  *
  * @package    ApiOpenStudio
  * @subpackage Core
@@ -16,11 +16,12 @@
 namespace ApiOpenStudio\Core\OpenApi;
 
 use ApiOpenStudio\Core\ApiException;
+use stdClass;
 
 /**
  * Class to generate default parent elements for OpenApi v2.0.
  */
-class OpenApiParent2 extends OpenApiParentAbstract
+class OpenApiParent2_0 extends OpenApiParentAbstract
 {
     /**
      * OpenApi doc version.
@@ -32,13 +33,13 @@ class OpenApiParent2 extends OpenApiParentAbstract
      *
      * @param string $applicationName
      *
-     * @return array
+     * @return stdClass
      *
      * @throws ApiException
      */
-    protected function getDefaultInfo(string $applicationName): array
+    protected function getDefaultInfo(string $applicationName): stdClass
     {
-        return [
+        $info = [
             'title' => $applicationName,
             'description' => "This if the definitions for the $applicationName application.",
             'termsOfService' => 'https://www.apiopenstudio.com/license/',
@@ -52,16 +53,18 @@ class OpenApiParent2 extends OpenApiParentAbstract
             ],
             'version' => '1.0.0',
         ];
+
+        return json_decode(json_encode($info, JSON_UNESCAPED_SLASHES));
     }
 
     /**
      * Returns the default responses element.
      *
-     * @return array
+     * @return stdClass
      */
-    protected function getDefaultResponses(): array
+    protected function getDefaultResponses(): stdClass
     {
-        return [
+        $responses = [
             'GeneralError' => [
                 'description' => 'General error.',
                 'schema' => [
@@ -108,11 +111,18 @@ class OpenApiParent2 extends OpenApiParentAbstract
                 ],
             ],
         ];
+
+        return json_decode(json_encode($responses, JSON_UNESCAPED_SLASHES));
     }
 
-    protected function getDefaultDefinitions(): array
+    /**
+     * Get the default definitions object.
+     *
+     * @return stdClass
+     */
+    protected function getDefaultDefinitions(): stdClass
     {
-        return [
+        $definitions = [
             'GeneralError' => [
                 'type' => 'object',
                 'properties' => [
@@ -134,19 +144,23 @@ class OpenApiParent2 extends OpenApiParentAbstract
                 ]
             ],
         ];
+
+        return json_decode(json_encode($definitions, JSON_UNESCAPED_SLASHES));
     }
 
     /**
      * Returns the default externalDocs element.
      *
-     * @return array
+     * @return stdClass
      */
-    protected function getDefaultExternalDocs(): array
+    protected function getDefaultExternalDocs(): stdClass
     {
-        return [
+        $externalDocs = [
             'description' => 'Find out more about ApiOpenStudio',
             'url' => 'https://www.apiopenstudio.com',
         ];
+
+        return json_decode(json_encode($externalDocs, JSON_UNESCAPED_SLASHES));
     }
 
     /**
@@ -154,7 +168,7 @@ class OpenApiParent2 extends OpenApiParentAbstract
      */
     public function setDefault(string $accountName, string $applicationName)
     {
-        $this->definition = [
+        $definition = [
             'swagger' => self::VERSION,
             'info' => $this->getDefaultInfo($applicationName),
             'host' => $this->settings->__get(['api', 'url']),
@@ -165,6 +179,8 @@ class OpenApiParent2 extends OpenApiParentAbstract
             'responses' => $this->getDefaultResponses(),
             'externalDocs' => $this->getDefaultExternalDocs(),
         ];
+
+        $this->definition = json_decode(json_encode($definition, JSON_UNESCAPED_SLASHES));
     }
 
     /**
@@ -172,7 +188,7 @@ class OpenApiParent2 extends OpenApiParentAbstract
      */
     public function getAccount(): string
     {
-        $matches = explode('/', trim($this->definition['basePath'], '/'));
+        $matches = explode('/', trim($this->definition->basePath, '/'));
         if (sizeof($matches) != 2) {
             throw new ApiException('invalid basePath in the existing openApi schema');
         }
@@ -184,7 +200,7 @@ class OpenApiParent2 extends OpenApiParentAbstract
      */
     public function getApplication(): string
     {
-        $matches = explode('/', trim($this->definition['basePath'], '/'));
+        $matches = explode('/', trim($this->definition->basePath, '/'));
         if (sizeof($matches) != 2) {
             throw new ApiException('invalid basePath in the existing openApi schema');
         }
@@ -196,11 +212,11 @@ class OpenApiParent2 extends OpenApiParentAbstract
      */
     public function setAccount(string $accountName)
     {
-        $matches = explode('/', trim($this->definition['basePath'], '/'));
+        $matches = explode('/', trim($this->definition->basePath, '/'));
         if (sizeof($matches) != 2) {
             throw new ApiException('invalid basePath in the existing openApi schema');
         }
-        $this->definition['basePath'] = "/$accountName/" . $matches[1];
+        $this->definition->basePath = "/$accountName/" . $matches[1];
     }
 
     /**
@@ -208,17 +224,17 @@ class OpenApiParent2 extends OpenApiParentAbstract
      */
     public function setApplication(string $applicationName)
     {
-        $matches = explode('/', trim($this->definition['basePath'], '/'));
+        $matches = explode('/', trim($this->definition->basePath, '/'));
         if (sizeof($matches) != 2) {
             throw new ApiException('invalid basePath in the existing openApi schema');
         }
-        $this->definition['info']['title'] = $applicationName;
-        $this->definition['info']['description'] = str_replace(
+        $this->definition->info->title = $applicationName;
+        $this->definition->info->description = str_replace(
              " {$matches[1]} ",
             " $applicationName ",
-            $this->definition['info']['description']
+            $this->definition->info->description
         );
-        $this->definition['basePath'] = '/' . $matches[0] . "/$applicationName";
+        $this->definition->basePath = '/' . $matches[0] . "/$applicationName";
     }
 
     /**
@@ -226,6 +242,6 @@ class OpenApiParent2 extends OpenApiParentAbstract
      */
     public function setDomain()
     {
-        $this->definition['host'] = $this->settings->__get(['api', 'url']);
+        $this->definition->host = $this->settings->__get(['api', 'url']);
     }
 }

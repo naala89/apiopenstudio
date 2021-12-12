@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class OpenApiParent3.
+ * Class OpenApiParent3_0_3.
  *
  * @package    ApiOpenStudio
  * @subpackage Core
@@ -16,11 +16,12 @@
 namespace ApiOpenStudio\Core\OpenApi;
 
 use ApiOpenStudio\Core\ApiException;
+use stdClass;
 
 /**
- * Class to generate default elements for OpenApi v3.0.
+ * Class to generate default elements for OpenApi v3.0.3.
  */
-class OpenApiParent3 extends OpenApiParentAbstract
+class OpenApiParent3_0_3 extends OpenApiParentAbstract
 {
     /**
      * OpenApi doc version.
@@ -32,16 +33,17 @@ class OpenApiParent3 extends OpenApiParentAbstract
      *
      * @param string $applicationName
      *
-     * @return array
+     * @return stdClass
      *
      * @throws ApiException
      */
-    protected function getDefaultInfo(string $applicationName): array
+    protected function getDefaultInfo(string $applicationName): stdClass
     {
-        return [
+        $info = [
             'title' => $applicationName,
             'description' => "These are the resources that belong to the $applicationName application.",
             'termsOfService' => 'https://www.apiopenstudio.com/license/',
+
             'contact' => [
                 'name' => 'API Support',
                 'email' => 'contact@' . $this->settings->__get(['api', 'url']),
@@ -52,30 +54,34 @@ class OpenApiParent3 extends OpenApiParentAbstract
             ],
             'version' => '1.0.0',
         ];
+
+        return json_decode(json_encode($info, JSON_UNESCAPED_SLASHES));
     }
 
     /**
      * Returns the default components element.
      *
-     * @return array
+     * @return stdClass
      */
-    protected function getDefaultComponents(): array
+    protected function getDefaultComponents(): stdClass
     {
-        return [
+        $components = [
             'schemas' => $this->getDefaultSchemas(),
             'responses' => $this->getDefaultResponses(),
             'securitySchemes' => $this->getDefaultSecuritySchemes(),
         ];
+
+        return json_decode(json_encode($components, JSON_UNESCAPED_SLASHES));
     }
 
     /**
      * Returns the default schemas element.
      *
-     * @return array
+     * @return stdClass
      */
-    protected function getDefaultSchemas(): array
+    protected function getDefaultSchemas(): stdClass
     {
-        return [
+        $schemas = [
             'GeneralError' => [
                 'type' => 'object',
                 'properties' => [
@@ -98,16 +104,18 @@ class OpenApiParent3 extends OpenApiParentAbstract
                 ],
             ],
         ];
+
+        return json_decode(json_encode($schemas, JSON_UNESCAPED_SLASHES));
     }
 
     /**
      * Returns the default responses element.
      *
-     * @return array
+     * @return stdClass
      */
-    protected function getDefaultResponses(): array
+    protected function getDefaultResponses(): stdClass
     {
-        return [
+        $responses = [
             'GeneralError' => [
                 'description' => 'General Error',
                 'content' => [
@@ -160,22 +168,26 @@ class OpenApiParent3 extends OpenApiParentAbstract
                 ],
             ],
         ];
+
+        return json_decode(json_encode($responses, JSON_UNESCAPED_SLASHES));
     }
 
     /**
      * Returns the default securitySchemes element.
      *
-     * @return array
+     * @return stdClass
      */
-    protected function getDefaultSecuritySchemes(): array
+    protected function getDefaultSecuritySchemes(): stdClass
     {
-        return [
+        $securitySchemes = [
             'bearer_token' => [
                 'type' => 'http',
                 'scheme' => 'bearer',
                 'bearerFormat' => 'JWT',
             ],
         ];
+
+        return json_decode(json_encode($securitySchemes, JSON_UNESCAPED_SLASHES));
     }
 
     /**
@@ -183,7 +195,7 @@ class OpenApiParent3 extends OpenApiParentAbstract
      */
     public function setDefault(string $accountName, string $applicationName)
     {
-        $this->definition = [
+        $definition = [
             'openapi' => self::VERSION,
             'info' => $this->getDefaultInfo($applicationName),
             'servers' => [],
@@ -196,10 +208,12 @@ class OpenApiParent3 extends OpenApiParentAbstract
             ],
         ];
         foreach ($this->settings->__get(['api', 'protocols']) as $protocol) {
-            $this->definition['servers'][] = [
+            $definition['servers'][] = [
                 'url' => "$protocol://" . $this->settings->__get(['api', 'url']) . "/$accountName/$applicationName"
             ];
         }
+
+        $this->definition = json_decode(json_encode($definition, JSON_UNESCAPED_SLASHES));
 
     }
 
@@ -208,14 +222,15 @@ class OpenApiParent3 extends OpenApiParentAbstract
      */
     public function getAccount(): string
     {
-        $servers = $this->definition['servers'];
-        $urlParts = explode('://', $servers[0]['url']);
+        $servers = $this->definition->servers;
+        $server = $servers[0];
+        $urlParts = explode('://', $server->url);
         if (sizeof($urlParts) != 2) {
-            throw new ApiException('invalid servers in the existing openApi schema');
+            throw new ApiException("invalid servers in the openApi schema ($server). Could not extract URL for finding account.");
         }
         $matches = explode('/', $urlParts[1]);
         if (sizeof($matches) != 3) {
-            throw new ApiException('invalid servers in the existing openApi schema');
+            throw new ApiException("invalid servers in the openApi schema ($server). Could not extract URI for finding account.");
         }
         return $matches[1];
     }
@@ -225,14 +240,15 @@ class OpenApiParent3 extends OpenApiParentAbstract
      */
     public function getApplication(): string
     {
-        $servers = $this->definition['servers'];
-        $urlParts = explode('://', $servers[0]['url']);
+        $servers = $this->definition->servers;
+        $server = $servers[0];
+        $urlParts = explode('://', $server->url);
         if (sizeof($urlParts) != 2) {
-            throw new ApiException('invalid servers in the existing openApi schema');
+            throw new ApiException("invalid servers in the openApi schema ({$server->url}). Could not extract URL for finding application. from ");
         }
         $matches = explode('/', $urlParts[1]);
         if (sizeof($matches) != 3) {
-            throw new ApiException('invalid servers in the existing openApi schema');
+            throw new ApiException("invalid servers in the openApi schema ({$server->url}). Could not extract URI for finding application.");
         }
         return $matches[2];
     }
@@ -242,16 +258,17 @@ class OpenApiParent3 extends OpenApiParentAbstract
      */
     public function setAccount(string $accountName)
     {
-        $servers = $this->definition['servers'];
-        $urlParts = explode('://', $servers[0]['url']);
+        $servers = $this->definition->servers;
+        $server = $servers[0];
+        $urlParts = explode('://', $server->url);
         if (sizeof($urlParts) != 2) {
-            throw new ApiException('invalid servers in the existing openApi schema');
+            throw new ApiException("invalid servers in the openApi schema ({$server->url}). Could not extract URL for setting account.");
         }
         $matches = explode('/', $urlParts[1]);
         if (sizeof($matches) != 3) {
-            throw new ApiException('invalid servers in the existing openApi schema');
+            throw new ApiException("invalid servers in the openApi schema ({$server->url}). Could not extract URI for setting account.");
         }
-        $this->definition['servers'] = $urlParts[0] . '://' . $matches[0] . "/$accountName/" . $matches[2];
+        $this->definition->servers = [$urlParts[0] . '://' . $matches[0] . "/$accountName/" . $matches[2]];
     }
 
     /**
@@ -259,22 +276,23 @@ class OpenApiParent3 extends OpenApiParentAbstract
      */
     public function setApplication(string $applicationName)
     {
-        $servers = $this->definition['servers'];
-        $urlParts = explode('://', $servers[0]['url']);
+        $servers = $this->definition->servers;
+        $server = $servers[0];
+        $urlParts = explode('://', $server->url);
         if (sizeof($urlParts) != 2) {
-            throw new ApiException('invalid servers in the existing openApi schema');
+            throw new ApiException("invalid servers in the openApi schema ({$server->url}). Could not extract URL for setting application.");
         }
         $matches = explode('/', $urlParts[1]);
         if (sizeof($matches) != 3) {
-            throw new ApiException('invalid servers in the existing openApi schema');
+            throw new ApiException("invalid servers in the openApi schema ({$server->url}). Could not extract URI for setting application.");
         }
-        $this->definition['servers'] = $urlParts[0] . '://' . $matches[0] . '/' . $matches[1] . "/$applicationName";
+        $this->definition->servers = [$urlParts[0] . '://' . $matches[0] . '/' . $matches[1] . "/$applicationName"];
 
-        $this->definition['info']['title'] = $applicationName;
-        $this->definition['info']['description'] = str_replace(
+        $this->definition->info->title = $applicationName;
+        $this->definition->info->description = str_replace(
             ' ' . $matches[1] . ' ',
             " $applicationName ",
-            $this->definition['info']['description']
+            $this->definition->info->description
         );
     }
 
@@ -283,8 +301,9 @@ class OpenApiParent3 extends OpenApiParentAbstract
      */
     public function setDomain()
     {
-        $this->definition['servers'] = [
+        $servers = [
             'url' => $this->settings->__get(['api', 'url']),
         ];
+        $this->definition->servers = json_decode(json_encode($servers,JSON_UNESCAPED_SLASHES));
     }
 }

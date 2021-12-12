@@ -17,6 +17,7 @@ namespace ApiOpenStudio\Core\OpenApi;
 
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
+use stdClass;
 
 /**
  * Abstract class to generate default parent elements for OpenApi.
@@ -24,9 +25,9 @@ use ApiOpenStudio\Core\Config;
 abstract class OpenApiParentAbstract
 {
     /**
-     * @var array Doc definition.
+     * @var stdClass Doc definition.
      */
-    protected array $definition = [];
+    protected stdClass $definition;
 
     /**
      * @var Config
@@ -37,6 +38,7 @@ abstract class OpenApiParentAbstract
     public function __construct()
     {
         $this->settings = new Config();
+        $this->definition = new stdClass();
     }
 
     /**
@@ -49,7 +51,7 @@ abstract class OpenApiParentAbstract
     public function import($definition)
     {
         if (is_string($definition)) {
-            $definition = json_decode($definition, true);
+            $definition = json_decode($definition);
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new ApiException('invalid input JSON string');
             }
@@ -62,19 +64,19 @@ abstract class OpenApiParentAbstract
      *
      * @param bool $encoded JSON encoded.
      *
-     * @return array|string
+     * @return stdClass|string
      *
      * @throws ApiException
      */
     public function export(bool $encoded = true)
     {
+        $result = $this->definition;
         if ($encoded) {
-            if (!$result = json_encode($this->definition, true)) {
+            if (!$result = json_encode($result, JSON_UNESCAPED_SLASHES)) {
                 throw new ApiException('failed to encode the JSON array');
             }
-            return $result;
         }
-        return $this->definition;
+        return $result;
     }
 
     /**

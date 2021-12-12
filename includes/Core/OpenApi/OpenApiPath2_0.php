@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class OpenApiPath3.
+ * Class OpenApiPath2_0.
  *
  * @package    ApiOpenStudio
  * @subpackage Core
@@ -18,9 +18,9 @@ namespace ApiOpenStudio\Core\OpenApi;
 use ApiOpenStudio\Db\Resource;
 
 /**
- * Class to generate default elements for OpenApi v3.0.
+ * Class to generate default path elements for OpenApi v2.0.
  */
-class OpenApiPath3 extends OpenApiPathAbstract
+class OpenApiPath2_0 extends OpenApiPathAbstract
 {
     /**
      * {@inheritDoc}
@@ -28,28 +28,36 @@ class OpenApiPath3 extends OpenApiPathAbstract
     public function setDefault(Resource $resource)
     {
         $path = '/' . $resource->getUri();
-        $this->definition = [
+        $definition = [
             $path => [
                 $resource->getMethod() => [
-                    'summary' => $resource->getName(),
                     'description' => $resource->getDescription(),
+                    'summary' => $resource->getName(),
                     'tags' => [$path],
+                    'produces' => [
+                        'application/json',
+                        'application/xml',
+                        'application/text',
+                        'text/html',
+                    ],
                     'responses' => [
                         '200' => [
-                            'description' => 'success',
+                            'description' => 'success response',
                         ],
                         '400' => [
-                            '$ref' => '#/components/responses/GeneralError',
+                            '$ref' => '#/responses/GeneralError'
                         ],
                         '401' => [
-                            '$ref' => '#/components/responses/Unauthorised',
+                            '$ref' => '#/responses/Unauthorised'
                         ],
                         '403' => [
-                            '$ref' => '#/components/responses/Forbidden',
+                            '$ref' => '#/responses/Forbidden'
                         ],
-                    ]
+                    ],
                 ],
             ],
         ];
+
+        $this->definition = json_decode(json_encode($definition, JSON_UNESCAPED_SLASHES));
     }
 }
