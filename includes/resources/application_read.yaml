@@ -10,7 +10,7 @@
 
 name: Application read
 
-description: Fetch a single or multiple applications, limited by the user's access rights.
+description: Fetch a single or multiple applications, limited by the users access rights.
 
 uri: application
 
