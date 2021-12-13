@@ -471,6 +471,38 @@ paths:
           $ref: '#/components/responses/Unauthorised'
         '403':
           $ref: '#/components/responses/Forbidden'
+  /openapi/import:
+    post:
+      summary: Import an OpenApi document.
+      description: Import an OpenApi document file in a form post and update the existing documentation or generate stubs for resources that do not exist.
+      tags:
+        - openapi
+      security:
+        - bearer_token: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                openapi:
+                  description: OpenApi JSON or YAML file
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: An OpenApi object
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+        '400':
+          $ref: '#/components/responses/GeneralError'
+        '401':
+          $ref: '#/components/responses/Unauthorised'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /openapi/default/{appid}:
     post:
       summary: OpenApi generate default

@@ -17,17 +17,15 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core\ApiException;
-use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core\DataContainer;
 use ApiOpenStudio\Core\MonologWrapper;
 use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\AccountMapper;
-use ApiOpenStudio\Db\Application;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\ResourceMapper;
-use mysql_xdevapi\Exception;
+use stdClass;
 
 /**
  * Class OpenapiRead
@@ -120,18 +118,20 @@ class OpenapiRead extends ProcessorEntity
         }
 
         $schema = json_decode($application->getOpenapi(), true);
+        if (empty($schema)) {
+            return new DataContainer("", 'json');
+        }
 
         $resources = $this->resourceMapper->findByAppId($appid);
         $schema['paths'] = [];
         foreach ($resources as $resource) {
             $resourceOpenApi = $resource->getOpenapi();
-            $schema['paths'] = array_merge_recursive($schema['paths'], json_decode($resourceOpenApi, true));
+            if (!empty($resourceOpenApi)) {
+                $schema['paths'] = array_merge_recursive($schema['paths'], json_decode($resourceOpenApi, true));
+            }
         }
         if (empty($schema['paths'])) {
-            unset($schema['paths']);
-        }
-        if (empty($schema)) {
-            return new DataContainer("", 'json');
+            $schema['paths'] = new stdClass();
         }
 
         return new DataContainer(json_encode($schema, JSON_UNESCAPED_SLASHES), 'json');
