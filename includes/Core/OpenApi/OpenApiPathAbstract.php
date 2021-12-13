@@ -61,7 +61,7 @@ abstract class OpenApiPathAbstract
     public function import($definition)
     {
         if (is_string($definition)) {
-            $definition = json_decode($definition, true);
+            $definition = json_decode($definition);
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new ApiException('invalid input JSON string');
             }
