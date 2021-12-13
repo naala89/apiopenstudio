@@ -21,6 +21,7 @@ use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core\MonologWrapper;
 use ApiOpenStudio\Db;
 use Spyc;
+use stdClass;
 
 /**
  * Class Install
@@ -109,6 +110,8 @@ class Install extends Script
         $this->createTables();
         echo "\n";
         $this->createResources();
+        echo "\n";
+        $this->importOpenApi();
         echo "\n";
         $this->createAdminUser();
         echo "\n";
@@ -501,6 +504,85 @@ class Install extends Script
         }
 
         echo "Resources successfully added to the DB!\n";
+    }
+
+    /**
+     * Import OpenApi schema into applications and resources.
+     *
+     * @param string|null $basePath
+     * @param string|null $dirOpenapi
+     *
+     * @throws ApiException
+     */
+    public function importOpenApi(string $basePath = null, string $dirOpenapi = null)
+    {
+        echo "Importing the OpenApi docs...\n";
+        try {
+            $openapiVersion = $this->config->__get(['api', 'openapi_version']);
+            $basePath = $basePath === null ? $this->config->__get(['api', 'base_path']) : $basePath;
+            $dirOpenapi = $dirOpenapi === null ? $this->config->__get(['api', 'openapi_directory']) : $dirOpenapi;
+        } catch (ApiException $e) {
+            echo "Failed to load config item: " . $e->getMessage() . "\n";
+            exit;
+        }
+        echo "OpenApi version configured to: $openapiVersion\n";
+
+        $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
+            str_replace('.', '_', $openapiVersion);
+        $openApiParentClass = new $openApiClassName();
+        $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiPath" .
+            str_replace('.', '_', $openapiVersion);
+        $openApiPathClass = new $openApiClassName();
+
+        $dir = $basePath . $dirOpenapi;
+        echo "Scanning $dir for files\n";
+        $filenames = scandir($dir);
+        $logger = new MonologWrapper($this->config->__get(['debug']));
+        $accountMapper = new Db\AccountMapper($this->db, $logger);
+        $applicationMapper = new Db\ApplicationMapper($this->db, $logger);
+        $resourceMapper = new Db\ResourceMapper($this->db, $logger);
+
+        foreach ($filenames as $filename) {
+            if (pathinfo($filename, PATHINFO_EXTENSION) != 'yaml' || strpos($filename, $openapiVersion) === false) {
+                continue;
+            }
+            echo "Importing $dir/$filename\n";
+            $schema = Spyc::YAMLLoadString(file_get_contents("$dir/$filename"));
+            $parent = $schema;
+            $parent['paths'] = new stdClass();
+            $paths = $schema['paths'];
+
+            $openApiParentClass->import(json_decode(json_encode($parent, JSON_UNESCAPED_SLASHES)));
+            $openApiPathClass->import(json_decode(json_encode($paths, JSON_UNESCAPED_SLASHES)));
+
+            $accountName = $openApiParentClass->getAccount();
+            $applicationName = $openApiParentClass->getApplication();
+
+            $account = $accountMapper->findByName($accountName);
+            $application = $applicationMapper->findByAccidAppname($account->getAccid(), $applicationName);
+            $application->setOpenapi($openApiParentClass->export());
+            try {
+                $applicationMapper->save($application);
+            } catch (ApiException $e) {
+                echo "Failed to save to application ($applicationName): " . $e->getMessage() . "\n";
+                exit;
+            }
+
+            foreach ($paths as $uri => $uriBody) {
+                foreach ($uriBody as $method => $methodBody) {
+                    $openApiPathClass->import(json_decode(json_encode([$uri => [$method => $methodBody]],JSON_UNESCAPED_SLASHES)));
+                    $trimmedUri = trim(preg_replace('/\/\{.*\}/', '', $uri), '/');
+                    $resource = $resourceMapper->findByAppIdMethodUri($application->getAppid(), $method, $trimmedUri);
+                    $resource->setOpenapi($openApiPathClass->export());
+                    try {
+                        $resourceMapper->save($resource);
+                    } catch (ApiException $e) {
+                        echo "Failed to save to resource ($method, $uri): " . $e->getMessage() . "\n";
+                        exit;
+                    }
+                }
+            }
+        }
     }
 
     /**
