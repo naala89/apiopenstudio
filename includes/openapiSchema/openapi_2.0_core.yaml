@@ -12,6 +12,11 @@ info:
   version: 1.0.0
 host: api.apiopenstudio.local
 basePath: /apiopenstudio/core
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
 schemes:
   - https
 paths:
@@ -19,6 +24,8 @@ paths:
     post:
       description: Create an account.
       summary: Account create
+      security:
+        - Bearer: []
       consumes:
         - application/x-www-form-urlencoded
       tags:
@@ -47,6 +54,8 @@ paths:
     get:
       description: Fetch a single or multiple accounts, limited by the users access rights.
       summary: Account read
+      security:
+        - Bearer: []
       tags:
         - account
       produces:
@@ -90,6 +99,8 @@ paths:
     delete:
       description: The account ID to delete
       summary: Account ID
+      security:
+        - Bearer: []
       tags:
         - account
       parameters:
@@ -118,6 +129,8 @@ paths:
     put:
       description: Rename an account.
       summary: Account update
+      security:
+        - Bearer: []
       tags:
         - account
       produces:
@@ -153,6 +166,8 @@ paths:
     post:
       description: Create an application.
       summary: Application create
+      security:
+        - Bearer: []
       tags:
         - application
       consumes:
@@ -183,8 +198,12 @@ paths:
         '403':
           $ref: '#/responses/Forbidden'
     get:
-      description: Fetch a single or multiple applications, limited by the users access rights.
+      description: >-
+        Fetch a single or multiple applications, limited by the users access
+        rights.
       summary: Application read
+      security:
+        - Bearer: []
       tags:
         - application
       produces:
@@ -228,6 +247,8 @@ paths:
     delete:
       description: Delete an application.
       summary: Application delete
+      security:
+        - Bearer: []
       tags:
         - application
       produces:
@@ -257,6 +278,8 @@ paths:
     put:
       description: Update an application.
       summary: Application update
+      security:
+        - Bearer: []
       tags:
         - application
       produces:
@@ -298,6 +321,8 @@ paths:
     post:
       description: Accept a user invite, using an invite token.
       summary: Invite accept
+      security:
+        - Bearer: []
       tags:
         - invite
       consumes:
@@ -328,6 +353,8 @@ paths:
     delete:
       description: Delete a user invite.
       summary: Invite delete
+      security:
+        - Bearer: []
       tags:
         - invite
       produces:
@@ -357,6 +384,8 @@ paths:
     get:
       description: Fetch a single or multiple user invites.
       summary: Invite read
+      security:
+        - Bearer: []
       tags:
         - invite
       produces:
@@ -410,6 +439,8 @@ paths:
     post:
       description: Send an invite to a single user or multiple users.
       summary: Invite send
+      security:
+        - Bearer: []
       tags:
         - invite
       consumes:
@@ -448,10 +479,47 @@ paths:
           $ref: '#/responses/Unauthorised'
         '403':
           $ref: '#/responses/Forbidden'
+  /openapi/default/{appid}:
+    post:
+      description: >-
+        Generate default OpenApi documentation for an application and all its
+        resources.
+      summary: OpenApi default
+      security:
+        - Bearer: []
+      tags:
+        - openapi
+      parameters:
+        - in: path
+          name: appid
+          description: The application ID to fetch document for
+          required: true
+          type: integer
+      produces:
+        - application/json
+        - application/xml
+        - application/text
+        - text/html
+      responses:
+        '200':
+          description: An OpenApi object
+          schema:
+            type: object
+            additionalProperties: {}
+        '400':
+          $ref: '#/responses/GeneralError'
+        '401':
+          $ref: '#/responses/Unauthorised'
+        '403':
+          $ref: '#/responses/Forbidden'
   /openapi/import:
     post:
       summary: Import an OpenApi document.
-      description: Import an OpenApi document file in a form post and update the existing documentation or generate stubs for resources that do not exist.
+      description: >-
+        Import an OpenApi document file in a form post and update the existing
+        documentation or generate stubs for resources that do not exist.
+      security:
+        - Bearer: []
       tags:
         - openapi
       consumes:
@@ -479,10 +547,46 @@ paths:
           $ref: '#/responses/Unauthorised'
         '403':
           $ref: '#/responses/Forbidden'
+  /openapi:
+    get:
+      description: >-
+        Fetch OpenApi documentation for an application and its resources,
+        limited by user access rights.
+      security:
+        - Bearer: []
+      summary: OpenApi read
+      tags:
+        - openapi
+      produces:
+        - application/json
+        - application/xml
+        - application/text
+        - text/html
+      parameters:
+        - in: query
+          name: appid
+          description: The application ID to fetch document for
+          required: true
+          type: integer
+          minimum: 1
+      responses:
+        '200':
+          description: An OpenApi object
+          schema:
+            type: object
+            additionalProperties: {}
+        '400':
+          $ref: '#/responses/GeneralError'
+        '401':
+          $ref: '#/responses/Unauthorised'
+        '403':
+          $ref: '#/responses/Forbidden'
   /openapi/{appid}:
     put:
       description: Update OpenApi documentation for an application and its resources.
       summary: OpenApi update
+      security:
+        - Bearer: []
       tags:
         - openapi
       produces:
@@ -511,69 +615,12 @@ paths:
           $ref: '#/responses/Unauthorised'
         '403':
           $ref: '#/responses/Forbidden'
-  /openapi/default/{appid}:
-    post:
-      description: Generate default OpenApi documentation for an application and all its resources.
-      summary: OpenApi default
-      tags:
-        - openapi
-      parameters:
-        - in: path
-          name: appid
-          description: The application ID to fetch document for
-          required: true
-          type: integer
-      produces:
-        - application/json
-        - application/xml
-        - application/text
-        - text/html
-      responses:
-        '200':
-          description: An OpenApi object
-          schema:
-            type: object
-            additionalProperties: {}
-        '400':
-          $ref: '#/responses/GeneralError'
-        '401':
-          $ref: '#/responses/Unauthorised'
-        '403':
-          $ref: '#/responses/Forbidden'
-  /openapi:
-    get:
-      description: Fetch OpenApi documentation for an application and its resources, limited by user access rights.
-      summary: OpenApi read
-      tags:
-        - openapi
-      produces:
-        - application/json
-        - application/xml
-        - application/text
-        - text/html
-      parameters:
-        - in: query
-          name: appid
-          description: The application ID to fetch document for
-          required: true
-          type: integer
-          minimum: 1
-      responses:
-        '200':
-          description: An OpenApi object
-          schema:
-            type: object
-            additionalProperties: {}
-        '400':
-          $ref: '#/responses/GeneralError'
-        '401':
-          $ref: '#/responses/Unauthorised'
-        '403':
-          $ref: '#/responses/Forbidden'
   /password/reset:
     post:
       description: Reset a user password.
       summary: Password reset
+      security:
+        - Bearer: []
       tags:
         - user
       consumes:
@@ -614,6 +661,8 @@ paths:
     get:
       description: Fetch details of a single or all processors.
       summary: Processors
+      security:
+        - Bearer: []
       tags:
         - processors
       produces:
@@ -642,6 +691,8 @@ paths:
     post:
       description: Create a resource.
       summary: Resource create
+      security:
+        - Bearer: []
       tags:
         - resource
       consumes:
@@ -706,6 +757,8 @@ paths:
     get:
       description: Fetch a single or multiple resources, limited by user access rights.
       summary: Resource read
+      security:
+        - Bearer: []
       tags:
         - resource
       produces:
@@ -762,6 +815,8 @@ paths:
     delete:
       description: Delete a resource.
       summary: Resource delete
+      security:
+        - Bearer: []
       tags:
         - resource
       produces:
@@ -790,6 +845,8 @@ paths:
     put:
       description: Update a resource.
       summary: Resource update
+      security:
+        - Bearer: []
       tags:
         - resource
       produces:
@@ -827,6 +884,8 @@ paths:
     get:
       description: Export a resource as a file as an attachment in the response.
       summary: Resource export
+      security:
+        - Bearer: []
       tags:
         - resource
       produces:
@@ -862,6 +921,8 @@ paths:
     post:
       description: Import a resource from a file.
       summary: Resource import
+      security:
+        - Bearer: []
       tags:
         - resource
       produces:
@@ -894,6 +955,8 @@ paths:
     post:
       description: Create a new role.
       summary: Role create
+      security:
+        - Bearer: []
       tags:
         - role
       consumes:
@@ -923,6 +986,8 @@ paths:
     get:
       description: Fetch a single or multiple roles.
       summary: Role read
+      security:
+        - Bearer: []
       tags:
         - role
       produces:
@@ -966,6 +1031,8 @@ paths:
     put:
       description: Update a role.
       summary: Role update
+      security:
+        - Bearer: []
       tags:
         - role
       produces:
@@ -995,6 +1062,8 @@ paths:
     delete:
       description: Delete a new role.
       summary: Role delete
+      security:
+        - Bearer: []
       tags:
         - role
       produces:
@@ -1059,6 +1128,8 @@ paths:
     post:
       description: create a user.
       summary: User create
+      security:
+        - Bearer: []
       tags:
         - user
       consumes:
@@ -1156,6 +1227,8 @@ paths:
     get:
       description: Fetch a single or multpiple users.
       summary: User read
+      security:
+        - Bearer: []
       tags:
         - user
       produces:
@@ -1210,6 +1283,8 @@ paths:
     delete:
       description: Delete a user.
       summary: User delete
+      security:
+        - Bearer: []
       tags:
         - user
       produces:
@@ -1238,6 +1313,8 @@ paths:
     put:
       description: Update a users details.
       summary: User update
+      security:
+        - Bearer: []
       tags:
         - user
       produces:
@@ -1275,6 +1352,8 @@ paths:
     post:
       description: Assign a role to a user for an account/application.
       summary: User Role create
+      security:
+        - Bearer: []
       tags:
         - user role
       consumes:
@@ -1293,13 +1372,17 @@ paths:
           minimum: 1
         - in: formData
           name: accid
-          description: the account ID for the user/role (only used for Account Manager roles)
+          description: >-
+            the account ID for the user/role (only used for Account Manager
+            roles)
           type: integer
           required: true
           minimum: 1
         - in: formData
           name: appid
-          description: the application ID for the user/role (not used for Account Manager or Administrator roles)
+          description: >-
+            the application ID for the user/role (not used for Account Manager
+            or Administrator roles)
           type: integer
           required: true
           minimum: 1
@@ -1323,6 +1406,8 @@ paths:
     get:
       description: Fetch roles.
       summary: User Role read
+      security:
+        - Bearer: []
       tags:
         - user role
       produces:
@@ -1380,6 +1465,8 @@ paths:
     delete:
       description: Delete a role for a user for an account/application.
       summary: User Role delete
+      security:
+        - Bearer: []
       tags:
         - user role
       produces:
@@ -1409,6 +1496,8 @@ paths:
     post:
       description: Create a var store variable.
       summary: Var store create
+      security:
+        - Bearer: []
       tags:
         - var store
       consumes:
@@ -1446,8 +1535,12 @@ paths:
         '403':
           $ref: '#/responses/Forbidden'
     get:
-      description: Fetch a single or multiple var store variables where the user has access to the applications vars.
+      description: >-
+        Fetch a single or multiple var store variables where the user has access
+        to the applications vars.
       summary: Var store read
+      security:
+        - Bearer: []
       tags:
         - var store
       produces:
@@ -1503,6 +1596,8 @@ paths:
     delete:
       description: Delete a var store variable.
       summary: Var store delete
+      security:
+        - Bearer: []
       tags:
         - var store
       produces:
@@ -1531,6 +1626,8 @@ paths:
     put:
       description: Update a var store variable.
       summary: Var store update
+      security:
+        - Bearer: []
       tags:
         - var store
       produces:
