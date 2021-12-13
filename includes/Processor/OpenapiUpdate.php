@@ -140,7 +140,7 @@ class OpenapiUpdate extends ProcessorEntity
         $application = $this->applicationMapper->findByAccidAppname($account->getAccid(), $applicationName);
         if (empty($appid) || $appid != $application->getAppid()) {
             throw new ApiException(
-                "invalid application name in the schema: $applicationName $appid " . $account->getAccid(),
+                "invalid application name in the schema: $applicationName",
                 7,
                 $this->id,
                 400
