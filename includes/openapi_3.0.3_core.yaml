@@ -48,7 +48,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
     get:
       summary: Account read
-      description: Fetch a single or multiple accounts, limited by the user's access rights.
+      description: Fetch a single or multiple accounts, limited by the users access rights.
       tags:
         - account
       security:
@@ -913,6 +913,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RoleObject'
+        '400':
+          $ref: '#/components/responses/GeneralError'
+        '401':
+          $ref: '#/components/responses/Unauthorised'
+        '403':
+          $ref: '#/components/responses/Forbidden'
     get:
       summary: Role read
       description: Fetch a single or multiple roles.
@@ -1289,7 +1295,7 @@ paths:
                 - rid
       responses:
         '200':
-          description: The user object
+          description: The user role object
           content:
             application/json:
               schema:
