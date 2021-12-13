@@ -204,7 +204,7 @@ class OpenApiParent2_0 extends OpenApiParentAbstract
         if (sizeof($matches) != 2) {
             throw new ApiException('invalid basePath in the existing openApi schema');
         }
-        return $matches[0];
+        return $matches[1];
     }
 
     /**
