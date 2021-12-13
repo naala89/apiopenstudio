@@ -583,6 +583,7 @@ class Install extends Script
                 }
             }
         }
+        echo "All OpenApi documentation successfully imported!\n";
     }
 
     /**
@@ -678,7 +679,7 @@ class Install extends Script
             exit;
         }
 
-        echo "Administrator role successfully added to ApiOpenStudio admin user!\n\n";
+        echo "Administrator role successfully added to ApiOpenStudio admin user!\n";
     }
 
     /**
