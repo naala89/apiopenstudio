@@ -445,9 +445,7 @@ paths:
               type: object
               properties:
                 email:
-                  description: >-
-                    The users email address (or comma separated emails addresses
-                    for multiple invites)
+                  description: The users email address (or comma separated emails addresses for multiple invites)
                   type: string
               required:
                 - email
@@ -958,6 +956,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RoleObjects'
+        '400':
+          $ref: '#/components/responses/GeneralError'
+        '401':
+          $ref: '#/components/responses/Unauthorised'
+        '403':
+          $ref: '#/components/responses/Forbidden'
     put:
       summary: Role update
       description: Update a role.
@@ -1275,15 +1279,11 @@ paths:
                   type: integer
                   minimum: 1
                 accid:
-                  description: >-
-                    the account ID for the user/role (only used for Account
-                    Manager roles)
+                  description: the account ID for the user/role (only used for Account Manager roles)
                   type: integer
                   minimum: 1
                 appid:
-                  description: >-
-                    the application ID for the user/role (not used for Account
-                    Manager or Administrator roles)
+                  description: the application ID for the user/role (not used for Account Manager or Administrator roles)
                   type: integer
                   minimum: 1
                 rid:
