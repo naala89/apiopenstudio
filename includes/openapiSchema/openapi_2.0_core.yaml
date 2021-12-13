@@ -474,11 +474,11 @@ paths:
             type: object
             additionalProperties: {}
         '400':
-          $ref: '#/components/responses/GeneralError'
+          $ref: '#/responses/GeneralError'
         '401':
-          $ref: '#/components/responses/Unauthorised'
+          $ref: '#/responses/Unauthorised'
         '403':
-          $ref: '#/components/responses/Forbidden'
+          $ref: '#/responses/Forbidden'
   /openapi/{appid}:
     put:
       description: Update OpenApi documentation for an application and its resources.
