@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class OpenApiPath2_0.
+ * Class OpenApiPath20.
  *
  * @package    ApiOpenStudio
  * @subpackage Core
@@ -20,7 +20,7 @@ use ApiOpenStudio\Db\Resource;
 /**
  * Class to generate default path elements for OpenApi v2.0.
  */
-class OpenApiPath2_0 extends OpenApiPathAbstract
+class OpenApiPath20 extends OpenApiPathAbstract
 {
     /**
      * {@inheritDoc}

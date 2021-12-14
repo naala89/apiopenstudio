@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class OpenApiPath3_0_3.
+ * Class OpenApiPath303.
  *
  * @package    ApiOpenStudio
  * @subpackage Core
@@ -20,7 +20,7 @@ use ApiOpenStudio\Db\Resource;
 /**
  * Class to generate default elements for OpenApi v3.0.3.
  */
-class OpenApiPath3_0_3 extends OpenApiPathAbstract
+class OpenApiPath303 extends OpenApiPathAbstract
 {
     /**
      * {@inheritDoc}
@@ -54,5 +54,4 @@ class OpenApiPath3_0_3 extends OpenApiPathAbstract
 
         $this->definition = json_decode(json_encode($definition, JSON_UNESCAPED_SLASHES));
     }
-
 }

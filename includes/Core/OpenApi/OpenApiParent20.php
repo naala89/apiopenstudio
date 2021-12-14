@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class OpenApiParent2_0.
+ * Class OpenApiParent20.
  *
  * @package    ApiOpenStudio
  * @subpackage Core
@@ -21,7 +21,7 @@ use stdClass;
 /**
  * Class to generate default parent elements for OpenApi v2.0.
  */
-class OpenApiParent2_0 extends OpenApiParentAbstract
+class OpenApiParent20 extends OpenApiParentAbstract
 {
     /**
      * OpenApi doc version.
@@ -230,7 +230,7 @@ class OpenApiParent2_0 extends OpenApiParentAbstract
         }
         $this->definition->info->title = $applicationName;
         $this->definition->info->description = str_replace(
-             " {$matches[1]} ",
+            " {$matches[1]} ",
             " $applicationName ",
             $this->definition->info->description
         );
