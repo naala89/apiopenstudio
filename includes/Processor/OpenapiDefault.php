@@ -123,11 +123,9 @@ class OpenapiDefault extends ProcessorEntity
             throw new ApiException('application assigned to an invalid account', 6, $this->id, 400);
         }
 
-        $openApiParentClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
-            str_replace('.', '_', $settings->__get(['api', 'openapi_version']));
+        $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->config);
+        $openApiPathClassName = Utilities::getOpenApiPathClassPath($this->config);
         $openApiParentClass = new $openApiParentClassName();
-        $openApiPathClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiPath" .
-            str_replace('.', '_', $settings->__get(['api', 'openapi_version']));
         $openApiPathClass = new $openApiPathClassName();
 
         $openApiParentClass->setDefault($account->getName(), $application->getName());

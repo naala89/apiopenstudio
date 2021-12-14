@@ -227,11 +227,10 @@ class ResourceUpdate extends ProcessorEntity
         // Generate default OpenApi fragment in the resource is it doesn't already exist.
         if (empty($resource->getOpenapi())) {
             $settings = new Config();
-            $openApiClassName = "\\ApiOpenStudio\\\OpenApi\\OpenApiPath" .
-                str_replace('.', '_', $settings->__get(['api', 'openapi_version']));
-            $openApiObj = new $openApiClassName();
-            $openApiObj->setDefault($resource);
-            $resource->setOpenapi($openApiObj->export());
+            $openApiPathClassName = Utilities::getOpenApiPathClassPath($settings);
+            $openApiPathClass = new $openApiPathClassName();
+            $openApiPathClass->setDefault($resource);
+            $resource->setOpenapi($openApiPathClass->export());
         }
 
         if (!empty($uri)) {

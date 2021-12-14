@@ -19,6 +19,7 @@ use ADOConnection;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db;
 use Spyc;
 use stdClass;
@@ -527,12 +528,10 @@ class Install extends Script
         }
         echo "OpenApi version configured to: $openapiVersion\n";
 
-        $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
-            str_replace('.', '_', $openapiVersion);
-        $openApiParentClass = new $openApiClassName();
-        $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiPath" .
-            str_replace('.', '_', $openapiVersion);
-        $openApiPathClass = new $openApiClassName();
+        $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->config);
+        $openApiPathClassName = Utilities::getOpenApiPathClassPath($this->config);
+        $openApiParentClass = new $openApiParentClassName();
+        $openApiPathClass = new $openApiPathClassName();
 
         $dir = $basePath . $dirOpenapi;
         echo "Scanning $dir for files\n";
@@ -570,7 +569,9 @@ class Install extends Script
 
             foreach ($paths as $uri => $uriBody) {
                 foreach ($uriBody as $method => $methodBody) {
-                    $openApiPathClass->import(json_decode(json_encode([$uri => [$method => $methodBody]],JSON_UNESCAPED_SLASHES)));
+                    $openApiPathClass->import(json_decode(json_encode([
+                        $uri => [$method => $methodBody]
+                    ], JSON_UNESCAPED_SLASHES)));
                     $trimmedUri = trim(preg_replace('/\/\{.*\}/', '', $uri), '/');
                     $resource = $resourceMapper->findByAppIdMethodUri($application->getAppid(), $method, $trimmedUri);
                     $resource->setOpenapi($openApiPathClass->export());

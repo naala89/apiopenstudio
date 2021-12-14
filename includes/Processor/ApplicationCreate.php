@@ -168,16 +168,15 @@ class ApplicationCreate extends ProcessorEntity
         }
 
         $settings = new Config();
-        $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
-            str_replace('.', '_', $settings->__get(['api', 'openapi_version']));
-        $openApiClass = new $openApiClassName();
+        $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->config);
+        $openApiParentClass = new $openApiParentClassName();
         if (!empty($openApi)) {
-            $openApiClass->import($openApi);
+            $openApiParentClass->import($openApi);
         } else {
-            $openApiClass->setDefault($account->getName(), $name);
+            $openApiParentClass->setDefault($account->getName(), $name);
         }
 
-        $application = new Application(null, $accid, $name, $openApiClass->export());
+        $application = new Application(null, $accid, $name, $openApiParentClass->export());
 
         $this->applicationMapper->save($application);
         $application = $this->applicationMapper->findByAccidAppname($accid, $name);

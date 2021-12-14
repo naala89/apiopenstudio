@@ -112,8 +112,7 @@ class OpenapiUpdate extends ProcessorEntity
         $appid = $this->val('appid', true);
 
         $settings = new Config();
-        $openApiParentClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
-            str_replace('.', '_', $settings->__get(['api', 'openapi_version']));
+        $openApiParentClassName = Utilities::getOpenApiParentClassPath($settings);
         $openApiParentClass = new $openApiParentClassName();
 
         $paths = $openApi->paths;

@@ -78,14 +78,14 @@ class OpenapiImport extends ProcessorEntity
     protected ResourceMapper $resourceMapper;
 
     /**
-     * @var OpenApiParentAbstract
+     * @var mixed
      */
-    protected OpenApiParentAbstract $openApiParent;
+    protected $openApiParent;
 
     /**
-     * @var OpenApiPathAbstract
+     * @var mixed
      */
-    protected OpenApiPathAbstract $openApiPath;
+    protected $openApiPath;
 
     /**
      * OpenapiRead constructor.
@@ -103,18 +103,16 @@ class OpenapiImport extends ProcessorEntity
         $this->accountMapper = new AccountMapper($db, $logger);
         $this->applicationMapper = new ApplicationMapper($db, $logger);
         $this->resourceMapper = new ResourceMapper($db, $logger);
-        $config = new Config();
+        $settings = new Config();
         try {
-            $openapiVersion = $config->__get(['api', 'openapi_version']);
+            $openapiVersion = $settings->__get(['api', 'openapi_version']);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), 2, $this->id, 400);
         }
-        $className = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
-            str_replace('.', '_', $openapiVersion);
-        $this->openApiParent = new $className();
-        $className = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiPath" .
-            str_replace('.', '_', $openapiVersion);
-        $this->openApiPath = new $className();
+        $openApiParentClassPath = Utilities::getOpenApiParentClassPath($settings);
+        $openApiPathClassPath = Utilities::getOpenApiParentClassPath($settings);
+        $this->openApiParent = new $openApiParentClassPath();
+        $this->openApiPath = new $openApiPathClassPath();
     }
 
     /**
@@ -159,7 +157,8 @@ class OpenapiImport extends ProcessorEntity
         }
         $application = $this->applicationMapper->findByAccidAppname($accid, $applicationName);
         if (empty($appid = $application->getAppid())) {
-            throw new ApiException("unable to find application (account: $accountName): $applicationName", 6, $this->id, 400);
+            $message = "unable to find application (account: $accountName): $applicationName";
+            throw new ApiException($message, 6, $this->id, 400);
         }
 
         // Only developers for an application can use this processor.
@@ -192,7 +191,7 @@ class OpenapiImport extends ProcessorEntity
                     $resource->setAppId($appid);
                     $resource->setName($body->summary);
                     $resource->setDescription($body->description);
-                    $resource->setOpenapi(json_encode([$uri => [$method => $body]],JSON_UNESCAPED_SLASHES));
+                    $resource->setOpenapi(json_encode([$uri => [$method => $body]], JSON_UNESCAPED_SLASHES));
                     try {
                         $this->resourceMapper->save($resource);
                     } catch (ApiException $e) {
@@ -205,7 +204,7 @@ class OpenapiImport extends ProcessorEntity
                         'application' => $application->getName(),
                     ];
                 } else {
-                    $resource->setOpenapi(json_encode([$uri => [$method => $body]],JSON_UNESCAPED_SLASHES));
+                    $resource->setOpenapi(json_encode([$uri => [$method => $body]], JSON_UNESCAPED_SLASHES));
                     try {
                         $this->resourceMapper->save($resource);
                     } catch (ApiException $e) {

@@ -20,6 +20,7 @@ use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\DataContainer;
 use ApiOpenStudio\Core\MonologWrapper;
 use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\Account;
 use ApiOpenStudio\Db\AccountMapper;
 use ApiOpenStudio\Db\ApplicationMapper;
@@ -134,19 +135,19 @@ class AccountUpdate extends ProcessorEntity
     protected function updateOpenApiForApplications(Account $account)
     {
         $settings = new Config();
-        $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
-            str_replace('.', '_', $settings->__get(['api', 'openapi_version']));
-        $openApi = new $openApiClassName();
+        $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->config);
+        $openApiParentClass = new $openApiParentClassName();
+        $openApiParentClass = new $openApiParentClass();
         $applications = $this->applicationMapper->findByAccid($account->getAccid());
         foreach ($applications as $application) {
             $schema = $application->getOpenapi();
             if (!empty($schema)) {
-                $openApi->import($application->getOpenapi());
+                $openApiParentClass->import($application->getOpenapi());
             } else {
-                $openApi->setDefault($account->getName(), $application->getName());
+                $openApiParentClass->setDefault($account->getName(), $application->getName());
             }
-            $openApi->setAccount($account->getName());
-            $application->setOpenapi($openApi->export());
+            $openApiParentClass->setAccount($account->getName());
+            $application->setOpenapi($openApiParentClass->export());
             $this->applicationMapper->save($application);
         }
     }

@@ -229,19 +229,18 @@ class ApplicationUpdate extends ProcessorEntity
     protected function getOpenApi(string $inputSchema, Application $application)
     {
         $settings = new Config();
-        $openApiClassName = "\\ApiOpenStudio\\\OpenApi\\OpenApiParent" .
-            str_replace('.', '_', $settings->__get(['api', 'openapi_version']));
-        $openApi = new $openApiClassName();
+        $openApiParentClassName = Utilities::getOpenApiParentClassPath($settings);
+        $openApiParentClass = new $openApiParentClassName();
 
         if (!empty($inputSchema)) {
-            $openApi->import($inputSchema);
+            $openApiParentClass->import($inputSchema);
         } elseif (empty($application->getOpenapi())) {
             $account = $this->accountMapper->findByAccid($application->getAccid());
-            $openApi->setDefault($account->getName(), $application->getName());
+            $openApiParentClass->setDefault($account->getName(), $application->getName());
         } else {
-            $openApi->import($application->getOpenapi());
+            $openApiParentClass->import($application->getOpenapi());
         }
 
-        return $openApi;
+        return $openApiParentClass;
     }
 }

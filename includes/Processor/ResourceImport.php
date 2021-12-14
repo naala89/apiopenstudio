@@ -174,7 +174,7 @@ class ResourceImport extends ProcessorEntity
             $resource['description'],
             $resource['method'],
             $resource['uri'],
-            json_encode($resource['meta'],JSON_UNESCAPED_SLASHES),
+            json_encode($resource['meta'], JSON_UNESCAPED_SLASHES),
             '',
             $resource['ttl']
         );
@@ -185,11 +185,11 @@ class ResourceImport extends ProcessorEntity
         } else {
             // Generate default OpenApi fragment.
             $settings = new Config();
-            $openApiClassName = "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiPath" .
-                str_replace('.', '_', $settings->__get(['api', 'openapi_version']));
-            $openApi = new $openApiClassName();
-            $openApi->setDefault($resourceObj);
-            $resourceObj->setOpenapi($openApi->export());
+            $openApiPathClassName = Utilities::getOpenApiPathClassPath($settings);
+            $openApiPathClass = new $openApiPathClassName();
+
+            $openApiPathClass->setDefault($resourceObj);
+            $resourceObj->setOpenapi($openApiPathClass->export());
         }
 
         if (!$this->resourceMapper->save($resourceObj)) {
