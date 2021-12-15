@@ -198,9 +198,8 @@ paths:
         '403':
           $ref: '#/responses/Forbidden'
     get:
-      description: >-
-        Fetch a single or multiple applications, limited by the users access
-        rights.
+      description:
+        Fetch a single or multiple applications, limited by the users access rights.
       summary: Application read
       security:
         - Bearer: []
@@ -481,9 +480,7 @@ paths:
           $ref: '#/responses/Forbidden'
   /openapi/default/{appid}:
     post:
-      description: >-
-        Generate default OpenApi documentation for an application and all its
-        resources.
+      description: Generate default OpenApi documentation for an application and all its resources.
       summary: OpenApi default
       security:
         - Bearer: []
@@ -515,9 +512,7 @@ paths:
   /openapi/import:
     post:
       summary: Import an OpenApi document.
-      description: >-
-        Import an OpenApi document file in a form post and update the existing
-        documentation or generate stubs for resources that do not exist.
+      description: Import an OpenApi document file in a form post and update the existingdocumentation or generate stubs for resources that do not exist.
       security:
         - Bearer: []
       tags:
@@ -549,9 +544,7 @@ paths:
           $ref: '#/responses/Forbidden'
   /openapi:
     get:
-      description: >-
-        Fetch OpenApi documentation for an application and its resources,
-        limited by user access rights.
+      description: Fetch OpenApi documentation for an application and its resources, limited by user access rights.
       security:
         - Bearer: []
       summary: OpenApi read
@@ -1372,17 +1365,13 @@ paths:
           minimum: 1
         - in: formData
           name: accid
-          description: >-
-            the account ID for the user/role (only used for Account Manager
-            roles)
+          description: the account ID for the user/role (only used for Account Manager roles)
           type: integer
           required: true
           minimum: 1
         - in: formData
           name: appid
-          description: >-
-            the application ID for the user/role (not used for Account Manager
-            or Administrator roles)
+          description: the application ID for the user/role (not used for Account Manager or Administrator roles)
           type: integer
           required: true
           minimum: 1
@@ -1535,9 +1524,7 @@ paths:
         '403':
           $ref: '#/responses/Forbidden'
     get:
-      description: >-
-        Fetch a single or multiple var store variables where the user has access
-        to the applications vars.
+      description: Fetch a single or multiple var store variables where the user has access to the applications vars.
       summary: Var store read
       security:
         - Bearer: []
