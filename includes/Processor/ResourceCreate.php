@@ -196,44 +196,7 @@ class ResourceCreate extends ProcessorEntity
         $metadata = $this->val('metadata', true);
         $schema = $this->val('openapi', true);
 
-        // Validate the application exists.
-        $application = $this->applicationMapper->findByAppid($appid);
-        if (empty($application->getAppid())) {
-            throw new ApiException("Invalid application: $appid", 6, $this->id, 400);
-        }
-
-        // Validate application is not core and core not locked.
-        $account = $this->accountMapper->findByAccid($application->getAccid());
-        $coreAccount = $this->settings->__get(['api', 'core_account']);
-        $coreApplication = $this->settings->__get(['api', 'core_application']);
-        $coreLock = $this->settings->__get(['api', 'core_resource_lock']);
-        if ($account->getName() == $coreAccount && $application->getName() == $coreApplication && $coreLock) {
-            throw new ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
-        }
-
-        // Validate user has developer role for the application
-        $userRoles = Utilities::getRolesFromToken();
-        $userHasAccess = false;
-        foreach ($userRoles as $userRole) {
-            if ($userRole['role_name'] == 'Developer' && $userRole['appid'] == $appid) {
-                $userHasAccess = true;
-            }
-        }
-        if (!$userHasAccess) {
-            throw new ApiException('Permission denied', 6, $this->id, 400);
-        }
-
-        // Validate the resource does not already exist.
-        $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
-        if (!empty($resource->getresid())) {
-            throw new ApiException('Resource already exists', 6, $this->id, 400);
-        }
-
-        try {
-            $this->validator->validate(json_decode($metadata, true));
-        } catch (ReflectionException $e) {
-            throw new ApiException($e->getMessage(), 6, $this->id, 400);
-        }
+        $this->validate($appid, $method, $uri, $metadata);
 
         $resource = new Resource(
             null,
@@ -246,9 +209,31 @@ class ResourceCreate extends ProcessorEntity
             '',
             $ttl
         );
+
+        try {
+            $application = $this->applicationMapper->findByAppid($appid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), 6, $this->id, 400);
+        }
+        if (empty($application->getOpenapi())) {
+            try {
+                $account = $this->accountMapper->findByAccid($application->getAccid());
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), 6, $this->id, 400);
+            }
+            $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->settings);
+            $openApiParentClass = new $openApiParentClassName();
+            $openApiParentClass->setDefault($account->getName(), $application->getName());
+            $application->setOpenapi($openApiParentClass->export());
+            try {
+                $this->applicationMapper->save($application);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
+        }
+
         if (empty($schema)) {
-            $settings = new Config();
-            $openApiPathClassName = Utilities::getOpenApiPathClassPath($settings);
+            $openApiPathClassName = Utilities::getOpenApiPathClassPath($this->settings);
             $openApiPathClass = new $openApiPathClassName();
 
             $openApiPathClass->setDefault($resource);
@@ -257,13 +242,69 @@ class ResourceCreate extends ProcessorEntity
             $resource->setOpenapi($schema);
         }
 
-        if (!$this->resourceMapper->save($resource)) {
-            throw new ApiException('Failed to create the resource, please check the logs', 6, $this->id, 400);
+        try {
+            $this->resourceMapper->save($resource);
+            $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
-        $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
         $result = $resource->dump();
         $result['meta'] = json_decode($result['meta'], true);
         $result['openapi'] = json_decode($result['openapi'], true);
         return new DataContainer($result, 'array');
+    }
+
+    /**
+     * Validate the input.
+     *
+     * @param int $appid
+     * @param string $method
+     * @param string $uri
+     * @param string $metadada
+     *
+     * @throws ApiException
+     */
+    protected function validate(int $appid, string $method, string $uri, string $metadata)
+    {
+        // Validate the application exists.
+        try {
+            $application = $this->applicationMapper->findByAppid($appid);
+        } catch (ApiException $e) {
+            throw new ApiException("Invalid application: $appid", 6, $this->id, 400);
+        }
+
+        // Validate application is not core and core not locked.
+        $account = $this->accountMapper->findByAccid($application->getAccid());
+        $coreAccount = $this->settings->__get(['api', 'core_account']);
+        $coreApplication = $this->settings->__get(['api', 'core_application']);
+        $coreLock = $this->settings->__get(['api', 'core_resource_lock']);
+        if ($account->getName() == $coreAccount && $application->getName() == $coreApplication && $coreLock) {
+            throw new ApiException("Unauthorised: this is a core resource", 4, $this->id, 403);
+        }
+
+        // Validate user has developer role for the application
+        $userRoles = Utilities::getRolesFromToken();
+        $userHasAccess = false;
+        foreach ($userRoles as $userRole) {
+            if ($userRole['role_name'] == 'Developer' && $userRole['appid'] == $appid) {
+                $userHasAccess = true;
+            }
+        }
+        if (!$userHasAccess) {
+            throw new ApiException('Permission denied', 4, $this->id, 403);
+        }
+
+        // Validate the resource does not already exist.
+        $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $uri);
+        if (!empty($resource->getresid())) {
+            throw new ApiException('Resource already exists', 6, $this->id, 400);
+        }
+
+        // Validate the metadada.
+        try {
+            $this->validator->validate(json_decode($metadata, true));
+        } catch (ReflectionException $e) {
+            throw new ApiException($e->getMessage(), 6, $this->id, 400);
+        }
     }
 }
