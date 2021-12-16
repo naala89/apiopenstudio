@@ -144,7 +144,7 @@ class Utilities
      */
     public static function getOpenApiPathClassPath(Config $settings): string
     {
-        return "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
+        return "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiPath" .
             str_replace('.', '', $settings->__get(['api', 'openapi_version']));
     }
 
