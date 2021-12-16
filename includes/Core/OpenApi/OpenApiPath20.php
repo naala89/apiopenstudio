@@ -109,7 +109,7 @@ class OpenApiPath20 extends OpenApiPathAbstract
             if (!isset($item['nullable'])) {
                 $parameter->required = true;
             } else {
-                $parameter->required = $item['nullable'];
+                $parameter->required = !((boolean) $item['nullable']);
             }
             if (!isset($item['expected_type'])) {
                 $parameter->type = 'string';
