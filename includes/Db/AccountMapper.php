@@ -41,8 +41,8 @@ class AccountMapper extends Mapper
         } else {
             $sql = 'UPDATE account SET name = ? WHERE accid = ?';
             $bindParams = [
-            $account->getName(),
-            $account->getAccid(),
+                $account->getName(),
+                $account->getAccid(),
             ];
         }
         return $this->saveDelete($sql, $bindParams);

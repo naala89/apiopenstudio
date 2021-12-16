@@ -73,6 +73,11 @@ class OpenapiDefault extends ProcessorEntity
     protected ResourceMapper $resourceMapper;
 
     /**
+     * @var Config
+     */
+    protected Config $settings;
+
+    /**
      * OpenapiRead constructor.
      *
      * @param $meta
@@ -86,6 +91,7 @@ class OpenapiDefault extends ProcessorEntity
         $this->accountMapper = new AccountMapper($db, $logger);
         $this->applicationMapper = new ApplicationMapper($db, $logger);
         $this->resourceMapper = new ResourceMapper($db, $logger);
+        $this->settings = new Config();
     }
 
     /**
@@ -100,7 +106,6 @@ class OpenapiDefault extends ProcessorEntity
         parent::process();
 
         $appid = $this->val('appid', true);
-        $settings = new Config();
 
         // Only developers for an application can use this processor.
         $roles = Utilities::getRolesFromToken();
@@ -123,8 +128,8 @@ class OpenapiDefault extends ProcessorEntity
             throw new ApiException('application assigned to an invalid account', 6, $this->id, 400);
         }
 
-        $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->config);
-        $openApiPathClassName = Utilities::getOpenApiPathClassPath($this->config);
+        $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->settings);
+        $openApiPathClassName = Utilities::getOpenApiPathClassPath($this->settings);
         $openApiParentClass = new $openApiParentClassName();
         $openApiPathClass = new $openApiPathClassName();
 
@@ -135,7 +140,7 @@ class OpenapiDefault extends ProcessorEntity
         try {
             $this->applicationMapper->save(($application));
         } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 6, $this->id, 400);
+            throw new ApiException($e->getMessage(), 2, $this->id, 500);
         }
 
         $schema = json_decode($schema, true);
@@ -149,7 +154,7 @@ class OpenapiDefault extends ProcessorEntity
             try {
                 $this->resourceMapper->save($resource);
             } catch (ApiException $e) {
-                throw new ApiException($e->getMessage(), 6, $this->id, 400);
+                throw new ApiException($e->getMessage(), 2, $this->id, 500);
             }
             $schema['paths'] = array_merge_recursive($schema['paths'], json_decode($resourceSchema, true));
         }

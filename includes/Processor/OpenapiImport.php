@@ -104,11 +104,6 @@ class OpenapiImport extends ProcessorEntity
         $this->applicationMapper = new ApplicationMapper($db, $logger);
         $this->resourceMapper = new ResourceMapper($db, $logger);
         $settings = new Config();
-        try {
-            $openapiVersion = $settings->__get(['api', 'openapi_version']);
-        } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 2, $this->id, 400);
-        }
         $openApiParentClassPath = Utilities::getOpenApiParentClassPath($settings);
         $openApiPathClassPath = Utilities::getOpenApiParentClassPath($settings);
         $this->openApiParent = new $openApiParentClassPath();
@@ -177,7 +172,7 @@ class OpenapiImport extends ProcessorEntity
         try {
             $this->applicationMapper->save($application);
         } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 2, $this->id, 400);
+            throw new ApiException($e->getMessage(), 2, $this->id, 500);
         }
 
         $result = [];
@@ -195,7 +190,7 @@ class OpenapiImport extends ProcessorEntity
                     try {
                         $this->resourceMapper->save($resource);
                     } catch (ApiException $e) {
-                        throw new ApiException($e->getMessage(), 2, $this->id, 400);
+                        throw new ApiException($e->getMessage(), 2, $this->id, 500);
                     }
                     $result['new'][] = [
                         'uri' => $trimmedUri,
@@ -208,7 +203,7 @@ class OpenapiImport extends ProcessorEntity
                     try {
                         $this->resourceMapper->save($resource);
                     } catch (ApiException $e) {
-                        throw new ApiException($e->getMessage(), 2, $this->id, 400);
+                        throw new ApiException($e->getMessage(), 2, $this->id, 500);
                     }
                     $result['updated'][] = [
                         'uri' => $trimmedUri,

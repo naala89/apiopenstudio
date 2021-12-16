@@ -163,7 +163,7 @@ class OpenapiUpdate extends ProcessorEntity
         try {
             $this->applicationMapper->save($application);
         } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 6, $this->id, 400);
+            throw new ApiException($e->getMessage(), 2, $this->id, 500);
         }
 
         foreach ($paths as $uri => $path) {
@@ -184,7 +184,7 @@ class OpenapiUpdate extends ProcessorEntity
                 try {
                     $this->resourceMapper->save($resource);
                 } catch (ApiException $e) {
-                    throw new ApiException($e->getMessage(), 6, $this->id, 400);
+                    throw new ApiException($e->getMessage(), 2, $this->id, 500);
                 }
             }
         }

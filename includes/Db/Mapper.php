@@ -112,7 +112,7 @@ abstract class Mapper
         if ($row === false) {
             $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
             $this->logger->error('db', $message);
-            throw new ApiException($message, 2);
+            throw new ApiException($message, 2, -1, 500);
         }
         return $this->mapArray($row);
     }
