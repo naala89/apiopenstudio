@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class OpenApiPath303.
+ * Class OpenApiPath302.
  *
  * @package    ApiOpenStudio
  * @subpackage Core
@@ -16,8 +16,8 @@
 namespace ApiOpenStudio\Core\OpenApi;
 
 /**
- * Class to generate default elements for OpenApi v3.0.3.
+ * Class to generate default elements for OpenApi v3.0.2.
  */
-class OpenApiPath303 extends OpenApiPath302
+class OpenApiPath302 extends OpenApiPath301
 {
 }

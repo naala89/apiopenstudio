@@ -230,7 +230,7 @@ class OpenApiParent20 extends OpenApiParentAbstract
         }
         $this->definition->info->title = $applicationName;
         $this->definition->info->description = str_replace(
-            " {$matches[1]} ",
+            " $matches[1] ",
             " $applicationName ",
             $this->definition->info->description
         );

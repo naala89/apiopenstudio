@@ -198,8 +198,9 @@ paths:
         '403':
           $ref: '#/responses/Forbidden'
     get:
-      description:
-        Fetch a single or multiple applications, limited by the users access rights.
+      description: >
+        Fetch a single or multiple applications, limited by the users access
+        rights.
       summary: Application read
       security:
         - Bearer: []

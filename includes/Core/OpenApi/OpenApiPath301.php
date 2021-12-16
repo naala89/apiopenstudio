@@ -16,8 +16,8 @@
 namespace ApiOpenStudio\Core\OpenApi;
 
 /**
- * Class to generate default elements for OpenApi v3.0.3.
+ * Class to generate default elements for OpenApi v3.0.1.
  */
-class OpenApiPath303 extends OpenApiPath302
+class OpenApiPath301 extends OpenApiPath300
 {
 }

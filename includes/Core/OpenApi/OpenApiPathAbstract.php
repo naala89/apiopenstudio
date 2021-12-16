@@ -17,6 +17,7 @@ namespace ApiOpenStudio\Core\OpenApi;
 
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
+use ApiOpenStudio\Core\ProcessorHelper;
 use ApiOpenStudio\Db\Resource;
 use stdClass;
 
@@ -34,12 +35,18 @@ abstract class OpenApiPathAbstract
      * @var Config
      *   Settings object.
      */
+
     protected Config $settings;
+    /**
+     * @var ProcessorHelper
+     */
+    protected ProcessorHelper $processorHelper;
 
     public function __construct()
     {
         $this->settings = new Config();
         $this->definition = new stdClass();
+        $this->processorHelper = new ProcessorHelper();
     }
 
     /**
@@ -50,6 +57,33 @@ abstract class OpenApiPathAbstract
      * @throws ApiException
      */
     abstract public function setDefault(Resource $resource);
+
+    /**
+     * Return the default GET parameters OpenApi object.
+     *
+     * @param array $meta
+     *
+     * @return array|stdClass
+     */
+    abstract protected function defaultGetParameters(array $meta);
+
+    /**
+     * Return the default POST parameters OpenApi object.
+     *
+     * @param array $meta
+     *
+     * @return array|stdClass
+     */
+    abstract protected function defaultPostParameters(array $meta);
+
+    /**
+     * Return the default PATH parameters OpenApi object.
+     *
+     * @param array $meta
+     *
+     * @return array|stdClass
+     */
+    abstract protected function defaultPathParameters(array $meta);
 
     /**
      * Import an existing definition.
@@ -131,5 +165,32 @@ abstract class OpenApiPathAbstract
 
         $this->definition->{$uri}->{$method}->summary = $name;
         $this->definition->{$uri}->{$method}->description = $description;
+    }
+
+    /**
+     * Return an array of all instances of a processor in metadata.
+     *
+     * @param string $machineName
+     * @param array $meta
+     *
+     * @return array
+     */
+    protected function findProcessors(string $machineName, array $meta): array
+    {
+        $result = [];
+        foreach ($meta as $key => $value) {
+            if ($key == 'processor' && $value == $machineName) {
+                $item = [];
+                foreach (array_keys($meta) as $arrayKey) {
+                    if (!is_array($meta[$arrayKey])) {
+                        $item[$arrayKey] = $meta[$arrayKey];
+                    }
+                }
+                $result[] = $item;
+            } elseif ($this->processorHelper->isProcessor($value)) {
+                $result = array_merge($this->findProcessors($machineName, $value));
+            }
+        }
+        return $result;
     }
 }

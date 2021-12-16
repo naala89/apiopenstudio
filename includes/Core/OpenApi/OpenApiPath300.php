@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class OpenApiPath20.
+ * Class OpenApiPath300.
  *
  * @package    ApiOpenStudio
  * @subpackage Core
@@ -19,44 +19,39 @@ use ApiOpenStudio\Db\Resource;
 use stdClass;
 
 /**
- * Class to generate default path elements for OpenApi v2.0.
+ * Class to generate default elements for OpenApi v3.0.0.
  */
-class OpenApiPath20 extends OpenApiPathAbstract
+class OpenApiPath300 extends OpenApiPathAbstract
 {
     /**
      * {@inheritDoc}
      */
     public function setDefault(Resource $resource)
     {
-        $path = '/' . $resource->getUri();
-        $method = $resource->getMethod();
         $meta = $resource->getMeta();
+        $uri = $resource->getUri();
+        $path = "/$uri";
+        $method = $resource->getMethod();
         $definition = [
             $path => [
                 $method => [
-                    'description' => $resource->getDescription(),
                     'summary' => $resource->getName(),
-                    'tags' => [$path],
-                    'produces' => [
-                        'application/json',
-                        'application/xml',
-                        'application/text',
-                        'text/html',
-                    ],
+                    'description' => $resource->getDescription(),
+                    'tags' => [$uri],
                     'responses' => [
                         '200' => [
-                            'description' => 'success response',
+                            'description' => 'success',
                         ],
                         '400' => [
-                            '$ref' => '#/responses/GeneralError'
+                            '$ref' => '#/components/responses/GeneralError',
                         ],
                         '401' => [
-                            '$ref' => '#/responses/Unauthorised'
+                            '$ref' => '#/components/responses/Unauthorised',
                         ],
                         '403' => [
-                            '$ref' => '#/responses/Forbidden'
+                            '$ref' => '#/components/responses/Forbidden',
                         ],
-                    ],
+                    ]
                 ],
             ],
         ];
@@ -112,28 +107,28 @@ class OpenApiPath20 extends OpenApiPathAbstract
                 $parameter->required = $item['nullable'];
             }
             if (!isset($item['expected_type'])) {
-                $parameter->type = 'string';
+                $parameter->schema->type = 'string';
             } else {
                 switch ($item['expected_type']) {
                     case 'boolean':
-                        $parameter->type = 'boolean';
+                        $parameter->schema->type = 'boolean';
                         break;
                     case 'integer':
-                        $parameter->type = 'integer';
+                        $parameter->schema->type = 'integer';
                         break;
                     case 'float':
-                        $parameter->type = 'float';
+                        $parameter->schema->type = 'float';
                         break;
                     case 'text':
                     case 'json':
                     case 'xml':
                     case 'html':
                     case 'empty':
-                        $parameter->type = 'string';
+                        $parameter->schema->type = 'string';
                         break;
                     case 'array':
-                        $parameter->type = 'array';
-                        $parameter->items->type = 'string';
+                        $parameter->schema->type = 'array';
+                        $parameter->schema->items->type = 'string';
                         break;
                 }
             }
@@ -157,28 +152,28 @@ class OpenApiPath20 extends OpenApiPathAbstract
             $parameter->required = true;
 
             if (!isset($item['expected_type'])) {
-                $parameter->type = 'string';
+                $parameter->schema->type = 'string';
             } else {
                 switch ($item['expected_type']) {
                     case 'boolean':
-                        $parameter->type = 'boolean';
+                        $parameter->schema->type = 'boolean';
                         break;
                     case 'integer':
-                        $parameter->type = 'integer';
+                        $parameter->schema->type = 'integer';
                         break;
                     case 'float':
-                        $parameter->type = 'float';
+                        $parameter->schema->type = 'float';
                         break;
                     case 'text':
                     case 'json':
                     case 'xml':
                     case 'html':
                     case 'empty':
-                        $parameter->type = 'string';
+                        $parameter->schema->type = 'string';
                         break;
                     case 'array':
-                        $parameter->type = 'array';
-                        $parameter->items->type = 'string';
+                        $parameter->schema->type = 'array';
+                        $parameter->schema->items->type = 'string';
                         break;
                 }
             }
@@ -226,7 +221,7 @@ class OpenApiPath20 extends OpenApiPathAbstract
                 case 'xml':
                 case 'html':
                 case 'empty':
-                    $parameters->{$content}->schema->properties->{$item['key']}->type = 'string';
+                $parameters->{$content}->schema->properties->{$item['key']}->type = 'string';
                     break;
                 case 'array':
                     $parameters->{$content}->schema->properties->{$item['key']}->type = 'array';
