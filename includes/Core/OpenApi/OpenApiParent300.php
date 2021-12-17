@@ -302,7 +302,9 @@ class OpenApiParent300 extends OpenApiParentAbstract
                 $message .= 'Could not extract URI for setting application';
                 throw new ApiException($message);
             }
-            $this->definition->servers[$key] = [$urlParts[0] . '://' . $matches[0] . '/' . $matches[1] . "/$applicationName"];
+            $this->definition->servers[$key] = [
+                $urlParts[0] . '://' . $matches[0] . '/' . $matches[1] . "/$applicationName"
+            ];
         }
 
         $this->definition->info->title = $applicationName;
