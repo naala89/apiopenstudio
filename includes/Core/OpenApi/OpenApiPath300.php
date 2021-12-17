@@ -104,8 +104,9 @@ class OpenApiPath300 extends OpenApiPathAbstract
             if (!isset($item['nullable'])) {
                 $parameter->required = true;
             } else {
-                $parameter->required = !((boolean) $item['nullable']);
+                $parameter->required = !((bool) $item['nullable']);
             }
+            $parameter->schema = new stdClass();
             if (!isset($item['expected_type'])) {
                 $parameter->schema->type = 'string';
             } else {
@@ -204,30 +205,30 @@ class OpenApiPath300 extends OpenApiPathAbstract
                 $item['key'] = 'postParam' . $count++;
             }
             $parameters->{$content}->schema->properties->{$item['key']} = new stdClass();
-            switch ($item['expected_type']) {
-                case 'boolean':
-                    $parameters->{$content}->schema->properties->{$item['key']}->type = 'boolean';
-                    break;
-                case 'integer':
-                    $parameters->{$content}->schema->properties->{$item['key']}->type = 'integer';
-                    $parameters->{$content}->schema->properties->{$item['key']}->format = 'int64';
-                    break;
-                case 'float':
-                    $parameters->{$content}->schema->properties->{$item['key']}->type = 'float';
-                    $parameters->{$content}->schema->properties->{$item['key']}->format = 'float64';
-                    break;
-                case 'text':
-                case 'json':
-                case 'xml':
-                case 'html':
-                case 'empty':
+            if (!isset($item['expected_type'])) {
                 $parameters->{$content}->schema->properties->{$item['key']}->type = 'string';
-                    break;
-                case 'array':
-                    $parameters->{$content}->schema->properties->{$item['key']}->type = 'array';
-                    $parameters->{$content}->schema->properties->{$item['key']}->items = new stdClass();
-                    $parameters->{$content}->schema->properties->{$item['key']}->items->type = 'string';
-                    break;
+            } else {
+                switch ($item['expected_type']) {
+                    case 'boolean':
+                        $parameters->{$content}->schema->properties->{$item['key']}->type = 'boolean';
+                        break;
+                    case 'integer':
+                        $parameters->{$content}->schema->properties->{$item['key']}->type = 'integer';
+                        $parameters->{$content}->schema->properties->{$item['key']}->format = 'int64';
+                        break;
+                    case 'float':
+                        $parameters->{$content}->schema->properties->{$item['key']}->type = 'float';
+                        $parameters->{$content}->schema->properties->{$item['key']}->format = 'float64';
+                        break;
+                    case 'array':
+                        $parameters->{$content}->schema->properties->{$item['key']}->type = 'array';
+                        $parameters->{$content}->schema->properties->{$item['key']}->items = new stdClass();
+                        $parameters->{$content}->schema->properties->{$item['key']}->items->type = 'string';
+                        break;
+                    default:
+                        $parameters->{$content}->schema->properties->{$item['key']}->type = 'string';
+                        break;
+                }
             }
         }
 

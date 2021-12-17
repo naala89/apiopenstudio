@@ -109,7 +109,7 @@ class OpenApiPath20 extends OpenApiPathAbstract
             if (!isset($item['nullable'])) {
                 $parameter->required = true;
             } else {
-                $parameter->required = !((boolean) $item['nullable']);
+                $parameter->required = !((bool) $item['nullable']);
             }
             if (!isset($item['expected_type'])) {
                 $parameter->type = 'string';
@@ -124,16 +124,12 @@ class OpenApiPath20 extends OpenApiPathAbstract
                     case 'float':
                         $parameter->type = 'float';
                         break;
-                    case 'text':
-                    case 'json':
-                    case 'xml':
-                    case 'html':
-                    case 'empty':
-                        $parameter->type = 'string';
-                        break;
                     case 'array':
                         $parameter->type = 'array';
                         $parameter->items->type = 'string';
+                        break;
+                    default:
+                        $parameter->type = 'string';
                         break;
                 }
             }
