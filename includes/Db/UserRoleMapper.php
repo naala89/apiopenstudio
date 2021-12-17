@@ -24,7 +24,6 @@ use ApiOpenStudio\Core\ApiException;
  */
 class UserRoleMapper extends Mapper
 {
-
     /**
      * Save the user role.
      *
