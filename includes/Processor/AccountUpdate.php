@@ -44,6 +44,11 @@ class AccountUpdate extends ProcessorEntity
     protected ApplicationMapper $applicationMapper;
 
     /**
+     * @var Config
+     */
+    protected Config $settings;
+
+    /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
@@ -88,6 +93,7 @@ class AccountUpdate extends ProcessorEntity
         parent::__construct($meta, $request, $db, $logger);
         $this->accountMapper = new AccountMapper($db, $logger);
         $this->applicationMapper = new ApplicationMapper($db, $logger);
+        $this->settings = new Config();
     }
 
     /**
@@ -134,8 +140,7 @@ class AccountUpdate extends ProcessorEntity
      */
     protected function updateOpenApiForApplications(Account $account)
     {
-        $settings = new Config();
-        $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->config);
+        $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->settings);
         $openApiParentClass = new $openApiParentClassName();
         $openApiParentClass = new $openApiParentClass();
         $applications = $this->applicationMapper->findByAccid($account->getAccid());

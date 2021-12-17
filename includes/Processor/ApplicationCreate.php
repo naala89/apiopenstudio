@@ -64,6 +64,13 @@ class ApplicationCreate extends ProcessorEntity
     protected ApplicationMapper $applicationMapper;
 
     /**
+     * Config class.
+     *
+     * @var Config
+     */
+    protected Config $settings;
+
+    /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
@@ -119,6 +126,7 @@ class ApplicationCreate extends ProcessorEntity
         $this->userMapper = new UserMapper($this->db, $logger);
         $this->accountMapper = new AccountMapper($this->db, $logger);
         $this->applicationMapper = new ApplicationMapper($this->db, $logger);
+        $this->settings = new Config();
     }
 
     /**
@@ -168,7 +176,7 @@ class ApplicationCreate extends ProcessorEntity
         }
 
         $settings = new Config();
-        $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->config);
+        $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->settings);
         $openApiParentClass = new $openApiParentClassName();
         if (!empty($openApi)) {
             $openApiParentClass->import($openApi);
