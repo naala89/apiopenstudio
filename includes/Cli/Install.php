@@ -546,13 +546,28 @@ class Install extends Script
                 continue;
             }
             echo "Importing $dir/$filename\n";
-            $schema = Spyc::YAMLLoadString(file_get_contents("$dir/$filename"));
-            $parent = $schema;
-            $parent['paths'] = new stdClass();
-            $paths = $schema['paths'];
+            $parent = Spyc::YAMLLoadString(file_get_contents("$dir/$filename"));
+            $parent = json_decode(json_encode($parent, JSON_UNESCAPED_SLASHES));
+            $paths = $parent->paths;
+            $parent->paths = new stdClass();
+            if (isset($parent->swagger) && $parent->swagger == '2.0') {
+                $parent->host = $this->config->__get(['api', 'url']);
+            } else {
+                $server = $parent->servers[0]->url;
+                $parts = explode('://', $server);
+                $parts = explode('/', $parts[1]);
+                $uri = '/' . $parts[sizeof($parts) - 2] . '/' . $parts[sizeof($parts) - 1];
+                $parent->servers = [];
+                foreach ($this->config->__get(['api', 'protocols']) as $protocol) {
+                    $url = $protocol . '://' . $this->config->__get(['api', 'url']) . $uri;
+                    $server = new stdClass();
+                    $server->url =  $url;
+                    $parent->servers[] = $server;
+                }
+            }
 
-            $openApiParentClass->import(json_decode(json_encode($parent, JSON_UNESCAPED_SLASHES)));
-            $openApiPathClass->import(json_decode(json_encode($paths, JSON_UNESCAPED_SLASHES)));
+            $openApiParentClass->import($parent);
+            $openApiPathClass->import($paths);
 
             $accountName = $openApiParentClass->getAccount();
             $applicationName = $openApiParentClass->getApplication();
