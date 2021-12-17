@@ -19,6 +19,7 @@ $coreOpenApi = [
         'version' => '1.0.0',
     ],
     'servers' => [
+        ['url' => 'http://localhost/apiopenstudio/core'],
         ['url' => 'https://localhost/apiopenstudio/core'],
     ],
     'paths' => [],
@@ -681,7 +682,11 @@ foreach ($validCreateEditDeleteUsers as $user) {
     $appid = $response['appid'];
     $newOpenApi['info']['title'] = 'new_application1';
     $newOpenApi['info']['description'] = 'These are the resources that belong to the new_application1 application.';
-    $newOpenApi['servers'][0]['url'] = 'https://localhost/testing_acc/new_application1';
+    $newOpenApi['servers'] = [
+        ['url' => 'http://localhost/testing_acc/new_application1'],
+        ['url' => 'https://localhost/testing_acc/new_application1'],
+    ];
+    $newOpenApi['servers'][1]['url'] = 'https://localhost/testing_acc/new_application1';
     $I->seeResponseContainsJson([
         'appid' => $appid,
         'accid' => 2,
@@ -694,7 +699,10 @@ foreach ($validCreateEditDeleteUsers as $user) {
     $I->seeResponseIsJson();
     $newOpenApi['info']['title'] = 'edited_name';
     $newOpenApi['info']['description'] = 'These are the resources that belong to the edited_name application.';
-    $newOpenApi['servers'][0]['url'] = 'https://localhost/testing_acc/edited_name';
+    $newOpenApi['servers'] = [
+        ['url' => 'http://localhost/testing_acc/edited_name'],
+        ['url' => 'https://localhost/testing_acc/edited_name'],
+    ];
     $I->seeResponseContainsJson([
         'appid' => $appid,
         'accid' => 2,
