@@ -149,7 +149,7 @@ class ApplicationCreate extends ProcessorEntity
             !$this->userRoleMapper->hasRole($uid, 'Administrator')
             && !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')
         ) {
-            throw new ApiException('Permission denied.', 6, $this->id, 403);
+            throw new ApiException('permission denied', 4, $this->id, 403);
         }
 
         if (preg_match('/[^a-z_\-0-9]/i', $name)) {

@@ -148,7 +148,7 @@ class ApplicationUpdate extends ProcessorEntity
 
         $application = $this->applicationMapper->findByAppid($appid);
         if (empty($application->getAccid())) {
-            throw new ApiException("Application ID does not exist: $appid", 6, $this->id, 417);
+            throw new ApiException("application ID does not exist: $appid", 6, $this->id, 400);
         }
 
         $this->validateAccess($application, $accid);
@@ -157,7 +157,7 @@ class ApplicationUpdate extends ProcessorEntity
         if (!empty($accid)) {
             $account = $this->accountMapper->findByAccid($accid);
             if (empty($account->getAccid())) {
-                throw new ApiException("Account ID does not exist: $accid", 6, $this->id, 417);
+                throw new ApiException("account ID does not exist: $accid", 6, $this->id, 400);
             }
             $application->setAccid($accid);
             $openApi->setAccount($account->getName());
@@ -166,7 +166,7 @@ class ApplicationUpdate extends ProcessorEntity
         if (!empty($name)) {
             if (preg_match('/[^a-z_\-0-9]/i', $name)) {
                 throw new ApiException(
-                    "Invalid application name: $name. Only underscore, hyphen or alhpanumeric characters permitted.",
+                    "invalid application name: $name. Only underscore, hyphen or alhpanumeric characters permitted",
                     6,
                     $this->id,
                     400
@@ -210,7 +210,7 @@ class ApplicationUpdate extends ProcessorEntity
                 !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')
             )
         ) {
-            throw new ApiException("Permission denied.", 6, $this->id, 417);
+            throw new ApiException("permission denied", 4, $this->id, 403);
         }
     }
 

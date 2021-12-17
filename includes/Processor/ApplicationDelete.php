@@ -120,35 +120,36 @@ class ApplicationDelete extends ProcessorEntity
             !$this->userRoleMapper->hasRole($uid, 'Administrator')
             && !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')
         ) {
-            throw new ApiException("Permission denied.", 6, $this->id, 417);
+            throw new ApiException("permission denied", 4, $this->id, 403);
         }
         if (empty($application->getAppid())) {
             throw new ApiException(
-                "Delete application, invalid appid: $appid",
+                "delete application, invalid appid: $appid",
                 6,
                 $this->id,
-                417
+                400
             );
         }
 
         $resources = $this->resourceMapper->findByAppId($appid);
         if (!empty($resources)) {
             throw new ApiException(
-                "Cannot delete application, resources are assigned to this application: $appid",
+                "cannot delete application, resources are assigned to this application: $appid",
                 6,
                 $this->id,
-                417
+                400
             );
         }
         $userRoles = $this->userRoleMapper->findByFilter(['col' => ['appid' => $appid]]);
         if (!empty($userRoles)) {
             throw new ApiException(
-                "Cannot delete application, users are assigned to this application: $appid",
+                "cannot delete application, users are assigned to this application: $appid",
                 6,
                 $this->id,
-                417
+                400
             );
         }
+
 
         return new DataContainer($this->applicationMapper->delete($application), 'boolean');
     }

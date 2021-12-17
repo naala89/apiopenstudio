@@ -175,7 +175,11 @@ class ApplicationRead extends ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        $applications = $this->applicationMapper->findByUid($uid, $params);
+        try {
+            $applications = $this->applicationMapper->findByUid($uid, $params);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
         $result = [];
         foreach ($applications as $application) {

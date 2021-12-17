@@ -730,7 +730,7 @@ foreach ($invalidCreateEditDeleteUsers as $user) {
     $I->performLogin($user['username'], $user['password']);
     $I->wantTo('Test creating an application with an invalid user: ' . $user['username']);
     $I->sendPost($uri, ['accid' => 2, 'name' => 'new_application2']);
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
     $I->seeResponseIsJson();
     $I->seeResponseContainsJson(['error' => [
         'code' => 4,
@@ -740,7 +740,7 @@ foreach ($invalidCreateEditDeleteUsers as $user) {
 
     $I->wantTo('Test updating an application with an invalid user: ' . $user['username']);
     $I->sendPut("$uri/$appid/2/edited_name");
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
     $I->seeResponseIsJson();
     $I->seeResponseContainsJson(['error' => [
         'code' => 4,
@@ -750,7 +750,7 @@ foreach ($invalidCreateEditDeleteUsers as $user) {
 
     $I->wantTo('Test deleting an application with an invalid user: ' . $user['username']);
     $I->sendDelete("$uri/$appid");
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
     $I->seeResponseIsJson();
     $I->seeResponseContainsJson(['error' => [
         'code' => 4,
