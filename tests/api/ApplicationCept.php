@@ -629,8 +629,9 @@ $validCreateEditDeleteUsers = [
 ];
 $invalidCreateEditDeleteUsers = [
     [
-        'username' => getenv('TESTER_APPLICATION_MANAGER_NAME'), 'password' => getenv('TESTER_APPLICATION_MANAGER_PASS')],
-    [
+        'username' => getenv('TESTER_APPLICATION_MANAGER_NAME'),
+        'password' => getenv('TESTER_APPLICATION_MANAGER_PASS')
+    ], [
         'username' => getenv('TESTER_DEVELOPER_NAME'), 'password' => getenv('TESTER_DEVELOPER_PASS')],
     [
         'username' => getenv('TESTER_CONSUMER_NAME'), 'password' => getenv('TESTER_CONSUMER_PASS')],
