@@ -7,7 +7,7 @@ info:
     name: API Support
     email: contact@api.apiopenstudio.local
   license:
-    name: \"ApiOpenStudio Public License\" based on Mozilla Public License 2.0
+    name: ApiOpenStudio Public License based on Mozilla Public License 2.0
     url: https://www.apiopenstudio.com/license/
   version: 1.0.0
 host: api.apiopenstudio.local
