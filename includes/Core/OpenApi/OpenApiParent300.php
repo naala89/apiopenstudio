@@ -225,12 +225,14 @@ class OpenApiParent300 extends OpenApiParentAbstract
         $server = $servers[0];
         $urlParts = explode('://', $server->url);
         if (sizeof($urlParts) != 2) {
-            $message = "invalid servers in the openApi schema ($server). Could not extract URL for finding account";
+            $message = 'invalid servers in the openApi schema (' . $server . '). ';
+            $message .= 'Could not extract URL for finding account';
             throw new ApiException($message);
         }
         $matches = explode('/', $urlParts[1]);
         if (sizeof($matches) != 3) {
-            $message = "invalid servers in the openApi schema ($server). Could not extract URI for finding account";
+            $message = 'invalid servers in the openApi schema (' . $server . '). ';
+            $message .= 'Could not extract URI for finding account';
             throw new ApiException($message);
         }
         return $matches[1];
@@ -245,14 +247,14 @@ class OpenApiParent300 extends OpenApiParentAbstract
         $server = $servers[0];
         $urlParts = explode('://', $server->url);
         if (sizeof($urlParts) != 2) {
-            $message = "invalid servers in the openApi schema ($server->url).";
-            $message .= " Could not extract URL for finding application";
+            $message = 'invalid servers in the openApi schema (' . $server->url . '). ';
+            $message .= ' Could not extract URL for finding application';
             throw new ApiException($message);
         }
         $matches = explode('/', $urlParts[1]);
         if (sizeof($matches) != 3) {
-            $message = "invalid servers in the openApi schema ($server->url).";
-            $message .= "Could not extract URI for finding application";
+            $message = 'invalid servers in the openApi schema (' . $server->url . '). ';
+            $message .= ' Could not extract URI for finding application';
             throw new ApiException($message);
         }
         return $matches[2];
@@ -267,14 +269,14 @@ class OpenApiParent300 extends OpenApiParentAbstract
         $server = $servers[0];
         $urlParts = explode('://', $server->url);
         if (sizeof($urlParts) != 2) {
-            $message = "invalid servers in the openApi schema ($server->url).";
-            $message .= " Could not extract URL for setting account.";
+            $message = 'invalid servers in the openApi schema (' . $server->url . '). ';
+            $message .= ' Could not extract URL for setting account';
             throw new ApiException($message);
         }
         $matches = explode('/', $urlParts[1]);
         if (sizeof($matches) != 3) {
-            $message = "invalid servers in the openApi schema ($server->url).";
-            $message .= " Could not extract URI for setting account.";
+            $message = 'invalid servers in the openApi schema (' . $server->url . '). ';
+            $message .= 'Could not extract URI for setting account';
             throw new ApiException($message);
         }
         $this->definition->servers = [$urlParts[0] . '://' . $matches[0] . "/$accountName/" . $matches[2]];
@@ -286,20 +288,22 @@ class OpenApiParent300 extends OpenApiParentAbstract
     public function setApplication(string $applicationName)
     {
         $servers = $this->definition->servers;
-        $server = $servers[0];
-        $urlParts = explode('://', $server->url);
-        if (sizeof($urlParts) != 2) {
-            $message = "invalid servers in the openApi schema ($server->url).";
-            $message .= "Could not extract URL for setting application.";
-            throw new ApiException($message);
+
+        foreach ($servers as $key => $server) {
+            $urlParts = explode('://', $server->url);
+            if (sizeof($urlParts) != 2) {
+                $message = 'invalid servers in the openApi schema (' . $server->url . '). ';
+                $message .= 'Could not extract URL for setting application';
+                throw new ApiException($message);
+            }
+            $matches = explode('/', $urlParts[1]);
+            if (sizeof($matches) != 3) {
+                $message = 'invalid servers in the openApi schema (' . $server->url . '). ';
+                $message .= 'Could not extract URI for setting application';
+                throw new ApiException($message);
+            }
+            $this->definition->servers[$key] = [$urlParts[0] . '://' . $matches[0] . '/' . $matches[1] . "/$applicationName"];
         }
-        $matches = explode('/', $urlParts[1]);
-        if (sizeof($matches) != 3) {
-            $message = "invalid servers in the openApi schema ($server->url).";
-            $message .= " Could not extract URI for setting application.";
-            throw new ApiException($message);
-        }
-        $this->definition->servers = [$urlParts[0] . '://' . $matches[0] . '/' . $matches[1] . "/$applicationName"];
 
         $this->definition->info->title = $applicationName;
         $this->definition->info->description = str_replace(
