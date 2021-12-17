@@ -203,12 +203,10 @@ class ApplicationUpdate extends ProcessorEntity
     {
         $uid = Utilities::getUidFromToken();
         if (
-            !$this->userRoleMapper->hasRole($uid, 'Administrator') ||
-            !$this->userRoleMapper->hasAccidRole($uid, $application->getAccid(), 'Account manager') ||
-            (
-                !empty($accid) &&
-                !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')
-            )
+            !$this->userRoleMapper->hasRole($uid, 'Administrator') &&
+            !$this->userRoleMapper->hasAccidRole($uid, $application->getAccid(), 'Account manager') &&
+            !empty($accid) &&
+            !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')
         ) {
             throw new ApiException("permission denied", 4, $this->id, 403);
         }
