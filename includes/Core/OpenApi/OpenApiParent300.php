@@ -49,7 +49,7 @@ class OpenApiParent300 extends OpenApiParentAbstract
                 'email' => 'contact@' . $this->settings->__get(['api', 'url']),
             ],
             'license' => [
-                'name' => '"ApiOpenStudio Public License" based on Mozilla Public License 2.0',
+                'name' => 'ApiOpenStudio Public License based on Mozilla Public License 2.0',
                 'url' => 'https://www.apiopenstudio.com/license/',
             ],
             'version' => '1.0.0',
