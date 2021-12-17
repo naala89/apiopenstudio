@@ -146,14 +146,14 @@ class ResourceExport extends ProcessorEntity
     protected function getExportArray(Resource $resource): array
     {
         $result = $resource->dump();
+
         $meta = json_decode($result['meta'], true);
         unset($result['meta']);
-
         foreach ($meta as $key => $definition) {
             $result[$key] = $definition;
         }
 
-        $result['openapi'] = json_decode($result['openapi'], true);
+        unset($result['openapi']);
 
         return $result;
     }
