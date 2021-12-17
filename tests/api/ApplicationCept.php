@@ -7,19 +7,19 @@ $coreOpenApi = [
     'info' => [
         'title' => 'core',
         'description' => 'These are the resources that belong to the core application.',
-        'termsOfService' => 'https => //www.apiopenstudio.com/license/',
+        'termsOfService' => 'https://www.apiopenstudio.com/license/',
         'contact' => [
             'name' => 'API Support',
             'email' => 'contact@api.apiopenstudio.local',
         ],
         'license' => [
             'name' => '\u201cApiOpenStudio Public License\u201d based on Mozilla Public License 2.0',
-            'url' => 'https => //www.apiopenstudio.com/license/',
+            'url' => 'https://www.apiopenstudio.com/license/',
         ],
         'version' => '1.0.0',
     ],
     'servers' => [
-        ['url' => 'https => //api.apiopenstudio.local/apiopenstudio/core'],
+        ['url' => 'https://api.apiopenstudio.local/apiopenstudio/core'],
     ],
     'paths' => [],
     'components' => [
@@ -513,7 +513,7 @@ $coreOpenApi = [
     'security' => [],
     'externalDocs' => [
         'description' => 'Find out more about ApiOpenStudio',
-        'url' => 'https => //www.apiopenstudio.com',
+        'url' => 'https://www.apiopenstudio.com',
     ]
 ];
 
@@ -522,14 +522,14 @@ $newApplicationOpenApi = [
     "info" => [
         "title" => '',
         "description" => "",
-        "termsOfService" => "https => //www.apiopenstudio.com/license/",
+        "termsOfService" => "https://www.apiopenstudio.com/license/",
         "contact" => [
             "name" => "API Support",
-            "email" => "contact@api.apiopenstudio.local",
+            "email" => "contact@localhost",
         ],
         "license" => [
             "name" => "\u201cApiOpenStudio Public License\u201d based on Mozilla Public License 2.0",
-            "url" => "https => //www.apiopenstudio.com/license/",
+            "url" => "https://www.apiopenstudio.com/license/",
         ],
         "version" => "1.0.0",
     ],
@@ -617,7 +617,7 @@ $newApplicationOpenApi = [
     "security" => [],
     "externalDocs" => [
         "description" => "Find out more about ApiOpenStudio",
-        "url" => "https => //www.apiopenstudio.com",
+        "url" => "https://www.apiopenstudio.com",
     ],
 ];
 
