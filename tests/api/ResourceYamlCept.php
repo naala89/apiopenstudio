@@ -243,8 +243,8 @@ foreach ($goodIdentities as $goodIdentity) {
             'method' => 'string',
             'uri' => 'string',
             'ttl' => 'integer',
-            'meta' => 'array',
-            'openapi' => 'array',
+            'security' => 'array',
+            'process' => 'array',
         ]
     );
 
@@ -260,21 +260,15 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContains("method: post");
     $I->seeResponseContains("uri: test/resource_update/allowed");
     $I->seeResponseContains("ttl: 0");
-    $I->seeResponseContains("meta:");
-    $I->seeResponseContains("    security:");
-    $I->seeResponseContains("        function: validate_token_roles");
-    $I->seeResponseContains("        id: test_security");
-    $I->seeResponseContains("        roles:");
-    $I->seeResponseContains("            - Consumer");
-    $I->seeResponseContains("    process:");
-    $I->seeResponseContains("        processor: var_int");
-    $I->seeResponseContains("        id: 'test allowed to update process'");
-    $I->seeResponseContains("        value: 32");
-    $I->seeResponseContains("openapi:");
-    $I->seeResponseContains("   test/resource_update/allowed:");
-    $I->seeResponseContains("       post:");
-    $I->seeResponseContains("           summary: 'Test allowed to update a resource'");
-    $I->seeResponseContains("           description: 'test allowed to update a resource'");
+    $I->seeResponseContains("security:");
+    $I->seeResponseContains("   function: validate_token_roles");
+    $I->seeResponseContains("   id: test_security");
+    $I->seeResponseContains("   roles:");
+    $I->seeResponseContains("       - Consumer");
+    $I->seeResponseContains("process:");
+    $I->seeResponseContains("   processor: var_int");
+    $I->seeResponseContains("   id: 'test allowed to update process'");
+    $I->seeResponseContains("   value: 32");
 
     $I->wantTo('Test resource delete for ' . $goodIdentity[0]);
     $I->sendDelete(
