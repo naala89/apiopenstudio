@@ -13,7 +13,7 @@ $coreOpenApi = [
             'email' => 'contact@api.apiopenstudio.local',
         ],
         'license' => [
-            'name' => '\u201cApiOpenStudio Public License\u201d based on Mozilla Public License 2.0',
+            'name' => '"ApiOpenStudio Public License" based on Mozilla Public License 2.0',
             'url' => 'https://www.apiopenstudio.com/license/',
         ],
         'version' => '1.0.0',
@@ -681,7 +681,7 @@ foreach ($validCreateEditDeleteUsers as $user) {
     $appid = $response['appid'];
     $newOpenApi['info']['title'] = 'new_application1';
     $newOpenApi['info']['description'] = 'These are the resources that belong to the new_application1 application.';
-    $newOpenApi['servers'][0]['url'] = 'https => //api.apiopenstudio.local/testing_acc/new_application1';
+    $newOpenApi['servers'][0]['url'] = 'https://api.apiopenstudio.local/testing_acc/new_application1';
     $I->seeResponseContainsJson([
         'appid' => $appid,
         'accid' => 2,
@@ -694,7 +694,7 @@ foreach ($validCreateEditDeleteUsers as $user) {
     $I->seeResponseIsJson();
     $newOpenApi['info']['title'] = 'edited_name';
     $newOpenApi['info']['description'] = 'These are the resources that belong to the edited_name application.';
-    $newOpenApi['servers'][0]['url'] = 'https => //api.apiopenstudio.local/testing_acc/edited_name';
+    $newOpenApi['servers'][0]['url'] = 'https://api.apiopenstudio.local/testing_acc/edited_name';
     $I->seeResponseContainsJson([
         'appid' => $appid,
         'accid' => 2,
