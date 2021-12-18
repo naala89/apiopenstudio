@@ -641,7 +641,7 @@ $validReadUsers = [
     [
         'username' => getenv('TESTER_ADMINISTRATOR_NAME'),
         'password' => getenv('TESTER_ADMINISTRATOR_PASS'),
-        'accounts' => [
+        'applications' => [
             [
                 'accid' => 1,
                 'appid' => 1,
@@ -653,19 +653,19 @@ $validReadUsers = [
     [
         'username' => getenv('TESTER_ACCOUNT_MANAGER_NAME'),
         'password' => getenv('TESTER_ACCOUNT_MANAGER_PASS'),
-        'accounts' => [],
+        'applications' => [],
     ], [
         'username' => getenv('TESTER_APPLICATION_MANAGER_NAME'),
         'password' => getenv('TESTER_APPLICATION_MANAGER_PASS'),
-        'accounts' => [],
+        'applications' => [],
     ], [
         'username' => getenv('TESTER_DEVELOPER_NAME'),
         'password' => getenv('TESTER_DEVELOPER_PASS'),
-        'accounts' => [],
+        'applications' => [],
     ], [
         'username' => getenv('TESTER_CONSUMER_NAME'),
         'password' => getenv('TESTER_CONSUMER_PASS'),
-        'accounts' => [],
+        'applications' => [],
     ],
 ];
 
