@@ -27,13 +27,13 @@ security:
 process:
   processor: application_read
   id: application_read_process
-  accountId:
+  account_id:
     processor: var_get
     id: application_read_account_id
     expected_type: integer
     nullable: true
     key: account_id
-  applicationId:
+  application_id:
     processor: var_get
     id: application_read_application_id
     expected_type: integer
@@ -45,7 +45,7 @@ process:
     expected_type: text
     nullable: true
     key: keyword
-  orderBy:
+  order_by:
     processor: var_get
     id: application_read_order_by
     expected_type: text

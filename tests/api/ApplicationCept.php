@@ -2,6 +2,7 @@
 
 $I = new ApiTester($scenario);
 
+$appid = 0;
 $coreOpenApi = [
     'openapi' => '3.0.3',
     'info' => [
@@ -517,12 +518,117 @@ $coreOpenApi = [
         'url' => 'https://www.apiopenstudio.com',
     ]
 ];
-
+$testingAppOpenApi = [
+    "openapi" => "3.0.0",
+    "info" => [
+        "title" => "testing_app",
+        "description" => "These are the resources that belong to the testing_app application.",
+        "termsOfService" => "https://www.apiopenstudio.com/license/",
+        "contact" => [
+            "name" => "API Support",
+            "email" => "contact@api.apiopenstudio.local",
+        ],
+        "license" => [
+            "name" => "ApiOpenStudio Public License based on Mozilla Public License 2.0",
+            "url" => "https://www.apiopenstudio.com/license/",
+        ],
+        "version" => "1.0.0",
+    ],
+    "servers" => [
+        ["url" => "http://api.apiopenstudio.local/testing_acc/testing_app"],
+        ["url" => "https://api.apiopenstudio.local/testing_acc/testing_app"]
+    ],
+    "paths" => [],
+    "components" => [
+        "schemas" => [
+            "GeneralError" => [
+                "type" => "object",
+                "properties" => [
+                    "error" => [
+                        "type" => "object",
+                        "properties" => [
+                            "id" => [
+                                "type" => "integer",
+                                "format" => "int32",
+                            ],
+                            "code" => [
+                                "type" => "integer",
+                                "format" => "int32",
+                            ],
+                            "message" => [
+                                "type" => "string",
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        "responses" => [
+            "GeneralError" => [
+                "description" => "General Error",
+                "content" => [
+                    "application/json" => [
+                        "schema" => ['$ref' => "#/components/schemas/GeneralError"],
+                        "example" => [
+                            "error" => [
+                                "id" => "<my_processor_id>",
+                                "code" => 6,
+                                "message" => "Oops, something went wrong.",
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            "Unauthorised" => [
+                "description" => "Unauthorised",
+                "content" => [
+                    "application/json" => [
+                        "schema" => ['$ref' => "#/components/schemas/GeneralError"],
+                        "example" => [
+                            "error" => [
+                                "id" => "<my_processor_id>",
+                                "code" => 4,
+                                "message" => "Invalid token.",
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            "Forbidden" => [
+                "description" => "Forbidden",
+                "content" => [
+                    "application/json" => [
+                        "schema" => ['$ref' => "#/components/schemas/GeneralError"],
+                        "example" => [
+                            "error" => [
+                                "id" => "<my_processor_id>",
+                                "code" => 6,
+                                "message" => "Permission denied.",
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        "securitySchemes" => [
+            "bearer_token" => [
+                "type" => "http",
+                "scheme" => "bearer",
+                "bearerFormat" => "JWT",
+            ],
+        ],
+    ],
+    "security" => [],
+    "externalDocs" => [
+        "description" => "Find out more about ApiOpenStudio",
+        "url" => "https://www.apiopenstudio.com",
+    ],
+];
 $newApplicationOpenApi = [
     "openapi" => "3.0.0",
     "info" => [
-        "title" => '',
-        "description" => "",
+        "title" => 'new_application1',
+        "description" => 'These are the resources that belong to the new_application1 application.',
         "termsOfService" => "https://www.apiopenstudio.com/license/",
         "contact" => [
             "name" => "API Support",
@@ -534,7 +640,10 @@ $newApplicationOpenApi = [
         ],
         "version" => "1.0.0",
     ],
-    "servers" => [],
+    "servers" => [
+        ['url' => 'http://localhost/testing_acc/new_application1'],
+        ['url' => 'https://localhost/testing_acc/new_application1'],
+    ],
     "paths" => [],
     "components" => [
         "schemas" => [
@@ -642,37 +751,70 @@ $validReadUsers = [
         'username' => getenv('TESTER_ADMINISTRATOR_NAME'),
         'password' => getenv('TESTER_ADMINISTRATOR_PASS'),
         'applications' => [
-            [
+            1 => [
                 'accid' => 1,
                 'appid' => 1,
                 'name' => 'core',
                 'openapi' => $coreOpenApi,
+            ],
+            2 => [
+                'accid' => 2,
+                'appid' => 2,
+                'name' => 'testing_app',
+                'openapi' => [],
             ],
         ],
     ],
     [
         'username' => getenv('TESTER_ACCOUNT_MANAGER_NAME'),
         'password' => getenv('TESTER_ACCOUNT_MANAGER_PASS'),
-        'applications' => [],
+        'applications' => [
+            2 => [
+                'accid' => 2,
+                'appid' => 2,
+                'name' => 'testing_app',
+                'openapi' => [],
+            ],
+        ],
     ], [
         'username' => getenv('TESTER_APPLICATION_MANAGER_NAME'),
         'password' => getenv('TESTER_APPLICATION_MANAGER_PASS'),
-        'applications' => [],
+        'applications' => [
+            2 => [
+                'accid' => 2,
+                'appid' => 2,
+                'name' => 'testing_app',
+                'openapi' => [],
+            ],
+        ],
     ], [
         'username' => getenv('TESTER_DEVELOPER_NAME'),
         'password' => getenv('TESTER_DEVELOPER_PASS'),
-        'applications' => [],
+        'applications' => [
+            2 => [
+                'accid' => 2,
+                'appid' => 2,
+                'name' => 'testing_app',
+                'openapi' => [],
+            ],
+        ],
     ], [
         'username' => getenv('TESTER_CONSUMER_NAME'),
         'password' => getenv('TESTER_CONSUMER_PASS'),
-        'applications' => [],
+        'applications' => [
+            2 => [
+                'accid' => 2,
+                'appid' => 2,
+                'name' => 'testing_app',
+                'openapi' => [],
+            ],
+        ],
     ],
 ];
 
 // Test application create/read/delete for each valid role
 $uri = $I->getCoreBaseUri() . '/application';
-$accid = 0;
-$newOpenApi = $newApplicationOpenApi;
+
 foreach ($validCreateEditDeleteUsers as $user) {
     $I->performLogin($user['username'], $user['password']);
     $I->wantTo('Test creating an application with a valid user: ' . $user['username']);
@@ -681,27 +823,22 @@ foreach ($validCreateEditDeleteUsers as $user) {
     $I->seeResponseIsJson();
     $response = json_decode($I->getResponse(), true);
     $appid = $response['appid'];
-    $newOpenApi['info']['title'] = 'new_application1';
-    $newOpenApi['info']['description'] = 'These are the resources that belong to the new_application1 application.';
-    $newOpenApi['servers'] = [
-        ['url' => 'http://localhost/testing_acc/new_application1'],
-        ['url' => 'https://localhost/testing_acc/new_application1'],
-    ];
-    $newOpenApi['servers'][1]['url'] = 'https://localhost/testing_acc/new_application1';
     $I->seeResponseContainsJson([
         'appid' => $appid,
         'accid' => 2,
         'name' => 'new_application1',
-        'openapi' => $newOpenApi,
+        'openapi' => $newApplicationOpenApi,
     ]);
 
     $I->wantTo('Test updating an application with a valid user: ' . $user['username']);
     $I->sendPut("$uri/$appid/2/edited_name");
     $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
-    $newOpenApi['info']['title'] = 'edited_name';
-    $newOpenApi['info']['description'] = 'These are the resources that belong to the edited_name application.';
-    $newOpenApi['servers'] = [
+    $editedNewApplicationOpenApi = $newApplicationOpenApi;
+    $editedNewApplicationOpenApi['info']['title'] = 'edited_name';
+    $editedNewApplicationOpenApi['info']['description'] =
+        'These are the resources that belong to the edited_name application.';
+    $editedNewApplicationOpenApi['servers'] = [
         ['url' => 'http://localhost/testing_acc/edited_name'],
         ['url' => 'https://localhost/testing_acc/edited_name'],
     ];
@@ -709,7 +846,7 @@ foreach ($validCreateEditDeleteUsers as $user) {
         'appid' => $appid,
         'accid' => 2,
         'name' => 'edited_name',
-        'openapi' => $newOpenApi,
+        'openapi' => $editedNewApplicationOpenApi,
     ]);
 
     $I->wantTo('Test deleting an application with a valid user: ' . $user['username']);
@@ -766,77 +903,91 @@ foreach ($validReadUsers as $user) {
     $I->sendGet($uri);
     $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
-    $testResponse = $user['applications'];
-    $testResponse[] = $newOpenApi;
-    $I->seeResponseContainsJson($testResponse);
+    $response = $user['applications'];
+    if ($user['username'] == getenv('TESTER_ADMINISTRATOR_NAME')) {
+        $response[$appid] = [
+            'accid' => 2,
+            'appid' => $appid,
+            'name' => 'new_application1',
+            'openapi' => $newApplicationOpenApi,
+        ];
+    }
+    $I->seeResponseContainsJson($response);
 }
 
 // Test individual account read for a user
 foreach ($validReadUsers as $user) {
-    if ($user['username'] != getenv('TESTER_ADMINISTRATOR_NAME')) {
-        $I->performLogin($user['username'], $user['password']);
+    $I->performLogin($user['username'], $user['password']);
+    if ($user['username'] == getenv('TESTER_ADMINISTRATOR_NAME')) {
         $I->wantTo('Test reading the core application with user: ' . $user['username']);
-        $I->sendGet("$uri/1");
-        $I->seeResponseCodeIs(200);
-        $I->seeResponseIsJson();
-        $I->seeResponseContainsJson([]);
-
-        $I->wantTo('Test reading the test_acc application with user: ' . $user['username']);
-        $I->sendGet("$uri/2");
+        $I->sendGet("$uri", ['application_id' => 1]);
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
-            [
-                'accid' => 2,
-                'name' => 'testing_acc',
-            ],
-        ]);
-
-        $I->wantTo('Test reading the new application with user: ' . $user['username']);
-        $I->sendGet("$uri/$accid");
-        $I->seeResponseCodeIs(200);
-        $I->seeResponseIsJson();
-        $I->seeResponseContainsJson([]);
-    } else {
-        $I->performLogin($user['username'], $user['password']);
-        $I->wantTo('Test reading the core application with user: ' . $user['username']);
-        $I->sendGet("$uri/1");
-        $I->seeResponseCodeIs(200);
-        $I->seeResponseIsJson();
-        $I->seeResponseContainsJson([
-            [
+            1 => [
                 'accid' => 1,
-                'name' => 'apiopenstudio',
+                'appid' => 1,
+                'name' => 'core',
+                'openapi' => $coreOpenApi,
             ],
         ]);
 
-        $I->wantTo('Test reading the test_acc application with user: ' . $user['username']);
-        $I->sendGet("$uri/2");
+        $I->wantTo('Test reading the testing_application application with user: ' . $user['username']);
+        $I->sendGet("$uri", ['application_id' => 2]);
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
-            [
+            2 => [
                 'accid' => 2,
-                'name' => 'testing_acc',
+                'appid' => 2,
+                'name' => 'testing_app',
+                'openapi' => [],
             ],
         ]);
 
         $I->wantTo('Test reading the new application with user: ' . $user['username']);
-        $I->sendGet("$uri/$accid");
+        $I->sendGet("$uri", ['application_id' => $appid]);
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
-            [
-                'accid' => $accid,
-                'name' => 'new_account1',
+            $appid => [
+                'accid' => 2,
+                'appid' => $appid,
+                'name' => 'new_application1',
+                'openapi' => $newApplicationOpenApi,
+            ]
+        ]);
+    } else {
+        $I->wantTo('Test reading the core application with user: ' . $user['username']);
+        $I->sendGet("$uri", ['application_id' => 1]);
+        $I->seeResponseCodeIs(200);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson([]);
+
+        $I->wantTo('Test reading the testing_application application with user: ' . $user['username']);
+        $I->sendGet("$uri", ['application_id' => 2]);
+        $I->seeResponseCodeIs(200);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson([
+            2 => [
+                'accid' => 2,
+                'appid' => 2,
+                'name' => 'testing_app',
+                'openapi' => [],
             ],
         ]);
+
+        $I->wantTo('Test reading the new application with user: ' . $user['username']);
+        $I->sendGet("$uri", ['application_id' => $appid]);
+        $I->seeResponseCodeIs(200);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson([]);
     }
 }
 
 // Clean up
 $I->performLogin(getenv('TESTER_ADMINISTRATOR_NAME'), getenv('TESTER_ADMINISTRATOR_PASS'));
-$I->sendDelete("$uri/$accid");
+$I->sendDelete("$uri/$appid");
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContains('true');

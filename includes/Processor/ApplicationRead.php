@@ -24,6 +24,7 @@ use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\UserMapper;
 use ApiOpenStudio\Db\UserRoleMapper;
+use stdClass;
 
 /**
  * Class ApplicationRead
@@ -64,7 +65,7 @@ class ApplicationRead extends ProcessorEntity
         'description' => 'Fetch a single or multiple applications.',
         'menu' => 'Admin',
         'input' => [
-            'accountId' => [
+            'account_id' => [
                 // phpcs:ignore
                 'description' => 'Account ID to fetch to filter by. NULL or empty will not filter by account.',
                 'cardinality' => [0, 1],
@@ -74,7 +75,7 @@ class ApplicationRead extends ProcessorEntity
                 'limitValues' => [],
                 'default' => '',
             ],
-            'applicationId' => [
+            'application_id' => [
                 // phpcs:ignore
                 'description' => 'Application ID to filter by. NULL or empty will not filter by application.',
                 'cardinality' => [0, 1],
@@ -93,7 +94,7 @@ class ApplicationRead extends ProcessorEntity
                 'limitValues' => [],
                 'default' => '',
             ],
-            'orderBy' => [
+            'order_by' => [
                 'description' => 'Order by column.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
@@ -142,10 +143,10 @@ class ApplicationRead extends ProcessorEntity
         parent::process();
 
         $uid = Utilities::getUidFromToken();
-        $accountId = $this->val('accountId', true);
-        $applicationId = $this->val('applicationId', true);
+        $accountId = $this->val('account_id', true);
+        $applicationId = $this->val('application_id', true);
         $keyword = $this->val('keyword', true);
-        $orderBy = $this->val('orderBy', true);
+        $orderBy = $this->val('order_by', true);
         $direction = $this->val('direction', true);
 
         // Filter params.
@@ -187,8 +188,12 @@ class ApplicationRead extends ProcessorEntity
                 'accid' => $application->getAccid(),
                 'appid' => $application->getAppid(),
                 'name' => $application->getName(),
-                'openapi' => json_decode($application->getOpenapi()),
             ];
+            if (empty($application->getOpenapi())) {
+                $result[$application->getAppid()]['openapi'] = new stdClass();
+            } else {
+                $result[$application->getAppid()]['openapi'] = json_decode($application->getOpenapi());
+            }
         }
 
         return new DataContainer($result, 'array');
