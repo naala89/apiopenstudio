@@ -321,7 +321,8 @@ class OpenApiParent300 extends OpenApiParentAbstract
         }
 
         $this->definition->info->title = $applicationName;
-        $this->definition->info->description = "These are the resources that belong to the $applicationName application.";
+        $description = "These are the resources that belong to the $applicationName application.";
+        $this->definition->info->description = $description;
     }
 
     /**
