@@ -58,6 +58,18 @@ class OpenApiParent300 extends OpenApiParentAbstract
         return json_decode(json_encode($info, JSON_UNESCAPED_SLASHES));
     }
 
+    protected function getDefaultServers(string $accountName, string $applicationName): array
+    {
+        $servers = [];
+        $domain = $this->settings->__get(['api', 'url']);
+        $server = new stdClass();
+        foreach ($this->settings->__get(['api', 'protocols']) as $protocol) {
+            $server->url = "$protocol://$domain/$accountName/$applicationName";
+            $servers[] = $server;
+        }
+        return $servers;
+    }
+
     /**
      * Returns the default components element.
      *
@@ -198,7 +210,7 @@ class OpenApiParent300 extends OpenApiParentAbstract
         $definition = [
             'openapi' => self::VERSION,
             'info' => $this->getDefaultInfo($applicationName),
-            'servers' => [],
+            'servers' => $this->getDefaultServers($accountName, $applicationName),
             'paths' => [],
             'components' => $this->getDefaultComponents(),
             'security' => [],
@@ -207,11 +219,6 @@ class OpenApiParent300 extends OpenApiParentAbstract
                 'url' => 'https://www.apiopenstudio.com',
             ],
         ];
-        foreach ($this->settings->__get(['api', 'protocols']) as $protocol) {
-            $definition['servers'][] = [
-                'url' => "$protocol://" . $this->settings->__get(['api', 'url']) . "/$accountName/$applicationName"
-            ];
-        }
 
         $this->definition = json_decode(json_encode($definition, JSON_UNESCAPED_SLASHES));
     }
@@ -266,20 +273,25 @@ class OpenApiParent300 extends OpenApiParentAbstract
     public function setAccount(string $accountName)
     {
         $servers = $this->definition->servers;
-        $server = $servers[0];
-        $urlParts = explode('://', $server->url);
-        if (sizeof($urlParts) != 2) {
-            $message = 'invalid servers in the openApi schema (' . $server->url . '). ';
-            $message .= ' Could not extract URL for setting account';
-            throw new ApiException($message);
+        foreach ($servers as $key => $server) {
+            $urlParts = explode('://', $server->url);
+            if (sizeof($urlParts) != 2) {
+                $message = 'invalid servers in the openApi schema (' . $server->url . '). ';
+                $message .= ' Could not extract URL for setting account';
+                throw new ApiException($message);
+            }
+            $protocol = $urlParts[0];
+            $matches = explode('/', $urlParts[1]);
+            if (sizeof($matches) != 3) {
+                $message = 'invalid servers in the openApi schema (' . $server->url . '). ';
+                $message .= 'Could not extract URI for setting account';
+                throw new ApiException($message);
+            }
+            $domain = $matches[0];
+            $applicationName = $matches[2];
+            $server->url = "$protocol://$domain/$accountName/$applicationName";
+            $this->definition->servers[$key] = $server;
         }
-        $matches = explode('/', $urlParts[1]);
-        if (sizeof($matches) != 3) {
-            $message = 'invalid servers in the openApi schema (' . $server->url . '). ';
-            $message .= 'Could not extract URI for setting account';
-            throw new ApiException($message);
-        }
-        $this->definition->servers = [$urlParts[0] . '://' . $matches[0] . "/$accountName/" . $matches[2]];
     }
 
     /**
@@ -288,7 +300,6 @@ class OpenApiParent300 extends OpenApiParentAbstract
     public function setApplication(string $applicationName)
     {
         $servers = $this->definition->servers;
-
         foreach ($servers as $key => $server) {
             $urlParts = explode('://', $server->url);
             if (sizeof($urlParts) != 2) {
@@ -296,15 +307,17 @@ class OpenApiParent300 extends OpenApiParentAbstract
                 $message .= 'Could not extract URL for setting application';
                 throw new ApiException($message);
             }
+            $protocol = $urlParts[0];
             $matches = explode('/', $urlParts[1]);
             if (sizeof($matches) != 3) {
                 $message = 'invalid servers in the openApi schema (' . $server->url . '). ';
                 $message .= 'Could not extract URI for setting application';
                 throw new ApiException($message);
             }
-            $this->definition->servers[$key] = [
-                $urlParts[0] . '://' . $matches[0] . '/' . $matches[1] . "/$applicationName"
-            ];
+            $domain = $matches[0];
+            $accountName = $matches[1];
+            $server->url = "$protocol://$domain/$accountName/$applicationName";
+            $this->definition->servers[$key] = $server;
         }
 
         $this->definition->info->title = $applicationName;

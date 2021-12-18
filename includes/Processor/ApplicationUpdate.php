@@ -64,6 +64,13 @@ class ApplicationUpdate extends ProcessorEntity
     protected UserMapper $userMapper;
 
     /**
+     * Config class.
+     *
+     * @var Config
+     */
+    protected Config $settings;
+
+    /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
@@ -128,6 +135,7 @@ class ApplicationUpdate extends ProcessorEntity
         $this->applicationMapper = new ApplicationMapper($this->db, $logger);
         $this->userRoleMapper = new UserRoleMapper($this->db, $logger);
         $this->userMapper = new UserMapper($this->db, $logger);
+        $this->settings = new Config();
     }
 
     /**
@@ -226,8 +234,7 @@ class ApplicationUpdate extends ProcessorEntity
      */
     protected function getOpenApi(string $inputSchema, Application $application)
     {
-        $settings = new Config();
-        $openApiParentClassName = Utilities::getOpenApiParentClassPath($settings);
+        $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->settings);
         $openApiParentClass = new $openApiParentClassName();
 
         if (!empty($inputSchema)) {

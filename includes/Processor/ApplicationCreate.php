@@ -175,7 +175,6 @@ class ApplicationCreate extends ProcessorEntity
             );
         }
 
-        $settings = new Config();
         $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->settings);
         $openApiParentClass = new $openApiParentClassName();
         if (!empty($openApi)) {
