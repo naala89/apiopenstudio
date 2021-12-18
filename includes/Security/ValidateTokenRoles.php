@@ -92,7 +92,7 @@ class ValidateTokenRoles extends ValidateToken
             return new Core\DataContainer(true, 'boolean');
         }
 
-        throw new Core\ApiException('unauthorized for this call', 4, $this->id, 401);
+        throw new Core\ApiException('permission denied', 4, $this->id, 403);
     }
 
     /**
