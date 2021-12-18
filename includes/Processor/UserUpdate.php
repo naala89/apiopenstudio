@@ -252,7 +252,7 @@ class UserUpdate extends Core\ProcessorEntity
         ) {
             // Non-privileged accounts can only edit their own accounts.
             if (!empty($uid) && $uid != $currentUser->getUid()) {
-                throw new Core\ApiException("Permission denied", 6, $this->id, 401);
+                throw new Core\ApiException("permission denied", 4, $this->id, 403);
             }
             $uid = $currentUser->getUid();
         }

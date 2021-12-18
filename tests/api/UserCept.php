@@ -116,7 +116,16 @@ foreach ($badIdentities as $badIdentity) {
             'email' => "email$count@foobar.com",
         ]
     );
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
+    $I->seeResponseContainsJson(
+        [
+            'error' => [
+                'code' => 4,
+                'message' => 'Permission denied.',
+                'id' => 'user_create_security',
+            ]
+        ]
+    );
 
     $I->wantTo('Test user update for ' . $badIdentity[0]);
     $I->sendPut(
@@ -141,11 +150,29 @@ foreach ($badIdentities as $badIdentity) {
             'phone_work' => '2345678',
         ])
     );
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
+    $I->seeResponseContainsJson(
+        [
+            'error' => [
+                'code' => 4,
+                'message' => 'Permission denied.',
+                'id' => 'user_update_process',
+            ]
+        ]
+    );
 
     $I->wantTo('Test user delete for ' . $badIdentity[0]);
     $I->sendDelete($I->getCoreBaseUri() . '/user/' . $uid);
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
+    $I->seeResponseContainsJson(
+        [
+            'error' => [
+                'code' => 4,
+                'message' => 'Permission denied.',
+                'id' => 'user_delete_security',
+            ]
+        ]
+    );
 }
 
 $uids = array_keys($newUsers);

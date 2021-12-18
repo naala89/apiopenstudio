@@ -43,12 +43,12 @@ process:
     name: index"
         ]
     );
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
     $I->seeResponseContainsJson(
         [
             'error' => [
                 'code' => 4,
-                'message' => 'Unauthorized for this call.',
+                'message' => 'Permission denied.',
                 'id' => 'resource_create_security',
             ]
         ]
@@ -58,12 +58,12 @@ process:
     $I->sendDelete(
         $I->getCoreBaseUri() . '/resource/0',
     );
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
     $I->seeResponseContainsJson(
         [
             'error' => [
                 'code' => 4,
-                'message' => 'Unauthorized for this call.',
+                'message' => 'Permission denied.',
                 'id' => 'resource_delete_security',
             ]
         ]
@@ -73,12 +73,12 @@ process:
     $I->sendGet(
         $I->getCoreBaseUri() . '/resource/export/yaml/14',
     );
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
     $I->seeResponseContainsJson(
         [
             'error' => [
                 'code' => 4,
-                'message' => 'Unauthorized for this call.',
+                'message' => 'Permission denied.',
                 'id' => 'resource_export_security',
             ]
         ]
@@ -98,12 +98,12 @@ process:
             ],
         ]
     );
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
     $I->seeResponseContainsJson(
         [
             'error' => [
                 'code' => 4,
-                'message' => 'Unauthorized for this call.',
+                'message' => 'Permission denied.',
                 'id' => 'resource_import_security',
             ]
         ]
@@ -114,12 +114,12 @@ process:
         $I->getCoreBaseUri() . '/resource',
         ['resid' => 33]
     );
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
     $I->seeResponseContainsJson(
         [
             'error' => [
                 'code' => 4,
-                'message' => 'Unauthorized for this call.',
+                'message' => 'Permission denied.',
                 'id' => 'resource_read_security',
             ]
         ]

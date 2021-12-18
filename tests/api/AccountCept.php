@@ -107,28 +107,31 @@ $I->seeResponseContainsJson([
 foreach ($invalidCreateEditDeleteUsers as $user) {
     $I->performLogin($user['username'], $user['password']);
     $I->sendPost($uri, ['name' => 'new_account2']);
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
     $I->seeResponseIsJson();
-    $I->seeResponseJsonMatchesJsonPath('$.error');
-    $I->seeResponseJsonMatchesJsonPath('$.error.code');
-    $I->seeResponseJsonMatchesJsonPath('$.error.id');
-    $I->seeResponseJsonMatchesJsonPath('$.error.message');
+    $I->seeResponseContainsJson(['error' => [
+        'code' => 4,
+        'id' => 'create_account_security',
+        'message' => 'Permission denied.',
+    ]]);
 
     $I->sendPut("$uri/$accid/edited_name");
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
     $I->seeResponseIsJson();
-    $I->seeResponseJsonMatchesJsonPath('$.error');
-    $I->seeResponseJsonMatchesJsonPath('$.error.code');
-    $I->seeResponseJsonMatchesJsonPath('$.error.id');
-    $I->seeResponseJsonMatchesJsonPath('$.error.message');
+    $I->seeResponseContainsJson(['error' => [
+        'code' => 4,
+        'id' => 'account_update_security',
+        'message' => 'Permission denied.',
+    ]]);
 
     $I->sendDelete("$uri/$accid");
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
     $I->seeResponseIsJson();
-    $I->seeResponseJsonMatchesJsonPath('$.error');
-    $I->seeResponseJsonMatchesJsonPath('$.error.code');
-    $I->seeResponseJsonMatchesJsonPath('$.error.id');
-    $I->seeResponseJsonMatchesJsonPath('$.error.message');
+    $I->seeResponseContainsJson(['error' => [
+        'code' => 4,
+        'id' => 'delete_account_security',
+        'message' => 'Permission denied.',
+    ]]);
 }
 
 // Test all account read for all users.

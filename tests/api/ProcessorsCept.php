@@ -11,12 +11,12 @@ $uri = $I->getCoreBaseUri() . '/processors';
 $I->performLogin(getenv('TESTER_ADMINISTRATOR_NAME'), getenv('TESTER_ADMINISTRATOR_PASS'));
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendGet($uri);
-$I->seeResponseCodeIs(401);
+$I->seeResponseCodeIs(403);
 $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 4,
-            'message' => 'Unauthorized for this call.',
+            'message' => 'Permission denied.',
             'id' => 'processors_security',
         ]
     ]
@@ -24,12 +24,12 @@ $I->seeResponseContainsJson(
 $I->performLogin(getenv('TESTER_APPLICATION_MANAGER_NAME'), getenv('TESTER_APPLICATION_MANAGER_PASS'));
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendGet($uri);
-$I->seeResponseCodeIs(401);
+$I->seeResponseCodeIs(403);
 $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 4,
-            'message' => 'Unauthorized for this call.',
+            'message' => 'Permission denied.',
             'id' => 'processors_security',
         ]
     ]
@@ -37,12 +37,12 @@ $I->seeResponseContainsJson(
 $I->performLogin(getenv('TESTER_ACCOUNT_MANAGER_NAME'), getenv('TESTER_ACCOUNT_MANAGER_PASS'));
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendGet($uri);
-$I->seeResponseCodeIs(401);
+$I->seeResponseCodeIs(403);
 $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 4,
-            'message' => 'Unauthorized for this call.',
+            'message' => 'Permission denied.',
             'id' => 'processors_security',
         ]
     ]
@@ -50,12 +50,12 @@ $I->seeResponseContainsJson(
 $I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendGet($uri);
-$I->seeResponseCodeIs(401);
+$I->seeResponseCodeIs(403);
 $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 4,
-            'message' => 'Unauthorized for this call.',
+            'message' => 'Permission denied.',
             'id' => 'processors_security',
         ]
     ]
