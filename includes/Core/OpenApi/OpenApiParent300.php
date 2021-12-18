@@ -62,10 +62,10 @@ class OpenApiParent300 extends OpenApiParentAbstract
     {
         $servers = [];
         $domain = $this->settings->__get(['api', 'url']);
-        $server = new stdClass();
         foreach ($this->settings->__get(['api', 'protocols']) as $protocol) {
-            $server->url = "$protocol://$domain/$accountName/$applicationName";
-            $servers[] = $server;
+            $newServer = new stdClass();
+            $newServer->url = "$protocol://$domain/$accountName/$applicationName";
+            $servers[] = $newServer;
         }
         return $servers;
     }
