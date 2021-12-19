@@ -160,7 +160,11 @@ class ApplicationUpdate extends ProcessorEntity
         }
 
         $this->validateAccess($application, $accid);
-        $openApi = $this->getOpenApi($schema, $application);
+        try {
+            $openApi = $this->getOpenApi($schema, $application);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
         if (!empty($accid)) {
             $account = $this->accountMapper->findByAccid($accid);
@@ -168,7 +172,11 @@ class ApplicationUpdate extends ProcessorEntity
                 throw new ApiException("account ID does not exist: $accid", 6, $this->id, 400);
             }
             $application->setAccid($accid);
-            $openApi->setAccount($account->getName());
+            try {
+                $openApi->setAccount($account->getName());
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
         }
 
         if (!empty($name)) {
@@ -181,7 +189,11 @@ class ApplicationUpdate extends ProcessorEntity
                 );
             }
             $application->setName($name);
-            $openApi->setApplication($name);
+            try {
+                $openApi->setApplication($name);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
         }
 
         $application->setOpenapi($openApi->export());
@@ -237,13 +249,17 @@ class ApplicationUpdate extends ProcessorEntity
         $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->settings);
         $openApiParentClass = new $openApiParentClassName();
 
-        if (!empty($inputSchema)) {
-            $openApiParentClass->import($inputSchema);
-        } elseif (empty($application->getOpenapi())) {
-            $account = $this->accountMapper->findByAccid($application->getAccid());
-            $openApiParentClass->setDefault($account->getName(), $application->getName());
-        } else {
-            $openApiParentClass->import($application->getOpenapi());
+        try {
+            if (!empty($inputSchema)) {
+                $openApiParentClass->import($inputSchema);
+            } elseif (empty($application->getOpenapi())) {
+                $account = $this->accountMapper->findByAccid($application->getAccid());
+                $openApiParentClass->setDefault($account->getName(), $application->getName());
+            } else {
+                $openApiParentClass->import($application->getOpenapi());
+            }
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
         return $openApiParentClass;
