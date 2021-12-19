@@ -23,5 +23,5 @@ class OpenApiParent303 extends OpenApiParent302
     /**
      * OpenApi doc version.
      */
-    protected const VERSION = "3.0.3";
+    protected string $version = "3.0.3";
 }

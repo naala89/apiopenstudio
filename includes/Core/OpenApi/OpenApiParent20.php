@@ -26,7 +26,7 @@ class OpenApiParent20 extends OpenApiParentAbstract
     /**
      * OpenApi doc version.
      */
-    protected const VERSION = "2.0";
+    protected string $version = "2.0";
 
     /**
      * Returns the default info element.
@@ -41,7 +41,7 @@ class OpenApiParent20 extends OpenApiParentAbstract
     {
         $info = [
             'title' => $applicationName,
-            'description' => "This if the definitions for the $applicationName application.",
+            'description' => "These are the resources that belong to the $applicationName application.",
             'termsOfService' => 'https://www.apiopenstudio.com/license/',
             'contact' => [
                 'name' => 'API Support',
@@ -169,7 +169,7 @@ class OpenApiParent20 extends OpenApiParentAbstract
     public function setDefault(string $accountName, string $applicationName)
     {
         $definition = [
-            'swagger' => self::VERSION,
+            'swagger' => $this->version,
             'info' => $this->getDefaultInfo($applicationName),
             'host' => $this->settings->__get(['api', 'url']),
             'basePath' => "/$accountName/$applicationName",
@@ -190,7 +190,7 @@ class OpenApiParent20 extends OpenApiParentAbstract
     {
         $matches = explode('/', trim($this->definition->basePath, '/'));
         if (sizeof($matches) != 2) {
-            throw new ApiException('invalid basePath in the existing openApi schema');
+            throw new ApiException('invalid basePath in the existing openApi schema', 2, -1, 500);
         }
         return $matches[0];
     }
@@ -202,7 +202,7 @@ class OpenApiParent20 extends OpenApiParentAbstract
     {
         $matches = explode('/', trim($this->definition->basePath, '/'));
         if (sizeof($matches) != 2) {
-            throw new ApiException('invalid basePath in the existing openApi schema');
+            throw new ApiException('invalid basePath in the existing openApi schema', 2, -1, 500);
         }
         return $matches[1];
     }
@@ -214,7 +214,7 @@ class OpenApiParent20 extends OpenApiParentAbstract
     {
         $matches = explode('/', trim($this->definition->basePath, '/'));
         if (sizeof($matches) != 2) {
-            throw new ApiException('invalid basePath in the existing openApi schema');
+            throw new ApiException('invalid basePath in the existing openApi schema', 2, -1, 500);
         }
         $this->definition->basePath = "/$accountName/" . $matches[1];
     }
@@ -226,7 +226,7 @@ class OpenApiParent20 extends OpenApiParentAbstract
     {
         $matches = explode('/', trim($this->definition->basePath, '/'));
         if (sizeof($matches) != 2) {
-            throw new ApiException('invalid basePath in the existing openApi schema');
+            throw new ApiException('invalid basePath in the existing openApi schema', 2, -1, 500);
         }
         $this->definition->info->title = $applicationName;
         $description = "These are the resources that belong to the $applicationName application.";

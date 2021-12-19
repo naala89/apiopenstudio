@@ -53,7 +53,7 @@ abstract class OpenApiParentAbstract
         if (is_string($definition)) {
             $definition = json_decode($definition);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new ApiException('invalid input JSON string');
+                throw new ApiException('invalid input JSON string', 4, -1, 400);
             }
         }
         $this->definition = $definition;

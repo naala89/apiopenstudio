@@ -26,7 +26,7 @@ class OpenApiParent300 extends OpenApiParentAbstract
     /**
      * OpenApi doc version.
      */
-    protected const VERSION = "3.0.0";
+    protected string $version = "3.0.0";
 
     /**
      * Returns the default info element.
@@ -208,7 +208,7 @@ class OpenApiParent300 extends OpenApiParentAbstract
     public function setDefault(string $accountName, string $applicationName)
     {
         $definition = [
-            'openapi' => self::VERSION,
+            'openapi' => $this->version,
             'info' => $this->getDefaultInfo($applicationName),
             'servers' => $this->getDefaultServers($accountName, $applicationName),
             'paths' => [],
