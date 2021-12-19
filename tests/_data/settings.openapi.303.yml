@@ -1,0 +1,17 @@
+# Example settings file.
+#
+# @package   ApiOpenStudio
+# @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
+#            If a copy of the license was not distributed with this file,
+#            You can obtain one at https://www.apiopenstudio.com/license/.
+# @author    john89 (https://gitlab.com/john89)
+# @copyright 2020-2030 Naala Pty Ltd
+# @link      https://www.apiopenstudio.com
+
+api:
+  protocols:
+    - https
+  base_path: "/var/www/html/api/"
+  url: "api.apiopenstudio.local"
+  openapi_version: "3.0.3"
+  openapi_directory: "includes/openapiSchema"
