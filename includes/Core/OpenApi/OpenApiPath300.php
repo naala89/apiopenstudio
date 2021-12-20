@@ -147,39 +147,41 @@ class OpenApiPath300 extends OpenApiPathAbstract
         $parameters = [];
         $items = $this->findProcessors('var_uri', $meta);
         foreach ($items as $item) {
-            $parameter = new stdClass();
-            $parameter->in = 'path';
-            $parameter->name = 'pathVar' . $item['index'];
-            $parameter->required = true;
-            $parameter->schema = new stdClass();
+            if (isset($item['index'])) {
+                $parameter = new stdClass();
+                $parameter->in = 'path';
+                $parameter->name = 'pathVar' . $item['index'];
+                $parameter->required = true;
+                $parameter->schema = new stdClass();
 
-            if (!isset($item['expected_type'])) {
-                $parameter->schema->type = 'string';
-            } else {
-                switch ($item['expected_type']) {
-                    case 'boolean':
-                        $parameter->schema->type = 'boolean';
-                        break;
-                    case 'integer':
-                        $parameter->schema->type = 'integer';
-                        break;
-                    case 'float':
-                        $parameter->schema->type = 'number';
-                        break;
-                    case 'text':
-                    case 'json':
-                    case 'xml':
-                    case 'html':
-                    case 'empty':
-                        $parameter->schema->type = 'string';
-                        break;
-                    case 'array':
-                        $parameter->schema->type = 'array';
-                        $parameter->schema->items->type = 'string';
-                        break;
+                if (!isset($item['expected_type'])) {
+                    $parameter->schema->type = 'string';
+                } else {
+                    switch ($item['expected_type']) {
+                        case 'boolean':
+                            $parameter->schema->type = 'boolean';
+                            break;
+                        case 'integer':
+                            $parameter->schema->type = 'integer';
+                            break;
+                        case 'float':
+                            $parameter->schema->type = 'number';
+                            break;
+                        case 'text':
+                        case 'json':
+                        case 'xml':
+                        case 'html':
+                        case 'empty':
+                            $parameter->schema->type = 'string';
+                            break;
+                        case 'array':
+                            $parameter->schema->type = 'array';
+                            $parameter->schema->items->type = 'string';
+                            break;
+                    }
                 }
+                $parameters[$item['index']] = $parameter;
             }
-            $parameters[$item['index']] = $parameter;
         }
 
         return $parameters;

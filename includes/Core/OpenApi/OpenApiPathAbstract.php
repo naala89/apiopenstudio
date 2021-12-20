@@ -186,7 +186,9 @@ abstract class OpenApiPathAbstract
                 $result = array_merge($result, $this->findProcessors($machineName, $value));
             } elseif (is_array($value)) {
                 foreach ($value as $val) {
-                    $result = array_merge($result, $this->findProcessors($machineName, $val));
+                    if ($this->processorHelper->isProcessor($val)) {
+                        $result = array_merge($result, $this->findProcessors($machineName, $val));
+                    }
                 }
             } elseif ($key == 'processor' && $value == $machineName) {
                 $item = [];

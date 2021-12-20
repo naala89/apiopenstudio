@@ -519,7 +519,7 @@ $coreOpenApi = [
     ]
 ];
 $testingAppOpenApi = [
-    "openapi" => "3.0.0",
+    "openapi" => "3.0.3",
     "info" => [
         "title" => "testing_app",
         "description" => "These are the resources that belong to the testing_app application.",
@@ -625,7 +625,7 @@ $testingAppOpenApi = [
     ],
 ];
 $newApplicationOpenApi = [
-    "openapi" => "3.0.0",
+    "openapi" => "3.0.3",
     "info" => [
         "title" => 'new_application1',
         "description" => 'These are the resources that belong to the new_application1 application.',
