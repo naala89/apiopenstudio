@@ -24,7 +24,6 @@ use ApiOpenStudio\Core\ApiException;
  */
 class ExternalUserMapper extends Mapper
 {
-
     /**
      * Save an external user object.
      *

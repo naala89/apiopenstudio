@@ -23,6 +23,8 @@ ttl: 0
 security:
   id: application_create_security
   processor: validate_token_roles
+  validate_account: false
+  validate_application: false
   roles:
     - Administrator
     - Account manager

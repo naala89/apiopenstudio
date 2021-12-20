@@ -113,7 +113,7 @@ class Api
         $conn = ADONewConnection($dsn);
         if (empty($conn)) {
             $this->logger->error('db', 'DB connection failed');
-            throw new ApiException('DB connection failed', 2, -1, 500);
+            throw new ApiException('DB connection failed', 2, 'oops', 500);
         }
         $this->db = $conn;
 
@@ -180,7 +180,7 @@ class Api
         }
         $get = $_GET;
         if (empty($get['request'])) {
-            throw new ApiException('invalid request', 3);
+            throw new ApiException('invalid request', 3, 'oops', 404);
         }
 
         $request = new Request();
@@ -192,19 +192,19 @@ class Api
             $accMapper = new Db\AccountMapper($this->db, $this->logger);
             $account = $accMapper->findByName($accName);
             if (empty($accId = $account->getAccid())) {
-                throw new ApiException('invalid request', 3, -1, 404);
+                throw new ApiException('invalid request');
             }
 
             $appName = array_shift($uriParts);
             $appMapper = new Db\ApplicationMapper($this->db, $this->logger);
             $application = $appMapper->findByAccidAppname($accId, $appName);
             if (empty($appId = $application->getAppid())) {
-                throw new ApiException('invalid request', 3, -1, 404);
+                throw new ApiException('invalid request');
             }
 
             $result = $this->getResource($appId, $method, $uriParts);
         } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 3 - 1, 404);
+            throw new ApiException($e->getMessage(), 3, 'oops', 404);
         }
 
         $request->setAccName($accName);
@@ -260,12 +260,12 @@ class Api
                 }
                 array_unshift($args, array_pop($uriParts));
             }
-            throw new ApiException('invalid request', 3, -1, 404);
+            throw new ApiException('invalid request', 3, 'oops', 404);
         }
 
         $filepath = $_SERVER['DOCUMENT_ROOT'] . $this->settings->__get('dir_yaml') . 'test/' . $this->test;
         if (!file_exists($filepath)) {
-            throw new ApiException("invalid test yaml: $filepath", 1, -1, 400);
+            throw new ApiException("invalid test yaml: $filepath", 1, 'oops', 400);
         }
         $yaml = Spyc::YAMLLoad($filepath);
         $meta = [];
@@ -466,7 +466,7 @@ class Api
     private function processOutputResponse(array $meta, $data, int $index = null)
     {
         if (!isset($meta['processor'])) {
-            throw new ApiException("No processor found in the output section: $index.", 3, -1, 400);
+            throw new ApiException("No processor found in the output section: $index.", 3, 'oops', 400);
         }
         $outFormat = ucfirst($this->cleanData($meta['processor']));
         $class = $this->helper->getProcessorString($outFormat, ['Output']);
@@ -491,7 +491,7 @@ class Api
     private function processOutputRemote(array $meta, $data, int $index = null)
     {
         if (!isset($meta['processor'])) {
-            throw new ApiException("No processor found in the output section: $index.", 3, -1, 400);
+            throw new ApiException("No processor found in the output section: $index.", 3, 'oops', 400);
         }
         $outFormat = ucfirst($this->cleanData($meta['processor']));
         $class = $this->helper->getProcessorString($outFormat, ['Output']);
@@ -515,7 +515,7 @@ class Api
             } elseif ($_SERVER['HTTP_X_HTTP_METHOD'] == 'PUT') {
                 $method = 'put';
             } else {
-                throw new ApiException("unexpected header", 3, -1, 406);
+                throw new ApiException("unexpected header", 3, 'oops', 406);
             }
         }
         return $method;

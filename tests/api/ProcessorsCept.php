@@ -11,12 +11,12 @@ $uri = $I->getCoreBaseUri() . '/processors';
 $I->performLogin(getenv('TESTER_ADMINISTRATOR_NAME'), getenv('TESTER_ADMINISTRATOR_PASS'));
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendGet($uri);
-$I->seeResponseCodeIs(401);
+$I->seeResponseCodeIs(403);
 $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 4,
-            'message' => 'Unauthorized for this call.',
+            'message' => 'Permission denied.',
             'id' => 'processors_security',
         ]
     ]
@@ -24,12 +24,12 @@ $I->seeResponseContainsJson(
 $I->performLogin(getenv('TESTER_APPLICATION_MANAGER_NAME'), getenv('TESTER_APPLICATION_MANAGER_PASS'));
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendGet($uri);
-$I->seeResponseCodeIs(401);
+$I->seeResponseCodeIs(403);
 $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 4,
-            'message' => 'Unauthorized for this call.',
+            'message' => 'Permission denied.',
             'id' => 'processors_security',
         ]
     ]
@@ -37,12 +37,12 @@ $I->seeResponseContainsJson(
 $I->performLogin(getenv('TESTER_ACCOUNT_MANAGER_NAME'), getenv('TESTER_ACCOUNT_MANAGER_PASS'));
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendGet($uri);
-$I->seeResponseCodeIs(401);
+$I->seeResponseCodeIs(403);
 $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 4,
-            'message' => 'Unauthorized for this call.',
+            'message' => 'Permission denied.',
             'id' => 'processors_security',
         ]
     ]
@@ -50,12 +50,12 @@ $I->seeResponseContainsJson(
 $I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendGet($uri);
-$I->seeResponseCodeIs(401);
+$I->seeResponseCodeIs(403);
 $I->seeResponseContainsJson(
     [
         'error' => [
             'code' => 4,
-            'message' => 'Unauthorized for this call.',
+            'message' => 'Permission denied.',
             'id' => 'processors_security',
         ]
     ]
@@ -114,140 +114,127 @@ $json = json_decode($I->getResponse(), true);
 if (!is_array($json) || !count($json) > 1) {
     assert('Invalid JSON response');
 }
-$I->seeResponseMatchesJsonType(
-    [
-        'name' => 'string',
-        'machineName' => 'string',
-        'description' => 'string',
-        'menu' => 'string',
-        'input' => 'array',
-    ]
-);
 
 $I->wantTo('Validate all necessary details are in each processor.');
-foreach (\GuzzleHttp\json_decode($I->getResponse()) as $index => $processor) {
-    if (empty($processor->name)) {
+foreach ($json as $index => $processor) {
+    if (empty($processor['name'])) {
         PHPUnit_Framework_Assert::assertTrue(
             false,
-            'the processor: ' . $index . ' is missing a name in its details in its details.'
+            "the processor: $index is missing a name in its details."
         );
     }
-    if (empty($processor->machineName)) {
+    $processorName = $processor['name'];
+    if (empty($processor['machineName'])) {
         PHPUnit_Framework_Assert::assertTrue(
             false,
-            'the processor: ' . $processor->name . ' is missing a machineName in its details.'
+            "The processor: $processorName is missing a machineName in its details."
         );
     }
-    if (empty($processor->description)) {
+    if (empty($processor['description'])) {
         PHPUnit_Framework_Assert::assertTrue(
             false,
-            'the processor: ' . $processor->name . ' is missing a description in its details.'
+            "The processor: $processorName is missing a description in its details."
         );
     }
-    if (empty($processor->menu)) {
+    if (empty($processor['menu'])) {
         PHPUnit_Framework_Assert::assertTrue(
             false,
-            'the processor: ' . $processor->name . ' is missing a menu in its details.'
+            "The processor: $processorName is missing a menu in its details."
         );
     }
-    if (empty($processor->menu)) {
+    if (!isset($processor['input'])) {
         PHPUnit_Framework_Assert::assertTrue(
             false,
-            'the processor: ' . $processor->menu . ' is missing an application in its details.'
+            "The processor: $processorName is missing an input in its details."
         );
     }
-    if (!isset($processor->input)) {
-        PHPUnit_Framework_Assert::assertTrue(
-            false,
-            'the processor: ' . $processor->name . ' is missing an input in its details.'
-        );
-    }
-    foreach ($processor->input as $key => $val) {
-        if (is_numeric($key)) {
+    foreach ($processor['input'] as $inputKey => $input) {
+        $inputKeys = array_keys($input);
+        if (!in_array('default', $inputKeys)) {
             PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " index must be a textual name for input ($key)"
+                "The processor: $processorName needs a default on its input: $inputKey"
             );
         }
-        if (empty($val->description)) {
+        if (is_numeric($inputKey)) {
             PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " needs a description for input input ($key)"
+                "The processor: $processorName must have a textual key for input ($inputKey)"
             );
         }
-        if (!isset($val->cardinality)) {
+        if (empty($input['description'])) {
             PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " is missing cardinality on its input: $key"
+                "The processor: $processorName is missing description for input ($inputKey)"
             );
         }
-        if (!is_array($val->cardinality)) {
+        if (!isset($input['cardinality'])) {
             PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " must have cardinality of type array on its input: $key"
+                "The processor: $processorName is missing cardinality on its input: $inputKey"
             );
         }
-        if (!isset($val->cardinality[0])) {
+        if (!is_array($input['cardinality'])) {
             PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " is missing min cardinality on its input: $key"
+                "The processor: $processorName must have cardinality of type array on its input: $inputKey"
             );
         }
-        if (!is_integer($val->cardinality[0] + 0)) {
+        if (sizeof($input['cardinality']) != 2) {
             PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " min cardinality must be an integer on its input: $key"
+                "The processor: $processorName must have input cardinality of [min, max]: $inputKey"
             );
         }
-        if ($val->cardinality[0] < 0) {
+        if (!is_integer($input['cardinality'][0] + 0)) {
             PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " min cardinality must be a positive value on its input: $key"
+                "The processor: $processorName min cardinality must be an integer on its input: $inputKey"
             );
         }
-        if (!isset($val->cardinality[1])) {
+        if ($input['cardinality'][0] < 0) {
             PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " is missing max cardinality on its input: $key"
+                "The processor: $processorName min cardinality must be a positive value on its input: $inputKey"
             );
         }
-        if ($val->cardinality[1] != '*' && !is_integer($val->cardinality[1] + 0)) {
+        if ($input['cardinality'][1] != '*' && !is_integer($input['cardinality'][1] + 0)) {
             PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " max cardinality must be an integer or " * " on its input: $key"
+                "The processor: $processorName max cardinality must be an integer or '*' on its input: $inputKey"
             );
         }
-        if (is_integer($val->cardinality[1]) && $val->cardinality[1] < 0) {
+        if (is_integer($input['cardinality'][1]) && $input['cardinality'][1] < 0) {
             PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " max cardinality must be a positive value on its input: $key"
+                "The processor: $processorName max cardinality must be a positive value on its input: $inputKey"
             );
         }
-        if (!isset($val->literalAllowed)) {
+        if (!isset($input['literalAllowed'])) {
             PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " needs a literalAllowed  on its input: $key"
+                "The processor: $processorName needs a literalAllowed  on its input: $inputKey"
             );
         }
-        if (!is_bool($val->literalAllowed)) {
+        if (!is_bool($input['literalAllowed'])) {
             PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " literalAllowed must be a boolean on its input: $key"
+                "The processor: $processorName literalAllowed must be a boolean on its input: $inputKey"
             );
         }
-        if (!isset($val->limitProcessors)) {
+        if (!isset($input['limitProcessors'])) {
             PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " needs a limitProcessors  on its input: $key"
+                "The processor: $processorName needs a limitProcessors  on its input: $inputKey"
             );
         }
-        if (!isset($val->limitTypes)) {
+        if (!isset($input['limitTypes'])) {
             PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " needs a limitTypes  on its input: $key"
+                "The processor: $processorName needs a limitTypes  on its input: $inputKey"
             );
         }
-        foreach ($val->limitTypes as $limitType) {
+        foreach ($input['limitTypes'] as $limitType) {
             $limitTypes = [
                 'boolean',
                 'integer',
@@ -262,30 +249,24 @@ foreach (\GuzzleHttp\json_decode($I->getResponse()) as $index => $processor) {
                 'empty',
             ];
             if (!in_array($limitType, $limitTypes)) {
-                $message = 'the processor: ' . $processor->name . " can only have a value of ";
-                $message .= implode(', ', $limitTypes) . " on its limitTypes: $key";
+                $message = "The processor: $processorName can only have a value of ";
+                $message .= implode(', ', $limitTypes) . " on its limitTypes: $inputKey";
                 PHPUnit_Framework_Assert::assertTrue(
                     false,
                     $message
                 );
             }
         }
-        if (!isset($val->limitValues)) {
+        if (!isset($input['limitValues'])) {
             PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " needs a limitValues on its input: $key"
+                "The processor: $processorName needs a limitValues on its input: $inputKey"
             );
         }
-        if (!is_array($val->limitValues)) {
+        if (!is_array($input['limitValues'])) {
             PHPUnit_Framework_Assert::assertTrue(
                 false,
-                'the processor: ' . $processor->name . " limitValues must be an array on its input: $key"
-            );
-        }
-        if (!isset($val->default)) {
-            PHPUnit_Framework_Assert::assertTrue(
-                false,
-                'the processor: ' . $processor->name . " needs a default on its input: $key"
+                "The processor: $processorName limitValues must be an array on its input: $inputKey"
             );
         }
     }

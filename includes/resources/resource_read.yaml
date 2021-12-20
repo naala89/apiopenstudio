@@ -10,7 +10,7 @@
 
 name: Resource read
 
-description: Fetch a single or multiple resources.
+description: Fetch a single or multiple resources, limited by user access rights.
 
 uri: resource
 

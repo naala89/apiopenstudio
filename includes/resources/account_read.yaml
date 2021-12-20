@@ -10,7 +10,7 @@
 
 name: Account read
 
-description: Fetch a single or multiple accounts that the user has access to.
+description: Fetch a single or multiple accounts, limited by the users access rights.
 
 uri: account
 
@@ -28,11 +28,11 @@ process:
   processor: account_read
   id: account_read_process
   accid:
-    processor: var_uri
+    processor: var_get
     id: account_read_accid
-    nullable: true
+    key: accid
     expected_type: integer
-    index: 0
+    nullable: true
   keyword:
     processor: var_get
     id: account_read_keyword

@@ -44,17 +44,26 @@ class Application
     protected ?string $name;
 
     /**
+     * OpenApi schema fragment.
+     *
+     * @var string|null OpenApi schema fragment.
+     */
+    protected ?string $openapi;
+
+    /**
      * Application constructor.
      *
      * @param int|null $appid Application ID.
      * @param int|null $accid Account ID.
      * @param string|null $name Application name.
+     * @param string|null $openapi OpenApi JSON fragment.
      */
-    public function __construct(int $appid = null, int $accid = null, string $name = null)
+    public function __construct(int $appid = null, int $accid = null, string $name = null, string $openapi = null)
     {
         $this->appid = $appid;
         $this->accid = $accid;
         $this->name = $name;
+        $this->openapi = $openapi;
     }
 
     /**
@@ -124,6 +133,28 @@ class Application
     }
 
     /**
+     * Get the OpenApi schema fragment.
+     *
+     * @return string OpenApi schema fragment.
+     */
+    public function getOpenapi(): ?string
+    {
+        return $this->openapi;
+    }
+
+    /**
+     * Set the OpenApi schema fragment.
+     *
+     * @param string $openapi OpenApi schema fragment.
+     *
+     * @return void
+     */
+    public function setOpenapi(string $openapi)
+    {
+        $this->openapi = $openapi;
+    }
+
+    /**
      * Return the values as an associative array.
      *
      * @return array Application.
@@ -134,6 +165,7 @@ class Application
             'appid' => $this->appid,
             'accid' => $this->accid,
             'name' => $this->name,
+            'openapi' => $this->openapi,
         ];
     }
 }

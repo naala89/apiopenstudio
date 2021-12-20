@@ -1,4 +1,4 @@
-# Resource import swagger resource.
+# OpenApi default.
 #
 # @package   Apiopenstudio
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -8,25 +8,27 @@
 # @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
-name: Resource import Swagger
+name: OpenApi default
 
-description: Create resource/s from a Swagger document.
+description: Generate default OpenApi documentation for an application and all its resources.
 
-uri: resource/swagger
+uri: openapi/default
 
 method: post
 
 appid: 1
 
-ttl: 0
+ttl: 3600
 
 security:
-  processor: validate_token_role
-  id: resource_import_swagger_security
-  roles:
-    - Developer
+  processor: validate_token
+  id: openapi_default_security
 
 process:
-  processor: resourceSwagger
-  id: 3
-  resource: resource
+  processor: openapi_default
+  id: openapi_default_process
+  appid:
+    processor: var_uri
+    id: openapi_default_appid
+    index: 0
+    expected_type: integer

@@ -18,16 +18,22 @@ namespace ApiOpenStudio\Processor;
 use ADOConnection;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\ProcessorHelper;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Core\Request;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\AccountMapper;
+use ApiOpenStudio\Db\ApplicationMapper;
+use ApiOpenStudio\Db\ResourceMapper;
 
 /**
  * Class ResourceBase
  *
  * Base class for all resource processors.
  */
-abstract class ResourceBase extends Core\ProcessorEntity
+abstract class ResourceBase extends ProcessorEntity
 {
     /**
      * Processor helper class.
@@ -114,9 +120,9 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param mixed $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->helper = new ProcessorHelper();
@@ -125,11 +131,11 @@ abstract class ResourceBase extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
      * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -205,11 +211,11 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * @param string $method Resource method.
      * @param string $uri Resource URI.
      *
-     * @return Core\DataContainer
+     * @return DataContainer
      *
      * @throws ApiException Error.
      */
-    protected function read(int $appId, string $method, string $uri): Core\DataContainer
+    protected function read(int $appId, string $method, string $uri): DataContainer
     {
         if (empty($appId)) {
             throw new ApiException('missing application ID, cannot find resource', 3, $this->id, 400);
@@ -222,7 +228,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
         }
         $uri = strtolower($uri);
 
-        $mapper = new Db\ResourceMapper($this->db, $this->logger);
+        $mapper = new ResourceMapper($this->db, $this->logger);
         $resource = $mapper->findByAppIdMethodUri($appId, $method, $uri);
         if (empty($resource->getResid())) {
             throw new ApiException('Resource not found', 1, $this->id, 200);
@@ -235,7 +241,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
         $result['method'] = $resource->getMethod();
         $result['ttl'] = $resource->getTtl();
 
-        return new Core\DataContainer($this->exportData($result), 'text');
+        return new DataContainer($this->exportData($result), 'text');
     }
 
     /**
@@ -245,11 +251,11 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * @param string $method Resource method.
      * @param string $uri Resource URI.
      *
-     * @return Core\DataContainer
+     * @return DataContainer
      *
      * @throws ApiException Error.
      */
-    protected function delete(int $appId, string $method, string $uri): Core\DataContainer
+    protected function delete(int $appId, string $method, string $uri): DataContainer
     {
         if (empty($appId)) {
             throw new ApiException('missing application ID, cannot find resource', 3, $this->id, 400);
@@ -262,10 +268,10 @@ abstract class ResourceBase extends Core\ProcessorEntity
         }
 
         $uri = strtolower($uri);
-        $mapper = new Db\ResourceMapper($this->db, $this->logger);
+        $mapper = new ResourceMapper($this->db, $this->logger);
         $resource = $mapper->findByAppIdMethodUri($appId, $method, $uri);
 
-        return new Core\DataContainer($mapper->delete($resource) ? 'true' : 'false', 'text');
+        return new DataContainer($mapper->delete($resource) ? 'true' : 'false', 'text');
     }
 
     /**
@@ -275,11 +281,11 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * @param string $accName Account name.
      * @param string $appName Application name.
      *
-     * @return Core\DataContainer
+     * @return DataContainer
      *
      * @throws ApiException Error.
      */
-    protected function create(array $data, string $accName, string $appName): Core\DataContainer
+    protected function create(array $data, string $accName, string $appName): DataContainer
     {
         $this->logger->debug('api', 'New resource' . print_r($data, true));
         $this->validateData($data);
@@ -307,9 +313,9 @@ abstract class ResourceBase extends Core\ProcessorEntity
             throw new ApiException("Resources for $coreAccountName/$coreApplicationName are locked", 6, -1, 406);
         }
 
-        $accountMapper = new Db\AccountMapper($this->db, $this->logger);
-        $applicationMapper = new Db\ApplicationMapper($this->db, $this->logger);
-        $resourceMapper = new Db\ResourceMapper($this->db, $this->logger);
+        $accountMapper = new AccountMapper($this->db, $this->logger);
+        $applicationMapper = new ApplicationMapper($this->db, $this->logger);
+        $resourceMapper = new ResourceMapper($this->db, $this->logger);
         $account = $accountMapper->findByName($accName);
         $accId = $account->getAccid();
         $application = $applicationMapper->findByAccidAppname($accId, $appName);
@@ -323,7 +329,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
         $resource->setMeta(json_encode($meta));
         $resource->setTtl($ttl);
 
-        return new Core\DataContainer($resourceMapper->save($resource) ? 'true' : 'false', 'text');
+        return new DataContainer($resourceMapper->save($resource) ? 'true' : 'false', 'text');
     }
 
     /**
@@ -374,7 +380,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
             $this->validateDetails($data['security']);
         }
         if (!empty($data['output'])) {
-            if (!is_array($data['output']) || Core\Utilities::isAssoc($data['output'])) {
+            if (!is_array($data['output']) || Utilities::isAssoc($data['output'])) {
                 throw new ApiException('invalid output structure in new resource', 6, -1, 406);
             }
             foreach ($data['output'] as $i => $output) {
@@ -390,7 +396,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
             }
         }
         if (!empty($data['fragments'])) {
-            if (!Core\Utilities::isAssoc($data['fragments'])) {
+            if (!Utilities::isAssoc($data['fragments'])) {
                 throw new ApiException("invalid fragments structure in new resource", 6, -1, 406);
             }
             foreach ($data['fragments'] as $fragVal) {
@@ -445,7 +451,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
                 $classStr = $this->helper->getProcessorString($node['processor']);
-                $class = new $classStr($meta, new Core\Request(), $this->db);
+                $class = new $classStr($meta, new Request(), $this->db);
                 $details = $class->details();
                 $id = $node['id'];
                 $this->logger->info('api', "validating: $id");

@@ -85,7 +85,7 @@ api:
   core_resource_lock: false
   dir_public: "public/"
   dir_resources: "includes/resources/"
-  dir_uploads: "uploads/"
+  dir_uploads: "~/Downloads/"
   dir_tmp: "/tmp/"
   jwt_private_key: "/var/www/html/api/jwt.key"
   jwt_public_key: "/var/www/html/api/jwt.key.pub"
@@ -94,6 +94,8 @@ api:
   jwt_life: "+1 hour"
   jwt_issuer: "api.apiopenstudio.local"
   jwt_permitted_for: "api.apiopenstudio.local"
+  openapi_version: "3.0.3"
+  openapi_directory: "includes/openapiSchema"
 
 email:
   host: apiopenstudio-email

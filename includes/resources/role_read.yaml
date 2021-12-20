@@ -35,9 +35,11 @@ process:
   processor: role_read
   id: role_read_process
   rid:
-    processor: var_uri
-    id: role_read_accid
-    index: 0
+    processor: var_get
+    id: role_read_rid
+    key: rid
+    expected_type: integer
+    nullable: true
   keyword:
     processor: var_get
     id: role_read_keyword

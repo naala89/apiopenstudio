@@ -24,7 +24,6 @@ use ApiOpenStudio\Core\ApiException;
  */
 class UserRoleMapper extends Mapper
 {
-
     /**
      * Save the user role.
      *
@@ -363,6 +362,10 @@ class UserRoleMapper extends Mapper
         }
 
         return $this->fetchRows($sql, $bindParams, $order);
+    }
+
+    public function findByUidAccidRolename(int $uid, ?int $getAccid, string $string)
+    {
     }
 
     /**

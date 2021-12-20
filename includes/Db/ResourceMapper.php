@@ -38,7 +38,7 @@ class ResourceMapper extends Mapper
     {
         if ($resource->getResid() == null) {
             $sql = <<<'TAG'
-INSERT INTO resource (appid, name, description, method, uri, meta, ttl) VALUES (?, ?, ?, ?, ?, ?, ?)
+INSERT INTO resource (appid, name, description, method, uri, meta, openapi, ttl) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 TAG;
             $bindParams = [
                 $resource->getAppId(),
@@ -47,12 +47,12 @@ TAG;
                 $resource->getMethod(),
                 $resource->getUri(),
                 $resource->getMeta(),
+                $resource->getOpenapi(),
                 $resource->getTtl(),
             ];
         } else {
-            $sql = <<<'TAG'
-UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, uri = ?, meta = ?, ttl = ? WHERE resid = ?
-TAG;
+            // phpcs:ignore
+            $sql = 'UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, uri = ?, meta = ?, openapi = ?, ttl = ? WHERE resid = ?';
             $bindParams = [
                 $resource->getAppId(),
                 $resource->getName(),
@@ -60,6 +60,7 @@ TAG;
                 $resource->getMethod(),
                 $resource->getUri(),
                 $resource->getMeta(),
+                $resource->getOpenapi(),
                 $resource->getTtl(),
                 $resource->getResid(),
             ];
@@ -325,6 +326,7 @@ TAG;
         $resource->setMethod(!empty($row['method']) ? $row['method'] : '');
         $resource->setUri(!empty($row['uri']) ? $row['uri'] : '');
         $resource->setMeta(!empty($row['meta']) ? $row['meta'] : '');
+        $resource->setOpenapi(!empty($row['openapi']) ? $row['openapi'] : '');
         $resource->setTtl(!empty($row['ttl']) ? $row['ttl'] : 0);
 
         return $resource;

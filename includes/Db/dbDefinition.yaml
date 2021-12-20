@@ -21,6 +21,7 @@ application:
     appid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: application id }
     accid: { type: int(10) unsigned, notnull: true, comment: account id }
     name: { type: varchar(255), notnull: true, comment: application name }
+    openapi: { type: blob, notnull: false, comment: JSON OpenApi fragment definition for the group of resources }
   data:
     - { accid: 1, name: core }
     - { accid: 2, name: testing_app }
@@ -73,6 +74,7 @@ resource:
     method: { type: text, notnull: true, comment: form delivery method }
     uri: { type: varchar(64), notnull: true, comment: URI of the api call }
     meta: { type: blob, notnull: true, comment: all of the actions taken by the call }
+    openapi: { type: blob, notnull: false, comment: JSON OpenApi path fragment definition for the resources }
     ttl: { type: int(10) unsigned, notnull: true, default: 300, comment: time to cache the results (seconds) }
 
 role:

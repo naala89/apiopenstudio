@@ -43,12 +43,12 @@ process:
     name: index"
         ]
     );
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
     $I->seeResponseContainsJson(
         [
             'error' => [
                 'code' => 4,
-                'message' => 'Unauthorized for this call.',
+                'message' => 'Permission denied.',
                 'id' => 'resource_create_security',
             ]
         ]
@@ -58,12 +58,12 @@ process:
     $I->sendDelete(
         $I->getCoreBaseUri() . '/resource/0',
     );
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
     $I->seeResponseContainsJson(
         [
             'error' => [
                 'code' => 4,
-                'message' => 'Unauthorized for this call.',
+                'message' => 'Permission denied.',
                 'id' => 'resource_delete_security',
             ]
         ]
@@ -73,12 +73,12 @@ process:
     $I->sendGet(
         $I->getCoreBaseUri() . '/resource/export/yaml/14',
     );
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
     $I->seeResponseContainsJson(
         [
             'error' => [
                 'code' => 4,
-                'message' => 'Unauthorized for this call.',
+                'message' => 'Permission denied.',
                 'id' => 'resource_export_security',
             ]
         ]
@@ -98,12 +98,12 @@ process:
             ],
         ]
     );
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
     $I->seeResponseContainsJson(
         [
             'error' => [
                 'code' => 4,
-                'message' => 'Unauthorized for this call.',
+                'message' => 'Permission denied.',
                 'id' => 'resource_import_security',
             ]
         ]
@@ -114,12 +114,12 @@ process:
         $I->getCoreBaseUri() . '/resource',
         ['resid' => 33]
     );
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
     $I->seeResponseContainsJson(
         [
             'error' => [
                 'code' => 4,
-                'message' => 'Unauthorized for this call.',
+                'message' => 'Permission denied.',
                 'id' => 'resource_read_security',
             ]
         ]
@@ -163,7 +163,8 @@ foreach ($goodIdentities as $goodIdentity) {
             'method' => 'string',
             'uri' => 'string',
             'ttl' => 'integer',
-            'meta' => 'string',
+            'meta' => 'array',
+            'openapi' => 'array',
         ]
     );
 
@@ -182,7 +183,8 @@ foreach ($goodIdentities as $goodIdentity) {
             'method' => 'string',
             'uri' => 'string',
             'ttl' => 'integer',
-            'meta' => 'string',
+            'meta' => 'array',
+            'openapi' => 'array',
         ]
     );
     $json = json_decode($I->getResponse(), true);
@@ -222,7 +224,8 @@ foreach ($goodIdentities as $goodIdentity) {
             'method' => 'string',
             'uri' => 'string',
             'ttl' => 'integer',
-            'meta' => 'string',
+            'meta' => 'array',
+            'openapi' => 'array',
         ]
     );
 
@@ -240,7 +243,8 @@ foreach ($goodIdentities as $goodIdentity) {
             'method' => 'string',
             'uri' => 'string',
             'ttl' => 'integer',
-            'meta' => 'string',
+            'security' => 'array',
+            'process' => 'array',
         ]
     );
 
@@ -256,16 +260,15 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContains("method: post");
     $I->seeResponseContains("uri: test/resource_update/allowed");
     $I->seeResponseContains("ttl: 0");
-    $I->seeResponseContains("meta:");
-    $I->seeResponseContains("    security:");
-    $I->seeResponseContains("        function: validate_token_roles");
-    $I->seeResponseContains("        id: test_security");
-    $I->seeResponseContains("        roles:");
-    $I->seeResponseContains("            - Consumer");
-    $I->seeResponseContains("    process:");
-    $I->seeResponseContains("        processor: var_int");
-    $I->seeResponseContains("        id: 'test allowed to update process'");
-    $I->seeResponseContains("        value: 32");
+    $I->seeResponseContains("security:");
+    $I->seeResponseContains("   function: validate_token_roles");
+    $I->seeResponseContains("   id: test_security");
+    $I->seeResponseContains("   roles:");
+    $I->seeResponseContains("       - Consumer");
+    $I->seeResponseContains("process:");
+    $I->seeResponseContains("   processor: var_int");
+    $I->seeResponseContains("   id: 'test allowed to update process'");
+    $I->seeResponseContains("   value: 32");
 
     $I->wantTo('Test resource delete for ' . $goodIdentity[0]);
     $I->sendDelete(

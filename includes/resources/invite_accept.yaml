@@ -10,7 +10,7 @@
 
 name: Invite accept
 
-description: User invite accepted using a token.
+description: Accept a user invite, using an invite token.
 
 uri: user/invite/accept
 

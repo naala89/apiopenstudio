@@ -134,6 +134,36 @@ class Utilities
     }
 
     /**
+     * Returns the current OpenApiPath* classname
+     *
+     * @param Config $settings
+     *
+     * @return string
+     *
+     * @throws ApiException
+     */
+    public static function getOpenApiPathClassPath(Config $settings): string
+    {
+        return "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiPath" .
+            str_replace('.', '', $settings->__get(['api', 'openapi_version']));
+    }
+
+    /**
+     * Returns the current OpenApiParent* classname
+     *
+     * @param Config $settings
+     *
+     * @return string
+     *
+     * @throws ApiException
+     */
+    public static function getOpenApiParentClassPath(Config $settings): string
+    {
+        return "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
+            str_replace('.', '', $settings->__get(['api', 'openapi_version']));
+    }
+
+    /**
      * Converts mysql date to standard php date.
      *
      * @param integer $mysqldate Unix time stamp.

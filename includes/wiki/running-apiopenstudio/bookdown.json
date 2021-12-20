@@ -1,6 +1,7 @@
 {
   "title": "Running ApiOpenStudio",
   "content": [
+    "workflow-and-documentation/bookdown.json",
     "headless.md",
     "user-roles-and-permissions.md",
     "core-resources.md"

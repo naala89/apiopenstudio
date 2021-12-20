@@ -15,16 +15,25 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
-use ApiOpenStudio\Db;
+use ADOConnection;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Db\AccountMapper;
 
 /**
  * Class AccountCreate
  *
  * Processor class to create an account.
  */
-class AccountCreate extends Core\ProcessorEntity
+class AccountCreate extends ProcessorEntity
 {
+    /**
+     * @var AccountMapper
+     */
+    protected AccountMapper $accountMapper;
+
     /**
      * {@inheritDoc}
      *
@@ -49,19 +58,33 @@ class AccountCreate extends Core\ProcessorEntity
     ];
 
     /**
+     * AccountCreate constructor.
+     *
+     * @param mixed $meta Output meta.
+     * @param mixed $request Request object.
+     * @param ADOConnection $db DB object.
+     * @param MonologWrapper $logger Logger object.
+     */
+    public function __construct($meta, &$request, ADOConnection $db, MonologWrapper $logger)
+    {
+        parent::__construct($meta, $request, $db, $logger);
+        $this->accountMapper = new AccountMapper($this->db, $logger);
+    }
+
+    /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
         $name = $this->val('name', true);
         if (preg_match('/[^a-z_\-0-9]/i', $name)) {
-            throw new Core\ApiException(
+            throw new ApiException(
                 "Invalid account name: $name. Only underscore, hyphen or alphanumeric characters permitted.",
                 6,
                 $this->id,
@@ -69,14 +92,16 @@ class AccountCreate extends Core\ProcessorEntity
             );
         }
 
-        $accountMapper = new Db\AccountMapper($this->db, $this->logger);
-
-        $account = $accountMapper->findByName($name);
+        $account = $this->accountMapper->findByName($name);
         if (!empty($account->getAccid())) {
-            throw new Core\ApiException("Invalid account name: $name. This account already exists.", 6, $this->id, 400);
+            throw new ApiException("Invalid account name: $name. This account already exists.", 6, $this->id, 400);
         }
 
         $account->setName($name);
-        return new Core\DataContainer($accountMapper->save($account), 'boolean');
+        if (!$this->accountMapper->save($account)) {
+            throw new ApiException('save account failed, please check the logs', 2, $this->id, 400);
+        }
+        $account = $this->accountMapper->findByName($name);
+        return new DataContainer($account->dump(), 'array');
     }
 }

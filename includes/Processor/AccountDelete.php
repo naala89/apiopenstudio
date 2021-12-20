@@ -15,16 +15,31 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
-use ApiOpenStudio\Db;
+use ADOConnection;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Db\AccountMapper;
+use ApiOpenStudio\Db\ApplicationMapper;
 
 /**
  * Class AccountDelete
  *
  * Processor class to delete an account.
  */
-class AccountDelete extends Core\ProcessorEntity
+class AccountDelete extends ProcessorEntity
 {
+    /**
+     * @var AccountMapper
+     */
+    protected AccountMapper $accountMapper;
+
+    /**
+     * @var ApplicationMapper
+     */
+    protected ApplicationMapper $applicationMapper;
+
     /**
      * {@inheritDoc}
      *
@@ -49,32 +64,45 @@ class AccountDelete extends Core\ProcessorEntity
     ];
 
     /**
+     * AccountDelete constructor.
+     *
+     * @param mixed $meta Output meta.
+     * @param mixed $request Request object.
+     * @param ADOConnection $db DB object.
+     * @param MonologWrapper $logger Logger object.
+     */
+    public function __construct($meta, &$request, ADOConnection $db, MonologWrapper $logger)
+    {
+        parent::__construct($meta, $request, $db, $logger);
+        $this->accountMapper = new AccountMapper($this->db, $logger);
+        $this->applicationMapper = new ApplicationMapper($this->db, $logger);
+    }
+
+    /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
         $accid = $this->val('accid', true);
 
-        $accountMapper = new Db\AccountMapper($this->db, $this->logger);
-        $account = $accountMapper->findByAccid($accid);
+        $account = $this->accountMapper->findByAccid($accid);
 
         if (empty($account->getAccid())) {
-            throw new Core\ApiException("Account does not exist: $accid", 6, $this->id, 400);
+            throw new ApiException("Account does not exist: $accid", 6, $this->id, 400);
         }
         // Do not delete if applications are attached to the account.
-        $applicationMapper = new Db\ApplicationMapper($this->db, $this->logger);
-        $applications = $applicationMapper->findByAccid($accid);
+        $applications = $this->applicationMapper->findByAccid($accid);
         if (!empty($applications)) {
             $message = 'Cannot delete the account, applications are assigned to the account';
-            throw new Core\ApiException($message, 6, $this->id, 400);
+            throw new ApiException($message, 6, $this->id, 400);
         }
 
-        return new Core\DataContainer($accountMapper->delete($account), 'boolean');
+        return new DataContainer($this->accountMapper->delete($account), 'boolean');
     }
 }
