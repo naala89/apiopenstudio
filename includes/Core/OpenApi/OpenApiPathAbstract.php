@@ -61,29 +61,29 @@ abstract class OpenApiPathAbstract
     /**
      * Return the default GET parameters OpenApi object.
      *
-     * @param array $meta
+     * @param stdClass $meta
      *
      * @return array|stdClass
      */
-    abstract protected function defaultGetParameters(array $meta);
+    abstract protected function defaultGetParameters(stdClass $meta);
 
     /**
      * Return the default POST parameters OpenApi object.
      *
-     * @param array $meta
+     * @param stdClass $meta
      *
      * @return array|stdClass
      */
-    abstract protected function defaultPostParameters(array $meta);
+    abstract protected function defaultPostParameters(stdClass $meta);
 
     /**
      * Return the default PATH parameters OpenApi object.
      *
-     * @param array $meta
+     * @param stdClass $meta
      *
      * @return array|stdClass
      */
-    abstract protected function defaultPathParameters(array $meta);
+    abstract protected function defaultPathParameters(stdClass $meta);
 
     /**
      * Import an existing definition.
@@ -171,26 +171,35 @@ abstract class OpenApiPathAbstract
      * Return an array of all instances of a processor in metadata.
      *
      * @param string $machineName
-     * @param array $meta
+     * @param stdClass $meta
      *
      * @return array
      */
-    protected function findProcessors(string $machineName, array $meta): array
+    protected function findProcessors(string $machineName, stdClass $meta): array
     {
         $result = [];
-        foreach ($meta as $key => $value) {
-            if ($key == 'processor' && $value == $machineName) {
+
+        $keys = array_keys((array) $meta);
+        foreach ($keys as $key) {
+            $value = $meta->{$key};
+            if ($this->processorHelper->isProcessor($value)) {
+                $result = array_merge($result, $this->findProcessors($machineName, $value));
+            } elseif (is_array($value)) {
+                foreach ($value as $val) {
+                    $result = array_merge($result, $this->findProcessors($machineName, $val));
+                }
+            } elseif ($key == 'processor' && $value == $machineName) {
                 $item = [];
-                foreach (array_keys($meta) as $arrayKey) {
-                    if (!is_array($meta[$arrayKey])) {
-                        $item[$arrayKey] = $meta[$arrayKey];
+                $processorKeys = array_keys((array) $meta);
+                foreach ($processorKeys as $processorKey) {
+                    if (!is_object($meta->{$processorKey})) {
+                        $item[$processorKey] = $meta->{$processorKey};
                     }
                 }
                 $result[] = $item;
-            } elseif ($this->processorHelper->isProcessor($value)) {
-                $result = array_merge($this->findProcessors($machineName, $value));
             }
         }
+
         return $result;
     }
 }
