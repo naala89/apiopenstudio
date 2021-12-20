@@ -35,9 +35,12 @@ abstract class OpenApiParentAbstract
      */
     protected Config $settings;
 
-    public function __construct()
+    /**
+     * @param Config|null $settings
+     */
+    public function __construct(Config $settings = null)
     {
-        $this->settings = new Config();
+        $this->settings = empty($settings) ? (new Config()) : $settings;
         $this->definition = new stdClass();
     }
 

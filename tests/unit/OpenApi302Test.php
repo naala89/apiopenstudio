@@ -46,7 +46,7 @@ class OpenApi302Test extends Unit
     protected function _before()
     {
         $this->settings = new Config(dirname(__DIR__) . '/_data/settings.openapi.302.yml');
-        $this->openApiParent = new OpenApiParent302();
+        $this->openApiParent = new OpenApiParent302($this->settings);
         $this->openApiPath = new OpenApiPath302();
         $this->account = new Account(1, 'test_account');
         $this->application = new Application(3, 1, 'test_application');
