@@ -55,8 +55,8 @@ class OpenApiPath300 extends OpenApiPathAbstract
                 ],
             ],
         ];
-        $getParameters = !empty($meta) ? (array) $this->defaultGetParameters(json_decode($meta, true)) : [];
-        if (!empty($getParameters)) {
+        $getParameters = !empty($meta) ? $this->defaultGetParameters(json_decode($meta)) : [];
+        if (!empty((array) $getParameters)) {
             if (!isset($definition[$path][$method]['parameters'])) {
                 $definition[$path][$method]['parameters'] = [];
             }
@@ -64,8 +64,8 @@ class OpenApiPath300 extends OpenApiPathAbstract
                 $definition[$path][$method]['parameters'][] = $getParameter;
             }
         }
-        $pathParameters = !empty($meta) ? (array) $this->defaultPathParameters(json_decode($meta, true)) : [];
-        if (!empty($pathParameters)) {
+        $pathParameters = !empty($meta) ? $this->defaultPathParameters(json_decode($meta)) : [];
+        if (!empty((array) $pathParameters)) {
             if (!isset($definition[$path][$method]['parameters'])) {
                 $definition[$path][$method]['parameters'] = [];
             }
@@ -77,8 +77,8 @@ class OpenApiPath300 extends OpenApiPathAbstract
                 $path = $newPath;
             }
         }
-        $postParameters = !empty($meta) ? (array) $this->defaultPostParameters(json_decode($meta, true)) : [];
-        if (!empty($postParameters)) {
+        $postParameters = !empty($meta) ? $this->defaultPostParameters(json_decode($meta)) : [];
+        if (!empty((array) $postParameters->content)) {
             $definition[$path][$method]['requestBody'] = $postParameters;
         }
 
@@ -88,7 +88,7 @@ class OpenApiPath300 extends OpenApiPathAbstract
     /**
      * {@inheritDoc}
      */
-    protected function defaultGetParameters(array $meta)
+    protected function defaultGetParameters(stdClass $meta)
     {
         $parameters = [];
         $count = 1;
@@ -118,7 +118,7 @@ class OpenApiPath300 extends OpenApiPathAbstract
                         $parameter->schema->type = 'integer';
                         break;
                     case 'float':
-                        $parameter->schema->type = 'float';
+                        $parameter->schema->type = 'number';
                         break;
                     case 'text':
                     case 'json':
@@ -142,7 +142,7 @@ class OpenApiPath300 extends OpenApiPathAbstract
     /**
      * {@inheritDoc}
      */
-    protected function defaultPathParameters(array $meta)
+    protected function defaultPathParameters(stdClass $meta)
     {
         $parameters = [];
         $items = $this->findProcessors('var_uri', $meta);
@@ -151,6 +151,7 @@ class OpenApiPath300 extends OpenApiPathAbstract
             $parameter->in = 'path';
             $parameter->name = 'pathVar' . $item['index'];
             $parameter->required = true;
+            $parameter->schema = new stdClass();
 
             if (!isset($item['expected_type'])) {
                 $parameter->schema->type = 'string';
@@ -163,7 +164,7 @@ class OpenApiPath300 extends OpenApiPathAbstract
                         $parameter->schema->type = 'integer';
                         break;
                     case 'float':
-                        $parameter->schema->type = 'float';
+                        $parameter->schema->type = 'number';
                         break;
                     case 'text':
                     case 'json':
@@ -187,51 +188,50 @@ class OpenApiPath300 extends OpenApiPathAbstract
     /**
      * {@inheritDoc}
      */
-    protected function defaultPostParameters(array $meta)
+    protected function defaultPostParameters(stdClass $meta)
     {
-        $content = "application/json";
+        $mediaType = "application/json";
         $count = 1;
-        $parameters = new stdClass();
+        $requestBody = new stdClass();
+        $requestBody->content = new stdClass();
 
         $items = $this->findProcessors('var_post', $meta);
         foreach ($items as $item) {
-            if (!isset($parameters->{$content})) {
-                $parameters->{$content} = new stdClass();
-                $parameters->{$content}->schema = new stdClass();
-                $parameters->{$content}->schema->type = 'object';
-                $parameters->{$content}->schema->properties = new stdClass();
+            if (!isset($requestBody->content->{$mediaType})) {
+                $requestBody->content->{$mediaType} = new stdClass();
+                $requestBody->content->{$mediaType}->schema = new stdClass();
+                $requestBody->content->{$mediaType}->schema->type = 'object';
+                $requestBody->content->{$mediaType}->schema->properties = new stdClass();
             }
             if (!isset($item['key'])) {
                 $item['key'] = 'postParam' . $count++;
             }
-            $parameters->{$content}->schema->properties->{$item['key']} = new stdClass();
+            $requestBody->content->{$mediaType}->schema->properties->{$item['key']} = new stdClass();
             if (!isset($item['expected_type'])) {
-                $parameters->{$content}->schema->properties->{$item['key']}->type = 'string';
+                $requestBody->content->{$mediaType}->schema->properties->{$item['key']}->type = 'string';
             } else {
                 switch ($item['expected_type']) {
                     case 'boolean':
-                        $parameters->{$content}->schema->properties->{$item['key']}->type = 'boolean';
+                        $requestBody->content->{$mediaType}->schema->properties->{$item['key']}->type = 'boolean';
                         break;
                     case 'integer':
-                        $parameters->{$content}->schema->properties->{$item['key']}->type = 'integer';
-                        $parameters->{$content}->schema->properties->{$item['key']}->format = 'int64';
+                        $requestBody->content->{$mediaType}->schema->properties->{$item['key']}->type = 'integer';
                         break;
                     case 'float':
-                        $parameters->{$content}->schema->properties->{$item['key']}->type = 'float';
-                        $parameters->{$content}->schema->properties->{$item['key']}->format = 'float64';
+                        $requestBody->content->{$mediaType}->schema->properties->{$item['key']}->type = 'number';
                         break;
                     case 'array':
-                        $parameters->{$content}->schema->properties->{$item['key']}->type = 'array';
-                        $parameters->{$content}->schema->properties->{$item['key']}->items = new stdClass();
-                        $parameters->{$content}->schema->properties->{$item['key']}->items->type = 'string';
+                        $requestBody->content->{$mediaType}->schema->properties->{$item['key']}->type = 'array';
+                        $requestBody->content->{$mediaType}->schema->properties->{$item['key']}->items = new stdClass();
+                        $requestBody->content->{$mediaType}->schema->properties->{$item['key']}->items->type = 'string';
                         break;
                     default:
-                        $parameters->{$content}->schema->properties->{$item['key']}->type = 'string';
+                        $requestBody->content->{$mediaType}->schema->properties->{$item['key']}->type = 'string';
                         break;
                 }
             }
         }
 
-        return $parameters;
+        return $requestBody;
     }
 }

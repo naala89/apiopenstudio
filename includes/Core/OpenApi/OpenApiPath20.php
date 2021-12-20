@@ -60,8 +60,8 @@ class OpenApiPath20 extends OpenApiPathAbstract
                 ],
             ],
         ];
-        $getParameters = !empty($meta) ? (array) $this->defaultGetParameters(json_decode($meta, true)) : [];
-        if (!empty($getParameters)) {
+        $getParameters = !empty($meta) ? $this->defaultGetParameters(json_decode($meta)) : [];
+        if (!empty((array) $getParameters)) {
             if (!isset($definition[$path][$method]['parameters'])) {
                 $definition[$path][$method]['parameters'] = [];
             }
@@ -69,8 +69,8 @@ class OpenApiPath20 extends OpenApiPathAbstract
                 $definition[$path][$method]['parameters'][] = $getParameter;
             }
         }
-        $pathParameters = !empty($meta) ? (array) $this->defaultPathParameters(json_decode($meta, true)) : [];
-        if (!empty($pathParameters)) {
+        $pathParameters = !empty($meta) ? $this->defaultPathParameters(json_decode($meta)) : [];
+        if (!empty((array) $pathParameters)) {
             if (!isset($definition[$path][$method]['parameters'])) {
                 $definition[$path][$method]['parameters'] = [];
             }
@@ -82,8 +82,8 @@ class OpenApiPath20 extends OpenApiPathAbstract
                 $path = $newPath;
             }
         }
-        $postParameters = !empty($meta) ? (array) $this->defaultPostParameters(json_decode($meta, true)) : [];
-        if (!empty($postParameters)) {
+        $postParameters = !empty($meta) ? $this->defaultPostParameters(json_decode($meta)) : [];
+        if (!empty((array) $postParameters)) {
             $definition[$path][$method]['requestBody'] = $postParameters;
         }
 
@@ -93,7 +93,7 @@ class OpenApiPath20 extends OpenApiPathAbstract
     /**
      * {@inheritDoc}
      */
-    protected function defaultGetParameters(array $meta)
+    protected function defaultGetParameters(stdClass $meta)
     {
         $parameters = [];
         $count = 1;
@@ -119,7 +119,7 @@ class OpenApiPath20 extends OpenApiPathAbstract
                         $parameter->type = 'boolean';
                         break;
                     case 'integer':
-                        $parameter->type = 'integer';
+                        $parameter->type = 'number';
                         break;
                     case 'float':
                         $parameter->type = 'float';
@@ -142,7 +142,7 @@ class OpenApiPath20 extends OpenApiPathAbstract
     /**
      * {@inheritDoc}
      */
-    protected function defaultPathParameters(array $meta)
+    protected function defaultPathParameters(stdClass $meta)
     {
         $parameters = [];
         $items = $this->findProcessors('var_uri', $meta);
@@ -163,7 +163,7 @@ class OpenApiPath20 extends OpenApiPathAbstract
                         $parameter->type = 'integer';
                         break;
                     case 'float':
-                        $parameter->type = 'float';
+                        $parameter->type = 'number';
                         break;
                     case 'text':
                     case 'json':
@@ -187,7 +187,7 @@ class OpenApiPath20 extends OpenApiPathAbstract
     /**
      * {@inheritDoc}
      */
-    protected function defaultPostParameters(array $meta)
+    protected function defaultPostParameters(stdClass $meta)
     {
         $content = "application/json";
         $count = 1;
@@ -211,11 +211,9 @@ class OpenApiPath20 extends OpenApiPathAbstract
                     break;
                 case 'integer':
                     $parameters->{$content}->schema->properties->{$item['key']}->type = 'integer';
-                    $parameters->{$content}->schema->properties->{$item['key']}->format = 'int64';
                     break;
                 case 'float':
-                    $parameters->{$content}->schema->properties->{$item['key']}->type = 'float';
-                    $parameters->{$content}->schema->properties->{$item['key']}->format = 'float64';
+                    $parameters->{$content}->schema->properties->{$item['key']}->type = 'number';
                     break;
                 case 'text':
                 case 'json':
