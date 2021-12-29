@@ -31,101 +31,120 @@ class IfThenElse extends Core\ProcessorEntity
      */
     protected array $details = [
         'name' => 'If Then Else',
-        'machineName' => 'ifThenElse',
+        'machineName' => 'if_then_else',
         'description' => 'An if then else logic gate.',
         'menu' => 'Logic',
+        'conditional' => true,
         'input' => [
-          'lhs' => [
-            'description' => 'The left-land side value in the equation.',
-            'cardinality' => [1, 1],
-            'literalAllowed' => true,
-            'limitProcessors' => [],
-            'limitTypes' => [],
-            'limitValues' => [],
-            'default' => '',
-          ],
-          'rhs' => [
-            'description' => 'The right-land side value in the equation.',
-            'cardinality' => [1, 1],
-            'literalAllowed' => true,
-            'limitProcessors' => [],
-            'limitTypes' => [],
-            'limitValues' => [],
-            'default' => '',
-          ],
-          'operator' => [
-            'description' => 'The comparison operator in the equation.',
-            'cardinality' => [1, 1],
-            'literalAllowed' => true,
-            'limitProcessors' => [],
-            'limitTypes' => ['text'],
-            'limitValues' => ['==', '!=', '>', '>=', '<', '<='],
-            'default' => '',
-          ],
-          'then' => [
-            'description' => 'What to do if the equation returns true.',
-            'cardinality' => [1, 1],
-            'literalAllowed' => false,
-            'limitProcessors' => [],
-            'limitTypes' => [],
-            'limitValues' => [],
-            'default' => '',
-          ],
-          'else' => [
-            'description' => 'What to do if the equation returns false.',
-            'cardinality' => [1, 1],
-            'literalAllowed' => false,
-            'limitProcessors' => [],
-            'limitTypes' => [],
-            'limitValues' => [],
-            'default' => '',
-          ],
+            'lhs' => [
+                'description' => 'The left-land side value in the equation.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => '',
+                'conditional' => false,
+            ],
+            'rhs' => [
+                'description' => 'The right-land side value in the equation.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => '',
+                'conditional' => false,
+            ],
+            'operator' => [
+                'description' => 'The comparison operator in the equation.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => ['==', '!=', '>', '>=', '<', '<='],
+                'default' => '',
+                'conditional' => false,
+            ],
+            'strict' => [
+                'description' => 'Comparisons include data types, not just value.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => true,
+                'conditional' => false,
+            ],
+            'then' => [
+                'description' => 'What to do if the equation returns true.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => false,
+                'limitProcessors' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => '',
+                'conditional' => true,
+            ],
+            'else' => [
+                'description' => 'What to do if the equation returns false.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => false,
+                'limitProcessors' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => '',
+                'conditional' => true,
+            ],
         ],
     ];
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
-     *
      * @throws Core\ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process()
     {
         parent::process();
 
-        $lhs = $this->val('lhs', true);
-        $rhs = $this->val('rhs', true);
+        $lhs = $this->val('lhs');
+        $rhs = $this->val('rhs');
+        $strict = $this->val('strict', true);
         $operator = $this->val('operator', true);
 
-        switch ($operator) {
-            case '==':
-                $result = $lhs == $rhs;
-                break;
-            case '!=':
-                $result = $lhs != $rhs;
-                break;
-            case '>':
-                $result = $lhs > $rhs;
-                break;
-            case '>=':
-                $result = $lhs >= $rhs;
-                break;
-            case '<':
-                $result = $lhs < $rhs;
-                break;
-            case '<=':
-                $result = $lhs <= $rhs;
-                break;
-            default:
-                throw new Core\ApiException("invalid operator: $operator", 1, $this->id);
-            break;
+        if ($strict && $lhs->getType() != $rhs->getType()) {
+            $doThen = false;
+        } else {
+            $lhs = $lhs->getData();
+            $rhs = $rhs->getData();
+            switch ($operator) {
+                case '==':
+                    $doThen = $lhs == $rhs;
+                    break;
+                case '!=':
+                    $doThen = $lhs != $rhs;
+                    break;
+                case '>':
+                    $doThen = $lhs > $rhs;
+                    break;
+                case '>=':
+                    $doThen = $lhs >= $rhs;
+                    break;
+                case '<':
+                    $doThen = $lhs < $rhs;
+                    break;
+                case '<=':
+                    $doThen = $lhs <= $rhs;
+                    break;
+                default:
+                    throw new Core\ApiException("invalid operator: $operator", 1, $this->id);
+            }
         }
 
-        if ($result) {
-            return $this->val('then');
-        } else {
-            return $this->val('else');
+        if ($doThen) {
+            return $this->meta->then;
         }
+        return $this->meta->else;
     }
 }
