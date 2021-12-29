@@ -125,10 +125,12 @@ class Api
         $meta = json_decode($resource->getMeta());
         $this->logger->debug('api', 'meta: ' . print_r($meta, true));
 
+        $parser = new TreeParser($this->request, $this->db, $this->logger);
+
         // validate user access rights for the call.
         if (!empty($meta->security)) {
             $this->logger->debug('api', 'Process security: ' . print_r($meta->security, true));
-            $this->crawlMeta($meta->security);
+            $parser->crawlMeta($meta->security);
         }
 
         // fetch the cache of the call, and process into output if it is not stale
@@ -142,14 +144,14 @@ class Api
             $fragments = $meta->fragments;
             foreach ($fragments as $fragKey => $fragVal) {
                 $this->logger->debug('api', 'Process fragment: ' . print_r($fragVal, true));
-                $fragments->$fragKey = $this->crawlMeta($fragVal);
+                $fragments->$fragKey = $parser->crawlMeta($fragVal);
             }
             $this->request->setFragments($fragments);
         }
 
         // process the call
         $this->logger->debug('api', 'Process resource: ' . print_r($meta->process, true));
-        $result = $this->crawlMeta($meta->process);
+        $result = $parser->crawlMeta($meta->process);
         $this->logger->debug('api', 'Results: ' . print_r($result, true));
 
 
@@ -331,93 +333,13 @@ class Api
     }
 
     /**
-     * Process the meta data, using depth first iteration.
-     *
-     * @param mixed $meta The resource metadata.
-     *
-     * @return mixed
-     *
-     * @throws ApiException Let any exceptions flow through.
-     */
-    private function crawlMeta($meta)
-    {
-        if (!$this->helper->isProcessor($meta)) {
-            return $meta;
-        }
-
-        $finalId = $meta->id;
-        $stack = [$meta];
-        $results = [];
-
-        while (sizeof($stack) > 0) {
-            $node = array_shift($stack);
-            $processNode = true;
-
-            // traverse through each attribute on the node
-            foreach ($node as $value) {
-                // $value is a processor and has not been calculated yet, add it to the front of $stack
-                if ($this->helper->isProcessor($value) && !isset($results[$value->id])) {
-                    if ($processNode) {
-                        array_unshift($stack, $node);
-                        // We have the first instance of an unprocessed attribute, so re-add $node to the stack
-                    }
-                    array_unshift($stack, $value);
-                    $processNode = false;
-                } elseif (is_array($value)) {
-                    // $value is an array of values, add to $stack
-                    foreach ($value as $item) {
-                        if ($this->helper->isProcessor($item) && !isset($results[$item->id])) {
-                            if ($processNode) {
-                                array_unshift($stack, $node);
-                                // We have the first instance of an unprocessed attribute, so re-add $node to the stack
-                            }
-                            array_unshift($stack, $item);
-                            $processNode = false;
-                        }
-                    }
-                }
-            }
-
-            // No new attributes have been added to the stack, so we can process the node
-            if ($processNode) {
-                // traverse through each attribute on the node and place values from $results into $node
-                foreach ($node as $key => $value) {
-                    if ($this->helper->isProcessor($value)) {
-                        // single processor - if value exists in $results,
-                        // replace value in $node with value from $results
-                        if (isset($results[$value->id])) {
-                            $node->{$key} = $results[$value->id];
-                            unset($results[$value->id]);
-                        }
-                    } elseif (is_array($value)) {
-                        // array of values - loop through values and if value exists in $results,
-                        // replace indexed value in $node with value from $results
-                        foreach ($value as $index => $item) {
-                            if ($this->helper->isProcessor($item) && isset($results[$item->id])) {
-                                $node->{$key}[$index] = $results[$item->id];
-                                unset($results[$item->id]);
-                            }
-                        }
-                    }
-                }
-
-                $classStr = $this->helper->getProcessorString($node->processor);
-                $class = new $classStr($node, $this->request, $this->db, $this->logger);
-                $results[$node->id] = $class->process();
-            }
-        }
-
-        return $results[$finalId];
-    }
-
-    /**
      * Get the formatted output.
      *
      * @param mixed $data Data to format.
      *
      * @return mixed
      *
-     * @throws ApiException Let any exceptions flow through.
+     * @throws ApiException
      */
     private function getOutput($data)
     {
@@ -460,8 +382,8 @@ class Api
      * @param int|null $index Index in the output array.
      *
      * @return mixed
-     *
-     * @throws ApiException Invalid output processor.
+     * 
+     * @throws ApiException
      */
     private function processOutputResponse(array $meta, $data, int $index = null)
     {
