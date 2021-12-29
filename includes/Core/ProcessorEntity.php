@@ -61,33 +61,46 @@ abstract class ProcessorEntity extends Entity
      * @var array Details of the processor.
      *
      * Indexes:
-     *  name: Human readable name of the processor.
+     *  'name' (string): Human readable name of the processor.
      *
-     *  machineName: Machine name of the processor.
+     *  'machineName' (string): Machine name of the processor in snake case.
      *
-     *  description: Description of the processor.
+     *  'description' (string): Description of the processor.
      *
-     *  menu: Lists the immediate menu parents.
+     *  'menu' (string): Lists the immediate menu parents.
      *
      *    examples:
      *      'menu' => 'menu1' - belongs to menu1
      *
-     *  input: List the input nodes for this processor
+     *  'conditional' (optional, boolean):
+     *
+     *    ApiOpenStudio usually parses the node tree using depth-first iteration. In some cases, this may be wasteful
+     *    because a processor may require conditional branching, in which case, we do not want to parse all comparison
+     *    values until we know what branch we will take, i.e. in if_then_else processor, we do not need to process both
+     *    the 'then' and the 'else' branches.
+     *
+     *    If omitted or set to false:
+     *       The parsing will continue as normal (depth-first).
+     *
+     *    If set to true:
+     *      The processor will be calculated and then the result branch will be returned and added to the stack.
+     *
+     *  'input': List the input nodes for this processor
      *    This is an array with the following indexes:
      *
-     *    description (string): description of what the processor does
+     *    'description' (string): description of what the processor does
      *
-     *    cardinality: (int min, mixed max)
+     *    'cardinality': (int min, mixed max)
      *      e.g. [0, 1]
      *      max can be integer or '*'. '*' = infinite
      *
-     *    literalAllowed (boolean): Allow liter values.
+     *    'literalAllowed' (boolean): Allow liter values.
      *
-     *    limitValues (array|mixed): Limit the sult values passed into the processor.
+     *    'limitValues' (array|mixed): Limit the sult values passed into the processor.
      *
-     *    limitProcessors (array|string): Limit the input processors.
+     *    'limitProcessors' (array|string): Limit the input processors.
      *
-     *    limitTypes: (array): an array of input type this processor will accept.
+     *    'limitTypes' (array): an array of input type this processor will accept.
      *      Possible values:
      *        file
      *        literal
@@ -97,6 +110,8 @@ abstract class ProcessorEntity extends Entity
      *        text
      *        float
      *        bool
+     *
+     *    'conditional' (optional): In the case of branching processors (see 'preprocess' above), this indicates if the input is a conditional input or required for the logic comparison.
      *
      *    examples:
      *      input => [
@@ -302,72 +317,6 @@ abstract class ProcessorEntity extends Entity
             $params['direction'] = $direction;
         }
         return $params;
-    }
-
-    /**
-     * Get the accids for accounts that the user has roles for.
-     *
-     * @param integer $uid User ID.
-     *
-     * @throws ApiException
-     *
-     * @return array
-     */
-    protected function getUserAccids(int $uid): array
-    {
-        $accountMapper = new AccountMapper($this->db, $this->logger);
-        $accounts = $accountMapper->findAllForUser($uid);
-        $accids = [];
-        foreach ($accounts as $account) {
-            $accids[] = $account->getAccid();
-        }
-        return $accids;
-    }
-
-    /**
-     * Get the appids for applications that the user has roles for.
-     *
-     * @param integer $uid User ID.
-     *
-     * @return DataContainer Array of appid.
-     *
-     * @throws ApiException Exception flowing though.
-     */
-    protected function getUserAppids(int $uid): DataContainer
-    {
-        $userRoleMapper = new UserRoleMapper($this->db, $this->logger);
-        $applicationMapper = new ApplicationMapper($this->db, $this->logger);
-        $userRoles = $userRoleMapper->findByFilter(['col' => ['uid' => $uid]]);
-        $appids = [];
-
-        foreach ($userRoles as $userRole) {
-            $appid = $userRole->getAppid();
-            $accid = $userRole->getAccid();
-
-            if (empty($accid)) {
-                $applications = $applicationMapper->findAll();
-                $appids = [];
-                foreach ($applications as $application) {
-                    $appids[] = $application->getAppid();
-                }
-                return new DataContainer($appids, 'array');
-            }
-
-            if (empty($appid)) {
-                $applications = $applicationMapper->findByAccid($accid);
-                foreach ($applications as $application) {
-                    if (!in_array($application->getAppid(), $appids)) {
-                        $appids[] = $application->getAppid();
-                    }
-                }
-            } else {
-                if (!in_array($appid, $appids)) {
-                    $appids[] = $appid;
-                }
-            }
-        }
-
-        return new DataContainer($appids, 'array');
     }
 
     /**
