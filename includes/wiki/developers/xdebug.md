@@ -1,69 +1,73 @@
 Configure Xdebug in PhpStorm
 ============================
 
-Turn on xDebug in ```.env```:
+The following assumes that you are using
+[apiopenstudio_docker_dev](https://gitlab.com/apiopenstudio/apiopenstudio_docker_dev).
+
+Enable Xdebug in docker
+-----------------------
+
+The dockerfile is configured toi create a build from ```php:n.n-fpm```,
+and you can enable the build to include the xDebug packages using a simple
+environment variable,
+
+Turn on Xdebug in ```.env``` in your checkout of
+[apiopenstudio_docker_dev](https://gitlab.com/apiopenstudio/apiopenstudio_docker_dev):
 
     WITH_XDEBUG=true
 
-rebuild your docker containers
+Rebuild your docker containers
 
     docker-compose build
+
+Or
+
+    docker-compose up -d --build
 
 PHPStorm configurations
 -----------------------
 
-### Set the port defined in .env
+### Set the port
 
-In PhpStorm, go to PhpStorm -> Preferences -> Languages and Frameworks -> PHP ->
-Debug.
-
-Make sure you have the same port that you have configured previously in "
-XDEBUG_CONFIG" environment variable:
+In PhpStorm, go to PhpStorm -> Preferences -> PHP -> Debug.
 
 ![Set xDebug port][set_xdebug_port]
 
 ### Configure a server.
 
-This is how PHPStorm will map the file paths in your local system to the ones in
-your container.
+This is how PHPStorm will map the local file paths to the ones in your
+container.
 
-Go to File -> Settings -> Languages and Frameworks -> PHP -> Servers
+Go to File -> Settings -> PHP -> Servers
 
 ![Configure the xDebug server][xdebug_server]
 
-Give a name to the server. It should match the value you have defined in your "
-PHP_IDE_CONFIG" environment variable, i.e. "apiopenstudio".
+Give a name to the server. It should be a recognisable name, so you can identify
+it later, i.e. "apiopenstudio".
 
-The "host" and "port" is how will access your application. In this case is the
-host is a mac, in other cases, you should use "localhost". The default port for
-xdebug 3 is now 9003.
-
-Set the path mappings to map your local environment project to "/var/www/html"
-in docker.
+Ensure you have "Use path mappings" checked, and edit the RHS to
+```/var/www/html/api```.
 
 Click "Apply" to save your configurations.
 
-### Configure the remote debugger
+Configuring Xdebug for ApiOpenStudio Admin
+------------------------------------------
 
-On the top right, click on "edit configurations":
+Depending on how you have set up your projects, and you have admin in a
+separate project, you will also need to set up servers as above, for your admin
+project.
 
-Click in the green "plus" sign at the top left and select "PHP Remote Debug"
-from the list.
+The remote paty mapping will be ```/var/www/html/admin```.
 
-Now configure it like this:
+Links
+-----
 
-![Configure the xDebug remote debugger][xdebug_remote_debug]
-
-Make sure you associate it with the previously created "server" definition.
-Use "PHPSTORM" as idekey.
-
-Your IDE should be now correctly configured. Lets test.
-
-## Links
-
-* [docker-phpstorm-and-xdebug-the-definitive-guide-14og][the_definitive_guide]
+* [Setup Step Debugging in PHP with Xdebug 3 and Docker Compose][setup_step_debugging_php_xdebug3_docker]
+* [Create a PHP debug server configuration][creating_a_php_debug_server_configuration]
+* [Conditional COPY/ADD in Dockerfile?][conditional_copy_add_in_dockerfile]
 
 [set_xdebug_port]: images/xdebug_port.png
 [xdebug_server]: images/xdebug_server.png
-[xdebug_remote_debug]: images/xdebug_remote_debug.png
-[the_definitive_guide]: https://dev.to/brpaz/docker-phpstorm-and-xdebug-the-definitive-guide-14og
+[setup_step_debugging_php_xdebug3_docker]: https://matthewsetter.com/setup-step-debugging-php-xdebug3-docker
+[creating_a_php_debug_server_configuration]: https://www.jetbrains.com/help/phpstorm/creating-a-php-debug-server-configuration.html
+[conditional_copy_add_in_dockerfile]: https://www.py4u.net/discuss/1621084
