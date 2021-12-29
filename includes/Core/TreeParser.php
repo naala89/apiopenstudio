@@ -58,12 +58,6 @@ class TreeParser
 
     /**
      * @var array
-     *   Stack of node processing node results.
-     */
-    protected array $conditionalStack = [];
-
-    /**
-     * @var array
      *   Stack of processed node results.
      */
     protected array $resultStack = [];
