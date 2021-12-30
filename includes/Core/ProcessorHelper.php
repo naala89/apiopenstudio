@@ -71,8 +71,12 @@ class ProcessorHelper
      */
     public function isProcessor(&$obj): bool
     {
-        if (is_object($obj) && isset($obj->processor) && isset($obj->id)) {
-            return true;
+        if (is_object($obj)) {
+            return (isset($obj->processor) && isset($obj->id));
+        }
+        if (is_array($obj)) {
+            return (isset($obj['processor']) && isset($obj['id']));
+
         }
         return false;
     }
