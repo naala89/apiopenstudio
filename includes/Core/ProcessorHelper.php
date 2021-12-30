@@ -76,7 +76,6 @@ class ProcessorHelper
         }
         if (is_array($obj)) {
             return (isset($obj['processor']) && isset($obj['id']));
-
         }
         return false;
     }
