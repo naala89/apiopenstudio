@@ -111,7 +111,8 @@ abstract class ProcessorEntity extends Entity
      *        float
      *        bool
      *
-     *    'conditional' (optional): In the case of branching processors (see 'preprocess' above), this indicates if the input is a conditional input or required for the logic comparison.
+     *    'conditional' (optional): In the case of branching processors (see 'preprocess' above),
+     *       this indicates if the input is a conditional input or required for the logic comparison.
      *
      *    examples:
      *      input => [

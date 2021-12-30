@@ -24,7 +24,8 @@ use stdClass;
  * Crawl through the processor node tree, using depth-first iteration.
  *
  * The parse stores all un-processed nodes in $unprocessedStack.
- * Where a node has children, each child is placed at the head of the stack so that it can be processed before the parent.
+ * Where a node has children, each child is placed at the head of the stack so that it can be processed before the
+ * parent.
  *
  * Node results are placed into $resultStack.
  *

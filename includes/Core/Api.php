@@ -382,7 +382,7 @@ class Api
      * @param int|null $index Index in the output array.
      *
      * @return mixed
-     * 
+     *
      * @throws ApiException
      */
     private function processOutputResponse(array $meta, $data, int $index = null)
