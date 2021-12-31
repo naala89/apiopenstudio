@@ -38,6 +38,7 @@ function update_all_core_processors_beta(ADODB_mysqli $db)
     $install->createLink();
     $install->useDatabase();
     $install->createResources();
+    $install->importOpenApi();
 }
 
 /**

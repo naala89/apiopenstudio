@@ -512,8 +512,6 @@ class Install extends Script
      *
      * @param string|null $basePath
      * @param string|null $dirOpenapi
-     *
-     * @throws ApiException
      */
     public function importOpenApi(string $basePath = null, string $dirOpenapi = null)
     {
@@ -528,15 +526,25 @@ class Install extends Script
         }
         echo "OpenApi version configured to: $openapiVersion\n";
 
-        $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->config);
-        $openApiPathClassName = Utilities::getOpenApiPathClassPath($this->config);
+        try {
+            $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->config);
+            $openApiPathClassName = Utilities::getOpenApiPathClassPath($this->config);
+        } catch (ApiException $e) {
+            echo "Failed fetch the OpenAPI classes: " . $e->getMessage() . "\n";
+            exit;
+        }
         $openApiParentClass = new $openApiParentClassName();
         $openApiPathClass = new $openApiPathClassName();
 
         $dir = $basePath . $dirOpenapi;
         echo "Scanning $dir for files\n";
         $filenames = scandir($dir);
-        $logger = new MonologWrapper($this->config->__get(['debug']));
+        try {
+            $logger = new MonologWrapper($this->config->__get(['debug']));
+        } catch (ApiException $e) {
+            echo "Failed to set up the logger: " . $e->getMessage() . "\n";
+            exit;
+        }
         $accountMapper = new Db\AccountMapper($this->db, $logger);
         $applicationMapper = new Db\ApplicationMapper($this->db, $logger);
         $resourceMapper = new Db\ResourceMapper($this->db, $logger);
@@ -551,18 +559,28 @@ class Install extends Script
             $paths = $parent->paths;
             $parent->paths = new stdClass();
             if (isset($parent->swagger) && $parent->swagger == '2.0') {
-                $parent->host = $this->config->__get(['api', 'url']);
+                try {
+                    $parent->host = $this->config->__get(['api', 'url']);
+                } catch (ApiException $e) {
+                    echo "Failed to get config for API URL: " . $e->getMessage() . "\n";
+                    exit;
+                }
             } else {
                 $server = $parent->servers[0]->url;
                 $parts = explode('://', $server);
                 $parts = explode('/', $parts[1]);
                 $uri = '/' . $parts[sizeof($parts) - 2] . '/' . $parts[sizeof($parts) - 1];
                 $parent->servers = [];
-                foreach ($this->config->__get(['api', 'protocols']) as $protocol) {
-                    $url = $protocol . '://' . $this->config->__get(['api', 'url']) . $uri;
-                    $server = new stdClass();
-                    $server->url =  $url;
-                    $parent->servers[] = $server;
+                try {
+                    foreach ($this->config->__get(['api', 'protocols']) as $protocol) {
+                        $url = $protocol . '://' . $this->config->__get(['api', 'url']) . $uri;
+                        $server = new stdClass();
+                        $server->url =  $url;
+                        $parent->servers[] = $server;
+                    }
+                } catch (ApiException $e) {
+                    echo "Failed to get config for API protocols and URL: " . $e->getMessage() . "\n";
+                    exit;
                 }
             }
 
@@ -572,10 +590,10 @@ class Install extends Script
             $accountName = $openApiParentClass->getAccount();
             $applicationName = $openApiParentClass->getApplication();
 
-            $account = $accountMapper->findByName($accountName);
-            $application = $applicationMapper->findByAccidAppname($account->getAccid(), $applicationName);
-            $application->setOpenapi($openApiParentClass->export());
             try {
+                $account = $accountMapper->findByName($accountName);
+                $application = $applicationMapper->findByAccidAppname($account->getAccid(), $applicationName);
+                $application->setOpenapi($openApiParentClass->export());
                 $applicationMapper->save($application);
             } catch (ApiException $e) {
                 echo "Failed to save to application ($applicationName): " . $e->getMessage() . "\n";
@@ -588,9 +606,9 @@ class Install extends Script
                         $uri => [$method => $methodBody]
                     ], JSON_UNESCAPED_SLASHES)));
                     $trimmedUri = trim(preg_replace('/\/\{.*\}/', '', $uri), '/');
-                    $resource = $resourceMapper->findByAppIdMethodUri($application->getAppid(), $method, $trimmedUri);
-                    $resource->setOpenapi($openApiPathClass->export());
                     try {
+                        $resource = $resourceMapper->findByAppIdMethodUri($application->getAppid(), $method, $trimmedUri);
+                        $resource->setOpenapi($openApiPathClass->export());
                         $resourceMapper->save($resource);
                     } catch (ApiException $e) {
                         echo "Failed to save to resource ($method, $uri): " . $e->getMessage() . "\n";
