@@ -1,0 +1,50 @@
+name: Simple if then else
+
+description: Test simple for if then else processor
+
+uri: if_then_else/simple
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    id: Simple if then else security
+    processor: validate_token_roles
+    roles:
+        - Consumer
+        - Developer
+
+process:
+    processor: if_then_else
+    id: Simple if then else
+    lhs:
+        processor: var_get
+        id: Simple if then else get lhs
+        key: lhs
+    rhs:
+        processor: var_get
+        id: Simple if then else get rhs
+        key: rhs
+    operator:
+        processor: var_get
+        id: Simple if then else get operator
+        key: operator
+    strict:
+        processor: var_get
+        id: Simple if then else get strict
+        key: strict
+        nullable: true
+        expected_type: boolean
+    then:
+        processor: collection
+        id: Simple if then else then
+        items:
+            - This is true
+    else:
+        processor: collection
+        id: Simple if then else else
+        items:
+            - This is false

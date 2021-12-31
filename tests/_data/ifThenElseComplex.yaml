@@ -1,0 +1,94 @@
+name: Complex if then else
+
+description: Test complex for if then else processor
+
+uri: if_then_else/complex
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    id: Complex if then else security
+    processor: validate_token_roles
+    roles:
+        - Consumer
+        - Developer
+
+process:
+    processor: if_then_else
+    id: Complex if then else
+    lhs:
+        processor: var_get
+        id: Complex if then else get lhs
+        key:
+            processor: var_get
+            id: Complex if then else get lhs key
+            key: lhs_key
+    rhs:
+        processor: var_get
+        id: Complex if then else get rhs
+        key:
+            processor: var_get
+            id: Complex if then else get rhs key
+            key: rhs_key
+    operator:
+        processor: var_get
+        id: Complex if then else get operator
+        key: operator
+    then:
+        processor: collection
+        id: Complex if then else then collection
+        items:
+            - 34
+            - 42
+            -
+                processor: if_then_else
+                id: Complex if then else then collection if_then_else 1
+                lhs:
+                    processor: var_get
+                    id: Complex if then else then collection if_then_else 1 lhs var_get
+                    key: key1
+                rhs:
+                    processor: var_get
+                    id: Complex if then else then collection if_then_else 1 rhs var_get
+                    key: key2
+                operator: ">"
+                then:
+                    processor: literal
+                    id: lteral 1
+                    value: "key1 > key2"
+                else:
+                    processor: literal
+                    id: lteral 2
+                    value: "key1 < key2"
+            -
+                processor: if_then_else
+                id: Complex if then else then collection if_then_else 2
+                lhs:
+                    processor: var_get
+                    id: Complex if then else then collection if_then_else 2 lhs var_get
+                    key: key2
+                rhs:
+                    processor: var_get
+                    id: Complex if then else then collection if_then_else 2 rhs var_get
+                    key: key1
+                operator: ">"
+                then:
+                    processor: literal
+                    id: lteral 3
+                    value: "key2 > key1"
+                else:
+                    processor: literal
+                    id: lteral 4
+                    value: "key2 < key1"
+            - Hello
+    else:
+        processor: collection
+        id: Complex if then else else collection
+        items:
+            - this
+            - is
+            - else
