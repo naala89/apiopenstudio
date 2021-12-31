@@ -219,8 +219,8 @@ class Update extends Script
             foreach ($functions as $function) {
                 $docblock = $phpDocFactory->getFunctionDoc($function);
                 if (!$docblock->hasTag('version')) {
-                    echo "Error: No version found in the PHPDoc in $function\n";
-                    exit;
+                    echo "Skipping $function: No version found in the PHPDoc\n";
+                    continue;
                 }
                 $version = $docblock->getTag('version')[0]->getValue();
                 if (!preg_match("/([vV])+\\s?([0-9]\\.){2}[0-9]/", $version)) {
