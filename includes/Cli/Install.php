@@ -607,7 +607,11 @@ class Install extends Script
                     ], JSON_UNESCAPED_SLASHES)));
                     $trimmedUri = trim(preg_replace('/\/\{.*\}/', '', $uri), '/');
                     try {
-                        $resource = $resourceMapper->findByAppIdMethodUri($application->getAppid(), $method, $trimmedUri);
+                        $resource = $resourceMapper->findByAppIdMethodUri(
+                            $application->getAppid(),
+                            $method,
+                            $trimmedUri
+                        );
                         $resource->setOpenapi($openApiPathClass->export());
                         $resourceMapper->save($resource);
                     } catch (ApiException $e) {
