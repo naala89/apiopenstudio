@@ -56,7 +56,6 @@ class ProcessorHelper
             $classStr = "\\ApiOpenStudio\\$namespace\\$className";
             if (class_exists($classStr)) {
                 return $classStr;
-                break;
             }
         }
 

@@ -25,9 +25,10 @@ commit locally.
 See [Setting up a local GitLab runner][setup_gitlab_runner] for details on how
 to set up a local GitLab runner instance.
 
-Once set up, you can run the tests like so:
+Once set up, you can run individual tests like so:
 
-    $ gitlab-runner exec docker tests
+    $ gitlab-runner exec docker test-7.4
+    $ gitlab-runner exec docker test-8.0
 
 Runner issues
 -------------
