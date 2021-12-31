@@ -60,17 +60,16 @@ class Collection extends Core\ProcessorEntity
 
         $items = $this->val('items', true);
 
-        if ($this->isDataContainer($items)) {
-            if ($items->getType == 'array') {
-                return $items;
+        if (is_array($items)) {
+            foreach ($items as $key => $item) {
+                if ($this->isDataContainer($item)) {
+                    $items[$key] = $item->getData();
+                }
             }
-            // Convert the container of single type into a container of array.
-            return new Core\DataContainer([$items], 'array');
-        }
-
-        // Convert single value into an array container.
-        if (!is_array($items)) {
-            return new Core\DataContainer([$items], 'array');
+        } elseif (empty($items)) {
+            $items = [];
+        } else {
+            $items = [$items];
         }
 
         return new Core\DataContainer($items, 'array');
