@@ -54,15 +54,6 @@ class VarField extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => '',
             ],
-            'array' => [
-                'description' => 'Array to be converted to a field. This can only have one index.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['array'],
-                'limitValues' => [],
-                'default' => [],
-            ],
         ],
     ];
 
@@ -77,17 +68,8 @@ class VarField extends Core\ProcessorEntity
     {
         parent::process();
 
-        $array = $this->val('array', true);
         $key = $this->val('key', true);
         $value = $this->val('value', true);
-
-        if (!empty($array)) {
-            if (sizeof($array) > 1) {
-                throw new Core\ApiException('Cannot have more than one index in an input array.', 0, $this->id, 417);
-            }
-            $keys = array_keys($array);
-            return new Core\DataContainer([$keys[0] => $array[$keys[0]]], 'array');
-        }
 
         return new Core\DataContainer([$key => $value], 'array');
     }

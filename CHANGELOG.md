@@ -144,3 +144,13 @@ ApiOpenStudio 1.0.0-alpha3
 - Implemented casting on all input vars like VarPost.
 - Create/update CRUD processors now return the value result, rather than 
   true/false.
+
+ApiOpenStudio 1.0.0-beta
+========================
+
+- Implemented full OpenAPI support and generation.
+- Separated the node tree traversal from core Api class.
+- Implemented conditional logic in the node tree traversal.
+- If/Then/Else processor.
+- More functional tests.
+- Deprecated ```array``` input in ```var_field```.
