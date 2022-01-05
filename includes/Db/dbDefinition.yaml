@@ -37,7 +37,7 @@ core:
   columns:
     version: { type: varchar(255), notnull: true, comment: current core version }
   data:
-    - { version: 1.0.0-alpha3 }
+    - { version: 1.0.0-beta }
 
 external_user:
   columns:
