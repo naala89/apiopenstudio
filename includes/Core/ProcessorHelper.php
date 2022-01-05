@@ -33,7 +33,7 @@ class ProcessorHelper
      * Return processor namespace and class name string.
      *
      * @param string $className Class name of processor.
-     * @param array|null $namespaces Namepsaces to search.
+     * @param array|null $namespaces Namespaces to search.
      *
      * @return string Class string.
      *
@@ -43,6 +43,9 @@ class ProcessorHelper
     {
         if (empty($className)) {
             throw new ApiException('empty processor name', 1, -1, 406);
+        }
+        if (empty($namespaces) && strpos($className, "\\") !== false) {
+            return $className;
         }
         $namespaces = empty($namespaces) ? $this->namespaces : $namespaces;
         $className = str_replace('-', '_', $className);
