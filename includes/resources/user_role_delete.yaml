@@ -1,6 +1,6 @@
 # User Role delete resource.
 #
-# @package   Apiopenstudio
+# @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
 #            If a copy of the license was not distributed with this file,
 #            You can obtain one at https://www.apiopenstudio.com/license/.
