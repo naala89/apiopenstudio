@@ -14,14 +14,16 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ApiException;
 
 /**
  * Class VarTemporary
  *
  * Processor class to define a temporary variable (stored in the request session),
  */
-class VarTemporary extends Core\ProcessorEntity
+class VarTemporary extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -32,7 +34,7 @@ class VarTemporary extends Core\ProcessorEntity
         'name' => 'Var (Temporary)',
         'machineName' => 'var_temporary',
         // phpcs:ignore
-        'description' => 'A temporarily stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time during your resource call. The value can be deleted, updated and fetched in future resource.',
+        'description' => 'A temporarily stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time during your resource call. The value can be deleted, updated and fetched in future resource. If the process fails (for whatever reason) and "strict" is set to true, then an exception will be thrown, otherwise false will be returned.',
         'menu' => 'Primitive',
         'input' => [
             'key' => [
@@ -49,7 +51,7 @@ class VarTemporary extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => ['text'],
+                'limitTypes' => [],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -78,42 +80,49 @@ class VarTemporary extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process()
+    public function process(): DataContainer
     {
         parent::process();
 
-        $name = $this->val('name');
-        $strict = !empty($this->meta->strict) ? $this->val('strict') : 1;
-        $operation = $this->val('operation');
+        $key = $this->val('key', true);
+        $value = $this->val('value', true);
+        $strict = $this->val('strict', true);
+        $operation = $this->val('operation', true);
 
         switch ($operation) {
             case 'save':
-                $_SESSION[$name] = $this->meta->value;
-                return new Core\DataContainer('true', 'text');
-            break;
+                $_SESSION[$key] = $value;
+                $result = true;
+                break;
             case 'delete':
-                if (!isset($_SESSION[$name])) {
+                if (!isset($_SESSION[$key])) {
                     if ($strict) {
-                        throw new Core\ApiException('could not delete variable, does not exist', 6, $this->id, 417);
+                        throw new ApiException('could not delete variable, does not exist', 6, $this->id, 417);
                     }
-                    return new Core\DataContainer('true', 'text');
+                    $result = false;
+                } else {
+                    unset($_SESSION[$key]);
+                    $result = true;
                 }
-                unset($_SESSION[$name]);
-                return new Core\DataContainer('true', 'text');
-            break;
+                break;
             case 'fetch':
-                if ($strict && !isset($_SESSION[$name])) {
-                    throw new Core\ApiException('could not fetch variable, does not exist', 6, $this->id, 417);
+                if (!isset($_SESSION[$key])) {
+                    if ($strict) {
+                        throw new ApiException('could not fetch variable, does not exist', 6, $this->id, 417);
+                    }
+                    $result = false;
+                } else {
+                    $result = $_SESSION[$key];
                 }
-                return new Core\DataContainer($_SESSION[$name], 'text');
-            break;
+                break;
             default:
-                throw new Core\ApiException("invalid operation: $operation", 6, $this->id, 417);
-            break;
+                throw new ApiException("invalid operation: $operation", 6, $this->id, 417);
         }
+
+        return new DataContainer($result);
     }
 }
