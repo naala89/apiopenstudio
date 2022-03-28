@@ -19,7 +19,7 @@ security:
 process:
   processor: concatenate
   id: test resource with bad min process
-  sources:
+  items:
     - zsdkfjh
 
 output:

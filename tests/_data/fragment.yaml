@@ -19,7 +19,7 @@ security:
 process:
   processor: concatenate
   id: 3
-  sources:
+  items:
     - processor: fragment
       name: frag1
       id: 4
