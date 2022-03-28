@@ -129,7 +129,8 @@ class Api
         // validate user access rights for the call.
         if (!empty($meta->security)) {
             $this->logger->debug('api', 'Process security: ' . print_r($meta->security, true));
-            $parser->crawlMeta($meta->security);
+            $parser->pushToProcessingStack($meta->security);
+            $parser->crawlMeta();
         }
 
         // fetch the cache of the call, and process into output if it is not stale
@@ -143,14 +144,16 @@ class Api
             $fragments = $meta->fragments;
             foreach ($fragments as $fragKey => $fragVal) {
                 $this->logger->debug('api', 'Process fragment: ' . print_r($fragVal, true));
-                $fragments->$fragKey = $parser->crawlMeta($fragVal);
+                $parser->pushToProcessingStack($fragVal);
+                $fragments->$fragKey = $parser->crawlMeta();
             }
             $this->request->setFragments($fragments);
         }
 
         // process the call
         $this->logger->debug('api', 'Process resource: ' . print_r($meta->process, true));
-        $result = $parser->crawlMeta($meta->process);
+        $parser->pushToProcessingStack($meta->process);
+        $result = $parser->crawlMeta();
         $this->logger->debug('api', 'Results: ' . print_r($result, true));
 
 
