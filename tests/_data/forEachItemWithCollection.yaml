@@ -1,0 +1,94 @@
+# @TODO: Unused: Unable to run this in Functional tests, because for_each_item uses the session internally.
+name: For...each using a collection
+
+description: For...each using a collection
+
+uri: for_each/collection
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    id: For/each collection security
+    processor: validate_token_roles
+    roles:
+        - Consumer
+        - Developer
+
+process:
+    processor: for_each_item
+    id: For/each collection foreach
+    input:
+        processor: collection
+        id: For/each collection input
+        items:
+            - first
+            - second
+            - third
+            - final
+    process_loop:
+        processor: if_then_else
+        id: for/each collection if_then_else
+        lhs:
+            processor: var_store_read
+            id: for/each collection if_then_else test exists
+            key: for_each_item_test_result
+            operation: fetch
+            strict: false
+        operator: '!='
+        rhs: false
+        then:
+            processor: var_store_update
+            id: for/each collection if_then_else then
+            operation: save
+            key: for_each_item_test_result
+            value:
+                processor: concatenate
+                id: for/each collection if_then_else then concatenate
+                items:
+                    -
+                        processor: var_store_read
+                        id: for/each collection if_then_else then existing
+                        key: for_each_item_test_result
+                        operation: fetch
+                        strict: false
+                    - ', '
+                    -   processor: var_temporary
+                        id: for/each collection if_then_else then existing
+                        key: For/each collection foreach.key
+                        operation: fetch
+                        strict: false
+                    - ': '
+                    -   processor: var_temporary
+                        id: for/each collection if_then_else then existing
+                        key: For/each collection foreach.val
+                        operation: fetch
+                        strict: false
+        else:
+            processor: var_store_create
+            id: for/each collection if_then_else else
+            operation: save
+            key: for_each_item_test_result
+            value:
+                processor: concatenate
+                id: for/each collection if_then_else else concatenate
+                items:
+                    -   processor: var_temporary
+                        id: for/each collection if_then_else then else
+                        key: For/each collection foreach.key
+                        operation: fetch
+                        strict: false
+                    - ': '
+                    -   processor: var_temporary
+                        id: for/each collection if_then_else then else
+                        key: For/each collection foreach.val
+                        operation: fetch
+                        strict: false
+    process_after:
+        processor: var_store_read
+        id: for/each collection post_process
+        key: for_each_item_test_result
+        operation: fetch

@@ -19,7 +19,7 @@ security:
 process:
   processor: concatenate
   id: 3
-  sources:
+  items:
     - field1
     - field2
     - field3

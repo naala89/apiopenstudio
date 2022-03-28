@@ -3,12 +3,13 @@
   "template": "bookdown/themes",
   "theme": {
     "toc": {
-      "collapsibleFromLevel": 1
+      "collapsibleFromLevel": 2
     }
   },
   "content": [
     "error-responses.md",
     "resources.md",
+    "logic/bookdown.json",
     "configuring-debug.md",
     "3rd-party-packages/bookdown.json",
     "contributing/bookdown.json",

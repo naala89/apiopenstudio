@@ -14,14 +14,16 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ApiException;
 
 /**
  * Class Collection
  *
  * Processor class to define a collection.
  */
-class Collection extends Core\ProcessorEntity
+class Collection extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -49,11 +51,11 @@ class Collection extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -71,6 +73,6 @@ class Collection extends Core\ProcessorEntity
             $items = [$items];
         }
 
-        return new Core\DataContainer($items, 'array');
+        return new DataContainer($items, 'array');
     }
 }

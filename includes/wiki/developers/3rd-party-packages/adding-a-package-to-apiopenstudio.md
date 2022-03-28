@@ -22,7 +22,7 @@ have already set that for you in the ```machineName``` attribute, e.g.
     ...
 
 Links
-=====
+-----
 
 * https://getcomposer.org/doc/05-repositories.md
 * https://medium.com/@sirajul.anik/composer-require-a-php-package-from-a-local-or-remote-repository-7e641bdbc824

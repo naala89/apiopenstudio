@@ -822,7 +822,7 @@ foreach ($goodIdentities as $goodIdentity) {
         [
             "error" => [
                 "code" => 6,
-                "message" => "Input 'sources' in processor 'test resource with bad min process' requires min 2.",
+                "message" => "Input 'items' in processor 'test resource with bad min process' requires min 2.",
                 "id" => 'resource_import_process'
             ]
         ]

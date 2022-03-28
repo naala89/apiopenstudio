@@ -14,14 +14,16 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\ApiException;
 
 /**
  * Class Collection
  *
  * Processor class to perform a concatenate operation.
  */
-class Concatenate extends Core\ProcessorEntity
+class Concatenate extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -31,17 +33,17 @@ class Concatenate extends Core\ProcessorEntity
     protected array $details = [
         'name' => 'Concatenate',
         'machineName' => 'concatenate',
-        'description' => 'Concatenate a series of strings or numbers into a single string.',
+        'description' => 'Concatenate a collection of strings or numbers.',
         'menu' => 'Data operation',
         'input' => [
-          'sources' => [
+          'items' => [
             'description' => 'The values to concatenate',
             'cardinality' => [2, '*'],
             'literalAllowed' => true,
-            'limitProcessors' => [],
+            'limitProcessors' => ['collection', 'var_object'],
             'limitTypes' => [],
             'limitValues' => [],
-            'default' => ''
+            'default' => []
           ],
         ],
     ];
@@ -49,20 +51,21 @@ class Concatenate extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
-        $sources = $this->val('sources');
+        $items = $this->val('items', true);
         $result = '';
-        foreach ($sources as $source) {
-            $result .= (string) $this->isDataContainer($source) ? $source->getData() : $source;
+
+        foreach ($items as $item) {
+            $result .= $this->isDataContainer($item) ? $item->getData() : $item;
         }
 
-        return new Core\DataContainer($result, 'text');
+        return new DataContainer($result, 'text');
     }
 }

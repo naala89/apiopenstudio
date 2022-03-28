@@ -27,8 +27,8 @@ to set up a local GitLab runner instance.
 
 Once set up, you can run individual tests like so:
 
-    $ gitlab-runner exec docker test-7.4
-    $ gitlab-runner exec docker test-8.0
+    gitlab-runner exec docker test-7.4
+    gitlab-runner exec docker test-8.0
 
 Runner issues
 -------------
@@ -38,7 +38,8 @@ Runner issues
 This is caused by a missing ```SSH_PRIVATE_KEY``` (which is usually a pipelines
 variable), and results in the following on your command line:
 
-    $ echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+
     Error loading key "(stdin)": invalid format
     [cmd] sh exited 1
     [cont-finish.d] executing container finish scripts...
