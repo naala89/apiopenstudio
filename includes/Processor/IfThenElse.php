@@ -14,14 +14,15 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\ApiException;
 
 /**
  * Class IfThenElse
  *
  * Processor class to if/then/else logic.
  */
-class IfThenElse extends Core\ProcessorEntity
+class IfThenElse extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -101,7 +102,7 @@ class IfThenElse extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
     public function process()
     {
@@ -113,7 +114,7 @@ class IfThenElse extends Core\ProcessorEntity
         $operator = $this->val('operator', true);
 
         if ($strict && $lhs->getType() != $rhs->getType()) {
-            $doThen = false;
+            $doThen = $operator == '!=';
         } else {
             $lhs = $lhs->getData();
             $rhs = $rhs->getData();
@@ -137,13 +138,10 @@ class IfThenElse extends Core\ProcessorEntity
                     $doThen = $lhs <= $rhs;
                     break;
                 default:
-                    throw new Core\ApiException("invalid operator: $operator", 1, $this->id);
+                    throw new ApiException("invalid operator: $operator", 1, $this->id);
             }
         }
 
-        if ($doThen) {
-            return $this->meta->then;
-        }
-        return $this->meta->else;
+        return $doThen ? $this->meta->then : $this->meta->else;
     }
 }
