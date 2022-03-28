@@ -22,7 +22,7 @@ use stdClass;
  *
  * Crawl through the processor node tree, using depth-first iteration.
  *
- * The parse stores all un-processed nodes in $unprocessedStack.
+ * The parser stores all un-processed nodes in $processingStack.
  * Where a node has children, each child is placed at the head of the stack so that it can be processed before the
  * parent.
  *
@@ -32,7 +32,8 @@ use stdClass;
  * and it's children results are removed from $resultStack.
  *
  * The crawler needs to also take into account conditional nodes. These branches should only be traversed,
- * based on the parent comparison results. This save unnecessary calculation of redundant branches.
+ * based on the parent comparison results. This save unnecessary calculation of redundant branches. These nodes are
+ * placed in the jitStack, and will only be processed once all the nodes in the $processingStack have been cleared.
  */
 class TreeParser
 {
@@ -51,14 +52,16 @@ class TreeParser
     private MonologWrapper $logger;
 
     /**
+     * Stack of nodes to be processed.
+     *
      * @var array
-     *   Stack of unprocessed nodes.
      */
-    protected array $unprocessedStack = [];
+    protected array $processingStack = [];
 
     /**
+     * Stack of processed node results.
+     *
      * @var array
-     *   Stack of processed node results.
      */
     protected array $resultStack = [];
 
@@ -80,8 +83,11 @@ class TreeParser
      * Constructor.
      *
      * @param Request $request
+     *   Request object.
      * @param ADOConnection $db
+     *   DB connection.
      * @param MonologWrapper $logger
+     *   Logger.
      */
     public function __construct(Request $request, ADOConnection $db, MonologWrapper $logger)
     {
@@ -92,18 +98,79 @@ class TreeParser
     }
 
     /**
-     * Process the metadata, using depth first iteration.
+     * Append a node tree structure to the end of the processingStack.
      *
-     * @param mixed $meta The resource metadata.
+     * @param array|stdClass $tree
+     *   Node tree to add to the stack.
+     */
+    public function pushToProcessingStack($tree)
+    {
+        $this->processingStack[] = $tree;
+    }
+
+    /**
+     * Fetch the element from the end of the processingStack.
+     *
+     * @return mixed|null
+     *   Value from the stack to be processed.
+     */
+    public function popFromProcessingStack()
+    {
+        return array_pop($this->processingStack);
+    }
+
+    /**
+     * Returns if the processing stack is empty.
+     *
+     * @return bool
+     *   Processing stack is empty.
+     */
+    public function processingStackEmpty(): bool
+    {
+        return empty($this->processingStack);
+    }
+
+  /**
+   * Add a value to thew result stack, indexed by its ID.
+   *
+   * @param $id
+   *   ID/Key for the result item.
+   * @param $val
+   *   Value for the result item.
+   */
+    public function addToResultStack($id, $val)
+    {
+        $this->resultStack[$id] = $val;
+    }
+
+  /**
+   * Fetch a value from the result stack.
+   * This will remove it from the result stack.
+   *
+   * @param $id
+   *
+   * @return mixed|null
+   *   Result value.
+   */
+    public function getFromResultStack($id)
+    {
+        if (isset($this->resultStack[$id])) {
+            $result = $this->resultStack[$id];
+            unset($this->resultStack[$id]);
+            return $result;
+        }
+        return null;
+    }
+
+    /**
+     * Process the metadata, using depth first iteration.
      *
      * @throws ApiException
      */
-    public function crawlMeta($meta)
+    public function crawlMeta()
     {
-        $this->unprocessedStack[] = $meta;
-
-        while (!empty($this->unprocessedStack)) {
-            $currentNode = array_pop($this->unprocessedStack);
+        while (!$this->processingStackEmpty()) {
+            $currentNode = $this->popFromProcessingStack();
 
             if ($this->helper->isProcessor($currentNode)) {
                 $this->processNode($currentNode);
@@ -111,9 +178,8 @@ class TreeParser
                 // currentNode is an array, process each item
                 foreach ($currentNode as $index => $item) {
                     if ($this->helper->isProcessor($item)) {
-                        if (isset($this->resultStack[$item->id])) {
-                            $currentNode[$index] = $this->resultStack[$item->id];
-                            unset($this->resultStack[$item->id]);
+                        if (($result = $this->getFromResultStack($item->id)) !== null) {
+                            $currentNode[$index] = $result;
                         } else {
                             $this->processNode($item);
                         }
@@ -122,7 +188,7 @@ class TreeParser
             }
         }
 
-        return array_shift($this->resultStack);
+        return array_pop($this->resultStack);
     }
 
     /**
@@ -137,23 +203,23 @@ class TreeParser
         $classStr = $this->helper->getProcessorString($node->processor);
         $class = new $classStr($node, $this->request, $this->db, $this->logger);
         $details = $class->details();
-        $preprocess = isset($details['conditional']) && $details['conditional'] == true;
+        $conditionalProcessor = isset($details['conditional']) && $details['conditional'];
 
-        foreach ((array) $node as $attributeId => $attribute) {
-            if ($this->helper->isProcessor($attribute)) {
-                if (isset($this->resultStack[$attribute->id])) {
-                    $node->{$attributeId} = $this->resultStack[$attribute->id];
-                    unset($this->resultStack[$attribute->id]);
-                } elseif (!$preprocess || $details['input'][$attributeId]['conditional'] == false) {
-                    $childNodes[] = $attribute;
+        $attributeIds = array_keys(get_object_vars($node));
+        foreach ($attributeIds as $attributeId) {
+            if ($this->helper->isProcessor($node->{$attributeId})) {
+                $conditionalAttribute = $details['input'][$attributeId]['conditional'] ?? false;
+                if (($result = $this->getFromResultStack($node->{$attributeId}->id)) !== null) {
+                    $node->{$attributeId} = $result;
+                } elseif (!$conditionalProcessor || !$conditionalAttribute) {
+                    $childNodes[] = $node->{$attributeId};
                 }
-            } elseif (is_array($attribute)) {
+            } elseif (is_array($node->{$attributeId})) {
                 // currentNode is an array, process each item
-                foreach ($attribute as $index => $item) {
+                foreach ($node->{$attributeId} as $index => $item) {
                     if ($this->helper->isProcessor($item)) {
-                        if (isset($this->resultStack[$item->id])) {
-                            $node->{$attributeId}[$index] = $this->resultStack[$item->id];
-                            unset($this->resultStack[$item->id]);
+                        if (($result = $this->getFromResultStack($item->id)) !== null) {
+                            $node->{$attributeId}[$index] = $result;
                         } else {
                             $childNodes[] = $item;
                         }
@@ -164,27 +230,30 @@ class TreeParser
 
         if (!empty($childNodes)) {
             $this->reprocessAfterChildren($node, $childNodes);
-        } elseif ($preprocess) {
+        } elseif ($conditionalProcessor) {
             // We have the result of the logic for a conditional processor.
             // The process() result is the meta for the branch to follow.
             $result = $class->process();
             $result->id = $node->id;
-            $this->unprocessedStack[] = $result;
+            $this->pushToProcessingStack($result);
         } else {
-            $this->resultStack[$node->id] = $class->process();
+            $this->addToResultStack($node->id, $class->process());
         }
     }
 
     /**
-     * Re-add a node to the unprocessedStack, after its child dependencies.
+     * Re-add a node to the processingStack, after its child dependencies.
+     *
      * @param $node
-     * @param $childNodes
+     *   Node to be processed last.
+     * @param array $childNodes
+     *   The modes children to be processed first.
      */
-    protected function reprocessAfterChildren($node, $childNodes)
+    protected function reprocessAfterChildren($node, array $childNodes)
     {
-        $this->unprocessedStack[] = $node;
+        $this->pushToProcessingStack($node);
         foreach ($childNodes as $childNode) {
-            $this->unprocessedStack[] = $childNode;
+            $this->pushToProcessingStack($childNode);
         }
     }
 }
