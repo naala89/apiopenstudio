@@ -19,6 +19,7 @@ use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\DataContainer;
 use ApiOpenStudio\Core\MonologWrapper;
 use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
@@ -75,11 +76,11 @@ class ResourceExport extends ProcessorEntity
      * ResourceExport constructor.
      *
      * @param mixed $meta Output meta.
-     * @param mixed $request Request object.
+     * @param Request $request Request object.
      * @param ADOConnection $db DB object.
      * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->resourceMapper = new ResourceMapper($db, $logger);
@@ -166,7 +167,7 @@ class ResourceExport extends ProcessorEntity
      */
     protected function getYaml(array $resource): string
     {
-        return  Yaml::dump($resource, Yaml::PARSE_OBJECT);
+        return  Yaml::dump($resource, 5000, 4, Yaml::PARSE_OBJECT);
     }
 
     /**

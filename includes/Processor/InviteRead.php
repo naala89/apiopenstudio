@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db;
 
 /**
@@ -104,11 +105,11 @@ class InviteRead extends Core\ProcessorEntity
      * InviteRead constructor.
      *
      * @param mixed $meta Output meta.
-     * @param mixed $request Request object.
+     * @param Request $request Request object.
      * @param ADOConnection $db DB object.
      * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->inviteMapper = new Db\InviteMapper($db, $logger);

@@ -55,7 +55,6 @@ class VarFloat extends Core\ProcessorEntity
      */
     public function process(): Core\DataContainer
     {
-
         $container = $this->val('value');
         if ($container->getType() != 'float') {
             $container->setType('float');

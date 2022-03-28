@@ -93,7 +93,7 @@ class ForEachItem extends ProcessorEntity
      */
     public function __construct(
         $meta,
-        Request $request,
+        Request &$request,
         ADOConnection $db = null,
         MonologWrapper $logger = null
     ) {

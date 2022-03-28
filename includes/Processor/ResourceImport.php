@@ -20,6 +20,7 @@ use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core\DataContainer;
 use ApiOpenStudio\Core\MonologWrapper;
 use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Core\ResourceValidator;
 use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\AccountMapper;
@@ -121,11 +122,11 @@ class ResourceImport extends ProcessorEntity
      * ResourceImport constructor.
      *
      * @param mixed $meta Output meta.
-     * @param mixed $request Request object.
+     * @param Request $request Request object.
      * @param ADOConnection $db DB object.
      * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Config();
