@@ -30,7 +30,7 @@ trait ConvertToHtmlTrait
      */
     public function fromEmptyToHtml($data): string
     {
-        $this->wrapDataHtmlFormat($data);
+        return $this->wrapDataHtmlFormat($data);
     }
 
     /**
@@ -87,23 +87,33 @@ trait ConvertToHtmlTrait
     /**
      * Convert array to HTML string.
      *
-     * @param $data
+     * @param array $data
      *
      * @return string
-     *
-     * @throws ApiException
      */
-    public function fromArrayToHtml($data): string
+    public function fromArrayToHtml(array $data): string
+    {
+        return $this->wrapDataHtmlFormat($this->fromArrayToDataList($data));
+    }
+
+    /**
+     * Convert array to HTML Data List string.
+     *
+     * @param array $data
+     *
+     * @return string
+     */
+    protected function fromArrayToDataList(array $data): string
     {
         $arrayString = '<dl>';
         foreach ($data as $key => $val) {
             if (is_array($val)) {
-                $val = $this->fromArrayToHtml($val);
+                $val = $this->fromArrayToDataList($val);
             }
             $arrayString .= "<dt>$key</dt><dd>$val</dd>";
         }
         $arrayString .= '</dl>';
-        return $this->wrapDataHtmlFormat($arrayString);
+        return $arrayString;
     }
 
     /**
@@ -112,8 +122,6 @@ trait ConvertToHtmlTrait
      * @param $data
      *
      * @return string
-     *
-     * @throws ApiException
      */
     public function fromJsonToHtml($data): string
     {
