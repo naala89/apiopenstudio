@@ -41,6 +41,8 @@ trait ConvertToXmlTrait
      * @param $data
      *
      * @return string
+     *
+     * @throws ApiException
      */
     public function fromBooleanToXml($data): string
     {
@@ -57,6 +59,8 @@ trait ConvertToXmlTrait
      * @param $data
      *
      * @return string
+     *
+     * @throws ApiException
      */
     public function fromIntegerToXml($data): string
     {
@@ -73,6 +77,8 @@ trait ConvertToXmlTrait
      * @param $data
      *
      * @return string
+     *
+     * @throws ApiException
      */
     public function fromFloatToXml($data): string
     {
@@ -89,6 +95,8 @@ trait ConvertToXmlTrait
      * @param $data
      *
      * @return string
+     *
+     * @throws ApiException
      */
     public function fromTextToXml($data): string
     {

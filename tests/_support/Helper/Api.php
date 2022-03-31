@@ -113,8 +113,8 @@ class Api extends Module
             \GuzzleHttp\json_encode(\GuzzleHttp\json_decode($response)),
             true
         );
-        if (isset($arr['token'])) {
-            $this->token = $arr['token'];
+        if (isset($arr['data']['token'])) {
+            $this->token = $arr['data']['token'];
         }
     }
 
@@ -145,9 +145,12 @@ class Api extends Module
         $this->getModule('REST')->seeResponseCodeIs(200);
         $this->getModule('REST')->seeResponseIsJson();
         $this->getModule('REST')->seeResponseMatchesJsonType([
-            'token' => 'string',
-            'uid' => 'integer',
-            'expires' => 'string',
+            'result' => 'string',
+            'data' => [
+                'token' => 'string',
+                'uid' => 'integer',
+                'expires' => 'string',
+            ],
         ]);
         $this->storeMyToken();
         $this->haveHttpHeader('Authorization', 'Bearer ' . $this->getMyStoredToken());

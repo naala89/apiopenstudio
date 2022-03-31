@@ -89,7 +89,17 @@ class Json extends Output
         $method = 'from' . ucfirst(strtolower($currentType)) . 'ToJson';
 
         try {
-            $this->data->setData($this->$method($this->data->getData()));
+            $data = $this->data->getData();
+            if (
+                $this->settings->__get(['api', 'wrap_json_in_response_object'])
+                && (
+                    !is_array($data)
+                    || (!isset($data['result']) && !isset($data['data']))
+                )
+            ) {
+                $data = ['result' => 'ok', 'data' => $data];
+            }
+            $this->data->setData($this->$method($data));
             $this->data->setType('json');
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), 6, $this->id, 400);

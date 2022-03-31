@@ -149,10 +149,7 @@ trait DetectTypeTrait
         }
         libxml_use_internal_errors(true);
         $testXml = simplexml_load_string($var);
-        if ($testXml) {
-            return true;
-        }
-        return false;
+        return $testXml !== false;
     }
 
     /**
@@ -179,6 +176,7 @@ trait DetectTypeTrait
         }
 
         libxml_use_internal_errors(true);
+        libxml_clear_errors();
         $doc = new DOMDocument();
         $doc->loadHTML($var);
         $errors = libxml_get_errors();
