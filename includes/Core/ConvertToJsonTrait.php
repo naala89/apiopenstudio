@@ -27,6 +27,8 @@ trait ConvertToJsonTrait
      * Convert empty to JSON.
      *
      * @param $data
+     *
+     * @return null
      */
     public function fromEmptyToJson($data)
     {
@@ -101,7 +103,7 @@ trait ConvertToJsonTrait
      */
     public function fromArrayToJson($data): string
     {
-        if (isset($data['data']) && is_nan($data['data'])) {
+        if (isset($data['data']) && is_numeric($data['data']) && is_nan($data['data'])) {
             $data['data'] = null;
         }
         return json_encode($data, true);
