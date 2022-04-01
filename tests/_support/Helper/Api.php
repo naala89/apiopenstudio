@@ -240,8 +240,8 @@ class Api extends Module
         );
         $resources = json_decode($this->getModule('REST')->response, true);
         $resid = 0;
-        if (!isset($resources['error'])) {
-            foreach ($resources as $resource) {
+        if (isset($resources['result']) && $resources['result'] == 'ok') {
+            foreach ($resources['data'] as $resource) {
                 if (
                     strtolower($resource['method']) == strtolower($yamlArr['method'])
                     && $resource['uri'] == $yamlArr['uri']
