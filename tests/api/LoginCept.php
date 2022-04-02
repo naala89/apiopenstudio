@@ -13,9 +13,12 @@ $I->sendPOST(
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseMatchesJsonType([
-    'token' => 'string',
-    'uid' => 'integer',
-    'expires' => 'string',
+    'result' => 'string',
+    'data' => [
+        'token' => 'string',
+        'uid' => 'integer',
+        'expires' => 'string',
+    ],
 ]);
 
 $I->wantTo('perform a successful login as account manager and see result');
@@ -30,9 +33,12 @@ $I->sendPOST(
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseMatchesJsonType([
-    'token' => 'string',
-    'uid' => 'integer',
-    'expires' => 'string',
+    'result' => 'string',
+    'data' => [
+        'token' => 'string',
+        'uid' => 'integer',
+        'expires' => 'string',
+    ],
 ]);
 
 $I->wantTo('perform a successful login as application manager and see result');
@@ -47,9 +53,12 @@ $I->sendPOST(
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseMatchesJsonType([
-    'token' => 'string',
-    'uid' => 'integer',
-    'expires' => 'string',
+    'result' => 'string',
+    'data' => [
+        'token' => 'string',
+        'uid' => 'integer',
+        'expires' => 'string',
+    ],
 ]);
 
 $I->wantTo('perform a successful login as developer and see result');
@@ -64,9 +73,12 @@ $I->sendPOST(
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseMatchesJsonType([
-    'token' => 'string',
-    'uid' => 'integer',
-    'expires' => 'string',
+    'result' => 'string',
+    'data' => [
+        'token' => 'string',
+        'uid' => 'integer',
+        'expires' => 'string',
+    ],
 ]);
 
 $I->wantTo('perform a successful login as consumer and see result');
@@ -81,9 +93,12 @@ $I->sendPOST(
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseMatchesJsonType([
-    'token' => 'string',
-    'uid' => 'integer',
-    'expires' => 'string',
+    'result' => 'string',
+    'data' => [
+        'token' => 'string',
+        'uid' => 'integer',
+        'expires' => 'string',
+    ],
 ]);
 
 $I = new ApiTester($scenario);
@@ -98,15 +113,14 @@ $I->sendPOST(
 );
 $I->seeResponseCodeIs(401);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(
-    [
-        'error' => [
-            'code' => 4,
-            'message' => 'Invalid username or password.',
-            'id' => 'generate_token_process',
-        ],
-    ]
-);
+$I->seeResponseContainsJson([
+    'result' => 'error',
+    'data' => [
+        'code' => 4,
+        'message' => 'Invalid username or password.',
+        'id' => 'generate_token_process',
+    ],
+]);
 
 $I = new ApiTester($scenario);
 $I->wantTo('perform a login with bad username see 401 with error object');
@@ -120,12 +134,11 @@ $I->sendPOST(
 );
 $I->seeResponseCodeIs(401);
 $I->seeResponseIsJson();
-$I->seeResponseContainsJson(
-    [
-        'error' => [
-            'code' => 4,
-            'message' => 'Invalid username or password.',
-            'id' => 'generate_token_process',
-        ],
-    ]
-);
+$I->seeResponseContainsJson([
+    'result' => 'error',
+    'data' => [
+        'code' => 4,
+        'message' => 'Invalid username or password.',
+        'id' => 'generate_token_process',
+    ],
+]);
