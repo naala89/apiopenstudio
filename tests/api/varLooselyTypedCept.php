@@ -13,7 +13,7 @@ $I->wantTo('populate a VarLooselyTyped with text and see the result.');
 $I->sendGet($uri . '/index1/index2', ['value' => 'text']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('text');
+$I->seeResponseContainsJson(['result' => 'ok', 'data' => 'text']);
 
 $I->wantTo('populate a VarLooselyTyped with true and see the result.');
 $I->sendGet($uri . '/index1/index2', ['value' => 'true']);
