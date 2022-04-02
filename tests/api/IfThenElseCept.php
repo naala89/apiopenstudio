@@ -236,7 +236,8 @@ $I->sendGet(
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    'error' => [
+    'result' => 'error',
+    'data' => [
         'id' => 'Simple if then else',
         'code' => 6,
         'message' => "Invalid value (-ne). Only '==', '!=', '>', '>=', '<', '<=' allowed in input 'operator'.",
@@ -265,11 +266,14 @@ $I->sendGet(
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    34,
-    42,
-    "key1 < key2",
-    "key2 > key1",
-    "Hello"
+    'result' => 'ok',
+    'data' => [
+        34,
+        42,
+        "key1 < key2",
+        "key2 > key1",
+        "Hello"
+    ]
 ]);
 
 $I->sendGet(
@@ -287,9 +291,12 @@ $I->sendGet(
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    'this',
-    'is',
-    'else',
+    'result' => 'ok',
+    'data' => [
+        'this',
+        'is',
+        'else',
+    ]
 ]);
 
 $I->wantTo('Test If Then Else processor with complex nesting with 1st nested if_then_else');
@@ -309,11 +316,14 @@ $I->sendGet(
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    34,
-    42,
-    "key1 > key2",
-    "key2 < key1",
-    "Hello"
+    'result' => 'ok',
+    'data' => [
+        34,
+        42,
+        "key1 > key2",
+        "key2 < key1",
+        "Hello"
+    ]
 ]);
 
 $I->sendGet(
@@ -331,9 +341,12 @@ $I->sendGet(
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    'this',
-    'is',
-    'else',
+    'result' => 'ok',
+    'data' => [
+        'this',
+        'is',
+        'else',
+    ]
 ]);
 
 $I->wantTo('Test If Then Else processor with complex nesting with 2nd nested if_then_else');
@@ -353,11 +366,14 @@ $I->sendGet(
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    34,
-    42,
-    "key1 < key2",
-    "key2 > key1",
-    "Hello"
+    'result' => 'ok',
+    'data' => [
+        34,
+        42,
+        "key1 < key2",
+        "key2 > key1",
+        "Hello"
+    ]
 ]);
 
 $I->sendGet(
@@ -375,9 +391,12 @@ $I->sendGet(
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    'this',
-    'is',
-    'else',
+    'result' => 'ok',
+    'data' => [
+        'this',
+        'is',
+        'else',
+    ]
 ]);
 
 $I->tearDownTestFromYaml($yaml);
