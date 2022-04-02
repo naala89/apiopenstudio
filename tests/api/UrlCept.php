@@ -1,5 +1,7 @@
 <?php
 
+use function PHPUnit\Framework\assertEquals;
+
 $I = new ApiTester($scenario);
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 $I->createResourceFromYaml('url.yaml');
@@ -22,14 +24,19 @@ $I->sendGet(
 );
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-// phpcs:ignore
-$I->seeResponseContainsJson([
-    "userId" => 1,
-    "id" => 1,
-    "title" => "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
-    // phpcs:ignore
-    "body" => "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
-]);
+$array = json_decode($I->getResponse(), true);
+assertEquals('ok', $array['result'], 'Assert we have an ok condition.');
+assertEquals(
+    [
+        'userId' => 1,
+        'id' => 1,
+        'title' => 'sunt aut facere repellat provident occaecati excepturi optio reprehenderit',
+        // phpcs:ignore
+        'body' => "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto",
+    ],
+    json_decode($array['data'], true),
+    'Assert the JSON response is correct.'
+);
 
 $I->deleteHeader('Authorization');
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
