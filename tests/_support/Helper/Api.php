@@ -278,8 +278,8 @@ class Api extends Module
             ]
         );
         $resources = json_decode($this->getModule('REST')->response, true);
-        if (!isset($resources['error'])) {
-            foreach ($resources as $resource) {
+        if ($resources['result'] != 'error') {
+            foreach ($resources['data'] as $resource) {
                 if (
                     strtolower($resource['method']) == strtolower($method)
                     && $resource['uri'] == $uri
