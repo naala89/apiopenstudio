@@ -28,29 +28,32 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(200);
     $I->seeResponseMatchesJsonType([
-        'uid' => 'integer',
-        'username' => 'string',
-        'hash' => 'string',
-        'passwordReset' => 'string',
-        'passwordResetTtl' => 'string',
-        'active' => 'integer',
-        'honorific' => 'string',
-        'nameFirst' => 'string',
-        'nameLast' => 'string',
-        'email' => 'string',
-        'company' => 'string',
-        'website' => 'string',
-        'addressStreet' => 'string',
-        'addressSuburb' => 'string',
-        'addressCity' => 'string',
-        'addressState' => 'string',
-        'addressCountry' => 'string',
-        'addressPostcode' => 'string',
-        'phoneMobile' => 'string',
-        'phoneWork' => 'string',
+        'result' => 'string',
+        'data' => [
+            'uid' => 'integer',
+            'username' => 'string',
+            'hash' => 'string',
+            'passwordReset' => 'string',
+            'passwordResetTtl' => 'string',
+            'active' => 'integer',
+            'honorific' => 'string',
+            'nameFirst' => 'string',
+            'nameLast' => 'string',
+            'email' => 'string',
+            'company' => 'string',
+            'website' => 'string',
+            'addressStreet' => 'string',
+            'addressSuburb' => 'string',
+            'addressCity' => 'string',
+            'addressState' => 'string',
+            'addressCountry' => 'string',
+            'addressPostcode' => 'string',
+            'phoneMobile' => 'string',
+            'phoneWork' => 'string',
+        ],
     ]);
     $response = json_decode($I->getResponse(), true);
-    $uid = $response['uid'];
+    $uid = $response['data']['uid'];
     $newUsers[$uid] = $response;
 
     $I->wantTo('Test user update for ' . $goodIdentity[0]);
@@ -78,29 +81,32 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(200);
     $I->seeResponseMatchesJsonType([
-        'uid' => 'integer',
-        'username' => 'string',
-        'hash' => 'string',
-        'passwordReset' => 'string',
-        'passwordResetTtl' => 'string',
-        'active' => 'integer',
-        'honorific' => 'string',
-        'nameFirst' => 'string',
-        'nameLast' => 'string',
-        'email' => 'string',
-        'company' => 'string',
-        'website' => 'string',
-        'addressStreet' => 'string',
-        'addressSuburb' => 'string',
-        'addressCity' => 'string',
-        'addressState' => 'string',
-        'addressCountry' => 'string',
-        'addressPostcode' => 'string',
-        'phoneMobile' => 'string',
-        'phoneWork' => 'string',
+        'result' => 'string',
+        'data' => [
+            'uid' => 'integer',
+            'username' => 'string',
+            'hash' => 'string',
+            'passwordReset' => 'string',
+            'passwordResetTtl' => 'string',
+            'active' => 'integer',
+            'honorific' => 'string',
+            'nameFirst' => 'string',
+            'nameLast' => 'string',
+            'email' => 'string',
+            'company' => 'string',
+            'website' => 'string',
+            'addressStreet' => 'string',
+            'addressSuburb' => 'string',
+            'addressCity' => 'string',
+            'addressState' => 'string',
+            'addressCountry' => 'string',
+            'addressPostcode' => 'string',
+            'phoneMobile' => 'string',
+            'phoneWork' => 'string',
+        ],
     ]);
     $response = json_decode($I->getResponse(), true);
-    $uid = $response['uid'];
+    $uid = $response['data']['uid'];
     $newUsers[$uid] = $response;
 }
 
@@ -117,15 +123,14 @@ foreach ($badIdentities as $badIdentity) {
         ]
     );
     $I->seeResponseCodeIs(403);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 4,
-                'message' => 'Permission denied.',
-                'id' => 'user_create_security',
-            ]
+    $I->seeResponseContainsJson([
+        'result' => 'error',
+        'data' => [
+            'code' => 4,
+            'message' => 'Permission denied.',
+            'id' => 'user_create_security',
         ]
-    );
+    ]);
 
     $I->wantTo('Test user update for ' . $badIdentity[0]);
     $I->sendPut(
@@ -151,28 +156,26 @@ foreach ($badIdentities as $badIdentity) {
         ])
     );
     $I->seeResponseCodeIs(403);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 4,
-                'message' => 'Permission denied.',
-                'id' => 'user_update_process',
-            ]
+    $I->seeResponseContainsJson([
+        'result' => 'error',
+        'data' => [
+            'code' => 4,
+            'message' => 'Permission denied.',
+            'id' => 'user_update_process',
         ]
-    );
+    ]);
 
     $I->wantTo('Test user delete for ' . $badIdentity[0]);
     $I->sendDelete($I->getCoreBaseUri() . '/user/' . $uid);
     $I->seeResponseCodeIs(403);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 4,
-                'message' => 'Permission denied.',
-                'id' => 'user_delete_security',
-            ]
+    $I->seeResponseContainsJson([
+        'result' => 'error',
+        'data' => [
+            'code' => 4,
+            'message' => 'Permission denied.',
+            'id' => 'user_delete_security',
         ]
-    );
+    ]);
 }
 
 $uids = array_keys($newUsers);
