@@ -15,7 +15,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-        'error' => [
+        'result' => 'error',
+        'data' => [
             'code' => 6,
             'message' => "Failed to convert text to integer.",
             'id' => 'test varuri processor varget',
@@ -29,7 +30,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-        'error' => [
+        'result' => 'error',
+        'data' => [
             'code' => 6,
             'message' => "Failed to convert text to integer.",
             'id' => 'test varuri processor varget',
@@ -43,10 +45,11 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-        'error' => [
+        'result' => 'error',
+        'data' => [
             'code' => 6,
             'message' => "Failed to convert text to integer.",
-            'id' => 'test varuri processor varget'
+            'id' => 'test varuri processor varget',
         ],
     ]
 );
@@ -57,7 +60,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-        'error' => [
+        'result' => 'error',
+        'data' => [
             'code' => 6,
             'message' => "Failed to convert text to integer.",
             'id' => 'test varuri processor varget',
@@ -83,7 +87,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-        'error' => [
+        'result' => 'error',
+        'data' => [
             'code' => 6,
             'message' => "URI var does not exist or is empty: 3.",
             'id' => 'test varuri processor process',
@@ -97,7 +102,8 @@ $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson(
     [
-        'error' => [
+        'result' => 'error',
+        'data' => [
             'code' => 6,
             'message' => "Failed to convert text to integer.",
             'id' => 'test varuri processor varget',
