@@ -154,3 +154,6 @@ ApiOpenStudio 1.0.0-beta
 - If/Then/Else processor.
 - More functional tests.
 - Deprecated ```array``` input in ```var_field```.
+- Updated all API calls the handle possible new JSON response objects:
+  - New JSON error response object.
+  - Responses can now be raw JSON response or a JSON response object.
