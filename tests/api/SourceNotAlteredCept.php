@@ -4,8 +4,8 @@ $I = new ApiTester($scenario);
 
 $uri = $I->getMyBaseUri() . '/url/';
 $yamlFilename = 'url.yaml';
-$xml_path = 'https://www.w3schools.com/xml/cd_catalog.xml';
-$json_path = 'https://jsonplaceholder.typicode.com/users';
+$xmlUrl = 'https://www.w3schools.com/xml/cd_catalog.xml';
+$jsonUrl = 'https://jsonplaceholder.typicode.com/users';
 $curl = curl_init();
 curl_setopt_array($curl, [
     CURLOPT_RETURNTRANSFER => true,
@@ -23,16 +23,14 @@ $I->deleteHeader('Authorization');
 $I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
 
 $I->wantTo('populate a Url with sample xml and Accept:application/xml in header see the result.');
-curl_setopt_array($curl, array(
-    CURLOPT_URL => $xml_path,
-));
+curl_setopt_array($curl, [CURLOPT_URL => $xmlUrl]);
 $comparison = curl_exec($curl);
 $I->haveHttpHeader('Accept', 'application/xml');
 $I->sendGet(
     $uri,
     [
         'method' => 'get',
-        'url' => $xml_path,
+        'url' => $xmlUrl,
         'source_type' => 'xml',
         'report_error' => true,
         'connect_timeout' => 10,
@@ -44,16 +42,17 @@ $I->seeResponseIsXml();
 $I->seeResponseContains($comparison);
 
 $I->wantTo('populate a Url with sample json and Accept:application/json in the header and see the result.');
-curl_setopt_array($curl, array(
-    CURLOPT_URL => $json_path,
-));
-$comparison = curl_exec($curl);
+curl_setopt_array($curl, [CURLOPT_URL => $jsonUrl]);
+$comparison = [
+    'result' => 'ok',
+    'data' => curl_exec($curl),
+];
 $I->haveHttpHeader('Accept', 'application/json');
 $I->sendGet(
     $uri,
     [
         'method' => 'get',
-        'url' => $json_path,
+        'url' => $jsonUrl,
         'sourceType' => 'json',
         'reportError' => true,
         'connectTimeout' => 10,
@@ -62,7 +61,7 @@ $I->sendGet(
 );
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains($comparison);
+$I->seeResponseContainsJson($comparison);
 
 $I->deleteHeader('Authorization');
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));

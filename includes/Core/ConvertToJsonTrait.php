@@ -28,9 +28,9 @@ trait ConvertToJsonTrait
      *
      * @param $data
      *
-     * @return string|null
+     * @return null
      */
-    public function fromEmptyToJson($data): ?string
+    public function fromEmptyToJson($data)
     {
         return null;
     }
@@ -52,11 +52,11 @@ trait ConvertToJsonTrait
      *
      * @param $data
      *
-     * @return string
+     * @return string|null
      */
-    public function fromIntegerToJson($data): string
+    public function fromIntegerToJson($data): ?string
     {
-        return json_encode($data);
+        return is_nan($data) ? null : json_encode($data);
     }
 
     /**
@@ -64,11 +64,11 @@ trait ConvertToJsonTrait
      *
      * @param $data
      *
-     * @return string
+     * @return string|null
      */
-    public function fromFloatToJson($data): string
+    public function fromFloatToJson($data): ?string
     {
-        return json_encode($data);
+        return is_nan($data) ? null : json_encode($data);
     }
 
     /**
@@ -103,6 +103,9 @@ trait ConvertToJsonTrait
      */
     public function fromArrayToJson($data): string
     {
+        if (isset($data['data']) && is_numeric($data['data']) && is_nan($data['data'])) {
+            $data['data'] = null;
+        }
         return json_encode($data, true);
     }
 
@@ -199,13 +202,13 @@ trait ConvertToJsonTrait
                 if (!array_key_exists($childname, $jsnode)) {
                     $jsnode[$childname] = [];
                 }
-                array_push($jsnode[$childname], $this->xml2json($childxmlnode, true));
+                array_push($jsnode[$childname], $this->xml2json($childxmlnode));
             }
             return $jsnode;
         } else {
             $nodename = $xml->getName();
             $jsnode[$nodename] = [];
-            array_push($jsnode[$nodename], $this->xml2json($xml, true));
+            array_push($jsnode[$nodename], $this->xml2json($xml));
             $result = json_encode($jsnode);
             return !is_array($result) ? [$result] : $result;
         }

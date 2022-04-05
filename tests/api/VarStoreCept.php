@@ -12,10 +12,11 @@ $I->sendPost($uri, ['appid' => 2, 'key' => 'varkey1', 'val' => 'varval1']);
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    "error" => [
-        "id" => "var_store_create_process",
-        "code" => 6,
-        "message" => "Permission denied."
+    'result' => 'error',
+    'data' => [
+        'id' => 'var_store_create_process',
+        'code' => 6,
+        'message' => 'Permission denied.'
     ]
 ]);
 
@@ -24,10 +25,11 @@ $I->sendPost($uri, ['appid' => 1, 'key' => 'varkey1', 'val' => 'varval1']);
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    "error" => [
-        "id" => "var_store_create_process",
-        "code" => 6,
-        "message" => "Permission denied."
+    'result' => 'error',
+    'data' => [
+        'id' => 'var_store_create_process',
+        'code' => 6,
+        'message' => 'Permission denied.'
     ]
 ]);
 
@@ -36,21 +38,22 @@ $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'
 $I->sendPost($uri, ['appid' => 2, 'key' => 'varkey1', 'val' => 'varval1']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseJsonMatchesJsonPath('$.key');
-$I->seeResponseJsonMatchesJsonPath('$.vid');
-$I->seeResponseJsonMatchesJsonPath('$.val');
+$I->seeResponseJsonMatchesJsonPath('$.data.key');
+$I->seeResponseJsonMatchesJsonPath('$.data.vid');
+$I->seeResponseJsonMatchesJsonPath('$.data.val');
 $response = json_decode($I->getResponse(), true);
-$varStores[$response['key']] = $response['vid'];
+$varStores[$response['data']['key']] = $response['data']['vid'];
 
 $I->wantTo('Test a developer cannot create a var for an application they are not assigned to');
 $I->sendPost($uri, ['appid' => 1, 'key' => 'varkey2', 'val' => 'varval2']);
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    "error" => [
-        "id" => "var_store_create_process",
-        "code" => 6,
-        "message" => "Permission denied.",
+    'result' => 'error',
+    'data' => [
+        'id' => 'var_store_create_process',
+        'code' => 6,
+        'message' => 'Permission denied.',
     ]
 ]);
 
@@ -59,21 +62,22 @@ $I->performLogin(getenv('TESTER_APPLICATION_MANAGER_NAME'), getenv('TESTER_APPLI
 $I->sendPost($uri, ['appid' => 2, 'key' => 'varkey2', 'val' => 'varval2']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseJsonMatchesJsonPath('$.key');
-$I->seeResponseJsonMatchesJsonPath('$.vid');
-$I->seeResponseJsonMatchesJsonPath('$.val');
+$I->seeResponseJsonMatchesJsonPath('$.data.key');
+$I->seeResponseJsonMatchesJsonPath('$.data.vid');
+$I->seeResponseJsonMatchesJsonPath('$.data.val');
 $response = json_decode($I->getResponse(), true);
-$varStores[$response['key']] = $response['vid'];
+$varStores[$response['data']['key']] = $response['data']['vid'];
 
 $I->wantTo('Test an application manager cannot create a var for an application they are not assigned to');
 $I->sendPost($uri, ['appid' => 1, 'key' => 'varkey3', 'val' => 'varval3']);
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    "error" => [
-        "id" => "var_store_create_process",
-        "code" => 6,
-        "message" => "Permission denied.",
+    'result' => 'error',
+    'data' => [
+        'id' => 'var_store_create_process',
+        'code' => 6,
+        'message' => 'Permission denied.',
     ]
 ]);
 
@@ -82,21 +86,22 @@ $I->performLogin(getenv('TESTER_ACCOUNT_MANAGER_NAME'), getenv('TESTER_ACCOUNT_M
 $I->sendPost($uri, ['appid' => 2, 'key' => 'varkey3', 'val' => 'varval3']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseJsonMatchesJsonPath('$.key');
-$I->seeResponseJsonMatchesJsonPath('$.vid');
-$I->seeResponseJsonMatchesJsonPath('$.val');
+$I->seeResponseJsonMatchesJsonPath('$.data.key');
+$I->seeResponseJsonMatchesJsonPath('$.data.vid');
+$I->seeResponseJsonMatchesJsonPath('$.data.val');
 $response = json_decode($I->getResponse(), true);
-$varStores[$response['key']] = $response['vid'];
+$varStores[$response['data']['key']] = $response['data']['vid'];
 
 $I->wantTo('Test an account manager cannot create a var for an application in an account they are not assigned to');
 $I->sendPost($uri, ['appid' => 1, 'key' => 'varkey4', 'val' => 'varval4']);
 $I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    "error" => [
-        "id" => "var_store_create_process",
-        "code" => 6,
-        "message" => "Permission denied.",
+    'result' => 'error',
+    'data' => [
+        'id' => 'var_store_create_process',
+        'code' => 6,
+        'message' => 'Permission denied.',
     ]
 ]);
 
@@ -105,19 +110,19 @@ $I->performLogin(getenv('TESTER_ADMINISTRATOR_NAME'), getenv('TESTER_ADMINISTRAT
 $I->sendPost($uri, ['appid' => 2, 'key' => 'varkey4', 'val' => 'varval4']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseJsonMatchesJsonPath('$.key');
-$I->seeResponseJsonMatchesJsonPath('$.vid');
-$I->seeResponseJsonMatchesJsonPath('$.val');
+$I->seeResponseJsonMatchesJsonPath('$.data.key');
+$I->seeResponseJsonMatchesJsonPath('$.data.vid');
+$I->seeResponseJsonMatchesJsonPath('$.data.val');
 $response = json_decode($I->getResponse(), true);
-$varStores[$response['key']] = $response['vid'];
+$varStores[$response['data']['key']] = $response['data']['vid'];
 $I->sendPost($uri, ['appid' => 1, 'key' => 'varkey5', 'val' => 'varval5']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseJsonMatchesJsonPath('$.key');
-$I->seeResponseJsonMatchesJsonPath('$.vid');
-$I->seeResponseJsonMatchesJsonPath('$.val');
+$I->seeResponseJsonMatchesJsonPath('$.data.key');
+$I->seeResponseJsonMatchesJsonPath('$.data.vid');
+$I->seeResponseJsonMatchesJsonPath('$.data.val');
 $response = json_decode($I->getResponse(), true);
-$varStores[$response['key']] = $response['vid'];
+$varStores[$response['data']['key']] = $response['data']['vid'];
 
 // Test role access to read var_store.
 

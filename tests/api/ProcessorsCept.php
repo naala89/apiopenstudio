@@ -5,118 +5,101 @@
 use Codeception\Scenario;
 
 $I = new ApiTester($scenario);
+$uri = $I->getCoreBaseUri() . '/processors';
+$allProcesorsUriExtensions = ['', '/', '/all'];
 
 $I->wantTo('Test /processors is only available to developers.');
-$uri = $I->getCoreBaseUri() . '/processors';
 $I->performLogin(getenv('TESTER_ADMINISTRATOR_NAME'), getenv('TESTER_ADMINISTRATOR_PASS'));
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendGet($uri);
 $I->seeResponseCodeIs(403);
-$I->seeResponseContainsJson(
-    [
-        'error' => [
-            'code' => 4,
-            'message' => 'Permission denied.',
-            'id' => 'processors_security',
-        ]
+$I->seeResponseContainsJson([
+    'result' => 'error',
+    'data' => [
+        'code' => 4,
+        'message' => 'Permission denied.',
+        'id' => 'processors_security',
     ]
-);
+]);
 $I->performLogin(getenv('TESTER_APPLICATION_MANAGER_NAME'), getenv('TESTER_APPLICATION_MANAGER_PASS'));
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendGet($uri);
 $I->seeResponseCodeIs(403);
-$I->seeResponseContainsJson(
-    [
-        'error' => [
-            'code' => 4,
-            'message' => 'Permission denied.',
-            'id' => 'processors_security',
-        ]
+$I->seeResponseContainsJson([
+    'result' => 'error',
+    'data' => [
+        'code' => 4,
+        'message' => 'Permission denied.',
+        'id' => 'processors_security',
     ]
-);
+]);
 $I->performLogin(getenv('TESTER_ACCOUNT_MANAGER_NAME'), getenv('TESTER_ACCOUNT_MANAGER_PASS'));
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendGet($uri);
 $I->seeResponseCodeIs(403);
-$I->seeResponseContainsJson(
-    [
-        'error' => [
-            'code' => 4,
-            'message' => 'Permission denied.',
-            'id' => 'processors_security',
-        ]
+$I->seeResponseContainsJson([
+    'result' => 'error',
+    'data' => [
+        'code' => 4,
+        'message' => 'Permission denied.',
+        'id' => 'processors_security',
     ]
-);
+]);
 $I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendGet($uri);
 $I->seeResponseCodeIs(403);
-$I->seeResponseContainsJson(
-    [
-        'error' => [
-            'code' => 4,
-            'message' => 'Permission denied.',
-            'id' => 'processors_security',
-        ]
+$I->seeResponseContainsJson([
+    'result' => 'error',
+    'data' => [
+        'code' => 4,
+        'message' => 'Permission denied.',
+        'id' => 'processors_security',
     ]
-);
+]);
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 $I->haveHttpHeader('Authorization', 'Bearer ' . $I->getMyStoredToken());
 $I->sendGet($uri);
 $I->seeResponseCodeIs(200);
-$I->seeResponseMatchesJsonType(
-    [
-        'name' => 'string',
-        'machineName' => 'string',
-        'description' => 'string',
-        'menu' => 'string',
-        'input' => 'array',
-    ]
-);
+$I->seeResponseMatchesJsonType([
+    'result' => 'string',
+    'data' => [
+        [
+            'name' => 'string',
+            'machineName' => 'string',
+            'description' => 'string',
+            'menu' => 'string',
+            'input' => 'array',
+        ],
+    ],
+]);
 
 $I->wantTo('Test that /processors/all, /processors and /processors/ will return all processors.');
-$I->sendGet($uri);
-$I->seeResponseCodeIs(200);
-$I->seeResponseIsJson();
-$json = json_decode($I->getResponse(), true);
-if (!is_array($json) || !count($json) > 1) {
-    assert('Invalid JSON response');
-}
-$I->seeResponseMatchesJsonType(
-    [
-        'name' => 'string',
-        'machineName' => 'string',
-        'description' => 'string',
-        'menu' => 'string',
-        'input' => 'array',
-    ]
-);
-$I->sendGet($uri . '/');
-$I->seeResponseCodeIs(200);
-$I->seeResponseIsJson();
-$json = json_decode($I->getResponse(), true);
-if (!is_array($json) || !count($json) > 1) {
-    assert('Invalid JSON response');
-}
-$I->seeResponseMatchesJsonType(
-    [
-        'name' => 'string',
-        'machineName' => 'string',
-        'description' => 'string',
-        'menu' => 'string',
-        'input' => 'array',
-    ]
-);
-$I->sendGet($uri . '/all');
-$I->seeResponseCodeIs(200);
-$I->seeResponseIsJson();
-$json = json_decode($I->getResponse(), true);
-if (!is_array($json) || !count($json) > 1) {
-    assert('Invalid JSON response');
+foreach ($allProcesorsUriExtensions as $allProcesorsUriExtension) {
+    $I->wantTo('Testing ' . $uri . $allProcesorsUriExtension);
+    $I->sendGet($uri . $allProcesorsUriExtension);
+    $I->seeResponseCodeIs(200);
+    $I->seeResponseIsJson();
+    $json = json_decode($I->getResponse(), true);
+    $I->seeResponseMatchesJsonType([
+        'result' => 'string',
+        'data' => [
+            [
+                'name' => 'string',
+                'machineName' => 'string',
+                'description' => 'string',
+                'menu' => 'string',
+                'input' => 'array',
+            ],
+        ],
+    ]);
+    if (count($json['data']) < 2) {
+        assert('Invalid JSON response');
+    }
 }
 
 $I->wantTo('Validate all necessary details are in each processor.');
-foreach ($json as $index => $processor) {
+foreach ($json['data'] as $index => $processor) {
     if (empty($processor['name'])) {
         PHPUnit_Framework_Assert::assertTrue(
             false,

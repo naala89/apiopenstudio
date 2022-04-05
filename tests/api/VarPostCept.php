@@ -49,30 +49,45 @@ $I->wantTo('populate a varPost with -11 and see the result.');
 $I->sendPOST($uri, ['value' => -11]);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('-11');
+$I->seeResponseContainsJson([
+    'result' => 'ok',
+    'data' => -11,
+]);
 
 $I->wantTo('populate a varPost with -11.0 and see the result.');
 $I->sendPOST($uri, ['value' => -11.0]);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('-11');
+$I->seeResponseContainsJson([
+    'result' => 'ok',
+    'data' => -11,
+]);
 
 $I->wantTo('populate a varPost with 0 and see the result.');
 $I->sendPOST($uri, ['value' => 0]);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('0');
+$I->seeResponseContainsJson([
+    'result' => 'ok',
+    'data' => 0,
+]);
 
 $I->wantTo('populate a varPost with 0.0 and see the result.');
 $I->sendPOST($uri, ['value' => 0.0]);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('0');
+$I->seeResponseContainsJson([
+    'result' => 'ok',
+    'data' => 0,
+]);
 
 $I->wantTo('populate a varPost with wrong varname and see the result.');
 $I->sendPOST($uri, ['values' => 'test']);
 $I->seeResponseCodeIs(200);
-$I->seeResponseEquals('');
+$I->seeResponseContainsJson([
+    'result' => 'ok',
+    'data' => '',
+]);
 
 $I->deleteHeader('Authorization');
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));

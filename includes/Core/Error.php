@@ -60,12 +60,15 @@ class Error
      * Construct and return the output error message
      *
      * @return DataContainer Result of the processor.
+     *
+     * @throws ApiException
      */
-    public function process()
+    public function process(): DataContainer
     {
         return new DataContainer(
             [
-                'error' => [
+                'result' => 'error',
+                'data' => [
                     'id' => !empty($this->id) ? $this->id : -1,
                     'code' => $this->code,
                     'message' => (!empty($this->message) ? (ucfirst($this->message) . '.') : 'Unidentified error.'),

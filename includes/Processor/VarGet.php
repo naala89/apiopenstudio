@@ -98,7 +98,7 @@ class VarGet extends Core\ProcessorEntity
                 }
                 $data = $vars[$key];
             } else {
-                $data = urldecode($vars[$key]);
+                $data = $vars[$key];
             }
         } else {
             $data = '';

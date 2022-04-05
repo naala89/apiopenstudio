@@ -123,7 +123,7 @@ class AccountRead extends ProcessorEntity
         if (!empty($keyword)) {
             $params['filter'][] = [
                 'keyword' => "%$keyword%",
-                'column' => "a.name",
+                'column' => "name",
             ];
         }
         if (!empty($accid)) {

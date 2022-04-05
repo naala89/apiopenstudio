@@ -822,7 +822,7 @@ foreach ($validCreateEditDeleteUsers as $user) {
     $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
     $response = json_decode($I->getResponse(), true);
-    $appid = $response['appid'];
+    $appid = $response['data']['appid'];
     $I->seeResponseContainsJson([
         'appid' => $appid,
         'accid' => 2,
@@ -853,7 +853,10 @@ foreach ($validCreateEditDeleteUsers as $user) {
     $I->sendDelete("$uri/$appid");
     $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
-    $I->seeResponseContains('true');
+    $I->seeResponseContainsJson([
+        'result' => 'ok',
+        'data' => true,
+    ]);
 }
 
 $I->performLogin(getenv('TESTER_ADMINISTRATOR_NAME'), getenv('TESTER_ADMINISTRATOR_PASS'));
@@ -861,7 +864,7 @@ $I->sendPost($uri, ['accid' => 2, 'name' => 'new_application1']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $response = json_decode($I->getResponse(), true);
-$appid = $response['appid'];
+$appid = $response['data']['appid'];
 
 foreach ($invalidCreateEditDeleteUsers as $user) {
     $I->performLogin($user['username'], $user['password']);
@@ -869,31 +872,40 @@ foreach ($invalidCreateEditDeleteUsers as $user) {
     $I->sendPost($uri, ['accid' => 2, 'name' => 'new_application2']);
     $I->seeResponseCodeIs(403);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(['error' => [
-        'code' => 4,
-        'id' => 'application_create_security',
-        'message' => 'Permission denied.',
-    ]]);
+    $I->seeResponseContainsJson([
+        'result' => 'error',
+        'data' => [
+            'code' => 4,
+            'id' => 'application_create_security',
+            'message' => 'Permission denied.',
+        ]
+    ]);
 
     $I->wantTo('Test updating an application with an invalid user: ' . $user['username']);
     $I->sendPut("$uri/$appid/2/edited_name");
     $I->seeResponseCodeIs(403);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(['error' => [
-        'code' => 4,
-        'id' => 'application_update_security',
-        'message' => 'Permission denied.',
-    ]]);
+    $I->seeResponseContainsJson([
+        'result' => 'error',
+        'data' => [
+            'code' => 4,
+            'id' => 'application_update_security',
+            'message' => 'Permission denied.',
+        ]
+    ]);
 
     $I->wantTo('Test deleting an application with an invalid user: ' . $user['username']);
     $I->sendDelete("$uri/$appid");
     $I->seeResponseCodeIs(403);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(['error' => [
-        'code' => 4,
-        'id' => 'application_delete_security',
-        'message' => 'Permission denied.',
-    ]]);
+    $I->seeResponseContainsJson([
+        'result' => 'error',
+        'data' => [
+            'code' => 4,
+            'id' => 'application_delete_security',
+            'message' => 'Permission denied.',
+        ]
+    ]);
 }
 
 // Test all account read for all users.
@@ -924,12 +936,15 @@ foreach ($validReadUsers as $user) {
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
-            1 => [
-                'accid' => 1,
-                'appid' => 1,
-                'name' => 'core',
-                'openapi' => $coreOpenApi,
-            ],
+            'result' => 'ok',
+            'data' => [
+                1 => [
+                    'accid' => 1,
+                    'appid' => 1,
+                    'name' => 'core',
+                    'openapi' => $coreOpenApi,
+                ],
+            ]
         ]);
 
         $I->wantTo('Test reading the testing_application application with user: ' . $user['username']);
@@ -937,12 +952,15 @@ foreach ($validReadUsers as $user) {
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
-            2 => [
-                'accid' => 2,
-                'appid' => 2,
-                'name' => 'testing_app',
-                'openapi' => [],
-            ],
+            'result' => 'ok',
+            'data' => [
+                2 => [
+                    'accid' => 2,
+                    'appid' => 2,
+                    'name' => 'testing_app',
+                    'openapi' => [],
+                ],
+            ]
         ]);
 
         $I->wantTo('Test reading the new application with user: ' . $user['username']);
@@ -950,11 +968,14 @@ foreach ($validReadUsers as $user) {
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
-            $appid => [
-                'accid' => 2,
-                'appid' => $appid,
-                'name' => 'new_application1',
-                'openapi' => $newApplicationOpenApi,
+            'result' => 'ok',
+            'data' => [
+                $appid => [
+                    'accid' => 2,
+                    'appid' => $appid,
+                    'name' => 'new_application1',
+                    'openapi' => $newApplicationOpenApi,
+                ]
             ]
         ]);
     } else {
@@ -969,12 +990,15 @@ foreach ($validReadUsers as $user) {
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
-            2 => [
-                'accid' => 2,
-                'appid' => 2,
-                'name' => 'testing_app',
-                'openapi' => [],
-            ],
+            'result' => 'ok',
+            'data' => [
+                2 => [
+                    'accid' => 2,
+                    'appid' => 2,
+                    'name' => 'testing_app',
+                    'openapi' => [],
+                ],
+            ]
         ]);
 
         $I->wantTo('Test reading the new application with user: ' . $user['username']);
