@@ -151,7 +151,12 @@ ApiOpenStudio 1.0.0-beta
 - Implemented full OpenAPI support and generation.
 - Separated the node tree traversal from core Api class.
 - Implemented conditional logic in the node tree traversal.
-- If/Then/Else processor.
+- JSON output handles NaN, INF and -INF (return "NaN", "Infinity", "-Infinity") 
+- New processors:
+  - If/Then/Else
+  - For...Each
+  - Math
+  - Sequential
 - More functional tests.
 - Deprecated ```array``` input in ```var_field```.
 - Updated all API calls the handle possible new JSON response objects:
