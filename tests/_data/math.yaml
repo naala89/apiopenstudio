@@ -57,4 +57,3 @@ process:
           id: test math z var
           key: z
           nullable: true
-
