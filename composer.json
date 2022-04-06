@@ -50,7 +50,7 @@
     "monolog/monolog": "^2.3",
     "galbar/jsonpath": "^2.0",
     "myclabs/deep-copy": "^1.11",
-    "denissimon/formula-parser": "^2.7"
+    "nxp/math-executor": "^2.1"
   },
   "autoload": {
     "psr-4": {
