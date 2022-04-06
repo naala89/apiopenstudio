@@ -55,7 +55,12 @@ try {
         exit();
     }
     $error = new Error($e->getCode(), $e->getProcessor(), $e->getMessage());
-    $output = new $outputClass($error->process(), $e->getHtmlCode(), $logger);
+    $dataContainer = $error->process();
+    $output = new $outputClass(
+        $dataContainer,
+        $e->getHtmlCode(),
+        $logger
+    );
     ob_end_flush();
     echo $output->process()->getData();
     exit();
