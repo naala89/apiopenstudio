@@ -44,7 +44,7 @@ trait ConvertToJsonTrait
      */
     public function fromBooleanToJson($data): string
     {
-        return json_encode($data ? 'true' : 'false');
+        return json_encode($data);
     }
 
     /**
@@ -56,7 +56,12 @@ trait ConvertToJsonTrait
      */
     public function fromIntegerToJson($data): ?string
     {
-        return is_nan($data) ? null : json_encode($data);
+        if (is_infinite($data)) {
+            $data = $data < 0 ? '-Infinity' : 'Infinity';
+        } elseif (is_nan($data)) {
+            $data = 'NaN';
+        }
+        return json_encode($data);
     }
 
     /**
@@ -68,7 +73,12 @@ trait ConvertToJsonTrait
      */
     public function fromFloatToJson($data): ?string
     {
-        return is_nan($data) ? null : json_encode($data);
+        if (is_infinite($data)) {
+            $data = $data < 0 ? '-Infinity' : 'Infinity';
+        } elseif (is_nan($data)) {
+            $data = 'NaN';
+        }
+        return json_encode($data);
     }
 
     /**
@@ -103,9 +113,6 @@ trait ConvertToJsonTrait
      */
     public function fromArrayToJson($data): string
     {
-        if (isset($data['data']) && is_numeric($data['data']) && is_nan($data['data'])) {
-            $data['data'] = null;
-        }
         return json_encode($data, true);
     }
 

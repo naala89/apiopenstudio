@@ -45,7 +45,7 @@ $I->wantTo('populate a Url with sample json and Accept:application/json in the h
 curl_setopt_array($curl, [CURLOPT_URL => $jsonUrl]);
 $comparison = [
     'result' => 'ok',
-    'data' => curl_exec($curl),
+    'data' => json_decode(curl_exec($curl), true),
 ];
 $I->haveHttpHeader('Accept', 'application/json');
 $I->sendGet(

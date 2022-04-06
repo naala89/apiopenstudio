@@ -66,7 +66,7 @@ abstract class Output extends Core\ProcessorEntity
      * @param mixed $data
      *   Output data.
      * @param integer $status
-     *   Output status.
+     *   HTTP output status.
      * @param Core\MonologWrapper $logger
      *   Logger.
      * @param mixed|null $meta
@@ -75,9 +75,9 @@ abstract class Output extends Core\ProcessorEntity
     public function __construct($data, int $status, Core\MonologWrapper $logger, $meta = null)
     {
         $this->settings = new Core\Config();
+        $this->data = $data;
         $this->status = $status;
         $this->logger = $logger;
-        $this->data = $data;
         $this->meta = $meta;
     }
 

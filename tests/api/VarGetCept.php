@@ -88,7 +88,7 @@ $I->sendGet($uri, ['values' => 'test', 'nullable' => true]);
 $I->seeResponseCodeIs(200);
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => '',
+    'data' => null,
 ]);
 
 $I->wantTo('populate a VarGet with wrong varname and nullable false and see the result.');
