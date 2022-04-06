@@ -113,7 +113,7 @@ $I->sendGet($uri, ['values' => 'test']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => '',
+    'data' => null,
 ]);
 
 $I->deleteHeader('Authorization');
