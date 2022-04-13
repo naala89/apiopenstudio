@@ -142,7 +142,10 @@ class VarStoreCreate extends Core\ProcessorEntity
             foreach ($roles as $role) {
                 if ($role['role_name'] == 'Administrator' && in_array('Administrator', $this->permittedRoles)) {
                     $permitted = true;
-                } elseif ($role['role_name'] == 'Account manager' && in_array('Account manager', $this->permittedRoles)) {
+                } elseif (
+                    $role['role_name'] == 'Account manager' &&
+                    in_array('Account manager', $this->permittedRoles)
+                ) {
                     $accid = $role['accid'];
                     if (!isset($accounts[$accid])) {
                         $accountsObjects = $this->applicationMapper->findByAccid($accid);
