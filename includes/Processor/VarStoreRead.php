@@ -192,10 +192,10 @@ class VarStoreRead extends Core\ProcessorEntity
             $params['filter'][] = ['value' => (int) $vid, 'column' => '`vid`'];
         }
         if (!empty($appid)) {
-            $params['filter'][] = ['value' => (int) $appid, 'column' => 'appid'];
+            $params['filter'][] = ['value' => (int) $appid, 'column' => '`appid`'];
         }
         if (!empty($key)) {
-            $params['filter'][] = ['value' => $key, 'column' => 'key'];
+            $params['filter'][] = ['value' => $key, 'column' => '`key`'];
         }
         if (!empty($keyword)) {
             $params['filter'][] = ['keyword' => "%$keyword%", 'column' => '`key`'];

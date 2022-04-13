@@ -207,14 +207,14 @@ class TreeParser
 
         $attributeIds = array_keys(get_object_vars($node));
         foreach ($attributeIds as $attributeId) {
+            $conditionalAttribute = $details['input'][$attributeId]['conditional'] ?? false;
             if ($this->helper->isProcessor($node->{$attributeId})) {
-                $conditionalAttribute = $details['input'][$attributeId]['conditional'] ?? false;
                 if (($result = $this->getFromResultStack($node->{$attributeId}->id)) !== null) {
                     $node->{$attributeId} = $result;
                 } elseif (!$conditionalProcessor || !$conditionalAttribute) {
                     $childNodes[] = $node->{$attributeId};
                 }
-            } elseif (is_array($node->{$attributeId})) {
+            } elseif (is_array($node->{$attributeId}) && !$conditionalProcessor) {
                 // currentNode is an array, process each item
                 foreach ($node->{$attributeId} as $index => $item) {
                     if ($this->helper->isProcessor($item)) {

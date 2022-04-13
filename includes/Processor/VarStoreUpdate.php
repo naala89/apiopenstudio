@@ -55,14 +55,24 @@ class VarStoreUpdate extends Core\ProcessorEntity
         'description' => 'Update a var store variable.',
         'menu' => 'Var store',
         'input' => [
-            'vid' => [
-                'description' => 'Var store ID.',
-                'cardinality' => [1, 1],
+            'validate_access' => [
+                // phpcs:ignore
+                'description' => 'If set to true, the calling users roles access will be validated. If set to false, then access is open. By default this is true for security reasons, but to allow consumers to use this in a resource, you will need to set it to false (otherwise access will be denied).',
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => ['integer', 'text'],
+                'limitTypes' => ['boolean'],
                 'limitValues' => [],
-                'default' => 'all',
+                'default' => true,
+            ],
+            'vid' => [
+                'description' => 'Var store ID.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => '',
             ],
             'key' => [
                 'description' => 'Var store key.',
@@ -123,35 +133,52 @@ class VarStoreUpdate extends Core\ProcessorEntity
         $key = $this->val('key', true);
         $appid = $this->val('appid', true);
         $val = $this->val('val', true);
+        $validateAccess = $this->val('validate_access', true);
 
-        $var = $this->varStoreMapper->findByVid($vid);
-        if (empty($var->getVid())) {
-            throw new Core\ApiException("unknown vid: $vid", 6, $this->id, 400);
-        }
-
-        // Validate access to the existing var's application
-        $permitted = false;
-        $currentAppid = $var->getAppid();
-        $roles = Core\Utilities::getRolesFromToken();
-        foreach ($roles as $role) {
-            if ($role['appid'] == $currentAppid && in_array($role['role_name'], $this->permittedRoles)) {
-                $permitted = true;
+        if (!empty($vid)) {
+            $var = $this->varStoreMapper->findByVid($vid);
+            if (empty($var->getVid())) {
+                throw new Core\ApiException("unknown vid: $vid", 6, $this->id, 400);
             }
-        }
-        if (!$permitted) {
-            throw new Core\ApiException("permission denied", 6, $this->id, 400);
+        } elseif (!empty($key) && !empty($appid)) {
+            $var = $this->varStoreMapper->findByAppIdKey($appid, $key);
+            if (empty($var->getVid())) {
+                throw new Core\ApiException("unknown vid: $vid", 6, $this->id, 400);
+            }
+        } else {
+            throw new Core\ApiException(
+                'Cannot find VarStore, required vid or appid + key',
+                6,
+                $this->id,
+                400
+            );
         }
 
-        // Validate access to the var's NEW application
-        if (!empty($appid)) {
+        if ($validateAccess) {
+            // Validate access to the existing var's application
             $permitted = false;
+            $currentAppid = $var->getAppid();
+            $roles = Core\Utilities::getRolesFromToken();
             foreach ($roles as $role) {
-                if ($role['appid'] == $appid && in_array($role['role_name'], $this->permittedRoles)) {
+                if ($role['appid'] == $currentAppid && in_array($role['role_name'], $this->permittedRoles)) {
                     $permitted = true;
                 }
             }
             if (!$permitted) {
                 throw new Core\ApiException("permission denied", 6, $this->id, 400);
+            }
+
+            // Validate access to the var's NEW application
+            if (!empty($appid)) {
+                $permitted = false;
+                foreach ($roles as $role) {
+                    if ($role['appid'] == $appid && in_array($role['role_name'], $this->permittedRoles)) {
+                        $permitted = true;
+                    }
+                }
+                if (!$permitted) {
+                    throw new Core\ApiException("permission denied", 6, $this->id, 400);
+                }
             }
         }
 

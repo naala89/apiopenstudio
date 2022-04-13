@@ -287,7 +287,7 @@ DESCRIPTION,
             $result = $jsonObject->get($expression);
             if ($result === false) {
                 $result = null;
-            } else {
+            } elseif (!is_numeric($result)) {
                 $result = json_encode($result);
             }
         } elseif ($operation == 'set') {

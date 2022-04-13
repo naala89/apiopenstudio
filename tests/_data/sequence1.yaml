@@ -1,0 +1,107 @@
+name: Sequence test
+
+description: test the sequence
+
+uri: sequence1
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    id: sequential1 security
+    processor: validate_token_roles
+    roles:
+        - Consumer
+
+process:
+    processor: sequential
+    id: Sequential process
+    sequence:
+        -
+            processor: var_store_create
+            id: Create the var store step 1
+            appid: 2
+            validate_access: false
+            key: testing sequential
+            val: first value
+        -
+            processor: var_store_update
+            id: Update the var store step 2
+            validate_access: false
+            vid:
+                processor: json_path
+                id: Get the ID from var store step 2
+                operation: get
+                expression: "$.0.vid"
+                data:
+                    processor: var_store_read
+                    id: Read the var store step 2 for vid
+                    appid: 2
+                    key: testing sequential
+                    validate_access: false
+            val:
+                processor: concatenate
+                id: Concatenate step 2 with step 3
+                items:
+                    -
+                        processor: json_path
+                        id: get the val for step 2
+                        operation: get
+                        expression: "$.0.val"
+                        remove_wrapping_quotes: true
+                        data:
+                            processor: var_store_read
+                            id: Read the var store step 2
+                            appid: 2
+                            key: testing sequential
+                            validate_access: false
+                    -
+                        ", second value"
+        -
+            processor: var_store_update
+            id: Update the var store step 3
+            validate_access: false
+            vid:
+                processor: json_path
+                id: Get the ID from var store step 3
+                operation: get
+                expression: "$.0.vid"
+                data:
+                    processor: var_store_read
+                    id: Read the var store step 3 for vid
+                    appid: 2
+                    key: testing sequential
+                    validate_access: false
+            val:
+                processor: concatenate
+                id: Concatenate step 2 with step 3
+                items:
+                    -
+                        processor: json_path
+                        id: get the val for step 3
+                        operation: get
+                        expression: "$.0.val"
+                        remove_wrapping_quotes: true
+                        data:
+                            processor: var_store_read
+                            id: Read the var store step 3
+                            appid: 2
+                            key: testing sequential
+                            validate_access: false
+                    -
+                        ", third value"
+        -
+            processor: json_path
+            id: get the val for var store final
+            operation: get
+            expression: "$.0.val"
+            remove_wrapping_quotes: true
+            data:
+                processor: var_store_read
+                id: Read the var store final
+                appid: 2
+                key: testing sequential
+                validate_access: false
