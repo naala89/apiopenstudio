@@ -64,6 +64,16 @@ class VarStoreCreate extends Core\ProcessorEntity
         'description' => 'Create a variable in the var store. The return result is an error object (on failure) or the newly created object.',
         'menu' => 'Var store',
         'input' => [
+            'validate_access' => [
+                // phpcs:ignore
+                'description' => 'If set to true, the calling users roles access will be validated. If set to false, then access is open. By default this is true for security reasons, but to allow consumers to use this in a resource, you will need to set it to false (otherwise access will be denied).',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => true,
+            ],
             'appid' => [
                 'description' => 'Application ID that the var will be assigned to.',
                 'cardinality' => [1, 1],
@@ -124,28 +134,31 @@ class VarStoreCreate extends Core\ProcessorEntity
         $appid = $this->val('appid', true);
         $key = $this->val('key', true);
         $val = $this->val('val', true);
+        $permitted = !($this->val('validate_access', true));
 
-        $permitted = false;
-        $roles = Core\Utilities::getRolesFromToken();
-        $accounts = [];
-        foreach ($roles as $role) {
-            if ($role['role_name'] == 'Administrator' && in_array('Administrator', $this->permittedRoles)) {
-                $permitted = true;
-            } elseif ($role['role_name'] == 'Account manager' && in_array('Account manager', $this->permittedRoles)) {
-                $accid = $role['accid'];
-                if (!isset($accounts[$accid])) {
-                    $accountsObjects = $this->applicationMapper->findByAccid($accid);
-                    foreach ($accountsObjects as $accountObject) {
-                        $accounts[$accid][] = $accountObject->getAppid();
+        if (!$permitted) {
+            $roles = Core\Utilities::getRolesFromToken();
+            $accounts = [];
+            foreach ($roles as $role) {
+                if ($role['role_name'] == 'Administrator' && in_array('Administrator', $this->permittedRoles)) {
+                    $permitted = true;
+                } elseif ($role['role_name'] == 'Account manager' && in_array('Account manager', $this->permittedRoles)) {
+                    $accid = $role['accid'];
+                    if (!isset($accounts[$accid])) {
+                        $accountsObjects = $this->applicationMapper->findByAccid($accid);
+                        foreach ($accountsObjects as $accountObject) {
+                            $accounts[$accid][] = $accountObject->getAppid();
+                        }
                     }
-                }
-                if (in_array($appid, $accounts[$accid])) {
+                    if (in_array($appid, $accounts[$accid])) {
+                        $permitted = true;
+                    }
+                } elseif ($role['appid'] == $appid && in_array($role['role_name'], $this->permittedRoles)) {
                     $permitted = true;
                 }
-            } elseif ($role['appid'] == $appid && in_array($role['role_name'], $this->permittedRoles)) {
-                $permitted = true;
             }
         }
+
         if (!$permitted) {
             throw new Core\ApiException("permission denied", 6, $this->id, 400);
         }
