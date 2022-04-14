@@ -67,17 +67,6 @@ class ForEachItem extends ProcessorEntity
                 'default' => [],
                 'conditional' => true,
             ],
-            'process_after' => [
-                // phpcs:ignore
-                'description' => 'Processing to take place after processing the items. Because this is a conditional processor, it is likely to be processed last. If you have any logic that needs to process the data after the for...each loop, place it here.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => false,
-                'limitProcessors' => [],
-                'limitTypes' => [],
-                'limitValues' => [],
-                'default' => [],
-                'conditional' => true,
-            ],
         ],
     ];
 
@@ -125,7 +114,5 @@ class ForEachItem extends ProcessorEntity
         // Cleanup - the array elements stored in the session are no longer needed.
         unset($_SESSION[$itemKey]);
         unset($_SESSION[$itemVal]);
-
-        return $this->meta->process_after;
     }
 }
