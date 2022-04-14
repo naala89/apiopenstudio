@@ -32,13 +32,13 @@ class IfThenElse extends ProcessorEntity
     protected array $details = [
         'name' => 'If Then Else',
         'machineName' => 'if_then_else',
-        'description' => 'An if then else logic gate.',
+        'description' => 'An if then else logic gate. LHS & RHS inputs can be empty to account for null/empty.',
         'menu' => 'Logic',
         'conditional' => true,
         'input' => [
             'lhs' => [
                 'description' => 'The left-land side value in the equation.',
-                'cardinality' => [1, 1],
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => [],
@@ -48,7 +48,7 @@ class IfThenElse extends ProcessorEntity
             ],
             'rhs' => [
                 'description' => 'The right-land side value in the equation.',
-                'cardinality' => [1, 1],
+                'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => [],
