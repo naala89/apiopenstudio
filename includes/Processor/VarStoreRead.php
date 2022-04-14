@@ -55,6 +55,16 @@ class VarStoreRead extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => true,
             ],
+            'strict' => [
+                // phpcs:ignore
+                'description' => 'If set to true then return null if var does not exist. If set to false throw exception if var does not exist. Default is strict. Only used in fetch or delete operations.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => true,
+            ],
             'vid' => [
                 'description' => 'Var ID. If empty, all vars that the user has access to will be returned.',
                 'cardinality' => [0, 1],
@@ -144,15 +154,16 @@ class VarStoreRead extends Core\ProcessorEntity
         $keyword = $this->val('keyword', true);
         $orderBy = $this->val('order_by', true);
         $direction = $this->val('direction', true);
+        $strict = $this->val('strict', true);
 
         if ($validateAccess) {
             $vars = $this->fetchWithValidation($vid, $appid, $key, $keyword, $orderBy, $direction);
-            if (empty($vars)) {
+            if (empty($vars) && $strict) {
                 throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
             }
         } else {
             $vars = $this->fetchWithoutValidation($vid, $appid, $key, $keyword, $orderBy, $direction);
-            if (empty($vars)) {
+            if (empty($vars) && $strict) {
                 throw new Core\ApiException('no results found', 6, $this->id, 400);
             }
         }
