@@ -26,9 +26,9 @@ trait ConvertToIntegerTrait
      *
      * @param $data
      *
-     * @return int|null
+     * @return null
      */
-    public function fromEmptyToInteger($data): ?int
+    public function fromEmptyToInteger($data)
     {
         return null;
     }
@@ -51,16 +51,10 @@ trait ConvertToIntegerTrait
      * @param $data
      *
      * @return int
-     *
-     * @throws ApiException
      */
     public function fromIntegerToInteger($data): int
     {
-        $result = filter_var($data, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-        if ($result === null) {
-            throw new ApiException('Failed to convert float to integer');
-        }
-        return $result;
+        return $data;
     }
 
     /**
@@ -92,9 +86,12 @@ trait ConvertToIntegerTrait
      */
     public function fromTextToInteger($data): int
     {
+        if ($data != '0') {
+            $data = preg_replace('/^0*/', '', $data);
+        }
         $result = filter_var($data, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
         if ($result === null) {
-            throw new ApiException('Failed to convert text to integer');
+            throw new ApiException("Failed to convert '$data' to integer");
         }
         return $result;
     }
@@ -124,11 +121,7 @@ trait ConvertToIntegerTrait
      */
     public function fromJsonToInteger($data): int
     {
-        $result = filter_var($data, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-        if ($result === null) {
-            throw new ApiException('Failed to convert JSON to integer');
-        }
-        return $result;
+        return $this->fromTextToInteger($data);
     }
 
     /**

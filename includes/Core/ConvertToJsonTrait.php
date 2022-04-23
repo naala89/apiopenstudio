@@ -125,7 +125,7 @@ trait ConvertToJsonTrait
      */
     public function fromJsonToJson($data): string
     {
-        return is_string($data) ? $data : json_encode($data);
+        return $data;
     }
 
     /**
