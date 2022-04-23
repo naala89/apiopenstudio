@@ -9,12 +9,12 @@ appid: 2
 ttl: 0
 
 security:
-  processor: validate_token_roles
-  id: test resource with no name security
-  roles:
-    - Consumer
+    processor: validate_token_roles
+    id: test resource with no name security
+    roles:
+        - Consumer
 
 process:
-  processor: processors
-  id: test resource with no name process
-  machine_name: all
+    processor: processors
+    id: test resource with no name process
+    machine_name: all

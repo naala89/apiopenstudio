@@ -11,22 +11,23 @@ appid: 2
 ttl: 0
 
 security:
-  processor: validate_token_roles
-  id: 1
-  roles:
-    - Consumer
-    - Developer
+    processor: validate_token_roles
+    id: 1
+    roles:
+        - Consumer
+        - Developer
 
 process:
-  processor: collection
-  id: 3
-  items:
-    - null
-    - 1234567890
-    - -1234567890
-    - val1
-    - processor: var_field
-      id: 4
-      key: key2
-      value: val2
+    processor: collection
+    id: 3
+    items:
+        - null
+        - 1234567890
+        - -1234567890
+        - val1
+        -
+            processor: var_field
+            id: 4
+            key: key2
+            value: val2
 

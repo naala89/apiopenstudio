@@ -21,18 +21,18 @@ appid: 1
 ttl: 3600
 
 security:
-  id: processors_security
-  processor: validate_token_roles
-  roles:
-    - Developer
-  validate_account: false
-  validate_application: false
+    id: processors_security
+    processor: validate_token_roles
+    roles:
+        - Developer
+    validate_account: false
+    validate_application: false
 
 process:
-  processor: processors
-  id: processors_process
-  machine_name:
-    processor: var_uri
-    id: processors_machine_name
-    index: 0
-    nullable: true
+    processor: processors
+    id: processors_process
+    machine_name:
+        processor: var_uri
+        id: processors_machine_name
+        index: 0
+        nullable: true

@@ -11,18 +11,20 @@ appid: 2
 ttl: 0
 
 security:
-  id: test bad resource no process security
-  processor: validate_token_roles
-  roles:
-    - Consumer
+    id: test bad resource no process security
+    processor: validate_token_roles
+    roles:
+        - Consumer
 
 output:
-  - response
-  - processor: email
-    to: john@naala.com.au
-    subject: "test email"
-    format: html
-    message: "test email"
-  - processor: xml
-    destination: www.foo.bar
-    method: post
+    - response
+    -
+        processor: email
+        to: john@naala.com.au
+        subject: "test email"
+        format: html
+        message: "test email"
+    -
+        processor: xml
+        destination: www.foo.bar
+        method: post

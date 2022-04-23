@@ -9,20 +9,20 @@ method: get
 ttl: 0
 
 security:
-  processor: token_consumer
-  id: 1
-  token:
-    processor: var_get
-    id: 2
-    name: token
+    processor: token_consumer
+    id: 1
+    token:
+        processor: var_get
+        id: 2
+        name: token
 
 process:
-  processor: url
-  id: 3
-  method: get
-  url: "http://datagator.local/html/sample/testAuthDigest.php"
-  auth:
-    processor: auth_digest
-    id: 4
-    username: admin
-    password: mypass
+    processor: url
+    id: 3
+    method: get
+    url: "http://datagator.local/html/sample/testAuthDigest.php"
+    auth:
+        processor: auth_digest
+        id: 4
+        username: admin
+        password: mypass

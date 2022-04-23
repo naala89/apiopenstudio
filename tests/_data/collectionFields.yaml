@@ -11,22 +11,23 @@ method: get
 ttl: 0
 
 security:
-  processor: validate_token_roles
-  id: 1
-  roles:
-    - Consumer
-    - Developer
+    processor: validate_token_roles
+    id: 1
+    roles:
+        - Consumer
+        - Developer
 
 process:
-  processor: collection
-  id: 3
-  items:
-    - processor: var_field
-      id: 4
-      key: key1
-      value:
-        processor: var_field
-        id: 5
-        key: key2
-        value: val2
+    processor: collection
+    id: 3
+    items:
+        -
+            processor: var_field
+            id: 4
+            key: key1
+            value:
+                processor: var_field
+                id: 5
+                key: key2
+                value: val2
 

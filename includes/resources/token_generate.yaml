@@ -21,13 +21,13 @@ appid: 1
 ttl: 0
 
 process:
-  processor: generate_token
-  id: generate_token_process
-  username:
-    processor: var_post
-    id: generate_token_username
-    key: username
-  password:
-    processor: var_post
-    id: generate_token_password
-    key: password
+    processor: generate_token
+    id: generate_token_process
+    username:
+        processor: var_post
+        id: generate_token_username
+        key: username
+    password:
+        processor: var_post
+        id: generate_token_password
+        key: password

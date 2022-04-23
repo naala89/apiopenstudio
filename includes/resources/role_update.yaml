@@ -21,48 +21,48 @@ appid: 1
 ttl: 0
 
 security:
-  id: role_update_security
-  processor: validate_token_roles
-  roles:
-    - Administrator
-    - Account manager
-    - Application manager
-  validate_account: false
-  validate_application: false
+    id: role_update_security
+    processor: validate_token_roles
+    roles:
+        - Administrator
+        - Account manager
+        - Application manager
+    validate_account: false
+    validate_application: false
 
 process:
-  processor: role_update
-  id: role_update_process
+    processor: role_update
+    id: role_update_process
 
-  rid:
-    processor: cast
-    id: role_update_cast_rid
-    data_type: integer
-    data:
-      processor: json_path
-      id: role_update_rid
-      data:
-        processor: var_body
-        id: role_update_body_rid
-        expected_type: json
-        nullable: false
-      expression: '$.rid'
-      operation: get
-      remove_wrapping_quotes: true
-      stripslashes: true
-  name:
-    processor: cast
-    id: role_update_cast_name
-    data_type: text
-    data:
-      processor: json_path
-      id: role_update_name
-      data:
-        processor: var_body
-        id: role_update_body_name
-        expected_type: json
-        nullable: false
-      expression: '$.name'
-      operation: get
-      remove_wrapping_quotes: true
-      stripslashes: true
+    rid:
+        processor: cast
+        id: role_update_cast_rid
+        data_type: integer
+        data:
+            processor: json_path
+            id: role_update_rid
+            data:
+                processor: var_body
+                id: role_update_body_rid
+                expected_type: json
+                nullable: false
+            expression: '$.rid'
+            operation: get
+            remove_wrapping_quotes: true
+            stripslashes: true
+    name:
+        processor: cast
+        id: role_update_cast_name
+        data_type: text
+        data:
+            processor: json_path
+            id: role_update_name
+            data:
+                processor: var_body
+                id: role_update_body_name
+                expected_type: json
+                nullable: false
+            expression: '$.name'
+            operation: get
+            remove_wrapping_quotes: true
+            stripslashes: true

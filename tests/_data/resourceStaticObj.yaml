@@ -11,6 +11,6 @@ appid: 2
 ttl: 0
 
 process:
-  key1: val1
-  key2: val2
-  key3: val3
+    key1: val1
+    key2: val2
+    key3: val3

@@ -21,18 +21,18 @@ appid: 1
 ttl: 0
 
 security:
-  id: user_invite_security
-  processor: validate_token_roles
-  roles:
-    - Administrator
-    - Account manager
-    - Application manager
+    id: user_invite_security
+    processor: validate_token_roles
+    roles:
+        - Administrator
+        - Account manager
+        - Application manager
 
 process:
-  processor: invite_create
-  id: user_invite_process
-  email:
-    processor: var_post
-    id: user_invite_var_post_email
-    key: email
-    nullable: false
+    processor: invite_create
+    id: user_invite_process
+    email:
+        processor: var_post
+        id: user_invite_var_post_email
+        key: email
+        nullable: false

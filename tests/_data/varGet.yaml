@@ -11,18 +11,18 @@ appid: 2
 ttl: 0
 
 security:
-  id: test var_get security
-  processor: validate_token_roles
-  roles:
-    - Consumer
+    id: test var_get security
+    processor: validate_token_roles
+    roles:
+        - Consumer
 
 process:
-  processor: var_get
-  id: test var_get process
-  key: value
-  nullable:
     processor: var_get
-    id: test var_get nullable
-    key: nullable
-    expected_type: boolean
-    nullable: true
+    id: test var_get process
+    key: value
+    nullable:
+        processor: var_get
+        id: test var_get nullable
+        key: nullable
+        expected_type: boolean
+        nullable: true

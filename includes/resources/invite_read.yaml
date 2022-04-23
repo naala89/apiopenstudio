@@ -21,45 +21,45 @@ appid: 1
 ttl: 0
 
 security:
-  id: invite_read_security
-  processor: validate_token_roles
-  roles:
-    - Administrator
-    - Account manager
-    - Application manager
-  validate_account: false
-  validate_application: false
+    id: invite_read_security
+    processor: validate_token_roles
+    roles:
+        - Administrator
+        - Account manager
+        - Application manager
+    validate_account: false
+    validate_application: false
 
 process:
-  processor: invite_read
-  id: invite_read_process
-  iid:
-    processor: var_get
-    id: invite_read_iid
-    key: iid
-    nullable: true
-  email:
-    processor: var_get
-    id: invite_read_email
-    key: email
-    nullable: true
-  order_by:
-    processor: var_get
-    id: invite_read_order_by
-    key: order_by
-    nullable: true
-  direction:
-    processor: var_get
-    id: invite_read_direction
-    key: direction
-    nullable: true
-  offset:
-    processor: var_get
-    id: invite_read_offset
-    key: offset
-    nullable: true
-  limit:
-    processor: var_get
-    id: invite_read_limit
-    key: limit
-    nullable: true
+    processor: invite_read
+    id: invite_read_process
+    iid:
+        processor: var_get
+        id: invite_read_iid
+        key: iid
+        nullable: true
+    email:
+        processor: var_get
+        id: invite_read_email
+        key: email
+        nullable: true
+    order_by:
+        processor: var_get
+        id: invite_read_order_by
+        key: order_by
+        nullable: true
+    direction:
+        processor: var_get
+        id: invite_read_direction
+        key: direction
+        nullable: true
+    offset:
+        processor: var_get
+        id: invite_read_offset
+        key: offset
+        nullable: true
+    limit:
+        processor: var_get
+        id: invite_read_limit
+        key: limit
+        nullable: true

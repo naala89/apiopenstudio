@@ -11,16 +11,16 @@ appid: 2
 ttl: 0
 
 security:
-  id: test resource with output response only security
-  processor: validate_token_roles
-  roles:
-    - Consumer
+    id: test resource with output response only security
+    processor: validate_token_roles
+    roles:
+        - Consumer
 
 process:
-  processor: processors
-  id: test resource with output response only process
-  machine_name: all
+    processor: processors
+    id: test resource with output response only process
+    machine_name: all
 
 output:
-  - response
+    - response
 

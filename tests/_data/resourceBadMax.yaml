@@ -11,29 +11,31 @@ appid: 2
 ttl: 0
 
 security:
-  processor: validate_token_roles
-  id: test resource with bad max security
-  roles:
-    - Consumer
+    processor: validate_token_roles
+    id: test resource with bad max security
+    roles:
+        - Consumer
 
 process:
-  processor: var_field
-  id: test resource with bad max process
-  key: zsdkfjh
-  value:
-    - zsdkfjh
-    - dfhstfn
+    processor: var_field
+    id: test resource with bad max process
+    key: zsdkfjh
+    value:
+        - zsdkfjh
+        - dfhstfn
 
 output:
-  - processor: email
-    id: test resource with bad max email
-    to: john@naala.com.au
-    subject: "test email"
-    format: html
-  - processor: xml
-    id: test resource with bad max xml
-    destination:
-      - www.foo.bar
-      - www.foo.bar
-      - www.foo.bar
-    method: post
+    -
+        processor: email
+        id: test resource with bad max email
+        to: john@naala.com.au
+        subject: "test email"
+        format: html
+    -
+        processor: xml
+        id: test resource with bad max xml
+        destination:
+            - www.foo.bar
+            - www.foo.bar
+            - www.foo.bar
+        method: post

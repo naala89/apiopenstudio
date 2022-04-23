@@ -21,19 +21,19 @@ appid: 1
 ttl: 0
 
 security:
-  id: resource_import_security
-  processor: validate_token_roles
-  roles:
-    - Developer
-  validate_account: false
-  validate_application: false
+    id: resource_import_security
+    processor: validate_token_roles
+    roles:
+        - Developer
+    validate_account: false
+    validate_application: false
 
 process:
-  id: resource_import_process
-  processor: resource_import
-  resource:
-    id: resource_import_file
-    processor: var_file
-    location: _FILES
-    filename: resource_file
-    get_contents: true
+    id: resource_import_process
+    processor: resource_import
+    resource:
+        id: resource_import_file
+        processor: var_file
+        location: _FILES
+        filename: resource_file
+        get_contents: true

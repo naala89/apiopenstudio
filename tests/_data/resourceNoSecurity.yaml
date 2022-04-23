@@ -11,18 +11,20 @@ appid: 2
 ttl: 0
 
 process:
-  processor: processors
-  id: test bad resource no security process
-  machine_name: all
+    processor: processors
+    id: test bad resource no security process
+    machine_name: all
 
 output:
-  - processor: email
-    id: test bad resource no security output email
-    to: john@naala.com.au
-    subject: "test email"
-    format: html
-    message: "test email"
-  - processor: xml
-    id: output xml
-    destination: www.foo.bar
-    method: post
+    -
+        processor: email
+        id: test bad resource no security output email
+        to: john@naala.com.au
+        subject: "test email"
+        format: html
+        message: "test email"
+    -
+        processor: xml
+        id: output xml
+        destination: www.foo.bar
+        method: post

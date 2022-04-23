@@ -21,10 +21,10 @@ appid: 1
 ttl: 0
 
 process:
-  id: user_invite_accept_process
-  processor: invite_accept
-  token:
-    processor: var_uri
-    id: user_invite_accept_token
-    index: 0
-    nullable: false
+    id: user_invite_accept_process
+    processor: invite_accept
+    token:
+        processor: var_uri
+        id: user_invite_accept_token
+        index: 0
+        nullable: false
