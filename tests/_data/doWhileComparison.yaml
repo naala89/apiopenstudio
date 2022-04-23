@@ -1,0 +1,93 @@
+name: Testing do...while with counter loops
+
+description: Testing counter loops with comparison works correctly
+
+uri: do_while/counter_loops
+
+appid: 2
+
+method: get
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: 1
+    roles:
+        - Consumer
+        - Developer
+
+process:
+    processor: sequential
+    id: sequential processor
+    sequence:
+        -
+            processor: var_store_create
+            id: setup counter
+            appid: 2
+            key: do_while_counter_loop
+            val: 0
+            validate_access: false
+        -
+            processor: do_while
+            id: do while processor
+            lhs:
+                processor: cast
+                id: cast string to integer
+                data_type: integer
+                data:
+                    processor: json_path
+                    id: extract val from counter object
+                    expression: "$.0.val"
+                    remove_wrapping_quotes: true
+                    operation: get
+                    data:
+                        processor: var_store_read
+                        id: read current counter value
+                        validate_access: false
+                        appid: 2
+                        remove_wrapping_quotes: true
+                        key: do_while_counter_loop
+            rhs: 70
+            operator: <
+            max_loops: 100
+            process_loop:
+                processor: var_store_update
+                id: save updated counter
+                validate_access: false
+                appid: 2
+                key: do_while_counter_loop
+                val:
+                    processor: math
+                    id: increment counter
+                    formula: x+1
+                    variables:
+                        processor: var_object
+                        id: formula variables
+                        attributes:
+                            -
+                                processor: var_field
+                                id: variable x
+                                key: x
+                                value:
+                                    processor: cast
+                                    id: cast var x value to integer
+                                    data_type: integer
+                                    data:
+                                        processor: json_path
+                                        id: extract val from counter object
+                                        expression: "$.0.val"
+                                        remove_wrapping_quotes: true
+                                        operation: get
+                                        data:
+                                            processor: var_store_read
+                                            id: read current counter value
+                                            validate_access: false
+                                            appid: 2
+                                            key: do_while_counter_loop
+        -
+            processor: var_store_read
+            id: read final counter value
+            appid: 2
+            key: do_while_counter_loop
+            validate_access: false
