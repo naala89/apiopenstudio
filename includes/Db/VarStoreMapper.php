@@ -142,24 +142,95 @@ QUERY;
     }
 
     /**
-     * Find a var by vid with user/role validation against the var's application.
+     * Return a var by vid that a user has access to.
      *
      * @param integer $uid User ID.
-     * @param array $roles Role IDs.
-     * @param integer $vid Var ID.
+     * @param integer $vid var ID.
      *
      * @return VarStore A VarStore object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByUidRolesVid(int $uid, array $roles, int $vid): VarStore
+    public function findByUidVid(int $uid, int $vid): VarStore
+    {
+        $sql = <<<QUERY
+SELECT vs.* FROM var_store AS vs WHERE  vs.vid = ? AND vs.appid in (
+    SELECT app.appid FROM application AS app WHERE (
+        SELECT ur.urid FROM user_role AS ur INNER JOIN role AS r ON ur.rid = r.rid 
+            WHERE r.name = "Administrator" AND ur.uid = ?)
+    UNION ALL
+    SELECT app.appid FROM application AS app WHERE app.accid IN (
+        SELECT ur.accid FROM user_role AS ur INNER JOIN role AS r ON ur.rid = r.rid
+            WHERE r.name = "Account manager" AND ur.uid = ?
+    )
+    UNION ALL
+    SELECT app.appid FROM application AS app WHERE app.appid IN (
+        SELECT ur.appid FROM user_role AS ur INNER JOIN role AS r ON ur.rid = r.rid WHERE ur.uid = ?
+    )
+)
+QUERY;
+
+        $bindParams = [$vid, $uid, $uid, $uid];
+
+        return $this->fetchRow($sql, $bindParams);
+    }
+
+    /**
+     * Return a var by appid/key that a user has access to.
+     *
+     * @param integer $uid User ID.
+     * @param integer $appid application ID.
+     * @param string $key var key.
+     *
+     * @return VarStore A VarStore object.
+     *
+     * @throws ApiException Return an ApiException on DB error.
+     */
+    public function findByUidAppidKey(int $uid, int $appid, string $key): VarStore
+    {
+        $sql = <<<QUERY
+SELECT vs.* FROM var_store AS vs WHERE vs.key = ? AND vs.appid = ? AND vs.appid in (
+    SELECT app.appid FROM application AS app WHERE (
+        SELECT ur.urid FROM user_role AS ur INNER JOIN role AS r ON ur.rid = r.rid 
+            WHERE r.name = "Administrator" AND ur.uid = ?)
+    UNION ALL
+    SELECT app.appid FROM application AS app WHERE app.accid IN (
+        SELECT ur.accid FROM user_role AS ur INNER JOIN role AS r ON ur.rid = r.rid
+            WHERE r.name = "Account manager" AND ur.uid = ?
+    )
+    UNION ALL
+    SELECT app.appid FROM application AS app WHERE app.appid IN (
+        SELECT ur.appid FROM user_role AS ur INNER JOIN role AS r ON ur.rid = r.rid WHERE ur.uid = ?
+    )
+)
+QUERY;
+
+        $bindParams = [$key, $appid, $uid, $uid, $uid];
+
+        return $this->fetchRow($sql, $bindParams);
+    }
+
+    /**
+     * Find a var by App ID and key with user/role validation.
+     *
+     * @param integer $uid User ID.
+     * @param array $roles Role IDs.
+     * @param integer $appid App ID.
+     * @param string $key variable key.
+     *
+     * @return VarStore A VarStore object.
+     *
+     * @throws ApiException Return an ApiException on DB error.
+     */
+    public function findByUidRolesAppidKey(int $uid, array $roles, int $appid, string $key): VarStore
     {
         $sql = 'SELECT vs.* FROM `var_store` AS vs';
         $sql .= ' INNER JOIN `user_role` AS ur ON vs.`appid` = ur.`appid`';
-        $sql .= ' INNER JOIN `role` AS r ON  ur.`rid` = r.`rid`';
+        $sql .= ' INNER JOIN `role` AS r ON ur.`rid` = r.`rid`';
         $sql .= ' WHERE ur.`uid` = ?';
-        $sql .= ' AND vs.`vid` = ?';
-        $bindParams = [$uid, $vid];
+        $sql .= ' AND vs.`appid` = ?';
+        $sql .= ' AND vs.`key` = ?';
+        $bindParams = [$uid, $appid, $key];
         $placeholders = [];
         foreach ($roles as $role) {
             $placeholders[] = '?';
@@ -242,10 +313,10 @@ QUERY;
     {
         $varStore = new VarStore();
 
-        $varStore->setVid(!empty($row['vid']) ? $row['vid'] : 0);
-        $varStore->setAppid(!empty($row['appid']) ? $row['appid'] : 0);
-        $varStore->setKey(!empty($row['key']) ? $row['key'] : '');
-        $varStore->setVal(!empty($row['val']) ? $row['val'] : '');
+        $varStore->setVid($row['vid'] ?? 0);
+        $varStore->setAppid($row['appid'] ?? 0);
+        $varStore->setKey($row['key'] ?? '');
+        $varStore->setVal($row['val'] ?? '');
 
         return $varStore;
     }
