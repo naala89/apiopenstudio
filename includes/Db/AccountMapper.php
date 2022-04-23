@@ -200,8 +200,8 @@ class AccountMapper extends Mapper
     {
         $account = new Account();
 
-        $account->setAccid(!empty($row['accid']) ? $row['accid'] : 0);
-        $account->setName(!empty($row['name']) ? $row['name'] : '');
+        $account->setAccid($row['accid'] ?? 0);
+        $account->setName($row['name'] ?? '');
 
         return $account;
     }
