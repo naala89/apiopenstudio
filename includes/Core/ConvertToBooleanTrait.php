@@ -26,9 +26,9 @@ trait ConvertToBooleanTrait
      *
      * @param $data
      *
-     * @return boolean|null
+     * @return null
      */
-    public function fromEmptyToBoolean($data): ?bool
+    public function fromEmptyToBoolean($data)
     {
         return null;
     }

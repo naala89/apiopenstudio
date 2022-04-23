@@ -140,8 +140,8 @@ class RoleMapper extends Mapper
     {
         $role = new Role();
 
-        $role->setRid(!empty($row['rid']) ? $row['rid'] : 0);
-        $role->setName(!empty($row['name']) ? $row['name'] : '');
+        $role->setRid($row['rid'] ?? 0);
+        $role->setName($row['name'] ?? '');
 
         return $role;
     }

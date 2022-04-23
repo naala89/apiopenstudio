@@ -11,26 +11,26 @@ appid: 2
 ttl: 0
 
 security:
-  id: test sort processor security
-  processor: validate_token_roles
-  roles:
-    - Consumer
+    id: test sort processor security
+    processor: validate_token_roles
+    roles:
+        - Consumer
 
 process:
-  processor: sort
-  id: test sort processor process
-  values:
-    - field1
-    - field4
-    - field2
-    - field3
-    - 1
-    - 5
-  direction:
-    processor: var_get
-    id: test sort processor direction
-    key: direction
-  sort_by:
-    processor: var_get
-    id: test sort processor sort_by
-    key: sort_by
+    processor: sort
+    id: test sort processor process
+    values:
+        - field1
+        - field4
+        - field2
+        - field3
+        - 1
+        - 5
+    direction:
+        processor: var_get
+        id: test sort processor direction
+        key: direction
+    sort_by:
+        processor: var_get
+        id: test sort processor sort_by
+        key: sort_by

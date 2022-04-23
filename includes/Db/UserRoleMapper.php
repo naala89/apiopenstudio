@@ -378,11 +378,11 @@ class UserRoleMapper extends Mapper
     {
         $userRole = new UserRole();
 
-        $userRole->setUrid(!empty($row['urid']) ? $row['urid'] : 0);
-        $userRole->setAccid(!empty($row['accid']) ? $row['accid'] : 0);
-        $userRole->setAppid(!empty($row['appid']) ? $row['appid'] : 0);
-        $userRole->setUid(!empty($row['uid']) ? $row['uid'] : 0);
-        $userRole->setRid(!empty($row['rid']) ? $row['rid'] : 0);
+        $userRole->setUrid($row['urid'] ?? 0);
+        $userRole->setAccid($row['accid'] ?? 0);
+        $userRole->setAppid($row['appid'] ?? 0);
+        $userRole->setUid($row['uid'] ?? 0);
+        $userRole->setRid($row['rid'] ?? 0);
 
         return $userRole;
     }

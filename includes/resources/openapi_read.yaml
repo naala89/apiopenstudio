@@ -21,14 +21,14 @@ appid: 1
 ttl: 3600
 
 security:
-  processor: validate_token
-  id: openapi_read_security
+    processor: validate_token
+    id: openapi_read_security
 
 process:
-  processor: openapi_read
-  id: openapi_read_process
-  appid:
-    processor: var_get
-    id: openapi_read_appid
-    expected_type: integer
-    key: appid
+    processor: openapi_read
+    id: openapi_read_process
+    appid:
+        processor: var_get
+        id: openapi_read_appid
+        expected_type: integer
+        key: appid

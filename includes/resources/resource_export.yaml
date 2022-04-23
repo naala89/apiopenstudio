@@ -21,27 +21,27 @@ appid: 1
 ttl: 0
 
 security:
-  id: resource_export_security
-  processor: validate_token_roles
-  roles:
-    - Developer
-  validate_account: false
-  validate_application: false
+    id: resource_export_security
+    processor: validate_token_roles
+    roles:
+        - Developer
+    validate_account: false
+    validate_application: false
 
 process:
-  processor: resource_export
-  id: resource_export_process
-  format:
-    processor: var_uri
-    id: resource_export_format
-    index: 0
-  resid:
-    processor: var_uri
-    id: resource_export_resid
-    index: 1
-    expected_type: integer
+    processor: resource_export
+    id: resource_export_process
+    format:
+        processor: var_uri
+        id: resource_export_format
+        index: 0
+    resid:
+        processor: var_uri
+        id: resource_export_resid
+        index: 1
+        expected_type: integer
 
 output:
-  processor: file
-  id: resource_export_output
-  filename: resource.yaml
+    processor: file
+    id: resource_export_output
+    filename: resource.yaml

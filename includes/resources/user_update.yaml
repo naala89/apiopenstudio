@@ -21,286 +21,286 @@ appid: 1
 ttl: 0
 
 security:
-  id: user_update_security
-  processor: validate_token
+    id: user_update_security
+    processor: validate_token
 
 process:
-  processor: user_update
-  id: user_update_process
-  uid:
-    processor: var_uri
-    id: user_update_uid
-    expected_type: integer
-    index: 0
-  active:
-    processor: cast
-    id: user_update_cast_active
-    data_type: boolean
-    data:
-      processor: json_path
-      id: user_update_active
-      operation: get
-      expression: '$.active'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_active
-        expected_type: json
-        nullable: false
-  username:
-    processor: cast
-    id: user_update_cast_username
-    data_type: text
-    data:
-      processor: json_path
-      id: user_update_username
-      operation: get
-      expression: '$.username'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_username
-        expected_type: json
-        nullable: false
-  password:
-    processor: cast
-    id: user_update_cast_password
-    data_type: text
-    data:
-      processor: json_path
-      id: user_update_password
-      operation: get
-      expression: '$.password'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_password
-        expected_type: json
-        nullable: false
-  honorific:
-    processor: cast
-    id: user_update_cast_honorific
-    data_type: text
-    data:
-      processor: json_path
-      id: user_update_honorific
-      operation: get
-      expression: '$.honorific'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_honorific
-        expected_type: json
-        nullable: false
-  name_first:
-    processor: cast
-    id: user_update_cast_name_first
-    data_type: text
-    data:
-      processor: json_path
-      id: user_update_name_first
-      operation: get
-      expression: '$.name_first'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_name_first
-        expected_type: json
-        nullable: false
-  name_last:
-    processor: cast
-    id: user_update_cast_name_last
-    data_type: text
-    data:
-      processor: json_path
-      id: user_update_name_last
-      operation: get
-      expression: '$.name_last'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_name_last
-        expected_type: json
-        nullable: false
-  email:
-    processor: cast
-    id: user_update_cast_email
-    data_type: text
-    data:
-      processor: json_path
-      id: user_update_email
-      operation: get
-      expression: '$.email'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_email
-        expected_type: json
-        nullable: false
-  company:
-    processor: cast
-    id: user_update_cast_company
-    data_type: text
-    data:
-      processor: json_path
-      id: user_update_company
-      operation: get
-      expression: '$.company'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_company
-        expected_type: json
-        nullable: false
-  website:
-    processor: cast
-    id: user_update_cast_website
-    data_type: text
-    data:
-      processor: json_path
-      id: user_update_website
-      operation: get
-      expression: '$.website'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_website
-        expected_type: json
-        nullable: false
-  address_street:
-    processor: cast
-    id: user_update_cast_address_street
-    data_type: text
-    data:
-      processor: json_path
-      id: user_update_address_street
-      operation: get
-      expression: '$.address_street'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_address_street
-        expected_type: json
-        nullable: false
-  address_suburb:
-    processor: cast
-    id: user_update_cast_address_suburb
-    data_type: text
-    data:
-      processor: json_path
-      id: user_update_address_suburb
-      operation: get
-      expression: '$.address_suburb'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_address_suburb
-        expected_type: json
-        nullable: false
-  address_city:
-    processor: cast
-    id: user_update_cast_address_city
-    data_type: text
-    data:
-      processor: json_path
-      id: user_update_address_city
-      operation: get
-      expression: '$.address_city'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_address_city
-        expected_type: json
-        nullable: false
-  address_state:
-    processor: cast
-    id: user_update_cast_address_state
-    data_type: text
-    data:
-      processor: json_path
-      id: user_update_address_state
-      operation: get
-      expression: '$.address_state'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_address_state
-        expected_type: json
-        nullable: false
-  address_country:
-    processor: cast
-    id: user_update_cast_address_country
-    data_type: text
-    data:
-      processor: json_path
-      id: user_update_address_country
-      operation: get
-      expression: '$.address_country'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_address_country
-        expected_type: json
-        nullable: false
-  address_postcode:
-    processor: cast
-    id: user_update_cast_address_postcode
-    data_type: text
-    data:
-      processor: json_path
-      id: user_update_address_postcode
-      operation: get
-      expression: '$.address_postcode'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_address_postcode
-        expected_type: json
-        nullable: false
-  phone_mobile:
-    processor: cast
-    id: user_update_cast_phone_mobile
-    data_type: text
-    data:
-      processor: json_path
-      id: user_update_phone_mobile
-      operation: get
-      expression: '$.phone_mobile'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_phone_mobile
-        expected_type: json
-        nullable: false
-  phone_work:
-    processor: cast
-    id: user_update_cast_phone_work
-    data_type: text
-    data:
-      processor: json_path
-      id: user_update_phone_work
-      operation: get
-      expression: '$.phone_work'
-      remove_wrapping_quotes: true
-      stripslashes: true
-      data:
-        processor: var_body
-        id: user_update_body_phone_work
-        expected_type: json
-        nullable: false
+    processor: user_update
+    id: user_update_process
+    uid:
+        processor: var_uri
+        id: user_update_uid
+        expected_type: integer
+        index: 0
+    active:
+        processor: cast
+        id: user_update_cast_active
+        data_type: boolean
+        data:
+            processor: json_path
+            id: user_update_active
+            operation: get
+            expression: '$.active'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_active
+                expected_type: json
+                nullable: false
+    username:
+        processor: cast
+        id: user_update_cast_username
+        data_type: text
+        data:
+            processor: json_path
+            id: user_update_username
+            operation: get
+            expression: '$.username'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_username
+                expected_type: json
+                nullable: false
+    password:
+        processor: cast
+        id: user_update_cast_password
+        data_type: text
+        data:
+            processor: json_path
+            id: user_update_password
+            operation: get
+            expression: '$.password'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_password
+                expected_type: json
+                nullable: false
+    honorific:
+        processor: cast
+        id: user_update_cast_honorific
+        data_type: text
+        data:
+            processor: json_path
+            id: user_update_honorific
+            operation: get
+            expression: '$.honorific'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_honorific
+                expected_type: json
+                nullable: false
+    name_first:
+        processor: cast
+        id: user_update_cast_name_first
+        data_type: text
+        data:
+            processor: json_path
+            id: user_update_name_first
+            operation: get
+            expression: '$.name_first'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_name_first
+                expected_type: json
+                nullable: false
+    name_last:
+        processor: cast
+        id: user_update_cast_name_last
+        data_type: text
+        data:
+            processor: json_path
+            id: user_update_name_last
+            operation: get
+            expression: '$.name_last'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_name_last
+                expected_type: json
+                nullable: false
+    email:
+        processor: cast
+        id: user_update_cast_email
+        data_type: text
+        data:
+            processor: json_path
+            id: user_update_email
+            operation: get
+            expression: '$.email'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_email
+                expected_type: json
+                nullable: false
+    company:
+        processor: cast
+        id: user_update_cast_company
+        data_type: text
+        data:
+            processor: json_path
+            id: user_update_company
+            operation: get
+            expression: '$.company'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_company
+                expected_type: json
+                nullable: false
+    website:
+        processor: cast
+        id: user_update_cast_website
+        data_type: text
+        data:
+            processor: json_path
+            id: user_update_website
+            operation: get
+            expression: '$.website'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_website
+                expected_type: json
+                nullable: false
+    address_street:
+        processor: cast
+        id: user_update_cast_address_street
+        data_type: text
+        data:
+            processor: json_path
+            id: user_update_address_street
+            operation: get
+            expression: '$.address_street'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_address_street
+                expected_type: json
+                nullable: false
+    address_suburb:
+        processor: cast
+        id: user_update_cast_address_suburb
+        data_type: text
+        data:
+            processor: json_path
+            id: user_update_address_suburb
+            operation: get
+            expression: '$.address_suburb'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_address_suburb
+                expected_type: json
+                nullable: false
+    address_city:
+        processor: cast
+        id: user_update_cast_address_city
+        data_type: text
+        data:
+            processor: json_path
+            id: user_update_address_city
+            operation: get
+            expression: '$.address_city'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_address_city
+                expected_type: json
+                nullable: false
+    address_state:
+        processor: cast
+        id: user_update_cast_address_state
+        data_type: text
+        data:
+            processor: json_path
+            id: user_update_address_state
+            operation: get
+            expression: '$.address_state'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_address_state
+                expected_type: json
+                nullable: false
+    address_country:
+        processor: cast
+        id: user_update_cast_address_country
+        data_type: text
+        data:
+            processor: json_path
+            id: user_update_address_country
+            operation: get
+            expression: '$.address_country'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_address_country
+                expected_type: json
+                nullable: false
+    address_postcode:
+        processor: cast
+        id: user_update_cast_address_postcode
+        data_type: text
+        data:
+            processor: json_path
+            id: user_update_address_postcode
+            operation: get
+            expression: '$.address_postcode'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_address_postcode
+                expected_type: json
+                nullable: false
+    phone_mobile:
+        processor: cast
+        id: user_update_cast_phone_mobile
+        data_type: text
+        data:
+            processor: json_path
+            id: user_update_phone_mobile
+            operation: get
+            expression: '$.phone_mobile'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_phone_mobile
+                expected_type: json
+                nullable: false
+    phone_work:
+        processor: cast
+        id: user_update_cast_phone_work
+        data_type: text
+        data:
+            processor: json_path
+            id: user_update_phone_work
+            operation: get
+            expression: '$.phone_work'
+            remove_wrapping_quotes: true
+            stripslashes: true
+            data:
+                processor: var_body
+                id: user_update_body_phone_work
+                expected_type: json
+                nullable: false

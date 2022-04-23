@@ -1,0 +1,78 @@
+name: Testing do...while with max loops
+
+description: Testing potentially ininite loops with max_loops set to 100
+
+uri: do_while/max_loops
+
+appid: 2
+
+method: get
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: 1
+    roles:
+        - Consumer
+        - Developer
+
+process:
+    processor: sequential
+    id: sequential processor
+    sequence:
+        -
+            processor: var_store_create
+            id: setup counter
+            appid: 2
+            key: do_while_counter_max
+            val: 0
+            validate_access: false
+        -
+            processor: do_while
+            id: do while processor
+            lhs: true
+            rhs: true
+            operator: ==
+            max_loops: 50
+            process_loop:
+                processor: var_store_update
+                id: save updated counter
+                validate_access: false
+                appid: 2
+                key: do_while_counter_max
+                val:
+                    processor: math
+                    id: increment counter
+                    formula: x+1
+                    variables:
+                        processor: var_object
+                        id: formula variables
+                        attributes:
+                            -
+                                processor: var_field
+                                id: variable x
+                                key: x
+                                value:
+                                    processor: cast
+                                    id: cast var x value to integer
+                                    data_type: integer
+                                    data:
+                                        processor: json_path
+                                        id: extract val from counter object
+                                        expression: "$.0.val"
+                                        operation: get
+                                        data:
+                                            processor: var_store_read
+                                            id: read current counter value
+                                            validate_access: false
+                                            appid: 2
+                                            remove_wrapping_quotes: true
+                                            key: do_while_counter_max
+        -
+            processor: var_store_read
+            id: read final counter value
+            appid: 2
+            key: do_while_counter_max
+            remove_wrapping_quotes: true
+            validate_access: false

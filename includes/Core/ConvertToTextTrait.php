@@ -26,9 +26,9 @@ trait ConvertToTextTrait
      *
      * @param $data
      *
-     * @return string|null
+     * @return null
      */
-    public function fromEmptyToText($data): ?string
+    public function fromEmptyToText($data)
     {
         return null;
     }

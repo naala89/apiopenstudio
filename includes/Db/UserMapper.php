@@ -232,26 +232,26 @@ class UserMapper extends Mapper
     protected function mapArray(array $row): User
     {
         $user = new User();
-        $user->setUid(!empty($row['uid']) ? $row['uid'] : 0);
-        $user->setActive(!empty($row['active']) ? $row['active'] : 0);
-        $user->setUsername(!empty($row['username']) ? $row['username'] : '');
-        $user->setHash(!empty($row['hash']) ? $row['hash'] : '');
-        $user->setEmail(!empty($row['email']) ? $row['email'] : '');
-        $user->setHonorific(!empty($row['honorific']) ? $row['honorific'] : '');
-        $user->setNameFirst(!empty($row['name_first']) ? $row['name_first'] : '');
-        $user->setNameLast(!empty($row['name_last']) ? $row['name_last'] : '');
-        $user->setCompany(!empty($row['company']) ? $row['company'] : '');
-        $user->setWebsite(!empty($row['website']) ? $row['website'] : '');
-        $user->setAddressStreet(!empty($row['address_street']) ? $row['address_street'] : '');
-        $user->setAddressSuburb(!empty($row['address_suburb']) ? $row['address_suburb'] : '');
-        $user->setAddressCity(!empty($row['address_city']) ? $row['address_city'] : '');
-        $user->setAddressState(!empty($row['address_state']) ? $row['address_state'] : '');
-        $user->setAddressCountry(!empty($row['address_country']) ? $row['address_country'] : '');
-        $user->setAddressPostcode(!empty($row['address_postcode']) ? $row['address_postcode'] : '');
-        $user->setPhoneMobile(!empty($row['phone_mobile']) ? $row['phone_mobile'] : '');
-        $user->setPhoneWork(!empty($row['phone_work']) ? $row['phone_work'] : '');
-        $user->setPasswordReset(!empty($row['password_reset']) ? $row['password_reset'] : '');
-        $user->setPasswordResetTtl(!empty($row['password_reset_ttl']) ? $row['password_reset_ttl'] : '');
+        $user->setUid($row['uid'] ?? 0);
+        $user->setActive($row['active'] ?? 0);
+        $user->setUsername($row['username'] ?? '');
+        $user->setHash($row['hash'] ?? '');
+        $user->setEmail($row['email'] ?? '');
+        $user->setHonorific($row['honorific'] ?? '');
+        $user->setNameFirst($row['name_first'] ?? '');
+        $user->setNameLast($row['name_last'] ?? '');
+        $user->setCompany($row['company'] ?? '');
+        $user->setWebsite($row['website'] ?? '');
+        $user->setAddressStreet($row['address_street'] ?? '');
+        $user->setAddressSuburb($row['address_suburb'] ?? '');
+        $user->setAddressCity($row['address_city'] ?? '');
+        $user->setAddressState($row['address_state'] ?? '');
+        $user->setAddressCountry($row['address_country'] ?? '');
+        $user->setAddressPostcode($row['address_postcode'] ?? '');
+        $user->setPhoneMobile($row['phone_mobile'] ?? '');
+        $user->setPhoneWork($row['phone_work'] ?? '');
+        $user->setPasswordReset($row['password_reset'] ?? '');
+        $user->setPasswordResetTtl($row['password_reset_ttl'] ?? '');
         return $user;
     }
 }

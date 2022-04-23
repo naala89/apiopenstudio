@@ -11,49 +11,49 @@ appid: 2
 ttl: 0
 
 security:
-  id: test math security
-  processor: validate_token_roles
-  roles:
-    - Developer
-    - Consumer
+    id: test math security
+    processor: validate_token_roles
+    roles:
+        - Developer
+        - Consumer
 
 process:
-  processor: math
-  id: math_processor
-  formula:
-    processor: var_get
-    id: test math formula
-    key: formula
-    expected_type: text
-    nullable: true
-  variables:
-    processor: var_object
-    id: test math variable object
-    attributes:
-      -
-        processor: var_field
-        id: test math variable field - x
-        key: x
-        value:
-          processor: var_get
-          id: test math x var
-          key: x
-          nullable: true
-      -
-        processor: var_field
-        id: test math variable field - y
-        key: y
-        value:
-          processor: var_get
-          id: test math y var
-          key: y
-          nullable: true
-      -
-        processor: var_field
-        id: test math variable field - z
-        key: z
-        value:
-          processor: var_get
-          id: test math z var
-          key: z
-          nullable: true
+    processor: math
+    id: math_processor
+    formula:
+        processor: var_get
+        id: test math formula
+        key: formula
+        expected_type: text
+        nullable: true
+    variables:
+        processor: var_object
+        id: test math variable object
+        attributes:
+            -
+                processor: var_field
+                id: test math variable field - x
+                key: x
+                value:
+                    processor: var_get
+                    id: test math x var
+                    key: x
+                    nullable: true
+            -
+                processor: var_field
+                id: test math variable field - y
+                key: y
+                value:
+                    processor: var_get
+                    id: test math y var
+                    key: y
+                    nullable: true
+            -
+                processor: var_field
+                id: test math variable field - z
+                key: z
+                value:
+                    processor: var_get
+                    id: test math z var
+                    key: z
+                    nullable: true

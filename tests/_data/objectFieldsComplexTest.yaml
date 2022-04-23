@@ -11,36 +11,36 @@ appid: 2
 ttl: 0
 
 security:
-  processor: validate_token_roles
-  id: test object fields security
-  roles:
-    - Consumer
+    processor: validate_token_roles
+    id: test object fields security
+    roles:
+        - Consumer
 
 process:
-  processor: var_object
-  id: test object process
-  attributes:
-    -
-      processor: var_field
-      id: test object fields field 1
-      key: key1
-      value:
-        processor: var_field
-        id: test object fields field 1 1
-        key: key1_1
-        value: value1_1
-    -
-      processor: var_field
-      id: test object fields field 2
-      key: key2
-      value: field2
-    -
-      processor: var_field
-      id: test object fields field 3
-      key: key3
-      value: field3
-    -
-      processor: var_field
-      id: test object fields field 4
-      key: key4
-      value: field4
+    processor: var_object
+    id: test object process
+    attributes:
+        -
+            processor: var_field
+            id: test object fields field 1
+            key: key1
+            value:
+                processor: var_field
+                id: test object fields field 1 1
+                key: key1_1
+                value: value1_1
+        -
+            processor: var_field
+            id: test object fields field 2
+            key: key2
+            value: field2
+        -
+            processor: var_field
+            id: test object fields field 3
+            key: key3
+            value: field3
+        -
+            processor: var_field
+            id: test object fields field 4
+            key: key4
+            value: field4

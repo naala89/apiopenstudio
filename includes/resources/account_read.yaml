@@ -21,33 +21,33 @@ appid: 1
 ttl: 0
 
 security:
-  id: account_read_security
-  processor: validate_token
+    id: account_read_security
+    processor: validate_token
 
 process:
-  processor: account_read
-  id: account_read_process
-  accid:
-    processor: var_get
-    id: account_read_accid
-    key: accid
-    expected_type: integer
-    nullable: true
-  keyword:
-    processor: var_get
-    id: account_read_keyword
-    key: keyword
-    expected_type: text
-    nullable: true
-  order_by:
-    processor: var_get
-    id: account_read_order_by
-    key: order_by
-    expected_type: text
-    nullable: true
-  direction:
-    processor: var_get
-    id: account_read_direction
-    key: direction
-    expected_type: text
-    nullable: true
+    processor: account_read
+    id: account_read_process
+    accid:
+        processor: var_get
+        id: account_read_accid
+        key: accid
+        expected_type: integer
+        nullable: true
+    keyword:
+        processor: var_get
+        id: account_read_keyword
+        key: keyword
+        expected_type: text
+        nullable: true
+    order_by:
+        processor: var_get
+        id: account_read_order_by
+        key: order_by
+        expected_type: text
+        nullable: true
+    direction:
+        processor: var_get
+        id: account_read_direction
+        key: direction
+        expected_type: text
+        nullable: true

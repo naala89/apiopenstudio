@@ -9,19 +9,19 @@ method: get
 ttl: 0
 
 security:
-  processor: token_consumer
-  id: 1
-  token:
-    processor: var_get
-    id: 2
-    name: token
+    processor: token_consumer
+    id: 1
+    token:
+        processor: var_get
+        id: 2
+        name: token
 
 process:
-  processor: concatenate
-  id: 3
-  items:
-    - field1
-    - field2
-    - field3
-    - 4
-    - 5.6
+    processor: concatenate
+    id: 3
+    items:
+        - field1
+        - field2
+        - field3
+        - 4
+        - 5.6

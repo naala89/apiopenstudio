@@ -11,43 +11,48 @@ appid: 2
 ttl: 0
 
 security:
-  id: test sort processor security
-  processor: validate_token_roles
-  roles:
-    - Consumer
+    id: test sort processor security
+    processor: validate_token_roles
+    roles:
+        - Consumer
 
 process:
-  processor: sort
-  id: test sort processor process
-  values:
-    processor: var_object
-    id: test sort processor object
-    attributes:
-      - processor: var_field
-        id: test sort processor field 1
-        key: key3
-        value: val3
-      - processor: var_field
-        id: test sort processor field 2
-        key: key2
-        value: val5
-      - processor: var_field
-        id: test sort processor field 3
-        key: key4
-        value: val2
-      - processor: var_field
-        id: test sort processor field 4
-        key: key1
-        value: val99
-      - processor: var_field
-        id: test sort processor field 5
-        key: key999
-        value: val1
-  direction:
-    processor: var_get
-    id: test sort processor direction
-    key: direction
-  sort_by:
-    processor: var_get
-    id: test sort processor sort_by
-    key: sort_by
+    processor: sort
+    id: test sort processor process
+    values:
+        processor: var_object
+        id: test sort processor object
+        attributes:
+            -
+                processor: var_field
+                id: test sort processor field 1
+                key: key3
+                value: val3
+            -
+                processor: var_field
+                id: test sort processor field 2
+                key: key2
+                value: val5
+            -
+                processor: var_field
+                id: test sort processor field 3
+                key: key4
+                value: val2
+            -
+                processor: var_field
+                id: test sort processor field 4
+                key: key1
+                value: val99
+            -
+                processor: var_field
+                id: test sort processor field 5
+                key: key999
+                value: val1
+    direction:
+        processor: var_get
+        id: test sort processor direction
+        key: direction
+    sort_by:
+        processor: var_get
+        id: test sort processor sort_by
+        key: sort_by

@@ -11,34 +11,34 @@ method: post
 ttl: 0
 
 security:
-  processor: validate_token_roles
-  id: test xml_path security
-  roles:
-    - Consumer
+    processor: validate_token_roles
+    id: test xml_path security
+    roles:
+        - Consumer
 
 process:
-  processor: xml_path
-  id: test xml_path
-  data:
-    processor: var_post
-    id: test xml_path data
-    key: data
-    expected_type: xml
-    nullable: false
-  expression:
-    processor: var_post
-    id: test xml_path expression
-    key: expression
-    expected_type: text
-    nullable: false
-  operation:
-    processor: var_post
-    id: test xml_path operation
-    key: operation
-    expected_type: text
-    nullable: false
-  value:
-    processor: var_post
-    id: test xml_path value
-    key: value
-    nullable: true
+    processor: xml_path
+    id: test xml_path
+    data:
+        processor: var_post
+        id: test xml_path data
+        key: data
+        expected_type: xml
+        nullable: false
+    expression:
+        processor: var_post
+        id: test xml_path expression
+        key: expression
+        expected_type: text
+        nullable: false
+    operation:
+        processor: var_post
+        id: test xml_path operation
+        key: operation
+        expected_type: text
+        nullable: false
+    value:
+        processor: var_post
+        id: test xml_path value
+        key: value
+        nullable: true

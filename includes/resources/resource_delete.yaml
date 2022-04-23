@@ -21,18 +21,18 @@ appid: 1
 ttl: 0
 
 security:
-  id: resource_delete_security
-  processor: validate_token_roles
-  roles:
-    - Developer
-  validate_account: false
-  validate_application: false
+    id: resource_delete_security
+    processor: validate_token_roles
+    roles:
+        - Developer
+    validate_account: false
+    validate_application: false
 
 process:
-  id: resource_delete_process
-  processor: resource_delete
-  resid:
-    id: resource_delete_resid
-    processor: var_uri
-    index: 0
-    expected_type: integer
+    id: resource_delete_process
+    processor: resource_delete
+    resid:
+        id: resource_delete_resid
+        processor: var_uri
+        index: 0
+        expected_type: integer

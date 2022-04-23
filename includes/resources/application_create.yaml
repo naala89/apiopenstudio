@@ -21,24 +21,24 @@ appid: 1
 ttl: 0
 
 security:
-  id: application_create_security
-  processor: validate_token_roles
-  validate_account: false
-  validate_application: false
-  roles:
-    - Administrator
-    - Account manager
+    id: application_create_security
+    processor: validate_token_roles
+    validate_account: false
+    validate_application: false
+    roles:
+        - Administrator
+        - Account manager
 
 process:
-  processor: application_create
-  id: application_create_process
-  accid:
-    processor: var_post
-    id: application_create_accid
-    expected_type: integer
-    key: accid
-  name:
-    processor: var_post
-    id: application_create_name
-    expected_type: text
-    key: name
+    processor: application_create
+    id: application_create_process
+    accid:
+        processor: var_post
+        id: application_create_accid
+        expected_type: integer
+        key: accid
+    name:
+        processor: var_post
+        id: application_create_name
+        expected_type: text
+        key: name

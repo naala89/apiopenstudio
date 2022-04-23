@@ -11,30 +11,30 @@ appid: 2
 ttl: 0
 
 security:
-  id: test resource required func type security
-  processor: validate_token_roles
-  roles:
-    - Consumer
+    id: test resource required func type security
+    processor: validate_token_roles
+    roles:
+        - Consumer
 
 process:
-  processor: processors
-  id: test resource required func type process
-  machine_name: all
+    processor: processors
+    id: test resource required func type process
+    machine_name: all
 
 output:
-  -
-    processor: email
-    id: test resource required func type output email
-    to: john@naala.com.au
-    subject: "test email"
-    format: html
-    message: test message
-  -
-    processor: xml
-    id: test resource required func type xml
-    destination: www.foo.bar
-    method: post
-    options:
-      processor: fucntions
-      id: test resource required func type xml options bad
-      machine_name: all
+    -
+        processor: email
+        id: test resource required func type output email
+        to: john@naala.com.au
+        subject: "test email"
+        format: html
+        message: test message
+    -
+        processor: xml
+        id: test resource required func type xml
+        destination: www.foo.bar
+        method: post
+        options:
+            processor: fucntions
+            id: test resource required func type xml options bad
+            machine_name: all

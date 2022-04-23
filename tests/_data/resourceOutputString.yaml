@@ -11,9 +11,9 @@ appid: 2
 ttl: 0
 
 process:
-  processor: processors
-  id: test resource with static string output process
-  machine_name: all
+    processor: processors
+    id: test resource with static string output process
+    machine_name: all
 
 output: dfgdzfgfs
 

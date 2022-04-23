@@ -11,24 +11,26 @@ appid: 2
 ttl: 0
 
 security:
-  id: test resource with empty processor as output security
-  processor: validate_token_roles
-  roles:
-    - Consumer
+    id: test resource with empty processor as output security
+    processor: validate_token_roles
+    roles:
+        - Consumer
 
 process:
-  processor: processors
-  id: test resource with empty processor as output process
-  machine_name: all
+    processor: processors
+    id: test resource with empty processor as output process
+    machine_name: all
 
 output:
-  - processor:
-    id: test resource with empty processor as output output 0
-    to: john@naala.com.au
-    subject: "test email"
-    format: html
-  - processor: xml
-    id: test resource with empty processor as output output 1
-    destination: www.foo.bar
-    method: post
+    -
+        processor:
+        id: test resource with empty processor as output output 0
+        to: john@naala.com.au
+        subject: "test email"
+        format: html
+    -
+        processor: xml
+        id: test resource with empty processor as output output 1
+        destination: www.foo.bar
+        method: post
 

@@ -21,19 +21,19 @@ appid: 1
 ttl: 0
 
 security:
-  processor: validate_token_roles
-  id: openapi_import_security
-  roles:
-    - Developer
-  valicate_account: false
-  valicate_application: false
+    processor: validate_token_roles
+    id: openapi_import_security
+    roles:
+        - Developer
+    valicate_account: false
+    valicate_application: false
 
 process:
-  processor: openapi_import
-  id: openapi_import_openapi_import
-  openapi_document:
-    id: openapi_import_file
-    processor: var_file
-    location: _FILES
-    filename: openapi
-    get_contents: true
+    processor: openapi_import
+    id: openapi_import_openapi_import
+    openapi_document:
+        id: openapi_import_file
+        processor: var_file
+        location: _FILES
+        filename: openapi
+        get_contents: true

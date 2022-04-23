@@ -11,42 +11,42 @@ appid: 2
 ttl: 0
 
 security:
-  id: test url security
-  processor: validate_token_roles
-  roles:
-    - Consumer
+    id: test url security
+    processor: validate_token_roles
+    roles:
+        - Consumer
 
 process:
-  processor: url
-  id: test url processor
-  method:
-    processor: var_get
-    id: test url method
-    key: method
-  url:
-    processor: var_get
-    id: test url url
-    key: url
-  sourceType:
-    processor: var_get
-    id: test url source_type
-    key: source_type
-    nullable: true
-  reportError:
-    processor: var_get
-    id: test url report_error
-    key: repor_error
-    expected_type: boolean
-    nullable: true
-  connectTimeout:
-    processor: var_get
-    id: test url connect_timeout
-    key: connect_timeout
-    expected_type: integer
-    nullable: true
-  timeout:
-    processor: var_get
-    id: test url timeout
-    key: timeout
-    expected_type: integer
-    nullable: true
+    processor: url
+    id: test url processor
+    method:
+        processor: var_get
+        id: test url method
+        key: method
+    url:
+        processor: var_get
+        id: test url url
+        key: url
+    sourceType:
+        processor: var_get
+        id: test url source_type
+        key: source_type
+        nullable: true
+    reportError:
+        processor: var_get
+        id: test url report_error
+        key: repor_error
+        expected_type: boolean
+        nullable: true
+    connectTimeout:
+        processor: var_get
+        id: test url connect_timeout
+        key: connect_timeout
+        expected_type: integer
+        nullable: true
+    timeout:
+        processor: var_get
+        id: test url timeout
+        key: timeout
+        expected_type: integer
+        nullable: true

@@ -21,24 +21,24 @@ appid: 1
 ttl: 3600
 
 security:
-  id: openapi_update_security
-  processor: validate_token_roles
-  validate_account: false
-  validate_application: false
-  roles:
-    - Developer
+    id: openapi_update_security
+    processor: validate_token_roles
+    validate_account: false
+    validate_application: false
+    roles:
+        - Developer
 
 process:
-  processor: openapi_update
-  id: openapi_update_process
-  appid:
-    processor: var_uri
-    id: openapi_update_appid
-    expected_type: integer
-    index: 0
-    nullable: false
-  open_api:
-    processor: var_body
-    id: openapi_update_body
-    expected_type: json
-    nullable: false
+    processor: openapi_update
+    id: openapi_update_process
+    appid:
+        processor: var_uri
+        id: openapi_update_appid
+        expected_type: integer
+        index: 0
+        nullable: false
+    open_api:
+        processor: var_body
+        id: openapi_update_body
+        expected_type: json
+        nullable: false

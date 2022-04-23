@@ -11,6 +11,9 @@ appid: 2
 ttl: 0
 
 process:
-  - ind1: val1
-  - ind2: val2
-  - ind3: val3
+    -
+        ind1: val1
+    -
+        ind2: val2
+    -
+        ind3: val3

@@ -11,28 +11,27 @@ appid: 2
 ttl: 0
 
 security:
-  processor: validate_token_roles
-  id: test good resource security
-  roles:
-    - Consumer
+    processor: validate_token_roles
+    id: test good resource security
+    roles:
+        - Consumer
 
 process:
-  processor: processors
-  id: test good resource process
-  machine_name: all
+    processor: processors
+    id: test good resource process
+    machine_name: all
 
 output:
-  -
-    processor: email
-    message: This is a test
-    id: test good resource output email
-    to: john@naala.com.au
-    subject: "test email"
-    format: html
-  -
-    processor: xml
-    id: test good resource output post xml
-    destination: www.foo.bar
-    method: post
-  -
-    response
+    -
+        processor: email
+        message: This is a test
+        id: test good resource output email
+        to: john@naala.com.au
+        subject: "test email"
+        format: html
+    -
+        processor: xml
+        id: test good resource output post xml
+        destination: www.foo.bar
+        method: post
+    - response

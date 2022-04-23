@@ -21,16 +21,16 @@ appid: 1
 ttl: 0
 
 security:
-  id: delete_account_security
-  processor: validate_token_roles
-  roles:
-    - Administrator
+    id: delete_account_security
+    processor: validate_token_roles
+    roles:
+        - Administrator
 
 process:
-  processor: account_delete
-  id: account_delete_process
-  accid:
-    processor: var_uri
-    id: account_delete_accid
-    expected_type: integer
-    index: 0
+    processor: account_delete
+    id: account_delete_process
+    accid:
+        processor: var_uri
+        id: account_delete_accid
+        expected_type: integer
+        index: 0

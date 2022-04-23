@@ -58,8 +58,7 @@ process:
                             appid: 2
                             key: testing sequential
                             validate_access: false
-                    -
-                        ", second value"
+                    - ", second value"
         -
             processor: var_store_update
             id: Update the var store step 3
@@ -91,8 +90,7 @@ process:
                             appid: 2
                             key: testing sequential
                             validate_access: false
-                    -
-                        ", third value"
+                    - ", third value"
         -
             processor: json_path
             id: get the val for var store final

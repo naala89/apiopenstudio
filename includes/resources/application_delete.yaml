@@ -21,19 +21,19 @@ appid: 1
 ttl: 0
 
 security:
-  id: application_delete_security
-  processor: validate_token_roles
-  validate_account: false
-  validate_application: false
-  roles:
-    - Administrator
-    - Account manager
+    id: application_delete_security
+    processor: validate_token_roles
+    validate_account: false
+    validate_application: false
+    roles:
+        - Administrator
+        - Account manager
 
 process:
-  processor: application_delete
-  id: application_delete_process
-  applicationId:
-    processor: var_uri
-    id: application_delete_application_id
-    expected_type: integer
-    index: 0
+    processor: application_delete
+    id: application_delete_process
+    applicationId:
+        processor: var_uri
+        id: application_delete_application_id
+        expected_type: integer
+        index: 0

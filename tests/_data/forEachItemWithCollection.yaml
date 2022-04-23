@@ -72,12 +72,14 @@ process:
                                 appid: 2
                                 key: for_each_item_test_result
                         - ', '
-                        -   processor: var_temporary
+                        -
+                            processor: var_temporary
                             id: for/each collection if_then_else then foreach.key
                             key: For/each collection foreach.key
                             operation: fetch
                         - ': '
-                        -   processor: var_temporary
+                        -
+                            processor: var_temporary
                             id: for/each collection if_then_else then foreach.val
                             key: For/each collection foreach.val
                             operation: fetch

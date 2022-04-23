@@ -26,9 +26,9 @@ trait ConvertToImageTrait
      *
      * @param $data
      *
-     * @return string|null
+     * @return null
      */
-    public function fromEmptyToImage($data): ?string
+    public function fromEmptyToImage($data)
     {
         return null;
     }

@@ -318,15 +318,15 @@ TAG;
     {
         $resource = new Resource();
 
-        $resource->setResid(!empty($row['resid']) ? $row['resid'] : 0);
-        $resource->setAppId(!empty($row['appid']) ? $row['appid'] : 0);
-        $resource->setName(!empty($row['name']) ? $row['name'] : '');
-        $resource->setDescription(!empty($row['description']) ? $row['description'] : '');
-        $resource->setMethod(!empty($row['method']) ? $row['method'] : '');
-        $resource->setUri(!empty($row['uri']) ? $row['uri'] : '');
-        $resource->setMeta(!empty($row['meta']) ? $row['meta'] : '');
-        $resource->setOpenapi(!empty($row['openapi']) ? $row['openapi'] : '');
-        $resource->setTtl(!empty($row['ttl']) ? $row['ttl'] : 0);
+        $resource->setResid($row['resid'] ?? 0);
+        $resource->setAppId($row['appid'] ?? 0);
+        $resource->setName($row['name'] ?? '');
+        $resource->setDescription($row['description'] ?? '');
+        $resource->setMethod($row['method'] ?? '');
+        $resource->setUri($row['uri'] ?? '');
+        $resource->setMeta($row['meta'] ?? '');
+        $resource->setOpenapi($row['openapi'] ?? '');
+        $resource->setTtl($row['ttl'] ?? 0);
 
         return $resource;
     }

@@ -17,6 +17,7 @@ namespace ApiOpenStudio\Processor;
 use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\Request;
+use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\VarStoreMapper;
 
 /**
@@ -32,6 +33,13 @@ class VarStoreRead extends Core\ProcessorEntity
      * @var VarStoreMapper
      */
     private VarStoreMapper $varStoreMapper;
+
+    /**
+     * Application mapper class.
+     *
+     * @var ApplicationMapper
+     */
+    private ApplicationMapper $applicationMapper;
 
     /**
      * {@inheritDoc}
@@ -134,6 +142,7 @@ class VarStoreRead extends Core\ProcessorEntity
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->varStoreMapper = new VarStoreMapper($db, $logger);
+        $this->applicationMapper = new ApplicationMapper($db, $logger);
     }
 
     /**
@@ -198,10 +207,21 @@ class VarStoreRead extends Core\ProcessorEntity
      */
     protected function fetchWithoutValidation($vid, $appid, $key, $keyword, $orderBy, $direction): array
     {
-        $params = [];
         if (!empty($vid)) {
-            $params['filter'][] = ['value' => (int) $vid, 'column' => '`vid`'];
+            $result = $this->varStoreMapper->findByVid($vid);
+            if (empty($result->getVid())) {
+                throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
+            }
+            return [$result];
         }
+        if (!empty($appid) && !empty($key)) {
+            $result = $this->varStoreMapper->findByAppIdKey($appid, $key);
+            if (empty($result->getVid())) {
+                throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
+            }
+            return [$result];
+        }
+        $params = [];
         if (!empty($appid)) {
             $params['filter'][] = ['value' => (int) $appid, 'column' => '`appid`'];
         }
@@ -243,10 +263,22 @@ class VarStoreRead extends Core\ProcessorEntity
      */
     protected function fetchWithValidation($vid, $appid, $key, $keyword, $orderBy, $direction): array
     {
-        $params = [];
+        $uid = Core\Utilities::getUidFromToken();
         if (!empty($vid)) {
-            $params['filter'][] = ['value' => (int) $vid, 'column' => 'vs.vid'];
+            $result = $this->varStoreMapper->findByUidVid($uid, $vid);
+            if (empty($result->getVid())) {
+                throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
+            }
+            return [$result];
         }
+        if (!empty($appid) && !empty($key)) {
+            $result = $this->varStoreMapper->findByUidAppidKey($uid, $appid, $key);
+            if (empty($result->getVid())) {
+                throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
+            }
+            return [$result];
+        }
+        $params = [];
         if (!empty($appid)) {
             $params['filter'][] = ['value' => (int) $appid, 'column' => 'vs.appid'];
         }
@@ -263,6 +295,6 @@ class VarStoreRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        return $this->varStoreMapper->findByUid(Core\Utilities::getUidFromToken(), $params);
+        return $this->varStoreMapper->findByUid($uid, $params);
     }
 }

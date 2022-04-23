@@ -11,16 +11,16 @@ appid: 2
 ttl: 0
 
 security:
-  id: test varuri processor security
-  processor: validate_token_roles
-  roles:
-    - Consumer
+    id: test varuri processor security
+    processor: validate_token_roles
+    roles:
+        - Consumer
 
 process:
-  processor: var_uri
-  id: test varuri processor process
-  index:
-    processor: var_get
-    id: test varuri processor varget
-    key: index
-    expected_type: integer
+    processor: var_uri
+    id: test varuri processor process
+    index:
+        processor: var_get
+        id: test varuri processor varget
+        key: index
+        expected_type: integer

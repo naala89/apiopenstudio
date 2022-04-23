@@ -21,14 +21,14 @@ appid: 1
 ttl: 0
 
 security:
-  id: var_store_delete_security
-  processor: validate_token
+    id: var_store_delete_security
+    processor: validate_token
 
 process:
-  id: var_store_delete_process
-  processor: var_store_delete
-  vid:
-    id: var_store_delete_vid
-    processor: var_uri
-    nullable: false
-    index: 0
+    id: var_store_delete_process
+    processor: var_store_delete
+    vid:
+        id: var_store_delete_vid
+        processor: var_uri
+        nullable: false
+        index: 0

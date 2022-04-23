@@ -21,57 +21,57 @@ appid: 1
 ttl: 0
 
 security:
-  id: resource_create_security
-  processor: validate_token_roles
-  roles:
-    - Developer
-  validate_account: false
-  validate_application: false
+    id: resource_create_security
+    processor: validate_token_roles
+    roles:
+        - Developer
+    validate_account: false
+    validate_application: false
 
 process:
-  processor: resource_create
-  id: resource_create_process
-  name:
-    processor: var_post
-    id: resource_create_name
-    nullable: false
-    key: name
-  description:
-    processor: var_post
-    id: resource_create_description
-    nullable: true
-    key: description
-  appid:
-    processor: var_post
-    id: resource_create_appid
-    nullable: false
-    key: appid
-    expected_type: integer
-  method:
-    processor: var_post
-    id: resource_create_method
-    nullable: false
-    key: method
-  uri:
-    processor: var_post
-    id: resource_create_uri
-    nullable: false
-    key: uri
-  ttl:
-    processor: var_post
-    id: resource_create_ttl
-    nullable: false
-    key: ttl
-    expected_type: integer
-  metadata:
-    processor: var_post
-    id: resource_create_meta
-    expected_type: json
-    nullable: false
-    key: metadata
-  openapi:
-    processor: var_post
-    id: resource_create_openapi
-    expected_type: json
-    nullable: false
-    key: openapi
+    processor: resource_create
+    id: resource_create_process
+    name:
+        processor: var_post
+        id: resource_create_name
+        nullable: false
+        key: name
+    description:
+        processor: var_post
+        id: resource_create_description
+        nullable: true
+        key: description
+    appid:
+        processor: var_post
+        id: resource_create_appid
+        nullable: false
+        key: appid
+        expected_type: integer
+    method:
+        processor: var_post
+        id: resource_create_method
+        nullable: false
+        key: method
+    uri:
+        processor: var_post
+        id: resource_create_uri
+        nullable: false
+        key: uri
+    ttl:
+        processor: var_post
+        id: resource_create_ttl
+        nullable: false
+        key: ttl
+        expected_type: integer
+    metadata:
+        processor: var_post
+        id: resource_create_meta
+        expected_type: json
+        nullable: false
+        key: metadata
+    openapi:
+        processor: var_post
+        id: resource_create_openapi
+        expected_type: json
+        nullable: false
+        key: openapi

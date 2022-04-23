@@ -21,19 +21,19 @@ appid: 1
 ttl: 0
 
 security:
-  id: invite_delete_security
-  processor: validate_token_roles
-  roles:
-    - Administrator
-    - Account manager
-    - Application manager
-  validate_account: false
-  validate_application: false
+    id: invite_delete_security
+    processor: validate_token_roles
+    roles:
+        - Administrator
+        - Account manager
+        - Application manager
+    validate_account: false
+    validate_application: false
 
 process:
-  processor: invite_delete
-  id: invite_delete_process
-  iid:
-    processor: var_uri
-    id: invite_delete_iid
-    index: 0
+    processor: invite_delete
+    id: invite_delete_process
+    iid:
+        processor: var_uri
+        id: invite_delete_iid
+        index: 0

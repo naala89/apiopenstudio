@@ -11,41 +11,41 @@ appid: 2
 ttl: 0
 
 security:
-  id: test var_rand security
-  processor: validate_token_roles
-  roles:
-    - Consumer
+    id: test var_rand security
+    processor: validate_token_roles
+    roles:
+        - Consumer
 
 process:
-  processor: var_rand
-  id: test var_rand process
-  length:
-    processor: var_get
-    id: test var_rand length
-    key: length
-    expected_type: integer
-    nullable: true
-  lower:
-    processor: var_get
-    id: test var_rand lower
-    key: lower
-    expected_type: boolean
-    nullable: true
-  upper:
-    processor: var_get
-    id: test var_rand upper
-    key: upper
-    expected_type: boolean
-    nullable: true
-  numeric:
-    processor: var_get
-    id: test var_rand numeric
-    key: numeric
-    expected_type: boolean
-    nullable: true
-  special:
-    processor: var_get
-    id: test var_rand special
-    key: special
-    expected_type: boolean
-    nullable: true
+    processor: var_rand
+    id: test var_rand process
+    length:
+        processor: var_get
+        id: test var_rand length
+        key: length
+        expected_type: integer
+        nullable: true
+    lower:
+        processor: var_get
+        id: test var_rand lower
+        key: lower
+        expected_type: boolean
+        nullable: true
+    upper:
+        processor: var_get
+        id: test var_rand upper
+        key: upper
+        expected_type: boolean
+        nullable: true
+    numeric:
+        processor: var_get
+        id: test var_rand numeric
+        key: numeric
+        expected_type: boolean
+        nullable: true
+    special:
+        processor: var_get
+        id: test var_rand special
+        key: special
+        expected_type: boolean
+        nullable: true

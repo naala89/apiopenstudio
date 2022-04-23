@@ -252,11 +252,10 @@ class ApplicationMapper extends Mapper
     protected function mapArray(array $row): Application
     {
         $application = new Application();
-
-        $application->setAppid(!empty($row['appid']) ? $row['appid'] : 0);
-        $application->setAccid(!empty($row['accid']) ? $row['accid'] : 0);
-        $application->setName(!empty($row['name']) ? $row['name'] : '');
-        $application->setOpenapi(!empty($row['openapi']) ? $row['openapi'] : '');
+        $application->setAppid($row['appid'] ?? 0);
+        $application->setAccid($row['accid'] ?? 0);
+        $application->setName($row['name'] ?? '');
+        $application->setOpenapi($row['openapi'] ?? '');
 
         return $application;
     }

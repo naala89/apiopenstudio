@@ -28,11 +28,11 @@ trait ConvertToXmlTrait
      *
      * @param $data
      *
-     * @return null
+     * @return string
      */
-    public function fromEmptyToXml($data)
+    public function fromEmptyToXml($data): string
     {
-        return null;
+        return $this->wrapDataXmlFormat('');
     }
 
     /**
