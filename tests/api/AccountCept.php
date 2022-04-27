@@ -15,49 +15,66 @@ $validReadUsers = [
     [
         'username' => getenv('TESTER_ADMINISTRATOR_NAME'),
         'password' => getenv('TESTER_ADMINISTRATOR_PASS'),
-        'accounts' => [
-            [
-                'accid' => 1,
-                'name' => 'apiopenstudio',
-            ], [
-                'accid' => 2,
-                'name' => 'testing_acc',
-            ],
+        'read_result' => [
+            'result' => 'string:regex(~ok~)',
+            'data' => [
+                [
+                    'accid' => 'integer:>0:<2',
+                    'name' => 'string:regex(~apiopenstudio~)',
+                ], [
+                    'accid' => 'integer:>1:<3',
+                    'name' => 'string:regex(~testing_acc~)',
+                ],
+            ]
         ],
     ],
     [
         'username' => getenv('TESTER_ACCOUNT_MANAGER_NAME'),
         'password' => getenv('TESTER_ACCOUNT_MANAGER_PASS'),
-        'accounts' => [
-            [
-                'accid' => 2,
-                'name' => 'testing_acc',
+        'read_result' => [
+            'result' => 'string:regex(~ok~)',
+            'data' => [
+                [
+                    'accid' => 'integer:>1:<3',
+                    'name' => 'string:regex(~testing_acc~)',
+                ],
             ],
         ],
     ], [
         'username' => getenv('TESTER_APPLICATION_MANAGER_NAME'),
         'password' => getenv('TESTER_APPLICATION_MANAGER_PASS'),
-        'accounts' => [
-            [
-                'accid' => 2,
-                'name' => 'testing_acc',
+        'read_result' => [
+            'result' => 'string:regex(~ok~)',
+            'data' => [
+                [
+                    'accid' => 'integer:>1:<3',
+                    'name' => 'string:regex(~testing_acc~)',
+                ],
             ],
         ],
     ], [
         'username' => getenv('TESTER_DEVELOPER_NAME'),
         'password' => getenv('TESTER_DEVELOPER_PASS'),
-        'accounts' => [
-            [
-                'accid' => 2,
-                'name' => 'testing_acc',
+        'read_result' => [
+            'result' => 'string:regex(~ok~)',
+            'data' => [
+                [
+                    'accid' => 'integer:>1:<3',
+                    'name' => 'string:regex(~testing_acc~)',
+                ],
             ],
         ],
     ], [
         'username' => getenv('TESTER_CONSUMER_NAME'),
         'password' => getenv('TESTER_CONSUMER_PASS'),
-        'accounts' => [
-            'accid' => 2,
-            'name' => 'testing_acc',
+        'read_result' => [
+            'result' => 'string:regex(~ok~)',
+            'data' => [
+                [
+                    'accid' => 'integer:>1:<3',
+                    'name' => 'string:regex(~testing_acc~)',
+                ],
+            ],
         ],
     ],
 ];
@@ -66,157 +83,221 @@ $validReadUsers = [
 $uri = $I->getCoreBaseUri() . '/account';
 $accid = 0;
 foreach ($validCreateEditDeleteUsers as $user) {
+    $I->comment('Testing account crud with valid user: ' . $user['username']);
     $I->performLogin($user['username'], $user['password']);
+
+    $I->wantTo('Create a new account with name: new_account1.');
     $I->sendPost($uri, ['name' => 'new_account1']);
     $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
     $I->seeResponseJsonMatchesJsonPath('$.data.accid');
-    $response = json_decode($I->getResponse(), true);
-    $accid = $response['data']['accid'];
-    $I->seeResponseContainsJson([
-        'result' => 'ok',
+    $I->seeResponseMatchesJsonType([
+        'result' => 'string:regex(~ok~)',
         'data' => [
-            'accid' => $accid,
-            'name' => 'new_account1',
+            'accid' => 'integer:>2',
+            'name' => 'string:regex(~new_account1~)',
         ],
     ]);
+    $response = json_decode($I->getResponse(), true);
+    $accid = $response['data']['accid'];
+    $I->comment("Got accid: $accid");
 
+    $I->wantTo("Update account $accid to edited_name.");
     $I->sendPut("$uri/$accid/edited_name");
     $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson([
-        'accid' => $accid,
-        'name' => 'edited_name'
+    $I->seeResponseMatchesJsonType([
+        'result' => 'string:regex(~ok~)',
+        'data' => [
+            'accid' => 'integer:>' . ($accid - 1) . ':<' . ($accid + 1),
+            'name' => 'string:regex(~edited_name~)',
+        ],
     ]);
 
+    $I->wantTo("Delete accid $accid.");
     $I->sendDelete("$uri/$accid");
     $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
-    $I->seeResponseContains('true');
+    $I->seeResponseIsJson([
+        [
+            'result' => 'ok',
+            'data' => true,
+        ],
+    ]);
 }
 
+$I->wantTo('Recreate the new account with name: new_account1, using administrator.');
 $I->performLogin(getenv('TESTER_ADMINISTRATOR_NAME'), getenv('TESTER_ADMINISTRATOR_PASS'));
 $I->sendPost($uri, ['name' => 'new_account1']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseJsonMatchesJsonPath('$.data.accid');
-$response = json_decode($I->getResponse(), true);
-$accid = $response['data']['accid'];
-$I->seeResponseContainsJson([
-    'result' => 'ok',
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
     'data' => [
-        'accid' => $accid,
-        'name' => 'new_account1',
+        'accid' => 'integer:>2',
+        'name' => 'string:regex(~new_account1~)',
     ],
 ]);
+$response = json_decode($I->getResponse(), true);
+$accid = $response['data']['accid'];
+$I->comment("Got accid: $accid");
+$validReadUsers[0]['read_result']['data'][] = [
+    'accid' => 'integer:>' . ($accid - 1) . ':<' . ($accid + 1),
+    'name' => 'string:regex(~new_account1~)',
+];
 
 foreach ($invalidCreateEditDeleteUsers as $user) {
+    $I->comment('Testing account crud with invalid user: ' . $user['username']);
     $I->performLogin($user['username'], $user['password']);
     $I->sendPost($uri, ['name' => 'new_account2']);
     $I->seeResponseCodeIs(403);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson([
-        'result' => 'error',
+    $I->seeResponseMatchesJsonType([
+        'result' => 'string:regex(~error~)',
         'data' => [
-            'code' => 4,
-            'id' => 'create_account_security',
-            'message' => 'Permission denied.',
+            'code' => 'integer:>3:<5',
+            'id' => 'string:regex(~create_account_security~)',
+            'message' => 'string:regex(~Permission denied.~)',
         ]
     ]);
 
     $I->sendPut("$uri/$accid/edited_name");
     $I->seeResponseCodeIs(403);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson([
-        'result' => 'error',
+    $I->seeResponseMatchesJsonType([
+        'result' => 'string:regex(~error~)',
         'data' => [
-            'code' => 4,
-            'id' => 'account_update_security',
-            'message' => 'Permission denied.',
-            ]
+            'code' => 'integer:>3:<5',
+            'id' => 'string:regex(~account_update_security~)',
+            'message' => 'string:regex(~Permission denied.~)',
+        ]
     ]);
 
     $I->sendDelete("$uri/$accid");
     $I->seeResponseCodeIs(403);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson([
-        'result' => 'error',
+    $I->seeResponseMatchesJsonType([
+        'result' => 'string:regex(~error~)',
         'data' => [
-            'code' => 4,
-            'id' => 'delete_account_security',
-            'message' => 'Permission denied.',
+            'code' => 'integer:>3:<5',
+            'id' => 'string:regex(~delete_account_security~)',
+            'message' => 'string:regex(~Permission denied.~)',
         ]
     ]);
 }
 
 // Test all account read for all users.
 foreach ($validReadUsers as $user) {
+    $I->wantTo('Test fetch all accounts for user: ' . $user['username']);
     $I->performLogin($user['username'], $user['password']);
     $I->sendGet("$uri");
     $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson($user['accounts']);
+    $I->seeResponseMatchesJsonType($user['read_result']);
 }
 
 // Test individual account read for a user
 foreach ($validReadUsers as $user) {
-    if ($user['username'] != getenv('TESTER_ADMINISTRATOR_NAME')) {
-        $I->performLogin($user['username'], $user['password']);
-        $I->sendGet("$uri/1");
-        $I->seeResponseCodeIs(200);
-        $I->seeResponseIsJson();
-        $I->seeResponseContainsJson([]);
+    $I->comment('Testing read individual accounts for user' . $user['username']);
+    $I->performLogin($user['username'], $user['password']);
 
-        $I->sendGet("$uri/2");
+    if ($user['username'] == getenv('TESTER_ADMINISTRATOR_NAME')) {
+        $I->wantTo('Test read account 1');
+        $I->sendGet("$uri", ['accid' => 1]);
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
-        $I->seeResponseContainsJson([
-            [
-                'accid' => 2,
-                'name' => 'testing_acc',
+        $I->seeResponseMatchesJsonType([
+            'result' => 'string:regex(~ok~)',
+            'data' => [
+                [
+                    'accid' => 'integer:>0:<2',
+                    'name' => 'string:regex(~apiopenstudio~)',
+                ],
             ],
         ]);
 
-        $I->sendGet("$uri/$accid");
+        $I->wantTo('Test read account 2');
+        $I->sendGet("$uri", ['accid' => 2]);
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
-        $I->seeResponseContainsJson([]);
+        $I->seeResponseMatchesJsonType([
+            'result' => 'string:regex(~ok~)',
+            'data' => [
+                [
+                    'accid' => 'integer:>1:<3',
+                    'name' => 'string:regex(~testing_acc~)',
+                ],
+            ],
+        ]);
+
+        $I->wantTo("Test read account $accid");
+        $I->sendGet("$uri", ['accid' => $accid]);
+        $I->seeResponseCodeIs(200);
+        $I->seeResponseIsJson();
+        $I->seeResponseMatchesJsonType([
+            'result' => 'string:regex(~ok~)',
+            'data' => [
+                [
+                    'accid' => 'integer:>' . ($accid - 1) . ':<' . ($accid + 1),
+                    'name' => 'string:regex(~new_account1~)',
+                ],
+            ],
+        ]);
     } else {
-        $I->performLogin($user['username'], $user['password']);
-        $I->sendGet("$uri/1");
+        $I->wantTo('Test read account 1');
+        $I->sendGet("$uri", ['accid' => 1]);
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
-        $I->seeResponseContainsJson([
+        $I->seeResponseIsJson([
             [
-                'accid' => 1,
-                'name' => 'apiopenstudio',
+                'result' => 'ok',
+                'data' => [],
             ],
         ]);
 
-        $I->sendGet("$uri/2");
+        $I->wantTo('Test read account 2');
+        $I->sendGet("$uri", ['accid' => 2]);
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
-        $I->seeResponseContainsJson([
-            [
-                'accid' => 2,
-                'name' => 'testing_acc',
+        $I->seeResponseMatchesJsonType([
+            'result' => 'string:regex(~ok~)',
+            'data' => [
+                [
+                    'accid' => 'integer:>1:<3',
+                    'name' => 'string:regex(~testing_acc~)',
+                ],
             ],
         ]);
 
-        $I->sendGet("$uri/$accid");
+        $I->wantTo("Test read account $accid");
+        $I->sendGet("$uri", ['accid' => $accid]);
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
-        $I->seeResponseContainsJson([
+        $I->seeResponseIsJson([
             [
-                'accid' => $accid,
-                'name' => 'new_account1',
+                'result' => 'ok',
+                'data' => [],
             ],
         ]);
     }
 }
 
-// Clean up
+$I->wantTo('Test exception for valid user deleting invalid account.');
 $I->performLogin(getenv('TESTER_ADMINISTRATOR_NAME'), getenv('TESTER_ADMINISTRATOR_PASS'));
+$I->sendDelete("$uri/" . ($accid + 1));
+$I->seeResponseCodeIs(400);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~error~)',
+    'data' => [
+        'code' => 'integer:>5:<7',
+        'id' => 'string:regex(~account_delete_process~)',
+        'message' => 'string:regex(~Account does not exist: 5.~)',
+    ]
+]);
+
+// Clean up
 $I->sendDelete("$uri/$accid");
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
