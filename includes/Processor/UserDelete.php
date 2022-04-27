@@ -15,6 +15,7 @@
 namespace ApiOpenStudio\Processor;
 
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Db;
 
 /**
@@ -64,11 +65,21 @@ class UserDelete extends Core\ProcessorEntity
 
         $userMapper = new Db\UserMapper($this->db, $this->logger);
 
-        $user = $userMapper->findByUid($uid);
+        try {
+            $user = $userMapper->findByUid($uid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($user->getUid())) {
             throw new Core\ApiException("User does not exist, uid: $uid", 6, $this->id, 400);
         }
 
-        return new Core\DataContainer($userMapper->delete($user), 'boolean');
+        try {
+            $userMapper->delete($user);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return new Core\DataContainer(true, 'boolean');
     }
 }

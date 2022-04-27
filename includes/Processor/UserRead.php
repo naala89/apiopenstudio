@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db;
 
@@ -135,7 +136,11 @@ class UserRead extends Core\ProcessorEntity
         $orderBy = empty($orderBy) ? 'uid' : $orderBy;
         $direction = $this->val('direction', true);
 
-        $currentUser = $this->userMapper->findByUid(Core\Utilities::getUidFromToken());
+        try {
+            $currentUser = $this->userMapper->findByUid(Core\Utilities::getUidFromToken());
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
         $params = [];
         if ($uid > 0) {
@@ -157,7 +162,11 @@ class UserRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        $users = $this->userMapper->findAllByPermissions($currentUser->getUid(), $params);
+        try {
+            $users = $this->userMapper->findAllByPermissions($currentUser->getUid(), $params);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($users)) {
             throw new Core\ApiException("User not found", 6, $this->id, 400);
         }

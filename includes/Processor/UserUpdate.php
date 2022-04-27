@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db;
 
@@ -243,13 +244,15 @@ class UserUpdate extends Core\ProcessorEntity
         parent::process();
 
         $uid = $this->val('uid', true);
-        $currentUser = $this->userMapper->findByUid(Core\Utilities::getUidFromToken());
-
-        if (
-            !$this->userRoleMapper->hasRole($currentUser->getUid(), 'Administrator')
-            && !$this->userRoleMapper->hasRole($currentUser->getUid(), 'Account manager')
-            && !$this->userRoleMapper->hasRole($currentUser->getUid(), 'Application manager')
-        ) {
+        try {
+            $currentUser = $this->userMapper->findByUid(Core\Utilities::getUidFromToken());
+            $testAdministrator = $this->userRoleMapper->hasRole($currentUser->getUid(), 'Administrator');
+            $testAccountManager = $this->userRoleMapper->hasRole($currentUser->getUid(), 'Account manager');
+            $testApplicationManager = $this->userRoleMapper->hasRole($currentUser->getUid(), 'Application manager');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        if (!$testAdministrator && !$testAccountManager && !$testApplicationManager) {
             // Non-privileged accounts can only edit their own accounts.
             if (!empty($uid) && $uid != $currentUser->getUid()) {
                 throw new Core\ApiException("permission denied", 4, $this->id, 403);
@@ -257,67 +260,96 @@ class UserUpdate extends Core\ProcessorEntity
             $uid = $currentUser->getUid();
         }
 
-        $user = $this->userMapper->findByUid($uid);
+        try {
+            $user = $this->userMapper->findByUid($uid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($user->getUid())) {
             throw new Core\ApiException("User not found: $uid", 6, $this->id, 400);
         }
+
         $active = (int) $this->val('active', true);
         if ($active === 0 || $active === 1) {
             $user->setActive($active);
         }
+
         if (!empty($username = $this->val('username', true)) && $user->getUsername() != $username) {
-            $userCheck = $this->userMapper->findByUsername($username);
+            try {
+                $userCheck = $this->userMapper->findByUsername($username);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
             if (!empty($userCheck->getUid())) {
                 throw new Core\ApiException("Username $username already exists", 6, $this->id, 400);
             }
             $user->setUsername($username);
         }
+
         if (!empty($email = $this->val('email', true)) && $user->getEmail() != $email) {
-            $userCheck = $this->userMapper->findByEmail($email);
+            try {
+                $userCheck = $this->userMapper->findByEmail($email);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
             if (!empty($userCheck->getUid())) {
                 throw new Core\ApiException("Email $email already exists", 6, $this->id, 400);
             }
             $user->setEmail($email);
         }
+
         if (!empty($password = $this->val('password', true))) {
             $user->setPassword($password);
         }
+
         if (!empty($honorific = $this->val('honorific', true))) {
             $user->setHonorific($honorific);
         }
+
         if (!empty($nameFirst = $this->val('name_first', true))) {
             $user->setNameFirst($nameFirst);
         }
+
         if (!empty($nameLast = $this->val('name_last', true))) {
             $user->setNameLast($nameLast);
         }
+
         if (!empty($company = $this->val('company', true))) {
             $user->setCompany($company);
         }
+
         if (!empty($website = $this->val('website', true))) {
             $user->setWebsite($website);
         }
+
         if (!empty($addressStreet = $this->val('address_street', true))) {
             $user->setAddressStreet($addressStreet);
         }
+
         if (!empty($addressSuburb = $this->val('address_suburb', true))) {
             $user->setAddressSuburb($addressSuburb);
         }
+
         if (!empty($addressCity = $this->val('address_city', true))) {
             $user->setAddressCity($addressCity);
         }
+
         if (!empty($addressState = $this->val('address_state', true))) {
             $user->setAddressState($addressState);
         }
+
         if (!empty($addressCountry = $this->val('address_country', true))) {
             $user->setAddressCountry($addressCountry);
         }
+
         if (!empty($addressPostcode = $this->val('address_postcode', true))) {
             $user->setAddressPostcode($addressPostcode);
         }
+
         if (!empty($phoneMobile = $this->val('phone_mobile', true))) {
             $user->setPhoneMobile($phoneMobile);
         }
+
         if (!empty($phoneWork = $this->val('phone_work', true))) {
             $user->setPhoneWork($phoneWork);
         }
