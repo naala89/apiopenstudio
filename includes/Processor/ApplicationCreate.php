@@ -161,11 +161,21 @@ class ApplicationCreate extends ProcessorEntity
             );
         }
 
-        $account = $this->accountMapper->findByAccid($accid);
+
+        try {
+            $account = $this->accountMapper->findByAccid($accid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($account->getAccid())) {
             throw new ApiException('Account does not exist: "' . $accid . '"', 6, $this->id, 400);
         }
-        $application = $this->applicationMapper->findByAccidAppname($accid, $name);
+
+        try {
+            $application = $this->applicationMapper->findByAccidAppname($accid, $name);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (!empty($application->getAppid())) {
             throw new ApiException(
                 "Application already exists ($name in account: " . $account->getName() . ")",
@@ -175,20 +185,26 @@ class ApplicationCreate extends ProcessorEntity
             );
         }
 
-        $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->settings);
-        $openApiParentClass = new $openApiParentClassName();
-        if (!empty($openApi)) {
-            $openApiParentClass->import($openApi);
-        } else {
-            $openApiParentClass->setDefault($account->getName(), $name);
+        try {
+            $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->settings);
+            $openApiParentClass = new $openApiParentClassName();
+            if (!empty($openApi)) {
+                $openApiParentClass->import($openApi);
+            } else {
+                $openApiParentClass->setDefault($account->getName(), $name);
+            }
+
+            $application = new Application(null, $accid, $name, $openApiParentClass->export());
+            $this->applicationMapper->save($application);
+
+            $application = $this->applicationMapper->findByAccidAppname($accid, $name);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        $application = new Application(null, $accid, $name, $openApiParentClass->export());
-
-        $this->applicationMapper->save($application);
-        $application = $this->applicationMapper->findByAccidAppname($accid, $name);
         $result = $application->dump();
         $result['openapi'] = json_decode($result['openapi']);
+
         return new DataContainer($result, 'array');
     }
 }
