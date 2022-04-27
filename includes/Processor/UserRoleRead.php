@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db;
 
@@ -162,7 +163,11 @@ class UserRoleRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        $userRoles = $this->userRoleMapper->findForUidWithFilter($currentUser->getUid(), $params);
+        try {
+            $userRoles = $this->userRoleMapper->findForUidWithFilter($currentUser->getUid(), $params);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
         $result = [];
         foreach ($userRoles as $userRole) {
