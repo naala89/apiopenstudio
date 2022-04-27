@@ -9,187 +9,190 @@
 # @link      https://www.apiopenstudio.com
 
 account:
-  columns:
-    accid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: account id }
-    name: { type: varchar(255), notnull: true, comment: account name }
-  data:
-    - { name: apiopenstudio }
-    - { name: testing_acc }
+    columns:
+        accid: {type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: account id}
+        name: {type: varchar(255), notnull: true, comment: account name}
+    data:
+        - {name: apiopenstudio}
+        - {name: testing_acc}
 
 application:
-  columns:
-    appid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: application id }
-    accid: { type: int(10) unsigned, notnull: true, comment: account id }
-    name: { type: varchar(255), notnull: true, comment: application name }
-    openapi: { type: blob, notnull: false, comment: JSON OpenApi fragment definition for the group of resources }
-  data:
-    - { accid: 1, name: core }
-    - { accid: 2, name: testing_app }
+    columns:
+        appid: {type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: application id}
+        accid: {type: int(10) unsigned, notnull: true, comment: account id}
+        name: {type: varchar(255), notnull: true, comment: application name}
+        openapi: {type: blob, notnull: false, comment: JSON OpenApi fragment definition for the group of resources}
+    data:
+        - {accid: 1, name: core}
+        -
+            accid: 2
+            name: testing_app
+            openapi: '{\"openapi\":\"3.0.3\",\"info\":{\"title\":\"test_app\",\"description\":\"These are the resources that belong to the test_app application.\",\"termsOfService\":\"https://www.apiopenstudio.com/license/\",\"contact\":{\"name\":\"API Support\",\"email\":\"contact@api.apiopenstudio.local\"},\"license\":{\"name\":\"ApiOpenStudio Public License based on Mozilla Public License 2.0\",\"url\":\"https://www.apiopenstudio.com/license/\"},\"version\":\"1.0.0\"},\"servers\":[{\"url\":\"https://api.apiopenstudio.local/testing_acc/test_app\"}],\"paths\":[],\"components\":{\"schemas\":{\"GeneralError\":{\"type\":\"object\",\"properties\":{\"result\":{\"type\":\"string\"},\"data\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"format\":\"int32\"},\"code\":{\"type\":\"integer\",\"format\":\"int32\"},\"message\":{\"type\":\"string\"}}}}}},\"responses\":{\"GeneralError\":{\"description\":\"General Error\",\"content\":{\"application/json\":{\"schema\":{\"$ref\":\"#/components/schemas/GeneralError\"},\"example\":{\"result\":\"error\",\"data\":{\"id\":\"<my_processor_id>\",\"code\":6,\"message\":\"Oops, something went wrong.\"}}}}},\"Unauthorised\":{\"description\":\"Unauthorised\",\"content\":{\"application/json\":{\"schema\":{\"$ref\":\"#/components/schemas/GeneralError\"},\"example\":{\"result\":\"error\",\"data\":{\"id\":\"<my_processor_id>\",\"code\":4,\"message\":\"Invalid token.\"}}}}},\"Forbidden\":{\"description\":\"Forbidden\",\"content\":{\"application/json\":{\"schema\":{\"$ref\":\"#/components/schemas/GeneralError\"},\"example\":{\"result\":\"error\",\"data\":{\"id\":\"<my_processor_id>\",\"code\":6,\"message\":\"Permission denied.\"}}}}}},\"securitySchemes\":{\"bearer_token\":{\"type\":\"http\",\"scheme\":\"bearer\",\"bearerFormat\":\"JWT\"}}},\"security\":[],\"externalDocs\":{\"description\":\"Find out more about ApiOpenStudio\",\"url\":\"https://www.apiopenstudio.com\"}}'
 
 blacklist:
-  columns:
-    blid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: blacklist id }
-    appid: { type: int(10) unsigned, notnull: true, comment: application id }
-    min_ip: { type: varchar(32), notnull: true, comment: ip range minimum }
-    max_ip: { type: varchar(32), notnull: true, comment: ip range maximum }
+    columns:
+        blid: {type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: blacklist id}
+        appid: {type: int(10) unsigned, notnull: true, comment: application id}
+        min_ip: {type: varchar(32), notnull: true, comment: ip range minimum}
+        max_ip: {type: varchar(32), notnull: true, comment: ip range maximum}
 
 core:
-  columns:
-    version: { type: varchar(255), notnull: true, comment: current core version }
-  data:
-    - { version: 1.0.0-beta }
+    columns:
+        version: {type: varchar(255), notnull: true, comment: current core version}
+    data:
+        - {version: 1.0.0-beta}
 
 external_user:
-  columns:
-    euid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: external user id }
-    appid: { type: int(10) unsigned, notnull: true, comment: application id }
-    external_id: { type: varchar(255), notnull: true, comment: user id in external entity }
-    external_entity: { type: varchar(255), notnull: true, comment: name of the external entity }
-    data_field_1: { type: varchar(255), notnull: false, comment: extra data field 1 }
-    data_field_2: { type: varchar(255), notnull: false, comment: extra data field 2 }
-    data_field_3: { type: varchar(255), notnull: false, comment: extra data field 3 }
+    columns:
+        euid: {type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: external user id}
+        appid: {type: int(10) unsigned, notnull: true, comment: application id}
+        external_id: {type: varchar(255), notnull: true, comment: user id in external entity}
+        external_entity: {type: varchar(255), notnull: true, comment: name of the external entity}
+        data_field_1: {type: varchar(255), notnull: false, comment: extra data field 1}
+        data_field_2: {type: varchar(255), notnull: false, comment: extra data field 2}
+        data_field_3: {type: varchar(255), notnull: false, comment: extra data field 3}
 
 invite:
-  columns:
-    iid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: invite id }
-    created: { type: timestamp, notnull: true, default: CURRENT_TIMESTAMP, comment: datetime created }
-    email: { type: varchar(255), default: true, comment: invite email address }
-    token: { type: varchar(255), notnull: true, comment: invite token }
+    columns:
+        iid: {type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: invite id}
+        created: {type: timestamp, notnull: true, default: CURRENT_TIMESTAMP, comment: datetime created}
+        email: {type: varchar(255), default: true, comment: invite email address}
+        token: {type: varchar(255), notnull: true, comment: invite token}
 
 log:
-  columns:
-    lid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: log id }
-    datetime: { type: timestamp, notnull: true, default: CURRENT_TIMESTAMP, comment: log time and date }
-    user: { type: varchar(255), notnull: true, comment: user name }
-    ip: { type: varchar(11), notnull: true, comment: user id }
-    type: { type: varchar(64), notnull: true, comment: call type }
-    text: { type: varchar(1024), notnull: true, comment: log text }
+    columns:
+        lid: {type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: log id}
+        datetime: {type: timestamp, notnull: true, default: CURRENT_TIMESTAMP, comment: log time and date}
+        user: {type: varchar(255), notnull: true, comment: user name}
+        ip: {type: varchar(11), notnull: true, comment: user id}
+        type: {type: varchar(64), notnull: true, comment: call type}
+        text: {type: varchar(1024), notnull: true, comment: log text}
 
 resource:
-  columns:
-    resid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: resource id }
-    appid: { type: int(10) unsigned, notnull: true, comment: application id }
-    name: { type: varchar(255), notnull: true, comment: name of the resource }
-    description : { type: varchar(2048), notnull: true, comment: description of the resource }
-    method: { type: text, notnull: true, comment: form delivery method }
-    uri: { type: varchar(64), notnull: true, comment: URI of the api call }
-    meta: { type: blob, notnull: true, comment: all of the actions taken by the call }
-    openapi: { type: blob, notnull: false, comment: JSON OpenApi path fragment definition for the resources }
-    ttl: { type: int(10) unsigned, notnull: true, default: 300, comment: time to cache the results (seconds) }
+    columns:
+        resid: {type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: resource id}
+        appid: {type: int(10) unsigned, notnull: true, comment: application id}
+        name: {type: varchar(255), notnull: true, comment: name of the resource}
+        description: {type: varchar(2048), notnull: true, comment: description of the resource}
+        method: {type: text, notnull: true, comment: form delivery method}
+        uri: {type: varchar(64), notnull: true, comment: URI of the api call}
+        meta: {type: blob, notnull: true, comment: all of the actions taken by the call}
+        openapi: {type: blob, notnull: false, comment: JSON OpenApi path fragment definition for the resources}
+        ttl: {type: int(10) unsigned, notnull: true, default: 300, comment: time to cache the results (seconds)}
 
 role:
-  columns:
-    rid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: role id }
-    name: { type: varchar(255), notnull: true, comment: title of role }
-  data:
-    - { name: Administrator }
-    - { name: Account manager }
-    - { name: Application manager }
-    - { name: Developer }
-    - { name: Consumer }
+    columns:
+        rid: {type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: role id}
+        name: {type: varchar(255), notnull: true, comment: title of role}
+    data:
+        - {name: Administrator}
+        - {name: Account manager}
+        - {name: Application manager}
+        - {name: Developer}
+        - {name: Consumer}
 
 user:
-  columns:
-    uid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: user id }
-    active: { type: tinyint(4), notnull: true, default: 1, comment: user status }
-    username: { type: varchar(255), notnull: true, comment: user name }
-    hash: { type: varchar(64), default: NULL, comment: pasword hash }
-    email: { type: varchar(255), notnull: true, comment: user email address }
-    honorific: { type: varchar(16), default: NULL, comment: users title }
-    name_first: { type: varchar(255), default: NULL, comment: first name }
-    name_last: { type: varchar(255), default: NULL, comment: last name }
-    company: { type: varchar(255), default: NULL, comment: company name }
-    website: { type: varchar(255), default: NULL, comment: company url }
-    address_street: { type: varchar(255), default: NULL, comment: user number and street name }
-    address_suburb: { type: varchar(255), default: NULL, comment: user address and suburb }
-    address_city: { type: varchar(255), default: NULL, comment: user city }
-    address_state: { type: varchar(255), default: NULL, comment: user state }
-    address_country: { type: varchar(255), default: NULL, comment: user country }
-    address_postcode: { type: varchar(16), default: NULL, comment: user postcode }
-    phone_mobile: { type: varchar(32), default: NULL, comment: user mobile number }
-    phone_work: { type: varchar(32), default: NULL, comment: user work number }
-    password_reset: { type: varchar(32), default: NULL, comment: password reset token }
-    password_reset_ttl: { type: timestamp, default: NULL, comment: end of life for passowrd reset token }
-  data:
-    -
-      username: tester_administrator
-      email: tester+administrator@testerton.com
-      hash: $2y$12$YIgdjM6Vb4szSyHB0psGTu4GEhoimX.bKPjdIbWD2i/FgwOi9iiay
-    -
-      username: tester_account_manager
-      email: tester+account_manager@testerton.com
-      hash: $2y$12$YIgdjM6Vb4szSyHB0psGTu4GEhoimX.bKPjdIbWD2i/FgwOi9iiay
-    -
-      username: tester_application_manager
-      email: tester+application_manager@testerton.com
-      hash: $2y$12$YIgdjM6Vb4szSyHB0psGTu4GEhoimX.bKPjdIbWD2i/FgwOi9iiay
-    -
-      username: tester_developer
-      email: tester+developer@testerton.com
-      hash: $2y$12$YIgdjM6Vb4szSyHB0psGTu4GEhoimX.bKPjdIbWD2i/FgwOi9iiay
-    -
-      username: tester_consumer
-      email: tester+consumer@testerton.com
-      hash: $2y$12$YIgdjM6Vb4szSyHB0psGTu4GEhoimX.bKPjdIbWD2i/FgwOi9iiay
+    columns:
+        uid: {type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: user id}
+        active: {type: tinyint(4), notnull: true, default: 1, comment: user status}
+        username: {type: varchar(255), notnull: true, comment: user name}
+        hash: {type: varchar(64), default: NULL, comment: pasword hash}
+        email: {type: varchar(255), notnull: true, comment: user email address}
+        honorific: {type: varchar(16), default: NULL, comment: users title}
+        name_first: {type: varchar(255), default: NULL, comment: first name}
+        name_last: {type: varchar(255), default: NULL, comment: last name}
+        company: {type: varchar(255), default: NULL, comment: company name}
+        website: {type: varchar(255), default: NULL, comment: company url}
+        address_street: {type: varchar(255), default: NULL, comment: user number and street name}
+        address_suburb: {type: varchar(255), default: NULL, comment: user address and suburb}
+        address_city: {type: varchar(255), default: NULL, comment: user city}
+        address_state: {type: varchar(255), default: NULL, comment: user state}
+        address_country: {type: varchar(255), default: NULL, comment: user country}
+        address_postcode: {type: varchar(16), default: NULL, comment: user postcode}
+        phone_mobile: {type: varchar(32), default: NULL, comment: user mobile number}
+        phone_work: {type: varchar(32), default: NULL, comment: user work number}
+        password_reset: {type: varchar(32), default: NULL, comment: password reset token}
+        password_reset_ttl: {type: timestamp, default: NULL, comment: end of life for passowrd reset token}
+    data:
+        -
+            username: tester_administrator
+            email: tester+administrator@testerton.com
+            hash: $2y$12$YIgdjM6Vb4szSyHB0psGTu4GEhoimX.bKPjdIbWD2i/FgwOi9iiay
+        -
+            username: tester_account_manager
+            email: tester+account_manager@testerton.com
+            hash: $2y$12$YIgdjM6Vb4szSyHB0psGTu4GEhoimX.bKPjdIbWD2i/FgwOi9iiay
+        -
+            username: tester_application_manager
+            email: tester+application_manager@testerton.com
+            hash: $2y$12$YIgdjM6Vb4szSyHB0psGTu4GEhoimX.bKPjdIbWD2i/FgwOi9iiay
+        -
+            username: tester_developer
+            email: tester+developer@testerton.com
+            hash: $2y$12$YIgdjM6Vb4szSyHB0psGTu4GEhoimX.bKPjdIbWD2i/FgwOi9iiay
+        -
+            username: tester_consumer
+            email: tester+consumer@testerton.com
+            hash: $2y$12$YIgdjM6Vb4szSyHB0psGTu4GEhoimX.bKPjdIbWD2i/FgwOi9iiay
 
 user_role:
-  columns:
-    urid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: user role id }
-    accid: { type: int(10) unsigned, notnull: false, comment: "account id, we allow null for owner role" }
-    appid: { type: int(10) unsigned, notnull: false, comment: "application id, we allow null for owner role" }
-    uid: { type: int(10) unsigned, notnull: true, comment: user id }
-    rid: { type: int(10) unsigned, notnull: true, comment: role id }
-  data:
-    -
-      uid: 1
-      rid: 1
-    -
-      uid: 2
-      rid: 2
-      accid: 2
-    -
-      uid: 3
-      rid: 3
-      accid: 2
-      appid: 2
-    -
-      uid: 4
-      rid: 4
-      accid: 2
-      appid: 2
-    -
-      uid: 5
-      rid: 5
-      accid: 2
-      appid: 2
+    columns:
+        urid: {type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: user role id}
+        accid: {type: int(10) unsigned, notnull: false, comment: "account id, we allow null for owner role"}
+        appid: {type: int(10) unsigned, notnull: false, comment: "application id, we allow null for owner role"}
+        uid: {type: int(10) unsigned, notnull: true, comment: user id}
+        rid: {type: int(10) unsigned, notnull: true, comment: role id}
+    data:
+        -
+            uid: 1
+            rid: 1
+        -
+            uid: 2
+            rid: 2
+            accid: 2
+        -
+            uid: 3
+            rid: 3
+            accid: 2
+            appid: 2
+        -
+            uid: 4
+            rid: 4
+            accid: 2
+            appid: 2
+        -
+            uid: 5
+            rid: 5
+            accid: 2
+            appid: 2
 
 var_store:
-  columns:
-    vid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: var id }
-    appid: { type: int(10) unsigned, notnull: true, comment: application id }
-    key: { type: varchar(255), notnull: true, comment: key of the var }
-    val: { type: blob, notnull: true, comment: value of the var }
-  data:
-    -
-      appid: 1
-      key: user_invite_subject
-      val: "ApiOpenStudio invite"
-    -
-      appid: 1
-      key: user_invite_message
-      val: '<!doctype html><html><head><meta name=\"viewport\" content=\"width=device-width\" /><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /><title>ApiOpenStudio invite</title><style>img{border:none;-ms-interpolation-mode:bicubic;max-width:100%}body{background-color:#f6f6f6;font-family:sans-serif;-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.4;margin:0;padding:0;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}table{border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;width:100%}table td{font-family:sans-serif;font-size:14px;vertical-align:top}.body{background-color:#f6f6f6;width:100%}.container{display:block;margin:0 auto !important;max-width:580px;padding:10px;width:580px}.content{box-sizing:border-box;display:block;margin:0 auto;max-width:580px;padding:10px}.main{background:#fff;border-radius:3px;width:100%}.wrapper{box-sizing:border-box;padding:20px}.content-block{padding-bottom:10px;padding-top:10px}.footer{clear:both;margin-top:10px;text-align:center;width:100%}.footer td, .footer p, .footer span, .footer a{color:#999;font-size:12px;text-align:center}h1,h2,h3,h4{color:#000;font-family:sans-serif;font-weight:400;line-height:1.4;margin:0;margin-bottom:30px}h1{font-size:35px;font-weight:300;text-align:center;text-transform:capitalize}p,ul,ol{font-family:sans-serif;font-size:14px;font-weight:normal;margin:0;margin-bottom:15px}p li, ul li, ol li{list-style-position:inside;margin-left:5px}a{color:#3498db;text-decoration:underline}.btn{box-sizing:border-box;width:100%}.btn>tbody>tr>td{padding-bottom:15px}.btn table{width:auto}.btn table td{background-color:#fff;border-radius:5px;text-align:center}.btn a{background-color:#fff;border:solid 1px #3498db;border-radius:5px;box-sizing:border-box;color:#3498db;cursor:pointer;display:inline-block;font-size:14px;font-weight:bold;margin:0;padding:12px 25px;text-decoration:none;text-transform:capitalize}.btn-primary table td{background-color:#3498db}.btn-primary a{background-color:#3498db;border-color:#3498db;color:#fff}.last{margin-bottom:0}.first{margin-top:0}.align-center{text-align:center}.align-right{text-align:right}.align-left{text-align:left}.clear{clear:both}.mt0{margin-top:0}.mb0{margin-bottom:0}.preheader{color:transparent;display:none;height:0;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;visibility:hidden;width:0}.powered-by a{text-decoration:none}hr{border:0;border-bottom:1px solid #f6f6f6;margin:20px 0}@media only screen and (max-width: 620px){table[class=body] h1{font-size:28px !important;margin-bottom:10px !important}table[class=body] p, table[class=body] ul, table[class=body] ol, table[class=body] td, table[class=body] span, table[class=body] a{font-size:16px !important}table[class=body] .wrapper, table[class=body] .article{padding:10px !important}table[class=body] .content{padding:0 !important}table[class=body] .container{padding:0 !important;width:100% !important}table[class=body] .main{border-left-width:0 !important;border-radius:0 !important;border-right-width:0 !important}table[class=body] .btn table{width:100% !important}table[class=body] .btn a{width:100% !important}table[class=body] .img-responsive{height:auto !important;max-width:100% !important;width:auto !important}}@media all{.ExternalClass{width:100%}.ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div{line-height:100%}.apple-link a{color:inherit !important;font-family:inherit !important;font-size:inherit !important;font-weight:inherit !important;line-height:inherit !important;text-decoration:none !important}#MessageViewBody a{color:inherit;text-decoration:none;font-size:inherit;font-family:inherit;font-weight:inherit;line-height:inherit}.btn-primary table td:hover{background-color:#34495e !important}.btn-primary a:hover{background-color:#34495e !important;border-color:#34495e !important}}</style></head><body class=\"\"> <span class=\"preheader\">Invite to ApiOpenStudio.</span><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"body\"><tr><td>&nbsp;</td><td class=\"container\"><div class=\"content\"><table role=\"presentation\" class=\"main\"><tr><td class=\"wrapper\"><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td><p>Hi there,</p><p>We have invited you to our API.</p><p>Clicking on the link below will grant you access to the app and the resources</p><p>When you have been granted access to ApiOpenStudio, you will need to set your password. Go to the login page and click on the reset password link and reset the password using your email.</p><p>To edit you profile and set a username, login using your email as a username and view/edit your profile.</p><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"btn btn-primary\"><tbody><tr><td align=\"left\"><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tbody><tr><td> <a href=\"https://[domain]/invite/accept/[token]\" target=\"_blank\">https://[domain]/invite/accept/[token]</a></td></tr></tbody></table></td></tr></tbody></table></td></tr></table></td></tr></table><div class=\"footer\"><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td class=\"content-block\"> <span class=\"apple-link\">ApiOpenStudio</span></td></tr><tr><td class=\"content-block powered-by\"> Powered by <a href=\"https://www.apiopenstudio.com\">ApiOpenStudio</a>.</td></tr></table></div></div></td><td>&nbsp;</td></tr></table></body></html>'
-    -
-      appid: 1
-      key: password_reset_subject
-      val: "ApiOpenStudio password reset"
-    -
-      appid: 1
-      key: password_reset_message
-      val: '<!doctype html><html><head><meta name=\"viewport\" content=\"width=device-width\" /><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /><title>ApiOpenStudio invite</title><style>img{border:none;-ms-interpolation-mode:bicubic;max-width:100%}body{background-color:#f6f6f6;font-family:sans-serif;-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.4;margin:0;padding:0;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}table{border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;width:100%}table td{font-family:sans-serif;font-size:14px;vertical-align:top}.body{background-color:#f6f6f6;width:100%}.container{display:block;margin:0 auto !important;max-width:580px;padding:10px;width:580px}.content{box-sizing:border-box;display:block;margin:0 auto;max-width:580px;padding:10px}.main{background:#fff;border-radius:3px;width:100%}.wrapper{box-sizing:border-box;padding:20px}.content-block{padding-bottom:10px;padding-top:10px}.footer{clear:both;margin-top:10px;text-align:center;width:100%}.footer td, .footer p, .footer span, .footer a{color:#999;font-size:12px;text-align:center}h1,h2,h3,h4{color:#000;font-family:sans-serif;font-weight:400;line-height:1.4;margin:0;margin-bottom:30px}h1{font-size:35px;font-weight:300;text-align:center;text-transform:capitalize}p,ul,ol{font-family:sans-serif;font-size:14px;font-weight:normal;margin:0;margin-bottom:15px}p li, ul li, ol li{list-style-position:inside;margin-left:5px}a{color:#3498db;text-decoration:underline}.btn{box-sizing:border-box;width:100%}.btn>tbody>tr>td{padding-bottom:15px}.btn table{width:auto}.btn table td{background-color:#fff;border-radius:5px;text-align:center}.btn a{background-color:#fff;border:solid 1px #3498db;border-radius:5px;box-sizing:border-box;color:#3498db;cursor:pointer;display:inline-block;font-size:14px;font-weight:bold;margin:0;padding:12px 25px;text-decoration:none;text-transform:capitalize}.btn-primary table td{background-color:#3498db}.btn-primary a{background-color:#3498db;border-color:#3498db;color:#fff}.last{margin-bottom:0}.first{margin-top:0}.align-center{text-align:center}.align-right{text-align:right}.align-left{text-align:left}.clear{clear:both}.mt0{margin-top:0}.mb0{margin-bottom:0}.preheader{color:transparent;display:none;height:0;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;visibility:hidden;width:0}.powered-by a{text-decoration:none}hr{border:0;border-bottom:1px solid #f6f6f6;margin:20px 0}@media only screen and (max-width: 620px){table[class=body] h1{font-size:28px !important;margin-bottom:10px !important}table[class=body] p, table[class=body] ul, table[class=body] ol, table[class=body] td, table[class=body] span, table[class=body] a{font-size:16px !important}table[class=body] .wrapper, table[class=body] .article{padding:10px !important}table[class=body] .content{padding:0 !important}table[class=body] .container{padding:0 !important;width:100% !important}table[class=body] .main{border-left-width:0 !important;border-radius:0 !important;border-right-width:0 !important}table[class=body] .btn table{width:100% !important}table[class=body] .btn a{width:100% !important}table[class=body] .img-responsive{height:auto !important;max-width:100% !important;width:auto !important}}@media all{.ExternalClass{width:100%}.ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div{line-height:100%}.apple-link a{color:inherit !important;font-family:inherit !important;font-size:inherit !important;font-weight:inherit !important;line-height:inherit !important;text-decoration:none !important}#MessageViewBody a{color:inherit;text-decoration:none;font-size:inherit;font-family:inherit;font-weight:inherit;line-height:inherit}.btn-primary table td:hover{background-color:#34495e !important}.btn-primary a:hover{background-color:#34495e !important;border-color:#34495e !important}}</style></head><body class=\"\"> <span class=\"preheader\">ApiOpenStudio password reset.</span><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"body\"><tr><td>&nbsp;</td><td class=\"container\"><div class=\"content\"><table role=\"presentation\" class=\"main\"><tr><td class=\"wrapper\"><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td><p>Hi there,</p><p>We have received a request to reset your password at ApiOpenStudio.</p><p>If you believe this was sent in error, please contact your administrator.</p><p>To reset your password, please click on the foloowing link.</p><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"btn btn-primary\"><tbody><tr><td align=\"left\"><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tbody><tr><td> <a href=\"https://[domain]/password/set/[token]\" target=\"_blank\">https://[domain]/password/set/[token]</a></td></tr></tbody></table></td></tr></tbody></table></td></tr></table></td></tr></table><div class=\"footer\"><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td class=\"content-block\"> <span class=\"apple-link\">ApiOpenStudio</span></td></tr><tr><td class=\"content-block powered-by\"> Powered by <a href=\"https://www.apiopenstudio.com\">ApiOpenStudio</a>.</td></tr></table></div></div></td><td>&nbsp;</td></tr></table></body></html>'
+    columns:
+        vid: {type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: var id}
+        appid: {type: int(10) unsigned, notnull: true, comment: application id}
+        key: {type: varchar(255), notnull: true, comment: key of the var}
+        val: {type: blob, notnull: true, comment: value of the var}
+    data:
+        -
+            appid: 1
+            key: user_invite_subject
+            val: "ApiOpenStudio invite"
+        -
+            appid: 1
+            key: user_invite_message
+            val: '<!doctype html><html><head><meta name=\"viewport\" content=\"width=device-width\" /><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /><title>ApiOpenStudio invite</title><style>img{border:none;-ms-interpolation-mode:bicubic;max-width:100%}body{background-color:#f6f6f6;font-family:sans-serif;-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.4;margin:0;padding:0;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}table{border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;width:100%}table td{font-family:sans-serif;font-size:14px;vertical-align:top}.body{background-color:#f6f6f6;width:100%}.container{display:block;margin:0 auto !important;max-width:580px;padding:10px;width:580px}.content{box-sizing:border-box;display:block;margin:0 auto;max-width:580px;padding:10px}.main{background:#fff;border-radius:3px;width:100%}.wrapper{box-sizing:border-box;padding:20px}.content-block{padding-bottom:10px;padding-top:10px}.footer{clear:both;margin-top:10px;text-align:center;width:100%}.footer td, .footer p, .footer span, .footer a{color:#999;font-size:12px;text-align:center}h1,h2,h3,h4{color:#000;font-family:sans-serif;font-weight:400;line-height:1.4;margin:0;margin-bottom:30px}h1{font-size:35px;font-weight:300;text-align:center;text-transform:capitalize}p,ul,ol{font-family:sans-serif;font-size:14px;font-weight:normal;margin:0;margin-bottom:15px}p li, ul li, ol li{list-style-position:inside;margin-left:5px}a{color:#3498db;text-decoration:underline}.btn{box-sizing:border-box;width:100%}.btn>tbody>tr>td{padding-bottom:15px}.btn table{width:auto}.btn table td{background-color:#fff;border-radius:5px;text-align:center}.btn a{background-color:#fff;border:solid 1px #3498db;border-radius:5px;box-sizing:border-box;color:#3498db;cursor:pointer;display:inline-block;font-size:14px;font-weight:bold;margin:0;padding:12px 25px;text-decoration:none;text-transform:capitalize}.btn-primary table td{background-color:#3498db}.btn-primary a{background-color:#3498db;border-color:#3498db;color:#fff}.last{margin-bottom:0}.first{margin-top:0}.align-center{text-align:center}.align-right{text-align:right}.align-left{text-align:left}.clear{clear:both}.mt0{margin-top:0}.mb0{margin-bottom:0}.preheader{color:transparent;display:none;height:0;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;visibility:hidden;width:0}.powered-by a{text-decoration:none}hr{border:0;border-bottom:1px solid #f6f6f6;margin:20px 0}@media only screen and (max-width: 620px){table[class=body] h1{font-size:28px !important;margin-bottom:10px !important}table[class=body] p, table[class=body] ul, table[class=body] ol, table[class=body] td, table[class=body] span, table[class=body] a{font-size:16px !important}table[class=body] .wrapper, table[class=body] .article{padding:10px !important}table[class=body] .content{padding:0 !important}table[class=body] .container{padding:0 !important;width:100% !important}table[class=body] .main{border-left-width:0 !important;border-radius:0 !important;border-right-width:0 !important}table[class=body] .btn table{width:100% !important}table[class=body] .btn a{width:100% !important}table[class=body] .img-responsive{height:auto !important;max-width:100% !important;width:auto !important}}@media all{.ExternalClass{width:100%}.ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div{line-height:100%}.apple-link a{color:inherit !important;font-family:inherit !important;font-size:inherit !important;font-weight:inherit !important;line-height:inherit !important;text-decoration:none !important}#MessageViewBody a{color:inherit;text-decoration:none;font-size:inherit;font-family:inherit;font-weight:inherit;line-height:inherit}.btn-primary table td:hover{background-color:#34495e !important}.btn-primary a:hover{background-color:#34495e !important;border-color:#34495e !important}}</style></head><body class=\"\"> <span class=\"preheader\">Invite to ApiOpenStudio.</span><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"body\"><tr><td>&nbsp;</td><td class=\"container\"><div class=\"content\"><table role=\"presentation\" class=\"main\"><tr><td class=\"wrapper\"><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td><p>Hi there,</p><p>We have invited you to our API.</p><p>Clicking on the link below will grant you access to the app and the resources</p><p>When you have been granted access to ApiOpenStudio, you will need to set your password. Go to the login page and click on the reset password link and reset the password using your email.</p><p>To edit you profile and set a username, login using your email as a username and view/edit your profile.</p><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"btn btn-primary\"><tbody><tr><td align=\"left\"><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tbody><tr><td> <a href=\"https://[domain]/invite/accept/[token]\" target=\"_blank\">https://[domain]/invite/accept/[token]</a></td></tr></tbody></table></td></tr></tbody></table></td></tr></table></td></tr></table><div class=\"footer\"><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td class=\"content-block\"> <span class=\"apple-link\">ApiOpenStudio</span></td></tr><tr><td class=\"content-block powered-by\"> Powered by <a href=\"https://www.apiopenstudio.com\">ApiOpenStudio</a>.</td></tr></table></div></div></td><td>&nbsp;</td></tr></table></body></html>'
+        -
+            appid: 1
+            key: password_reset_subject
+            val: "ApiOpenStudio password reset"
+        -
+            appid: 1
+            key: password_reset_message
+            val: '<!doctype html><html><head><meta name=\"viewport\" content=\"width=device-width\" /><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /><title>ApiOpenStudio invite</title><style>img{border:none;-ms-interpolation-mode:bicubic;max-width:100%}body{background-color:#f6f6f6;font-family:sans-serif;-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.4;margin:0;padding:0;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}table{border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;width:100%}table td{font-family:sans-serif;font-size:14px;vertical-align:top}.body{background-color:#f6f6f6;width:100%}.container{display:block;margin:0 auto !important;max-width:580px;padding:10px;width:580px}.content{box-sizing:border-box;display:block;margin:0 auto;max-width:580px;padding:10px}.main{background:#fff;border-radius:3px;width:100%}.wrapper{box-sizing:border-box;padding:20px}.content-block{padding-bottom:10px;padding-top:10px}.footer{clear:both;margin-top:10px;text-align:center;width:100%}.footer td, .footer p, .footer span, .footer a{color:#999;font-size:12px;text-align:center}h1,h2,h3,h4{color:#000;font-family:sans-serif;font-weight:400;line-height:1.4;margin:0;margin-bottom:30px}h1{font-size:35px;font-weight:300;text-align:center;text-transform:capitalize}p,ul,ol{font-family:sans-serif;font-size:14px;font-weight:normal;margin:0;margin-bottom:15px}p li, ul li, ol li{list-style-position:inside;margin-left:5px}a{color:#3498db;text-decoration:underline}.btn{box-sizing:border-box;width:100%}.btn>tbody>tr>td{padding-bottom:15px}.btn table{width:auto}.btn table td{background-color:#fff;border-radius:5px;text-align:center}.btn a{background-color:#fff;border:solid 1px #3498db;border-radius:5px;box-sizing:border-box;color:#3498db;cursor:pointer;display:inline-block;font-size:14px;font-weight:bold;margin:0;padding:12px 25px;text-decoration:none;text-transform:capitalize}.btn-primary table td{background-color:#3498db}.btn-primary a{background-color:#3498db;border-color:#3498db;color:#fff}.last{margin-bottom:0}.first{margin-top:0}.align-center{text-align:center}.align-right{text-align:right}.align-left{text-align:left}.clear{clear:both}.mt0{margin-top:0}.mb0{margin-bottom:0}.preheader{color:transparent;display:none;height:0;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;visibility:hidden;width:0}.powered-by a{text-decoration:none}hr{border:0;border-bottom:1px solid #f6f6f6;margin:20px 0}@media only screen and (max-width: 620px){table[class=body] h1{font-size:28px !important;margin-bottom:10px !important}table[class=body] p, table[class=body] ul, table[class=body] ol, table[class=body] td, table[class=body] span, table[class=body] a{font-size:16px !important}table[class=body] .wrapper, table[class=body] .article{padding:10px !important}table[class=body] .content{padding:0 !important}table[class=body] .container{padding:0 !important;width:100% !important}table[class=body] .main{border-left-width:0 !important;border-radius:0 !important;border-right-width:0 !important}table[class=body] .btn table{width:100% !important}table[class=body] .btn a{width:100% !important}table[class=body] .img-responsive{height:auto !important;max-width:100% !important;width:auto !important}}@media all{.ExternalClass{width:100%}.ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div{line-height:100%}.apple-link a{color:inherit !important;font-family:inherit !important;font-size:inherit !important;font-weight:inherit !important;line-height:inherit !important;text-decoration:none !important}#MessageViewBody a{color:inherit;text-decoration:none;font-size:inherit;font-family:inherit;font-weight:inherit;line-height:inherit}.btn-primary table td:hover{background-color:#34495e !important}.btn-primary a:hover{background-color:#34495e !important;border-color:#34495e !important}}</style></head><body class=\"\"> <span class=\"preheader\">ApiOpenStudio password reset.</span><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"body\"><tr><td>&nbsp;</td><td class=\"container\"><div class=\"content\"><table role=\"presentation\" class=\"main\"><tr><td class=\"wrapper\"><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td><p>Hi there,</p><p>We have received a request to reset your password at ApiOpenStudio.</p><p>If you believe this was sent in error, please contact your administrator.</p><p>To reset your password, please click on the foloowing link.</p><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"btn btn-primary\"><tbody><tr><td align=\"left\"><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tbody><tr><td> <a href=\"https://[domain]/password/set/[token]\" target=\"_blank\">https://[domain]/password/set/[token]</a></td></tr></tbody></table></td></tr></tbody></table></td></tr></table></td></tr></table><div class=\"footer\"><table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td class=\"content-block\"> <span class=\"apple-link\">ApiOpenStudio</span></td></tr><tr><td class=\"content-block powered-by\"> Powered by <a href=\"https://www.apiopenstudio.com\">ApiOpenStudio</a>.</td></tr></table></div></div></td><td>&nbsp;</td></tr></table></body></html>'
 
 whitelist:
-  columns:
-    wlid: { type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: whitelist id }
-    appid: { type: int(10) unsigned, notnull: true, comment: application id }
-    min_ip: { type: varchar(32), notnull: true, comment: ip range minimum }
-    max_ip: { type: varchar(32), notnull: true, comment: ip range maximum }
+    columns:
+        wlid: {type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: whitelist id}
+        appid: {type: int(10) unsigned, notnull: true, comment: application id}
+        min_ip: {type: varchar(32), notnull: true, comment: ip range minimum}
+        max_ip: {type: varchar(32), notnull: true, comment: ip range maximum}
