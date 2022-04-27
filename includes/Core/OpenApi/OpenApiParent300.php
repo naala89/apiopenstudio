@@ -57,6 +57,16 @@ class OpenApiParent300 extends OpenApiParentAbstract
         return json_decode(json_encode($info, JSON_UNESCAPED_SLASHES));
     }
 
+    /**
+     * Returns the default servers, based on settings.php.
+     *
+     * @param string $accountName
+     * @param string $applicationName
+     *
+     * @return array
+     *
+     * @throws ApiException
+     */
     protected function getDefaultServers(string $accountName, string $applicationName): array
     {
         $servers = [];
@@ -73,6 +83,8 @@ class OpenApiParent300 extends OpenApiParentAbstract
      * Returns the default components element.
      *
      * @return stdClass
+     *
+     * @throws ApiException
      */
     protected function getDefaultComponents(): stdClass
     {
@@ -89,32 +101,49 @@ class OpenApiParent300 extends OpenApiParentAbstract
      * Returns the default schemas element.
      *
      * @return stdClass
+     *
+     * @throws ApiException
      */
     protected function getDefaultSchemas(): stdClass
     {
-        $schemas = [
-            'GeneralError' => [
-                'type' => 'object',
-                'properties' => [
-                    'error' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'id' => [
-                                'type' => 'integer',
-                                'format' => 'int32',
-                            ],
-                            'code' => [
-                                'type' => 'integer',
-                                'format' => 'int32',
-                            ],
-                            'message' => [
-                                'type' => 'string',
-                            ],
-                        ],
-                    ],
+        $dataBlock = [
+            'type' => 'object',
+            'properties' => [
+                'id' => [
+                    'type' => 'integer',
+                    'format' => 'int32',
+                ],
+                'code' => [
+                    'type' => 'integer',
+                    'format' => 'int32',
+                ],
+                'message' => [
+                    'type' => 'string',
                 ],
             ],
         ];
+        if ($this->settings->__get(['api', 'wrap_json_in_response_object'])) {
+            $schemas = [
+                'GeneralError' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'result' => [
+                            'type' => 'string',
+                        ],
+                        'data' => $dataBlock,
+                    ],
+                ],
+            ];
+        } else {
+            $schemas = [
+                'GeneralError' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'error' => $dataBlock,
+                    ],
+                ],
+            ];
+        }
 
         return json_decode(json_encode($schemas, JSON_UNESCAPED_SLASHES));
     }
@@ -123,62 +152,91 @@ class OpenApiParent300 extends OpenApiParentAbstract
      * Returns the default responses element.
      *
      * @return stdClass
+     *
+     * @throws ApiException
      */
     protected function getDefaultResponses(): stdClass
     {
-        $responses = [
-            'GeneralError' => [
-                'description' => 'General Error',
-                'content' => [
-                    'application/json' => [
-                        'schema' => [
-                            '$ref' => '#/components/schemas/GeneralError',
-                        ],
-                        'example' => [
-                            'error' => [
-                                'id' => '<my_processor_id>',
-                                'code' => 6,
-                                'message' => 'Oops, something went wrong.',
-                            ]
-                        ],
-                    ],
-                ],
-            ],
-            'Unauthorised' => [
-                'description' => 'Unauthorised',
-                'content' => [
-                    'application/json' => [
-                        'schema' => [
-                            '$ref' => '#/components/schemas/GeneralError',
-                        ],
-                        'example' => [
-                            'error' => [
-                                'id' => '<my_processor_id>',
-                                'code' => 4,
-                                'message' => 'Invalid token.',
-                            ]
-                        ],
-                    ],
-                ],
-            ],
-            'Forbidden' => [
-                'description' => 'Forbidden',
-                'content' => [
-                    'application/json' => [
-                        'schema' => [
-                            '$ref' => '#/components/schemas/GeneralError',
-                        ],
-                        'example' => [
-                            'error' => [
-                                'id' => '<my_processor_id>',
-                                'code' => 6,
-                                'message' => 'Permission denied.',
-                            ]
-                        ],
+        $responses = [];
+        $wrap_json_in_response_object = $this->settings->__get(['api', 'wrap_json_in_response_object']);
+        $responses['GeneralError'] = [
+            'description' => 'General Error',
+            'content' => [
+                'application/json' => [
+                    'schema' => [
+                        '$ref' => '#/components/schemas/GeneralError',
                     ],
                 ],
             ],
         ];
+        $responses['Unauthorised'] = [
+            'description' => 'Unauthorised',
+            'content' => [
+                'application/json' => [
+                    'schema' => [
+                        '$ref' => '#/components/schemas/GeneralError',
+                    ],
+                ],
+            ],
+        ];
+        $responses['Forbidden'] = [
+            'description' => 'Forbidden',
+            'content' => [
+                'application/json' => [
+                    'schema' => [
+                        '$ref' => '#/components/schemas/GeneralError',
+                    ],
+                ],
+            ],
+        ];
+        if ($wrap_json_in_response_object) {
+            $responses['GeneralError']['content']['application/json']['example'] = [
+                'result' => 'error',
+                'data' => [
+                    'id' => '<my_processor_id>',
+                    'code' => 6,
+                    'message' => 'Oops, something went wrong.',
+                ],
+            ];
+            $responses['Unauthorised']['content']['application/json']['example'] = [
+                'result' => 'error',
+                'data' => [
+                    'id' => '<my_processor_id>',
+                    'code' => 4,
+                    'message' => 'Invalid token.',
+                ],
+            ];
+            $responses['Forbidden']['content']['application/json']['example'] = [
+                'result' => 'error',
+                'data' => [
+                    'id' => '<my_processor_id>',
+                    'code' => 6,
+                    'message' => 'Permission denied.',
+                ],
+            ];
+        } else {
+            $responses['GeneralError']['content']['application/json']['example'] = [
+                'error' => [
+                    'id' => '<my_processor_id>',
+                    'code' => 6,
+                    'message' => 'Oops, something went wrong.',
+                ]
+            ];
+            $responses['Unauthorised']['content']['application/json']['example'] = [
+                'error' => [
+                    'id' => '<my_processor_id>',
+                    'code' => 4,
+                    'message' => 'Invalid token.',
+                ]
+            ];
+            $responses['Forbidden']['content']['application/json']['example'] = [
+                'error' => [
+                    'id' => '<my_processor_id>',
+                    'code' => 6,
+                    'message' => 'Permission denied.',
+                ]
+            ];
+        }
 
         return json_decode(json_encode($responses, JSON_UNESCAPED_SLASHES));
     }
