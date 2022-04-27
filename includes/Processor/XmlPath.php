@@ -316,7 +316,12 @@ DESCRIPTION,
             foreach ($nodes as $node) {
                 $xmlWithoutWhiteSpace = trim(preg_replace('~\s+~u', ' ', $node->asXML()), ' ');
                 if (!$this->simplexmlImportXml($result, $xmlWithoutWhiteSpace)) {
-                    throw new Core\ApiException('failed to add node to parent XML, something went wrong');
+                    throw new Core\ApiException(
+                        'failed to add node to parent XML, something went wrong',
+                        6,
+                        $this->id,
+                        400
+                    );
                 }
             }
         }

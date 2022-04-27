@@ -189,7 +189,7 @@ TEXT,
             }
             $result = $executor->execute($formula);
         } catch (Exception $e) {
-            throw new Core\ApiException($e->getMessage(), 6, $this->id);
+            throw new Core\ApiException($e->getMessage(), 6, $this->id, 400);
         }
 
         return new Core\DataContainer($result);
