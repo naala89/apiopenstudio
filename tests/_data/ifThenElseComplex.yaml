@@ -39,7 +39,7 @@ process:
         id: Complex if then else get operator
         key: operator
     then:
-        processor: collection
+        processor: var_collection
         id: Complex if then else then collection
         items:
             - 34
@@ -86,7 +86,7 @@ process:
                     value: "key2 < key1"
             - Hello
     else:
-        processor: collection
+        processor: var_collection
         id: Complex if then else else collection
         items:
             - this

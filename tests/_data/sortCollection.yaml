@@ -20,7 +20,7 @@ process:
     processor: sort
     id: test sort processor process
     values:
-        processor: collection
+        processor: var_collection
         id: test sort processor collection
         items:
             - field1
