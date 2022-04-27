@@ -15,3 +15,4 @@ api:
     url: "api.apiopenstudio.local"
     openapi_version: "2.0"
     openapi_directory: "includes/openapiSchema"
+    wrap_json_in_response_object: true
