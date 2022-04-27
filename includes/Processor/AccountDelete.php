@@ -91,18 +91,32 @@ class AccountDelete extends ProcessorEntity
 
         $accid = $this->val('accid', true);
 
-        $account = $this->accountMapper->findByAccid($accid);
-
+        try {
+            $account = $this->accountMapper->findByAccid($accid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($account->getAccid())) {
             throw new ApiException("Account does not exist: $accid", 6, $this->id, 400);
         }
+
         // Do not delete if applications are attached to the account.
-        $applications = $this->applicationMapper->findByAccid($accid);
+        try {
+            $applications = $this->applicationMapper->findByAccid($accid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (!empty($applications)) {
             $message = 'Cannot delete the account, applications are assigned to the account';
             throw new ApiException($message, 6, $this->id, 400);
         }
 
-        return new DataContainer($this->accountMapper->delete($account), 'boolean');
+        try {
+            $result = $this->accountMapper->delete($account);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return new DataContainer($result, 'boolean');
     }
 }

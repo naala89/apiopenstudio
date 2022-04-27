@@ -139,7 +139,11 @@ class AccountRead extends ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        $accounts = $this->accountMapper->findAllForUser($uid, $params);
+        try {
+            $accounts = $this->accountMapper->findAllForUser($uid, $params);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
         $result = [];
         foreach ($accounts as $account) {
