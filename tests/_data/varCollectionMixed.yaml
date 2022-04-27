@@ -1,8 +1,8 @@
-name: Testing collection mixed
+name: Testing var_collection mixed
 
 description: Test a good Collection processor of mixed fields
 
-uri: collection/mixed
+uri: var_collection/mixed
 
 method: get
 
@@ -12,14 +12,14 @@ ttl: 0
 
 security:
     processor: validate_token_roles
-    id: 1
+    id: var collection mixed fields security
     roles:
         - Consumer
         - Developer
 
 process:
-    processor: collection
-    id: 3
+    processor: var_collection
+    id: var collection mixed fields collection
     items:
         - null
         - 1234567890
@@ -27,7 +27,7 @@ process:
         - val1
         -
             processor: var_field
-            id: 4
+            id: var collection mixed fields sub item
             key: key2
             value: val2
 

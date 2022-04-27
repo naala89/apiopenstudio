@@ -1,0 +1,33 @@
+name: Testing var_collection fields
+
+description: Test a good var_collection processor of fields
+
+uri: var_collection/fields
+
+appid: 2
+
+method: get
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: var collection fields security
+    roles:
+        - Consumer
+        - Developer
+
+process:
+    processor: var_collection
+    id: var collection fields collection
+    items:
+        -
+            processor: var_field
+            id: var collection fields base item 1
+            key: key1
+            value:
+                processor: var_field
+                id: var collection fields sub item 1
+                key: key2
+                value: val2
+
