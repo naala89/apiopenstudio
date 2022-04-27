@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db;
 
@@ -88,17 +89,24 @@ class InviteAccept extends Core\ProcessorEntity
     public function process(): Core\DataContainer
     {
         parent::process();
-
         $token = $this->val('token', true);
 
-        $invite = $this->inviteMapper->findByToken($token);
+        try {
+            $invite = $this->inviteMapper->findByToken($token);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($email = $invite->getEmail())) {
             throw new Core\ApiException("Invalid invite token", 6, $this->id, 400);
         }
 
         $user = new Db\User(null, 1, $email, null, null, null, $email);
-        $this->userMapper->save($user);
-        $this->inviteMapper->delete($invite);
+        try {
+            $this->userMapper->save($user);
+            $this->inviteMapper->delete($invite);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
         return new Core\DataContainer('true', 'text');
     }

@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db;
 
@@ -160,7 +161,11 @@ class InviteRead extends Core\ProcessorEntity
         }
 
         $result = [];
-        $invites = $this->inviteMapper->findAll($params);
+        try {
+            $invites = $this->inviteMapper->findAll($params);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         foreach ($invites as $invite) {
             $result[] = $invite->dump();
         }
