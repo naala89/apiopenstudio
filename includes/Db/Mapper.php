@@ -88,7 +88,7 @@ abstract class Mapper
         }
         $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
         $this->logger->error('db', $message);
-        throw new ApiException($message, 2);
+        throw new ApiException($message, 2, -1, 500);
     }
 
     /**
@@ -175,7 +175,9 @@ abstract class Mapper
         // Add order by.
         if (!empty($params['order_by'])) {
             if (stripos($sql, ' order by ') !== false) {
-                throw new ApiException('Trying to add order by params on SQL with ORDER BY clause: ' . $sql);
+                $message = "Trying to add order by params on SQL with ORDER BY clause: $sql";
+                $this->logger->error('db', $message);
+                throw new ApiException($message, 2, -1, 500);
             }
             $orderBy = mysqli_real_escape_string($this->db->_connectionID, $params['order_by']);
             $direction = strtoupper(mysqli_real_escape_string($this->db->_connectionID, $params['direction']));
@@ -187,7 +189,9 @@ abstract class Mapper
         $this->logger->debug('db', 'Bind Params: ' . print_r($bindParams, true));
         if (!empty($params['offset']) || !empty($params['limit'])) {
             if (stripos($sql, ' limit ') !== false) {
-                throw new ApiException('Trying to limit params on SQL with LIMIT clause: ' . $sql);
+                $message = "Trying to limit params on SQL with LIMIT clause: $sql";
+                $this->logger->error('db', $message);
+                throw new ApiException($message, 2, -1, 500);
             }
             $recordSet = $this->db->selectLimit(
                 $sql,
@@ -202,7 +206,7 @@ abstract class Mapper
         if (!$recordSet) {
             $message = $this->db->ErrorMsg() . ' (' .  __METHOD__ . ')';
             $this->logger->error('db', $message);
-            throw new ApiException($message, 2);
+            throw new ApiException($message, 2, -1, 500);
         }
 
         $entries = [];
