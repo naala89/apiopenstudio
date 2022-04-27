@@ -118,44 +118,52 @@ class OpenapiDefault extends ProcessorEntity
             throw new ApiException('permission denied', 4, 403);
         }
 
-        $application = $this->applicationMapper->findByAppId($appid);
+        try {
+            $application = $this->applicationMapper->findByAppId($appid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($application->getAppid())) {
             throw new ApiException('invalid appid', 6, $this->id, 400);
         }
-        $account = $this->accountMapper->findByAccid($application->getAccid());
+
+        try {
+            $account = $this->accountMapper->findByAccid($application->getAccid());
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($account->getAccid())) {
             throw new ApiException('application assigned to an invalid account', 6, $this->id, 400);
         }
 
-        $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->settings);
-        $openApiPathClassName = Utilities::getOpenApiPathClassPath($this->settings);
-        $openApiParentClass = new $openApiParentClassName();
-        $openApiPathClass = new $openApiPathClassName();
-
-        $openApiParentClass->setDefault($account->getName(), $application->getName());
-        $schema = $openApiParentClass->export();
-
-        $application->setOpenapi($schema);
         try {
+            $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->settings);
+            $openApiPathClassName = Utilities::getOpenApiPathClassPath($this->settings);
+            $openApiParentClass = new $openApiParentClassName();
+            $openApiPathClass = new $openApiPathClassName();
+            $openApiParentClass->setDefault($account->getName(), $application->getName());
+            $schema = $openApiParentClass->export();
+            $application->setOpenapi($schema);
+
             $this->applicationMapper->save(($application));
-        } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 2, $this->id, 500);
-        }
 
-        $schema = json_decode($schema, true);
-        $schema['paths'] = [];
+            $schema = json_decode($schema, true);
+            $schema['paths'] = [];
 
-        $resources = $this->resourceMapper->findByAppId($appid);
-        foreach ($resources as $resource) {
-            $openApiPathClass->setDefault($resource, $account->getName(), $application->getName());
-            $resourceSchema = $openApiPathClass->export();
-            $resource->setOpenapi($resourceSchema);
-            try {
-                $this->resourceMapper->save($resource);
-            } catch (ApiException $e) {
-                throw new ApiException($e->getMessage(), 2, $this->id, 500);
+            $resources = $this->resourceMapper->findByAppId($appid);
+            foreach ($resources as $resource) {
+                $openApiPathClass->setDefault($resource, $account->getName(), $application->getName());
+                $resourceSchema = $openApiPathClass->export();
+                $resource->setOpenapi($resourceSchema);
+                try {
+                    $this->resourceMapper->save($resource);
+                } catch (ApiException $e) {
+                    throw new ApiException($e->getMessage(), 2, $this->id, 500);
+                }
+                $schema['paths'] = array_merge_recursive($schema['paths'], json_decode($resourceSchema, true));
             }
-            $schema['paths'] = array_merge_recursive($schema['paths'], json_decode($resourceSchema, true));
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getHtmlCode(), $this->id, $e->getHtmlCode());
         }
 
         return new DataContainer(json_encode($schema, JSON_UNESCAPED_SLASHES), 'json');
