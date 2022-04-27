@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db\RoleMapper;
@@ -105,18 +106,29 @@ class RoleUpdate extends Core\ProcessorEntity
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
-        $role = $this->roleMapper->findByName($name);
+        try {
+            $role = $this->roleMapper->findByName($name);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (!empty($role->getRid())) {
             throw new Core\ApiException("A role with the name '$name' already exists", 7, $this->id);
         }
-        $role = $this->roleMapper->findByRid($rid);
+
+        try {
+            $role = $this->roleMapper->findByRid($rid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($role->getRid())) {
             throw new Core\ApiException("A role with RID: $rid does not exist", 7, $this->id);
         }
 
-        $role->setName($name);
-        if (!$this->roleMapper->save($role)) {
-            throw new Core\ApiException("Failed to update role, please check the logs.", 7, $this->id, 400);
+        try {
+            $role->setName($name);
+            $this->roleMapper->save($role);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
         return new Core\DataContainer($role->dump(), 'array');

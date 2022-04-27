@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db\RoleMapper;
 
@@ -132,7 +133,11 @@ class RoleRead extends Core\ProcessorEntity
      */
     private function findByRid(int $rid): Core\DataContainer
     {
-        $role = $this->roleMapper->findByRid($rid);
+        try {
+            $role = $this->roleMapper->findByRid($rid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($role->getRid())) {
             throw new Core\ApiException("Unknown role: $rid", 6, $this->id, 400);
         }
@@ -150,7 +155,11 @@ class RoleRead extends Core\ProcessorEntity
      */
     private function findAll(array $params): Core\DataContainer
     {
-        $result = $this->roleMapper->findAll($params);
+        try {
+            $result = $this->roleMapper->findAll($params);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $roles = [];
         foreach ($result as $item) {
             $roles[] = $item->dump();
