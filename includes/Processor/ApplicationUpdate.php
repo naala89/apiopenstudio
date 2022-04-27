@@ -154,23 +154,28 @@ class ApplicationUpdate extends ProcessorEntity
         $name = $this->val('name', true);
         $schema = $this->val('openapi', true);
 
-        $application = $this->applicationMapper->findByAppid($appid);
+        try {
+            $application = $this->applicationMapper->findByAppid($appid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($application->getAccid())) {
             throw new ApiException("application ID does not exist: $appid", 6, $this->id, 400);
         }
 
         $this->validateAccess($application, $accid);
-        try {
-            $openApi = $this->getOpenApi($schema, $application);
-        } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-        }
+        $openApi = $this->getOpenApi($schema, $application);
 
         if (!empty($accid)) {
-            $account = $this->accountMapper->findByAccid($accid);
+            try {
+                $account = $this->accountMapper->findByAccid($accid);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
             if (empty($account->getAccid())) {
                 throw new ApiException("account ID does not exist: $accid", 6, $this->id, 400);
             }
+
             $application->setAccid($accid);
             try {
                 $openApi->setAccount($account->getName());
@@ -198,14 +203,12 @@ class ApplicationUpdate extends ProcessorEntity
 
         $application->setOpenapi($openApi->export());
 
-        if (!$this->applicationMapper->save($application)) {
-            throw new ApiException(
-                'application update failed, please check the logs',
-                6,
-                $this->id,
-                500
-            );
+        try {
+            $this->applicationMapper->save($application);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
+
         $result = $application->dump();
         $result['openapi'] = json_decode($result['openapi']);
         return new DataContainer($result, 'array');

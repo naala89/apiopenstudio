@@ -114,7 +114,16 @@ class ApplicationDelete extends ProcessorEntity
 
         $uid = Utilities::getUidFromToken();
         $appid = $this->val('applicationId', true);
-        $application = $this->applicationMapper->findByAppid($appid);
+
+        try {
+            $application = $this->applicationMapper->findByAppid($appid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        if (empty($application->getAppid())) {
+            throw new ApiException("Invalid appid: $appid", 6, $this->id, 400);
+        }
+
         $accid = $application->getAccid();
         if (
             !$this->userRoleMapper->hasRole($uid, 'Administrator')
@@ -122,16 +131,12 @@ class ApplicationDelete extends ProcessorEntity
         ) {
             throw new ApiException("permission denied", 4, $this->id, 403);
         }
-        if (empty($application->getAppid())) {
-            throw new ApiException(
-                "delete application, invalid appid: $appid",
-                6,
-                $this->id,
-                400
-            );
-        }
 
-        $resources = $this->resourceMapper->findByAppId($appid);
+        try {
+            $resources = $this->resourceMapper->findByAppId($appid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (!empty($resources)) {
             throw new ApiException(
                 "cannot delete application, resources are assigned to this application: $appid",
@@ -140,7 +145,12 @@ class ApplicationDelete extends ProcessorEntity
                 400
             );
         }
-        $userRoles = $this->userRoleMapper->findByFilter(['col' => ['appid' => $appid]]);
+
+        try {
+            $userRoles = $this->userRoleMapper->findByFilter(['col' => ['appid' => $appid]]);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (!empty($userRoles)) {
             throw new ApiException(
                 "cannot delete application, users are assigned to this application: $appid",
@@ -150,7 +160,12 @@ class ApplicationDelete extends ProcessorEntity
             );
         }
 
+        try {
+            $result = $this->applicationMapper->delete($application);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
-        return new DataContainer($this->applicationMapper->delete($application), 'boolean');
+        return new DataContainer($result, 'boolean');
     }
 }

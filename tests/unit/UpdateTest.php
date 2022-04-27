@@ -1,19 +1,20 @@
 <?php
 
 use ApiOpenStudio\Cli\Update;
+use Codeception\Test\Unit;
 
-class UpdateTest extends \Codeception\Test\Unit
+class UpdateTest extends Unit
 {
     /**
-     * @var \UnitTester
+     * @var UnitTester
      */
-    protected $tester;
+    protected UnitTester $tester;
 
     /**
      * @var ApiOpenStudio\Cli\Update
      */
-    protected $update;
-    
+    protected Update $update;
+
     protected function _before()
     {
         $this->update = new Update();

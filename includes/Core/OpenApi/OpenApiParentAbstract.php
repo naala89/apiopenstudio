@@ -55,7 +55,7 @@ abstract class OpenApiParentAbstract
         if (is_string($definition)) {
             $definition = json_decode($definition);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new ApiException('invalid input JSON string', 4, -1, 400);
+                throw new ApiException('invalid input OpenApi JSON string', 4, -1, 400);
             }
         }
         $this->definition = $definition;
@@ -75,7 +75,7 @@ abstract class OpenApiParentAbstract
         $result = $this->definition;
         if ($encoded) {
             if (!$result = json_encode($result, JSON_UNESCAPED_SLASHES)) {
-                throw new ApiException('failed to encode the JSON array');
+                throw new ApiException('failed to encode the OpenApi array to JSON');
             }
         }
         return $result;

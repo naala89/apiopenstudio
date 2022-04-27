@@ -142,14 +142,19 @@ class OpenapiImport extends ProcessorEntity
         try {
             $accountName = $this->openApiParent->getAccount();
             $applicationName = $this->openApiParent->getApplication();
+            $account = $this->accountMapper->findByName($accountName);
         } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 6, $this->id, 400);
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
-        $account = $this->accountMapper->findByName($accountName);
         if (empty($accid = $account->getAccid())) {
             throw new ApiException("unable to find account: $accountName", 6, $this->id, 400);
         }
-        $application = $this->applicationMapper->findByAccidAppname($accid, $applicationName);
+
+        try {
+            $application = $this->applicationMapper->findByAccidAppname($accid, $applicationName);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($appid = $application->getAppid())) {
             $message = "unable to find application (account: $accountName): $applicationName";
             throw new ApiException($message, 6, $this->id, 400);
@@ -171,14 +176,18 @@ class OpenapiImport extends ProcessorEntity
         try {
             $this->applicationMapper->save($application);
         } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 2, $this->id, 500);
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
         $result = [];
         foreach ((array) $paths as $uri => $methods) {
             foreach ((array) $methods as $method => $body) {
                 $trimmedUri = trim(preg_replace('/\/\{.*\}/', '', $uri), '/');
-                $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $trimmedUri);
+                try {
+                    $resource = $this->resourceMapper->findByAppIdMethodUri($appid, $method, $trimmedUri);
+                } catch (ApiException $e) {
+                    throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+                }
                 if (empty($resource->getResid())) {
                     $resource->setUri($trimmedUri);
                     $resource->setMethod($method);
@@ -189,7 +198,7 @@ class OpenapiImport extends ProcessorEntity
                     try {
                         $this->resourceMapper->save($resource);
                     } catch (ApiException $e) {
-                        throw new ApiException($e->getMessage(), 2, $this->id, 500);
+                        throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
                     }
                     $result['new'][] = [
                         'uri' => $trimmedUri,
@@ -202,7 +211,7 @@ class OpenapiImport extends ProcessorEntity
                     try {
                         $this->resourceMapper->save($resource);
                     } catch (ApiException $e) {
-                        throw new ApiException($e->getMessage(), 2, $this->id, 500);
+                        throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
                     }
                     $result['updated'][] = [
                         'uri' => $trimmedUri,

@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db;
 
@@ -229,11 +230,20 @@ class UserCreate extends Core\ProcessorEntity
         $email = $this->val('email', true);
         $password = $this->val('password', true);
 
-        $user = $this->userMapper->findByUsername($username);
+        try {
+            $user = $this->userMapper->findByUsername($username);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (!empty($user->getUid())) {
             throw new Core\ApiException("Username $username already exists", 6, $this->id, 400);
         }
-        $user = $this->userMapper->findByEmail($email);
+
+        try {
+            $user = $this->userMapper->findByEmail($email);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (!empty($user->getUid())) {
             throw new Core\ApiException("Email $email already exists", 6, $this->id, 400);
         }
@@ -262,11 +272,13 @@ class UserCreate extends Core\ProcessorEntity
         $user->setPasswordReset();
         $user->setPasswordResetTtl();
 
-        if (!$this->userMapper->save($user)) {
-            throw new Core\ApiException('failed to create the new user, please check the logs', 6, $this->id, 400);
+        try {
+            $this->userMapper->save($user);
+            $user = $this->userMapper->findByUsername($username);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        $user = $this->userMapper->findByUsername($username);
         return new Core\DataContainer($user->dump(), 'array');
     }
 }

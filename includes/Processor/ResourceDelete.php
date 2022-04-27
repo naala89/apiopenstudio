@@ -115,7 +115,11 @@ class ResourceDelete extends ProcessorEntity
         $resid = $this->val('resid', true);
 
         // Validate resource exists.
-        $resource = $this->resourceMapper->findByResid($resid);
+        try {
+            $resource = $this->resourceMapper->findByResid($resid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($resource->getResid())) {
             throw new ApiException("no resources found or insufficient privileges", 6, $this->id, 400);
         }
@@ -133,8 +137,12 @@ class ResourceDelete extends ProcessorEntity
         }
 
         // Validate deleting core resource and core resources not locked.
-        $application = $this->applicationMapper->findByAppid($resource->getAppid());
-        $account = $this->accountMapper->findByAccid($application->getAccid());
+        try {
+            $application = $this->applicationMapper->findByAppid($resource->getAppid());
+            $account = $this->accountMapper->findByAccid($application->getAccid());
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (
             $account->getName() == $this->settings->__get(['api', 'core_account'])
             && $application->getName() == $this->settings->__get(['api', 'core_application'])
@@ -143,6 +151,11 @@ class ResourceDelete extends ProcessorEntity
             throw new ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
-        return new DataContainer($this->resourceMapper->delete($resource), 'boolean');
+        try {
+            $result = $this->resourceMapper->delete($resource);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        return new DataContainer($result);
     }
 }

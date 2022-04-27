@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\VarStore;
@@ -148,7 +149,11 @@ class VarStoreCreate extends Core\ProcessorEntity
                 ) {
                     $accid = $role['accid'];
                     if (!isset($accounts[$accid])) {
-                        $accountsObjects = $this->applicationMapper->findByAccid($accid);
+                        try {
+                            $accountsObjects = $this->applicationMapper->findByAccid($accid);
+                        } catch (ApiException $e) {
+                            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+                        }
                         foreach ($accountsObjects as $accountObject) {
                             $accounts[$accid][] = $accountObject->getAppid();
                         }
@@ -166,15 +171,23 @@ class VarStoreCreate extends Core\ProcessorEntity
             throw new Core\ApiException("permission denied", 6, $this->id, 400);
         }
 
-        $varStore = $this->varStoreMapper->findByAppIdKey($appid, $key);
+        try {
+            $varStore = $this->varStoreMapper->findByAppIdKey($appid, $key);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (!empty($varStore->getVid())) {
             throw new Core\ApiException("var store already exists", 6, $this->id, 400);
         }
 
         $varStore = new VarStore(null, $appid, $key, $val);
 
-        $this->varStoreMapper->save($varStore);
-        $varStore = $this->varStoreMapper->findByAppIdKey($appid, $key);
+        try {
+            $this->varStoreMapper->save($varStore);
+            $varStore = $this->varStoreMapper->findByAppIdKey($appid, $key);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
         return new Core\DataContainer($varStore->dump(), 'array');
     }

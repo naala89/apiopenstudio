@@ -13,6 +13,6 @@ api:
         - https
     base_path: "/var/www/html/api/"
     url: "api.apiopenstudio.local"
-    openapi_version: "3.0.2"
+    openapi_version: "3.0.3"
     openapi_directory: "includes/openapiSchema"
-    wrap_json_in_response_object: true
+    wrap_json_in_response_object: false

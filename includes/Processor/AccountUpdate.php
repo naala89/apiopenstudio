@@ -118,20 +118,32 @@ class AccountUpdate extends ProcessorEntity
         }
         $accid = $this->val('accid', true);
 
-        $account = $this->accountMapper->findByName($name);
+        try {
+            $account = $this->accountMapper->findByName($name);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (!empty($account->getAccid())) {
             throw new ApiException("Account already exists: $name", 6, $this->id, 400);
         }
-        $account = $this->accountMapper->findByAccid($accid);
+
+        try {
+            $account = $this->accountMapper->findByAccid($accid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($account->getAccid())) {
             throw new ApiException("Account does not exist: $accid", 6, $this->id, 400);
         }
 
-        $account->setName($name);
-        if (!$this->accountMapper->save($account)) {
-            throw new ApiException('save account failed, please check the logs', 2, $this->id, 400);
+        try {
+            $account->setName($name);
+            $this->accountMapper->save($account);
+            $this->updateOpenApiForApplications($account);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
-        $this->updateOpenApiForApplications($account);
+
         return new DataContainer($account->dump(), 'array');
     }
 

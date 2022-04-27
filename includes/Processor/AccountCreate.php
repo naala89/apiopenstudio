@@ -85,23 +85,31 @@ class AccountCreate extends ProcessorEntity
         $name = $this->val('name', true);
         if (preg_match('/[^a-z_\-0-9]/i', $name)) {
             throw new ApiException(
-                "Invalid account name: $name. Only underscore, hyphen or alphanumeric characters permitted.",
+                "Invalid account name: $name. Only underscore, hyphen or alphanumeric characters permitted",
                 6,
                 $this->id,
                 400
             );
         }
 
-        $account = $this->accountMapper->findByName($name);
-        if (!empty($account->getAccid())) {
-            throw new ApiException("Invalid account name: $name. This account already exists.", 6, $this->id, 400);
+        try {
+            $account = $this->accountMapper->findByName($name);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        $account->setName($name);
-        if (!$this->accountMapper->save($account)) {
-            throw new ApiException('save account failed, please check the logs', 2, $this->id, 400);
+        if (!empty($account->getAccid())) {
+            throw new ApiException("Invalid account name: $name. This account already exists", 6, $this->id, 400);
         }
-        $account = $this->accountMapper->findByName($name);
+
+        try {
+            $account->setName($name);
+            $this->accountMapper->save($account);
+            $account = $this->accountMapper->findByName($name);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
         return new DataContainer($account->dump(), 'array');
     }
 }

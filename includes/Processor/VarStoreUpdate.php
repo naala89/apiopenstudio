@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db\UserRoleMapper;
 use ApiOpenStudio\Db\VarStoreMapper;
@@ -136,12 +137,20 @@ class VarStoreUpdate extends Core\ProcessorEntity
         $validateAccess = $this->val('validate_access', true);
 
         if (!empty($vid)) {
-            $var = $this->varStoreMapper->findByVid($vid);
+            try {
+                $var = $this->varStoreMapper->findByVid($vid);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
             if (empty($var->getVid())) {
                 throw new Core\ApiException("unknown vid: $vid", 6, $this->id, 400);
             }
         } elseif (!empty($key) && !empty($appid)) {
-            $var = $this->varStoreMapper->findByAppIdKey($appid, $key);
+            try {
+                $var = $this->varStoreMapper->findByAppIdKey($appid, $key);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
             if (empty($var->getVid())) {
                 throw new Core\ApiException("unknown vid: $vid", 6, $this->id, 400);
             }
@@ -158,7 +167,11 @@ class VarStoreUpdate extends Core\ProcessorEntity
             // Validate access to the existing var's application
             $permitted = false;
             $currentAppid = $var->getAppid();
-            $roles = Core\Utilities::getRolesFromToken();
+            try {
+                $roles = Core\Utilities::getRolesFromToken();
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
             foreach ($roles as $role) {
                 if ($role['appid'] == $currentAppid && in_array($role['role_name'], $this->permittedRoles)) {
                     $permitted = true;
@@ -192,7 +205,11 @@ class VarStoreUpdate extends Core\ProcessorEntity
             $var->setKey($key);
         }
 
-        $this->varStoreMapper->save($var);
+        try {
+            $this->varStoreMapper->save($var);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
         return new Core\DataContainer($var->dump(), 'array');
     }

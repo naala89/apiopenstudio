@@ -122,10 +122,10 @@ class OpenapiUpdate extends ProcessorEntity
         try {
             $applicationName = $openApiParentClass->getApplication();
             $accountName = $openApiParentClass->getAccount();
+            $account = $this->accountMapper->findByName($accountName);
         } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 7, $this->id, 400);
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
-        $account = $this->accountMapper->findByName($accountName);
         $accid = $account->getAccid();
         if (empty($accid)) {
             throw new ApiException(
@@ -135,7 +135,11 @@ class OpenapiUpdate extends ProcessorEntity
                 400
             );
         }
-        $application = $this->applicationMapper->findByAccidAppname($account->getAccid(), $applicationName);
+        try {
+            $application = $this->applicationMapper->findByAccidAppname($account->getAccid(), $applicationName);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($appid) || $appid != $application->getAppid()) {
             throw new ApiException(
                 "invalid application name in the schema: $applicationName",
@@ -162,7 +166,7 @@ class OpenapiUpdate extends ProcessorEntity
         try {
             $this->applicationMapper->save($application);
         } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 2, $this->id, 500);
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
         foreach ($paths as $uri => $path) {
@@ -183,7 +187,7 @@ class OpenapiUpdate extends ProcessorEntity
                 try {
                     $this->resourceMapper->save($resource);
                 } catch (ApiException $e) {
-                    throw new ApiException($e->getMessage(), 2, $this->id, 500);
+                    throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
                 }
             }
         }

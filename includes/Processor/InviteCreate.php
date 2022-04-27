@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db;
 use Swift_SmtpTransport;
@@ -125,60 +126,66 @@ class InviteCreate extends Core\ProcessorEntity
         parent::process();
 
         $emailString = $this->val('email', true);
-
         $emails = [$emailString];
         if (strpos($emailString, ',') !== false) {
             $emails = explode(',', $emailString);
         }
 
-        foreach ($emails as $key => $email) {
-            $user = $this->userMapper->findByEmail(trim($email));
-            if (!empty($user->getUid())) {
-                throw new Core\ApiException("User already exists: $email", 6, $this->id, 400);
+        try {
+            foreach ($emails as $email) {
+                $user = $this->userMapper->findByEmail(trim($email));
+                if (!empty($user->getUid())) {
+                    throw new Core\ApiException("User already exists: $email", 6, $this->id, 400);
+                }
             }
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        $account = $this->accountMapper->findByName('apiopenstudio');
-        $application = $this->applicationMapper->findByAccidAppname($account->getAccid(), 'core');
-        $var = $this->varStoreMapper->findByAppIdKey($application->getAppid(), 'user_invite_subject');
-        $subject = $var->getVal();
-        $var = $this->varStoreMapper->findByAppIdKey($application->getAppid(), 'user_invite_message');
-        $message = $var->getVal();
-        $domain = $this->settings->__get(['api', 'url']);
-        $message = str_replace('[domain]', $domain, $message);
-        $fromEmail = $this->settings->__get(['email', 'from', 'email']);
-        $fromName = $this->settings->__get(['email', 'from', 'name']);
+        try {
+            $account = $this->accountMapper->findByName('apiopenstudio');
+            $application = $this->applicationMapper->findByAccidAppname($account->getAccid(), 'core');
+            $var = $this->varStoreMapper->findByAppIdKey($application->getAppid(), 'user_invite_subject');
+            $subject = $var->getVal();
+            $var = $this->varStoreMapper->findByAppIdKey($application->getAppid(), 'user_invite_message');
+            $message = $var->getVal();
+            $domain = $this->settings->__get(['api', 'url']);
+            $message = str_replace('[domain]', $domain, $message);
+            $fromEmail = $this->settings->__get(['email', 'from', 'email']);
+            $fromName = $this->settings->__get(['email', 'from', 'name']);
 
-        $transport = (new Swift_SmtpTransport($this->settings->__get(['email', 'host']), 25))
-            ->setUsername($this->settings->__get(['email', 'username']))
-            ->setPassword($this->settings->__get(['email', 'password']));
+            $transport = (new Swift_SmtpTransport($this->settings->__get(['email', 'host']), 25))
+                ->setUsername($this->settings->__get(['email', 'username']))
+                ->setPassword($this->settings->__get(['email', 'password']));
 
-        $result = [];
+            $result = [];
+            foreach ($emails as $email) {
+                $invite = $this->inviteMapper->findByEmail($email);
+                if (!empty($invite->getIid())) {
+                    $this->inviteMapper->delete($invite);
+                    $result['resent'][] = $email;
+                }
 
-        foreach ($emails as $email) {
-            $invite = $this->inviteMapper->findByEmail($email);
-            if (!empty($invite->getIid())) {
-                $this->inviteMapper->delete($invite);
-                $result['resent'][] = $email;
+                $token = Core\Utilities::randomString(32);
+                $finalMessage = str_replace('[token]', $token, $message);
+                $mailer = new Swift_Mailer($transport);
+                $emailMessage = (new Swift_Message($subject))
+                    ->setFrom([$fromEmail => $fromName])
+                    ->setTo($email)
+                    ->setBody($finalMessage)
+                    ->setContentType('text/html');
+
+                if ($mailer->send($emailMessage) > 0) {
+                    $invite = new Db\Invite(null, $email, $token);
+                    $this->inviteMapper->save($invite);
+
+                    $result['success'][] = "$email";
+                } else {
+                    $result['fail'][] = "$email";
+                }
             }
-
-            $token = Core\Utilities::randomString(32);
-            $finalMessage = str_replace('[token]', $token, $message);
-            $mailer = new Swift_Mailer($transport);
-            $emailMessage = (new Swift_Message($subject))
-                ->setFrom([$fromEmail => $fromName])
-                ->setTo($email)
-                ->setBody($finalMessage)
-                ->setContentType('text/html');
-
-            if ($mailer->send($emailMessage) > 0) {
-                $invite = new Db\Invite(null, $email, $token);
-                $this->inviteMapper->save($invite);
-
-                $result['success'][] = "$email";
-            } else {
-                $result['fail'][] = "$email";
-            }
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
         return new Core\DataContainer($result, 'json');

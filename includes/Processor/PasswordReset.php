@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db;
 use Swift_SmtpTransport;
@@ -141,29 +142,37 @@ class PasswordReset extends Core\ProcessorEntity
         if (!empty($email)) {
             // Initial password reset request.
             // Set the token and send the email.
-            $user = $this->userMapper->findByEmail($email);
+            try {
+                $user = $this->userMapper->findByEmail($email);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
             if (empty($user->getUid())) {
                 return new Core\DataContainer('true', 'text');
             }
 
             $token = Core\Utilities::randomString(32);
 
-            $account = $this->accountMapper->findByName('apiopenstudio');
-            $application = $this->applicationMapper->findByAccidAppname($account->getAccid(), 'core');
-            $var = $this->varStoreMapper->findByAppIdKey($application->getAppid(), 'password_reset_subject');
-            $subject = $var->getVal();
-            $var = $this->varStoreMapper->findByAppIdKey($application->getAppid(), 'password_reset_message');
-            $message = $var->getVal();
-            $domain = $this->settings->__get(['admin', 'url']);
-            $message = str_replace('[domain]', $domain, $message);
-            $message = str_replace('[token]', $token, $message);
+            try {
+                $account = $this->accountMapper->findByName('apiopenstudio');
+                $application = $this->applicationMapper->findByAccidAppname($account->getAccid(), 'core');
+                $var = $this->varStoreMapper->findByAppIdKey($application->getAppid(), 'password_reset_subject');
+                $subject = $var->getVal();
+                $var = $this->varStoreMapper->findByAppIdKey($application->getAppid(), 'password_reset_message');
+                $message = $var->getVal();
+                $domain = $this->settings->__get(['admin', 'url']);
+                $message = str_replace('[domain]', $domain, $message);
+                $message = str_replace('[token]', $token, $message);
 
-            $transport = (new Swift_SmtpTransport($this->settings->__get(['email', 'host']), 25))
-                ->setUsername($this->settings->__get(['email', 'username']))
-                ->setPassword($this->settings->__get(['email', 'password']));
-            $mailer = new Swift_Mailer($transport);
-            $fromEmail = $this->settings->__get(['email', 'from', 'email']);
-            $fromName = $this->settings->__get(['email', 'from', 'name']);
+                $transport = (new Swift_SmtpTransport($this->settings->__get(['email', 'host']), 25))
+                    ->setUsername($this->settings->__get(['email', 'username']))
+                    ->setPassword($this->settings->__get(['email', 'password']));
+                $mailer = new Swift_Mailer($transport);
+                $fromEmail = $this->settings->__get(['email', 'from', 'email']);
+                $fromName = $this->settings->__get(['email', 'from', 'name']);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
             $emailMessage = (new Swift_Message($subject))
                 ->setFrom([$fromEmail => $fromName])
                 ->setTo($email)
@@ -175,7 +184,11 @@ class PasswordReset extends Core\ProcessorEntity
 
             $user->setPasswordReset($token);
             $user->setPasswordResetTtl(Core\Utilities::datePhp2mysql(strtotime("+15 minute")));
-            $this->userMapper->save($user);
+            try {
+                $this->userMapper->save($user);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
 
             return new Core\DataContainer('true', 'text');
         }
@@ -185,13 +198,21 @@ class PasswordReset extends Core\ProcessorEntity
             return new Core\DataContainer('true', 'text');
         }
 
-        $user = $this->userMapper->findByPasswordToken($token);
+        try {
+            $user = $this->userMapper->findByPasswordToken($token);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($user->getUid())) {
             return new Core\DataContainer('true', 'text');
         }
 
-        $user->setPassword($password);
-        $this->userMapper->save($user);
+        try {
+            $user->setPassword($password);
+            $this->userMapper->save($user);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
         return new Core\DataContainer('true', 'text');
     }

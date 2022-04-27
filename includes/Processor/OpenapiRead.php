@@ -111,17 +111,25 @@ class OpenapiRead extends ProcessorEntity
             throw new ApiException('permission denied', 4, 403);
         }
 
-        $application = $this->applicationMapper->findByAppId($appid);
+        try {
+            $application = $this->applicationMapper->findByAppId($appid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($application->getAppid())) {
             throw new ApiException('invalid appid');
         }
 
         $schema = json_decode($application->getOpenapi(), true);
         if (empty($schema)) {
-            return new DataContainer("", 'json');
+            return new DataContainer(null);
         }
 
-        $resources = $this->resourceMapper->findByAppId($appid);
+        try {
+            $resources = $this->resourceMapper->findByAppId($appid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $schema['paths'] = [];
         foreach ($resources as $resource) {
             $resourceOpenApi = $resource->getOpenapi();

@@ -11,7 +11,7 @@ use cebe\openapi\exceptions\TypeErrorException;
 use Codeception\Test\Unit;
 use cebe\openapi\Reader;
 
-class OpenApiParent300Test extends Unit
+class OpenApi300NoWrapTest extends Unit
 {
     /**
      * @var UnitTester
@@ -45,7 +45,7 @@ class OpenApiParent300Test extends Unit
 
     protected function _before()
     {
-        $this->settings = new Config(dirname(__DIR__) . '/_data/settings.openapi.300.yml');
+        $this->settings = new Config(dirname(__DIR__) . '/_data/settings.openapi.no_wrap.300.yml');
         $this->openApiParent = new OpenApiParent300($this->settings);
         $this->openApiPath = new OpenApiPath300();
         $this->account = new Account(1, 'test_account');
@@ -242,10 +242,7 @@ class OpenApiParent300Test extends Unit
         return [
             'type' => 'object',
             'properties' => [
-                'result' => [
-                    'type' => 'string',
-                ],
-                'data' => [
+                'error' => [
                     'type' => 'object',
                     'properties' => [
                         'id' => [
@@ -278,8 +275,7 @@ class OpenApiParent300Test extends Unit
                         '$ref' => '#/components/schemas/GeneralError'
                     ],
                     'example' => [
-                        'result' => 'error',
-                        'data' => [
+                        'error' => [
                             'id' => '<my_processor_id>',
                             'code' => 6,
                             'message' => 'Oops, something went wrong.'
@@ -303,8 +299,7 @@ class OpenApiParent300Test extends Unit
                         '$ref' => '#/components/schemas/GeneralError'
                     ],
                     'example' => [
-                        'result' => 'error',
-                        'data' => [
+                        'error' => [
                             'id' => '<my_processor_id>',
                             'code' => 4,
                             'message' => 'Invalid token.'
@@ -328,8 +323,7 @@ class OpenApiParent300Test extends Unit
                         '$ref' => '#/components/schemas/GeneralError'
                     ],
                     'example' => [
-                        'result' => 'error',
-                        'data' => [
+                        'error' => [
                             'id' => '<my_processor_id>',
                             'code' => 6,
                             'message' => 'Permission denied.'

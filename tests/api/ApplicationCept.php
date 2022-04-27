@@ -519,215 +519,230 @@ $coreOpenApi = [
     ]
 ];
 $testingAppOpenApi = [
-    "openapi" => "3.0.3",
-    "info" => [
-        "title" => "testing_app",
-        "description" => "These are the resources that belong to the testing_app application.",
-        "termsOfService" => "https://www.apiopenstudio.com/license/",
-        "contact" => [
-            "name" => "API Support",
-            "email" => "contact@api.apiopenstudio.local",
+    'openapi' => '3.0.3',
+    'info' => [
+        'title' => 'testing_app',
+        'description' => 'These are the resources that belong to the testing_app application.',
+        'termsOfService' => 'https://www.apiopenstudio.com/license/',
+        'contact' => [
+            'name' => 'API Support',
+            'email' => 'contact@api.apiopenstudio.local',
         ],
-        "license" => [
-            "name" => "ApiOpenStudio Public License based on Mozilla Public License 2.0",
-            "url" => "https://www.apiopenstudio.com/license/",
+        'license' => [
+            'name' => 'ApiOpenStudio Public License based on Mozilla Public License 2.0',
+            'url' => 'https://www.apiopenstudio.com/license/',
         ],
-        "version" => "1.0.0",
+        'version' => '1.0.0',
     ],
-    "servers" => [
-        ["url" => "http://api.apiopenstudio.local/testing_acc/testing_app"],
-        ["url" => "https://api.apiopenstudio.local/testing_acc/testing_app"]
+    'servers' => [
+        ['url' => 'http://api.apiopenstudio.local/testing_acc/testing_app'],
+        ['url' => 'https://api.apiopenstudio.local/testing_acc/testing_app']
     ],
-    "paths" => [],
-    "components" => [
-        "schemas" => [
-            "GeneralError" => [
-                "type" => "object",
-                "properties" => [
-                    "error" => [
-                        "type" => "object",
-                        "properties" => [
-                            "id" => [
-                                "type" => "integer",
-                                "format" => "int32",
-                            ],
-                            "code" => [
-                                "type" => "integer",
-                                "format" => "int32",
-                            ],
-                            "message" => [
-                                "type" => "string",
+    'paths' => [],
+    'components' => [
+        'schemas' => [
+            'GeneralError' => [
+                'type' => 'object',
+                'properties' => [
+                    'result' => [
+                        'type' => 'string',
+                    ],
+                    'data' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'id' => [
+                                    'type' => 'integer',
+                                    'format' => 'int32',
+                                ],
+                                'code' => [
+                                    'type' => 'integer',
+                                    'format' => 'int32',
+                                ],
+                                'message' => [
+                                    'type' => 'string',
+                                ],
                             ],
                         ],
                     ],
                 ],
             ],
         ],
-        "responses" => [
-            "GeneralError" => [
-                "description" => "General Error",
-                "content" => [
-                    "application/json" => [
-                        "schema" => ['$ref' => "#/components/schemas/GeneralError"],
-                        "example" => [
-                            "error" => [
-                                "id" => "<my_processor_id>",
-                                "code" => 6,
-                                "message" => "Oops, something went wrong.",
+        'responses' => [
+            'GeneralError' => [
+                'description' => 'General Error',
+                'content' => [
+                    'application/json' => [
+                        'schema' => ['$ref' => '#/components/schemas/GeneralError'],
+                        'example' => [
+                            'result' => 'error',
+                            'data' => [
+                                'id' => '<my_processor_id>',
+                                'code' => 6,
+                                'message' => 'Oops, something went wrong.',
                             ],
                         ],
                     ],
                 ],
             ],
-            "Unauthorised" => [
-                "description" => "Unauthorised",
-                "content" => [
-                    "application/json" => [
-                        "schema" => ['$ref' => "#/components/schemas/GeneralError"],
-                        "example" => [
-                            "error" => [
-                                "id" => "<my_processor_id>",
-                                "code" => 4,
-                                "message" => "Invalid token.",
+            'Unauthorised' => [
+                'description' => 'Unauthorised',
+                'content' => [
+                    'application/json' => [
+                        'schema' => ['$ref' => '#/components/schemas/GeneralError'],
+                        'example' => [
+                            'result' => 'error',
+                            'data' => [
+                                'id' => '<my_processor_id>',
+                                'code' => 4,
+                                'message' => 'Invalid token.',
                             ],
                         ],
                     ],
                 ],
             ],
-            "Forbidden" => [
-                "description" => "Forbidden",
-                "content" => [
-                    "application/json" => [
-                        "schema" => ['$ref' => "#/components/schemas/GeneralError"],
-                        "example" => [
-                            "error" => [
-                                "id" => "<my_processor_id>",
-                                "code" => 6,
-                                "message" => "Permission denied.",
+            'Forbidden' => [
+                'description' => 'Forbidden',
+                'content' => [
+                    'application/json' => [
+                        'schema' => ['$ref' => '#/components/schemas/GeneralError'],
+                        'example' => [
+                            'result' => 'error',
+                            'data' => [
+                                'id' => '<my_processor_id>',
+                                'code' => 6,
+                                'message' => 'Permission denied.',
                             ],
                         ],
                     ],
                 ],
             ],
         ],
-        "securitySchemes" => [
-            "bearer_token" => [
-                "type" => "http",
-                "scheme" => "bearer",
-                "bearerFormat" => "JWT",
+        'securitySchemes' => [
+            'bearer_token' => [
+                'type' => 'http',
+                'scheme' => 'bearer',
+                'bearerFormat' => 'JWT',
             ],
         ],
     ],
-    "security" => [],
-    "externalDocs" => [
-        "description" => "Find out more about ApiOpenStudio",
-        "url" => "https://www.apiopenstudio.com",
+    'security' => [],
+    'externalDocs' => [
+        'description' => 'Find out more about ApiOpenStudio',
+        'url' => 'https://www.apiopenstudio.com',
     ],
 ];
 $newApplicationOpenApi = [
-    "openapi" => "3.0.3",
-    "info" => [
-        "title" => 'new_application1',
-        "description" => 'These are the resources that belong to the new_application1 application.',
-        "termsOfService" => "https://www.apiopenstudio.com/license/",
-        "contact" => [
-            "name" => "API Support",
-            "email" => "contact@localhost",
+    'openapi' => '3.0.3',
+    'info' => [
+        'title' => 'new_application1',
+        'description' => 'These are the resources that belong to the new_application1 application.',
+        'termsOfService' => 'https://www.apiopenstudio.com/license/',
+        'contact' => [
+            'name' => 'API Support',
+            'email' => 'contact@localhost',
         ],
-        "license" => [
-            "name" => 'ApiOpenStudio Public License based on Mozilla Public License 2.0',
-            "url" => "https://www.apiopenstudio.com/license/",
+        'license' => [
+            'name' => 'ApiOpenStudio Public License based on Mozilla Public License 2.0',
+            'url' => 'https://www.apiopenstudio.com/license/',
         ],
-        "version" => "1.0.0",
+        'version' => '1.0.0',
     ],
-    "servers" => [
+    'servers' => [
         ['url' => 'http://localhost/testing_acc/new_application1'],
         ['url' => 'https://localhost/testing_acc/new_application1'],
     ],
-    "paths" => [],
-    "components" => [
-        "schemas" => [
-            "GeneralError" => [
-                "type" => "object",
-                "properties" => [
-                    "error" => [
-                        "type" => "object",
-                        "properties" => [
-                            "id" => [
-                                "type" => "integer",
-                                "format" => "int32",
+    'paths' => [],
+    'components' => [
+        'schemas' => [
+            'GeneralError' => [
+                'type' => 'object',
+                'properties' => [
+                    'result' => [
+                        'type' => 'string',
+                    ],
+                    'data' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'id' => [
+                                'type' => 'integer',
+                                'format' => 'int32',
                             ],
-                            "code" => [
-                                "type" => "integer",
-                                "format" => "int32",
+                            'code' => [
+                                'type' => 'integer',
+                                'format' => 'int32',
                             ],
-                            "message" => [
-                                "type" => "string",
+                            'message' => [
+                                'type' => 'string',
                             ],
                         ],
                     ],
                 ],
             ],
         ],
-        "responses" => [
-            "GeneralError" => [
-                "description" => "General Error",
-                "content" => [
-                    "application/json" => [
-                        "schema" => ['$ref' => "#/components/schemas/GeneralError"],
-                        "example" => [
-                            "error" => [
-                                "id" => "<my_processor_id>",
-                                "code" => 6,
-                                "message" => "Oops, something went wrong.",
+        'responses' => [
+            'GeneralError' => [
+                'description' => 'General Error',
+                'content' => [
+                    'application/json' => [
+                        'schema' => ['$ref' => '#/components/schemas/GeneralError'],
+                        'example' => [
+                            'result' => 'error',
+                            'data' => [
+                                'id' => '<my_processor_id>',
+                                'code' => 6,
+                                'message' => 'Oops, something went wrong.',
                             ],
                         ],
                     ],
                 ],
             ],
-            "Unauthorised" => [
-                "description" => "Unauthorised",
-                "content" => [
-                    "application/json" => [
-                        "schema" => ['$ref' => "#/components/schemas/GeneralError"],
-                        "example" => [
-                            "error" => [
-                                "id" => "<my_processor_id>",
-                                "code" => 4,
-                                "message" => "Invalid token.",
+            'Unauthorised' => [
+                'description' => 'Unauthorised',
+                'content' => [
+                    'application/json' => [
+                        'schema' => ['$ref' => '#/components/schemas/GeneralError'],
+                        'example' => [
+                            'result' => 'error',
+                            'data' => [
+                                'id' => '<my_processor_id>',
+                                'code' => 4,
+                                'message' => 'Invalid token.',
                             ],
                         ],
                     ],
                 ],
             ],
-            "Forbidden" => [
-                "description" => "Forbidden",
-                "content" => [
-                    "application/json" => [
-                        "schema" => ['$ref' => "#/components/schemas/GeneralError"],
-                        "example" => [
-                            "error" => [
-                                "id" => "<my_processor_id>",
-                                "code" => 6,
-                                "message" => "Permission denied.",
+            'Forbidden' => [
+                'description' => 'Forbidden',
+                'content' => [
+                    'application/json' => [
+                        'schema' => ['$ref' => '#/components/schemas/GeneralError'],
+                        'example' => [
+                            'result' => 'error',
+                            'data' => [
+                                'id' => '<my_processor_id>',
+                                'code' => 6,
+                                'message' => 'Permission denied.',
                             ],
                         ],
                     ],
                 ],
             ],
         ],
-        "securitySchemes" => [
-            "bearer_token" => [
-                "type" => "http",
-                "scheme" => "bearer",
-                "bearerFormat" => "JWT",
+        'securitySchemes' => [
+            'bearer_token' => [
+                'type' => 'http',
+                'scheme' => 'bearer',
+                'bearerFormat' => 'JWT',
             ],
         ],
     ],
-    "security" => [],
-    "externalDocs" => [
-        "description" => "Find out more about ApiOpenStudio",
-        "url" => "https://www.apiopenstudio.com",
+    'security' => [],
+    'externalDocs' => [
+        'description' => 'Find out more about ApiOpenStudio',
+        'url' => "https://www.apiopenstudio.com",
     ],
 ];
 
@@ -824,10 +839,13 @@ foreach ($validCreateEditDeleteUsers as $user) {
     $response = json_decode($I->getResponse(), true);
     $appid = $response['data']['appid'];
     $I->seeResponseContainsJson([
-        'appid' => $appid,
-        'accid' => 2,
-        'name' => 'new_application1',
-        'openapi' => $newApplicationOpenApi,
+        'result' => 'ok',
+        'data' => [
+            'appid' => $appid,
+            'accid' => 2,
+            'name' => 'new_application1',
+            'openapi' => $newApplicationOpenApi,
+        ],
     ]);
 
     $I->wantTo('Test updating an application with a valid user: ' . $user['username']);
@@ -843,10 +861,13 @@ foreach ($validCreateEditDeleteUsers as $user) {
         ['url' => 'https://localhost/testing_acc/edited_name'],
     ];
     $I->seeResponseContainsJson([
-        'appid' => $appid,
-        'accid' => 2,
-        'name' => 'edited_name',
-        'openapi' => $editedNewApplicationOpenApi,
+        'result' => 'ok',
+        'data' => [
+            'appid' => $appid,
+            'accid' => 2,
+            'name' => 'edited_name',
+            'openapi' => $editedNewApplicationOpenApi,
+        ],
     ]);
 
     $I->wantTo('Test deleting an application with a valid user: ' . $user['username']);

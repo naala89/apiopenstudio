@@ -154,7 +154,11 @@ class ResourceRead extends ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        $result = $this->resourceMapper->findByUid($uid, $params);
+        try {
+            $result = $this->resourceMapper->findByUid($uid, $params);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($result)) {
             throw new ApiException('No resources found or insufficient privileges', 6, $this->id);
         }
