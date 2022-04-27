@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\VarStoreMapper;
@@ -101,7 +102,11 @@ class VarStoreDelete extends Core\ProcessorEntity
 
         $vid = $this->val('vid', true);
 
-        $var = $this->varStoreMapper->findByVid($vid);
+        try {
+            $var = $this->varStoreMapper->findByVid($vid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($var->getVid())) {
             throw new Core\ApiException("unknown vid: $vid", 6, $this->id, 400);
         }
@@ -117,7 +122,11 @@ class VarStoreDelete extends Core\ProcessorEntity
             } elseif ($role['role_name'] == 'Account manager' && in_array('Account manager', $this->permittedRoles)) {
                 $accid = $role['accid'];
                 if (!isset($accounts[$accid])) {
-                    $accountsObjects = $this->applicationMapper->findByAccid($accid);
+                    try {
+                        $accountsObjects = $this->applicationMapper->findByAccid($accid);
+                    } catch (ApiException $e) {
+                        throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+                    }
                     foreach ($accountsObjects as $accountObject) {
                         $accounts[$accid][] = $accountObject->getAppid();
                     }
@@ -133,6 +142,12 @@ class VarStoreDelete extends Core\ProcessorEntity
             throw new Core\ApiException("permission denied", 6, $this->id, 400);
         }
 
-        return new Core\DataContainer($this->varStoreMapper->delete($var), 'boolean');
+        try {
+            $this->varStoreMapper->delete($var);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return new Core\DataContainer(true, 'boolean');
     }
 }

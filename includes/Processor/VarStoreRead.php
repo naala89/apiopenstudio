@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\VarStoreMapper;
@@ -208,14 +209,22 @@ class VarStoreRead extends Core\ProcessorEntity
     protected function fetchWithoutValidation($vid, $appid, $key, $keyword, $orderBy, $direction): array
     {
         if (!empty($vid)) {
-            $result = $this->varStoreMapper->findByVid($vid);
+            try {
+                $result = $this->varStoreMapper->findByVid($vid);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
             if (empty($result->getVid())) {
                 throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
             }
             return [$result];
         }
         if (!empty($appid) && !empty($key)) {
-            $result = $this->varStoreMapper->findByAppIdKey($appid, $key);
+            try {
+                $result = $this->varStoreMapper->findByAppIdKey($appid, $key);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
             if (empty($result->getVid())) {
                 throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
             }
@@ -238,7 +247,13 @@ class VarStoreRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        return $this->varStoreMapper->findAll($params);
+        try {
+            $result = $this->varStoreMapper->findAll($params);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 
     /**
@@ -265,14 +280,22 @@ class VarStoreRead extends Core\ProcessorEntity
     {
         $uid = Core\Utilities::getUidFromToken();
         if (!empty($vid)) {
-            $result = $this->varStoreMapper->findByUidVid($uid, $vid);
+            try {
+                $result = $this->varStoreMapper->findByUidVid($uid, $vid);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
             if (empty($result->getVid())) {
                 throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
             }
             return [$result];
         }
         if (!empty($appid) && !empty($key)) {
-            $result = $this->varStoreMapper->findByUidAppidKey($uid, $appid, $key);
+            try {
+                $result = $this->varStoreMapper->findByUidAppidKey($uid, $appid, $key);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
             if (empty($result->getVid())) {
                 throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
             }
@@ -295,6 +318,12 @@ class VarStoreRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        return $this->varStoreMapper->findByUid($uid, $params);
+        try {
+            $result = $this->varStoreMapper->findByUid($uid, $params);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 }
