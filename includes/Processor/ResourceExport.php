@@ -101,7 +101,11 @@ class ResourceExport extends ProcessorEntity
         $format = $this->val('format', true);
 
         // Validate resource exists.
-        $resource = $this->resourceMapper->findByResid($resid);
+        try {
+            $resource = $this->resourceMapper->findByResid($resid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($resource->getResid())) {
             throw new ApiException('Invalid resource', 6, $this->id, 400);
         }

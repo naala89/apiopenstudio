@@ -192,7 +192,12 @@ class ResourceImport extends ProcessorEntity
             $resourceObj->setOpenapi($openApiPathClass->export());
         }
 
-        if (!$this->resourceMapper->save($resourceObj)) {
+        try {
+            $result = !$this->resourceMapper->save($resourceObj);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        if (!$result) {
             return new DataContainer(false, 'boolean');
         }
 

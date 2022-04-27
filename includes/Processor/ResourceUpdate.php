@@ -214,8 +214,12 @@ class ResourceUpdate extends ProcessorEntity
         $metadata = $this->val('metadata', true);
         $openapi = $this->val('openapi', true);
 
-        $resource = $this->resourceMapper->findByResid($resid);
-        $application = $this->applicationMapper->findByAppid($resource->getAppId());
+        try {
+            $resource = $this->resourceMapper->findByResid($resid);
+            $application = $this->applicationMapper->findByAppid($resource->getAppId());
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
         // Invalid resource.
         if (empty($resource->getResid())) {
@@ -319,10 +323,13 @@ class ResourceUpdate extends ProcessorEntity
         }
         $resource->setOpenapi(json_encode($schema, JSON_UNESCAPED_SLASHES));
 
-        if (!$this->resourceMapper->save($resource)) {
-            throw new ApiException('Failed to update the resource, please check the logs', 2, $this->id, 500);
+        try {
+            $this->resourceMapper->save($resource);
+            $resource = $this->resourceMapper->findByResid($resid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
-        $resource = $this->resourceMapper->findByResid($resid);
+
         $result = $resource->dump();
         $result['meta'] = json_decode($result['meta'], true);
         $result['openapi'] = json_decode($result['openapi'], true);

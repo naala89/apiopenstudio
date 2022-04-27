@@ -196,7 +196,11 @@ class ResourceCreate extends ProcessorEntity
         $metadata = $this->val('metadata', true);
         $schema = $this->val('openapi', true);
 
-        $this->validate($appid, $method, $uri, $metadata);
+        try {
+            $this->validate($appid, $method, $uri, $metadata);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
         $resource = new Resource(
             null,
@@ -213,13 +217,13 @@ class ResourceCreate extends ProcessorEntity
         try {
             $application = $this->applicationMapper->findByAppid($appid);
         } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 6, $this->id, 400);
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         if (empty($application->getOpenapi())) {
             try {
                 $account = $this->accountMapper->findByAccid($application->getAccid());
             } catch (ApiException $e) {
-                throw new ApiException($e->getMessage(), 6, $this->id, 400);
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
             }
             $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->settings);
             $openApiParentClass = new $openApiParentClassName();
