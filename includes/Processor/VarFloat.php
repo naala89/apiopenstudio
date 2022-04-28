@@ -29,7 +29,7 @@ class VarFloat extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (Float)',
+        'name' => 'Float',
         'machineName' => 'var_float',
         'description' => 'A float variable. It validates the input and returns an error if it is not a float.',
         'menu' => 'Primitive',

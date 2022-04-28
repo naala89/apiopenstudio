@@ -29,11 +29,11 @@ class VarUri extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (URI)',
+        'name' => 'Uri',
         'machineName' => 'var_uri',
         // phpcs:ignore
         'description' => 'A url-decoded value from the request URI. It fetches the value of a particular param in the URI, based on the index value.',
-        'menu' => 'Primitive',
+        'menu' => 'Request',
         'input' => [
             'index' => [
                 'description' => 'The index of the variable, starting with 0 after the client ID, request path.',

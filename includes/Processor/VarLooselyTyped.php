@@ -29,7 +29,7 @@ class VarLooselyTyped extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (loosely typed)',
+        'name' => 'Loosely typed',
         'machineName' => 'var_loosely_typed',
         // phpcs:ignore
         'description' => 'A loosely typed variable (i.e. not strictly typed). There are no restrictions on the input, however the result will have type calculated.',

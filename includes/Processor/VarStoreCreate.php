@@ -62,8 +62,8 @@ class VarStoreCreate extends Core\ProcessorEntity
         'name' => 'Var store create',
         'machineName' => 'var_store_create',
         // phpcs:ignore
-        'description' => 'Create a variable in the var store. The return result is an error object (on failure) or the newly created object.',
-        'menu' => 'Var store',
+        'description' => 'Create a global variable. This is available to all resources within an application group. The return result is an error object (on failure) or the newly created object.',
+        'menu' => 'Variables',
         'input' => [
             'validate_access' => [
                 // phpcs:ignore

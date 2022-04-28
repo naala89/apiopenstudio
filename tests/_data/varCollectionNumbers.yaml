@@ -1,8 +1,8 @@
-name: Testing collection numbers
+name: Testing var_collection numbers
 
-description: Test a good Collection processor of numbers
+description: Test a good var_collection processor of numbers
 
-uri: collection/numbers
+uri: var_collection/numbers
 
 method: get
 
@@ -12,14 +12,14 @@ ttl: 0
 
 security:
     processor: validate_token_roles
-    id: 1
+    id: var collection numbers security
     roles:
         - Consumer
         - Developer
 
 process:
-    processor: collection
-    id: 3
+    processor: var_collection
+    id: var collection numbers collection
     items:
         - 1
         - 2

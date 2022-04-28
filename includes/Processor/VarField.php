@@ -29,7 +29,7 @@ class VarField extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (field)',
+        'name' => 'Field',
         'machineName' => 'var_field',
         // phpcs:ignore
         'description' => 'Create a name value pair. This is primarily for use as a field in object. individual key/values can be input or an array (single key). ',

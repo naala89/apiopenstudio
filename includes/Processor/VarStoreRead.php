@@ -51,8 +51,8 @@ class VarStoreRead extends Core\ProcessorEntity
         'name' => 'Var store read',
         'machineName' => 'var_store_read',
         // phpcs:ignore
-        'description' => 'Fetch a single or multiple var store variables. These will be the variables that belong to the application. If the application is core, then all vars are returned.',
-        'menu' => 'Var store',
+        'description' => 'Read a global variable. This is available to all resources within an application group. If the application is core, then all vars are returned.',
+        'menu' => 'Variables',
         'input' => [
             'validate_access' => [
                 // phpcs:ignore

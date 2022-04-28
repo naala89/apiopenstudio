@@ -31,10 +31,10 @@ class VarBody extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (Body)',
+        'name' => 'Body',
         'machineName' => 'var_body',
         'description' => 'Fetch the entire body of a post.',
-        'menu' => 'Primitive',
+        'menu' => 'Request',
         'input' => [
             'expected_type' => [
                 // phpcs:ignore

@@ -39,12 +39,12 @@ process:
         nullable: true
         expected_type: boolean
     then:
-        processor: collection
+        processor: var_collection
         id: Simple if then else then
         items:
             - This is true
     else:
-        processor: collection
+        processor: var_collection
         id: Simple if then else else
         items:
             - This is false

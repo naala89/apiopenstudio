@@ -3,12 +3,10 @@
 $I = new ApiTester($scenario);
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 
-$I->wantTo('create a collection of strings and see result');
-
-$yaml = 'collectionStrings.yaml';
-$uri = $I->getMyBaseUri() . '/collection/strings';
+$I->wantTo('create a var_collection of strings and see result');
+$yaml = 'varCollectionStrings.yaml';
+$uri = $I->getMyBaseUri() . '/var_collection/strings';
 $I->createResourceFromYaml($yaml);
-
 $I->sendGet($uri);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
@@ -18,15 +16,12 @@ $I->seeResponseContainsJson([
     "attr3",
     "attr4",
 ]);
-
 $I->tearDownTestFromYaml($yaml);
 
-$I->wantTo('create a collection of numbers and see result');
-
-$yaml = 'collectionNumbers.yaml';
-$uri = $I->getMyBaseUri() . '/collection/numbers';
+$I->wantTo('create a var_collection of numbers and see result');
+$yaml = 'varCollectionNumbers.yaml';
+$uri = $I->getMyBaseUri() . '/var_collection/numbers';
 $I->createResourceFromYaml($yaml);
-
 $I->sendGet($uri);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
@@ -37,15 +32,12 @@ $I->seeResponseContainsJson([
     0,
     -3.345987345433624537,
 ]);
-
 $I->tearDownTestFromYaml($yaml);
 
-$I->wantTo('create a collection of fields and see result');
-
-$yaml = 'collectionFields.yaml';
-$uri = $I->getMyBaseUri() . '/collection/fields';
+$I->wantTo('create a var_collection of fields and see result');
+$yaml = 'varCollectionFields.yaml';
+$uri = $I->getMyBaseUri() . '/var_collection/fields';
 $I->createResourceFromYaml($yaml);
-
 $I->sendGet($uri);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
@@ -54,15 +46,12 @@ $I->seeResponseContainsJson([
         "key2" => "val2",
     ],
 ]);
-
 $I->tearDownTestFromYaml($yaml);
 
-$I->wantTo('create a collection of mixed entities and see result');
-
-$yaml = 'collectionMixed.yaml';
-$uri = $I->getMyBaseUri() . '/collection/mixed';
+$I->wantTo('create a var_collection of mixed entities and see result');
+$yaml = 'varCollectionMixed.yaml';
+$uri = $I->getMyBaseUri() . '/var_collection/mixed';
 $I->createResourceFromYaml($yaml);
-
 $I->sendGet($uri);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();

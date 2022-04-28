@@ -60,8 +60,8 @@ class VarStoreDelete extends Core\ProcessorEntity
     protected array $details = [
         'name' => 'Var store delete',
         'machineName' => 'var_store_delete',
-        'description' => 'Delete a var store variable.',
-        'menu' => 'Var store',
+        'description' => 'Delete a global variable. This will remove it for all resources within an application group.',
+        'menu' => 'Variables',
         'input' => [
             'vid' => [
                 'description' => 'Var store ID.',

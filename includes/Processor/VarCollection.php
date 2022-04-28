@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Collection.
+ * Class VarCollection.
  *
  * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
@@ -19,11 +19,11 @@ use ApiOpenStudio\Core\DataContainer;
 use ApiOpenStudio\Core\ApiException;
 
 /**
- * Class Collection
+ * Class VarCollection
  *
  * Processor class to define a collection.
  */
-class Collection extends ProcessorEntity
+class VarCollection extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -32,8 +32,8 @@ class Collection extends ProcessorEntity
      */
     protected array $details = [
         'name' => 'Collection',
-        'machineName' => 'collection',
-        'description' => 'Collection contains multiple values, like an array or list.',
+        'machineName' => 'var_collection',
+        'description' => 'Var Collection contains multiple values, like an array or list.',
         'menu' => 'Primitive',
         'input' => [
           'items' => [
