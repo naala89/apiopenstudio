@@ -22,27 +22,27 @@ $I->seeResponseContainsJson([
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 $I->tearDownTestFromYaml($yamlFilename);
 
-//$I->wantTo('create an Object with a simple array with indexes.');
-//$yamlFilename = 'varObjectArrayTest2.yaml';
-//$uri = '/object/array/2';
-//$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
-//$I->createResourceFromYaml($yamlFilename);
-//$I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
-//$I->sendGet($I->getMyBaseUri() . $uri);
-//$I->seeResponseCodeIs(200);
-//$I->seeResponseIsJson();
-//$I->seeResponseContainsJson([
-//    'result' => 'ok',
-//    'data' => [
-//        'field1',
-//        'field2',
-//        'field3',
-//        'field4',
-//    ],
-//]);
-//$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
-//$I->tearDownTestFromYaml($yamlFilename);
-//
+$I->wantTo('create an Object with a simple array with indexes.');
+$yamlFilename = 'varObjectArrayTest2.yaml';
+$uri = '/object/array/2';
+$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
+$I->createResourceFromYaml($yamlFilename);
+$I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
+$I->sendGet($I->getMyBaseUri() . $uri);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseContainsJson([
+    'result' => 'ok',
+    'data' => [
+        'field1',
+        'field2',
+        'field3',
+        'field4',
+    ],
+]);
+$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
+$I->tearDownTestFromYaml($yamlFilename);
+
 //$I->wantTo('create an Object with a simple array with indexes.');
 //$yamlFilename = 'varObjectArrayTest3.yaml';
 //$uri = '/object/array/3';
