@@ -67,6 +67,7 @@ class VarObject extends ProcessorEntity
 
         $result = [];
         foreach ($attributes as $index => $attribute) {
+            $attribute = $this->isDataContainer(($attribute)) ? $attribute->getData() : $attribute;
             if (empty($attribute)) {
                 continue;
             }
