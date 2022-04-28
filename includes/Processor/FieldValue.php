@@ -31,7 +31,7 @@ class FieldValue extends Core\ProcessorEntity
     protected array $details = [
         'name' => 'Field value',
         'machineName' => 'field_value',
-        'description' => 'Returns the key oy value from a field.',
+        'description' => 'Returns the key or value from a field.',
         'menu' => 'Data operation',
         'input' => [
             'field' => [
