@@ -163,7 +163,7 @@ class ResourceImport extends ProcessorEntity
         try {
             $this->validator->validate($resource['meta']);
         } catch (ApiException | ReflectionException $e) {
-            throw new ApiException($e->getMessage(), 6, $this->id, 400);
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
         // Create the final Resource object for saving into the DB.
