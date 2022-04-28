@@ -178,7 +178,7 @@ class ResourceValidator
      */
     private function validateDetails(array $meta)
     {
-        $stack = array($meta);
+        $stack = [$meta];
 
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
@@ -325,10 +325,10 @@ class ResourceValidator
             }
         }
         if (!$valid) {
-            $message = 'invalid literal in new resource (' . print_r($element) . '. only "' .
+            $message = 'invalid literal in new resource (' . print_r($element, true) . '). only "' .
                 implode("', '", $accepts) . '" accepted';
             $this->logger->error('api', $message);
-            throw new ApiException($message);
+            throw new ApiException($message, 6, -1, 400);
         }
         return true;
     }
