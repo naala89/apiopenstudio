@@ -73,15 +73,15 @@ class VarObject extends ProcessorEntity
             $attribute = is_object($attribute) ? (array) $attribute : $attribute;
             if (!is_array($attribute)) {
                 throw new ApiException(
-                    "Cannot add attribute at index: $index. Each attribute must be a key/value pair",
+                    "Cannot add attribute at index: $index. Attributes must be an array of key/value pair array/object",
                     6,
                     $this->id,
                     400
                 );
             }
-            if (!sizeof($attribute) > 1) {
+            if (sizeof($attribute) > 1) {
                 throw new ApiException(
-                    "Cannot add attribute at index: $index. The attribute must be array with a single key/value pair",
+                    "Cannot add attribute at index: $index. The attribute must have a single key/value pair",
                     6,
                     $this->id,
                     400

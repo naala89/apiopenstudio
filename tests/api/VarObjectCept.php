@@ -16,7 +16,7 @@ $I->seeResponseContainsJson([
     'data' => [
         'code' => 6,
         'id' => 'test object array process',
-        'message' => 'Cannot add attribute at index: 0. Each attribute must be a key/value pair.',
+        'message' => 'Cannot add attribute at index: 0. Attributes must be an array of key/value pair array/object.',
     ],
 ]);
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
@@ -25,7 +25,6 @@ $I->tearDownTestFromYaml($yamlFilename);
 $I->wantTo('Test creating an object with an object of strings with numeric indexes.');
 $yamlFilename = 'varObjectArrayTest2.yaml';
 $uri = '/object/array/2';
-$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 $I->createResourceFromYaml($yamlFilename);
 $I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
 $I->sendGet($I->getMyBaseUri() . $uri);
@@ -36,7 +35,7 @@ $I->seeResponseContainsJson([
     'data' => [
         'code' => 6,
         'id' => 'test object array process',
-        'message' => 'Cannot add attribute at index: 0. Each attribute must be a key/value pair.',
+        'message' => 'Cannot add attribute at index: 0. Attributes must be an array of key/value pair array/object.',
     ],
 ]);
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
@@ -45,7 +44,6 @@ $I->tearDownTestFromYaml($yamlFilename);
 $I->wantTo('Test creating an object with an array of objects with strings and numeric indexes.');
 $yamlFilename = 'varObjectArrayTest3.yaml';
 $uri = '/object/array/3';
-$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 $I->createResourceFromYaml($yamlFilename);
 $I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
 $I->sendGet($I->getMyBaseUri() . $uri);
@@ -64,21 +62,19 @@ $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'
 $I->tearDownTestFromYaml($yamlFilename);
 
 $I->wantTo('create an Object with a simple array with indexes.');
-$yamlFilename = 'varObjectArrayTest4.yaml';
-$uri = '/object/array/4';
-$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
+$yamlFilename = 'varObjectArrayTest5.yaml';
+$uri = '/object/array/5';
 $I->createResourceFromYaml($yamlFilename);
 $I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
 $I->sendGet($I->getMyBaseUri() . $uri);
-$I->seeResponseCodeIs(200);
+$I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    'result' => 'ok',
+    'result' => 'error',
     'data' => [
-        0 => 'field1',
-        5 => 'field2',
-        2 => 'field3',
-        'final' => 'field4',
+        'code' => 6,
+        'id' => 'test object array process',
+        'message' => 'Cannot add attribute at index: 3. The attribute must have a single key/value pair.',
     ],
 ]);
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
