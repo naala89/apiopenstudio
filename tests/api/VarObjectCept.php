@@ -2,7 +2,7 @@
 
 $I = new ApiTester($scenario);
 
-$I->wantTo('create an Object with a simple array.');
+$I->wantTo('Test creating an object with an array of strings.');
 $yamlFilename = 'varObjectArrayTest1.yaml';
 $uri = '/object/array/1';
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
@@ -22,7 +22,7 @@ $I->seeResponseContainsJson([
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 $I->tearDownTestFromYaml($yamlFilename);
 
-$I->wantTo('create an Object with a simple array with indexes.');
+$I->wantTo('Test creating an object with an object of strings with numeric indexes.');
 $yamlFilename = 'varObjectArrayTest2.yaml';
 $uri = '/object/array/2';
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
@@ -42,7 +42,7 @@ $I->seeResponseContainsJson([
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 $I->tearDownTestFromYaml($yamlFilename);
 
-$I->wantTo('create an Object with a simple array with indexes.');
+$I->wantTo('Test creating an object with an array of objects with strings and numeric indexes.');
 $yamlFilename = 'varObjectArrayTest3.yaml';
 $uri = '/object/array/3';
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
@@ -58,6 +58,27 @@ $I->seeResponseContainsJson([
         5 => 'field2',
         2 => 'field3',
         3 => 'field4',
+    ],
+]);
+$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
+$I->tearDownTestFromYaml($yamlFilename);
+
+$I->wantTo('create an Object with a simple array with indexes.');
+$yamlFilename = 'varObjectArrayTest4.yaml';
+$uri = '/object/array/4';
+$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
+$I->createResourceFromYaml($yamlFilename);
+$I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
+$I->sendGet($I->getMyBaseUri() . $uri);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseContainsJson([
+    'result' => 'ok',
+    'data' => [
+        0 => 'field1',
+        5 => 'field2',
+        2 => 'field3',
+        'final' => 'field4',
     ],
 ]);
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));

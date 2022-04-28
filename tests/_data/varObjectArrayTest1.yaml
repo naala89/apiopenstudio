@@ -1,6 +1,6 @@
 name: Testing object array 1
 
-description: Test creating an object with input array of values only. This should fail, because no attribute is a N/V pair.
+description: Test creating an object with input array of values only. This should fail, because attributes are not N/V pairs.
 
 uri: object/array/1
 
