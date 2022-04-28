@@ -34,8 +34,8 @@ class VarTemporary extends ProcessorEntity
         'name' => 'Var (Temporary)',
         'machineName' => 'var_temporary',
         // phpcs:ignore
-        'description' => 'A temporarily stored variable. This allows you to store a regularly used variable with a single value and fetch it at any time during your resource call. The value can be deleted, updated and fetched in future resource. If the process fails (for whatever reason) and "strict" is set to true, then an exception will be thrown, otherwise false will be returned.',
-        'menu' => 'Primitive',
+        'description' => 'A temporarily stored variable that will only be available to and have a life-time of the individual resource call. This allows you to store a regularly used variable with a single value and fetch it at any time during your resource call. The value can be deleted, updated and fetched in future resource. If the process fails (for whatever reason) and "strict" is set to true, then an exception will be thrown, otherwise false will be returned.',
+        'menu' => 'Variables',
         'input' => [
             'key' => [
                 'description' => 'The key or name of the variable.',

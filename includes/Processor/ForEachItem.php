@@ -72,7 +72,7 @@ class ForEachItem extends ProcessorEntity
 
     /**
      * @var DeepCopy
-     *   Enable deepy copy of objects.
+     *   Enable deep copy of objects.
      */
     protected DeepCopy $deepCopy;
 

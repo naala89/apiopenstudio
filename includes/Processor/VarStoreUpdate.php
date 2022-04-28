@@ -53,8 +53,9 @@ class VarStoreUpdate extends Core\ProcessorEntity
     protected array $details = [
         'name' => 'Var store update',
         'machineName' => 'var_store_update',
-        'description' => 'Update a var store variable.',
-        'menu' => 'Var store',
+        //phpcs:ignore
+        'description' => 'Update a global variable. This is available to all resources within an application group. The specific var_store can be referenced by either the unique vid or appid/key pair.',
+        'menu' => 'Variables',
         'input' => [
             'validate_access' => [
                 // phpcs:ignore

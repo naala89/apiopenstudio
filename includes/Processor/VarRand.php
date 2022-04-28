@@ -29,7 +29,7 @@ class VarRand extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (Rand)',
+        'name' => 'Rand',
         'machineName' => 'var_rand',
         // phpcs:ignore
         'description' => 'A random variable. It produces a random variable of any specified length or mix of character types.',

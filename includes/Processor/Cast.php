@@ -49,7 +49,7 @@ class Cast extends Core\ProcessorEntity
         'name' => 'Cast',
         'machineName' => 'cast',
         'description' => 'Change the data type of an input data.',
-        'menu' => 'Primitive',
+        'menu' => 'Data operation',
         'input' => [
             'data' => [
                 'description' => 'The input data that needs to be cast.',

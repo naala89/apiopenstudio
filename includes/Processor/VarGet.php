@@ -29,10 +29,10 @@ class VarGet extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (Get)',
+        'name' => 'Get',
         'machineName' => 'var_get',
-        'description' => 'A "get" variable. It fetches a urldecoded variable from the get request.',
-        'menu' => 'Primitive',
+        'description' => 'A "get" variable. It fetches a url-decoded variable from the get request.',
+        'menu' => 'Request',
         'input' => [
             'key' => [
                 'description' => 'The key or name of the GET variable.',

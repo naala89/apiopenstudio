@@ -31,7 +31,7 @@ class VarCollection extends ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (Collection)',
+        'name' => 'Collection',
         'machineName' => 'var_collection',
         'description' => 'Var Collection contains multiple values, like an array or list.',
         'menu' => 'Primitive',
