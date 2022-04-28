@@ -193,7 +193,7 @@ class ResourceImport extends ProcessorEntity
         }
 
         try {
-            $result = !$this->resourceMapper->save($resourceObj);
+            $result = $this->resourceMapper->save($resourceObj);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }

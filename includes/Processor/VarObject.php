@@ -38,7 +38,7 @@ class VarObject extends ProcessorEntity
         'menu' => 'Primitive',
         'input' => [
             'attributes' => [
-                'description' => 'The value of an attribute or a complex object.',
+                'description' => 'An array of key/value pairs for each attribute in the array.',
                 'cardinality' => [0, '*'],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
@@ -70,9 +70,10 @@ class VarObject extends ProcessorEntity
             if (empty($attribute)) {
                 continue;
             }
+            $attribute = is_object($attribute) ? (array) $attribute : $attribute;
             if (!is_array($attribute)) {
                 throw new ApiException(
-                    "Cannot add attribute at index: $index. The attribute must be an array",
+                    "Cannot add attribute at index: $index. Each attribute must be a key/value pair",
                     6,
                     $this->id,
                     400

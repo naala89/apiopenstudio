@@ -1,6 +1,6 @@
 name: Testing object array 2
 
-description: Test creating an object with array of indexed values only. This should only return an array of values.
+description: Test creating an object with array of indexed values only. This should fail because it is not an array of key/value pairs.
 
 uri: object/array/2
 
