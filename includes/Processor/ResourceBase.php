@@ -313,7 +313,7 @@ abstract class ResourceBase extends ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         if ($coreResourceLock && $accName == $coreAccountName && $appName == $coreApplicationName) {
-            throw new ApiException("Resources for $coreAccountName/$coreApplicationName are locked", 6, $this->id, 406);
+            throw new ApiException("Resources for $coreAccountName/$coreApplicationName are locked", 4, $this->id, 406);
         }
 
         $accountMapper = new AccountMapper($this->db, $this->logger);

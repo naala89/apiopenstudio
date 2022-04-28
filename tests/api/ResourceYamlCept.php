@@ -306,14 +306,14 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         'Missing name in new resource.',
         $array['data']['message'],
         'Assert the error message is correct.'
     );
 
-    $I->wantTo('create a new resource from YAML missing uri attr and for ' . $goodIdentity[0]);
+    $I->wantTo('create a new resource from YAML missing uri attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceNoUri.yaml';
     $I->sendPOST(
         $I->getCoreBaseUri() . '/resource/import',
@@ -332,7 +332,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         'Missing uri in new resource.',
         $array['data']['message'],
@@ -370,7 +370,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         'Missing description in new resource.',
         $array['data']['message'],
@@ -407,7 +407,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         'Missing method in new resource.',
         $array['data']['message'],
@@ -435,7 +435,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         'Missing ttl in new resource.',
         $array['data']['message'],
@@ -472,7 +472,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         'Negative ttl in new resource.',
         $array['data']['message'],
@@ -530,7 +530,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         'Missing process in new resource.',
         $array['data']['message'],
@@ -588,7 +588,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         $array['data']['message'],
         'Invalid process declaration, only processors allowed.',
@@ -625,7 +625,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         $array['data']['message'],
         'Invalid process declaration, only processors allowed.',
@@ -662,7 +662,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         $array['data']['message'],
         'Invalid process declaration, only processors allowed.',
@@ -699,7 +699,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         $array['data']['message'],
         'Invalid process declaration, only processors allowed.',
@@ -736,7 +736,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         $array['data']['message'],
         'Invalid output declaration. Only processor, array of processors or "response" allowed.',
@@ -775,7 +775,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         $array['data']['message'],
         'Invalid output declaration. Only processor, array of processors or "response" allowed.',
@@ -814,7 +814,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         $array['data']['message'],
         'Invalid output declaration. Only processor, array of processors or "response" allowed.',
@@ -873,7 +873,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $message = 'Processor test resource required func type xml options ';
     $message .= 'bad is an invalid processor type (only "field" allowed).';
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals($array['data']['message'], $message, 'Assert the error message is correct.');
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
@@ -906,7 +906,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         $array['data']['message'],
         "Input 'items' in processor 'test resource with bad min process' requires min 2.",
@@ -943,7 +943,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         $array['data']['message'],
         "Input 'value' in processor 'test resource with bad max process' requires max 1.",
@@ -980,7 +980,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(4, $array['data']['code'], 'Assert the error code is 4.');
     assertEquals(
         $array['data']['message'],
         'Unauthorised: you do not have permissions for this application.',
@@ -1017,7 +1017,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseIsJson();
     $array = json_decode($I->getResponse(), true);
     assertEquals('error', $array['result'], 'Assert we have an error condition.');
-    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
     assertEquals(
         $array['data']['message'],
         'Identical IDs in new resource: resource identical ids.',
