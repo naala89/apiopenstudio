@@ -40,7 +40,4 @@ process:
             key: key3
             value: field3
         -
-            processor: var_field
-            id: test object fields field 4
-            key: key4
-            value: field4
+            key4: field4

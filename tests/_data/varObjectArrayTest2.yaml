@@ -1,0 +1,26 @@
+name: Testing object array 2
+
+description: Test creating an object with array of indexed values only. This should fail because it is not an array of key/value pairs.
+
+uri: object/array/2
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test object array security
+    roles:
+        - Consumer
+
+process:
+    processor: var_object
+    id: test object array process
+    attributes:
+        0: field1
+        1: field2
+        2: field3
+        3: field4

@@ -1,8 +1,8 @@
-name: Testing object array
+name: Testing object array 3
 
-description: Test creating an object with array.
+description: Test creating an object with array of mixed indexed values only. This should pass with keys as numeric.
 
-uri: object/array
+uri: object/array/3
 
 method: get
 
@@ -21,10 +21,10 @@ process:
     id: test object array process
     attributes:
         -
-            key1: field1
+            0: field1
         -
-            key2: field2
+            5: field2
         -
-            key3: field3
+            2: field3
         -
-            key4: field4
+            3: field4

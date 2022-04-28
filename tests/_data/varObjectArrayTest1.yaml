@@ -1,0 +1,30 @@
+name: Testing object array 1
+
+description: Test creating an object with input array of values only. This should fail, because attributes are not N/V pairs.
+
+uri: object/array/1
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test object array security
+    roles:
+        - Consumer
+
+process:
+    processor: var_object
+    id: test object array process
+    attributes:
+        -
+            field1
+        -
+            field2
+        -
+            field3
+        -
+            field4

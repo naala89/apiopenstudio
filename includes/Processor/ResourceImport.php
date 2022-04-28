@@ -163,7 +163,7 @@ class ResourceImport extends ProcessorEntity
         try {
             $this->validator->validate($resource['meta']);
         } catch (ApiException | ReflectionException $e) {
-            throw new ApiException($e->getMessage(), 6, $this->id, 400);
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
         // Create the final Resource object for saving into the DB.
@@ -193,7 +193,7 @@ class ResourceImport extends ProcessorEntity
         }
 
         try {
-            $result = !$this->resourceMapper->save($resourceObj);
+            $result = $this->resourceMapper->save($resourceObj);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
@@ -242,7 +242,7 @@ class ResourceImport extends ProcessorEntity
             $this->logger->error('api', "Unauthorised resource import. uid: $uid, appid: " . $resource['appid']);
             throw new ApiException(
                 "Unauthorised: you do not have permissions for this application",
-                6,
+                4,
                 $this->id,
                 400
             );
@@ -310,14 +310,14 @@ class ResourceImport extends ProcessorEntity
         foreach ($this->requiredKeys as $requiredKey) {
             if (!isset($resource[$requiredKey])) {
                 $this->logger->error('api', "Missing $requiredKey in new resource");
-                throw new ApiException("Missing $requiredKey in new resource", 6, $this->id, 400);
+                throw new ApiException("Missing $requiredKey in new resource", 1, $this->id, 400);
             }
         }
 
         // Validate TTL in the imported file.
         if ($resource['ttl'] < 0) {
             $this->logger->error('api', 'Negative ttl in new resource');
-            throw new ApiException("Negative ttl in new resource", 6, $this->id, 400);
+            throw new ApiException("Negative ttl in new resource", 1, $this->id, 400);
         }
 
         // Validate the application exists.
@@ -326,7 +326,7 @@ class ResourceImport extends ProcessorEntity
             $this->logger->error('api', 'Invalid application: ' . $resource['appid']);
             throw new ApiException(
                 'Invalid application: ' . $resource['appid'],
-                6,
+                1,
                 $this->id,
                 400
             );
