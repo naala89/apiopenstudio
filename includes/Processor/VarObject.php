@@ -14,14 +14,16 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ApiException;
 
 /**
  * Class VarObject
  *
  * Processor class to define an object variable.
  */
-class VarObject extends Core\ProcessorEntity
+class VarObject extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -39,8 +41,8 @@ class VarObject extends Core\ProcessorEntity
                 'description' => 'The value of an attribute or a complex object.',
                 'cardinality' => [0, '*'],
                 'literalAllowed' => true,
-                'limitProcessors' => ['var_field'],
-                'limitTypes' => ['array'],
+                'limitProcessors' => [],
+                'limitTypes' => [],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -50,25 +52,53 @@ class VarObject extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
         $attributes = $this->val('attributes', true);
-        $result = [];
 
-        foreach ($attributes as $attribute) {
-            $field = $this->isDataContainer($attribute) ? $attribute->getData() : $attribute;
-            if (is_object($field)) {
-                $field = (array) $field;
-            }
-            $keys = is_object($field) ? get_object_vars($field) : array_keys($field);
-            $result[$keys[0]] = $field[$keys[0]];
+        if (empty($attributes)) {
+            return new DataContainer([], 'array');
         }
 
-        return new Core\DataContainer($result, 'array');
+        $result = [];
+        foreach ($attributes as $index => $attribute) {
+            if (empty($attribute)) {
+                continue;
+            }
+            if (!is_array($attribute)) {
+                throw new ApiException(
+                    "Cannot add attribute at index: $index. The attribute must be an array",
+                    6,
+                    $this->id,
+                    400
+                );
+            }
+            if (!sizeof($attribute) > 1) {
+                throw new ApiException(
+                    "Cannot add attribute at index: $index. The attribute must be array with a single key/value pair",
+                    6,
+                    $this->id,
+                    400
+                );
+            }
+            $keys = array_keys($attribute);
+            $key = $keys[0];
+            if (isset($result[$key])) {
+                throw new ApiException(
+                    "Cannot add attribute at index: $index. The attribute $key already exists",
+                    6,
+                    $this->id,
+                    400
+                );
+            }
+            $result[$key] = $attribute[$key];
+        }
+
+        return new DataContainer($result, 'array');
     }
 }

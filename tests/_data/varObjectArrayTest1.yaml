@@ -1,8 +1,8 @@
-name: Testing object array
+name: Testing object array 1
 
-description: Test creating an object with array.
+description: Test creating an object with input array of values only. This should fail, because no attribute is a N/V pair.
 
-uri: object/array
+uri: object/array/1
 
 method: get
 
@@ -21,11 +21,10 @@ process:
     id: test object array process
     attributes:
         -
-            key1:
-                key1_1: val1_1
+            field1
         -
-            key2: field2
+            field2
         -
-            key3: field3
+            field3
         -
-            key4: field4
+            field4
