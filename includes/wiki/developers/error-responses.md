@@ -41,6 +41,7 @@ Error codes
 5. External error
 6. Invalid processor input
 7. Invalid application
+8. Invalid configuration
 
 HTML status codes
 -----------------
