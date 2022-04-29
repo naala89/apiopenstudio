@@ -17,7 +17,7 @@ namespace ApiOpenStudio\Db;
 /**
  * Class Account.
  *
- * DB class for for storing account row data.
+ * DB class for storing account row data.
  */
 class Application
 {
