@@ -1,6 +1,6 @@
 # Var Store read resource.
 #
-# @package   Apiopenstudio
+# @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
 #            If a copy of the license was not distributed with this file,
 #            You can obtain one at https://www.apiopenstudio.com/license/.
@@ -21,46 +21,46 @@ appid: 1
 ttl: 0
 
 security:
-  id: var_store_read_security
-  processor: validate_token
+    id: var_store_read_security
+    processor: validate_token
 
 process:
-  processor: var_store_read
-  id: var_store_read_process
-  validate_access:
-    processor: literal
-    id: var_store_read_validate_access
-    value: true
-    type: boolean
-  vid:
-    processor: var_get
-    id: var_store_read_vid
-    nullable: true
-    expected_type: integer
-    key: vid
-  appid:
-    processor: var_get
-    id: var_store_read_appid
-    nullable: true
-    expected_type: integer
-    key: appid
-  key:
-    processor: var_get
-    id: var_store_read_key
-    key: key
-    nullable: true
-  keyword:
-    processor: var_get
-    id: var_store_read_keyword
-    nullable: true
-    key: keyword
-  order_by:
-    processor: var_get
-    id: var_store_read_order_by
-    nullable: true
-    key: order_by
-  direction:
-    processor: var_get
-    id: var_store_read_direction
-    nullable: true
-    key: direction
+    processor: var_store_read
+    id: var_store_read_process
+    validate_access:
+        processor: literal
+        id: var_store_read_validate_access
+        value: true
+        type: boolean
+    vid:
+        processor: var_get
+        id: var_store_read_vid
+        nullable: true
+        expected_type: integer
+        key: vid
+    appid:
+        processor: var_get
+        id: var_store_read_appid
+        nullable: true
+        expected_type: integer
+        key: appid
+    key:
+        processor: var_get
+        id: var_store_read_key
+        key: key
+        nullable: true
+    keyword:
+        processor: var_get
+        id: var_store_read_keyword
+        nullable: true
+        key: keyword
+    order_by:
+        processor: var_get
+        id: var_store_read_order_by
+        nullable: true
+        key: order_by
+    direction:
+        processor: var_get
+        id: var_store_read_direction
+        nullable: true
+        key: direction

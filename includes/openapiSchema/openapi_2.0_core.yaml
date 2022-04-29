@@ -1,0 +1,2178 @@
+swagger: '2.0'
+info:
+    title: core
+    description: This if the definitions for the core application.
+    termsOfService: https://www.apiopenstudio.com/license/
+    contact:
+        name: API Support
+        email: contact@api.apiopenstudio.local
+    license:
+        name: ApiOpenStudio Public License based on Mozilla Public License 2.0
+        url: https://www.apiopenstudio.com/license/
+    version: 1.0.0
+host: api.apiopenstudio.local
+basePath: /apiopenstudio/core
+securityDefinitions:
+    Bearer:
+        type: apiKey
+        name: Authorization
+        in: header
+schemes:
+    - https
+paths:
+    /account:
+        post:
+            description: Create an account.
+            summary: Account create
+            security:
+                -
+                    Bearer: []
+            consumes:
+                - application/x-www-form-urlencoded
+            tags:
+                - account
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: formData
+                    name: name
+                    type: string
+                    description: The account name.
+            responses:
+                '200':
+                    description: An account object.
+                    schema:
+                        $ref: '#/definitions/AccountObject'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+        get:
+            description: Fetch a single or multiple accounts, limited by the users access rights.
+            summary: Account read
+            security:
+                -
+                    Bearer: []
+            tags:
+                - account
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: query
+                    name: accid
+                    description: Filter by the account ID
+                    required: false
+                    type: integer
+                -
+                    in: query
+                    name: keyword
+                    description: Filter by keyword
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: order_by
+                    description: Results order by column
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: direction
+                    description: Results order by direction (asc or desc)
+                    required: false
+                    type: string
+            responses:
+                '200':
+                    description: An array of account objects.
+                    schema:
+                        $ref: '#/definitions/AccountObjects'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /account/{accid}:
+        delete:
+            description: The account ID to delete
+            summary: Account ID
+            security:
+                -
+                    Bearer: []
+            tags:
+                - account
+            parameters:
+                -
+                    name: accid
+                    in: path
+                    description: User ID
+                    type: integer
+                    required: true
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            responses:
+                '200':
+                    description: An array of account objects.
+                    schema:
+                        $ref: '#/definitions/AccountObjects'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /account/{accid}/{name}:
+        put:
+            description: Rename an account.
+            summary: Account update
+            security:
+                -
+                    Bearer: []
+            tags:
+                - account
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: path
+                    name: accid
+                    description: The account ID to edit
+                    required: true
+                    type: integer
+                    minimum: 1
+                -
+                    in: path
+                    name: name
+                    description: The new account name
+                    required: true
+                    type: string
+                    minimum: 1
+            responses:
+                '200':
+                    description: An account object.
+                    schema:
+                        $ref: '#/definitions/AccountObject'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /application:
+        post:
+            description: Create an application.
+            summary: Application create
+            security:
+                -
+                    Bearer: []
+            tags:
+                - application
+            consumes:
+                - application/x-www-form-urlencoded
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: formData
+                    name: accid
+                    type: integer
+                    description: The parent account ID for the application
+                -
+                    in: formData
+                    name: name
+                    type: string
+                    description: The application name
+            responses:
+                '200':
+                    description: An application object.
+                    schema:
+                        $ref: '#/definitions/ApplicationObject'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+        get:
+            description: >
+                Fetch a single or multiple applications, limited by the users access
+                rights.
+            summary: Application read
+            security:
+                -
+                    Bearer: []
+            tags:
+                - application
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: query
+                    name: account_id
+                    required: false
+                    type: integer
+                -
+                    in: query
+                    name: application_id
+                    required: false
+                    type: integer
+                -
+                    in: query
+                    name: keyword
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: order_by
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: direction
+                    required: false
+                    type: string
+            responses:
+                '200':
+                    description: An array of application objects.
+                    schema:
+                        $ref: '#/definitions/ApplicationObjects'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /application/{appid}:
+        delete:
+            description: Delete an application.
+            summary: Application delete
+            security:
+                -
+                    Bearer: []
+            tags:
+                - application
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    name: appid
+                    in: path
+                    description: The application ID to delete
+                    type: integer
+                    minimum: 1
+                    required: true
+            responses:
+                '200':
+                    description: Delete account process success state.
+                    schema:
+                        type: boolean
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /application/{appid}/{accid}/{name}:
+        put:
+            description: Update an application.
+            summary: Application update
+            security:
+                -
+                    Bearer: []
+            tags:
+                - application
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: path
+                    name: appid
+                    description: The application ID to edit
+                    required: true
+                    type: integer
+                    minimum: 1
+                -
+                    in: path
+                    name: accid
+                    description: The parent account ID for the application
+                    required: true
+                    type: integer
+                    minimum: 1
+                -
+                    in: path
+                    name: name
+                    description: The new account name
+                    required: true
+                    type: string
+                    minimum: 1
+            responses:
+                '200':
+                    description: An application object.
+                    schema:
+                        $ref: '#/definitions/ApplicationObject'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /user/invite/accept:
+        post:
+            description: Accept a user invite, using an invite token.
+            summary: Invite accept
+            security:
+                -
+                    Bearer: []
+            tags:
+                - invite
+            consumes:
+                - application/x-www-form-urlencoded
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: formData
+                    name: token
+                    type: string
+                    required: true
+                    description: The users invite token
+            responses:
+                '200':
+                    description: Invite accept process success state.
+                    schema:
+                        type: boolean
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /invite/{iid}:
+        delete:
+            description: Delete a user invite.
+            summary: Invite delete
+            security:
+                -
+                    Bearer: []
+            tags:
+                - invite
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: path
+                    name: iid
+                    description: The invite ID to delete
+                    required: true
+                    type: integer
+                    minimum: 1
+            responses:
+                '200':
+                    description: Delete invite process success state.
+                    schema:
+                        type: boolean
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /invite:
+        get:
+            description: Fetch a single or multiple user invites.
+            summary: Invite read
+            security:
+                -
+                    Bearer: []
+            tags:
+                - invite
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: query
+                    name: iid
+                    description: Filter by the invite ID
+                    required: false
+                    type: integer
+                -
+                    in: query
+                    name: email
+                    description: Filter by the users email
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: order_by
+                    description: Sort the results by column
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: direction
+                    description: order the results by asc or desc
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: offset
+                    description: Fetch the results after the nth item
+                    required: false
+                    type: integer
+                -
+                    in: query
+                    name: limit
+                    description: Limit the results to n items
+                    required: false
+                    type: integer
+            responses:
+                '200':
+                    description: An array of invite objects
+                    schema:
+                        $ref: '#/definitions/InviteObjects'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /user/invite:
+        post:
+            description: Send an invite to a single user or multiple users.
+            summary: Invite send
+            security:
+                -
+                    Bearer: []
+            tags:
+                - invite
+            consumes:
+                - application/x-www-form-urlencoded
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: formData
+                    name: accid
+                    type: integer
+                    description: The parent account ID for the application
+                -
+                    in: formData
+                    name: name
+                    type: string
+                    description: The application name
+            responses:
+                '200':
+                    description: Invite results, with email addresses successfully invited or failed.
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: array
+                                items:
+                                    type: string
+                            fail:
+                                type: array
+                                items:
+                                    type: string
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /openapi/default/{appid}:
+        post:
+            description: Generate default OpenApi documentation for an application and all its resources.
+            summary: OpenApi default
+            security:
+                -
+                    Bearer: []
+            tags:
+                - openapi
+            parameters:
+                -
+                    in: path
+                    name: appid
+                    description: The application ID to fetch document for
+                    required: true
+                    type: integer
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            responses:
+                '200':
+                    description: An OpenApi object
+                    schema:
+                        type: object
+                        additionalProperties: {}
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /openapi/import:
+        post:
+            summary: Import an OpenApi document.
+            description: Import an OpenApi document file in a form post and update the existingdocumentation or generate stubs for resources that do not exist.
+            security:
+                -
+                    Bearer: []
+            tags:
+                - openapi
+            consumes:
+                - application/x-www-form-urlencoded
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: formData
+                    name: openapi
+                    description: OpenApi JSON or YAML file
+                    type: string
+                    format: binary
+            responses:
+                '200':
+                    description: An OpenApi object
+                    schema:
+                        type: object
+                        additionalProperties: {}
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /openapi:
+        get:
+            description: Fetch OpenApi documentation for an application and its resources, limited by user access rights.
+            security:
+                -
+                    Bearer: []
+            summary: OpenApi read
+            tags:
+                - openapi
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: query
+                    name: appid
+                    description: The application ID to fetch document for
+                    required: true
+                    type: integer
+                    minimum: 1
+            responses:
+                '200':
+                    description: An OpenApi object
+                    schema:
+                        type: object
+                        additionalProperties: {}
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /openapi/{appid}:
+        put:
+            description: Update OpenApi documentation for an application and its resources.
+            summary: OpenApi update
+            security:
+                -
+                    Bearer: []
+            tags:
+                - openapi
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: path
+                    name: appid
+                    description: The application ID to update
+                    type: integer
+                    required: true
+                    minimum: 1
+                -
+                    in: body
+                    name: body
+                    description: The full OpenApi documentation for an application.
+                    schema:
+                        type: object
+            responses:
+                '200':
+                    description: success response
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /password/reset:
+        post:
+            description: Reset a user password.
+            summary: Password reset
+            security:
+                -
+                    Bearer: []
+            tags:
+                - user
+            consumes:
+                - application/x-www-form-urlencoded
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: formData
+                    name: email
+                    description: The users email address
+                    type: string
+                    required: true
+                -
+                    in: formData
+                    name: token
+                    description: The users password reset token
+                    type: string
+                    required: true
+                -
+                    in: formData
+                    name: password
+                    description: The users new password
+                    type: string
+                    required: true
+            responses:
+                '200':
+                    description: reset password process success state.
+                    schema:
+                        type: boolean
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /processors/{machine_name}:
+        get:
+            description: Fetch details of a single or all processors.
+            summary: Processors
+            security:
+                -
+                    Bearer: []
+            tags:
+                - processors
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: path
+                    name: machine_name
+                    description: The processor machine name. This parameter is OPTIONAL!
+                    required: true
+                    type: string
+            responses:
+                '200':
+                    description: An array of processor definition objects
+                    schema:
+                        $ref: '#/definitions/ProcessorObjects'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /resource:
+        post:
+            description: Create a resource.
+            summary: Resource create
+            security:
+                -
+                    Bearer: []
+            tags:
+                - resource
+            consumes:
+                - application/x-www-form-urlencoded
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: formData
+                    name: name
+                    description: The resource name
+                    type: string
+                    required: true
+                -
+                    in: formData
+                    name: description
+                    description: The resource description
+                    type: string
+                -
+                    in: formData
+                    name: appid
+                    description: The parent application ID of the resource
+                    type: integer
+                    minimum: 1
+                    required: true
+                -
+                    in: formData
+                    name: method
+                    description: The resource request method
+                    type: string
+                    required: true
+                -
+                    in: formData
+                    name: uri
+                    description: The resource request URI
+                    type: string
+                    required: true
+                -
+                    in: formData
+                    name: ttl
+                    description: The resource cache time (in seconds)
+                    type: integer
+                    required: true
+                -
+                    in: formData
+                    name: meta
+                    description: The resource security/process/output metadata
+                    type: string
+                -
+                    in: formData
+                    name: openapi
+                    description: The resource OpenApi documentation fragment
+                    type: string
+            responses:
+                '200':
+                    description: The resource object
+                    schema:
+                        allOf:
+                            -
+                                $ref: '#/definitions/ResourceId'
+                            -
+                                $ref: '#/definitions/ResourceObject'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+        get:
+            description: Fetch a single or multiple resources, limited by user access rights.
+            summary: Resource read
+            security:
+                -
+                    Bearer: []
+            tags:
+                - resource
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: query
+                    name: resid
+                    description: The resource ID to filter by
+                    required: false
+                    type: integer
+                    minimum: 1
+                -
+                    in: query
+                    name: accid
+                    description: The account ID to filter by
+                    required: false
+                    type: integer
+                    minimum: 1
+                -
+                    in: query
+                    name: appid
+                    description: The application ID to filter by
+                    required: false
+                    type: integer
+                    minimum: 1
+                -
+                    in: query
+                    name: keyword
+                    description: The keyword to filter by
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: order_by
+                    description: Order the results by column
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: direction
+                    description: Order the results asc or desc
+                    required: false
+                    type: string
+            responses:
+                '200':
+                    description: An array of account objects
+                    schema:
+                        $ref: '#/definitions/ResourceObjects'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /resource/{resid}:
+        delete:
+            description: Delete a resource.
+            summary: Resource delete
+            security:
+                -
+                    Bearer: []
+            tags:
+                - resource
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: path
+                    name: resid
+                    description: The resource ID to delete
+                    required: true
+                    type: integer
+                    minimum: 1
+            responses:
+                '200':
+                    description: Delete resource process success state.
+                    schema:
+                        type: boolean
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+        put:
+            description: Update a resource.
+            summary: Resource update
+            security:
+                -
+                    Bearer: []
+            tags:
+                - resource
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: path
+                    name: resid
+                    description: The resource ID to update
+                    required: true
+                    type: integer
+                    minimum: 1
+                -
+                    name: body
+                    in: body
+                    description: The resource object
+                    required: true
+                    schema:
+                        $ref: '#/definitions/ResourceObject'
+            responses:
+                '200':
+                    description: The resource object
+                    schema:
+                        allOf:
+                            -
+                                $ref: '#/definitions/ResourceId'
+                            -
+                                $ref: '#/definitions/ResourceObject'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /resource/export/{format}/{resid}:
+        get:
+            description: Export a resource as a file as an attachment in the response.
+            summary: Resource export
+            security:
+                -
+                    Bearer: []
+            tags:
+                - resource
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: path
+                    name: format
+                    description: The resource export format (json or yaml)
+                    required: true
+                    type: string
+                -
+                    in: path
+                    name: resid
+                    description: The resource ID to export
+                    required: true
+                    type: integer
+                    minimum: 1
+            responses:
+                '200':
+                    description: A resource file as an attachment
+                    schema:
+                        type: string
+                        format: binary
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /resource/import:
+        post:
+            description: Import a resource from a file.
+            summary: Resource import
+            security:
+                -
+                    Bearer: []
+            tags:
+                - resource
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            consumes:
+                - multipart/form-data
+            parameters:
+                -
+                    in: formData
+                    name: resource_file
+                    type: file
+                    required: true
+                    description: The resource file (JSON or YAML)
+            responses:
+                '200':
+                    description: The resource object
+                    schema:
+                        allOf:
+                            -
+                                $ref: '#/definitions/ResourceId'
+                            -
+                                $ref: '#/definitions/ResourceObject'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /role:
+        post:
+            description: Create a new role.
+            summary: Role create
+            security:
+                -
+                    Bearer: []
+            tags:
+                - role
+            consumes:
+                - application/x-www-form-urlencoded
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: formData
+                    name: name
+                    description: The role name
+                    type: string
+                    required: true
+            responses:
+                '200':
+                    description: A role object
+                    schema:
+                        $ref: '#/definitions/RoleObject'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+        get:
+            description: Fetch a single or multiple roles.
+            summary: Role read
+            security:
+                -
+                    Bearer: []
+            tags:
+                - role
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: query
+                    name: rid
+                    description: Filter by role ID
+                    required: false
+                    type: integer
+                    minimum: 1
+                -
+                    in: query
+                    name: keyword
+                    description: Filter by keyword
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: order_by
+                    description: order the results by column
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: direction
+                    description: order direction of the results (asc or desc)
+                    required: false
+                    type: string
+            responses:
+                '200':
+                    description: An array of role objects
+                    schema:
+                        $ref: '#/definitions/RoleObjects'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+        put:
+            description: Update a role.
+            summary: Role update
+            security:
+                -
+                    Bearer: []
+            tags:
+                - role
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: body
+                    name: body
+                    description: The role name
+                    schema:
+                        $ref: '#/definitions/RoleObject'
+                    required: true
+            responses:
+                '200':
+                    description: A role object
+                    schema:
+                        $ref: '#/definitions/RoleObject'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /role/{rid}:
+        delete:
+            description: Delete a new role.
+            summary: Role delete
+            security:
+                -
+                    Bearer: []
+            tags:
+                - role
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: path
+                    name: rid
+                    description: The role ID to delete
+                    required: true
+                    type: integer
+                    minimum: 1
+            responses:
+                '200':
+                    description: Delete role process success state.
+                    schema:
+                        type: boolean
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /auth/token:
+        post:
+            description: Fetch a JWT token, user validated by username/password.
+            summary: Generate token
+            tags:
+                - authentication
+            consumes:
+                - application/x-www-form-urlencoded
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: formData
+                    name: username
+                    description: The username
+                    type: string
+                    required: true
+                -
+                    in: formData
+                    name: password
+                    description: The password
+                    type: string
+                    required: true
+            responses:
+                '200':
+                    description: A token object
+                    schema:
+                        $ref: '#/definitions/TokenObject'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /user:
+        post:
+            description: create a user.
+            summary: User create
+            security:
+                -
+                    Bearer: []
+            tags:
+                - user
+            consumes:
+                - application/x-www-form-urlencoded
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: formData
+                    name: username
+                    description: the users username
+                    type: string
+                    required: true
+                -
+                    in: formData
+                    name: password
+                    description: the users password
+                    type: string
+                    required: true
+                -
+                    in: formData
+                    name: email
+                    description: the users email
+                    type: string
+                    required: true
+                -
+                    in: formData
+                    name: active
+                    description: the users active/disabled status
+                    type: boolean
+                -
+                    in: formData
+                    name: honorific
+                    description: the users honorific (title)
+                    type: string
+                -
+                    in: formData
+                    name: name_first
+                    description: the users first name
+                    type: string
+                -
+                    in: formData
+                    name: name_last
+                    description: the users last name
+                    type: string
+                -
+                    in: formData
+                    name: company
+                    description: the users company
+                    type: string
+                -
+                    in: formData
+                    name: website
+                    description: the users website
+                    type: string
+                -
+                    in: formData
+                    name: street_address
+                    description: the users address street
+                    type: string
+                -
+                    in: formData
+                    name: suburb
+                    description: the users address suburb
+                    type: string
+                -
+                    in: formData
+                    name: city
+                    description: the users address city
+                    type: string
+                -
+                    in: formData
+                    name: state
+                    description: the users address state
+                    type: string
+                -
+                    in: formData
+                    name: country
+                    description: the users address country
+                    type: string
+                -
+                    in: formData
+                    name: postcode
+                    description: the users address postcode
+                    type: string
+                -
+                    in: formData
+                    name: phone_mobile
+                    description: the users mobile phone number
+                    type: string
+                -
+                    in: formData
+                    name: phone_work
+                    description: the users work phone number
+                    type: string
+            responses:
+                '200':
+                    description: The user object
+                    schema:
+                        allOf:
+                            -
+                                $ref: '#/definitions/UserId'
+                            -
+                                $ref: '#/definitions/UserObject'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+        get:
+            description: Fetch a single or multpiple users.
+            summary: User read
+            security:
+                -
+                    Bearer: []
+            tags:
+                - user
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: query
+                    name: uid
+                    description: Filter by user ID
+                    required: false
+                    type: integer
+                    minimum: 1
+                -
+                    in: query
+                    name: username
+                    description: Filter by username
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: email
+                    description: Filter by email
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: keyword
+                    description: Filter by keyword
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: order_by
+                    description: Sort the order results by column
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: direct
+                    description: Sort the order results by asc or desc
+                    required: false
+                    type: string
+            responses:
+                '200':
+                    description: an array of user objects
+                    schema:
+                        $ref: '#/definitions/UserObjects'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /user/{uid}:
+        delete:
+            description: Delete a user.
+            summary: User delete
+            security:
+                -
+                    Bearer: []
+            tags:
+                - user
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: path
+                    name: uid
+                    description: The user ID to delete
+                    required: true
+                    type: integer
+                    minimum: 1
+            responses:
+                '200':
+                    description: Delete role process success state.
+                    schema:
+                        type: boolean
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+        put:
+            description: Update a users details.
+            summary: User update
+            security:
+                -
+                    Bearer: []
+            tags:
+                - user
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: path
+                    name: uid
+                    description: The user ID to update
+                    type: integer
+                    minimum: 1
+                    required: true
+                -
+                    in: body
+                    name: body
+                    description: A JSON object containing user object
+                    schema:
+                        $ref: '#/definitions/UserObject'
+                    required: true
+            responses:
+                '200':
+                    description: The user object
+                    schema:
+                        allOf:
+                            -
+                                $ref: '#/definitions/UserId'
+                            -
+                                $ref: '#/definitions/UserObject'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /user/role:
+        post:
+            description: Assign a role to a user for an account/application.
+            summary: User Role create
+            security:
+                -
+                    Bearer: []
+            tags:
+                - user role
+            consumes:
+                - application/x-www-form-urlencoded
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: formData
+                    name: uid
+                    description: the users ID
+                    type: integer
+                    required: true
+                    minimum: 1
+                -
+                    in: formData
+                    name: accid
+                    description: the account ID for the user/role (only used for Account Manager roles)
+                    type: integer
+                    required: true
+                    minimum: 1
+                -
+                    in: formData
+                    name: appid
+                    description: the application ID for the user/role (not used for Account Manager or Administrator roles)
+                    type: integer
+                    required: true
+                    minimum: 1
+                -
+                    in: formData
+                    name: rid
+                    description: the role ID for the user/role
+                    type: integer
+                    required: true
+                    minimum: 1
+            responses:
+                '200':
+                    description: The user/role object
+                    schema:
+                        $ref: '#/definitions/UserRoleObject'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+        get:
+            description: Fetch roles.
+            summary: User Role read
+            security:
+                -
+                    Bearer: []
+            tags:
+                - user role
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: query
+                    name: uid
+                    description: Filter by user ID
+                    required: false
+                    type: integer
+                    minimum: 1
+                -
+                    in: query
+                    name: accid
+                    description: Filter by account ID
+                    required: false
+                    type: integer
+                    minimum: 1
+                -
+                    in: query
+                    name: appid
+                    description: Filter by application ID
+                    required: false
+                    type: integer
+                    minimum: 1
+                -
+                    in: query
+                    name: rid
+                    description: Filter by role ID
+                    required: false
+                    type: integer
+                    minimum: 1
+                -
+                    in: query
+                    name: order_by
+                    description: Sort results by column
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: direction
+                    description: Sort results by order asc or desc
+                    required: false
+                    type: string
+            responses:
+                '200':
+                    description: an array of user/role objects
+                    schema:
+                        $ref: '#/definitions/UserRoleObjects'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /user/role/{urid}:
+        delete:
+            description: Delete a role for a user for an account/application.
+            summary: User Role delete
+            security:
+                -
+                    Bearer: []
+            tags:
+                - user role
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: path
+                    name: urid
+                    description: The user/role ID to delete
+                    required: true
+                    type: integer
+                    minimum: 1
+            responses:
+                '200':
+                    description: Delete user/role process success state.
+                    schema:
+                        type: boolean
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /var_store:
+        post:
+            description: Create a var store variable.
+            summary: Var store create
+            security:
+                -
+                    Bearer: []
+            tags:
+                - var store
+            consumes:
+                - application/x-www-form-urlencoded
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: formData
+                    name: appid
+                    description: the parent application ID
+                    type: integer
+                    required: true
+                    minimum: 1
+                -
+                    in: formData
+                    name: key
+                    description: the var store key name
+                    type: string
+                    required: true
+                -
+                    in: formData
+                    name: val
+                    description: the var store value
+                    type: string
+            responses:
+                '200':
+                    description: An var store object
+                    schema:
+                        $ref: '#/definitions/VarStoreObject'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+        get:
+            description: Fetch a single or multiple var store variables where the user has access to the applications vars.
+            summary: Var store read
+            security:
+                -
+                    Bearer: []
+            tags:
+                - var store
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: query
+                    name: vid
+                    description: Filter by var store ID
+                    required: false
+                    type: integer
+                    minimum: 1
+                -
+                    in: query
+                    name: appid
+                    description: Filter by application ID
+                    required: false
+                    type: integer
+                    minimum: 1
+                -
+                    in: query
+                    name: key
+                    description: Filter by key
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: keyword
+                    description: Filter by keyword
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: order_by
+                    description: sort results by column
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: direction
+                    description: sort results order (asc or desc)
+                    required: false
+                    type: string
+            responses:
+                '200':
+                    description: An array of var store objects
+                    schema:
+                        $ref: '#/definitions/VarStoreObjects'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+    /var_store/{vid}:
+        delete:
+            description: Delete a var store variable.
+            summary: Var store delete
+            security:
+                -
+                    Bearer: []
+            tags:
+                - var store
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: path
+                    name: vid
+                    description: The var store ID to delete
+                    required: true
+                    type: integer
+                    minimum: 1
+            responses:
+                '200':
+                    description: Delete var store process success state.
+                    schema:
+                        type: boolean
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+        put:
+            description: Update a var store variable.
+            summary: Var store update
+            security:
+                -
+                    Bearer: []
+            tags:
+                - var store
+            produces:
+                - application/json
+                - application/xml
+                - application/text
+                - text/html
+            parameters:
+                -
+                    in: path
+                    name: vid
+                    description: The var store ID to update
+                    required: true
+                    type: integer
+                    minimum: 1
+                -
+                    in: query
+                    name: key
+                    description: The var store key to update
+                    type: string
+                -
+                    in: query
+                    name: appid
+                    description: The var store parent application ID to update
+                    type: integer
+                    minimum: 1
+                -
+                    in: body
+                    name: body
+                    description: The value for the var store
+                    schema:
+                        type: string
+            responses:
+                '200':
+                    description: The user object
+                    schema:
+                        $ref: '#/definitions/VarStoreObject'
+                '400':
+                    $ref: '#/responses/GeneralError'
+                '401':
+                    $ref: '#/responses/Unauthorised'
+                '403':
+                    $ref: '#/responses/Forbidden'
+definitions:
+    AccountObject:
+        type: object
+        properties:
+            accid:
+                description: The account ID.
+                type: integer
+                minimum: 1
+            name:
+                description: The account name.
+                type: string
+    AccountObjects:
+        type: array
+        items:
+            $ref: '#/definitions/AccountObject'
+    ApplicationObject:
+        type: object
+        properties:
+            accid:
+                description: The account ID.
+                type: integer
+                minimum: 1
+            appid:
+                description: The application ID.
+                type: integer
+                minimum: 1
+            name:
+                description: The application name.
+                type: string
+    ApplicationObjects:
+        type: array
+        items:
+            $ref: '#/definitions/ApplicationObject'
+    GeneralError:
+        type: object
+        properties:
+            error:
+                type: object
+                properties:
+                    id:
+                        type: integer
+                        format: int32
+                    code:
+                        type: integer
+                        format: int32
+                    message:
+                        type: string
+    InviteObject:
+        type: object
+        properties:
+            iid:
+                description: The invite ID
+                type: integer
+                minimum: 1
+            created:
+                description: The date/time that the invite was created
+                type: string
+            email:
+                description: The invited users email
+                type: string
+            token:
+                description: The invited users invite token
+                type: string
+    InviteObjects:
+        type: array
+        items:
+            $ref: '#/definitions/InviteObject'
+    ProcessorInputObject:
+        type: object
+        properties:
+            description:
+                description: The input description.
+                type: string
+            cardinality:
+                description: The input's description.
+                type: array
+                minItems: 2
+                maxItems: 2
+                items:
+                    type: string
+            literalAllowed:
+                description: The input can be a literal.
+                type: boolean
+            limitProcessors:
+                description: Limit the input to specific processors.
+                type: array
+                items:
+                    type: string
+            limitTypes:
+                description: Limit the input to specific content types.
+                type: array
+                items:
+                    type: string
+            limitValues:
+                description: Limit the input to specific values.
+                type: array
+                items: {}
+            default:
+                description: The default value if no input recieved
+                type: string
+    ProcessorObject:
+        type: object
+        properties:
+            name:
+                description: The processor name.
+                type: string
+            machineName:
+                description: The processor machine name.
+                type: string
+            description:
+                description: The processor description.
+                type: string
+            menu:
+                description: The processor's parent menu.
+                type: string
+            input:
+                description: The processor's input items.
+                type: object
+                additionalProperties:
+                    $ref: '#/definitions/ProcessorInputObject'
+    ProcessorObjects:
+        type: array
+        items:
+            $ref: '#/definitions/ProcessorObject'
+    TokenObject:
+        type: object
+        properties:
+            token:
+                description: The JWT auth token
+                type: string
+            uid:
+                description: The user ID
+                type: integer
+                minimum: 1
+            expires:
+                description: The JWT exipry date
+                type: string
+    ResourceId:
+        type: object
+        properties:
+            resid:
+                description: The resource ID.
+                type: integer
+                minimum: 1
+    ResourceObject:
+        type: object
+        properties:
+            name:
+                description: The resource name.
+                type: string
+            description:
+                description: The resource description.
+                type: string
+            appid:
+                description: The application ID the resource belongs to.
+                type: integer
+                minimum: 1
+            method:
+                description: The resource request method.
+                type: string
+            uri:
+                description: The resource URI.
+                type: string
+            ttl:
+                description: The resource cache time (in seconds).
+                type: integer
+            meta:
+                description: The resource cache time.
+                type: object
+                additionalProperties: {}
+            openapi:
+                description: The resources OpenApi documentation fragment for paths.method.
+                type: object
+                additionalProperties: {}
+    ResourceObjects:
+        type: array
+        items:
+            allOf:
+                -
+                    $ref: '#/definitions/ResourceId'
+                -
+                    $ref: '#/definitions/ResourceObject'
+    RoleObject:
+        type: object
+        properties:
+            rid:
+                description: The role ID.
+                type: integer
+                minimum: 1
+            name:
+                description: The role name.
+                type: string
+    RoleObjects:
+        type: array
+        items:
+            $ref: '#/definitions/RoleObject'
+    UserId:
+        type: object
+        properties:
+            uid:
+                description: The users ID
+                type: integer
+                minimum: 1
+    UserObject:
+        type: object
+        properties:
+            active:
+                description: The active/disabkled status of the user
+                type: integer
+                minimum: 0
+                maximum: 1
+            username:
+                description: The users username
+                type: string
+            hash:
+                description: The users password hash
+                type: string
+            email:
+                description: The users email address
+                type: string
+            honorific:
+                description: The users honorific
+                type: string
+            nameFirst:
+                description: The users first name
+                type: string
+            nameLast:
+                description: The users last name
+                type: string
+            company:
+                description: The users company
+                type: string
+            website:
+                description: The users website
+                type: string
+            addressStreet:
+                description: The users address street
+                type: string
+            addressSuburb:
+                description: The users address suburb
+                type: string
+            addressCity:
+                description: The users address city
+                type: string
+            addressState:
+                description: The users address state
+                type: string
+            addressCountry:
+                description: The users address country
+                type: string
+            addressPostcode:
+                description: The users address postcode
+                type: string
+            phoneMobile:
+                description: The users mobile phone number
+                type: string
+            phoneWork:
+                description: The users work phone number
+                type: string
+            passwordReset:
+                description: The users password reset hash
+                type: string
+            passwordResetTtl:
+                description: The users password reset expiry date
+                type: string
+    UserObjects:
+        type: array
+        items:
+            allOf:
+                -
+                    $ref: '#/definitions/UserId'
+                -
+                    $ref: '#/definitions/UserObject'
+    UserRoleObject:
+        type: object
+        properties:
+            urid:
+                description: The user/role ID
+                type: integer
+                minimum: 1
+            uid:
+                description: The user ID
+                type: integer
+                minimum: 1
+            accid:
+                description: The account ID for the user/role
+                type: integer
+            appid:
+                description: The application ID for the user/role
+                type: integer
+                minimum: 1
+            rid:
+                description: The role ID for the user/role
+                type: integer
+                minimum: 1
+    UserRoleObjects:
+        type: array
+        items:
+            $ref: '#/definitions/UserRoleObject'
+    VarStoreObject:
+        type: object
+        properties:
+            vid:
+                description: The var store ID
+                type: integer
+                minimum: 1
+            appid:
+                description: The parent application ID
+                type: integer
+                minimum: 1
+            key:
+                description: The var store key
+                type: string
+            val:
+                description: The var store value
+                type: string
+    VarStoreObjects:
+        type: array
+        items:
+            $ref: '#/definitions/VarStoreObject'
+responses:
+    GeneralError:
+        description: General error.
+        schema:
+            $ref: '#/definitions/GeneralError'
+        examples:
+            application/json:
+                error:
+                    id: <processor_id>
+                    code: 6
+                    message: Oops, something went wrong.
+    Unauthorised:
+        description: Unauthorised.
+        schema:
+            $ref: '#/definitions/GeneralError'
+        examples:
+            application/json:
+                error:
+                    id: <processor_id>
+                    code: 4
+                    message: Invalid token.
+    Forbidden:
+        description: Forbidden.
+        schema:
+            $ref: '#/definitions/GeneralError'
+        examples:
+            application/json:
+                error:
+                    id: <processor_id>
+                    code: 4
+                    message: Permission denied.
+externalDocs:
+    description: Find out more about ApiOpenStudio
+    url: https://www.apiopenstudio.com

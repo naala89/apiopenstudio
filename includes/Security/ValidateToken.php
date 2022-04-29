@@ -3,8 +3,7 @@
 /**
  * Class ValidateToken.
  *
- * @package    ApiOpenStudio
- * @subpackage Security
+ * @package    ApiOpenStudio\Security
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -20,6 +19,7 @@ use ApiOpenStudio\Core;
 use ApiOpenStudio\Db;
 use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
+use ApiOpenStudio\Core\Request;
 
 /**
  * Class ValidateToken.
@@ -66,7 +66,7 @@ class ValidateToken extends Core\ProcessorEntity
      * @param ADODB_mysqli $db Database object.
      * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADODB_mysqli $db, Core\MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADODB_mysqli $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
     }
@@ -82,7 +82,11 @@ class ValidateToken extends Core\ProcessorEntity
     {
         parent::process();
 
-        $this->token = Core\Utilities::decryptToken();
+        try {
+            $this->token = Core\Utilities::decryptToken();
+        } catch (Core\ApiException $e) {
+            throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $this->validateToken();
 
         return new Core\DataContainer(true, 'boolean');

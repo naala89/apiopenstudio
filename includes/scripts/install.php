@@ -23,7 +23,7 @@ $install = new Install();
 
 $install->exec($argv);
 
-echo "ApiOpenStudio is successfully installed!\n\n";
-echo "you will now be able to configure and use the admin GUI and/or make REST calls to Api OpenStudio.\n";
+echo "ApiOpenStudio is successfully installed!\n";
+echo "You will now be able to configure and use the admin GUI and/or make REST calls to Api OpenStudio.\n";
 
 exit;

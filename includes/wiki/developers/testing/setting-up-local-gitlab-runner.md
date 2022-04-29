@@ -19,8 +19,11 @@ See [install][all_install] for platform specific GitLab runner installation.
 and put it into the folder you created. The following assumes you have renamed
 the binary to ```gitlab-runner.exe``` (optional). You can download a binary for
 every available version as described in
-[Bleeding Edge - download any other tagged release][windows_other_tagged_release).
-3. Make sure to restrict the ```Write``` permissions on the GitLab Runner directory and executable. If you do not set these permissions, regular users can replace the executable with their own and run arbitrary code with elevated privileges. 
+[download any other tagged release][windows_other_tagged_release].
+3. Make sure to restrict the ```Write``` permissions on the GitLab Runner
+directory and executable. If you do not set these permissions, regular users can
+replace the executable with their own and run arbitrary code with elevated
+privileges. 
 4. Run an [elevated command prompt][windows_elevated_prompt] to register.
 
 ### Linux

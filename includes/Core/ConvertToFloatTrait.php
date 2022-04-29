@@ -3,8 +3,7 @@
 /**
  * Trait ConvertToFloatTrait.
  *
- * @package    ApiOpenStudio
- * @subpackage Core
+ * @package    ApiOpenStudio\Core
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -27,9 +26,9 @@ trait ConvertToFloatTrait
      *
      * @param $data
      *
-     * @return float|null
+     * @return null
      */
-    public function fromEmptyToFloat($data): ?float
+    public function fromEmptyToFloat($data)
     {
         return null;
     }
@@ -58,10 +57,16 @@ trait ConvertToFloatTrait
      * @param $data
      *
      * @return float
+     *
+     * @throws ApiException
      */
     public function fromIntegerToFloat($data): float
     {
-        return filter_var($data, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
+        $result = filter_var($data, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
+        if ($result === null) {
+            throw new ApiException("Failed to convert '$data' to float");
+        }
+        return $result;
     }
 
     /**
@@ -87,9 +92,12 @@ trait ConvertToFloatTrait
      */
     public function fromTextToFloat($data): float
     {
+        if ($data != "0" && strpos($data, '.') === false) {
+            $data = preg_replace('/^0*/', '', $data);
+        }
         $result = filter_var($data, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
         if ($result === null) {
-            throw new ApiException('Failed to convert text to float');
+            throw new ApiException("Failed to convert '$data' to float");
         }
         return $result;
     }
@@ -114,10 +122,12 @@ trait ConvertToFloatTrait
      * @param $data
      *
      * @return float
+     *
+     * @throws ApiException
      */
     public function fromJsonToFloat($data): float
     {
-        return filter_var($data, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
+        return $this->fromTextToFloat($data);
     }
 
     /**

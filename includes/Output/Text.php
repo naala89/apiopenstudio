@@ -3,8 +3,7 @@
 /**
  * Class Text.
  *
- * @package    ApiOpenStudio
- * @subpackage Output
+ * @package    ApiOpenStudio\Output
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -17,7 +16,6 @@ namespace ApiOpenStudio\Output;
 
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\ConvertToTextTrait;
-use ApiOpenStudio\Core\DataContainer;
 use ApiOpenStudio\Core\DetectTypeTrait;
 
 /**
@@ -94,7 +92,7 @@ class Text extends Output
             $this->data->setData($this->$method($this->data->getData()));
             $this->data->setType('text');
         } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 6, $this->id, 400);
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
     }
 }

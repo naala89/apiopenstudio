@@ -3,8 +3,7 @@
 /**
  * Class GenerateToken.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -93,7 +92,7 @@ class GenerateToken extends Core\ProcessorEntity
             $this->logger->warning('api', $message);
             throw new Core\ApiException($message, 4, $this->id, 401);
         }
-        if (!Core\Hash::verifPassword($password, $storedHash)) {
+        if (!Core\Hash::verifyPassword($password, $storedHash)) {
             // Invalid password.
             $message = 'invalid username or password';
             $this->logger->warning('api', $message);
@@ -111,23 +110,34 @@ class GenerateToken extends Core\ProcessorEntity
             $finalRoles[] = $userRole;
         }
 
-        $algorithm =
-            "Lcobucci\\JWT\\Signer\\" .
-            $config->__get(['api', 'jwt_alg_type']) .
-            "\\" .
-            $config->__get(['api', 'jwt_alg']);
+        try {
+            $jwt_alg_type = $config->__get(['api', 'jwt_alg_type']);
+            $jwt_alg = $config->__get(['api', 'jwt_alg']);
+            $jwt_private_key = $config->__get(['api', 'jwt_private_key']);
+            $jwt_public_key = $config->__get(['api', 'jwt_public_key']);
+            $jwt_issuer = $config->__get(['api', 'jwt_issuer']);
+            $jwt_permitted_for = $config->__get(['api', 'jwt_permitted_for']);
+            $jwt_life = $config->__get(['api', 'jwt_life']);
+        } catch (Core\ApiException $e) {
+            throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        $algorithm = "Lcobucci\\JWT\\Signer\\$jwt_alg_type\\$jwt_alg";
+        if (!class_exists($algorithm)) {
+            $this->logger->error('api', "Invalid algorithm path: $algorithm");
+            throw new Core\ApiException('Invalid config for encryption, please check the logs', 8, $this->id, 500);
+        }
         $jwtConfig = Configuration::forAsymmetricSigner(
             new $algorithm(),
-            LocalFileReference::file($config->__get(['api', 'jwt_private_key'])),
-            LocalFileReference::file($config->__get(['api', 'jwt_public_key']))
+            LocalFileReference::file($jwt_private_key),
+            LocalFileReference::file($jwt_public_key)
         );
         $now = new DateTimeImmutable();
         $token = $jwtConfig->builder()
-            ->issuedBy($config->__get(['api', 'jwt_issuer']))
-            ->permittedFor($config->__get(['api', 'jwt_permitted_for']))
+            ->issuedBy($jwt_issuer)
+            ->permittedFor($jwt_permitted_for)
             ->issuedAt($now)
             ->canOnlyBeUsedAfter($now->modify('+1 minute'))
-            ->expiresAt($now->modify($config->__get(['api', 'jwt_life'])))
+            ->expiresAt($now->modify($jwt_life))
             ->withClaim('uid', $user->getUid())
             ->withClaim('roles', $finalRoles)
             ->getToken($jwtConfig->signer(), $jwtConfig->signingKey());
@@ -136,7 +146,7 @@ class GenerateToken extends Core\ProcessorEntity
             [
                 'token' => $token->toString(),
                 'uid' => $user->getUid(),
-                'expires' => $now->modify($config->__get(['api', 'jwt_life']))->format('d-M-y H:i:s T'),
+                'expires' => $now->modify($jwt_life)->format('d-M-y H:i:s T'),
             ],
             'array'
         );

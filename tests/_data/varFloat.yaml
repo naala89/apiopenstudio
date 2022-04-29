@@ -11,16 +11,16 @@ appid: 2
 ttl: 0
 
 security:
-  id: test var_float security
-  processor: validate_token_roles
-  roles:
-    - Consumer
+    id: test var_float security
+    processor: validate_token_roles
+    roles:
+        - Consumer
 
 process:
-  processor: var_float
-  id: test var_float process
-  value:
-    processor: var_get
-    id: test var_float value
-    expected_type: float
-    key: value
+    processor: var_float
+    id: test var_float process
+    value:
+        processor: var_get
+        id: test var_float value
+        expected_type: float
+        key: value

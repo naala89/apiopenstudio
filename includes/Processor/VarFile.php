@@ -3,8 +3,7 @@
 /**
  * Class VarFile.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -17,6 +16,7 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\Request;
 use Exception;
 use GuzzleHttp\Client;
 
@@ -40,7 +40,7 @@ class VarFile extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (File)',
+        'name' => 'File',
         'machineName' => 'var_file',
         'description' => 'Return the contents of a file or the file path.',
         'menu' => 'Primitive',
@@ -91,11 +91,11 @@ class VarFile extends Core\ProcessorEntity
      * VarFile constructor.
      *
      * @param mixed $meta Output meta.
-     * @param mixed $request Request object.
+     * @param Request $request Request object.
      * @param ADOConnection $db DB object.
      * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Core\Config();
@@ -140,7 +140,11 @@ class VarFile extends Core\ProcessorEntity
     private function getFileFiles(string $filename, bool $getContents, bool $nullable): Core\DataContainer
     {
         $this->validateFilesError($filename, $nullable);
-        $dir = $this->settings->__get(['api', 'dir_tmp']);
+        try {
+            $dir = $this->settings->__get(['api', 'dir_tmp']);
+        } catch (Core\ApiException $e) {
+            throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $extension = pathinfo($_FILES[$filename]['name'], PATHINFO_EXTENSION);
         try {
             $basename = bin2hex(random_bytes(8));
@@ -178,7 +182,11 @@ class VarFile extends Core\ProcessorEntity
         bool $getContents,
         bool $nullable
     ): Core\DataContainer {
-        $dir = $this->settings->__get(['api', 'base_path']) . $this->settings->__get(['api', 'dirFileStorage']);
+        try {
+            $dir = $this->settings->__get(['api', 'base_path']) . $this->settings->__get(['api', 'dirFileStorage']);
+        } catch (Core\ApiException $e) {
+            throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $name = md5($filename . time());
         $extension = '.' . pathinfo($_FILES[$filename]['tmp_name'], PATHINFO_EXTENSION);
         $fileString = "$dir/$name.$extension";

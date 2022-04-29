@@ -3,8 +3,7 @@
 /**
  * Trait ConvertToJsonTrait.
  *
- * @package    ApiOpenStudio
- * @subpackage Core
+ * @package    ApiOpenStudio\Core
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -29,9 +28,9 @@ trait ConvertToJsonTrait
      *
      * @param $data
      *
-     * @return string|null
+     * @return null
      */
-    public function fromEmptyToJson($data): ?string
+    public function fromEmptyToJson($data)
     {
         return null;
     }
@@ -45,7 +44,7 @@ trait ConvertToJsonTrait
      */
     public function fromBooleanToJson($data): string
     {
-        return json_encode($data ? 'true' : 'false');
+        return json_encode($data);
     }
 
     /**
@@ -53,10 +52,15 @@ trait ConvertToJsonTrait
      *
      * @param $data
      *
-     * @return string
+     * @return string|null
      */
-    public function fromIntegerToJson($data): string
+    public function fromIntegerToJson($data): ?string
     {
+        if (is_infinite($data)) {
+            $data = $data < 0 ? '-Infinity' : 'Infinity';
+        } elseif (is_nan($data)) {
+            $data = 'NaN';
+        }
         return json_encode($data);
     }
 
@@ -65,10 +69,15 @@ trait ConvertToJsonTrait
      *
      * @param $data
      *
-     * @return string
+     * @return string|null
      */
-    public function fromFloatToJson($data): string
+    public function fromFloatToJson($data): ?string
     {
+        if (is_infinite($data)) {
+            $data = $data < 0 ? '-Infinity' : 'Infinity';
+        } elseif (is_nan($data)) {
+            $data = 'NaN';
+        }
         return json_encode($data);
     }
 
@@ -116,7 +125,7 @@ trait ConvertToJsonTrait
      */
     public function fromJsonToJson($data): string
     {
-        return is_string($data) ? $data : json_encode($data);
+        return $data;
     }
 
     /**
@@ -200,13 +209,13 @@ trait ConvertToJsonTrait
                 if (!array_key_exists($childname, $jsnode)) {
                     $jsnode[$childname] = [];
                 }
-                array_push($jsnode[$childname], $this->xml2json($childxmlnode, true));
+                array_push($jsnode[$childname], $this->xml2json($childxmlnode));
             }
             return $jsnode;
         } else {
             $nodename = $xml->getName();
             $jsnode[$nodename] = [];
-            array_push($jsnode[$nodename], $this->xml2json($xml, true));
+            array_push($jsnode[$nodename], $this->xml2json($xml));
             $result = json_encode($jsnode);
             return !is_array($result) ? [$result] : $result;
         }

@@ -3,8 +3,7 @@
 /**
  * Class VarBool.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -16,6 +15,7 @@
 namespace ApiOpenStudio\Processor;
 
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 
 /**
  * Class VarBool
@@ -30,7 +30,7 @@ class VarBool extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (Boolean)',
+        'name' => 'Boolean',
         'machineName' => 'var_bool',
         'description' => 'A boolean variable. It validates the input (0,1,yes,no,true,false) into a boolean value, and \
         returns an error if it is not a boolean.',
@@ -60,8 +60,13 @@ class VarBool extends Core\ProcessorEntity
         parent::process();
 
         $container = $this->val('value');
-        if ($container->getType() != 'boolean') {
-            $container->setType('boolean');
+
+        try {
+            if ($container->getType() != 'boolean') {
+                $container->setType('boolean');
+            }
+        } catch (Core\ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
         return $container;

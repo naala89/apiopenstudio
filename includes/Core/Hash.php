@@ -3,8 +3,7 @@
 /**
  * Class Hash.
  *
- * @package    ApiOpenStudio
- * @subpackage Core
+ * @package    ApiOpenStudio\Core
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -52,7 +51,7 @@ class Hash
    *
    * @return boolean
    */
-    public static function verifPassword(string $password, string $hash): bool
+    public static function verifyPassword(string $password, string $hash): bool
     {
         return password_verify($password, $hash);
     }

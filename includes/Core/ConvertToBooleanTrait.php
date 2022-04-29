@@ -3,8 +3,7 @@
 /**
  * Trait ConvertToBooleanTrait.
  *
- * @package    ApiOpenStudio
- * @subpackage Core
+ * @package    ApiOpenStudio\Core
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -27,9 +26,9 @@ trait ConvertToBooleanTrait
      *
      * @param $data
      *
-     * @return boolean|null
+     * @return null
      */
-    public function fromEmptyToBoolean($data): ?bool
+    public function fromEmptyToBoolean($data)
     {
         return null;
     }

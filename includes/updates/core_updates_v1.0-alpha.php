@@ -3,8 +3,7 @@
 /**
  * Update functions for ApiOpenStudio v1.0-alpha
  *
- * @package    ApiOpenStudio
- * @subpackage Updates
+ * @package    ApiOpenStudio\Updates
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.

@@ -33,6 +33,7 @@ $password = $config->__get(['db', 'password']);
 $basePath = $config->__get(['api', 'base_path']);
 $resources = $config->__get(['api', 'dir_resources']);
 $dbDefinition = $config->__get(['db', 'definition_path']);
+$openapiDirectory = $config->__get(['api', 'openapi_directory']);
 
 $install->createLink(
     null,
@@ -46,6 +47,7 @@ $install->createUser($database, $username, $password);
 $install->useDatabase($database);
 $install->createTables($basePath, $dbDefinition, true);
 $install->createResources($basePath, $resources);
+$install->importOpenApi($basePath, $openapiDirectory);
 $install->createAdminUser(getenv('ADMIN_NAME'), getenv('ADMIN_PASS'), getenv('ADMIN_EMAIL'));
 
 echo "Test database successfully setup.\n";

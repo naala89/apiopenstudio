@@ -22,11 +22,11 @@ foreach ($goodIdentities as $goodIdentity) {
         ['name' => 'Test role create ' . $goodIdentity[0]]
     );
     $I->seeResponseCodeIs(200);
-    $I->seeResponseJsonMatchesJsonPath('$.rid');
-    $I->seeResponseJsonMatchesJsonPath('$.name');
+    $I->seeResponseJsonMatchesJsonPath('$.data.rid');
+    $I->seeResponseJsonMatchesJsonPath('$.data.name');
     $response = json_decode($I->getResponse(), true);
-    $rid = $response['rid'];
-    $newRoles[$rid] = $response['name'];
+    $rid = $response['data']['rid'];
+    $newRoles[$rid] = $response['data']['name'];
 
     $I->wantTo('Test role update for ' . $goodIdentity[0]);
     $I->sendPut(
@@ -37,11 +37,11 @@ foreach ($goodIdentities as $goodIdentity) {
         ])
     );
     $I->seeResponseCodeIs(200);
-    $I->seeResponseJsonMatchesJsonPath('$.rid');
-    $I->seeResponseJsonMatchesJsonPath('$.name');
+    $I->seeResponseJsonMatchesJsonPath('$.data.rid');
+    $I->seeResponseJsonMatchesJsonPath('$.data.name');
     $response = json_decode($I->getResponse(), true);
-    $rid = $response['rid'];
-    $newRoles[$rid] = $response['name'];
+    $rid = $response['data']['rid'];
+    $newRoles[$rid] = $response['data']['name'];
 }
 
 foreach ($badIdentities as $badIdentity) {
@@ -52,7 +52,15 @@ foreach ($badIdentities as $badIdentity) {
         $I->getCoreBaseUri() . '/role',
         ['name' => 'Test role create ' . $badIdentity[0]]
     );
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
+    $I->seeResponseContainsJson([
+        'result' => 'error',
+        'data' => [
+            'code' => 4,
+            'message' => 'Permission denied.',
+            'id' => 'role_create_security',
+        ],
+    ]);
 
     $I->wantTo('Test role update for ' . $badIdentity[0]);
     $I->sendPut(
@@ -62,11 +70,27 @@ foreach ($badIdentities as $badIdentity) {
             'name' => 'Test role update for ' . $badIdentity[0],
         ])
     );
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
+    $I->seeResponseContainsJson([
+        'result' => 'error',
+        'data' => [
+            'code' => 4,
+            'message' => 'Permission denied.',
+            'id' => 'role_update_security',
+        ]
+    ]);
 
     $I->wantTo('Test role delete for ' . $badIdentity[0]);
     $I->sendDelete($I->getCoreBaseUri() . '/role/' . $rid);
-    $I->seeResponseCodeIs(401);
+    $I->seeResponseCodeIs(403);
+    $I->seeResponseContainsJson([
+        'result' => 'error',
+        'data' => [
+            'code' => 4,
+            'message' => 'Permission denied.',
+            'id' => 'role_delete_security',
+        ]
+    ]);
 }
 
 $rids = array_keys($newRoles);

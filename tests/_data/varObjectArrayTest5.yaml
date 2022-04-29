@@ -1,0 +1,31 @@
+name: Testing object array 5
+
+description: Test creating an object with array of mixed indexed values only, but one with multiple keys. This shoudl fail
+
+uri: object/array/5
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test object array security
+    roles:
+        - Consumer
+
+process:
+    processor: var_object
+    id: test object array process
+    attributes:
+        -
+            0: field1
+        -
+            5: field2
+        -
+            2: field3
+        -
+            final: field4
+            extra: field4

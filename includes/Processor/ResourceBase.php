@@ -3,8 +3,7 @@
 /**
  * Class ResourceBase.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -18,16 +17,23 @@ namespace ApiOpenStudio\Processor;
 use ADOConnection;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\ProcessorHelper;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Core\Request;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\AccountMapper;
+use ApiOpenStudio\Db\Application;
+use ApiOpenStudio\Db\ApplicationMapper;
+use ApiOpenStudio\Db\ResourceMapper;
 
 /**
  * Class ResourceBase
  *
  * Base class for all resource processors.
  */
-abstract class ResourceBase extends Core\ProcessorEntity
+abstract class ResourceBase extends ProcessorEntity
 {
     /**
      * Processor helper class.
@@ -35,6 +41,20 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * @var ProcessorHelper
      */
     protected ProcessorHelper $helper;
+
+    /**
+     * Account mapper class.
+     *
+     * @var AccountMapper
+     */
+    private AccountMapper $accountMapper;
+
+    /**
+     * Config class.
+     *
+     * @var Config
+     */
+    private Config $settings;
 
     /**
      * {@inheritDoc}
@@ -112,24 +132,26 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * ResourceBase constructor.
      *
      * @param mixed $meta Output meta.
-     * @param mixed $request Request object.
+     * @param Request $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->helper = new ProcessorHelper();
+        $this->settings = new Config();
+        $this->accountMapper = new AccountMapper($db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
      * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -205,11 +227,11 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * @param string $method Resource method.
      * @param string $uri Resource URI.
      *
-     * @return Core\DataContainer
+     * @return DataContainer
      *
      * @throws ApiException Error.
      */
-    protected function read(int $appId, string $method, string $uri): Core\DataContainer
+    protected function read(int $appId, string $method, string $uri): DataContainer
     {
         if (empty($appId)) {
             throw new ApiException('missing application ID, cannot find resource', 3, $this->id, 400);
@@ -222,7 +244,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
         }
         $uri = strtolower($uri);
 
-        $mapper = new Db\ResourceMapper($this->db, $this->logger);
+        $mapper = new ResourceMapper($this->db, $this->logger);
         $resource = $mapper->findByAppIdMethodUri($appId, $method, $uri);
         if (empty($resource->getResid())) {
             throw new ApiException('Resource not found', 1, $this->id, 200);
@@ -235,7 +257,13 @@ abstract class ResourceBase extends Core\ProcessorEntity
         $result['method'] = $resource->getMethod();
         $result['ttl'] = $resource->getTtl();
 
-        return new Core\DataContainer($this->exportData($result), 'text');
+        try {
+            $result = new DataContainer($this->exportData($result), 'text');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 
     /**
@@ -245,11 +273,11 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * @param string $method Resource method.
      * @param string $uri Resource URI.
      *
-     * @return Core\DataContainer
+     * @return DataContainer
      *
      * @throws ApiException Error.
      */
-    protected function delete(int $appId, string $method, string $uri): Core\DataContainer
+    protected function delete(int $appId, string $method, string $uri): DataContainer
     {
         if (empty($appId)) {
             throw new ApiException('missing application ID, cannot find resource', 3, $this->id, 400);
@@ -262,10 +290,16 @@ abstract class ResourceBase extends Core\ProcessorEntity
         }
 
         $uri = strtolower($uri);
-        $mapper = new Db\ResourceMapper($this->db, $this->logger);
+        $mapper = new ResourceMapper($this->db, $this->logger);
         $resource = $mapper->findByAppIdMethodUri($appId, $method, $uri);
 
-        return new Core\DataContainer($mapper->delete($resource) ? 'true' : 'false', 'text');
+        try {
+            $result = new DataContainer($mapper->delete($resource) ? 'true' : 'false', 'text');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 
     /**
@@ -275,11 +309,11 @@ abstract class ResourceBase extends Core\ProcessorEntity
      * @param string $accName Account name.
      * @param string $appName Application name.
      *
-     * @return Core\DataContainer
+     * @return DataContainer
      *
      * @throws ApiException Error.
      */
-    protected function create(array $data, string $accName, string $appName): Core\DataContainer
+    protected function create(array $data, string $accName, string $appName): DataContainer
     {
         $this->logger->debug('api', 'New resource' . print_r($data, true));
         $this->validateData($data);
@@ -299,31 +333,39 @@ abstract class ResourceBase extends Core\ProcessorEntity
         $ttl = !empty($data['ttl']) ? $data['ttl'] : 0;
 
         // Prevent unauthorised editing of admin resources.
-        $settings = new Config();
-        $coreAccountName = $settings->__get(['api', 'core_account']);
-        $coreApplicationName = $settings->__get(['api', 'core_application']);
-        $coreResourceLock = $settings->__get(['api', 'core_resource_lock']);
+        try {
+            $settings = new Config();
+            $coreAccountName = $settings->__get(['api', 'core_account']);
+            $coreApplicationName = $settings->__get(['api', 'core_application']);
+            $coreResourceLock = $settings->__get(['api', 'core_resource_lock']);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if ($coreResourceLock && $accName == $coreAccountName && $appName == $coreApplicationName) {
-            throw new ApiException("Resources for $coreAccountName/$coreApplicationName are locked", 6, -1, 406);
+            throw new ApiException("Resources for $coreAccountName/$coreApplicationName are locked", 4, $this->id, 406);
         }
 
-        $accountMapper = new Db\AccountMapper($this->db, $this->logger);
-        $applicationMapper = new Db\ApplicationMapper($this->db, $this->logger);
-        $resourceMapper = new Db\ResourceMapper($this->db, $this->logger);
-        $account = $accountMapper->findByName($accName);
-        $accId = $account->getAccid();
-        $application = $applicationMapper->findByAccidAppname($accId, $appName);
-        $appId = $application->getAppid();
-        $resource = $resourceMapper->findByAppIdMethodUri($appId, $method, $uri);
-        $resource->setAppId($appId);
-        $resource->setName($name);
-        $resource->setDescription($description);
-        $resource->setMethod($method);
-        $resource->setUri($uri);
-        $resource->setMeta(json_encode($meta));
-        $resource->setTtl($ttl);
+        $accountMapper = new AccountMapper($this->db, $this->logger);
+        $applicationMapper = new ApplicationMapper($this->db, $this->logger);
+        $resourceMapper = new ResourceMapper($this->db, $this->logger);
+        try {
+            $account = $accountMapper->findByName($accName);
+            $accId = $account->getAccid();
+            $application = $applicationMapper->findByAccidAppname($accId, $appName);
+            $appId = $application->getAppid();
+            $resource = $resourceMapper->findByAppIdMethodUri($appId, $method, $uri);
+            $resource->setAppId($appId);
+            $resource->setName($name);
+            $resource->setDescription($description);
+            $resource->setMethod($method);
+            $resource->setUri($uri);
+            $resource->setMeta(json_encode($meta));
+            $resource->setTtl($ttl);
 
-        return new Core\DataContainer($resourceMapper->save($resource) ? 'true' : 'false', 'text');
+            return new DataContainer($resourceMapper->save($resource));
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
     }
 
     /**
@@ -344,25 +386,25 @@ abstract class ResourceBase extends Core\ProcessorEntity
         }
         if (is_array($data) && sizeof($data) == 1 && $data[0] == $this->meta->resource) {
             $message = 'Form-data element with name: "' . $this->meta->resource . '" not found.';
-            throw new ApiException($message, 6, -1, 406);
+            throw new ApiException($message, 6, $this->id, 406);
         }
         if (!isset($data['name'])) {
-            throw new ApiException("missing name in new resource", 6, -1, 406);
+            throw new ApiException("missing name in new resource", 6, $this->id, 406);
         }
         if (!isset($data['description'])) {
-            throw new ApiException("missing description in new resource", 6, -1, 406);
+            throw new ApiException("missing description in new resource", 6, $this->id, 406);
         }
         if (!isset($data['uri'])) {
-            throw new ApiException("missing uri in new resource", 6, -1, 406);
+            throw new ApiException("missing uri in new resource", 6, $this->id, 406);
         }
         if (!isset($data['method'])) {
-            throw new ApiException("missing method in new resource", 6, -1, 406);
+            throw new ApiException("missing method in new resource", 6, $this->id, 406);
         }
         if (!isset($data['process'])) {
-            throw new ApiException("missing process in new resource", 6, -1, 406);
+            throw new ApiException("missing process in new resource", 6, $this->id, 406);
         }
         if (!isset($data['ttl']) || strlen($data['ttl']) < 1) {
-            throw new ApiException("missing or negative ttl in new resource", 6, -1, 406);
+            throw new ApiException("missing or negative ttl in new resource", 6, $this->id, 406);
         }
 
         // validate for identical IDs
@@ -374,24 +416,24 @@ abstract class ResourceBase extends Core\ProcessorEntity
             $this->validateDetails($data['security']);
         }
         if (!empty($data['output'])) {
-            if (!is_array($data['output']) || Core\Utilities::isAssoc($data['output'])) {
-                throw new ApiException('invalid output structure in new resource', 6, -1, 406);
+            if (!is_array($data['output']) || Utilities::isAssoc($data['output'])) {
+                throw new ApiException('invalid output structure in new resource', 6, $this->id, 406);
             }
             foreach ($data['output'] as $i => $output) {
                 if (is_array($output)) {
                     if (!$this->helper->isProcessor($output)) {
                         $message = "bad processor declaration in output at index $i in new resource";
-                        throw new ApiException($message, 6, -1, 406);
+                        throw new ApiException($message, 6, $this->id, 406);
                     }
                     $this->validateDetails($output);
                 } elseif ($output != 'response') {
-                    throw new ApiException("invalid output structure at index: $i, in new resource", 6, -1, 406);
+                    throw new ApiException("invalid output structure at index: $i, in new resource", 6, $this->id, 406);
                 }
             }
         }
         if (!empty($data['fragments'])) {
-            if (!Core\Utilities::isAssoc($data['fragments'])) {
-                throw new ApiException("invalid fragments structure in new resource", 6, -1, 406);
+            if (!Utilities::isAssoc($data['fragments'])) {
+                throw new ApiException("invalid fragments structure in new resource", 6, $this->id, 406);
             }
             foreach ($data['fragments'] as $fragVal) {
                 $this->validateDetails($fragVal);
@@ -417,7 +459,7 @@ abstract class ResourceBase extends Core\ProcessorEntity
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
                 if (in_array($node['id'], $id)) {
-                    throw new ApiException('identical ID in new resource: ' . $node['id'], 6, -1, 406);
+                    throw new ApiException('identical ID in new resource: ' . $node['id'], 6, $this->id, 406);
                 }
                 $id[] = $node['id'];
             }
@@ -444,15 +486,18 @@ abstract class ResourceBase extends Core\ProcessorEntity
 
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
-                $classStr = $this->helper->getProcessorString($node['processor']);
-                $class = new $classStr($meta, new Core\Request(), $this->db);
+                try {
+                    $classStr = $this->helper->getProcessorString($node['processor']);
+                } catch (ApiException $e) {
+                    throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+                }
+                $class = new $classStr($meta, new Request(), $this->db);
                 $details = $class->details();
                 $id = $node['id'];
                 $this->logger->info('api', "validating: $id");
 
                 foreach ($details['input'] as $inputKey => $inputDef) {
-                    $min = $inputDef['cardinality'][0];
-                    $max = $inputDef['cardinality'][1];
+                    list($min, $max) = $inputDef['cardinality'];
                     $literalAllowed = $inputDef['literalAllowed'];
                     $limitProcessors = $inputDef['limitProcessors'];
                     $limitTypes = $inputDef['limitTypes'];
@@ -571,6 +616,28 @@ abstract class ResourceBase extends Core\ProcessorEntity
             $message = 'invalid literal in new resource (' . print_r($element, true) . '. only "' .
                 implode("', '", $accepts) . '" accepted';
             throw new ApiException($message, 6, $id, 406);
+        }
+    }
+
+    /**
+     * Validate application is not core and core not locked.
+     *
+     * @param Application $application
+     *
+     * @throws ApiException
+     */
+    protected function validateCoreProtection(Application $application)
+    {
+        try {
+            $account = $this->accountMapper->findByAccid($application->getAccid());
+            $coreAccount = $this->settings->__get(['api', 'core_account']);
+            $coreApplication = $this->settings->__get(['api', 'core_application']);
+            $coreLock = $this->settings->__get(['api', 'core_resource_lock']);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        if ($account->getName() == $coreAccount && $application->getName() == $coreApplication && $coreLock) {
+            throw new ApiException("Unauthorised: this is a core resource", 4, $this->id, 403);
         }
     }
 }

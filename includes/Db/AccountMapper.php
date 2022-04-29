@@ -3,8 +3,7 @@
 /**
  * Class AccountMapper.
  *
- * @package    ApiOpenStudio
- * @subpackage Db
+ * @package    ApiOpenStudio\Db
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -41,8 +40,8 @@ class AccountMapper extends Mapper
         } else {
             $sql = 'UPDATE account SET name = ? WHERE accid = ?';
             $bindParams = [
-            $account->getName(),
-            $account->getAccid(),
+                $account->getName(),
+                $account->getAccid(),
             ];
         }
         return $this->saveDelete($sql, $bindParams);
@@ -201,8 +200,8 @@ class AccountMapper extends Mapper
     {
         $account = new Account();
 
-        $account->setAccid(!empty($row['accid']) ? $row['accid'] : 0);
-        $account->setName(!empty($row['name']) ? $row['name'] : '');
+        $account->setAccid($row['accid'] ?? 0);
+        $account->setName($row['name'] ?? '');
 
         return $account;
     }

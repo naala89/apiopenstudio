@@ -3,8 +3,7 @@
 /**
  * Class ExternalUserMapper.
  *
- * @package    ApiOpenStudio
- * @subpackage Db
+ * @package    ApiOpenStudio\Db
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -24,7 +23,6 @@ use ApiOpenStudio\Core\ApiException;
  */
 class ExternalUserMapper extends Mapper
 {
-
     /**
      * Save an external user object.
      *
@@ -144,13 +142,13 @@ class ExternalUserMapper extends Mapper
     {
         $user = new ExternalUser();
 
-        $user->setId(!empty($row['id']) ? $row['id'] : 0);
-        $user->setAppId(!empty($row['appid']) ? $row['appid'] : 0);
-        $user->setExternalId(!empty($row['external_id']) ? $row['external_id'] : null);
-        $user->setExternalEntity(!empty($row['external_entity']) ? $row['external_entity'] : null);
-        $user->setDataField1(!empty($row['data_field_1']) ? $row['data_field_1'] : null);
-        $user->setDataField2(!empty($row['data_field_2']) ? $row['data_field_2'] : null);
-        $user->setDataField3(!empty($row['data_field_3']) ? $row['data_field_3'] : null);
+        $user->setId($row['id'] ?? 0);
+        $user->setAppId($row['appid'] ?? 0);
+        $user->setExternalId($row['external_id'] ?? null);
+        $user->setExternalEntity($row['external_entity'] ?? null);
+        $user->setDataField1($row['data_field_1'] ?? null);
+        $user->setDataField2($row['data_field_2'] ?? null);
+        $user->setDataField3($row['data_field_3'] ?? null);
 
         return $user;
     }

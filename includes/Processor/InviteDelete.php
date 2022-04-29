@@ -3,8 +3,7 @@
 /**
  * Class InviteDelete.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -17,6 +16,8 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db;
 
 /**
@@ -60,11 +61,11 @@ class InviteDelete extends Core\ProcessorEntity
      * InviteDelete constructor.
      *
      * @param mixed $meta Output meta.
-     * @param mixed $request Request object.
+     * @param Request $request Request object.
      * @param ADOConnection $db DB object.
      * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->inviteMapper = new Db\InviteMapper($db, $logger);
@@ -80,16 +81,23 @@ class InviteDelete extends Core\ProcessorEntity
     public function process(): Core\DataContainer
     {
         parent::process();
-
         $iid = $this->val('iid', true);
 
-        $invite = $this->inviteMapper->findByIid($iid);
-
+        try {
+            $invite = $this->inviteMapper->findByIid($iid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($invite->getIid())) {
             throw new Core\ApiException('Invalid iid: ' . $iid);
         }
 
-        $result = $this->inviteMapper->delete($invite);
+        try {
+            $this->inviteMapper->delete($invite);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
         return new Core\DataContainer('Deleted user invite for ' . $invite->getEmail(), 'text');
     }
 }

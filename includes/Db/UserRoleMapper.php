@@ -3,8 +3,7 @@
 /**
  * Class RoleMapper.
  *
- * @package    ApiOpenStudio
- * @subpackage Db
+ * @package    ApiOpenStudio\Db
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -24,7 +23,6 @@ use ApiOpenStudio\Core\ApiException;
  */
 class UserRoleMapper extends Mapper
 {
-
     /**
      * Save the user role.
      *
@@ -365,6 +363,10 @@ class UserRoleMapper extends Mapper
         return $this->fetchRows($sql, $bindParams, $order);
     }
 
+    public function findByUidAccidRolename(int $uid, ?int $getAccid, string $string)
+    {
+    }
+
     /**
      * Map a DB row to a UserRole object.
      *
@@ -376,11 +378,11 @@ class UserRoleMapper extends Mapper
     {
         $userRole = new UserRole();
 
-        $userRole->setUrid(!empty($row['urid']) ? $row['urid'] : 0);
-        $userRole->setAccid(!empty($row['accid']) ? $row['accid'] : 0);
-        $userRole->setAppid(!empty($row['appid']) ? $row['appid'] : 0);
-        $userRole->setUid(!empty($row['uid']) ? $row['uid'] : 0);
-        $userRole->setRid(!empty($row['rid']) ? $row['rid'] : 0);
+        $userRole->setUrid($row['urid'] ?? 0);
+        $userRole->setAccid($row['accid'] ?? 0);
+        $userRole->setAppid($row['appid'] ?? 0);
+        $userRole->setUid($row['uid'] ?? 0);
+        $userRole->setRid($row['rid'] ?? 0);
 
         return $userRole;
     }

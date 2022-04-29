@@ -3,8 +3,7 @@
 /**
  * Class XmlPath.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -317,7 +316,12 @@ DESCRIPTION,
             foreach ($nodes as $node) {
                 $xmlWithoutWhiteSpace = trim(preg_replace('~\s+~u', ' ', $node->asXML()), ' ');
                 if (!$this->simplexmlImportXml($result, $xmlWithoutWhiteSpace)) {
-                    throw new Core\ApiException('failed to add node to parent XML, something went wrong');
+                    throw new Core\ApiException(
+                        'failed to add node to parent XML, something went wrong',
+                        6,
+                        $this->id,
+                        400
+                    );
                 }
             }
         }

@@ -3,8 +3,7 @@
 /**
  * Class Cast.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -27,7 +26,6 @@ use ApiOpenStudio\Core\ConvertToJsonTrait;
 use ApiOpenStudio\Core\ConvertToTextTrait;
 use ApiOpenStudio\Core\ConvertToXmlTrait;
 use ApiOpenStudio\Core\DetectTypeTrait;
-use ApiOpenStudio\Db;
 
 /**
  * Class Cast
@@ -50,7 +48,7 @@ class Cast extends Core\ProcessorEntity
         'name' => 'Cast',
         'machineName' => 'cast',
         'description' => 'Change the data type of an input data.',
-        'menu' => 'Primitive',
+        'menu' => 'Data operation',
         'input' => [
             'data' => [
                 'description' => 'The input data that needs to be cast.',
@@ -98,8 +96,6 @@ class Cast extends Core\ProcessorEntity
 
         $container = $this->val('data');
         $dataType = $this->val('data_type', true);
-
-        $inputIsNull = $container->getData() === null;
 
         try {
             $method = 'from' . ucfirst(strtolower($container->getType())) . 'To' . ucfirst(strtolower($dataType));

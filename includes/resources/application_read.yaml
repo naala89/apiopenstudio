@@ -1,6 +1,6 @@
 # Application read resource.
 #
-# @package   Apiopenstudio
+# @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
 #            If a copy of the license was not distributed with this file,
 #            You can obtain one at https://www.apiopenstudio.com/license/.
@@ -10,7 +10,7 @@
 
 name: Application read
 
-description: Fetch a single or multiple applications.
+description: Fetch a single or multiple applications, limited by the users access rights.
 
 uri: application
 
@@ -21,39 +21,39 @@ appid: 1
 ttl: 0
 
 security:
-  id: application_read_security
-  processor: validate_token
+    id: application_read_security
+    processor: validate_token
 
 process:
-  processor: application_read
-  id: application_read_process
-  accountId:
-    processor: var_get
-    id: application_read_account_id
-    expected_type: integer
-    nullable: true
-    key: account_id
-  applicationId:
-    processor: var_get
-    id: application_read_application_id
-    expected_type: integer
-    nullable: true
-    key: application_id
-  keyword:
-    processor: var_get
-    id: application_read_keyword
-    expected_type: text
-    nullable: true
-    key: keyword
-  orderBy:
-    processor: var_get
-    id: application_read_order_by
-    expected_type: text
-    nullable: true
-    key: order_by
-  direction:
-    processor: var_get
-    id: application_read_direction
-    expected_type: text
-    nullable: true
-    key: direction
+    processor: application_read
+    id: application_read_process
+    account_id:
+        processor: var_get
+        id: application_read_account_id
+        expected_type: integer
+        nullable: true
+        key: account_id
+    application_id:
+        processor: var_get
+        id: application_read_application_id
+        expected_type: integer
+        nullable: true
+        key: application_id
+    keyword:
+        processor: var_get
+        id: application_read_keyword
+        expected_type: text
+        nullable: true
+        key: keyword
+    order_by:
+        processor: var_get
+        id: application_read_order_by
+        expected_type: text
+        nullable: true
+        key: order_by
+    direction:
+        processor: var_get
+        id: application_read_direction
+        expected_type: text
+        nullable: true
+        key: direction

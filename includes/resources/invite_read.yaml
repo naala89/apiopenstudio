@@ -1,6 +1,6 @@
 # Invite read resource.
 #
-# @package   Apiopenstudio
+# @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
 #            If a copy of the license was not distributed with this file,
 #            You can obtain one at https://www.apiopenstudio.com/license/.
@@ -10,7 +10,7 @@
 
 name: Invite read
 
-description: Fetch user invites.
+description: Fetch a single or multiple user invites.
 
 uri: invite
 
@@ -21,45 +21,45 @@ appid: 1
 ttl: 0
 
 security:
-  id: invite_read_security
-  processor: validate_token_roles
-  roles:
-    - Administrator
-    - Account manager
-    - Application manager
-  validate_account: false
-  validate_application: false
+    id: invite_read_security
+    processor: validate_token_roles
+    roles:
+        - Administrator
+        - Account manager
+        - Application manager
+    validate_account: false
+    validate_application: false
 
 process:
-  processor: invite_read
-  id: invite_read_process
-  iid:
-    processor: var_get
-    id: invite_read_iid
-    key: iid
-    nullable: true
-  email:
-    processor: var_get
-    id: invite_read_email
-    key: email
-    nullable: true
-  order_by:
-    processor: var_get
-    id: invite_read_order_by
-    key: order_by
-    nullable: true
-  direction:
-    processor: var_get
-    id: invite_read_direction
-    key: direction
-    nullable: true
-  offset:
-    processor: var_get
-    id: invite_read_offset
-    key: offset
-    nullable: true
-  limit:
-    processor: var_get
-    id: invite_read_limit
-    key: limit
-    nullable: true
+    processor: invite_read
+    id: invite_read_process
+    iid:
+        processor: var_get
+        id: invite_read_iid
+        key: iid
+        nullable: true
+    email:
+        processor: var_get
+        id: invite_read_email
+        key: email
+        nullable: true
+    order_by:
+        processor: var_get
+        id: invite_read_order_by
+        key: order_by
+        nullable: true
+    direction:
+        processor: var_get
+        id: invite_read_direction
+        key: direction
+        nullable: true
+    offset:
+        processor: var_get
+        id: invite_read_offset
+        key: offset
+        nullable: true
+    limit:
+        processor: var_get
+        id: invite_read_limit
+        key: limit
+        nullable: true

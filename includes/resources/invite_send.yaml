@@ -1,6 +1,6 @@
 # Invite send resource.
 #
-# @package   Apiopenstudio
+# @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
 #            If a copy of the license was not distributed with this file,
 #            You can obtain one at https://www.apiopenstudio.com/license/.
@@ -10,7 +10,7 @@
 
 name: Invite send
 
-description: Invite a user or users.
+description: Send an invite to a single user or multiple users.
 
 uri: user/invite
 
@@ -21,18 +21,18 @@ appid: 1
 ttl: 0
 
 security:
-  id: user_invite_security
-  processor: validate_token_roles
-  roles:
-    - Administrator
-    - Account manager
-    - Application manager
+    id: user_invite_security
+    processor: validate_token_roles
+    roles:
+        - Administrator
+        - Account manager
+        - Application manager
 
 process:
-  processor: invite_create
-  id: user_invite_process
-  email:
-    processor: var_post
-    id: user_invite_var_post_email
-    key: email
-    nullable: false
+    processor: invite_create
+    id: user_invite_process
+    email:
+        processor: var_post
+        id: user_invite_var_post_email
+        key: email
+        nullable: false

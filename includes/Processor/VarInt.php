@@ -3,8 +3,7 @@
 /**
  * Class VarInt.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -16,6 +15,7 @@
 namespace ApiOpenStudio\Processor;
 
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 
 /**
  * Class VarInt
@@ -30,7 +30,7 @@ class VarInt extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-    'name' => 'Var (Integer)',
+    'name' => 'Integer',
         'machineName' => 'var_int',
         'description' => 'An integer variable. It validates the input and returns an error if it is not a integer.',
         'menu' => 'Primitive',
@@ -58,8 +58,13 @@ class VarInt extends Core\ProcessorEntity
     {
 
         $container = $this->val('value');
-        if ($container->getType() != 'integer') {
-            $container->setType('integer');
+
+        try {
+            if ($container->getType() != 'integer') {
+                $container->setType('integer');
+            }
+        } catch (Core\ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
         return $container;

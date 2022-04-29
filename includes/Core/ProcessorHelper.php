@@ -3,8 +3,7 @@
 /**
  * Class ProcessorHelper.
  *
- * @package    ApiOpenStudio
- * @subpackage Core
+ * @package    ApiOpenStudio\Core
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -33,7 +32,7 @@ class ProcessorHelper
      * Return processor namespace and class name string.
      *
      * @param string $className Class name of processor.
-     * @param array|null $namespaces Namepsaces to search.
+     * @param array|null $namespaces Namespaces to search.
      *
      * @return string Class string.
      *
@@ -42,7 +41,10 @@ class ProcessorHelper
     public function getProcessorString(string $className, array $namespaces = null): string
     {
         if (empty($className)) {
-            throw new ApiException('empty processor name', 1, -1, 406);
+            throw new ApiException('empty processor name', 1, -1, 500);
+        }
+        if (empty($namespaces) && strpos($className, "\\") !== false) {
+            return $className;
         }
         $namespaces = empty($namespaces) ? $this->namespaces : $namespaces;
         $className = str_replace('-', '_', $className);
@@ -56,11 +58,10 @@ class ProcessorHelper
             $classStr = "\\ApiOpenStudio\\$namespace\\$className";
             if (class_exists($classStr)) {
                 return $classStr;
-                break;
             }
         }
 
-        throw new ApiException("unknown processor: $className", 1, -1, 400);
+        throw new ApiException("unknown processor: $className", 1, -1, 500);
     }
 
     /**
@@ -70,7 +71,7 @@ class ProcessorHelper
      *
      * @return boolean
      */
-    public function isProcessor(&$obj): bool
+    public function isProcessor($obj): bool
     {
         if (is_object($obj)) {
             return (isset($obj->processor) && isset($obj->id));

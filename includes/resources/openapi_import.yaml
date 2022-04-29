@@ -1,0 +1,39 @@
+# Import an OpenApi document.
+#
+# @package   Apiopenstudio\Resources
+# @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
+#            If a copy of the license was not distributed with this file,
+#            You can obtain one at https://www.apiopenstudio.com/license/.
+# @author    john89 (https://gitlab.com/john89)
+# @copyright 2020-2030 Naala Pty Ltd
+# @link      https://www.apiopenstudio.com
+
+name: Import an OpenApi document.
+
+description: Import an OpenApi document file in a form post and update the existing documentation or generate stubs for resources that do not exist.
+
+uri: openapi/import
+
+method: post
+
+appid: 1
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: openapi_import_security
+    roles:
+        - Developer
+    valicate_account: false
+    valicate_application: false
+
+process:
+    processor: openapi_import
+    id: openapi_import_openapi_import
+    openapi_document:
+        id: openapi_import_file
+        processor: var_file
+        location: _FILES
+        filename: openapi
+        get_contents: true

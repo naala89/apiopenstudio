@@ -3,8 +3,7 @@
 /**
  * Class ResourceMapper.
  *
- * @package    ApiOpenStudio
- * @subpackage Db
+ * @package    ApiOpenStudio\Db
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -38,7 +37,7 @@ class ResourceMapper extends Mapper
     {
         if ($resource->getResid() == null) {
             $sql = <<<'TAG'
-INSERT INTO resource (appid, name, description, method, uri, meta, ttl) VALUES (?, ?, ?, ?, ?, ?, ?)
+INSERT INTO resource (appid, name, description, method, uri, meta, openapi, ttl) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 TAG;
             $bindParams = [
                 $resource->getAppId(),
@@ -47,12 +46,12 @@ TAG;
                 $resource->getMethod(),
                 $resource->getUri(),
                 $resource->getMeta(),
+                $resource->getOpenapi(),
                 $resource->getTtl(),
             ];
         } else {
-            $sql = <<<'TAG'
-UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, uri = ?, meta = ?, ttl = ? WHERE resid = ?
-TAG;
+            // phpcs:ignore
+            $sql = 'UPDATE resource SET appid = ?, name = ?, description = ?, method = ?, uri = ?, meta = ?, openapi = ?, ttl = ? WHERE resid = ?';
             $bindParams = [
                 $resource->getAppId(),
                 $resource->getName(),
@@ -60,6 +59,7 @@ TAG;
                 $resource->getMethod(),
                 $resource->getUri(),
                 $resource->getMeta(),
+                $resource->getOpenapi(),
                 $resource->getTtl(),
                 $resource->getResid(),
             ];
@@ -318,14 +318,15 @@ TAG;
     {
         $resource = new Resource();
 
-        $resource->setResid(!empty($row['resid']) ? $row['resid'] : 0);
-        $resource->setAppId(!empty($row['appid']) ? $row['appid'] : 0);
-        $resource->setName(!empty($row['name']) ? $row['name'] : '');
-        $resource->setDescription(!empty($row['description']) ? $row['description'] : '');
-        $resource->setMethod(!empty($row['method']) ? $row['method'] : '');
-        $resource->setUri(!empty($row['uri']) ? $row['uri'] : '');
-        $resource->setMeta(!empty($row['meta']) ? $row['meta'] : '');
-        $resource->setTtl(!empty($row['ttl']) ? $row['ttl'] : 0);
+        $resource->setResid($row['resid'] ?? 0);
+        $resource->setAppId($row['appid'] ?? 0);
+        $resource->setName($row['name'] ?? '');
+        $resource->setDescription($row['description'] ?? '');
+        $resource->setMethod($row['method'] ?? '');
+        $resource->setUri($row['uri'] ?? '');
+        $resource->setMeta($row['meta'] ?? '');
+        $resource->setOpenapi($row['openapi'] ?? '');
+        $resource->setTtl($row['ttl'] ?? 0);
 
         return $resource;
     }

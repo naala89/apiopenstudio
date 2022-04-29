@@ -3,8 +3,7 @@
 /**
  * Class UserRoleDelete.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -16,6 +15,7 @@
 namespace ApiOpenStudio\Processor;
 
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Db;
 
 /**
@@ -63,22 +63,40 @@ class UserRoleDelete extends Core\ProcessorEntity
 
         $userRoleMapper = new Db\UserRoleMapper($this->db, $this->logger);
 
-        $userRoles = $userRoleMapper->findByFilter(['col' => [
-        'urid' => $urid,
-        ]]);
+        try {
+            $userRoles = $userRoleMapper->findByFilter([
+                'col' => [
+                    'urid' => $urid,
+                ],
+            ]);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $userRole = $userRoles[0];
         if (empty($userRole->getUrid())) {
             throw new Core\ApiException('User role does not exist', 6, $this->id, 400);
         }
         if ($userRole->getUrid() == 1) {
-            $userRoles = $userRoleMapper->findByFilter(['col' => [
-            'rid' => 1,
-            ]]);
+            try {
+                $userRoles = $userRoleMapper->findByFilter([
+                    'col' => [
+                        'rid' => 1,
+                    ],
+                ]);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
             if (count($userRoles) < 2) {
                 throw new Core\ApiException('Cannot delete Administrator role if only one exists', 6, $this->id, 400);
             }
         }
 
-        return new Core\DataContainer($userRoleMapper->delete($userRole), 'boolean');
+        try {
+            $userRoleMapper->delete($userRole);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return new Core\DataContainer(true, 'boolean');
     }
 }

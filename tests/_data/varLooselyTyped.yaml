@@ -11,15 +11,15 @@ appid: 2
 ttl: 0
 
 security:
-  processor: validate_token_roles
-  id: test var_loosely_typed security
-  roles:
-    - Consumer
+    processor: validate_token_roles
+    id: test var_loosely_typed security
+    roles:
+        - Consumer
 
 process:
-  processor: var_loosely_typed
-  id: test var_loosely_typed process
-  value:
-    processor: var_get
-    id: test var_loosely_typed value
-    key: value
+    processor: var_loosely_typed
+    id: test var_loosely_typed process
+    value:
+        processor: var_get
+        id: test var_loosely_typed value
+        key: value

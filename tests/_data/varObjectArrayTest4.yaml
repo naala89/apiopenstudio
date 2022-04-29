@@ -1,0 +1,30 @@
+name: Testing object array 4
+
+description: Test creating an object with array of mixed indexed values only. This should pass.
+
+uri: object/array/4
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test object array security
+    roles:
+        - Consumer
+
+process:
+    processor: var_object
+    id: test object array process
+    attributes:
+        -
+            0: field1
+        -
+            5: field2
+        -
+            2: field3
+        -
+            final: field4

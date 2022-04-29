@@ -3,8 +3,7 @@
 /**
  * Class Email.
  *
- * @package    ApiOpenStudio
- * @subpackage Output
+ * @package    ApiOpenStudio\Output
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -109,9 +108,13 @@ class Email extends Output
 
         $to = $this->val('to', true);
         $fromEmail = $this->val('from_email', true);
-        $fromEmail = empty($fromEmail) ? $config->__get(['email', 'from', 'email']) : $fromEmail;
         $fromName = $this->val('from_name', true);
-        $fromName = empty($fromName) ? $config->__get(['email', 'from', 'name']) : $fromName;
+        try {
+            $fromEmail = empty($fromEmail) ? $config->__get(['email', 'from', 'email']) : $fromEmail;
+            $fromName = empty($fromName) ? $config->__get(['email', 'from', 'name']) : $fromName;
+        } catch (Core\ApiException $e) {
+            throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $subject = $this->val('subject', true);
         $message = $this->val('message', true);
         $format = $this->val('format', true);
@@ -120,9 +123,13 @@ class Email extends Output
         $obj = new $class($message, 200, '');
         $message = $obj->getData();
 
-        $transport = (new Swift_SmtpTransport($config->__get(['email', 'host']), 25))
-            ->setUsername($config->__get(['email', 'username']))
-            ->setPassword($config->__get(['email', 'password']));
+        try {
+            $transport = (new Swift_SmtpTransport($config->__get(['email', 'host']), 25))
+                ->setUsername($config->__get(['email', 'username']))
+                ->setPassword($config->__get(['email', 'password']));
+        } catch (Core\ApiException $e) {
+            throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $mailer = new Swift_Mailer($transport);
         $email = (new Swift_Message($subject))
             ->setFrom([$fromEmail => $fromName])

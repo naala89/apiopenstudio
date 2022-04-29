@@ -1,0 +1,29 @@
+name: Testing var_collection numbers
+
+description: Test a good var_collection processor of numbers
+
+uri: var_collection/numbers
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: var collection numbers security
+    roles:
+        - Consumer
+        - Developer
+
+process:
+    processor: var_collection
+    id: var collection numbers collection
+    items:
+        - 1
+        - 2
+        - 9999999999
+        - -1
+        - 0
+        - -3.345987345433624537

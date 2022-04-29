@@ -54,9 +54,12 @@ api:
   url: localhost
   cache: false
   default_format: json
+  wrap_json_in_response_object: true
   core_account: apiopenstudio
   core_application: core
   core_resource_lock: false
+  openapi_version: "3.0.3"
+  openapi_directory: "includes/openapiSchema"
   dir_public: public/
   dir_resources: includes/resources/
   dir_uploads: uploads/

@@ -3,8 +3,7 @@
 /**
  * Trait DetectTypeTrait.
  *
- * @package    ApiOpenStudio
- * @subpackage Core
+ * @package    ApiOpenStudio\Core
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -150,10 +149,7 @@ trait DetectTypeTrait
         }
         libxml_use_internal_errors(true);
         $testXml = simplexml_load_string($var);
-        if ($testXml) {
-            return true;
-        }
-        return false;
+        return $testXml !== false;
     }
 
     /**
@@ -180,6 +176,7 @@ trait DetectTypeTrait
         }
 
         libxml_use_internal_errors(true);
+        libxml_clear_errors();
         $doc = new DOMDocument();
         $doc->loadHTML($var);
         $errors = libxml_get_errors();

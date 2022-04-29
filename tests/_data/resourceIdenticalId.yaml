@@ -11,23 +11,25 @@ appid: 2
 ttl: 0
 
 security:
-  processor: validate_token_roles
-  id: resource identical ids security
-  roles:
-    - Consumer
+    processor: validate_token_roles
+    id: resource identical ids security
+    roles:
+        - Consumer
 
 process:
-  processor: processors
-  id: resource identical ids
+    processor: processors
+    id: resource identical ids
 
 output:
-  - processor: email
-    id: resource identical ids
-    to: john@naala.com.au
-    subject: "test email"
-    format: html
-    message: test message
-  - processor: xml
-    id: resource identical ids xml
-    destination: www.foo.bar
-    method: post
+    -
+        processor: email
+        id: resource identical ids
+        to: john@naala.com.au
+        subject: "test email"
+        format: html
+        message: test message
+    -
+        processor: xml
+        id: resource identical ids xml
+        destination: www.foo.bar
+        method: post

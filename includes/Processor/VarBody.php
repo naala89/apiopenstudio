@@ -3,8 +3,7 @@
 /**
  * Class VarBody.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -17,7 +16,6 @@ namespace ApiOpenStudio\Processor;
 
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
-use ApiOpenStudio\Core\Debug;
 
 /**
  * Class VarBody
@@ -32,10 +30,10 @@ class VarBody extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (Body)',
+        'name' => 'Body',
         'machineName' => 'var_body',
         'description' => 'Fetch the entire body of a post.',
-        'menu' => 'Primitive',
+        'menu' => 'Request',
         'input' => [
             'expected_type' => [
                 // phpcs:ignore

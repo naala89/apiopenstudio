@@ -3,8 +3,7 @@
 /**
  * Class VarRand.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -30,7 +29,7 @@ class VarRand extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (Rand)',
+        'name' => 'Rand',
         'machineName' => 'var_rand',
         // phpcs:ignore
         'description' => 'A random variable. It produces a random variable of any specified length or mix of character types.',

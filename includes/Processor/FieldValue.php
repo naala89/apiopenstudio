@@ -3,8 +3,7 @@
 /**
  * Class FieldValue.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -32,7 +31,7 @@ class FieldValue extends Core\ProcessorEntity
     protected array $details = [
         'name' => 'Field value',
         'machineName' => 'field_value',
-        'description' => 'Returns the key oy value from a field.',
+        'description' => 'Returns the key or value from a field.',
         'menu' => 'Data operation',
         'input' => [
             'field' => [

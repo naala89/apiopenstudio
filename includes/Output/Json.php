@@ -3,8 +3,7 @@
 /**
  * Class Json.
  *
- * @package    ApiOpenStudio
- * @subpackage Output
+ * @package    ApiOpenStudio\Output
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -86,14 +85,25 @@ class Json extends Output
      */
     protected function castData(): void
     {
-        $currentType = $this->data->getType();
-        $method = 'from' . ucfirst(strtolower($currentType)) . 'ToJson';
-
         try {
-            $this->data->setData($this->$method($this->data->getData()));
+            $data = $this->data->getData();
+            $currentType = $this->data->getType();
+            $method = 'from' . ucfirst(strtolower($currentType)) . 'ToJson';
+            $data = $this->$method($data);
+            try {
+                if (
+                    $this->settings->__get(['api', 'wrap_json_in_response_object'])
+                    && (!is_array($this->data->getData()) || array_keys($this->data->getData()) != ['result', 'data'])
+                ) {
+                    $data = json_encode(['result' => 'ok', 'data' => json_decode($data)]);
+                }
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
+            $this->data->setData($data);
             $this->data->setType('json');
         } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 6, $this->id, 400);
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
     }
 }

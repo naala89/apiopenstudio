@@ -3,8 +3,7 @@
 /**
  * Class Config.
  *
- * @package    ApiOpenStudio
- * @subpackage Core
+ * @package    ApiOpenStudio\Core
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -58,7 +57,7 @@ class Config
             if (array_key_exists($key, $this->conf)) {
                 return $this->conf[$key];
             }
-            throw new ApiException("Invalid configuration option: $key");
+            throw new ApiException("Invalid configuration option: $key", 8, -1, 500);
         }
 
         if (is_array($key)) {
@@ -68,14 +67,14 @@ class Config
                     print_r($key, true);
                     print_r($index, true);
                     print_r($val, true);
-                    throw new ApiException("Invalid configuration option: $index");
+                    throw new ApiException("Invalid configuration option: $index", 8, -1, 500);
                 }
                 $val = $val[$index];
             }
             return $val;
         }
 
-        throw new ApiException('Invalid configuration key');
+        throw new ApiException('Invalid configuration key', 8, -1, 500);
     }
 
     /**

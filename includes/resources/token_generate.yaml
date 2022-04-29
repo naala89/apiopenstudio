@@ -1,6 +1,6 @@
 # Generate a JWT token for a valid user.
 #
-# @package   ApiOpenStudio
+# @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
 #            If a copy of the license was not distributed with this file,
 #            You can obtain one at https://www.apiopenstudio.com/license/.
@@ -21,13 +21,13 @@ appid: 1
 ttl: 0
 
 process:
-  processor: generate_token
-  id: generate_token_process
-  username:
-    processor: var_post
-    id: generate_token_username
-    key: username
-  password:
-    processor: var_post
-    id: generate_token_password
-    key: password
+    processor: generate_token
+    id: generate_token_process
+    username:
+        processor: var_post
+        id: generate_token_username
+        key: username
+    password:
+        processor: var_post
+        id: generate_token_password
+        key: password

@@ -6,6 +6,7 @@ modules:
         url: "https://%API_DOMAIN%"
         depends: PhpBrowser
     - Filesystem
+    - Asserts
 env:
   local:
     modules:

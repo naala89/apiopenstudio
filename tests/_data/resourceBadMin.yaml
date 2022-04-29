@@ -11,27 +11,29 @@ appid: 2
 ttl: 0
 
 security:
-  processor: validate_token_roles
-  id: test resource with bad min security
-  roles:
-    - Consumer
+    processor: validate_token_roles
+    id: test resource with bad min security
+    roles:
+        - Consumer
 
 process:
-  processor: concatenate
-  id: test resource with bad min process
-  sources:
-    - zsdkfjh
+    processor: concatenate
+    id: test resource with bad min process
+    items:
+        - zsdkfjh
 
 output:
-  - processor: email
-    id: test resource with bad min email
-    to: john@naala.com.au
-    subject: "test email"
-    format: html
-  - processor: xml
-    id: test resource with bad min xml
-    destination:
-      - www.foo.bar
-      - www.foo.bar
-      - www.foo.bar
-    method: post
+    -
+        processor: email
+        id: test resource with bad min email
+        to: john@naala.com.au
+        subject: "test email"
+        format: html
+    -
+        processor: xml
+        id: test resource with bad min xml
+        destination:
+            - www.foo.bar
+            - www.foo.bar
+            - www.foo.bar
+        method: post

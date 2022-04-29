@@ -3,8 +3,7 @@
 /**
  * Class VarUri.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -30,11 +29,11 @@ class VarUri extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (URI)',
+        'name' => 'Uri',
         'machineName' => 'var_uri',
         // phpcs:ignore
         'description' => 'A url-decoded value from the request URI. It fetches the value of a particular param in the URI, based on the index value.',
-        'menu' => 'Primitive',
+        'menu' => 'Request',
         'input' => [
             'index' => [
                 'description' => 'The index of the variable, starting with 0 after the client ID, request path.',

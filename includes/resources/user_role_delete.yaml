@@ -1,6 +1,6 @@
 # User Role delete resource.
 #
-# @package   Apiopenstudio
+# @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
 #            If a copy of the license was not distributed with this file,
 #            You can obtain one at https://www.apiopenstudio.com/license/.
@@ -21,18 +21,18 @@ appid: 1
 ttl: 0
 
 security:
-  id: user_role_delete_security
-  processor: validate_token_roles
-  roles:
-    - Administrator
-    - Account manager
-    - Application manager
+    id: user_role_delete_security
+    processor: validate_token_roles
+    roles:
+        - Administrator
+        - Account manager
+        - Application manager
 
 process:
-  processor: user_role_delete
-  id: user_role_delete_process
-  urid:
-    processor: var_uri
-    id: user_role_delete_urid
-    expected_type: integer
-    index: 0
+    processor: user_role_delete
+    id: user_role_delete_process
+    urid:
+        processor: var_uri
+        id: user_role_delete_urid
+        expected_type: integer
+        index: 0

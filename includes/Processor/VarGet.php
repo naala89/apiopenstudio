@@ -3,8 +3,7 @@
 /**
  * Class VarGet.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -30,10 +29,10 @@ class VarGet extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (Get)',
+        'name' => 'Get',
         'machineName' => 'var_get',
-        'description' => 'A "get" variable. It fetches a urldecoded variable from the get request.',
-        'menu' => 'Primitive',
+        'description' => 'A "get" variable. It fetches a url-decoded variable from the get request.',
+        'menu' => 'Request',
         'input' => [
             'key' => [
                 'description' => 'The key or name of the GET variable.',
@@ -99,7 +98,7 @@ class VarGet extends Core\ProcessorEntity
                 }
                 $data = $vars[$key];
             } else {
-                $data = urldecode($vars[$key]);
+                $data = $vars[$key];
             }
         } else {
             $data = '';

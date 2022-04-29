@@ -11,15 +11,15 @@ appid: 2
 ttl: 0
 
 security:
-  id: test var_uri security
-  processor: validate_token_roles
-  roles:
-    - Consumer
+    id: test var_uri security
+    processor: validate_token_roles
+    roles:
+        - Consumer
 
 process:
-  processor: var_str
-  id: test var_uri process
-  value:
-    processor: var_get
-    id: test var_uri string value
-    key: value
+    processor: var_str
+    id: test var_uri process
+    value:
+        processor: var_get
+        id: test var_uri string value
+        key: value

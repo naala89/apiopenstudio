@@ -3,8 +3,7 @@
 /**
  * Class RoleRead.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -17,6 +16,8 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db\RoleMapper;
 
 /**
@@ -49,7 +50,7 @@ class RoleRead extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => ['integer', 'text'],
+                'limitTypes' => ['integer'],
                 'limitValues' => [],
                 'default' => '',
             ],
@@ -87,11 +88,11 @@ class RoleRead extends Core\ProcessorEntity
      * RoleRead constructor.
      *
      * @param mixed $meta Output meta.
-     * @param mixed $request Request object.
+     * @param Request $request Request object.
      * @param ADOConnection $db DB object.
      * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->roleMapper = new RoleMapper($db, $logger);
@@ -113,7 +114,7 @@ class RoleRead extends Core\ProcessorEntity
         $orderBy = $this->val('order_by', true);
         $direction = $this->val('direction', true);
 
-        if ($rid != 'all') {
+        if (!empty($rid)) {
             return $this->findByRid($rid);
         }
 
@@ -132,7 +133,11 @@ class RoleRead extends Core\ProcessorEntity
      */
     private function findByRid(int $rid): Core\DataContainer
     {
-        $role = $this->roleMapper->findByRid($rid);
+        try {
+            $role = $this->roleMapper->findByRid($rid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($role->getRid())) {
             throw new Core\ApiException("Unknown role: $rid", 6, $this->id, 400);
         }
@@ -150,7 +155,11 @@ class RoleRead extends Core\ProcessorEntity
      */
     private function findAll(array $params): Core\DataContainer
     {
-        $result = $this->roleMapper->findAll($params);
+        try {
+            $result = $this->roleMapper->findAll($params);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $roles = [];
         foreach ($result as $item) {
             $roles[] = $item->dump();

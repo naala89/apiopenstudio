@@ -1,6 +1,6 @@
 # Account create resource.
 #
-# @package   Apiopenstudio
+# @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
 #            If a copy of the license was not distributed with this file,
 #            You can obtain one at https://www.apiopenstudio.com/license/.
@@ -21,16 +21,16 @@ appid: 1
 ttl: 0
 
 security:
-  id: create_account_security
-  processor: validate_token_roles
-  roles:
-    - Administrator
+    id: create_account_security
+    processor: validate_token_roles
+    roles:
+        - Administrator
 
 process:
-  processor: account_create
-  id: account_create_process
-  name:
-    processor: var_post
-    id: account_create_name
-    expected_type: text
-    key: name
+    processor: account_create
+    id: account_create_process
+    name:
+        processor: var_post
+        id: account_create_name
+        expected_type: text
+        key: name

@@ -3,8 +3,7 @@
 /**
  * Trait ConvertToXmlTrait.
  *
- * @package    ApiOpenStudio
- * @subpackage Core
+ * @package    ApiOpenStudio\Core
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -15,6 +14,7 @@
 
 namespace ApiOpenStudio\Core;
 
+use Exception;
 use SimpleXMLElement;
 
 /**
@@ -29,11 +29,11 @@ trait ConvertToXmlTrait
      *
      * @param $data
      *
-     * @return null
+     * @return string
      */
-    public function fromEmptyToXml($data)
+    public function fromEmptyToXml($data): string
     {
-        return null;
+        return $this->wrapDataXmlFormat('');
     }
 
     /**
@@ -42,6 +42,8 @@ trait ConvertToXmlTrait
      * @param $data
      *
      * @return string
+     *
+     * @throws ApiException
      */
     public function fromBooleanToXml($data): string
     {
@@ -58,6 +60,8 @@ trait ConvertToXmlTrait
      * @param $data
      *
      * @return string
+     *
+     * @throws ApiException
      */
     public function fromIntegerToXml($data): string
     {
@@ -74,6 +78,8 @@ trait ConvertToXmlTrait
      * @param $data
      *
      * @return string
+     *
+     * @throws ApiException
      */
     public function fromFloatToXml($data): string
     {
@@ -90,6 +96,8 @@ trait ConvertToXmlTrait
      * @param $data
      *
      * @return string
+     *
+     * @throws ApiException
      */
     public function fromTextToXml($data): string
     {
@@ -190,8 +198,8 @@ trait ConvertToXmlTrait
     {
         try {
             $xml = new SimpleXMLElement('<apiOpenStudioWrapper/>');
-        } catch (\Exception $e) {
-            throw new ApiException($e->getMessage());
+        } catch (Exception $e) {
+            throw new ApiException($e->getMessage(), 0, -1, 500);
         }
         return $xml;
     }

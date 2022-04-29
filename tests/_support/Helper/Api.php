@@ -113,8 +113,8 @@ class Api extends Module
             \GuzzleHttp\json_encode(\GuzzleHttp\json_decode($response)),
             true
         );
-        if (isset($arr['token'])) {
-            $this->token = $arr['token'];
+        if (isset($arr['data']['token'])) {
+            $this->token = $arr['data']['token'];
         }
     }
 
@@ -145,9 +145,12 @@ class Api extends Module
         $this->getModule('REST')->seeResponseCodeIs(200);
         $this->getModule('REST')->seeResponseIsJson();
         $this->getModule('REST')->seeResponseMatchesJsonType([
-            'token' => 'string',
-            'uid' => 'integer',
-            'expires' => 'string',
+            'result' => 'string',
+            'data' => [
+                'token' => 'string',
+                'uid' => 'integer',
+                'expires' => 'string',
+            ],
         ]);
         $this->storeMyToken();
         $this->haveHttpHeader('Authorization', 'Bearer ' . $this->getMyStoredToken());
@@ -237,8 +240,8 @@ class Api extends Module
         );
         $resources = json_decode($this->getModule('REST')->response, true);
         $resid = 0;
-        if (!isset($resources['error'])) {
-            foreach ($resources as $resource) {
+        if (isset($resources['result']) && $resources['result'] == 'ok') {
+            foreach ($resources['data'] as $resource) {
                 if (
                     strtolower($resource['method']) == strtolower($yamlArr['method'])
                     && $resource['uri'] == $yamlArr['uri']
@@ -275,8 +278,8 @@ class Api extends Module
             ]
         );
         $resources = json_decode($this->getModule('REST')->response, true);
-        if (!isset($resources['error'])) {
-            foreach ($resources as $resource) {
+        if ($resources['result'] != 'error') {
+            foreach ($resources['data'] as $resource) {
                 if (
                     strtolower($resource['method']) == strtolower($method)
                     && $resource['uri'] == $uri

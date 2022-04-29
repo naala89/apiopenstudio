@@ -3,8 +3,7 @@
 /**
  * Class VarStoreRead.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -17,6 +16,8 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db\VarStoreMapper;
 
 /**
@@ -42,12 +43,22 @@ class VarStoreRead extends Core\ProcessorEntity
         'name' => 'Var store read',
         'machineName' => 'var_store_read',
         // phpcs:ignore
-        'description' => 'Fetch a single or multiple var store variables. These will be the variables that belong to the application. If the application is core, then all vars are returned.',
-        'menu' => 'Var store',
+        'description' => 'Read a global variable. This is available to all resources within an application group. If the application is core, then all vars are returned.',
+        'menu' => 'Variables',
         'input' => [
             'validate_access' => [
                 // phpcs:ignore
                 'description' => 'If set to true, the calling users roles access will be validated. If set to false, then access is open. By default this is true for security reasons, but to allow consumers to use this in a resource, you will need to set it to false (otherwise access will be denied).',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => true,
+            ],
+            'strict' => [
+                // phpcs:ignore
+                'description' => 'If set to true then return null if var does not exist. If set to false throw exception if var does not exist. Default is strict. Only used in fetch or delete operations.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
@@ -116,11 +127,11 @@ class VarStoreRead extends Core\ProcessorEntity
      * VarStoreRead constructor.
      *
      * @param mixed $meta Output meta.
-     * @param mixed $request Request object.
+     * @param Request $request Request object.
      * @param ADOConnection $db DB object.
      * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->varStoreMapper = new VarStoreMapper($db, $logger);
@@ -144,15 +155,16 @@ class VarStoreRead extends Core\ProcessorEntity
         $keyword = $this->val('keyword', true);
         $orderBy = $this->val('order_by', true);
         $direction = $this->val('direction', true);
+        $strict = $this->val('strict', true);
 
         if ($validateAccess) {
             $vars = $this->fetchWithValidation($vid, $appid, $key, $keyword, $orderBy, $direction);
-            if (empty($vars)) {
+            if (empty($vars) && $strict) {
                 throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
             }
         } else {
             $vars = $this->fetchWithoutValidation($vid, $appid, $key, $keyword, $orderBy, $direction);
-            if (empty($vars)) {
+            if (empty($vars) && $strict) {
                 throw new Core\ApiException('no results found', 6, $this->id, 400);
             }
         }
@@ -187,15 +199,34 @@ class VarStoreRead extends Core\ProcessorEntity
      */
     protected function fetchWithoutValidation($vid, $appid, $key, $keyword, $orderBy, $direction): array
     {
-        $params = [];
         if (!empty($vid)) {
-            $params['filter'][] = ['value' => (int) $vid, 'column' => '`vid`'];
+            try {
+                $result = $this->varStoreMapper->findByVid($vid);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
+            if (empty($result->getVid())) {
+                throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
+            }
+            return [$result];
         }
+        if (!empty($appid) && !empty($key)) {
+            try {
+                $result = $this->varStoreMapper->findByAppIdKey($appid, $key);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
+            if (empty($result->getVid())) {
+                throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
+            }
+            return [$result];
+        }
+        $params = [];
         if (!empty($appid)) {
-            $params['filter'][] = ['value' => (int) $appid, 'column' => 'appid'];
+            $params['filter'][] = ['value' => (int) $appid, 'column' => '`appid`'];
         }
         if (!empty($key)) {
-            $params['filter'][] = ['value' => $key, 'column' => 'key'];
+            $params['filter'][] = ['value' => $key, 'column' => '`key`'];
         }
         if (!empty($keyword)) {
             $params['filter'][] = ['keyword' => "%$keyword%", 'column' => '`key`'];
@@ -207,7 +238,13 @@ class VarStoreRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        return $this->varStoreMapper->findAll($params);
+        try {
+            $result = $this->varStoreMapper->findAll($params);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 
     /**
@@ -232,10 +269,34 @@ class VarStoreRead extends Core\ProcessorEntity
      */
     protected function fetchWithValidation($vid, $appid, $key, $keyword, $orderBy, $direction): array
     {
-        $params = [];
-        if (!empty($vid)) {
-            $params['filter'][] = ['value' => (int) $vid, 'column' => 'vs.vid'];
+        try {
+            $uid = Core\Utilities::getUidFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
+        if (!empty($vid)) {
+            try {
+                $result = $this->varStoreMapper->findByUidVid($uid, $vid);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
+            if (empty($result->getVid())) {
+                throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
+            }
+            return [$result];
+        }
+        if (!empty($appid) && !empty($key)) {
+            try {
+                $result = $this->varStoreMapper->findByUidAppidKey($uid, $appid, $key);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
+            if (empty($result->getVid())) {
+                throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
+            }
+            return [$result];
+        }
+        $params = [];
         if (!empty($appid)) {
             $params['filter'][] = ['value' => (int) $appid, 'column' => 'vs.appid'];
         }
@@ -252,6 +313,12 @@ class VarStoreRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        return $this->varStoreMapper->findByUid(Core\Utilities::getUidFromToken(), $params);
+        try {
+            $result = $this->varStoreMapper->findByUid($uid, $params);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 }

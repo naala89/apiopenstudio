@@ -3,8 +3,7 @@
 /**
  * Class Output.
  *
- * @package    ApiOpenStudio
- * @subpackage Output
+ * @package    ApiOpenStudio\Output
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -16,8 +15,6 @@
 namespace ApiOpenStudio\Output;
 
 use ApiOpenStudio\Core;
-use ApiOpenStudio\Config;
-use phpDocumentor\Reflection\Types\Boolean;
 
 /**
  * Class Output
@@ -67,7 +64,7 @@ abstract class Output extends Core\ProcessorEntity
      * @param mixed $data
      *   Output data.
      * @param integer $status
-     *   Output status.
+     *   HTTP output status.
      * @param Core\MonologWrapper $logger
      *   Logger.
      * @param mixed|null $meta
@@ -76,9 +73,9 @@ abstract class Output extends Core\ProcessorEntity
     public function __construct($data, int $status, Core\MonologWrapper $logger, $meta = null)
     {
         $this->settings = new Core\Config();
+        $this->data = $data;
         $this->status = $status;
         $this->logger = $logger;
-        $this->data = $data;
         $this->meta = $meta;
     }
 

@@ -3,8 +3,7 @@
 /**
  * Class ResourceExport.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -16,10 +15,14 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\Request;
+use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
-use ApiOpenStudio\Db\UserRoleMapper;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -27,15 +30,8 @@ use Symfony\Component\Yaml\Yaml;
  *
  * Processor class to export a resource.
  */
-class ResourceExport extends Core\ProcessorEntity
+class ResourceExport extends ProcessorEntity
 {
-    /**
-     * User role mapper class.
-     *
-     * @var UserRoleMapper
-     */
-    private UserRoleMapper $userRoleMapper;
-
     /**
      * Resource mapper class.
      *
@@ -79,25 +75,24 @@ class ResourceExport extends Core\ProcessorEntity
      * ResourceExport constructor.
      *
      * @param mixed $meta Output meta.
-     * @param mixed $request Request object.
+     * @param Request $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->userRoleMapper = new UserRoleMapper($db, $logger);
         $this->resourceMapper = new ResourceMapper($db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -105,13 +100,17 @@ class ResourceExport extends Core\ProcessorEntity
         $format = $this->val('format', true);
 
         // Validate resource exists.
-        $resource = $this->resourceMapper->findByResid($resid);
+        try {
+            $resource = $this->resourceMapper->findByResid($resid);
+            $userRoles = Utilities::getRolesFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($resource->getResid())) {
-            throw new Core\ApiException('Invalid resource', 6, $this->id, 400);
+            throw new ApiException('Invalid resource', 6, $this->id, 400);
         }
 
         // Validate user has Developer access to its application.
-        $userRoles = Core\Utilities::getRolesFromToken();
         $userHasAccess = false;
         foreach ($userRoles as $userRole) {
             if ($userRole['role_name'] == 'Developer' && $userRole['appid'] == $resource->getAppId()) {
@@ -119,47 +118,74 @@ class ResourceExport extends Core\ProcessorEntity
             }
         }
         if (!$userHasAccess) {
-            throw new Core\ApiException('Permission denied', 6, $this->id, 400);
+            throw new ApiException('Permission denied', 6, $this->id, 400);
         }
 
-        switch ($format) {
-            case 'yaml':
-                header('Content-Disposition: attachment; filename="resource.twig"');
-                return new Core\DataContainer($this->getYaml($resource), 'text');
-                break;
-            case 'json':
-                header('Content-Disposition: attachment; filename="resource.json"');
-                return new Core\DataContainer($this->getJson($resource), 'json');
-                break;
-            default:
-                throw new Core\ApiException("Invalid format: $format", 6, $this->id, 400);
-                break;
+        $resourceExport = $this->getExportArray($resource);
+
+        try {
+            switch ($format) {
+                case 'yaml':
+                    header('Content-Disposition: attachment; filename="resource.twig"');
+                    $result = new  DataContainer($this->getYaml($resourceExport), 'text');
+                    break;
+                case 'json':
+                    header('Content-Disposition: attachment; filename="resource.json"');
+                    $result = new DataContainer($this->getJson($resourceExport), 'json');
+                    break;
+                default:
+                    throw new ApiException("Invalid format: $format", 6, $this->id, 400);
+            }
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
+
+        return $result;
     }
 
     /**
-     * Create a YAML string from a resource.
+     * Construct an array of the resource for export.
      *
-     * @param Resource $resource The resource.
+     * @param Resource $resource
      *
-     * @return string A YAML string.
+     * @return array
      */
-    private function getYaml(Resource $resource): string
+    protected function getExportArray(Resource $resource): array
     {
-        $obj = $resource->dump();
-        $obj['meta'] = json_decode($resource->getMeta(), true);
-        return  Yaml::dump($obj, Yaml::PARSE_OBJECT);
+        $result = $resource->dump();
+
+        $meta = json_decode($result['meta'], true);
+        unset($result['meta']);
+        foreach ($meta as $key => $definition) {
+            $result[$key] = $definition;
+        }
+
+        unset($result['openapi']);
+
+        return $result;
     }
 
     /**
-     * Create a JSON string from a resource.
+     * Create a YAML string from a resource array.
      *
-     * @param Resource $resource The resource.
+     * @param array $resource The exportable resource array.
      *
      * @return string A YAML string.
      */
-    private function getJson(Resource $resource): string
+    protected function getYaml(array $resource): string
     {
-        return json_encode($resource->dump());
+        return  Yaml::dump($resource, 5000, 4, Yaml::PARSE_OBJECT);
+    }
+
+    /**
+     * Create a JSON string from a resource array.
+     *
+     * @param array $resource The exportable resource array.
+     *
+     * @return string A JSON string.
+     */
+    protected function getJson(array $resource): string
+    {
+        return json_encode($resource, JSON_UNESCAPED_SLASHES);
     }
 }

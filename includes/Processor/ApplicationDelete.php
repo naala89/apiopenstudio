@@ -3,8 +3,7 @@
 /**
  * Class ApplicationDelete.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -16,44 +15,51 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\Request;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\ApplicationMapper;
+use ApiOpenStudio\Db\ResourceMapper;
+use ApiOpenStudio\Db\UserMapper;
+use ApiOpenStudio\Db\UserRoleMapper;
 
 /**
  * Class ApplicationDelete
  *
  * Processor class to delete an application.
  */
-class ApplicationDelete extends Core\ProcessorEntity
+class ApplicationDelete extends ProcessorEntity
 {
     /**
      * User role mapper class.
      *
-     * @var Db\UserRoleMapper
+     * @var UserRoleMapper
      */
-    protected Db\UserRoleMapper $userRoleMapper;
+    protected UserRoleMapper $userRoleMapper;
 
     /**
      * User mapper class.
      *
-     * @var Db\UserMapper
+     * @var UserMapper
      */
-    protected Db\UserMapper $userMapper;
+    protected UserMapper $userMapper;
 
     /**
      * Application mapper class.
      *
-     * @var Db\ApplicationMapper
+     * @var ApplicationMapper
      */
-    protected Db\ApplicationMapper $applicationMapper;
+    protected ApplicationMapper $applicationMapper;
 
     /**
      * Resource mapper class.
      *
-     * @var Db\ResourceMapper
+     * @var ResourceMapper
      */
-    protected Db\ResourceMapper $resourceMapper;
+    protected ResourceMapper $resourceMapper;
 
     /**
      * {@inheritDoc}
@@ -82,68 +88,89 @@ class ApplicationDelete extends Core\ProcessorEntity
      * ApplicationDelete constructor.
      *
      * @param mixed $meta Output meta.
-     * @param mixed $request Request object.
+     * @param Request $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->userRoleMapper = new Db\UserRoleMapper($this->db, $logger);
-        $this->userMapper = new Db\UserMapper($this->db, $logger);
-        $this->applicationMapper = new Db\ApplicationMapper($this->db, $logger);
-        $this->resourceMapper = new Db\ResourceMapper($this->db, $logger);
+        $this->userRoleMapper = new UserRoleMapper($this->db, $logger);
+        $this->userMapper = new UserMapper($this->db, $logger);
+        $this->applicationMapper = new ApplicationMapper($this->db, $logger);
+        $this->resourceMapper = new ResourceMapper($this->db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
-        $uid = Core\Utilities::getUidFromToken();
+        try {
+            $uid = Utilities::getUidFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $appid = $this->val('applicationId', true);
-        $application = $this->applicationMapper->findByAppid($appid);
+
+        try {
+            $application = $this->applicationMapper->findByAppid($appid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        if (empty($application->getAppid())) {
+            throw new ApiException("Invalid appid: $appid", 6, $this->id, 400);
+        }
+
         $accid = $application->getAccid();
         if (
             !$this->userRoleMapper->hasRole($uid, 'Administrator')
             && !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')
         ) {
-            throw new ApiException("Permission denied.", 6, $this->id, 417);
-        }
-        if (empty($application->getAppid())) {
-            throw new ApiException(
-                "Delete application, invalid appid: $appid",
-                6,
-                $this->id,
-                417
-            );
+            throw new ApiException("permission denied", 4, $this->id, 403);
         }
 
-        $resources = $this->resourceMapper->findByAppId($appid);
+        try {
+            $resources = $this->resourceMapper->findByAppId($appid);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (!empty($resources)) {
             throw new ApiException(
-                "Cannot delete application, resources are assigned to this application: $appid",
+                "cannot delete application, resources are assigned to this application: $appid",
                 6,
                 $this->id,
-                417
-            );
-        }
-        $userRoles = $this->userRoleMapper->findByFilter(['col' => ['appid' => $appid]]);
-        if (!empty($userRoles)) {
-            throw new ApiException(
-                "Cannot delete application, users are assigned to this application: $appid",
-                6,
-                $this->id,
-                417
+                400
             );
         }
 
-        return new Core\DataContainer($this->applicationMapper->delete($application), 'boolean');
+        try {
+            $userRoles = $this->userRoleMapper->findByFilter(['col' => ['appid' => $appid]]);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        if (!empty($userRoles)) {
+            throw new ApiException(
+                "cannot delete application, users are assigned to this application: $appid",
+                6,
+                $this->id,
+                400
+            );
+        }
+
+        try {
+            $result = $this->applicationMapper->delete($application);
+            $result = new DataContainer($result, 'boolean');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 }

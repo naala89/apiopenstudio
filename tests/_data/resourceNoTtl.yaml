@@ -9,23 +9,25 @@ appid: 2
 method: get
 
 security:
-  id: test bad resource no ttl security
-  processor: validate_token_roles
-  roles:
-    - Consumer
+    id: test bad resource no ttl security
+    processor: validate_token_roles
+    roles:
+        - Consumer
 
 process:
-  processor: processors
-  id: test bad resource no ttl process
-  machine_name: all
+    processor: processors
+    id: test bad resource no ttl process
+    machine_name: all
 
 output:
-  - response
-  - processor: email
-    to: john@naala.com.au
-    subject: "test email"
-    format: html
-  - processor: xml
-    destination: www.foo.bar
-    method: post
+    - response
+    -
+        processor: email
+        to: john@naala.com.au
+        subject: "test email"
+        format: html
+    -
+        processor: xml
+        destination: www.foo.bar
+        method: post
 

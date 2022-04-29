@@ -3,8 +3,7 @@
 /**
  * Class VarPost.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -30,10 +29,10 @@ class VarPost extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (Post)',
+        'name' => 'Post',
         'machineName' => 'var_post',
         'description' => 'A "post" variable. It fetches a variable from the post request.',
-        'menu' => 'Primitive',
+        'menu' => 'Request',
         'input' => [
             'key' => [
                 'description' => 'The key or name of the POST variable.',

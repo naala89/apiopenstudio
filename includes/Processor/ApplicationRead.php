@@ -3,8 +3,7 @@
 /**
  * Class ApplicationRead.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -16,36 +15,44 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\Request;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\ApplicationMapper;
+use ApiOpenStudio\Db\UserMapper;
+use ApiOpenStudio\Db\UserRoleMapper;
+use stdClass;
 
 /**
  * Class ApplicationRead
  *
  * Processor class to fetch an application.
  */
-class ApplicationRead extends Core\ProcessorEntity
+class ApplicationRead extends ProcessorEntity
 {
     /**
      * Application mapper class.
      *
-     * @var Db\ApplicationMapper
+     * @var ApplicationMapper
      */
-    protected Db\ApplicationMapper $applicationMapper;
+    protected ApplicationMapper $applicationMapper;
 
     /**
      * User role mapper class.
      *
-     * @var Db\UserRoleMapper
+     * @var UserRoleMapper
      */
-    protected Db\UserRoleMapper $userRoleMapper;
+    protected UserRoleMapper $userRoleMapper;
 
     /**
      * User mapper class.
      *
-     * @var Db\UserMapper
+     * @var UserMapper
      */
-    protected Db\UserMapper $userMapper;
+    protected UserMapper $userMapper;
 
     /**
      * {@inheritDoc}
@@ -58,7 +65,7 @@ class ApplicationRead extends Core\ProcessorEntity
         'description' => 'Fetch a single or multiple applications.',
         'menu' => 'Admin',
         'input' => [
-            'accountId' => [
+            'account_id' => [
                 // phpcs:ignore
                 'description' => 'Account ID to fetch to filter by. NULL or empty will not filter by account.',
                 'cardinality' => [0, 1],
@@ -68,7 +75,7 @@ class ApplicationRead extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => '',
             ],
-            'applicationId' => [
+            'application_id' => [
                 // phpcs:ignore
                 'description' => 'Application ID to filter by. NULL or empty will not filter by application.',
                 'cardinality' => [0, 1],
@@ -87,7 +94,7 @@ class ApplicationRead extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => '',
             ],
-            'orderBy' => [
+            'order_by' => [
                 'description' => 'Order by column.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
@@ -112,34 +119,38 @@ class ApplicationRead extends Core\ProcessorEntity
      * ApplicationRead constructor.
      *
      * @param mixed $meta Output meta.
-     * @param mixed $request Request object.
+     * @param Request $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->applicationMapper = new Db\ApplicationMapper($this->db, $logger);
-        $this->userRoleMapper = new Db\UserRoleMapper($this->db, $logger);
-        $this->userMapper = new Db\UserMapper($this->db, $logger);
+        $this->applicationMapper = new ApplicationMapper($this->db, $logger);
+        $this->userRoleMapper = new UserRoleMapper($this->db, $logger);
+        $this->userMapper = new UserMapper($this->db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
-        $uid = Core\Utilities::getUidFromToken();
-        $accountId = $this->val('accountId', true);
-        $applicationId = $this->val('applicationId', true);
+        try {
+            $uid = Utilities::getUidFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        $accountId = $this->val('account_id', true);
+        $applicationId = $this->val('application_id', true);
         $keyword = $this->val('keyword', true);
-        $orderBy = $this->val('orderBy', true);
+        $orderBy = $this->val('order_by', true);
         $direction = $this->val('direction', true);
 
         // Filter params.
@@ -169,7 +180,11 @@ class ApplicationRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        $applications = $this->applicationMapper->findByUid($uid, $params);
+        try {
+            $applications = $this->applicationMapper->findByUid($uid, $params);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
         $result = [];
         foreach ($applications as $application) {
@@ -178,8 +193,19 @@ class ApplicationRead extends Core\ProcessorEntity
                 'appid' => $application->getAppid(),
                 'name' => $application->getName(),
             ];
+            if (empty($application->getOpenapi())) {
+                $result[$application->getAppid()]['openapi'] = new stdClass();
+            } else {
+                $result[$application->getAppid()]['openapi'] = json_decode($application->getOpenapi());
+            }
         }
 
-        return new Core\DataContainer($result, 'array');
+        try {
+            $result = new DataContainer($result, 'array');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 }

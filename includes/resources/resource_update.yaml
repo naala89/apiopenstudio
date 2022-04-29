@@ -1,6 +1,6 @@
 # Resource update resource.
 #
-# @package   Apiopenstudio
+# @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
 #            If a copy of the license was not distributed with this file,
 #            You can obtain one at https://www.apiopenstudio.com/license/.
@@ -21,129 +21,143 @@ appid: 1
 ttl: 0
 
 security:
-  id: resource_update_security
-  processor: validate_token_roles
-  roles:
-    - Developer
-  validate_account: false
-  validate_application: false
+    id: resource_update_security
+    processor: validate_token_roles
+    roles:
+        - Developer
+    validate_account: false
+    validate_application: false
 
 process:
-  id: resource_update_process
-  processor: resource_update
-  resid:
-    processor: var_uri
-    id: resource_update_resid
-    index: 0
-    nullable: false
-    expected_type: integer
-  name:
-    processor: cast
-    id: resource_update_cast_name
-    data_type: text
-    data:
-      processor: json_path
-      id: resource_update_name
-      data:
-        processor: var_body
-        id: resource_update_body_name
-        expected_type: json
+    id: resource_update_process
+    processor: resource_update
+    resid:
+        processor: var_uri
+        id: resource_update_resid
+        index: 0
         nullable: false
-      expression: '$.name'
-      operation: get
-      remove_wrapping_quotes: true
-      stripslashes: true
-  description:
-    processor: cast
-    id: resource_update_cast_description
-    data_type: text
-    data:
-      processor: json_path
-      id: resource_update_description
-      data:
-        processor: var_body
-        id: resource_update_body_description
-        expected_type: json
-        nullable: false
-      expression: '$.description'
-      operation: get
-      remove_wrapping_quotes: true
-      stripslashes: true
-  appid:
-    processor: cast
-    id: resource_update_cast_appid
-    data_type: integer
-    data:
-      processor: json_path
-      id: resource_update_appid
-      data:
-        processor: var_body
-        id: resource_update_body_appid
-        expected_type: json
-        nullable: false
-      expression: '$.appid'
-      operation: get
-      remove_wrapping_quotes: true
-      stripslashes: true
-  method:
-    processor: cast
-    id: resource_update_cast_method
-    data_type: text
-    data:
-      processor: json_path
-      id: resource_update_method
-      data:
-        processor: var_body
-        id: resource_update_body_method
-        expected_type: json
-        nullable: false
-      expression: '$.method'
-      operation: get
-      remove_wrapping_quotes: true
-      stripslashes: true
-  uri:
-    processor: cast
-    id: resource_update_cast_uri
-    data_type: text
-    data:
-      processor: json_path
-      id: resource_update_uri
-      data:
-        processor: var_body
-        id: resource_update_body_uri
-        expected_type: json
-        nullable: false
-      expression: '$.uri'
-      operation: get
-      remove_wrapping_quotes: true
-      stripslashes: true
-  ttl:
-    processor: cast
-    id: resource_update_cast_ttl
-    data_type: integer
-    data:
-      processor: json_path
-      id: resource_update_ttl
-      operation: get
-      expression: '$.ttl'
-      data:
-        processor: var_body
-        id: resource_update_body_ttl
-        expected_type: json
-        nullable: false
-      remove_wrapping_quotes: true
-      stripslashes: true
-  metadata:
-    processor: cast
-    id: resource_update_cast_metadata
-    data_type: json
-    data:
-      processor: json_path
-      id: resource_update_metadata
-      operation: get
-      expression: '$.metadata'
-      data:
-        processor: var_body
-        id: resource_update_body_metadata
-        expected_type: json
-        nullable: false
+        expected_type: integer
+    name:
+        processor: cast
+        id: resource_update_cast_name
+        data_type: text
+        data:
+            processor: json_path
+            id: resource_update_name
+            data:
+                processor: var_body
+                id: resource_update_body_name
+                expected_type: json
+                nullable: false
+            expression: '$.name'
+            operation: get
+            remove_wrapping_quotes: true
+            stripslashes: true
+    description:
+        processor: cast
+        id: resource_update_cast_description
+        data_type: text
+        data:
+            processor: json_path
+            id: resource_update_description
+            data:
+                processor: var_body
+                id: resource_update_body_description
+                expected_type: json
+                nullable: false
+            expression: '$.description'
+            operation: get
+            remove_wrapping_quotes: true
+            stripslashes: true
+    appid:
+        processor: cast
+        id: resource_update_cast_appid
+        data_type: integer
+        data:
+            processor: json_path
+            id: resource_update_appid
+            data:
+                processor: var_body
+                id: resource_update_body_appid
+                expected_type: json
+                nullable: false
+            expression: '$.appid'
+            operation: get
+            remove_wrapping_quotes: true
+            stripslashes: true
+    method:
+        processor: cast
+        id: resource_update_cast_method
+        data_type: text
+        data:
+            processor: json_path
+            id: resource_update_method
+            data:
+                processor: var_body
+                id: resource_update_body_method
+                expected_type: json
+                nullable: false
+            expression: '$.method'
+            operation: get
+            remove_wrapping_quotes: true
+            stripslashes: true
+    uri:
+        processor: cast
+        id: resource_update_cast_uri
+        data_type: text
+        data:
+            processor: json_path
+            id: resource_update_uri
+            data:
+                processor: var_body
+                id: resource_update_body_uri
+                expected_type: json
+                nullable: false
+            expression: '$.uri'
+            operation: get
+            remove_wrapping_quotes: true
+            stripslashes: true
+    ttl:
+        processor: cast
+        id: resource_update_cast_ttl
+        data_type: integer
+        data:
+            processor: json_path
+            id: resource_update_ttl
+            operation: get
+            expression: '$.ttl'
+            data:
+                processor: var_body
+                id: resource_update_body_ttl
+                expected_type: json
+                nullable: false
+            remove_wrapping_quotes: true
+            stripslashes: true
+    metadata:
+        processor: cast
+        id: resource_update_cast_metadata
+        data_type: json
+        data:
+            processor: json_path
+            id: resource_update_metadata
+            operation: get
+            expression: '$.metadata'
+            data:
+                processor: var_body
+                id: resource_update_body_metadata
+                expected_type: json
+                nullable: false
+    openapi:
+        processor: cast
+        id: resource_update_cast_openapi
+        data_type: json
+        data:
+            processor: json_path
+            id: resource_update_openapi
+            operation: get
+            expression: '$.openapi'
+            data:
+                processor: var_body
+                id: resource_update_body_openapi
+                expected_type: json
+                nullable: false

@@ -1,0 +1,10 @@
+{
+  "title": "3rd party packages",
+  "content": [
+    "introduction.md",
+    "creating-and-maintaining-3rd-party-packages.md",
+    "adding-a-repository-to-apiopenstudio.md",
+    "adding-a-package-to-apiopenstudio.md"
+  ],
+  "tocDepth": 1
+}

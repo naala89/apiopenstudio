@@ -3,8 +3,7 @@
 /**
  * Class ApplicationMapper.
  *
- * @package    ApiOpenStudio
- * @subpackage Db
+ * @package    ApiOpenStudio\Db
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -27,7 +26,7 @@ class ApplicationMapper extends Mapper
     /**
      * Save an Application object.
      *
-     * @param Application $application The Applicationm object.
+     * @param Application $application The Application object.
      *
      * @return boolean Success.
      *
@@ -36,17 +35,19 @@ class ApplicationMapper extends Mapper
     public function save(Application $application): bool
     {
         if ($application->getAppid() == null) {
-            $sql = 'INSERT INTO application (accid, name) VALUES (?, ?)';
+            $sql = 'INSERT INTO application (accid, name, openapi) VALUES (?, ?, ?)';
             $bindParams = [
-            $application->getAccid(),
-            $application->getName(),
+                $application->getAccid(),
+                $application->getName(),
+                $application->getOpenapi(),
             ];
         } else {
-            $sql = 'UPDATE application SET accid = ?, name = ? WHERE appid = ?';
+            $sql = 'UPDATE application SET accid = ?, name = ?, openapi = ? WHERE appid = ?';
             $bindParams = [
-            $application->getAccid(),
-            $application->getName(),
-            $application->getAppid(),
+                $application->getAccid(),
+                $application->getName(),
+                $application->getOpenapi(),
+                $application->getAppid(),
             ];
         }
         return $this->saveDelete($sql, $bindParams);
@@ -171,7 +172,7 @@ class ApplicationMapper extends Mapper
      *
      * @param integer $accid Account ID.
      *
-     * @return array array of mapped Application objects.
+     * @return array[Application] array of mapped Application objects.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
@@ -251,10 +252,10 @@ class ApplicationMapper extends Mapper
     protected function mapArray(array $row): Application
     {
         $application = new Application();
-
-        $application->setAppid(!empty($row['appid']) ? $row['appid'] : 0);
-        $application->setAccid(!empty($row['accid']) ? $row['accid'] : 0);
-        $application->setName(!empty($row['name']) ? $row['name'] : '');
+        $application->setAppid($row['appid'] ?? 0);
+        $application->setAccid($row['accid'] ?? 0);
+        $application->setName($row['name'] ?? '');
+        $application->setOpenapi($row['openapi'] ?? '');
 
         return $application;
     }

@@ -1,0 +1,9 @@
+{
+  "title": "Workflow and documentation",
+  "content": [
+    "workflow-and-openapi.md",
+    "api-first-design.md",
+    "generating-documentation.md"
+  ],
+  "tocDepth": 1
+}

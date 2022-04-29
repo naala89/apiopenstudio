@@ -1,9 +1,9 @@
 Processors
 ==========
 
-All processrs in Api Open Studio are self documenting.
+All processors in Api Open Studio are self documenting.
 
-This is available in the GUI, on the create aresource page on the RHS panel.
+This is available in the GUI, on the create a resource page on the RHS panel.
 
 Example on a [local environment][create_resource]
 -------------------------------------------------

@@ -1,6 +1,6 @@
 # Account delete resource.
 #
-# @package   ApiOpenStudio
+# @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
 #            If a copy of the license was not distributed with this file,
 #            You can obtain one at https://www.apiopenstudio.com/license/.
@@ -21,16 +21,16 @@ appid: 1
 ttl: 0
 
 security:
-  id: delete_account_security
-  processor: validate_token_roles
-  roles:
-    - Administrator
+    id: delete_account_security
+    processor: validate_token_roles
+    roles:
+        - Administrator
 
 process:
-  processor: account_delete
-  id: account_delete_process
-  accid:
-    processor: var_uri
-    id: account_delete_accid
-    expected_type: integer
-    index: 0
+    processor: account_delete
+    id: account_delete_process
+    accid:
+        processor: var_uri
+        id: account_delete_accid
+        expected_type: integer
+        index: 0

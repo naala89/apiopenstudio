@@ -3,8 +3,7 @@
 /**
  * Class VarStr.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -30,7 +29,7 @@ class VarStr extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (String)',
+        'name' => 'String',
         'machineName' => 'var_str',
         'description' => 'A string variable. It validates the input and returns an error if it is not a string.',
         'menu' => 'Primitive',

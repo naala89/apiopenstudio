@@ -3,19 +3,21 @@
   "template": "bookdown/themes",
   "theme": {
     "toc": {
-      "collapsibleFromLevel": 1
+      "collapsibleFromLevel": 2
     }
   },
   "content": [
-    "contributing/bookdown.json",
     "error-responses.md",
-    "testing/bookdown.json",
-    "coding-standards.md",
+    "resources.md",
+    "logic/bookdown.json",
     "configuring-debug.md",
+    "3rd-party-packages/bookdown.json",
+    "contributing/bookdown.json",
+    "coding-standards.md",
     "linting.md",
     "processors.md",
     "creating-processors.md",
-    "resources.md",
+    "testing/bookdown.json",
     "xdebug.md"
   ],
   "tocDepth": 1

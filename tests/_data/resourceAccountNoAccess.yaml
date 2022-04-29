@@ -11,12 +11,12 @@ appid: 1
 ttl: 0
 
 security:
-  processor: validate_token_roles
-  id: resource application no developer role security
-  roles:
-    - Consumer
+    processor: validate_token_roles
+    id: resource application no developer role security
+    roles:
+        - Consumer
 
 process:
-  processor: processors
-  id: resource application no developer role process
-  machine_name: all
+    processor: processors
+    id: resource application no developer role process
+    machine_name: all

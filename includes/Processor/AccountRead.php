@@ -3,8 +3,7 @@
 /**
  * Class AccountRead.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -16,22 +15,27 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\Request;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\AccountMapper;
 
 /**
  * Class AccountRead
  *
  * Processor class to fetch an account.
  */
-class AccountRead extends Core\ProcessorEntity
+class AccountRead extends ProcessorEntity
 {
     /**
      * Account mapper class.
      *
-     * @var Db\AccountMapper
+     * @var AccountMapper
      */
-    private Db\AccountMapper $accountMapper;
+    private AccountMapper $accountMapper;
 
     /**
      * {@inheritDoc}
@@ -88,28 +92,32 @@ class AccountRead extends Core\ProcessorEntity
      * AccountRead constructor.
      *
      * @param mixed $meta Output meta.
-     * @param mixed $request Request object.
+     * @param Request $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->accountMapper = new Db\AccountMapper($db, $logger);
+        $this->accountMapper = new AccountMapper($db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
-        $uid = Core\Utilities::getUidFromToken();
+        try {
+            $uid = Utilities::getUidFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $accid = $this->val('accid', true);
         $keyword = $this->val('keyword', true);
         $orderBy = $this->val('order_by', true);
@@ -119,7 +127,7 @@ class AccountRead extends Core\ProcessorEntity
         if (!empty($keyword)) {
             $params['filter'][] = [
                 'keyword' => "%$keyword%",
-                'column' => "a.name",
+                'column' => "name",
             ];
         }
         if (!empty($accid)) {
@@ -135,10 +143,10 @@ class AccountRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        $accounts = $this->accountMapper->findAllForUser($uid, $params);
-
-        if (empty($accounts)) {
-            throw new Core\ApiException('No accounts found', 6, $this->id, 400);
+        try {
+            $accounts = $this->accountMapper->findAllForUser($uid, $params);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
         $result = [];
@@ -146,6 +154,11 @@ class AccountRead extends Core\ProcessorEntity
             $result[] = $account->dump();
         }
 
-        return new Core\DataContainer($result, 'array');
+        try {
+            $result = new DataContainer($result, 'array');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        return $result;
     }
 }

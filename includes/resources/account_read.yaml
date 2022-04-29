@@ -1,6 +1,6 @@
 # Account read resource.
 #
-# @package   ApiOpenStudio
+# @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
 #            If a copy of the license was not distributed with this file,
 #            You can obtain one at https://www.apiopenstudio.com/license/.
@@ -10,7 +10,7 @@
 
 name: Account read
 
-description: Fetch a single or multiple accounts that the user has access to.
+description: Fetch a single or multiple accounts, limited by the users access rights.
 
 uri: account
 
@@ -21,33 +21,33 @@ appid: 1
 ttl: 0
 
 security:
-  id: account_read_security
-  processor: validate_token
+    id: account_read_security
+    processor: validate_token
 
 process:
-  processor: account_read
-  id: account_read_process
-  accid:
-    processor: var_uri
-    id: account_read_accid
-    nullable: true
-    expected_type: integer
-    index: 0
-  keyword:
-    processor: var_get
-    id: account_read_keyword
-    key: keyword
-    expected_type: text
-    nullable: true
-  order_by:
-    processor: var_get
-    id: account_read_order_by
-    key: order_by
-    expected_type: text
-    nullable: true
-  direction:
-    processor: var_get
-    id: account_read_direction
-    key: direction
-    expected_type: text
-    nullable: true
+    processor: account_read
+    id: account_read_process
+    accid:
+        processor: var_get
+        id: account_read_accid
+        key: accid
+        expected_type: integer
+        nullable: true
+    keyword:
+        processor: var_get
+        id: account_read_keyword
+        key: keyword
+        expected_type: text
+        nullable: true
+    order_by:
+        processor: var_get
+        id: account_read_order_by
+        key: order_by
+        expected_type: text
+        nullable: true
+    direction:
+        processor: var_get
+        id: account_read_direction
+        key: direction
+        expected_type: text
+        nullable: true

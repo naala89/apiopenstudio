@@ -1,6 +1,6 @@
 # Role read resource.
 #
-# @package   Apiopenstudio
+# @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
 #            If a copy of the license was not distributed with this file,
 #            You can obtain one at https://www.apiopenstudio.com/license/.
@@ -21,35 +21,37 @@ appid: 1
 ttl: 0
 
 security:
-  id: role_read_security
-  processor: validate_token_roles
-  roles:
-    - Administrator
-    - Account manager
-    - Application manager
-    - Developer
-  validate_account: false
-  validate_application: false
+    id: role_read_security
+    processor: validate_token_roles
+    roles:
+        - Administrator
+        - Account manager
+        - Application manager
+        - Developer
+    validate_account: false
+    validate_application: false
 
 process:
-  processor: role_read
-  id: role_read_process
-  rid:
-    processor: var_uri
-    id: role_read_accid
-    index: 0
-  keyword:
-    processor: var_get
-    id: role_read_keyword
-    key: keyword
-    nullable: true
-  order_by:
-    processor: var_get
-    id: role_read_order_by
-    key: order_by
-    nullable: true
-  direction:
-    processor: var_get
-    id: role_read_direction
-    key: direction
-    nullable: true
+    processor: role_read
+    id: role_read_process
+    rid:
+        processor: var_get
+        id: role_read_rid
+        key: rid
+        expected_type: integer
+        nullable: true
+    keyword:
+        processor: var_get
+        id: role_read_keyword
+        key: keyword
+        nullable: true
+    order_by:
+        processor: var_get
+        id: role_read_order_by
+        key: order_by
+        nullable: true
+    direction:
+        processor: var_get
+        id: role_read_direction
+        key: direction
+        nullable: true

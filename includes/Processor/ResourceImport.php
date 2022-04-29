@@ -3,8 +3,7 @@
 /**
  * Class ResourceImport.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -16,16 +15,20 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\Request;
+use ApiOpenStudio\Core\ResourceValidator;
+use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\AccountMapper;
+use ApiOpenStudio\Db\Application;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
-use ReflectionException;
 use Symfony\Component\Yaml\Exception\ParseException;
-use ApiOpenStudio\Db\UserRoleMapper;
-use ApiOpenStudio\Core\ResourceValidator;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -33,7 +36,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * Processor class to import a resource
  */
-class ResourceImport extends Core\ProcessorEntity
+class ResourceImport extends ProcessorEntity
 {
     /**
      * Required keys in a resource yaml file.
@@ -50,18 +53,18 @@ class ResourceImport extends Core\ProcessorEntity
     ];
 
     /**
-     * Config object.
+     * Account mapper class.
+     *
+     * @var AccountMapper
+     */
+    private AccountMapper $accountMapper;
+
+    /**
+     * Config class.
      *
      * @var Config
      */
     private Config $settings;
-
-    /**
-     * User role mapper class.
-     *
-     * @var UserRoleMapper
-     */
-    private UserRoleMapper $userRoleMapper;
 
     /**
      * Resource mapper class.
@@ -69,13 +72,6 @@ class ResourceImport extends Core\ProcessorEntity
      * @var ResourceMapper
      */
     private ResourceMapper $resourceMapper;
-
-    /**
-     * Account mapper class.
-     *
-     * @var AccountMapper
-     */
-    private AccountMapper $accountMapper;
 
     /**
      * Application mapper class.
@@ -118,15 +114,14 @@ class ResourceImport extends Core\ProcessorEntity
      * ResourceImport constructor.
      *
      * @param mixed $meta Output meta.
-     * @param mixed $request Request object.
+     * @param Request $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Config();
-        $this->userRoleMapper = new UserRoleMapper($db, $logger);
         $this->accountMapper = new AccountMapper($db, $logger);
         $this->applicationMapper = new ApplicationMapper($db, $logger);
         $this->resourceMapper = new ResourceMapper($db, $logger);
@@ -136,45 +131,152 @@ class ResourceImport extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
-        $uid = Core\Utilities::getUidFromToken();
-        $roles = Core\Utilities::getRolesFromToken();
+        try {
+            $uid = Utilities::getUidFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $resource = $this->val('resource');
 
-        // Only developer role permitted to upload resource.
-        $permitted = false;
-        foreach ($roles as $role) {
-            if ($role['role_name'] == 'Developer') {
-                $permitted = true;
-            }
+        // Extract the file contents.
+        $fileContents = $resource->getType() == 'file' ? file_get_contents($resource->getData()) : $resource->getData();
+        $resource = $this->extractNewResource($fileContents);
+        $this->logger->debug('api', 'Decoded new resource: ' . print_r($resource, true));
+
+        $this->validateImportPermissions($uid, $resource);
+        $this->validateNewResource($resource);
+
+        // Validate the metadata.
+        try {
+            $this->validator->validate($resource['meta']);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
-        if (!$permitted) {
-            throw new Core\ApiException(
-                'unauthorized for this call',
+
+        // Create the final Resource object for saving into the DB.
+        $resourceObj = new Resource(
+            null,
+            $resource['appid'],
+            $resource['name'],
+            $resource['description'],
+            $resource['method'],
+            $resource['uri'],
+            json_encode($resource['meta'], JSON_UNESCAPED_SLASHES),
+            '',
+            $resource['ttl']
+        );
+
+        // OpenApi
+        if (!empty($resource['openapi'])) {
+            $resourceObj->setOpenapi(json_encode($resource['openapi'], true));
+        } else {
+            // Generate default OpenApi fragment.
+            $settings = new Config();
+            $openApiPathClassName = Utilities::getOpenApiPathClassPath($settings);
+            $openApiPathClass = new $openApiPathClassName();
+
+            $openApiPathClass->setDefault($resourceObj);
+            $resourceObj->setOpenapi($openApiPathClass->export());
+        }
+
+        try {
+            $result = $this->resourceMapper->save($resourceObj);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        if (!$result) {
+            return new DataContainer(false, 'boolean');
+        }
+
+        $resourceObj = $this->resourceMapper->findByAppIdMethodUri(
+            $resourceObj->getAppId(),
+            $resourceObj->getMethod(),
+            $resourceObj->getUri()
+        );
+        $resource = $resourceObj->dump();
+        $resource['meta'] = json_decode($resource['meta'], true);
+        $resource['openapi'] = json_decode($resource['openapi'], true);
+
+        try {
+            $result = new DataContainer($resource, 'array');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
+    }
+
+    /**
+     * Validate user permissions to import a resource.
+     *
+     * @param int $uid
+     * @param array $resource
+     *
+     * @throws ApiException
+     */
+    protected function validateImportPermissions(int $uid, array $resource)
+    {
+        if (!isset($resource['appid'])) {
+            throw new ApiException(
+                'invalid resource, missing appid',
                 4,
                 $this->id,
                 401
             );
         }
+        try {
+            $roles = Utilities::getRolesFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        // Only developer role permitted to upload resource.
+        $permitted = false;
+        foreach ($roles as $role) {
+            if ($role['role_name'] == 'Developer' && $role['appid'] == $resource['appid']) {
+                $permitted = true;
+            }
+        }
+        if (!$permitted) {
+            $this->logger->error('api', "Unauthorised resource import. uid: $uid, appid: " . $resource['appid']);
+            throw new ApiException(
+                "Unauthorised: you do not have permissions for this application",
+                4,
+                $this->id,
+                400
+            );
+        }
+    }
 
-        // Validate the YAML/JSON.
-        $resource = $resource->getType() == 'file' ? file_get_contents($resource->getData()) : $resource->getData();
-        if ($value = json_decode($resource, true)) {
-            $resource = $value;
-        } else {
+    /**
+     * Extract the input YAML or JSON into an array.
+     *
+     * @param string $string
+     *
+     * @return array
+     *
+     * @throws ApiException
+     */
+    protected function extractNewResource(string $string): array
+    {
+        // attempt string extraction as JSON.
+        $resource = json_decode($string, true);
+
+        // attempt string extraction as YAML.
+        if ($resource === null) {
+            $message = 'unable to parse input as JSON';
             try {
-                $value = Yaml::parse($resource);
-                $resource = $value;
+                $resource = Yaml::parse($string);
             } catch (ParseException $exception) {
-                $message = 'Unable to parse the YAML string: ' . $exception->getMessage();
-                throw new Core\ApiException(
+                $message .= '. Unable to parse the YAML string: ' . $exception->getMessage();
+                throw new ApiException(
                     $message,
                     6,
                     $this->id,
@@ -183,64 +285,60 @@ class ResourceImport extends Core\ProcessorEntity
             }
         }
 
-        $this->logger->debug('api', 'Decoded new resource: ' . print_r($resource, true));
+        // Merge the sections into final metadata.
+        $resource['meta'] = [];
+        if (isset($resource['security'])) {
+            $resource['meta'] = array_merge($resource['meta'], ['security' => $resource['security']]);
+            unset($resource['security']);
+        }
+        if (isset($resource['process'])) {
+            $resource['meta'] = array_merge($resource['meta'], ['process' => $resource['process']]);
+            unset($resource['process']);
+        }
+        if (isset($resource['output'])) {
+            $resource['meta'] = array_merge($resource['meta'], ['output' => $resource['output']]);
+            unset($resource['output']);
+        }
 
+        return $resource;
+    }
+
+    /**
+     * Validate the new resource array.
+     *
+     * @param array $resource
+     *
+     * @throws ApiException
+     */
+    protected function validateNewResource(array $resource)
+    {
         // Validate required keys in the imported file.
         foreach ($this->requiredKeys as $requiredKey) {
             if (!isset($resource[$requiredKey])) {
                 $this->logger->error('api', "Missing $requiredKey in new resource");
-                throw new Core\ApiException("Missing $requiredKey in new resource", 6, $this->id, 400);
+                throw new ApiException("Missing $requiredKey in new resource", 1, $this->id, 400);
             }
         }
+
         // Validate TTL in the imported file.
         if ($resource['ttl'] < 0) {
             $this->logger->error('api', 'Negative ttl in new resource');
-            throw new Core\ApiException("Negative ttl in new resource", 6, $this->id, 400);
-        }
-
-        // Validate user has developer role for the appid.
-        $role = $this->userRoleMapper->findByUidAppidRolename(
-            $uid,
-            $resource['appid'],
-            'Developer'
-        );
-        if (empty($role->getUrid())) {
-            $this->logger->error('api', 'Unauthorised: you do not have permissions for this application');
-            throw new Core\ApiException(
-                "Unauthorised: you do not have permissions for this application",
-                6,
-                $this->id,
-                400
-            );
+            throw new ApiException("Negative ttl in new resource", 1, $this->id, 400);
         }
 
         // Validate the application exists.
         $application = $this->applicationMapper->findByAppid($resource['appid']);
         if (empty($application)) {
             $this->logger->error('api', 'Invalid application: ' . $resource['appid']);
-            throw new Core\ApiException(
+            throw new ApiException(
                 'Invalid application: ' . $resource['appid'],
-                6,
+                1,
                 $this->id,
                 400
             );
         }
 
-        // Validate the account exists.
-        $account = $this->accountMapper->findByAccid($application->getAccid());
-        if (
-            $account->getName() == $this->settings->__get(['api', 'core_account'])
-            && $application->getName() == $this->settings->__get(['api', 'core_application'])
-            && $this->settings->__get(['api', 'core_resource_lock'])
-        ) {
-            $this->logger->error('api', 'Unauthorised: this is the core application');
-            throw new Core\ApiException(
-                'Unauthorised: this is the core application',
-                6,
-                $this->id,
-                400
-            );
-        }
+        $this->validateCoreProtection($application);
 
         // Validate the resource does not already exist.
         $resourceExists = $this->resourceMapper->findByAppIdMethodUri(
@@ -250,88 +348,29 @@ class ResourceImport extends Core\ProcessorEntity
         );
         if (!empty($resourceExists->getresid())) {
             $this->logger->error('api', 'Resource already exists');
-            throw new Core\ApiException('Resource already exists', 6, $this->id, 400);
+            throw new ApiException('Resource already exists', 6, $this->id, 400);
         }
-
-        // Merge the sections into final metadata.
-        $meta = [];
-        if (isset($resource['security'])) {
-            $meta = array_merge($meta, ['security' => $resource['security']]);
-        }
-        if (isset($resource['process'])) {
-            $meta = array_merge($meta, ['process' => $resource['process']]);
-        }
-        if (isset($resource['output'])) {
-            $meta = array_merge($meta, ['output' => $resource['output']]);
-        }
-
-        // Validate the metadata.
-        try {
-            $this->validator->validate($meta);
-        } catch (Core\ApiException | ReflectionException $e) {
-            throw new Core\ApiException($e->getMessage(), 6, $this->id, 400);
-        }
-
-        if (
-            !$this->create(
-                $resource['name'],
-                $resource['description'],
-                $resource['method'],
-                $resource['uri'],
-                $resource['appid'],
-                $resource['ttl'],
-                json_encode($meta)
-            )
-        ) {
-            throw new Core\ApiException(false, 'boolean');
-        }
-        $result = $this->resourceMapper->findByAppIdMethodUri(
-            $resource['appid'],
-            $resource['method'],
-            $resource['uri']
-        );
-
-        return new Core\DataContainer($result->dump(), 'array');
     }
 
     /**
-     * Create the resource in the DB.
+     * Validate application is not core and core not locked.
      *
-     * @param string $name The resource name.
-     * @param string $description The resource description.
-     * @param string $method The resource method.
-     * @param string $uri The resource URI.
-     * @param integer $appid The resource application ID.
-     * @param integer $ttl The resource application TTL.
-     * @param string $meta The resource metadata json encoded string.
+     * @param Application $application
      *
-     * @return Core\DataContainer Create resource result.
-     *
-     * @throws Core\ApiException
+     * @throws ApiException
      */
-    private function create(
-        string $name,
-        string $description,
-        string $method,
-        string $uri,
-        int $appid,
-        int $ttl,
-        string $meta
-    ): Core\DataContainer {
-        $resource = new Resource(
-            null,
-            $appid,
-            $name,
-            $description,
-            strtolower($method),
-            strtolower($uri),
-            $meta,
-            $ttl
-        );
-        if (!$this->resourceMapper->save($resource)) {
-            return new Core\DataContainer(false);
+    protected function validateCoreProtection(Application $application)
+    {
+        try {
+            $account = $this->accountMapper->findByAccid($application->getAccid());
+            $coreAccount = $this->settings->__get(['api', 'core_account']);
+            $coreApplication = $this->settings->__get(['api', 'core_application']);
+            $coreLock = $this->settings->__get(['api', 'core_resource_lock']);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
-        $resource = $this->resourceMapper->findByAppIdMethodUri($appid, strtolower($method), strtolower($uri));
-        return new Core\DataContainer($resource->dump(), 'array');
+        if ($account->getName() == $coreAccount && $application->getName() == $coreApplication && $coreLock) {
+            throw new ApiException("Unauthorised: this is a core resource", 4, $this->id, 403);
+        }
     }
 }

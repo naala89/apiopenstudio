@@ -1,0 +1,36 @@
+name: Testing object with comlex array of literals
+
+description: Test object with comlex array of literals
+
+uri: object/array
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test object array security
+    roles:
+        - Consumer
+
+process:
+    processor: var_object
+    id: test object array process
+    attributes:
+        -
+            key1_1:
+                key1_2_1: val1_1
+        -
+            key2_1:
+                key2_2_1: val2_2_1
+                key2_2_2:
+                    key2_3_1: val2_3_1
+        -
+            key3_1: val3_1
+        -
+            key4_1:
+                - val4_2_1
+                - val4_2_2

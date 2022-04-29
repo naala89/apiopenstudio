@@ -1,6 +1,6 @@
 # Processors resource.
 #
-# @package   Apiopenstudio
+# @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
 #            If a copy of the license was not distributed with this file,
 #            You can obtain one at https://www.apiopenstudio.com/license/.
@@ -10,7 +10,7 @@
 
 name: Processors
 
-description: Fetch details of processors.
+description: Fetch details of a single or all processors.
 
 uri: processors
 
@@ -21,18 +21,18 @@ appid: 1
 ttl: 3600
 
 security:
-  id: processors_security
-  processor: validate_token_roles
-  roles:
-    - Developer
-  validate_account: false
-  validate_application: false
+    id: processors_security
+    processor: validate_token_roles
+    roles:
+        - Developer
+    validate_account: false
+    validate_application: false
 
 process:
-  processor: processors
-  id: processors_process
-  machine_name:
-    processor: var_uri
-    id: processors_machine_name
-    index: 0
-    nullable: true
+    processor: processors
+    id: processors_process
+    machine_name:
+        processor: var_uri
+        id: processors_machine_name
+        index: 0
+        nullable: true

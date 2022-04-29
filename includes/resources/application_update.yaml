@@ -1,6 +1,6 @@
 # Application update resource.
 #
-# @package   Apiopenstudio
+# @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
 #            If a copy of the license was not distributed with this file,
 #            You can obtain one at https://www.apiopenstudio.com/license/.
@@ -21,26 +21,28 @@ appid: 1
 ttl: 0
 
 security:
-  id: application_update_security
-  processor: validate_token_roles
-  roles:
-    - Administrator
-    - Account manager
+    id: application_update_security
+    processor: validate_token_roles
+    validate_account: false
+    validate_application: false
+    roles:
+        - Administrator
+        - Account manager
 
 process:
-  processor: application_update
-  id: application_update_process
-  appid:
-    processor: var_uri
-    id: application_update_appid
-    expected_type: integer
-    index: 0
-  accid:
-    processor: var_uri
-    id: application_update_accid
-    expected_type: integer
-    index: 1
-  name:
-    processor: var_uri
-    id: application_update_name
-    index: 2
+    processor: application_update
+    id: application_update_process
+    appid:
+        processor: var_uri
+        id: application_update_appid
+        expected_type: integer
+        index: 0
+    accid:
+        processor: var_uri
+        id: application_update_accid
+        expected_type: integer
+        index: 1
+    name:
+        processor: var_uri
+        id: application_update_name
+        index: 2

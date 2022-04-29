@@ -1,6 +1,6 @@
 # User create resource.
 #
-# @package   Apiopenstudio
+# @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
 #            If a copy of the license was not distributed with this file,
 #            You can obtain one at https://www.apiopenstudio.com/license/.
@@ -21,101 +21,101 @@ appid: 1
 ttl: 0
 
 security:
-  id: user_create_security
-  processor: validate_token_roles
-  roles:
-    - Administrator
-    - Account manager
-    - Application manager
-  validate_account: false
-  validate_application: false
+    id: user_create_security
+    processor: validate_token_roles
+    roles:
+        - Administrator
+        - Account manager
+        - Application manager
+    validate_account: false
+    validate_application: false
 
 process:
-  processor: user_create
-  id: user_create_process
-  username:
-    processor: var_post
-    id: user_create_username
-    nullable: false
-    key: username
-  password:
-    processor: var_post
-    id: user_create_password
-    nullable: true
-    key: password
-  active:
-    processor: var_post
-    id: user_create_active
-    nullable: true
-    expected_type: boolean
-    key: active
-  honorific:
-    processor: var_post
-    id: user_create_honorific
-    nullable: true
-    key: honorific
-  name_first:
-    processor: var_post
-    id: user_create_name_first
-    nullable: true
-    key: name_first
-  name_last:
-    processor: var_post
-    id: user_create_name_last
-    nullable: true
-    key: name_last
-  email:
-    processor: var_post
-    id: user_create_email
-    nullable: false
-    key: email
-  company:
-    processor: var_post
-    id: user_create_company
-    nullable: true
-    key: company
-  website:
-    processor: var_post
-    id: user_create_website
-    nullable: true
-    key: website
-  street_address:
-    processor: var_post
-    id: user_create_street_address
-    nullable: true
-    key: address_street
-  suburb:
-    processor: var_post
-    id: user_create_suburb
-    nullable: true
-    key: address_suburb
-  city:
-    processor: var_post
-    id: user_create_city
-    nullable: true
-    key: address_city
-  state:
-    processor: var_post
-    id: user_create_state
-    nullable: true
-    key: address_state
-  country:
-    processor: var_post
-    id: user_create_country
-    nullable: true
-    key: address_country
-  postcode:
-    processor: var_post
-    id: user_create_postcode
-    nullable: true
-    key: address_postcode
-  phone_mobile:
-    processor: var_post
-    id: user_create_phone_mobile
-    nullable: true
-    key: phone_mobile
-  phone_work:
-    processor: var_post
-    id: user_create_phone_work
-    nullable: true
-    key: phone_work
+    processor: user_create
+    id: user_create_process
+    username:
+        processor: var_post
+        id: user_create_username
+        nullable: false
+        key: username
+    password:
+        processor: var_post
+        id: user_create_password
+        nullable: true
+        key: password
+    active:
+        processor: var_post
+        id: user_create_active
+        nullable: true
+        expected_type: boolean
+        key: active
+    honorific:
+        processor: var_post
+        id: user_create_honorific
+        nullable: true
+        key: honorific
+    name_first:
+        processor: var_post
+        id: user_create_name_first
+        nullable: true
+        key: name_first
+    name_last:
+        processor: var_post
+        id: user_create_name_last
+        nullable: true
+        key: name_last
+    email:
+        processor: var_post
+        id: user_create_email
+        nullable: false
+        key: email
+    company:
+        processor: var_post
+        id: user_create_company
+        nullable: true
+        key: company
+    website:
+        processor: var_post
+        id: user_create_website
+        nullable: true
+        key: website
+    street_address:
+        processor: var_post
+        id: user_create_street_address
+        nullable: true
+        key: address_street
+    suburb:
+        processor: var_post
+        id: user_create_suburb
+        nullable: true
+        key: address_suburb
+    city:
+        processor: var_post
+        id: user_create_city
+        nullable: true
+        key: address_city
+    state:
+        processor: var_post
+        id: user_create_state
+        nullable: true
+        key: address_state
+    country:
+        processor: var_post
+        id: user_create_country
+        nullable: true
+        key: address_country
+    postcode:
+        processor: var_post
+        id: user_create_postcode
+        nullable: true
+        key: address_postcode
+    phone_mobile:
+        processor: var_post
+        id: user_create_phone_mobile
+        nullable: true
+        key: phone_mobile
+    phone_work:
+        processor: var_post
+        id: user_create_phone_work
+        nullable: true
+        key: phone_work

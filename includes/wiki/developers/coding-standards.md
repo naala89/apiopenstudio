@@ -14,9 +14,14 @@ So it is worth running phpcs locally before any commit.
 
 ```php_codesniffer``` will be installed by composer. The standard used is PSR12.
 
-After ```composer install``` has run, the following command will test your code locally:
+After ```composer install``` has run, the following command will test your code
+locally:
 
-    $ ./vendor/bin/phpcs --standard=PSR12 --report-file=phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
+    ./vendor/bin/phpcs --standard=PSR12 \
+        includes/ \
+        public/*.php \
+        tests/api/ \
+        tests/runner_generate_db.php
 
 Line length
 -----------
@@ -50,7 +55,8 @@ Arrays
 Constants
 --------
 
-* all constants and reserved constants (e.g. true, false, null) should be in lower case.
+* all constants and reserved constants (e.g. true, false, null) should be in
+* lower case.
 
 Get and Post parameters
 -----------------------

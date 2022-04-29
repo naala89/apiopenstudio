@@ -3,8 +3,7 @@
 /**
  * Class InviteMapper.
  *
- * @package    ApiOpenStudio
- * @subpackage Db
+ * @package    ApiOpenStudio\Db
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -159,10 +158,10 @@ class InviteMapper extends Mapper
     {
         $invite = new Invite();
 
-        $invite->setIid(!empty($row['iid']) ? $row['iid'] : 0);
-        $invite->setCreated(!empty($row['created']) ? $row['created'] : '');
-        $invite->setEmail(!empty($row['email']) ? $row['email'] : '');
-        $invite->setToken(!empty($row['token']) ? $row['token'] : '');
+        $invite->setIid($row['iid'] ?? 0);
+        $invite->setCreated($row['created'] ?? '');
+        $invite->setEmail($row['email'] ?? '');
+        $invite->setToken($row['token'] ?? '');
 
         return $invite;
     }

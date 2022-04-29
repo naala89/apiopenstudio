@@ -1,5 +1,7 @@
 <?php
 
+use function PHPUnit\Framework\assertEquals;
+
 $I = new ApiTester($scenario);
 
 $yamlGoodFilename = 'resourceGood.yaml';
@@ -10,8 +12,7 @@ $badIdentities = [
     [getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS')],
 ];
 $goodIdentities = [
-    [getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS')]]
-;
+    [getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS')]];
 
 foreach ($badIdentities as $badIdentity) {
     $I->wantTo('Test resource create for ' . $badIdentity[0]);
@@ -43,46 +44,43 @@ process:
     name: index"
         ]
     );
-    $I->seeResponseCodeIs(401);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 4,
-                'message' => 'Unauthorized for this call.',
-                'id' => 'resource_create_security',
-            ]
-        ]
-    );
+    $I->seeResponseCodeIs(403);
+    $I->seeResponseContainsJson([
+        'result' => 'error',
+        'data' => [
+            'code' => 4,
+            'message' => 'Permission denied.',
+            'id' => 'resource_create_security',
+        ],
+    ]);
 
     $I->wantTo('Test resource delete for ' . $badIdentity[0]);
     $I->sendDelete(
         $I->getCoreBaseUri() . '/resource/0',
     );
-    $I->seeResponseCodeIs(401);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 4,
-                'message' => 'Unauthorized for this call.',
-                'id' => 'resource_delete_security',
-            ]
-        ]
-    );
+    $I->seeResponseCodeIs(403);
+    $I->seeResponseContainsJson([
+        'result' => 'error',
+        'data' => [
+            'code' => 4,
+            'message' => 'Permission denied.',
+            'id' => 'resource_delete_security',
+        ],
+    ]);
 
     $I->wantTo('Test resource export for ' . $badIdentity[0]);
     $I->sendGet(
         $I->getCoreBaseUri() . '/resource/export/yaml/14',
     );
-    $I->seeResponseCodeIs(401);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 4,
-                'message' => 'Unauthorized for this call.',
-                'id' => 'resource_export_security',
-            ]
-        ]
-    );
+    $I->seeResponseCodeIs(403);
+    $I->seeResponseContainsJson([
+        'result' => 'error',
+        'data' => [
+            'code' => 4,
+            'message' => 'Permission denied.',
+            'id' => 'resource_export_security',
+        ],
+    ]);
 
     $I->wantTo('Test resource import for ' . $badIdentity[0]);
     $I->sendPOST(
@@ -98,32 +96,30 @@ process:
             ],
         ]
     );
-    $I->seeResponseCodeIs(401);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 4,
-                'message' => 'Unauthorized for this call.',
-                'id' => 'resource_import_security',
-            ]
-        ]
-    );
+    $I->seeResponseCodeIs(403);
+    $I->seeResponseContainsJson([
+        'result' => 'error',
+        'data' => [
+            'code' => 4,
+            'message' => 'Permission denied.',
+            'id' => 'resource_import_security',
+        ],
+    ]);
 
     $I->wantTo('Test resource read for ' . $badIdentity[0]);
     $I->sendGet(
         $I->getCoreBaseUri() . '/resource',
         ['resid' => 33]
     );
-    $I->seeResponseCodeIs(401);
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 4,
-                'message' => 'Unauthorized for this call.',
-                'id' => 'resource_read_security',
-            ]
-        ]
-    );
+    $I->seeResponseCodeIs(403);
+    $I->seeResponseContainsJson([
+        'result' => 'error',
+        'data' => [
+            'code' => 4,
+            'message' => 'Permission denied.',
+            'id' => 'resource_read_security',
+        ],
+    ]);
 }
 
 foreach ($goodIdentities as $goodIdentity) {
@@ -154,8 +150,9 @@ foreach ($goodIdentities as $goodIdentity) {
         ]
     );
     $I->seeResponseCodeIs(200);
-    $I->seeResponseMatchesJsonType(
-        [
+    $I->seeResponseMatchesJsonType([
+        'result' => 'string',
+        'data' => [
             'resid' => 'integer',
             'name' => 'string',
             'description' => 'string',
@@ -163,9 +160,10 @@ foreach ($goodIdentities as $goodIdentity) {
             'method' => 'string',
             'uri' => 'string',
             'ttl' => 'integer',
-            'meta' => 'string',
-        ]
-    );
+            'meta' => 'array',
+            'openapi' => 'array',
+        ],
+    ]);
 
     $I->wantTo('Test resource read for ' . $goodIdentity[0]);
     $I->sendGet(
@@ -173,20 +171,24 @@ foreach ($goodIdentities as $goodIdentity) {
         ['keyword' => 'allowed to create a resource']
     );
     $I->seeResponseCodeIs(200);
-    $I->seeResponseMatchesJsonType(
-        [
-            'resid' => 'integer',
-            'name' => 'string',
-            'description' => 'string',
-            'appid' => 'integer',
-            'method' => 'string',
-            'uri' => 'string',
-            'ttl' => 'integer',
-            'meta' => 'string',
-        ]
-    );
+    $I->seeResponseMatchesJsonType([
+        'result' => 'string',
+        'data' => [
+            [
+                'resid' => 'integer',
+                'name' => 'string',
+                'description' => 'string',
+                'appid' => 'integer',
+                'method' => 'string',
+                'uri' => 'string',
+                'ttl' => 'integer',
+                'meta' => 'array',
+                'openapi' => 'array',
+            ],
+        ],
+    ]);
     $json = json_decode($I->getResponse(), true);
-    $resid = $json[0]['resid'];
+    $resid = $json['data'][0]['resid'];
 
     $I->wantTo('Test resource update for ' . $goodIdentity[0]);
     $I->sendPut(
@@ -213,8 +215,9 @@ foreach ($goodIdentities as $goodIdentity) {
         ])
     );
     $I->seeResponseCodeIs(200);
-    $I->seeResponseMatchesJsonType(
-        [
+    $I->seeResponseMatchesJsonType([
+        'result' => 'string',
+        'data' => [
             'resid' => 'integer',
             'name' => 'string',
             'description' => 'string',
@@ -222,29 +225,35 @@ foreach ($goodIdentities as $goodIdentity) {
             'method' => 'string',
             'uri' => 'string',
             'ttl' => 'integer',
-            'meta' => 'string',
-        ]
-    );
+            'meta' => 'array',
+            'openapi' => 'array',
+        ],
+    ]);
 
     $I->wantTo('Test resource JSON export for ' . $goodIdentity[0]);
+    $I->deleteHeader('Accept');
+    $I->haveHttpHeader('Accept', 'application/text');
     $I->sendGet(
         $I->getCoreBaseUri() . "/resource/export/json/$resid",
     );
     $I->seeResponseCodeIs(200);
-    $I->seeResponseMatchesJsonType(
-        [
-            'resid' => 'integer',
-            'name' => 'string',
-            'description' => 'string',
-            'appid' => 'integer',
-            'method' => 'string',
-            'uri' => 'string',
-            'ttl' => 'integer',
-            'meta' => 'string',
-        ]
-    );
+    $I->seeResponseMatchesJsonType([
+        'resid' => 'integer',
+        'name' => 'string',
+        'description' => 'string',
+        'appid' => 'integer',
+        'method' => 'string',
+        'uri' => 'string',
+        'ttl' => 'integer',
+        'security' => 'array',
+        'process' => 'array',
+    ]);
+    $I->deleteHeader('Accept');
+    $I->haveHttpHeader('Accept', 'application/json');
 
     $I->wantTo('Test resource YAML export for ' . $goodIdentity[0]);
+    $I->deleteHeader('Accept');
+    $I->haveHttpHeader('Accept', 'application/text');
     $I->sendGet(
         $I->getCoreBaseUri() . "/resource/export/yaml/$resid",
     );
@@ -256,23 +265,27 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContains("method: post");
     $I->seeResponseContains("uri: test/resource_update/allowed");
     $I->seeResponseContains("ttl: 0");
-    $I->seeResponseContains("meta:");
-    $I->seeResponseContains("    security:");
-    $I->seeResponseContains("        function: validate_token_roles");
-    $I->seeResponseContains("        id: test_security");
-    $I->seeResponseContains("        roles:");
-    $I->seeResponseContains("            - Consumer");
-    $I->seeResponseContains("    process:");
-    $I->seeResponseContains("        processor: var_int");
-    $I->seeResponseContains("        id: 'test allowed to update process'");
-    $I->seeResponseContains("        value: 32");
+    $I->seeResponseContains("security:");
+    $I->seeResponseContains("   function: validate_token_roles");
+    $I->seeResponseContains("   id: test_security");
+    $I->seeResponseContains("   roles:");
+    $I->seeResponseContains("       - Consumer");
+    $I->seeResponseContains("process:");
+    $I->seeResponseContains("   processor: var_int");
+    $I->seeResponseContains("   id: 'test allowed to update process'");
+    $I->seeResponseContains("   value: 32");
+    $I->deleteHeader('Accept');
+    $I->haveHttpHeader('Accept', 'application/json');
 
     $I->wantTo('Test resource delete for ' . $goodIdentity[0]);
     $I->sendDelete(
         $I->getCoreBaseUri() . "/resource/$resid",
     );
     $I->seeResponseCodeIs(200);
-    $I->seeResponseContainsJson(['true']);
+    $I->seeResponseContainsJson([
+        'result' => 'ok',
+        'data' => true
+    ]);
 
     $I->wantTo('create a new resource from YAML missing name attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceNoName.yaml';
@@ -291,17 +304,16 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'Missing name in new resource.',
-                'id' => 'resource_import_process',
-            ]
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        'Missing name in new resource.',
+        $array['data']['message'],
+        'Assert the error message is correct.'
     );
 
-    $I->wantTo('create a new resource from YAML missing uri attr and for ' . $goodIdentity[0]);
+    $I->wantTo('create a new resource from YAML missing uri attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceNoUri.yaml';
     $I->sendPOST(
         $I->getCoreBaseUri() . '/resource/import',
@@ -318,19 +330,25 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'Missing uri in new resource.',
-                'id' => 'resource_import_process',
-            ],
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        'Missing uri in new resource.',
+        $array['data']['message'],
+        'Assert the error message is correct.'
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 
     $I->wantTo('create a new resource from YAML missing description attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceNoDescription.yaml';
@@ -350,19 +368,25 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'Missing description in new resource.',
-                'id' => 'resource_import_process',
-            ]
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        'Missing description in new resource.',
+        $array['data']['message'],
+        'Assert the error message is correct.'
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 
     $I->wantTo('create a new resource from YAML missing method attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceNoMethod.yaml';
@@ -381,14 +405,13 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'Missing method in new resource.',
-                'id' => 'resource_import_process',
-            ],
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        'Missing method in new resource.',
+        $array['data']['message'],
+        'Assert the error message is correct.'
     );
     // We cannot test tearing down the resource here,
     // because we will be unable to fetch the resource due to missing method attr.
@@ -410,19 +433,25 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'Missing ttl in new resource.',
-                'id' => 'resource_import_process',
-            ],
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        'Missing ttl in new resource.',
+        $array['data']['message'],
+        'Assert the error message is correct.'
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 
     $I->wantTo('create a new resource from YAML negative ttl attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceTtl-1.yaml';
@@ -441,19 +470,25 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'Negative ttl in new resource.',
-                'id' => 'resource_import_process',
-            ],
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        'Negative ttl in new resource.',
+        $array['data']['message'],
+        'Assert the error message is correct.'
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 
     $I->wantTo('create a new resource from YAML missing security attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceNoSecurity.yaml';
@@ -493,19 +528,25 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            'error' => [
-                'code' => 6,
-                'message' => 'Missing process in new resource.',
-                'id' => 'resource_import_process',
-            ],
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        'Missing process in new resource.',
+        $array['data']['message'],
+        'Assert the error message is correct.'
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 
     $I->wantTo('create a new resource from YAML missing output attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceNoOutput.yaml';
@@ -545,19 +586,25 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            "error" => [
-                "code" => 6,
-                "message" => "Invalid process declaration, only processors allowed.",
-                "id" => 'resource_import_process',
-            ],
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        $array['data']['message'],
+        'Invalid process declaration, only processors allowed.',
+        'Assert the error message is correct.'
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 
     $I->wantTo('create a new resource from YAML with an integer value in process attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceStaticInt.yaml';
@@ -576,19 +623,25 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            "error" => [
-                "code" => 6,
-                "message" => "Invalid process declaration, only processors allowed.",
-                "id" => 'resource_import_process',
-            ],
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        $array['data']['message'],
+        'Invalid process declaration, only processors allowed.',
+        'Assert the error message is correct.'
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 
     $I->wantTo('create a new resource from YAML with an array value in process attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceStaticArray.yaml';
@@ -607,19 +660,25 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            "error" => [
-                "code" => 6,
-                "message" => "Invalid process declaration, only processors allowed.",
-                "id" => 'resource_import_process',
-            ],
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        $array['data']['message'],
+        'Invalid process declaration, only processors allowed.',
+        'Assert the error message is correct.'
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 
     $I->wantTo('create a new resource from YAML with an object value in process attr for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceStaticObj.yaml';
@@ -638,19 +697,25 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            "error" => [
-                "code" => 6,
-                "message" => "Invalid process declaration, only processors allowed.",
-                "id" => 'resource_import_process',
-            ],
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        $array['data']['message'],
+        'Invalid process declaration, only processors allowed.',
+        'Assert the error message is correct.'
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 
     $I->wantTo('create a new resource from YAML with an non array output structure for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceOutputString.yaml';
@@ -669,21 +734,29 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            "error" => [
-                "code" => 6,
-                "message" => 'Invalid output declaration. Only processor, array of processors or "response" allowed.',
-                "id" => 'resource_import_process',
-            ],
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        $array['data']['message'],
+        'Invalid output declaration. Only processor, array of processors or "response" allowed.',
+        'Assert the error message is correct.'
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 
-    $I->wantTo('create a new resource from YAML with an associative array output structure for ' . $goodIdentity[0]);
+    $I->wantTo(
+        'create a new resource from YAML with an associative array output structure for ' . $goodIdentity[0]
+    );
     $yamlFilename = 'resourceOutputAssocArr.yaml';
     $I->sendPOST(
         $I->getCoreBaseUri() . '/resource/import',
@@ -700,21 +773,29 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            "error" => [
-                "code" => 6,
-                "message" => 'Invalid output declaration. Only processor, array of processors or "response" allowed.',
-                "id" => 'resource_import_process',
-            ],
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        $array['data']['message'],
+        'Invalid output declaration. Only processor, array of processors or "response" allowed.',
+        'Assert the error message is correct.'
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 
-    $I->wantTo('create a new resource from YAML with a func val missing in output structure for ' . $goodIdentity[0]);
+    $I->wantTo(
+        'create a new resource from YAML with a func val missing in output structure for ' . $goodIdentity[0]
+    );
     $yamlFilename = 'resourceOutputEmptyFunc.yaml';
     $I->sendPOST(
         $I->getCoreBaseUri() . '/resource/import',
@@ -731,19 +812,25 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            "error" => [
-                "code" => 6,
-                "message" => 'Invalid output declaration. Only processor, array of processors or "response" allowed.',
-                "id" => 'resource_import_process',
-            ],
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        $array['data']['message'],
+        'Invalid output declaration. Only processor, array of processors or "response" allowed.',
+        'Assert the error message is correct.'
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 
     $I->wantTo('create a new resource from YAML with resource only output for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceOutputResponseOnly.yaml';
@@ -782,21 +869,23 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
     $message = 'Processor test resource required func type xml options ';
     $message .= 'bad is an invalid processor type (only "field" allowed).';
-    $I->seeResponseContainsJson(
-        [
-            "error" => [
-                "code" => 6,
-                "message" => $message,
-                "id" => 'resource_import_process',
-            ]
-        ]
-    );
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals($array['data']['message'], $message, 'Assert the error message is correct.');
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 
     $I->wantTo('create a new resource from YAML with less than min inputs for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceBadMin.yaml';
@@ -815,19 +904,25 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            "error" => [
-                "code" => 6,
-                "message" => "Input 'sources' in processor 'test resource with bad min process' requires min 2.",
-                "id" => 'resource_import_process'
-            ]
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        $array['data']['message'],
+        "Input 'items' in processor 'test resource with bad min process' requires min 2.",
+        'Assert the error message is correct.'
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 
     $I->wantTo('create a new resource from YAML with more than max inputs for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceBadMax.yaml';
@@ -846,19 +941,25 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            "error" => [
-                "code" => 6,
-                "message" => "Input 'value' in processor 'test resource with bad max process' requires max 1.",
-                "id" => 'resource_import_process',
-            ]
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        $array['data']['message'],
+        "Input 'value' in processor 'test resource with bad max process' requires max 1.",
+        'Assert the error message is correct.'
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 
     $I->wantTo('create a new resource from YAML for an account without developer access for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceAccountNoAccess.yaml';
@@ -877,19 +978,25 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            "error" => [
-                "code" => 6,
-                "message" => 'Unauthorised: you do not have permissions for this application.',
-                "id" => 'resource_import_process',
-            ]
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(4, $array['data']['code'], 'Assert the error code is 4.');
+    assertEquals(
+        $array['data']['message'],
+        'Unauthorised: you do not have permissions for this application.',
+        'Assert the error message is correct.'
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 
     $I->wantTo('create a new resource from YAML with identical Ids in processors for ' . $goodIdentity[0]);
     $yamlFilename = 'resourceIdenticalId.yaml';
@@ -908,19 +1015,25 @@ foreach ($goodIdentities as $goodIdentity) {
     );
     $I->seeResponseCodeIs(400);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson(
-        [
-            "error" => [
-                "code" => 6,
-                "message" => 'Identical IDs in new resource: resource identical ids.',
-                "id" => 'resource_import_process',
-            ],
-        ]
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(1, $array['data']['code'], 'Assert the error code is 1.');
+    assertEquals(
+        $array['data']['message'],
+        'Identical IDs in new resource: resource identical ids.',
+        'Assert the error message is correct.'
     );
     $I->tearDownTestFromYaml($yamlFilename);
     $I->seeResponseCodeIs(400);
-    $I->seeResponseContainsJson(['error' => ['code' => 6]]);
-    $I->seeResponseContainsJson(['error' => ['message' => 'No resources found or insufficient privileges.']]);
+    $I->seeResponseIsJson();
+    $array = json_decode($I->getResponse(), true);
+    assertEquals('error', $array['result'], 'Assert we have an error condition.');
+    assertEquals(6, $array['data']['code'], 'Assert the error code is 6.');
+    assertEquals(
+        'No resources found or insufficient privileges.',
+        $array['data']['message'],
+        'Assert no resource was created'
+    );
 }
 
 // Tear down the ResourceYaml test resource.

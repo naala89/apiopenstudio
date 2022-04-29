@@ -3,8 +3,7 @@
 /**
  * Class VarStoreDelete.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -17,6 +16,8 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\VarStoreMapper;
 
@@ -59,8 +60,8 @@ class VarStoreDelete extends Core\ProcessorEntity
     protected array $details = [
         'name' => 'Var store delete',
         'machineName' => 'var_store_delete',
-        'description' => 'Delete a var store variable.',
-        'menu' => 'Var store',
+        'description' => 'Delete a global variable. This will remove it for all resources within an application group.',
+        'menu' => 'Variables',
         'input' => [
             'vid' => [
                 'description' => 'Var store ID.',
@@ -78,14 +79,15 @@ class VarStoreDelete extends Core\ProcessorEntity
      * VarStoreDelete constructor.
      *
      * @param mixed $meta Output meta.
-     * @param mixed $request Request object.
+     * @param Request $request Request object.
      * @param ADOConnection $db DB object.
      * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->varStoreMapper = new VarStoreMapper($db, $logger);
+        $this->applicationMapper = new ApplicationMapper($db, $logger);
     }
 
     /**
@@ -101,7 +103,12 @@ class VarStoreDelete extends Core\ProcessorEntity
 
         $vid = $this->val('vid', true);
 
-        $var = $this->varStoreMapper->findByVid($vid);
+        try {
+            $var = $this->varStoreMapper->findByVid($vid);
+            $roles = Core\Utilities::getRolesFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($var->getVid())) {
             throw new Core\ApiException("unknown vid: $vid", 6, $this->id, 400);
         }
@@ -109,7 +116,6 @@ class VarStoreDelete extends Core\ProcessorEntity
 
         // Validate access to the existing var's application
         $permitted = false;
-        $roles = Core\Utilities::getRolesFromToken();
         $accounts = [];
         foreach ($roles as $role) {
             if ($role['role_name'] == 'Administrator' && in_array('Administrator', $this->permittedRoles)) {
@@ -117,7 +123,11 @@ class VarStoreDelete extends Core\ProcessorEntity
             } elseif ($role['role_name'] == 'Account manager' && in_array('Account manager', $this->permittedRoles)) {
                 $accid = $role['accid'];
                 if (!isset($accounts[$accid])) {
-                    $accountsObjects = $this->applicationMapper->findByAccid($accid);
+                    try {
+                        $accountsObjects = $this->applicationMapper->findByAccid($accid);
+                    } catch (ApiException $e) {
+                        throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+                    }
                     foreach ($accountsObjects as $accountObject) {
                         $accounts[$accid][] = $accountObject->getAppid();
                     }
@@ -133,6 +143,12 @@ class VarStoreDelete extends Core\ProcessorEntity
             throw new Core\ApiException("permission denied", 6, $this->id, 400);
         }
 
-        return new Core\DataContainer($this->varStoreMapper->delete($var), 'boolean');
+        try {
+            $this->varStoreMapper->delete($var);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return new Core\DataContainer(true, 'boolean');
     }
 }

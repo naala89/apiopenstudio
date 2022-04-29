@@ -1,0 +1,44 @@
+# OpenApi update.
+#
+# @package   Apiopenstudio\Resources
+# @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
+#            If a copy of the license was not distributed with this file,
+#            You can obtain one at https://www.apiopenstudio.com/license/.
+# @author    john89 (https://gitlab.com/john89)
+# @copyright 2020-2030 Naala Pty Ltd
+# @link      https://www.apiopenstudio.com
+
+name: OpenApi update
+
+description: Update OpenApi documentation for an application and its resources.
+
+uri: openapi
+
+method: put
+
+appid: 1
+
+ttl: 3600
+
+security:
+    id: openapi_update_security
+    processor: validate_token_roles
+    validate_account: false
+    validate_application: false
+    roles:
+        - Developer
+
+process:
+    processor: openapi_update
+    id: openapi_update_process
+    appid:
+        processor: var_uri
+        id: openapi_update_appid
+        expected_type: integer
+        index: 0
+        nullable: false
+    open_api:
+        processor: var_body
+        id: openapi_update_body
+        expected_type: json
+        nullable: false

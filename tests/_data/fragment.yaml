@@ -9,42 +9,46 @@ method: get
 ttl: 0
 
 security:
-  processor: token_consumer
-  id: 1
-  token:
-    processor: var_get
-    id: 2
-    name: token
+    processor: token_consumer
+    id: 1
+    token:
+        processor: var_get
+        id: 2
+        name: token
 
 process:
-  processor: concatenate
-  id: 3
-  sources:
-    - processor: fragment
-      name: frag1
-      id: 4
-    - processor: fragment
-      name: frag2
-      id: 5
-    - processor: fragment
-      name: frag3
-      id: 6
-    - processor: fragment
-      name: frag1
-      id: 7
-    - 4
-    - 5
+    processor: concatenate
+    id: 3
+    items:
+        -
+            processor: fragment
+            name: frag1
+            id: 4
+        -
+            processor: fragment
+            name: frag2
+            id: 5
+        -
+            processor: fragment
+            name: frag3
+            id: 6
+        -
+            processor: fragment
+            name: frag1
+            id: 7
+        - 4
+        - 5
 
 fragments:
-  frag1:
-    processor: var_get
-    id: 8
-    name: val1
-  frag2:
-    processor: var_get
-    id: 9
-    name: val2
-  frag3:
-    processor: var_get
-    id: 10
-    name: val3
+    frag1:
+        processor: var_get
+        id: 8
+        name: val1
+    frag2:
+        processor: var_get
+        id: 9
+        name: val2
+    frag3:
+        processor: var_get
+        id: 10
+        name: val3

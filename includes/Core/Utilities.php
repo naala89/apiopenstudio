@@ -3,8 +3,7 @@
 /**
  * Class Utilities.
  *
- * @package    ApiOpenStudio
- * @subpackage Core
+ * @package    ApiOpenStudio\Core
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -24,6 +23,7 @@ use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
+use Lcobucci\JWT\Validation\NoConstraintsGiven;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 
 /**
@@ -96,7 +96,7 @@ class Utilities
         $lower = $lower === null || $lower;
         $upper = $upper === null || $upper;
         $number = $number === null || $number;
-        $special = !($special === null) && $special;
+        $special = $special === null || $special;
         $chars = '';
         if ($lower) {
             $chars .= self::$lower_case;
@@ -131,6 +131,36 @@ class Utilities
     public static function datePhp2mysql(int $phpdate): string
     {
         return date('Y-m-d H:i:s', $phpdate);
+    }
+
+    /**
+     * Returns the current OpenApiPath* classname
+     *
+     * @param Config $settings
+     *
+     * @return string
+     *
+     * @throws ApiException
+     */
+    public static function getOpenApiPathClassPath(Config $settings): string
+    {
+        return "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiPath" .
+            str_replace('.', '', $settings->__get(['api', 'openapi_version']));
+    }
+
+    /**
+     * Returns the current OpenApiParent* classname
+     *
+     * @param Config $settings
+     *
+     * @return string
+     *
+     * @throws ApiException
+     */
+    public static function getOpenApiParentClassPath(Config $settings): string
+    {
+        return "\\ApiOpenStudio\\Core\\OpenApi\\OpenApiParent" .
+            str_replace('.', '', $settings->__get(['api', 'openapi_version']));
     }
 
     /**
@@ -250,7 +280,7 @@ class Utilities
     }
 
     /**
-     * Check if a url exists.
+     * Check if a URL exists.
      *
      * @param string $url The URL.
      *
@@ -266,7 +296,7 @@ class Utilities
     }
 
     /**
-     * Check if current url is https.
+     * Check if current URL is https.
      *
      * @return boolean
      */
@@ -405,7 +435,7 @@ class Utilities
 
         try {
             $jwtConfig->validator()->assert($decryptedToken, ...$constraints);
-        } catch (RequiredConstraintsViolated $e) {
+        } catch (RequiredConstraintsViolated | NoConstraintsGiven $e) {
             throw new ApiException('invalid token', 4, -1, 401);
         }
 

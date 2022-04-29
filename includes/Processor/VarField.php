@@ -3,8 +3,7 @@
 /**
  * Class VarField.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -30,7 +29,7 @@ class VarField extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (field)',
+        'name' => 'Field',
         'machineName' => 'var_field',
         // phpcs:ignore
         'description' => 'Create a name value pair. This is primarily for use as a field in object. individual key/values can be input or an array (single key). ',
@@ -54,15 +53,6 @@ class VarField extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => '',
             ],
-            'array' => [
-                'description' => 'Array to be converted to a field. This can only have one index.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['array'],
-                'limitValues' => [],
-                'default' => [],
-            ],
         ],
     ];
 
@@ -77,17 +67,8 @@ class VarField extends Core\ProcessorEntity
     {
         parent::process();
 
-        $array = $this->val('array', true);
         $key = $this->val('key', true);
         $value = $this->val('value', true);
-
-        if (!empty($array)) {
-            if (sizeof($array) > 1) {
-                throw new Core\ApiException('Cannot have more than one index in an input array.', 0, $this->id, 417);
-            }
-            $keys = array_keys($array);
-            return new Core\DataContainer([$keys[0] => $array[$keys[0]]], 'array');
-        }
 
         return new Core\DataContainer([$key => $value], 'array');
     }

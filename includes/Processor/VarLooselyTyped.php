@@ -3,8 +3,7 @@
 /**
  * Class VarLooselyTyped.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -30,7 +29,7 @@ class VarLooselyTyped extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Var (loosely typed)',
+        'name' => 'Loosely typed',
         'machineName' => 'var_loosely_typed',
         // phpcs:ignore
         'description' => 'A loosely typed variable (i.e. not strictly typed). There are no restrictions on the input, however the result will have type calculated.',

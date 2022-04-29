@@ -144,3 +144,21 @@ ApiOpenStudio 1.0.0-alpha3
 - Implemented casting on all input vars like VarPost.
 - Create/update CRUD processors now return the value result, rather than 
   true/false.
+
+ApiOpenStudio 1.0.0-beta
+========================
+
+- Implemented full OpenAPI support and generation.
+- Separated the node tree traversal from core Api class.
+- Implemented conditional logic in the node tree traversal.
+- JSON output handles NaN, INF and -INF (return "NaN", "Infinity", "-Infinity") 
+- New processors:
+  - If/Then/Else
+  - For...Each
+  - Math
+  - Sequential
+- More functional tests.
+- Deprecated ```array``` input in ```var_field```.
+- Updated all API calls the handle possible new JSON response objects:
+  - New JSON error response object.
+  - Responses can now be raw JSON response or a JSON response object.

@@ -3,8 +3,7 @@
 /**
  * Class Merge.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -82,7 +81,7 @@ class Merge extends Core\ProcessorEntity
         $method = strtolower(trim($mergeType));
 
         if (!method_exists($this, $method)) {
-            throw new Core\ApiException("invalid mergeType: $mergeType", 6, $this->id, 407);
+            throw new Core\ApiException("invalid mergeType: $mergeType", 6, $this->id, 400);
         }
 
         if ($unique === true) {

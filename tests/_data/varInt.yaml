@@ -11,16 +11,16 @@ appid: 2
 ttl: 0
 
 security:
-  id: test var_int security
-  processor: validate_token_roles
-  roles:
-    - Consumer
+    id: test var_int security
+    processor: validate_token_roles
+    roles:
+        - Consumer
 
 process:
-  processor: var_int
-  id: test var_int process
-  value:
-    processor: var_get
-    id: test var_int value
-    expected_type: integer
-    key: value
+    processor: var_int
+    id: test var_int process
+    value:
+        processor: var_get
+        id: test var_int value
+        expected_type: integer
+        key: value

@@ -3,8 +3,7 @@
 /**
  * Class InviteAccept.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -17,6 +16,8 @@ namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db;
 
 /**
@@ -67,11 +68,11 @@ class InviteAccept extends Core\ProcessorEntity
      * InviteAccept constructor.
      *
      * @param mixed $meta Output meta.
-     * @param mixed $request Request object.
+     * @param Request $request Request object.
      * @param ADOConnection $db DB object.
      * @param Core\MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->userMapper = new Db\UserMapper($db, $logger);
@@ -88,17 +89,24 @@ class InviteAccept extends Core\ProcessorEntity
     public function process(): Core\DataContainer
     {
         parent::process();
-
         $token = $this->val('token', true);
 
-        $invite = $this->inviteMapper->findByToken($token);
+        try {
+            $invite = $this->inviteMapper->findByToken($token);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (empty($email = $invite->getEmail())) {
             throw new Core\ApiException("Invalid invite token", 6, $this->id, 400);
         }
 
         $user = new Db\User(null, 1, $email, null, null, null, $email);
-        $this->userMapper->save($user);
-        $this->inviteMapper->delete($invite);
+        try {
+            $this->userMapper->save($user);
+            $this->inviteMapper->delete($invite);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
         return new Core\DataContainer('true', 'text');
     }

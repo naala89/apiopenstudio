@@ -3,8 +3,7 @@
 /**
  * Class JsonPath.
  *
- * @package    ApiOpenStudio
- * @subpackage Processor
+ * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -286,7 +285,11 @@ DESCRIPTION,
 
         if ($operation == 'get') {
             $result = $jsonObject->get($expression);
-            $result = json_encode($result);
+            if ($result === false) {
+                $result = null;
+            } elseif (!is_numeric($result)) {
+                $result = json_encode($result);
+            }
         } elseif ($operation == 'set') {
             $result = $jsonObject->set($expression, $value->getData())->getJson();
         } elseif ($operation == 'add') {
@@ -300,10 +303,10 @@ DESCRIPTION,
             $result = $jsonObject->remove($expression, $field_name)->getJson();
         }
 
-        if ($remove_wrapping_quotes === true) {
+        if ($remove_wrapping_quotes === true && $result !== null) {
             $result = trim($result, '"');
         }
-        if ($stripslashes === true) {
+        if ($stripslashes === true && $result !== null) {
             $result = stripslashes($result);
         }
 

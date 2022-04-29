@@ -3,8 +3,7 @@
 /**
  * Class MonologWrapper.
  *
- * @package    ApiOpenStudio
- * @subpackage Core
+ * @package    ApiOpenStudio\Core
  * @author     john89 (https://gitlab.com/john89)
  * @copyright  2020-2030 Naala Pty Ltd
  * @license    This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -267,7 +266,7 @@ class MonologWrapper
      * @param array $definition
      *   Handler attributes.
      *
-     * @return mixed
+     * @return ChromePHPHandler|ErrorLogHandler|FirePHPHandler|MongoDBHandler|ProcessHandler|StreamHandler|SyslogHandler
      *
      * @throws ApiException
      */
@@ -279,28 +278,20 @@ class MonologWrapper
         switch ($definition['class']) {
             case 'StreamHandler':
                 return $this->streamHandler($handlerName, $definition);
-                break;
             case 'FirePHPHandler':
                 return $this->firePHPHandler();
-                break;
             case 'ChromePHPHandler':
                 return $this->chromePHPHandler();
-                break;
             case 'SyslogHandler':
                 return $this->syslogHandler($handlerName, $definition);
-                break;
             case 'ErrorLogHandler':
                 return $this->errorLogHandler();
-                break;
             case 'ProcessHandler':
                 return $this->processHandler($handlerName, $definition);
-                break;
             case 'MongoDBHandler':
                 return $this->mongoDBHandler($handlerName, $definition);
-                break;
             default:
                 throw new ApiException("invalid handler class in $handlerName in the settings");
-                break;
         }
     }
 
