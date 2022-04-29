@@ -26,7 +26,6 @@ use ApiOpenStudio\Core\ConvertToJsonTrait;
 use ApiOpenStudio\Core\ConvertToTextTrait;
 use ApiOpenStudio\Core\ConvertToXmlTrait;
 use ApiOpenStudio\Core\DetectTypeTrait;
-use ApiOpenStudio\Db;
 
 /**
  * Class Cast

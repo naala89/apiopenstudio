@@ -152,6 +152,7 @@ class OpenapiImport extends ProcessorEntity
 
         try {
             $application = $this->applicationMapper->findByAccidAppname($accid, $applicationName);
+            $roles = Utilities::getRolesFromToken();
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
@@ -161,7 +162,6 @@ class OpenapiImport extends ProcessorEntity
         }
 
         // Only developers for an application can use this processor.
-        $roles = Utilities::getRolesFromToken();
         $permitted = false;
         foreach ($roles as $role) {
             if ($role['appid'] == $appid && $role['role_name'] == 'Developer') {
@@ -223,6 +223,12 @@ class OpenapiImport extends ProcessorEntity
             }
         }
 
-        return new DataContainer($result, 'array');
+        try {
+            $result = new DataContainer($result, 'array');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 }

@@ -140,7 +140,11 @@ class VarFile extends Core\ProcessorEntity
     private function getFileFiles(string $filename, bool $getContents, bool $nullable): Core\DataContainer
     {
         $this->validateFilesError($filename, $nullable);
-        $dir = $this->settings->__get(['api', 'dir_tmp']);
+        try {
+            $dir = $this->settings->__get(['api', 'dir_tmp']);
+        } catch (Core\ApiException $e) {
+            throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $extension = pathinfo($_FILES[$filename]['name'], PATHINFO_EXTENSION);
         try {
             $basename = bin2hex(random_bytes(8));
@@ -178,7 +182,11 @@ class VarFile extends Core\ProcessorEntity
         bool $getContents,
         bool $nullable
     ): Core\DataContainer {
-        $dir = $this->settings->__get(['api', 'base_path']) . $this->settings->__get(['api', 'dirFileStorage']);
+        try {
+            $dir = $this->settings->__get(['api', 'base_path']) . $this->settings->__get(['api', 'dirFileStorage']);
+        } catch (Core\ApiException $e) {
+            throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $name = md5($filename . time());
         $extension = '.' . pathinfo($_FILES[$filename]['tmp_name'], PATHINFO_EXTENSION);
         $fileString = "$dir/$name.$extension";

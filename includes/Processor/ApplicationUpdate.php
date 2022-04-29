@@ -209,9 +209,15 @@ class ApplicationUpdate extends ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        $result = $application->dump();
-        $result['openapi'] = json_decode($result['openapi']);
-        return new DataContainer($result, 'array');
+        try {
+            $result = $application->dump();
+            $result['openapi'] = json_decode($result['openapi']);
+            $result = new DataContainer($result, 'array');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 
     /**
@@ -224,7 +230,11 @@ class ApplicationUpdate extends ProcessorEntity
      */
     protected function validateAccess(Application $application, int $accid = null)
     {
-        $uid = Utilities::getUidFromToken();
+        try {
+            $uid = Utilities::getUidFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (
             !$this->userRoleMapper->hasRole($uid, 'Administrator') &&
             !$this->userRoleMapper->hasAccidRole($uid, $application->getAccid(), 'Account manager') &&

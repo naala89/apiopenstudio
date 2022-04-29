@@ -142,7 +142,11 @@ class ApplicationRead extends ProcessorEntity
     {
         parent::process();
 
-        $uid = Utilities::getUidFromToken();
+        try {
+            $uid = Utilities::getUidFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $accountId = $this->val('account_id', true);
         $applicationId = $this->val('application_id', true);
         $keyword = $this->val('keyword', true);
@@ -196,6 +200,12 @@ class ApplicationRead extends ProcessorEntity
             }
         }
 
-        return new DataContainer($result, 'array');
+        try {
+            $result = new DataContainer($result, 'array');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 }

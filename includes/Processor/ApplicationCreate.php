@@ -144,7 +144,11 @@ class ApplicationCreate extends ProcessorEntity
         $name = $this->val('name', true);
         $openApi = $this->val('openapi', true);
 
-        $uid = Utilities::getUidFromToken();
+        try {
+            $uid = Utilities::getUidFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (
             !$this->userRoleMapper->hasRole($uid, 'Administrator')
             && !$this->userRoleMapper->hasAccidRole($uid, $accid, 'Account manager')
@@ -202,9 +206,14 @@ class ApplicationCreate extends ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        $result = $application->dump();
-        $result['openapi'] = json_decode($result['openapi']);
+        try {
+            $result = $application->dump();
+            $result['openapi'] = json_decode($result['openapi']);
+            $result = new DataContainer($result, 'array');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
-        return new DataContainer($result, 'array');
+        return $result;
     }
 }

@@ -107,7 +107,11 @@ class OpenapiDefault extends ProcessorEntity
         $appid = $this->val('appid', true);
 
         // Only developers for an application can use this processor.
-        $roles = Utilities::getRolesFromToken();
+        try {
+            $roles = Utilities::getRolesFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $permitted = false;
         foreach ($roles as $role) {
             if ($role['appid'] == $appid && $role['role_name'] == 'Developer') {
@@ -166,6 +170,12 @@ class OpenapiDefault extends ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getHtmlCode(), $this->id, $e->getHtmlCode());
         }
 
-        return new DataContainer(json_encode($schema, JSON_UNESCAPED_SLASHES), 'json');
+        try {
+            $result = new DataContainer(json_encode($schema, JSON_UNESCAPED_SLASHES), 'json');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 }

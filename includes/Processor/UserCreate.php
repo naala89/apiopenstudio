@@ -30,9 +30,9 @@ class UserCreate extends Core\ProcessorEntity
     /**
      * User mapper class.
      *
-     * @var UserMapper
+     * @var Db\UserMapper
      */
-    private $userMapper;
+    private Db\UserMapper $userMapper;
 
     /**
      * {@inheritDoc}

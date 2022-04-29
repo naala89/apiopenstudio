@@ -18,7 +18,6 @@ use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Request;
-use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\VarStoreMapper;
 
 /**
@@ -34,13 +33,6 @@ class VarStoreRead extends Core\ProcessorEntity
      * @var VarStoreMapper
      */
     private VarStoreMapper $varStoreMapper;
-
-    /**
-     * Application mapper class.
-     *
-     * @var ApplicationMapper
-     */
-    private ApplicationMapper $applicationMapper;
 
     /**
      * {@inheritDoc}
@@ -143,7 +135,6 @@ class VarStoreRead extends Core\ProcessorEntity
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->varStoreMapper = new VarStoreMapper($db, $logger);
-        $this->applicationMapper = new ApplicationMapper($db, $logger);
     }
 
     /**
@@ -278,7 +269,11 @@ class VarStoreRead extends Core\ProcessorEntity
      */
     protected function fetchWithValidation($vid, $appid, $key, $keyword, $orderBy, $direction): array
     {
-        $uid = Core\Utilities::getUidFromToken();
+        try {
+            $uid = Core\Utilities::getUidFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (!empty($vid)) {
             try {
                 $result = $this->varStoreMapper->findByUidVid($uid, $vid);

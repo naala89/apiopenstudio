@@ -15,6 +15,7 @@
 namespace ApiOpenStudio\Processor;
 
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 
 /**
  * Class VarInt
@@ -57,8 +58,13 @@ class VarInt extends Core\ProcessorEntity
     {
 
         $container = $this->val('value');
-        if ($container->getType() != 'integer') {
-            $container->setType('integer');
+
+        try {
+            if ($container->getType() != 'integer') {
+                $container->setType('integer');
+            }
+        } catch (Core\ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
         return $container;

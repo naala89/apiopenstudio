@@ -24,6 +24,7 @@ use ApiOpenStudio\Core\ProcessorHelper;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\AccountMapper;
+use ApiOpenStudio\Db\Application;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\ResourceMapper;
 
@@ -40,6 +41,20 @@ abstract class ResourceBase extends ProcessorEntity
      * @var ProcessorHelper
      */
     protected ProcessorHelper $helper;
+
+    /**
+     * Account mapper class.
+     *
+     * @var AccountMapper
+     */
+    private AccountMapper $accountMapper;
+
+    /**
+     * Config class.
+     *
+     * @var Config
+     */
+    private Config $settings;
 
     /**
      * {@inheritDoc}
@@ -125,6 +140,8 @@ abstract class ResourceBase extends ProcessorEntity
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->helper = new ProcessorHelper();
+        $this->settings = new Config();
+        $this->accountMapper = new AccountMapper($db, $logger);
     }
 
     /**
@@ -240,7 +257,13 @@ abstract class ResourceBase extends ProcessorEntity
         $result['method'] = $resource->getMethod();
         $result['ttl'] = $resource->getTtl();
 
-        return new DataContainer($this->exportData($result), 'text');
+        try {
+            $result = new DataContainer($this->exportData($result), 'text');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 
     /**
@@ -270,7 +293,13 @@ abstract class ResourceBase extends ProcessorEntity
         $mapper = new ResourceMapper($this->db, $this->logger);
         $resource = $mapper->findByAppIdMethodUri($appId, $method, $uri);
 
-        return new DataContainer($mapper->delete($resource) ? 'true' : 'false', 'text');
+        try {
+            $result = new DataContainer($mapper->delete($resource) ? 'true' : 'false', 'text');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 
     /**
@@ -457,15 +486,18 @@ abstract class ResourceBase extends ProcessorEntity
 
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
-                $classStr = $this->helper->getProcessorString($node['processor']);
+                try {
+                    $classStr = $this->helper->getProcessorString($node['processor']);
+                } catch (ApiException $e) {
+                    throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+                }
                 $class = new $classStr($meta, new Request(), $this->db);
                 $details = $class->details();
                 $id = $node['id'];
                 $this->logger->info('api', "validating: $id");
 
                 foreach ($details['input'] as $inputKey => $inputDef) {
-                    $min = $inputDef['cardinality'][0];
-                    $max = $inputDef['cardinality'][1];
+                    list($min, $max) = $inputDef['cardinality'];
                     $literalAllowed = $inputDef['literalAllowed'];
                     $limitProcessors = $inputDef['limitProcessors'];
                     $limitTypes = $inputDef['limitTypes'];
@@ -584,6 +616,28 @@ abstract class ResourceBase extends ProcessorEntity
             $message = 'invalid literal in new resource (' . print_r($element, true) . '. only "' .
                 implode("', '", $accepts) . '" accepted';
             throw new ApiException($message, 6, $id, 406);
+        }
+    }
+
+    /**
+     * Validate application is not core and core not locked.
+     *
+     * @param Application $application
+     *
+     * @throws ApiException
+     */
+    protected function validateCoreProtection(Application $application)
+    {
+        try {
+            $account = $this->accountMapper->findByAccid($application->getAccid());
+            $coreAccount = $this->settings->__get(['api', 'core_account']);
+            $coreApplication = $this->settings->__get(['api', 'core_application']);
+            $coreLock = $this->settings->__get(['api', 'core_resource_lock']);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        if ($account->getName() == $coreAccount && $application->getName() == $coreApplication && $coreLock) {
+            throw new ApiException("Unauthorised: this is a core resource", 4, $this->id, 403);
         }
     }
 }

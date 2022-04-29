@@ -149,14 +149,21 @@ class InviteCreate extends Core\ProcessorEntity
             $subject = $var->getVal();
             $var = $this->varStoreMapper->findByAppIdKey($application->getAppid(), 'user_invite_message');
             $message = $var->getVal();
-            $domain = $this->settings->__get(['api', 'url']);
+            try {
+                $domain = $this->settings->__get(['api', 'url']);
+                $fromEmail = $this->settings->__get(['email', 'from', 'email']);
+                $fromName = $this->settings->__get(['email', 'from', 'name']);
+                $emailUsername = $this->settings->__get(['email', 'username']);
+                $emailPassword = $this->settings->__get(['email', 'password']);
+                $emailHost = $this->settings->__get(['email', 'host']);
+            } catch (Core\ApiException $e) {
+                throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
             $message = str_replace('[domain]', $domain, $message);
-            $fromEmail = $this->settings->__get(['email', 'from', 'email']);
-            $fromName = $this->settings->__get(['email', 'from', 'name']);
 
-            $transport = (new Swift_SmtpTransport($this->settings->__get(['email', 'host']), 25))
-                ->setUsername($this->settings->__get(['email', 'username']))
-                ->setPassword($this->settings->__get(['email', 'password']));
+            $transport = (new Swift_SmtpTransport($emailHost, 25))
+                ->setUsername($emailUsername)
+                ->setPassword($emailPassword);
 
             $result = [];
             foreach ($emails as $email) {

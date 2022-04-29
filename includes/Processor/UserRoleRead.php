@@ -135,7 +135,11 @@ class UserRoleRead extends Core\ProcessorEntity
     {
         parent::process();
 
-        $currentUser = $this->userMapper->findByUid(Core\Utilities::getUidFromToken());
+        try {
+            $currentUser = $this->userMapper->findByUid(Core\Utilities::getUidFromToken());
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $uid = $this->val('uid', true);
         $accid = $this->val('accid', true);
         $appid = $this->val('appid', true);

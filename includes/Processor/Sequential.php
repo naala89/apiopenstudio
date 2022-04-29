@@ -15,7 +15,6 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core\DataContainer;
 use ApiOpenStudio\Core\MonologWrapper;
 use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;

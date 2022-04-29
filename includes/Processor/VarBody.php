@@ -16,7 +16,6 @@ namespace ApiOpenStudio\Processor;
 
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
-use ApiOpenStudio\Core\Debug;
 
 /**
  * Class VarBody

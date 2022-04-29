@@ -100,7 +100,11 @@ class OpenapiRead extends ProcessorEntity
 
         $appid = $this->val('appid', true);
 
-        $roles = Utilities::getRolesFromToken();
+        try {
+            $roles = Utilities::getRolesFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $permitted = false;
         foreach ($roles as $role) {
             if ($role['appid'] == $appid) {
@@ -141,6 +145,12 @@ class OpenapiRead extends ProcessorEntity
             $schema['paths'] = new stdClass();
         }
 
-        return new DataContainer(json_encode($schema, JSON_UNESCAPED_SLASHES), 'json');
+        try {
+            $result = new DataContainer(json_encode($schema, JSON_UNESCAPED_SLASHES), 'json');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 }

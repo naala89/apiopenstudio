@@ -92,7 +92,12 @@ class RoleDelete extends Core\ProcessorEntity
         $rid = $this->val('rid', true);
 
         // Update to core application and is locked.
-        if ($this->settings->__get(['api', 'core_resource_lock']) && $rid < 6) {
+        try {
+            $coreLock = $this->settings->__get(['api', 'core_resource_lock']);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        if ($coreLock && $rid < 6) {
             throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 

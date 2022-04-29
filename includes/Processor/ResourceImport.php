@@ -24,11 +24,10 @@ use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Core\ResourceValidator;
 use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\AccountMapper;
+use ApiOpenStudio\Db\Application;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
-use ApiOpenStudio\Db\UserRoleMapper;
-use ReflectionException;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -54,18 +53,18 @@ class ResourceImport extends ProcessorEntity
     ];
 
     /**
-     * Config object.
+     * Account mapper class.
+     *
+     * @var AccountMapper
+     */
+    private AccountMapper $accountMapper;
+
+    /**
+     * Config class.
      *
      * @var Config
      */
     private Config $settings;
-
-    /**
-     * User role mapper class.
-     *
-     * @var UserRoleMapper
-     */
-    private UserRoleMapper $userRoleMapper;
 
     /**
      * Resource mapper class.
@@ -73,13 +72,6 @@ class ResourceImport extends ProcessorEntity
      * @var ResourceMapper
      */
     private ResourceMapper $resourceMapper;
-
-    /**
-     * Account mapper class.
-     *
-     * @var AccountMapper
-     */
-    private AccountMapper $accountMapper;
 
     /**
      * Application mapper class.
@@ -130,7 +122,6 @@ class ResourceImport extends ProcessorEntity
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Config();
-        $this->userRoleMapper = new UserRoleMapper($db, $logger);
         $this->accountMapper = new AccountMapper($db, $logger);
         $this->applicationMapper = new ApplicationMapper($db, $logger);
         $this->resourceMapper = new ResourceMapper($db, $logger);
@@ -148,7 +139,11 @@ class ResourceImport extends ProcessorEntity
     {
         parent::process();
 
-        $uid = Utilities::getUidFromToken();
+        try {
+            $uid = Utilities::getUidFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $resource = $this->val('resource');
 
         // Extract the file contents.
@@ -162,7 +157,7 @@ class ResourceImport extends ProcessorEntity
         // Validate the metadata.
         try {
             $this->validator->validate($resource['meta']);
-        } catch (ApiException | ReflectionException $e) {
+        } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
@@ -209,7 +204,14 @@ class ResourceImport extends ProcessorEntity
         $resource = $resourceObj->dump();
         $resource['meta'] = json_decode($resource['meta'], true);
         $resource['openapi'] = json_decode($resource['openapi'], true);
-        return new DataContainer($resource, 'array');
+
+        try {
+            $result = new DataContainer($resource, 'array');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 
     /**
@@ -230,7 +232,11 @@ class ResourceImport extends ProcessorEntity
                 401
             );
         }
-        $roles = Utilities::getRolesFromToken();
+        try {
+            $roles = Utilities::getRolesFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         // Only developer role permitted to upload resource.
         $permitted = false;
         foreach ($roles as $role) {
@@ -332,21 +338,7 @@ class ResourceImport extends ProcessorEntity
             );
         }
 
-        // Validate the account exists.
-        $account = $this->accountMapper->findByAccid($application->getAccid());
-        if (
-            $account->getName() == $this->settings->__get(['api', 'core_account'])
-            && $application->getName() == $this->settings->__get(['api', 'core_application'])
-            && $this->settings->__get(['api', 'core_resource_lock'])
-        ) {
-            $this->logger->error('api', 'Unauthorised: this is the core application');
-            throw new ApiException(
-                'Unauthorised: this is the core application',
-                6,
-                $this->id,
-                400
-            );
-        }
+        $this->validateCoreProtection($application);
 
         // Validate the resource does not already exist.
         $resourceExists = $this->resourceMapper->findByAppIdMethodUri(
@@ -357,6 +349,28 @@ class ResourceImport extends ProcessorEntity
         if (!empty($resourceExists->getresid())) {
             $this->logger->error('api', 'Resource already exists');
             throw new ApiException('Resource already exists', 6, $this->id, 400);
+        }
+    }
+
+    /**
+     * Validate application is not core and core not locked.
+     *
+     * @param Application $application
+     *
+     * @throws ApiException
+     */
+    protected function validateCoreProtection(Application $application)
+    {
+        try {
+            $account = $this->accountMapper->findByAccid($application->getAccid());
+            $coreAccount = $this->settings->__get(['api', 'core_account']);
+            $coreApplication = $this->settings->__get(['api', 'core_application']);
+            $coreLock = $this->settings->__get(['api', 'core_resource_lock']);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        if ($account->getName() == $coreAccount && $application->getName() == $coreApplication && $coreLock) {
+            throw new ApiException("Unauthorised: this is a core resource", 4, $this->id, 403);
         }
     }
 }
