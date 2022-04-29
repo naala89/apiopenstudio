@@ -269,9 +269,7 @@ class Cache
      */
     private function setupApc(): bool
     {
-        $cacheAvailable = false;
-
-        if ($cacheAvailable = extension_loaded('apc')) {
+        if (extension_loaded('apc')) {
             $this->logger->info('api', 'apc available');
             $this->cacheType = 'apc';
             $this->logger->info('api', 'apc enabled');

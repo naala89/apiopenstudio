@@ -73,12 +73,12 @@ class DataContainer extends Entity
             $this->setData($data);
         } else {
             if (!in_array($dataType, $this->types)) {
-                throw new ApiException("invalid datatype, cannot set DataContainer to: $dataType");
+                throw new ApiException("invalid datatype, cannot set DataContainer to: $dataType", 0, -1, 500);
             }
             $detectedType = $this->detectType($data);
             $method = 'from' . ucfirst(strtolower($detectedType)) . 'To' . ucfirst(strtolower($dataType));
             if (!method_exists(__CLASS__, $method)) {
-                throw new ApiException("could not find method to cast: $method");
+                throw new ApiException("could not find method to cast: $method", 0, -1, 500);
             }
             $data = $this->$method($data);
             $this->data = $data;
@@ -132,11 +132,11 @@ class DataContainer extends Entity
     {
         $detectedType = $this->detectType($this->data);
         if (!in_array($type, $this->types)) {
-            throw new ApiException("invalid datatype, cannot set DataContainer to: $type");
+            throw new ApiException("invalid datatype, cannot set DataContainer to: $type", 0, -1, 500);
         }
         $method = 'from' . ucfirst(strtolower($detectedType)) . 'To' . ucfirst(strtolower($type));
         if (!method_exists(__CLASS__, $method)) {
-            throw new ApiException("could not find method to cast: $method");
+            throw new ApiException("could not find method to cast: $method", 0, -1, 500);
         }
         $data = $this->$method($this->data);
         $this->data = $data;

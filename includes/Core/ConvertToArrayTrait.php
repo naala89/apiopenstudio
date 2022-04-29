@@ -191,13 +191,13 @@ trait ConvertToArrayTrait
                 if (!array_key_exists($childname, $jsnode)) {
                     $jsnode[$childname] = [];
                 }
-                array_push($jsnode[$childname], $this->xml2json($childxmlnode, true));
+                array_push($jsnode[$childname], $this->xml2json($childxmlnode));
             }
             return $jsnode;
         } else {
             $nodename = $xml->getName();
             $jsnode[$nodename] = [];
-            array_push($jsnode[$nodename], $this->xml2json($xml, true));
+            array_push($jsnode[$nodename], $this->xml2json($xml));
             $result = json_encode($jsnode);
             return !is_array($result) ? [$result] : $result;
         }

@@ -15,9 +15,6 @@
 namespace ApiOpenStudio\Core;
 
 use ADOConnection;
-use ApiOpenStudio\Db\AccountMapper;
-use ApiOpenStudio\Db\ApplicationMapper;
-use ApiOpenStudio\Db\UserRoleMapper;
 
 /**
  * Class ProcessorEntity
@@ -207,7 +204,11 @@ abstract class ProcessorEntity extends Entity
      */
     public function process()
     {
-        $this->logger->info('api', 'Processor: ' . $this->details()['machineName']);
+        try {
+            $this->logger->info('api', 'Processor: ' . $this->details()['machineName']);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
     }
 
     /**
@@ -243,7 +244,7 @@ abstract class ProcessorEntity extends Entity
         $inputDet = $this->details['input'];
         if (!isset($inputDet[$key])) {
             // undefined input key for this processor type
-            throw new ApiException("invalid key: $key", 1, $this->id);
+            throw new ApiException("invalid key: $key", 1, $this->id, 500);
         }
 
         $min = $inputDet[$key]['cardinality'][0];
@@ -255,7 +256,12 @@ abstract class ProcessorEntity extends Entity
         $count = (empty($this->meta->$key) ? 0 : is_array($this->meta->$key)) ? sizeof($this->meta->$key) : 1;
         if ($count < $min || ($max != '*' && $count > $max)) {
             // invalid cardinality
-            throw new ApiException("invalid number of inputs ($count) in $key, requires $min - $max", 7, $this->id);
+            throw new ApiException(
+                "invalid number of inputs ($count) in $key, requires $min - $max",
+                1,
+                $this->id,
+                400
+            );
         }
 
         // Set data to default if empty.
@@ -265,15 +271,27 @@ abstract class ProcessorEntity extends Entity
             $test = $this->isDataContainer($this->meta->$key) ? $this->meta->$key->getData() : $this->meta->$key;
         }
         if ($test === null || $test === '') {
-            $this->meta->$key = new DataContainer($default);
+            try {
+                $this->meta->$key = new DataContainer($default);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
         }
 
-        $container = $this->isDataContainer($this->meta->$key)
-            ? $this->meta->$key
-            : new DataContainer($this->meta->$key);
+        try {
+            $container = $this->isDataContainer($this->meta->$key)
+                ? $this->meta->$key
+                : new DataContainer($this->meta->$key);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
-        $this->validateAllowedValues($container->getData(), $limitValues, $min, $key);
-        $this->validateAllowedTypes($container->getType(), $limitTypes, $min, $key);
+        try {
+            $this->validateAllowedValues($container->getData(), $limitValues, $min, $key);
+            $this->validateAllowedTypes($container->getType(), $limitTypes, $min, $key);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
         $this->logger->debug('api', 'Value: ' . print_r($container->getData(), true));
 
