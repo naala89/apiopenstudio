@@ -14,8 +14,6 @@
 
 namespace ApiOpenStudio\Output;
 
-use ApiOpenStudio\Core\DataContainer;
-
 /**
  * Class Plain
  *

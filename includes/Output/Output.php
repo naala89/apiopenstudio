@@ -15,8 +15,6 @@
 namespace ApiOpenStudio\Output;
 
 use ApiOpenStudio\Core;
-use ApiOpenStudio\Config;
-use phpDocumentor\Reflection\Types\Boolean;
 
 /**
  * Class Output
