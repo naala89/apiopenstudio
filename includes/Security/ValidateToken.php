@@ -82,7 +82,11 @@ class ValidateToken extends Core\ProcessorEntity
     {
         parent::process();
 
-        $this->token = Core\Utilities::decryptToken();
+        try {
+            $this->token = Core\Utilities::decryptToken();
+        } catch (Core\ApiException $e) {
+            throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $this->validateToken();
 
         return new Core\DataContainer(true, 'boolean');
