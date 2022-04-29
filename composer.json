@@ -38,6 +38,12 @@
     "cebe/php-openapi": "^1.5"
   },
   "require": {
+    "ext-simplexml": "*",
+    "ext-json": "*",
+    "ext-curl": "*",
+    "ext-libxml": "*",
+    "ext-dom": "*",
+    "ext-mysqli": "*",
     "adodb/adodb-php": "^5.20",
     "mustangostang/spyc": "^0.6.2",
     "jlawrence/eos": "^3.2",
