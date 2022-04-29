@@ -36,9 +36,9 @@ $varData = [
 ];
 $errorData = [
     ['5*/7', '*/.'],
-    ['^', 'Unknown error.'],
+    ['^', 'Unidentified error.'],
     ['()', 'Stack must be empty.'],
-    [') (', 'Unknown error.'],
+    [') (', 'Unidentified error.'],
     ['(1+1)5', 'Stack must be empty.'],
     ['pi e', 'Pie.'],
     ['1*E1', 'E1.'],
@@ -46,7 +46,7 @@ $errorData = [
     ['  ', 'Stack must be empty.'],
     ['_', '_.'],
     ['X', 'X.', ['x' => '4']],
-    ['(x))', 'Unknown error.'],
+    ['(x))', 'Unidentified error.'],
 ];
 
 $I->wantTo('Test formulas that will return NaN.');
