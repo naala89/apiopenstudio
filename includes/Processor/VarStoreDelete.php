@@ -87,6 +87,7 @@ class VarStoreDelete extends Core\ProcessorEntity
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->varStoreMapper = new VarStoreMapper($db, $logger);
+        $this->applicationMapper = new ApplicationMapper($db, $logger);
     }
 
     /**
@@ -104,6 +105,7 @@ class VarStoreDelete extends Core\ProcessorEntity
 
         try {
             $var = $this->varStoreMapper->findByVid($vid);
+            $roles = Core\Utilities::getRolesFromToken();
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
@@ -114,7 +116,6 @@ class VarStoreDelete extends Core\ProcessorEntity
 
         // Validate access to the existing var's application
         $permitted = false;
-        $roles = Core\Utilities::getRolesFromToken();
         $accounts = [];
         foreach ($roles as $role) {
             if ($role['role_name'] == 'Administrator' && in_array('Administrator', $this->permittedRoles)) {

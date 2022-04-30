@@ -15,6 +15,7 @@
 namespace ApiOpenStudio\Processor;
 
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 
 /**
  * Class VarBool
@@ -59,8 +60,13 @@ class VarBool extends Core\ProcessorEntity
         parent::process();
 
         $container = $this->val('value');
-        if ($container->getType() != 'boolean') {
-            $container->setType('boolean');
+
+        try {
+            if ($container->getType() != 'boolean') {
+                $container->setType('boolean');
+            }
+        } catch (Core\ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
         return $container;

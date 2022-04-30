@@ -140,11 +140,12 @@ class AccountUpdate extends ProcessorEntity
             $account->setName($name);
             $this->accountMapper->save($account);
             $this->updateOpenApiForApplications($account);
+            $result = new DataContainer($account->dump(), 'array');
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        return new DataContainer($account->dump(), 'array');
+        return $result;
     }
 
     /**

@@ -51,7 +51,7 @@ class Hash
    *
    * @return boolean
    */
-    public static function verifPassword(string $password, string $hash): bool
+    public static function verifyPassword(string $password, string $hash): bool
     {
         return password_verify($password, $hash);
     }

@@ -14,6 +14,7 @@
 
 namespace ApiOpenStudio\Core;
 
+use Exception;
 use SimpleXMLElement;
 
 /**
@@ -197,8 +198,8 @@ trait ConvertToXmlTrait
     {
         try {
             $xml = new SimpleXMLElement('<apiOpenStudioWrapper/>');
-        } catch (\Exception $e) {
-            throw new ApiException($e->getMessage());
+        } catch (Exception $e) {
+            throw new ApiException($e->getMessage(), 0, -1, 500);
         }
         return $xml;
     }

@@ -137,6 +137,7 @@ class OpenapiUpdate extends ProcessorEntity
         }
         try {
             $application = $this->applicationMapper->findByAccidAppname($account->getAccid(), $applicationName);
+            $roles = Utilities::getRolesFromToken();
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
@@ -150,7 +151,6 @@ class OpenapiUpdate extends ProcessorEntity
         }
 
         // Only developers for an application can use this processor.
-        $roles = Utilities::getRolesFromToken();
         $permitted = false;
         foreach ($roles as $role) {
             if ($role['appid'] == $appid && $role['role_name'] == 'Developer') {
@@ -192,6 +192,12 @@ class OpenapiUpdate extends ProcessorEntity
             }
         }
 
-        return new DataContainer(json_encode($result), 'json');
+        try {
+            $result = new DataContainer(json_encode($result), 'json');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 }

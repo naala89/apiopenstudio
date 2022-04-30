@@ -76,8 +76,6 @@ class Install extends Script
      *   CLI args.
      *
      * @return void
-     *
-     * @throws ApiException
      */
     public function exec(array $argv = null)
     {
@@ -95,11 +93,17 @@ class Install extends Script
             exit;
         }
 
-        $this->createLink(null, null, '', 'root', $this->config->__get(['db', 'root_password']));
+        try {
+            $rootPassword = $this->config->__get(['db', 'root_password']);
+            $username = $this->config->__get(['db', 'username']);
+        } catch (ApiException $e) {
+            $this->handleException($e);
+        }
+        $this->createLink(null, null, '', 'root', $rootPassword);
         echo "\n";
         $this->dropDatabase();
         echo "\n";
-        $this->dropUser($this->config->__get(['db', 'username']));
+        $this->dropUser($username);
         echo "\n";
         $this->createDatabase();
         echo "\n";
@@ -150,8 +154,7 @@ class Install extends Script
             $password = $password === null ? $this->config->__get(['db', 'password']) : $password;
         } catch (ApiException $e) {
             echo "Error: DB connection failed, please check your settings.yml file.\n";
-            echo $e->getMessage();
-            exit;
+            $this->handleException($e);
         }
 
         // DB link.
@@ -200,8 +203,7 @@ class Install extends Script
             $database = $database === null ? $this->config->__get(['db', 'database']) : $database;
         } catch (ApiException $e) {
             echo "Error: Create `$database` database failed, please check your settings.yml file.\n";
-            echo $e->getMessage();
-            exit;
+            $this->handleException($e);
         }
 
         echo "Creating the Database...\n";
@@ -228,8 +230,7 @@ class Install extends Script
             $database = $database === null ? $this->config->__get(['db', 'database']) : $database;
         } catch (ApiException $e) {
             echo "Error: Drop `$database` database failed, please check your settings.yml file.\n";
-            echo $e->getMessage() . "\n";
-            exit;
+            $this->handleException($e);
         }
 
         echo "Dropping the `$database` Database...\n";
@@ -256,8 +257,7 @@ class Install extends Script
             $database = $database === null ? $this->config->__get(['db', 'database']) : $database;
         } catch (ApiException $e) {
             echo "Error: use `$database` database failed, please check your settings.yml file.\n";
-            echo $e->getMessage() . "\n";
-            exit;
+            $this->handleException($e);
         }
 
         echo "Using the Database...\n";
@@ -290,8 +290,7 @@ class Install extends Script
             $password = $password === null ? $this->config->__get(['db', 'password']) : $password;
         } catch (ApiException $e) {
             echo "Error: Create `$username` user failed, please check your settings.yml file.\n";
-            echo $e->getMessage() . "\n";
-            exit;
+            $this->handleException($e);
         }
 
         echo "Creating the database user...\n";
@@ -334,8 +333,7 @@ class Install extends Script
             $username = $username === null ? $this->config->__get(['db', 'username']) : $username;
         } catch (ApiException $e) {
             echo "Error: Drop user `$username` failed, please check your settings.yml file.\n";
-            echo $e->getMessage() . "\n";
-            exit;
+            $this->handleException($e);
         }
 
         echo "Dropping the `$username` user...\n";
@@ -369,8 +367,7 @@ class Install extends Script
                 : $definitionPath;
         } catch (ApiException $e) {
             echo "Error: Create tables failed, please check your settings.yml file.\n";
-            echo $e->getMessage() . "\n";
-            exit;
+            $this->handleException($e);
         }
 
         while (!is_bool($includeTest)) {
@@ -468,8 +465,7 @@ class Install extends Script
             $dirResources = $dirResources === null ? $this->config->__get(['api', 'dir_resources']) : $dirResources;
         } catch (ApiException $e) {
             echo "Error: Create resources failed, please check your settings.yml file.\n";
-            echo $e->getMessage() . "\n";
-            exit;
+            $this->handleException($e);
         }
 
         $dir = $basePath . $dirResources;
@@ -515,38 +511,39 @@ class Install extends Script
     public function importOpenApi(string $basePath = null, string $dirOpenapi = null)
     {
         echo "Importing the OpenApi docs...\n";
+
         try {
             $openapiVersion = $this->config->__get(['api', 'openapi_version']);
             $basePath = $basePath === null ? $this->config->__get(['api', 'base_path']) : $basePath;
             $dirOpenapi = $dirOpenapi === null ? $this->config->__get(['api', 'openapi_directory']) : $dirOpenapi;
+            echo "OpenApi version configured to: $openapiVersion\n";
         } catch (ApiException $e) {
-            echo "Failed to load config item: " . $e->getMessage() . "\n";
-            exit;
+            echo "Failed to load config item\n";
+            $this->handleException($e);
         }
-        echo "OpenApi version configured to: $openapiVersion\n";
 
         try {
             $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->config);
             $openApiPathClassName = Utilities::getOpenApiPathClassPath($this->config);
+            $openApiParentClass = new $openApiParentClassName();
+            $openApiPathClass = new $openApiPathClassName();
         } catch (ApiException $e) {
-            echo "Failed fetch the OpenAPI classes: " . $e->getMessage() . "\n";
-            exit;
+            echo "Failed fetch the OpenAPI classes\n";
+            $this->handleException($e);
         }
-        $openApiParentClass = new $openApiParentClassName();
-        $openApiPathClass = new $openApiPathClassName();
 
         $dir = $basePath . $dirOpenapi;
         echo "Scanning $dir for files\n";
         $filenames = scandir($dir);
         try {
             $logger = new MonologWrapper($this->config->__get(['debug']));
+            $accountMapper = new Db\AccountMapper($this->db, $logger);
+            $applicationMapper = new Db\ApplicationMapper($this->db, $logger);
+            $resourceMapper = new Db\ResourceMapper($this->db, $logger);
         } catch (ApiException $e) {
-            echo "Failed to set up the logger: " . $e->getMessage() . "\n";
-            exit;
+            echo "Failed to set up the logger\n";
+            $this->handleException($e);
         }
-        $accountMapper = new Db\AccountMapper($this->db, $logger);
-        $applicationMapper = new Db\ApplicationMapper($this->db, $logger);
-        $resourceMapper = new Db\ResourceMapper($this->db, $logger);
 
         foreach ($filenames as $filename) {
             if (pathinfo($filename, PATHINFO_EXTENSION) != 'yaml' || strpos($filename, $openapiVersion) === false) {
@@ -561,8 +558,8 @@ class Install extends Script
                 try {
                     $parent->host = $this->config->__get(['api', 'url']);
                 } catch (ApiException $e) {
-                    echo "Failed to get config for API URL: " . $e->getMessage() . "\n";
-                    exit;
+                    echo "Failed to get config for API URL\n";
+                    $this->handleException($e);
                 }
             } else {
                 $server = $parent->servers[0]->url;
@@ -578,8 +575,8 @@ class Install extends Script
                         $parent->servers[] = $server;
                     }
                 } catch (ApiException $e) {
-                    echo "Failed to get config for API protocols and URL: " . $e->getMessage() . "\n";
-                    exit;
+                    echo "Failed to get config for API protocols and URL\n";
+                    $this->handleException($e);
                 }
             }
 
@@ -595,8 +592,8 @@ class Install extends Script
                 $application->setOpenapi($openApiParentClass->export());
                 $applicationMapper->save($application);
             } catch (ApiException $e) {
-                echo "Failed to save to application ($applicationName): " . $e->getMessage() . "\n";
-                exit;
+                echo "Failed to save to application ($applicationName)\n";
+                $this->handleException($e);
             }
 
             foreach ($paths as $uri => $uriBody) {
@@ -614,8 +611,8 @@ class Install extends Script
                         $resource->setOpenapi($openApiPathClass->export());
                         $resourceMapper->save($resource);
                     } catch (ApiException $e) {
-                        echo "Failed to save to resource ($method, $uri): " . $e->getMessage() . "\n";
-                        exit;
+                        echo "Failed to save to resource ($method, $uri)\n";
+                        $this->handleException($e);
                     }
                 }
             }
@@ -632,7 +629,6 @@ class Install extends Script
      *   Admin user password.
      * @param string $email
      *   Admin user email.
-     * @throws ApiException
      */
     public function createAdminUser(string $username = '', string $password = '', string $email = '')
     {
@@ -651,8 +647,8 @@ class Install extends Script
             $email = $this->readlineTerminal($prompt);
         }
 
-        $logger = new MonologWrapper($this->config->__get(['debug']));
         try {
+            $logger = new MonologWrapper($this->config->__get(['debug']));
             $userMapper = new Db\UserMapper($this->db, $logger);
             $user = new Db\User(
                 null,
@@ -680,8 +676,7 @@ class Install extends Script
             $userMapper->save($user);
         } catch (ApiException $e) {
             echo "Error: an error occurred creating your user, please check the logs.\n";
-            echo $e->getMessage() . "\n";
-            exit;
+            $this->handleException($e);
         }
         echo "ApiOpenStudio admin user created!\n";
 
@@ -712,8 +707,7 @@ class Install extends Script
             $userRoleMapper->save($userRole);
         } catch (ApiException $e) {
             echo "Error: An error occurred creating your Administrator role, please check the logs.\n";
-            echo $e->getMessage() . "\n";
-            exit;
+            $this->handleException($e);
         }
 
         echo "Administrator role successfully added to ApiOpenStudio admin user!\n";
@@ -723,8 +717,6 @@ class Install extends Script
      * Generate the JWT keys.
      *
      * @param null $generateKeys Force generation of keys.
-     *
-     * @throws ApiException
      */
     public function generateJwtKeys($generateKeys = null)
     {
@@ -732,10 +724,14 @@ class Install extends Script
         echo "You will need the public/private keys for users to login and validate.\n";
         echo "These can be automatically generated for you, or you can manually copy them in yourself\n\n";
 
-        $private_key_path = $config->__get(['api', 'jwt_private_key']);
-        $public_key_path = $config->__get(['api', 'jwt_public_key']);
-        echo "Private JWT key path: $private_key_path\n";
-        echo "Public JWT key path: $public_key_path\n\n";
+        try {
+            $private_key_path = $config->__get(['api', 'jwt_private_key']);
+            $public_key_path = $config->__get(['api', 'jwt_public_key']);
+            echo "Private JWT key path: $private_key_path\n";
+            echo "Public JWT key path: $public_key_path\n\n";
+        } catch (ApiException $e) {
+            $this->handleException($e);
+        }
 
         while (!is_bool($generateKeys)) {
             $prompt = "Automatically generate public/private keys for JWT ";
@@ -747,9 +743,17 @@ class Install extends Script
         }
 
         if ($generateKeys) {
-            echo "Generating keys...\n\n";
-            shell_exec("ssh-keygen -t rsa -b 4096 -P \"\" -m PEM -f $private_key_path");
+            echo "Generating keys...\n";
+            shell_exec("ssh-keygen -t rsa -b 4096 -P \"\" -m PEM -f $private_key_path >/dev/null & sleep 2");
             shell_exec("openssl rsa -in $private_key_path -pubout -outform PEM -out $public_key_path");
+            shell_exec("chmod 600 $private_key_path $public_key_path");
+            echo "keys generated\n";
         }
+    }
+
+    protected function handleException(ApiException $e)
+    {
+        echo $e->getMessage() . "\n";
+        exit;
     }
 }

@@ -16,7 +16,6 @@ namespace ApiOpenStudio\Output;
 
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\ConvertToFileTrait;
-use ApiOpenStudio\Core\DataContainer;
 use ApiOpenStudio\Core\DetectTypeTrait;
 
 /**
@@ -116,7 +115,7 @@ class File extends Output
             $this->data->setData($this->$method($this->data->getData()));
             $this->data->setType('file');
         } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 6, $this->id, 400);
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
     }
 }

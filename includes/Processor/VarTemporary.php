@@ -123,6 +123,12 @@ class VarTemporary extends ProcessorEntity
                 throw new ApiException("invalid operation: $operation", 6, $this->id, 417);
         }
 
-        return new DataContainer($result);
+        try {
+            $result = new DataContainer($result);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 }

@@ -67,8 +67,8 @@ class ResourceValidator
      *
      * @return void
      *
-     * @throws ApiException|ReflectionException
-     *   Input data not well formed.
+     * @throws ApiException
+     *   Input data not well-formed.
      */
     public function validate(array $data)
     {
@@ -98,7 +98,7 @@ class ResourceValidator
                 $this->logger->error('api', $message);
                 throw new ApiException($message, 1, -1, 400);
             }
-            foreach ($data['fragments'] as $fragKey => $fragVal) {
+            foreach ($data['fragments'] as $fragVal) {
                 $this->validateDetails($fragVal);
             }
         }
@@ -114,7 +114,7 @@ class ResourceValidator
             if ($this->helper->isProcessor($data['output'])) {
                 $this->validateDetails($data['output']);
             } elseif (is_array($data['output'])) {
-                foreach ($data['output'] as $key => $output) {
+                foreach ($data['output'] as $output) {
                     if ($this->helper->isProcessor($output)) {
                         $this->validateDetails($output);
                     } elseif ($output != 'response') {
@@ -174,7 +174,7 @@ class ResourceValidator
      *
      * @return void
      *
-     * @throws ApiException|ReflectionException Error found in validating the resource.
+     * @throws ApiException Error found in validating the resource.
      */
     private function validateDetails(array $meta)
     {
@@ -183,7 +183,11 @@ class ResourceValidator
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
                 $classStr = $this->helper->getProcessorString($node['processor']);
-                $class = new ReflectionClass($classStr);
+                try {
+                    $class = new ReflectionClass($classStr);
+                } catch (ReflectionException $e) {
+                    throw new ApiException($e->getMessage(), $e->getCode(), -1, 500);
+                }
                 $parents = [];
                 while ($parent = $class->getParentClass()) {
                     $parents[] = $parent->getName();
@@ -264,7 +268,7 @@ class ResourceValidator
                     $this->logger->error('api', 'Invalid processor, id attribute missing');
                     throw new ApiException('Invalid processor, id attribute missing', 1, -1, 400);
                 }
-                foreach ($node as $key => $value) {
+                foreach ($node as $value) {
                     array_unshift($stack, $value);
                 }
             }
@@ -278,13 +282,12 @@ class ResourceValidator
      *
      * @param mixed $element Literal value in a resource to validate against $accepts.
      * @param array $accepts Array of types the processor can accept.
-     * @param string|integer $id Processor ID.
      *
      * @return boolean
      *
      * @throws ApiException Invalid $element.
      */
-    private function validateTypeValue($element, array $accepts, $id): bool
+    private function validateTypeValue($element, array $accepts): bool
     {
         if (empty($accepts)) {
             return true;

@@ -16,7 +16,6 @@ namespace ApiOpenStudio\Core;
 
 use ADOConnection;
 use ApiOpenStudio\Db;
-use Spyc;
 
 /**
  * Class Api
@@ -45,13 +44,6 @@ class Api
      * @var ProcessorHelper
      */
     private ProcessorHelper $helper;
-
-    /**
-     * Test for resource direct from file.
-     *
-     * @var boolean
-     */
-    private bool $test = false; // false or filename in /yaml/test
 
     /**
      * DB connection object.
@@ -189,27 +181,23 @@ class Api
 
         $request = new Request();
 
-        try {
-            $uriParts = explode('/', trim($get['request'], '/'));
+        $uriParts = explode('/', trim($get['request'], '/'));
 
-            $accName = array_shift($uriParts);
-            $accMapper = new Db\AccountMapper($this->db, $this->logger);
-            $account = $accMapper->findByName($accName);
-            if (empty($accId = $account->getAccid())) {
-                throw new ApiException('invalid request');
-            }
-
-            $appName = array_shift($uriParts);
-            $appMapper = new Db\ApplicationMapper($this->db, $this->logger);
-            $application = $appMapper->findByAccidAppname($accId, $appName);
-            if (empty($appId = $application->getAppid())) {
-                throw new ApiException('invalid request');
-            }
-
-            $result = $this->getResource($appId, $method, $uriParts);
-        } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 3, 'oops', 404);
+        $accName = array_shift($uriParts);
+        $accMapper = new Db\AccountMapper($this->db, $this->logger);
+        $account = $accMapper->findByName($accName);
+        if (empty($accId = $account->getAccid())) {
+            throw new ApiException('invalid request', 3, 'oops', 404);
         }
+
+        $appName = array_shift($uriParts);
+        $appMapper = new Db\ApplicationMapper($this->db, $this->logger);
+        $application = $appMapper->findByAccidAppname($accId, $appName);
+        if (empty($appId = $application->getAppid())) {
+            throw new ApiException('invalid request', 3, 'oops', 404);
+        }
+
+        $result = $this->getResource($appId, $method, $uriParts);
 
         $request->setAccName($accName);
         $request->setAccId($accId);
@@ -243,68 +231,28 @@ class Api
      * @param string $method Request HTTP method.
      * @param array $uriParts Request URI parts.
      *
-     * @return array|Db\Resource
+     * @return array
      *
      * @throws ApiException Exception flowing through, ot invalid test YAML.
      */
-    private function getResource(int $appId, string $method, array $uriParts)
+    private function getResource(int $appId, string $method, array $uriParts): array
     {
-        if (!$this->test) {
-            $resourceMapper = new Db\ResourceMapper($this->db, $this->logger);
+        $resourceMapper = new Db\ResourceMapper($this->db, $this->logger);
 
-            $args = [];
-            while (sizeof($uriParts) > 0) {
-                $uri = implode('/', $uriParts);
-                $result = $resourceMapper->findByAppIdMethodUri($appId, $method, $uri);
-                if (!empty($result->getResid())) {
-                    return [
-                        'args' => $args,
-                        'resource' => $result,
-                    ];
-                }
-                array_unshift($args, array_pop($uriParts));
+        $args = [];
+        while (sizeof($uriParts) > 0) {
+            $uri = implode('/', $uriParts);
+            $result = $resourceMapper->findByAppIdMethodUri($appId, $method, $uri);
+            if (!empty($result->getResid())) {
+                return [
+                    'args' => $args,
+                    'resource' => $result,
+                ];
             }
-            throw new ApiException('invalid request', 3, 'oops', 404);
+            array_unshift($args, array_pop($uriParts));
         }
 
-        $filepath = $_SERVER['DOCUMENT_ROOT'] . $this->settings->__get('dir_yaml') . 'test/' . $this->test;
-        if (!file_exists($filepath)) {
-            throw new ApiException("invalid test yaml: $filepath", 1, 'oops', 400);
-        }
-        $yaml = Spyc::YAMLLoad($filepath);
-        $meta = [];
-        $meta['process'] = $yaml['process'];
-        if (!empty($yaml['security'])) {
-            $meta['security'] = $yaml['security'];
-        }
-        if (!empty($yaml['output'])) {
-            $meta['output'] = $yaml['output'];
-        }
-        if (!empty($yaml['fragments'])) {
-            $meta['fragments'] = $yaml['fragments'];
-        }
-        $resource = new Db\Resource();
-        $resource->setMeta(json_encode($meta));
-        $resource->setTtl($yaml['ttl']);
-        $resource->setMethod($yaml['method']);
-        $resource->setUri(strtolower($yaml['uri']));
-        return $resource;
-    }
-
-    /**
-     * Get the cache key for a request.
-     *
-     * @param array $uriParts Array of UTI fragments.
-     *
-     * @return string
-     *
-     * @throws ApiException
-     */
-    private function getCacheKey(array $uriParts)
-    {
-        $cacheKey = $this->cleanData($this->request->getMethod() . '_' . implode('_', $uriParts));
-        $this->logger->info('api', 'cache key: ' . $cacheKey);
-        return $cacheKey;
+        throw new ApiException('invalid request', 3, 'oops', 404);
     }
 
     /**
@@ -390,7 +338,7 @@ class Api
     private function processOutputResponse(array $meta, $data, int $index = null)
     {
         if (!isset($meta['processor'])) {
-            throw new ApiException("No processor found in the output section: $index.", 3, 'oops', 400);
+            throw new ApiException("No processor found in the output section: $index.", 1, 'oops', 500);
         }
         $outFormat = ucfirst($this->cleanData($meta['processor']));
         $class = $this->helper->getProcessorString($outFormat, ['Output']);
@@ -404,7 +352,7 @@ class Api
     /**
      * Process the output.
      *
-     * @param array $meta Output mnetadata.
+     * @param array $meta Output metadata.
      * @param mixed $data Response data.
      * @param int|null $index Index in the output array.
      *
@@ -415,7 +363,7 @@ class Api
     private function processOutputRemote(array $meta, $data, int $index = null)
     {
         if (!isset($meta['processor'])) {
-            throw new ApiException("No processor found in the output section: $index.", 3, 'oops', 400);
+            throw new ApiException("No processor found in the output section: $index.", 1, 'oops', 500);
         }
         $outFormat = ucfirst($this->cleanData($meta['processor']));
         $class = $this->helper->getProcessorString($outFormat, ['Output']);
@@ -439,7 +387,7 @@ class Api
             } elseif ($_SERVER['HTTP_X_HTTP_METHOD'] == 'PUT') {
                 $method = 'put';
             } else {
-                throw new ApiException("unexpected header", 3, 'oops', 406);
+                throw new ApiException("unexpected header", 3, 'oops', 400);
             }
         }
         return $method;

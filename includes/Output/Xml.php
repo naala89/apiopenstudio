@@ -96,7 +96,7 @@ class Xml extends Output
             $this->data->setData($this->$method($this->data->getData()));
             $this->data->setType('xml');
         } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 6, 'output: XML', 400);
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
     }
 }

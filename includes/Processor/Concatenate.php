@@ -66,6 +66,12 @@ class Concatenate extends ProcessorEntity
             $result .= $this->isDataContainer($item) ? $item->getData() : $item;
         }
 
-        return new DataContainer($result, 'text');
+        try {
+            $result = new DataContainer($result, 'text');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 }

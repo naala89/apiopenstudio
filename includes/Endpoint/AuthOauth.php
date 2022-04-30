@@ -21,7 +21,7 @@ use ApiOpenStudio\Core;
  *
  * Provide OAuth authentication to a resource.
  */
-class AuthOAuth extends Core\ProcessorEntity
+class AuthOauth extends Core\ProcessorEntity
 {
   /**
    * {@inheritDoc}
@@ -94,7 +94,7 @@ class AuthOAuth extends Core\ProcessorEntity
         parent::process();
 
         $headers = array(
-            Authorization => OAuth,
+            'Authorization' => 'OAuth',
             'oauth_consumer_key' => $this->val('key', true),
             'oauth_nonce' => $this->val('nonce', true),
             'oauth_signature' => $this->val('signature', true),

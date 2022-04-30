@@ -134,12 +134,27 @@ Throwing Exceptions
 -------------------
 
 In order to fail gracefully, processors should trap all errors and throw
-an ```ApiOpenStudio\Core\ApiException```. This will because by the core
-prcessing code, and its message return in the result with the defined error
-code, HTML reponse code and processor ID. e.g.
+an ```ApiOpenStudio\Core\ApiException```. This will be caught by the core
+processing code, and the message will be returned in the result with the defined error
+code, HTML response code and processor ID. e.g.
 
     if (false) {
         throw new ApiException("I could not process this input.", 6, $this->id, 400);
+    }
+
+The core code will often find issues and will throw ApiException's. However,
+the core code will have no idea what processor was actually being processed at
+the time of the exception and will be unable to add the prcessor ID to the
+exception. It is good style to catch and rethrow these exceptions, with the
+processor ID. This makes it much easier for users and future developers to
+locate issues and bugs when using your processor. 
+
+i.e.
+
+    try {
+        $result = new DataContainer($myResult, 'array');
+    } catch (ApiException $e) {
+        throw new ApiException($e->getMessage(), $e->getCode, $this->id, $e->getHtmlCode());
     }
 
 Logging

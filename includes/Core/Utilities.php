@@ -23,6 +23,7 @@ use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
+use Lcobucci\JWT\Validation\NoConstraintsGiven;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 
 /**
@@ -95,7 +96,7 @@ class Utilities
         $lower = $lower === null || $lower;
         $upper = $upper === null || $upper;
         $number = $number === null || $number;
-        $special = !($special === null) && $special;
+        $special = $special === null || $special;
         $chars = '';
         if ($lower) {
             $chars .= self::$lower_case;
@@ -279,7 +280,7 @@ class Utilities
     }
 
     /**
-     * Check if a url exists.
+     * Check if a URL exists.
      *
      * @param string $url The URL.
      *
@@ -295,7 +296,7 @@ class Utilities
     }
 
     /**
-     * Check if current url is https.
+     * Check if current URL is https.
      *
      * @return boolean
      */
@@ -434,7 +435,7 @@ class Utilities
 
         try {
             $jwtConfig->validator()->assert($decryptedToken, ...$constraints);
-        } catch (RequiredConstraintsViolated $e) {
+        } catch (RequiredConstraintsViolated | NoConstraintsGiven $e) {
             throw new ApiException('invalid token', 4, -1, 401);
         }
 

@@ -138,7 +138,11 @@ class VarStoreCreate extends Core\ProcessorEntity
         $permitted = !($this->val('validate_access', true));
 
         if (!$permitted) {
-            $roles = Core\Utilities::getRolesFromToken();
+            try {
+                $roles = Core\Utilities::getRolesFromToken();
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
             $accounts = [];
             foreach ($roles as $role) {
                 if ($role['role_name'] == 'Administrator' && in_array('Administrator', $this->permittedRoles)) {

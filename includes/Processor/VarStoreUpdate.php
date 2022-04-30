@@ -18,7 +18,6 @@ use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Request;
-use ApiOpenStudio\Db\UserRoleMapper;
 use ApiOpenStudio\Db\VarStoreMapper;
 
 /**

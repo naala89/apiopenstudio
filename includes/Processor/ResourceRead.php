@@ -126,7 +126,11 @@ class ResourceRead extends ProcessorEntity
         $keyword = $this->val('keyword', true);
         $orderBy = $this->val('order_by', true);
         $direction = $this->val('direction', true);
-        $uid = Utilities::getUidFromToken();
+        try {
+            $uid = Utilities::getUidFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
 
         $params = [];
         if (!empty($resid)) {
@@ -171,6 +175,12 @@ class ResourceRead extends ProcessorEntity
             $resources[] = $item;
         }
 
-        return new DataContainer($resources, 'array');
+        try {
+            $result = new DataContainer($resources, 'array');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 }

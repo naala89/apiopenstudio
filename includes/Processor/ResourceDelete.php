@@ -23,6 +23,7 @@ use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\AccountMapper;
+use ApiOpenStudio\Db\Application;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\ResourceMapper;
 
@@ -33,6 +34,13 @@ use ApiOpenStudio\Db\ResourceMapper;
  */
 class ResourceDelete extends ProcessorEntity
 {
+    /**
+     * Account mapper class.
+     *
+     * @var AccountMapper
+     */
+    private AccountMapper $accountMapper;
+
     /**
      * Config class.
      *
@@ -46,13 +54,6 @@ class ResourceDelete extends ProcessorEntity
      * @var ResourceMapper
      */
     private ResourceMapper $resourceMapper;
-
-    /**
-     * Account mapper class.
-     *
-     * @var AccountMapper
-     */
-    private AccountMapper $accountMapper;
 
     /**
      * Application mapper class.
@@ -95,10 +96,10 @@ class ResourceDelete extends ProcessorEntity
     public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->applicationMapper = new ApplicationMapper($db, $logger);
-        $this->accountMapper = new AccountMapper($db, $logger);
-        $this->resourceMapper = new ResourceMapper($db, $logger);
         $this->settings = new Config();
+        $this->accountMapper = new AccountMapper($db, $logger);
+        $this->applicationMapper = new ApplicationMapper($db, $logger);
+        $this->resourceMapper = new ResourceMapper($db, $logger);
     }
 
     /**
@@ -125,7 +126,11 @@ class ResourceDelete extends ProcessorEntity
         }
 
         // Validate user has Developer access to its application.
-        $userRoles = Utilities::getRolesFromToken();
+        try {
+            $userRoles = Utilities::getRolesFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $userHasAccess = false;
         foreach ($userRoles as $userRole) {
             if ($userRole['role_name'] == 'Developer' && $userRole['appid'] == $resource->getAppId()) {
@@ -136,26 +141,43 @@ class ResourceDelete extends ProcessorEntity
             throw new ApiException('Permission denied', 6, $this->id, 400);
         }
 
-        // Validate deleting core resource and core resources not locked.
-        try {
-            $application = $this->applicationMapper->findByAppid($resource->getAppid());
-            $account = $this->accountMapper->findByAccid($application->getAccid());
-        } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-        }
-        if (
-            $account->getName() == $this->settings->__get(['api', 'core_account'])
-            && $application->getName() == $this->settings->__get(['api', 'core_application'])
-            && $this->settings->__get(['api', 'core_resource_lock'])
-        ) {
-            throw new ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
-        }
+        $application = $this->applicationMapper->findByAppid($resource->getAppid());
+        $this->validateCoreProtection($application);
 
         try {
             $result = $this->resourceMapper->delete($resource);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
-        return new DataContainer($result);
+
+        try {
+            $result =  new DataContainer($result);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
+    }
+
+    /**
+     * Validate application is not core and core not locked.
+     *
+     * @param Application $application
+     *
+     * @throws ApiException
+     */
+    protected function validateCoreProtection(Application $application)
+    {
+        try {
+            $account = $this->accountMapper->findByAccid($application->getAccid());
+            $coreAccount = $this->settings->__get(['api', 'core_account']);
+            $coreApplication = $this->settings->__get(['api', 'core_application']);
+            $coreLock = $this->settings->__get(['api', 'core_resource_lock']);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        if ($account->getName() == $coreAccount && $application->getName() == $coreApplication && $coreLock) {
+            throw new ApiException("Unauthorised: this is a core resource", 4, $this->id, 403);
+        }
     }
 }

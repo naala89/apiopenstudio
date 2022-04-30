@@ -85,7 +85,7 @@ class Image extends Output
             $this->data->setData($this->$method($this->data->getData()));
             $this->data->setType('image');
         } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), 6, $this->id, 400);
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
     }
 }

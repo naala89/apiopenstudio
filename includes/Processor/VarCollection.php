@@ -73,6 +73,12 @@ class VarCollection extends ProcessorEntity
             $items = [$items];
         }
 
-        return new DataContainer($items, 'array');
+        try {
+            $result = new DataContainer($items, 'array');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 }

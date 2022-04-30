@@ -23,7 +23,6 @@ use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
-use ApiOpenStudio\Db\UserRoleMapper;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -103,6 +102,7 @@ class ResourceExport extends ProcessorEntity
         // Validate resource exists.
         try {
             $resource = $this->resourceMapper->findByResid($resid);
+            $userRoles = Utilities::getRolesFromToken();
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
@@ -111,7 +111,6 @@ class ResourceExport extends ProcessorEntity
         }
 
         // Validate user has Developer access to its application.
-        $userRoles = Utilities::getRolesFromToken();
         $userHasAccess = false;
         foreach ($userRoles as $userRole) {
             if ($userRole['role_name'] == 'Developer' && $userRole['appid'] == $resource->getAppId()) {
@@ -124,17 +123,21 @@ class ResourceExport extends ProcessorEntity
 
         $resourceExport = $this->getExportArray($resource);
 
-        switch ($format) {
-            case 'yaml':
-                header('Content-Disposition: attachment; filename="resource.twig"');
-                $result = new  DataContainer($this->getYaml($resourceExport), 'text');
-                break;
-            case 'json':
-                header('Content-Disposition: attachment; filename="resource.json"');
-                $result = new DataContainer($this->getJson($resourceExport), 'json');
-                break;
-            default:
-                throw new ApiException("Invalid format: $format", 6, $this->id, 400);
+        try {
+            switch ($format) {
+                case 'yaml':
+                    header('Content-Disposition: attachment; filename="resource.twig"');
+                    $result = new  DataContainer($this->getYaml($resourceExport), 'text');
+                    break;
+                case 'json':
+                    header('Content-Disposition: attachment; filename="resource.json"');
+                    $result = new DataContainer($this->getJson($resourceExport), 'json');
+                    break;
+                default:
+                    throw new ApiException("Invalid format: $format", 6, $this->id, 400);
+            }
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
         return $result;

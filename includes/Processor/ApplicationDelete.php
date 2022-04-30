@@ -112,7 +112,11 @@ class ApplicationDelete extends ProcessorEntity
     {
         parent::process();
 
-        $uid = Utilities::getUidFromToken();
+        try {
+            $uid = Utilities::getUidFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $appid = $this->val('applicationId', true);
 
         try {
@@ -162,10 +166,11 @@ class ApplicationDelete extends ProcessorEntity
 
         try {
             $result = $this->applicationMapper->delete($application);
+            $result = new DataContainer($result, 'boolean');
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        return new DataContainer($result, 'boolean');
+        return $result;
     }
 }

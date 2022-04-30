@@ -112,11 +112,11 @@ class AccountDelete extends ProcessorEntity
         }
 
         try {
-            $result = $this->accountMapper->delete($account);
+            $result = new DataContainer($this->accountMapper->delete($account), 'boolean');
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        return new DataContainer($result, 'boolean');
+        return $result;
     }
 }

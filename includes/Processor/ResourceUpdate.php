@@ -38,6 +38,13 @@ use ReflectionException;
 class ResourceUpdate extends ProcessorEntity
 {
     /**
+     * Account mapper class.
+     *
+     * @var AccountMapper
+     */
+    private AccountMapper $accountMapper;
+
+    /**
      * Config class.
      *
      * @var Config
@@ -57,13 +64,6 @@ class ResourceUpdate extends ProcessorEntity
      * @var ResourceMapper
      */
     private ResourceMapper $resourceMapper;
-
-    /**
-     * Account mapper class.
-     *
-     * @var AccountMapper
-     */
-    private AccountMapper $accountMapper;
 
     /**
      * Application mapper class.
@@ -186,8 +186,8 @@ class ResourceUpdate extends ProcessorEntity
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Config();
+        $this->accountMapper = new AccountMapper($db, $logger);
         $this->userRoleMapper = new UserRoleMapper($db, $logger);
-        $this->accountMapper = new AccountMapper($this->db, $logger);
         $this->applicationMapper = new ApplicationMapper($db, $logger);
         $this->resourceMapper = new ResourceMapper($db, $logger);
         $this->validator = new ResourceValidator($db, $logger);
@@ -333,7 +333,14 @@ class ResourceUpdate extends ProcessorEntity
         $result = $resource->dump();
         $result['meta'] = json_decode($result['meta'], true);
         $result['openapi'] = json_decode($result['openapi'], true);
-        return new DataContainer($result, 'array');
+
+        try {
+            $result = new DataContainer($result, 'array');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 
     /**
@@ -346,7 +353,11 @@ class ResourceUpdate extends ProcessorEntity
      */
     protected function validateUserRoleAccess(Application $application, int $newAppid = null)
     {
-        $uid = Utilities::getUidFromToken();
+        try {
+            $uid = Utilities::getUidFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         if (
             empty(
                 $this->userRoleMapper->findByUidAppidRolename(
@@ -383,14 +394,28 @@ class ResourceUpdate extends ProcessorEntity
             }
         }
 
-        // Update to core application and is locked.
-        $account = $this->accountMapper->findByAccid($application->getAccid());
-        if (
-            $account->getName() == $this->settings->__get(['api', 'core_account'])
-            && $application->getName() == $this->settings->__get(['api', 'core_application'])
-            && $this->settings->__get(['api', 'core_resource_lock'])
-        ) {
-            throw new ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
+        $this->validateCoreProtection($application);
+    }
+
+    /**
+     * Validate application is not core and core not locked.
+     *
+     * @param Application $application
+     *
+     * @throws ApiException
+     */
+    protected function validateCoreProtection(Application $application)
+    {
+        try {
+            $account = $this->accountMapper->findByAccid($application->getAccid());
+            $coreAccount = $this->settings->__get(['api', 'core_account']);
+            $coreApplication = $this->settings->__get(['api', 'core_application']);
+            $coreLock = $this->settings->__get(['api', 'core_resource_lock']);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        if ($account->getName() == $coreAccount && $application->getName() == $coreApplication && $coreLock) {
+            throw new ApiException("Unauthorised: this is a core resource", 4, $this->id, 403);
         }
     }
 }

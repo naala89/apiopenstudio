@@ -15,6 +15,7 @@
 namespace ApiOpenStudio\Processor;
 
 use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
 
 /**
  * Class VarFloat
@@ -56,8 +57,13 @@ class VarFloat extends Core\ProcessorEntity
     public function process(): Core\DataContainer
     {
         $container = $this->val('value');
-        if ($container->getType() != 'float') {
-            $container->setType('float');
+
+        try {
+            if ($container->getType() != 'float') {
+                $container->setType('float');
+            }
+        } catch (Core\ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
         return $container;

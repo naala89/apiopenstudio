@@ -41,7 +41,7 @@ class ProcessorHelper
     public function getProcessorString(string $className, array $namespaces = null): string
     {
         if (empty($className)) {
-            throw new ApiException('empty processor name', 1, -1, 406);
+            throw new ApiException('empty processor name', 1, -1, 500);
         }
         if (empty($namespaces) && strpos($className, "\\") !== false) {
             return $className;
@@ -61,7 +61,7 @@ class ProcessorHelper
             }
         }
 
-        throw new ApiException("unknown processor: $className", 1, -1, 400);
+        throw new ApiException("unknown processor: $className", 1, -1, 500);
     }
 
     /**
@@ -71,7 +71,7 @@ class ProcessorHelper
      *
      * @return boolean
      */
-    public function isProcessor(&$obj): bool
+    public function isProcessor($obj): bool
     {
         if (is_object($obj)) {
             return (isset($obj->processor) && isset($obj->id));

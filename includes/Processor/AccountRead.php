@@ -113,7 +113,11 @@ class AccountRead extends ProcessorEntity
     {
         parent::process();
 
-        $uid = Utilities::getUidFromToken();
+        try {
+            $uid = Utilities::getUidFromToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
         $accid = $this->val('accid', true);
         $keyword = $this->val('keyword', true);
         $orderBy = $this->val('order_by', true);
@@ -150,6 +154,11 @@ class AccountRead extends ProcessorEntity
             $result[] = $account->dump();
         }
 
-        return new DataContainer($result, 'array');
+        try {
+            $result = new DataContainer($result, 'array');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        return $result;
     }
 }

@@ -62,7 +62,12 @@ class VarObject extends ProcessorEntity
         $attributes = $this->val('attributes', true);
 
         if (empty($attributes)) {
-            return new DataContainer([], 'array');
+            try {
+                $result = new DataContainer([], 'array');
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            }
+            return $result;
         }
 
         $result = [];
@@ -101,6 +106,12 @@ class VarObject extends ProcessorEntity
             $result[$key] = $attribute[$key];
         }
 
-        return new DataContainer($result, 'array');
+        try {
+            $result = new DataContainer($result, 'array');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 }

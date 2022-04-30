@@ -96,8 +96,6 @@ class Update extends Script
      *   CLI args.
      *
      * @return void
-     *
-     * @throws ApiException
      */
     public function exec(array $argv = null)
     {
@@ -106,7 +104,11 @@ class Update extends Script
         if (!empty($this->options['d'])) {
             $this->updateDir = $this->options['d'];
         } else {
-            $this->updateDir = $this->config->__get(['api', 'base_path']) . $this->updateDir;
+            try {
+                $this->updateDir = $this->config->__get(['api', 'base_path']) . $this->updateDir;
+            } catch (ApiException $e) {
+                $this->handleException($e);
+            }
         }
         if (substr($this->updateDir, -1) != '/') {
             $this->updateDir = $this->updateDir . '/';
@@ -128,13 +130,7 @@ class Update extends Script
 
         $currentVersion = $this->getCurrentVersion();
         echo "\n";
-        try {
-            $functions = $this->findUpdates($currentVersion);
-        } catch (PhpDocException $e) {
-        } catch (CacheException $e) {
-            echo "An exception was thrown while searching for updates: " . $e->getMessage() . "\n";
-            exit;
-        }
+        $functions = $this->findUpdates($currentVersion);
         echo "\n";
         if (empty($functions)) {
             echo "No updates to run!\n";
@@ -146,25 +142,27 @@ class Update extends Script
 
     /**
      * Set up the DB connection.
-     *
-     * @throws ApiException
      */
     protected function setupDBLink()
     {
         $dsnOptionsArr = [];
-        foreach ($this->config->__get(['db', 'options']) as $k => $v) {
-            $dsnOptionsArr[] = "$k=$v";
-        }
-        $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
-        $dsn = $this->config->__get(['db', 'driver']) . '://'
-            . $this->config->__get(['db', 'username']) . ':'
-            . $this->config->__get(['db', 'password']) . '@'
-            . $this->config->__get(['db', 'host']) . '/'
-            . $this->config->__get(['db', 'database'])
-            . $dsnOptions;
-        if (!$this->db = ADONewConnection($dsn)) {
-            echo "Error: DB connection failed, please check your settings.yml file.\n";
-            exit;
+        try {
+            foreach ($this->config->__get(['db', 'options']) as $k => $v) {
+                $dsnOptionsArr[] = "$k=$v";
+            }
+            $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
+            $dsn = $this->config->__get(['db', 'driver']) . '://'
+                . $this->config->__get(['db', 'username']) . ':'
+                . $this->config->__get(['db', 'password']) . '@'
+                . $this->config->__get(['db', 'host']) . '/'
+                . $this->config->__get(['db', 'database'])
+                . $dsnOptions;
+            if (!$this->db = ADONewConnection($dsn)) {
+                echo "Error: DB connection failed, please check your settings.yml file.\n";
+                exit;
+            }
+        } catch (ApiException $e) {
+            $this->handleException($e);
         }
     }
 
@@ -196,9 +194,6 @@ class Update extends Script
      *
      * @return array
      *   All functions with meta.
-     * @return array
-     * @throws PhpDocException
-     * @throws CacheException
      */
     protected function findUpdates(string $currentVersion): array
     {
@@ -216,7 +211,12 @@ class Update extends Script
                 exit;
             }
             foreach ($functions as $function) {
-                $docblock = $phpDocFactory->getFunctionDoc($function);
+                try {
+                    $docblock = $phpDocFactory->getFunctionDoc($function);
+                } catch (PhpDocException | CacheException $e) {
+                    echo "An exception was thrown while searching for updates: " . $e->getMessage() . "\n";
+                    exit;
+                }
                 if (!$docblock->hasTag('version')) {
                     echo "Skipping $function: No version found in the PHPDoc\n";
                     continue;
@@ -421,5 +421,12 @@ class Update extends Script
             return 1;
         }
         return 1;
+    }
+
+    protected function handleException(ApiException $e)
+    {
+        echo "An error occurred, please check the logs.\n";
+        echo $e->getMessage() . "\n";
+        exit;
     }
 }
