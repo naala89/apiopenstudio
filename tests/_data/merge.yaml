@@ -6,19 +6,19 @@ uri: merge
 
 method: get
 
+appid: 2
+
 ttl: 0
 
 security:
-    processor: token_consumer
-    id: 1
-    token:
-        processor: var_get
-        id: 2
-        name: token
+    id: test merge security
+    processor: validate_token_roles
+    roles:
+        - Consumer
 
 process:
     processor: merge
-    id: 3
+    id: test merge merge
     sources:
         -
             - val1
@@ -31,14 +31,20 @@ process:
             - val6
             - val7
             - val8
-    mergeType:
+    merge_type:
         processor: var_get
-        id: 4
-        name: mergeType
+        id: test merge merge_type
+        key: merge_type
+        nullable: true
     unique:
-        processor: var_bool
-        id: 5
-        value:
-            processor: var_get
-            id: 6
-            name: unique
+        processor: var_get
+        id: test merge unique
+        key: unique
+        nullable: true
+        expected_type: boolean
+    reset_keys:
+        processor: var_get
+        id: test merge reset_keys
+        key: reset_keys
+        nullable: true
+        expected_type: boolean
