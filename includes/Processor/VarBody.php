@@ -85,7 +85,7 @@ class VarBody extends Core\ProcessorEntity
         $data = file_get_contents('php://input');
 
         if (empty($data) && !$nullable) {
-            throw new ApiException("Body is empty", 6, $this->id);
+            throw new ApiException("Body is empty", 6, $this->id, 400);
         }
 
         if (!empty($expectedType)) {
