@@ -1,0 +1,29 @@
+name: Testing concatenate numbers
+
+description: Test concatenate numbers
+
+uri: concatenate/numbers
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    id: test concatenate numbers security
+    processor: validate_token_roles
+    roles:
+        - Consumer
+        - Developer
+
+process:
+    processor: concatenate
+    id: test concatenate numbers concatenate
+    items:
+        - 3
+        - .1
+        - 41
+        - 7
+        - 0
+        - 5
