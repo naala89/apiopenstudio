@@ -33,7 +33,7 @@ class Text extends Output
      *
      * @var string The string to contain the content type header value.
      */
-    protected string $header = 'Content-Type:text/text';
+    protected string $header = 'Content-Type:text/plain';
 
     /**
      * {@inheritDoc}
