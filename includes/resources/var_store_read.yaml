@@ -28,7 +28,7 @@ process:
     processor: var_store_read
     id: var_store_read_process
     validate_access:
-        processor: literal
+        processor: var_literal
         id: var_store_read_validate_access
         value: true
         type: boolean

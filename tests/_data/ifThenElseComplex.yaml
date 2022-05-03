@@ -57,13 +57,15 @@ process:
                     key: key2
                 operator: ">"
                 then:
-                    processor: literal
+                    processor: var_literal
                     id: lteral 1
                     value: "key1 > key2"
+                    type: text
                 else:
-                    processor: literal
+                    processor: var_literal
                     id: lteral 2
                     value: "key1 < key2"
+                    type: text
             -
                 processor: if_then_else
                 id: Complex if then else then collection if_then_else 2
@@ -77,13 +79,15 @@ process:
                     key: key1
                 operator: ">"
                 then:
-                    processor: literal
+                    processor: var_literal
                     id: lteral 3
                     value: "key2 > key1"
+                    type: text
                 else:
-                    processor: literal
+                    processor: var_literal
                     id: lteral 4
                     value: "key2 < key1"
+                    type: text
             - Hello
     else:
         processor: var_collection

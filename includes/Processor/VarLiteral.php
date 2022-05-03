@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Literal.
+ * Class VarLiteral.
  *
  * @package    ApiOpenStudio\Processor
  * @author     john89 (https://gitlab.com/john89)
@@ -14,14 +14,16 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ApiException;
 
 /**
- * Class Literal
+ * Class VarLiteral
  *
  * Processor class te represent a literal.
  */
-class Literal extends Core\ProcessorEntity
+class VarLiteral extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -30,7 +32,7 @@ class Literal extends Core\ProcessorEntity
      */
     protected array $details = [
         'name' => 'Literal',
-        'machineName' => 'literal',
+        'machineName' => 'var_literal',
         'description' => 'A literal string or value.',
         'menu' => 'Primitive',
         'input' => [
@@ -50,7 +52,7 @@ class Literal extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => 'text',
+                'default' => '',
             ],
         ],
     ];
@@ -58,17 +60,28 @@ class Literal extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
         $value = $this->val('value', true);
+        $value = is_object($value) ? json_decode(json_encode($value), true) : $value;
         $type = $this->val('type', true);
 
-        return new Core\DataContainer($value, $type);
+        try {
+            if (!empty($type)) {
+                $result = new DataContainer($value, $type);
+            } else {
+                $result = new DataContainer($value);
+            }
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 }
