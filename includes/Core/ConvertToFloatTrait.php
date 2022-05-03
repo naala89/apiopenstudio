@@ -46,7 +46,7 @@ trait ConvertToFloatTrait
     {
         $result = filter_var($data, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
         if ($result === null) {
-            throw new ApiException('Failed to convert boolean to float');
+            throw new ApiException('Cannot cast boolean to float', 6, -1, 400);
         }
         return $result;
     }
@@ -57,15 +57,10 @@ trait ConvertToFloatTrait
      * @param $data
      *
      * @return float
-     *
-     * @throws ApiException
      */
     public function fromIntegerToFloat($data): float
     {
         $result = filter_var($data, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
-        if ($result === null) {
-            throw new ApiException("Failed to convert '$data' to float");
-        }
         return $result;
     }
 
@@ -97,7 +92,7 @@ trait ConvertToFloatTrait
         }
         $result = filter_var($data, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
         if ($result === null) {
-            throw new ApiException("Failed to convert '$data' to float");
+            throw new ApiException("Cannot cast text to float", 6, -1, 400);
         }
         return $result;
     }
@@ -113,7 +108,7 @@ trait ConvertToFloatTrait
      */
     public function fromArrayToFloat($data): float
     {
-        throw new ApiException('Cannot cast array to float');
+        throw new ApiException('Cannot cast array to float', 6, -1, 400);
     }
 
     /**
@@ -141,7 +136,7 @@ trait ConvertToFloatTrait
      */
     public function fromXmlToFloat($data): float
     {
-        throw new ApiException('Cannot cast XML to float');
+        throw new ApiException('Cannot cast XML to float', 6, -1, 400);
     }
 
     /**
@@ -155,7 +150,7 @@ trait ConvertToFloatTrait
      */
     public function fromHtmlToFloat($data): float
     {
-        throw new ApiException('Cannot cast HTML to float');
+        throw new ApiException('Cannot cast HTML to float', 6, -1, 400);
     }
 
     /**
@@ -169,7 +164,7 @@ trait ConvertToFloatTrait
      */
     public function fromImageToFloat($data): float
     {
-        throw new ApiException('Cannot cast image to float');
+        throw new ApiException('Cannot cast image to float', 6, -1, 400);
     }
 
     /**
@@ -183,6 +178,6 @@ trait ConvertToFloatTrait
      */
     public function fromFileToFloat($data): float
     {
-        throw new ApiException('Cannot cast file to float');
+        throw new ApiException('Cannot cast file to float', 6, -1, 400);
     }
 }

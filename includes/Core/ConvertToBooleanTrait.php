@@ -58,7 +58,7 @@ trait ConvertToBooleanTrait
     {
         $result = filter_var($data, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         if ($result === null) {
-            throw new ApiException('Failed to convert integer to boolean');
+            throw new ApiException('Cannot cast integer to boolean', 6, -1, 400);
         }
         return $result;
     }
@@ -76,7 +76,7 @@ trait ConvertToBooleanTrait
     {
         $result = filter_var($data, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         if ($result === null) {
-            throw new ApiException('Failed to convert float to boolean');
+            throw new ApiException('Cannot cast float to boolean', 6, -1, 400);
         }
         return $result;
     }
@@ -94,7 +94,7 @@ trait ConvertToBooleanTrait
     {
         $result = filter_var($data, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         if ($result === null) {
-            throw new ApiException('Failed to convert text to boolean');
+            throw new ApiException('Cannot cast text to boolean', 6, -1, 400);
         }
         return $result;
     }
@@ -110,7 +110,7 @@ trait ConvertToBooleanTrait
      */
     public function fromArrayToBoolean($data): bool
     {
-        throw new ApiException('Cannot cast array to boolean');
+        throw new ApiException('Cannot cast array to boolean', 6, -1, 400);
     }
 
     /**
@@ -126,7 +126,7 @@ trait ConvertToBooleanTrait
     {
         $result = filter_var($data, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         if ($result === null) {
-            throw new ApiException('Failed to convert JSON to boolean');
+            throw new ApiException('Cannot cast JSON to boolean', 6, -1, 400);
         }
         return $result;
     }
@@ -142,7 +142,7 @@ trait ConvertToBooleanTrait
      */
     public function fromXmlToBoolean($data): bool
     {
-        throw new ApiException('Cannot cast XML to boolean');
+        throw new ApiException('Cannot cast XML to boolean', 6, -1, 400);
     }
 
     /**
@@ -156,7 +156,7 @@ trait ConvertToBooleanTrait
      */
     public function fromHtmlToBoolean($data): bool
     {
-        throw new ApiException('Cannot cast HTML to boolean');
+        throw new ApiException('Cannot cast HTML to boolean', 6, -1, 400);
     }
 
     /**
@@ -170,7 +170,7 @@ trait ConvertToBooleanTrait
      */
     public function fromImageToBoolean($data): bool
     {
-        throw new ApiException('Cannot cast image to boolean');
+        throw new ApiException('Cannot cast image to boolean', 6, -1, 400);
     }
 
     /**
@@ -184,6 +184,6 @@ trait ConvertToBooleanTrait
      */
     public function fromFileToBoolean($data): bool
     {
-        throw new ApiException('Cannot cast file to boolean');
+        throw new ApiException('Cannot cast file to boolean', 6, -1, 400);
     }
 }

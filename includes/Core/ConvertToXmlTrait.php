@@ -30,10 +30,15 @@ trait ConvertToXmlTrait
      * @param $data
      *
      * @return string
+     *
+     * @throws ApiException
      */
     public function fromEmptyToXml($data): string
     {
-        return $this->wrapDataXmlFormat('');
+        $xml = $this->getBaseXmlWrapper();
+        $node = $xml->xpath('//apiOpenStudioWrapper');
+        $node[0][0] = $data;
+        return $xml->asXML();
     }
 
     /**
@@ -48,9 +53,8 @@ trait ConvertToXmlTrait
     public function fromBooleanToXml($data): string
     {
         $xml = $this->getBaseXmlWrapper();
-        $node = $xml->xpath('//');
-        $node = $node[0];
-        $node->{0} = $data;
+        $node = $xml->xpath('//apiOpenStudioWrapper');
+        $node[0][0] = $data;
         return $xml->asXML();
     }
 
@@ -66,9 +70,8 @@ trait ConvertToXmlTrait
     public function fromIntegerToXml($data): string
     {
         $xml = $this->getBaseXmlWrapper();
-        $node = $xml->xpath('//');
-        $node = $node[0];
-        $node->{0} = $data;
+        $node = $xml->xpath('//apiOpenStudioWrapper');
+        $node[0][0] = $data;
         return $xml->asXML();
     }
 
@@ -84,9 +87,8 @@ trait ConvertToXmlTrait
     public function fromFloatToXml($data): string
     {
         $xml = $this->getBaseXmlWrapper();
-        $node = $xml->xpath('//');
-        $node = $node[0];
-        $node->{0} = $data;
+        $node = $xml->xpath('//apiOpenStudioWrapper');
+        $node[0][0] = $data;
         return $xml->asXML();
     }
 
@@ -103,8 +105,7 @@ trait ConvertToXmlTrait
     {
         $xml = $this->getBaseXmlWrapper();
         $node = $xml->xpath('//apiOpenStudioWrapper');
-        $node = $node[0];
-        $node->{0} = $data;
+        $node[0][0] = $data;
         return $xml->asXML();
     }
 
@@ -169,10 +170,15 @@ trait ConvertToXmlTrait
      * @param $data
      *
      * @return string
+     *
+     * @throws ApiException
      */
     public function fromImageToXml($data): string
     {
-        return $this->wrapDataXmlFormat($data);
+        $xml = $this->getBaseXmlWrapper();
+        $node = $xml->xpath('//apiOpenStudioWrapper');
+        $node[0][0] = $data;
+        return $xml->asXML();
     }
 
     /**
@@ -181,10 +187,15 @@ trait ConvertToXmlTrait
      * @param $data
      *
      * @return string
+     *
+     * @throws ApiException
      */
     public function fromFileToXml($data): string
     {
-        return $this->wrapDataXmlFormat($data);
+        $xml = $this->getBaseXmlWrapper();
+        $node = $xml->xpath('//apiOpenStudioWrapper');
+        $node[0][0] = $data;
+        return $xml->asXML();
     }
 
     /**
@@ -202,20 +213,6 @@ trait ConvertToXmlTrait
             throw new ApiException($e->getMessage(), 0, -1, 500);
         }
         return $xml;
-    }
-
-    /**
-     * Wrap Data in MML string wrapper.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    protected function wrapDataXmlFormat($data): string
-    {
-        $data = str_replace('<apiOpenStudioWrapper>', '', $data);
-        $data = str_replace('</apiOpenStudioWrapper>', '', $data);
-        return '<?xml version="1.0"?><apiOpenStudioWrapper>' . $data . '</apiOpenStudioWrapper>';
     }
 
     /**

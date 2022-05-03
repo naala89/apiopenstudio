@@ -21,7 +21,7 @@ use ApiOpenStudio\Core\DetectTypeTrait;
 /**
  * Class Json
  *
- * Outputs the results as a JSON.
+ * Outputs the results as a JSON string.
  */
 class Json extends Output
 {

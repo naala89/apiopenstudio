@@ -17,7 +17,7 @@ $I->seeResponseContainsJson([
     'result' => 'error',
     'data' => [
         'code' => 6,
-        'message' => "Failed to convert 'text' to float.",
+        'message' => 'Cannot cast text to float.',
         'id' => 'test var_float value',
     ],
 ]);
@@ -30,7 +30,7 @@ $I->seeResponseContainsJson([
     'result' => 'error',
     'data' => [
         'code' => 6,
-        'message' => "Failed to convert 'true' to float.",
+        'message' => 'Cannot cast text to float.',
         'id' => 'test var_float value',
     ],
 ]);

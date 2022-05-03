@@ -18,7 +18,7 @@ $I->seeResponseContainsJson(
         'result' => 'error',
         'data' => [
             'code' => 6,
-            'message' => "Failed to convert 'text' to integer.",
+            'message' => "Cannot cast text to integer.",
             'id' => 'test varuri processor varget',
         ],
     ]
@@ -33,7 +33,7 @@ $I->seeResponseContainsJson(
         'result' => 'error',
         'data' => [
             'code' => 6,
-            'message' => "Failed to convert 'true' to integer.",
+            'message' => 'Cannot cast text to integer.',
             'id' => 'test varuri processor varget',
         ],
     ]
@@ -48,7 +48,7 @@ $I->seeResponseContainsJson(
         'result' => 'error',
         'data' => [
             'code' => 6,
-            'message' => "Failed to convert '1.6' to integer.",
+            'message' => 'Cannot cast text to integer.',
             'id' => 'test varuri processor varget',
         ],
     ]
@@ -63,7 +63,7 @@ $I->seeResponseContainsJson(
         'result' => 'error',
         'data' => [
             'code' => 6,
-            'message' => "Failed to convert '1.6' to integer.",
+            'message' => 'Cannot cast text to integer.',
             'id' => 'test varuri processor varget',
         ],
     ]
@@ -105,7 +105,7 @@ $I->seeResponseContainsJson(
         'result' => 'error',
         'data' => [
             'code' => 6,
-            'message' => "Failed to convert '2.1' to integer.",
+            'message' => 'Cannot cast text to integer.',
             'id' => 'test varuri processor varget',
         ],
     ]

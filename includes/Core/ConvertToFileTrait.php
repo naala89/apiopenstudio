@@ -92,7 +92,12 @@ trait ConvertToFileTrait
      */
     public function fromArrayToFile($data): bool
     {
-        throw new ApiException('Cannot convert an array to file, please convert to JSON or XML first');
+        throw new ApiException(
+            'Cannot cast array to file',
+            6,
+            -1,
+            400
+        );
     }
 
     /**

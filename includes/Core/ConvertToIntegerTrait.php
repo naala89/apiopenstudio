@@ -70,7 +70,7 @@ trait ConvertToIntegerTrait
     {
         $result = filter_var($data, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
         if ($result === null) {
-            throw new ApiException('Failed to convert float to integer');
+            throw new ApiException('Cannot cast float to integer', 6, -1, 400);
         }
         return $result;
     }
@@ -91,7 +91,7 @@ trait ConvertToIntegerTrait
         }
         $result = filter_var($data, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
         if ($result === null) {
-            throw new ApiException("Failed to convert '$data' to integer");
+            throw new ApiException("Cannot cast text to integer", 6, -1, 400);
         }
         return $result;
     }
@@ -107,7 +107,7 @@ trait ConvertToIntegerTrait
      */
     public function fromArrayToInteger($data): int
     {
-        throw new ApiException('Cannot cast array to integer');
+        throw new ApiException('Cannot cast array to integer', 6, -1, 400);
     }
 
     /**
@@ -135,7 +135,7 @@ trait ConvertToIntegerTrait
      */
     public function fromXmlToInteger($data): int
     {
-        throw new ApiException('Cannot cast XML to integer');
+        throw new ApiException('Cannot cast XML to integer', 6, -1, 400);
     }
 
     /**
@@ -149,7 +149,7 @@ trait ConvertToIntegerTrait
      */
     public function fromHtmlToInteger($data): int
     {
-        throw new ApiException('Cannot cast HTML to integer');
+        throw new ApiException('Cannot cast HTML to integer', 6, -1, 400);
     }
 
     /**
@@ -163,7 +163,7 @@ trait ConvertToIntegerTrait
      */
     public function fromImageToInteger($data): int
     {
-        throw new ApiException('Cannot cast image to integer');
+        throw new ApiException('Cannot cast image to integer', 6, -1, 400);
     }
 
     /**
@@ -177,6 +177,6 @@ trait ConvertToIntegerTrait
      */
     public function fromFileToInteger($data): int
     {
-        throw new ApiException('Cannot cast file to integer');
+        throw new ApiException('Cannot cast file to integer', 6, -1, 400);
     }
 }

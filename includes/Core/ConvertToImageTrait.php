@@ -44,7 +44,7 @@ trait ConvertToImageTrait
      */
     public function fromBooleanToImage($data): string
     {
-        throw new ApiException('Cannot cast boolean to image');
+        throw new ApiException('Cannot cast boolean to image', 6, -1, 400);
     }
 
     /**
@@ -58,7 +58,7 @@ trait ConvertToImageTrait
      */
     public function fromIntegerToImage($data): string
     {
-        throw new ApiException('Cannot cast integer to image');
+        throw new ApiException('Cannot cast integer to image', 6, -1, 400);
     }
 
     /**
@@ -72,7 +72,7 @@ trait ConvertToImageTrait
      */
     public function fromFloatToImage($data): string
     {
-        throw new ApiException('Cannot cast float to image');
+        throw new ApiException('Cannot cast float to image', 6, -1, 400);
     }
 
     /**
@@ -98,7 +98,7 @@ trait ConvertToImageTrait
      */
     public function fromArrayToImage($data): string
     {
-        throw new ApiException('Cannot cast array to image');
+        throw new ApiException('Cannot cast array to image', 6, -1, 400);
     }
 
     /**
@@ -112,7 +112,7 @@ trait ConvertToImageTrait
      */
     public function fromJsonToImage($data): string
     {
-        throw new ApiException('Cannot cast JSON to image');
+        throw new ApiException('Cannot cast JSON to image', 6, -1, 400);
     }
 
     /**
@@ -126,7 +126,7 @@ trait ConvertToImageTrait
      */
     public function fromXmlToImage($data): string
     {
-        throw new ApiException('Cannot cast XML to image');
+        throw new ApiException('Cannot cast XML to image', 6, -1, 400);
     }
 
     /**
@@ -140,7 +140,7 @@ trait ConvertToImageTrait
      */
     public function fromHtmlToImage($data): string
     {
-        throw new ApiException('Cannot cast HTML to image');
+        throw new ApiException('Cannot cast HTML to image', 6, -1, 400);
     }
 
     /**
