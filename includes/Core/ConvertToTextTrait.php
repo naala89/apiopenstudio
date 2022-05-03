@@ -87,10 +87,12 @@ trait ConvertToTextTrait
      * @param $data
      *
      * @return string
+     *
+     * @throws ApiException
      */
     public function fromArrayToText($data): string
     {
-        return json_encode($data);
+        throw new ApiException('Cannot cast array to text', 6, -1, 400);
     }
 
     /**

@@ -144,7 +144,7 @@ trait ConvertToArrayTrait
      */
     public function fromImageToArray($data): array
     {
-        throw new ApiException('Cannot cast image to array');
+        throw new ApiException('Cannot cast image to array', 6, -1, 400);
     }
 
     /**
@@ -158,7 +158,7 @@ trait ConvertToArrayTrait
      */
     public function fromFileToArray($data): array
     {
-        throw new ApiException('Cannot cast file to array');
+        throw new ApiException('Cannot cast file to array', 6, -1, 400);
     }
 
     /**

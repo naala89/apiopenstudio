@@ -90,7 +90,7 @@ $I->seeResponseContainsJson([
     'result' => 'error',
     'data' => [
         'code' => 6,
-        'message' => 'Failed to convert text to boolean.',
+        'message' => 'Cannot cast text to boolean.',
         'id' => 'test var_bool value',
     ],
 ]);
@@ -103,7 +103,7 @@ $I->seeResponseContainsJson([
     'result' => 'error',
     'data' => [
         'code' => 6,
-        'message' => 'Failed to convert text to boolean.',
+        'message' => 'Cannot cast text to boolean.',
         'id' => 'test var_bool value',
     ],
 ]);

@@ -138,7 +138,9 @@ trait ConvertToJsonTrait
     public function fromXmlToJson($data): string
     {
         $xml = simplexml_load_string($data);
-        return  json_encode($xml);
+        $json = json_encode($xml);
+        $array = json_decode($json, true);
+        return  json_encode($array);
     }
 
     /**
@@ -176,7 +178,7 @@ trait ConvertToJsonTrait
      */
     public function fromFileToJson($data): string
     {
-        throw new ApiException('Cannot cast file to JSON');
+        throw new ApiException('Cannot cast file to JSON', 6, -1, 400);
     }
 
     /**
