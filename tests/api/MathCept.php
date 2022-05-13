@@ -49,7 +49,7 @@ $errorData = [
     ['(x))', 'Unidentified error.'],
 ];
 
-$I->wantTo('Test formulas that will return NaN.');
+$I->wantTo('Test formulas that will return NAN.');
 foreach ($nanData as $formula) {
     $I->wantTo("Test formula $formula.");
     $I->sendGet($uri, ['formula' => $formula]);
@@ -57,7 +57,7 @@ foreach ($nanData as $formula) {
     $I->seeResponseIsJson();
     $I->seeResponseContainsJson([
         'result' => 'ok',
-        'data' => 'NaN',
+        'data' => 'NAN',
     ]);
 }
 
