@@ -22,6 +22,30 @@ namespace ApiOpenStudio\Core;
 trait ConvertToBooleanTrait
 {
     /**
+     * Convert array to boolean.
+     *
+     * @param array $array
+     *
+     * @throws ApiException
+     */
+    public function fromArrayToBoolean(array $array)
+    {
+        throw new ApiException('Cannot cast array to boolean', 6, -1, 400);
+    }
+
+    /**
+     * Convert boolean to boolean.
+     *
+     * @param bool $boolean
+     *
+     * @return boolean
+     */
+    public function fromBooleanToBoolean(bool $boolean): bool
+    {
+        return $boolean;
+    }
+
+    /**
      * Convert empty to boolean.
      *
      * @param $data
@@ -34,127 +58,43 @@ trait ConvertToBooleanTrait
     }
 
     /**
-     * Convert boolean to boolean.
+     * Convert file to boolean.
      *
-     * @param $data
-     *
-     * @return boolean
-     */
-    public function fromBooleanToBoolean($data): bool
-    {
-        return $data;
-    }
-
-    /**
-     * Convert integer to boolean.
-     *
-     * @param $data
-     *
-     * @return boolean
+     * @param $file
      *
      * @throws ApiException
      */
-    public function fromIntegerToBoolean($data): bool
+    public function fromFileToBoolean($file)
     {
-        $result = filter_var($data, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-        if ($result === null) {
-            throw new ApiException('Cannot cast integer to boolean', 6, -1, 400);
-        }
-        return $result;
+        throw new ApiException('Cannot cast file to boolean', 6, -1, 400);
     }
 
     /**
      * Convert float to boolean.
      *
-     * @param $data
+     * @param float $float
      *
      * @return boolean
      *
      * @throws ApiException
      */
-    public function fromFloatToBoolean($data): bool
+    public function fromFloatToBoolean(float $float): bool
     {
-        $result = filter_var($data, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-        if ($result === null) {
+        $boolean = filter_var($float, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        if ($boolean === null) {
             throw new ApiException('Cannot cast float to boolean', 6, -1, 400);
         }
-        return $result;
-    }
-
-    /**
-     * Convert text to boolean.
-     *
-     * @param $data
-     *
-     * @return boolean
-     *
-     * @throws ApiException
-     */
-    public function fromTextToBoolean($data): bool
-    {
-        $result = filter_var($data, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-        if ($result === null) {
-            throw new ApiException('Cannot cast text to boolean', 6, -1, 400);
-        }
-        return $result;
-    }
-
-    /**
-     * Convert array to boolean.
-     *
-     * @param $data
-     *
-     * @return boolean
-     *
-     * @throws ApiException
-     */
-    public function fromArrayToBoolean($data): bool
-    {
-        throw new ApiException('Cannot cast array to boolean', 6, -1, 400);
-    }
-
-    /**
-     * Convert JSON to boolean.
-     *
-     * @param $data
-     *
-     * @return boolean
-     *
-     * @throws ApiException
-     */
-    public function fromJsonToBoolean($data): bool
-    {
-        $result = filter_var($data, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-        if ($result === null) {
-            throw new ApiException('Cannot cast JSON to boolean', 6, -1, 400);
-        }
-        return $result;
-    }
-
-    /**
-     * Convert XML to boolean.
-     *
-     * @param $data
-     *
-     * @return boolean
-     *
-     * @throws ApiException
-     */
-    public function fromXmlToBoolean($data): bool
-    {
-        throw new ApiException('Cannot cast XML to boolean', 6, -1, 400);
+        return $boolean;
     }
 
     /**
      * Convert HTML to boolean.
      *
-     * @param $data
-     *
-     * @return boolean
+     * @param string $html
      *
      * @throws ApiException
      */
-    public function fromHtmlToBoolean($data): bool
+    public function fromHtmlToBoolean(string $html)
     {
         throw new ApiException('Cannot cast HTML to boolean', 6, -1, 400);
     }
@@ -162,28 +102,78 @@ trait ConvertToBooleanTrait
     /**
      * Convert image to boolean.
      *
-     * @param $data
-     *
-     * @return boolean
+     * @param $image
      *
      * @throws ApiException
      */
-    public function fromImageToBoolean($data): bool
+    public function fromImageToBoolean($image)
     {
         throw new ApiException('Cannot cast image to boolean', 6, -1, 400);
     }
 
     /**
-     * Convert file to boolean.
+     * Convert integer to boolean.
      *
-     * @param $data
+     * @param int $integer
      *
      * @return boolean
      *
      * @throws ApiException
      */
-    public function fromFileToBoolean($data): bool
+    public function fromIntegerToBoolean(int $integer): bool
     {
-        throw new ApiException('Cannot cast file to boolean', 6, -1, 400);
+        $boolean = filter_var($integer, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        if ($boolean === null) {
+            throw new ApiException('Cannot cast integer to boolean', 6, -1, 400);
+        }
+        return $boolean;
+    }
+
+    /**
+     * Convert JSON string to boolean.
+     *
+     * @param string $json
+     *
+     * @return boolean
+     *
+     * @throws ApiException
+     */
+    public function fromJsonToBoolean(string $json): bool
+    {
+        $boolean = filter_var($json, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        if ($boolean === null) {
+            throw new ApiException('Cannot cast JSON to boolean', 6, -1, 400);
+        }
+        return $boolean;
+    }
+
+    /**
+     * Convert text to boolean.
+     *
+     * @param string $text
+     *
+     * @return boolean
+     *
+     * @throws ApiException
+     */
+    public function fromTextToBoolean(string $text): bool
+    {
+        $boolean = filter_var($text, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        if ($boolean === null) {
+            throw new ApiException('Cannot cast text to boolean', 6, -1, 400);
+        }
+        return $boolean;
+    }
+
+    /**
+     * Convert XML to boolean.
+     *
+     * @param string $xml
+     *
+     * @throws ApiException
+     */
+    public function fromXmlToBoolean(string $xml)
+    {
+        throw new ApiException('Cannot cast XML to boolean', 6, -1, 400);
     }
 }

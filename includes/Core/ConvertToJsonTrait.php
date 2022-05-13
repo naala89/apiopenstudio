@@ -14,7 +14,9 @@
 
 namespace ApiOpenStudio\Core;
 
+use Exception;
 use SimpleXMLElement;
+use SoapBox\Formatter\Formatter;
 
 /**
  * Trait ConvertToJsonTrait.
@@ -23,6 +25,30 @@ use SimpleXMLElement;
  */
 trait ConvertToJsonTrait
 {
+    /**
+     * Convert array to JSON string.
+     *
+     * @param array $array
+     *
+     * @return string
+     */
+    public function fromArrayToJson(array $array): string
+    {
+        return json_encode($array);
+    }
+
+    /**
+     * Convert boolean to JSON string.
+     *
+     * @param ?bool $boolean
+     *
+     * @return ?bool
+     */
+    public function fromBooleanToJson(?bool $boolean): ?bool
+    {
+        return $boolean;
+    }
+
     /**
      * Convert empty to JSON.
      *
@@ -36,190 +62,123 @@ trait ConvertToJsonTrait
     }
 
     /**
-     * Convert boolean to JSON string.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromBooleanToJson($data): string
-    {
-        return json_encode($data);
-    }
-
-    /**
-     * Convert integer to JSON string.
-     *
-     * @param $data
-     *
-     * @return string|null
-     */
-    public function fromIntegerToJson($data): ?string
-    {
-        if (is_infinite($data)) {
-            $data = $data < 0 ? '-Infinity' : 'Infinity';
-        } elseif (is_nan($data)) {
-            $data = 'NaN';
-        }
-        return json_encode($data);
-    }
-
-    /**
-     * Convert float to JSON string.
-     *
-     * @param $data
-     *
-     * @return string|null
-     */
-    public function fromFloatToJson($data): ?string
-    {
-        if (is_infinite($data)) {
-            $data = $data < 0 ? '-Infinity' : 'Infinity';
-        } elseif (is_nan($data)) {
-            $data = 'NaN';
-        }
-        return json_encode($data);
-    }
-
-    /**
-     * Convert text to JSON string.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromTextToJson($data): string
-    {
-        if ($data == '') {
-            // Empty string should be returned as double quotes so that it is not returned as null.
-            return '""';
-        }
-        // Wrap in double quotes if not already present.
-        if (substr($data, 0, 1) != '"') {
-            $data = '"' . $data;
-        }
-        if (substr($data, -1, 1) != '"') {
-            $data = $data . '"';
-        }
-        return $data;
-    }
-
-    /**
-     * Convert array to JSON string.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromArrayToJson($data): string
-    {
-        return json_encode($data, true);
-    }
-
-    /**
-     * Convert JSON string to JSON string.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromJsonToJson($data): string
-    {
-        return $data;
-    }
-
-    /**
-     * Convert XML string to JSON string.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromXmlToJson($data): string
-    {
-        $xml = simplexml_load_string($data);
-        $json = json_encode($xml);
-        $array = json_decode($json, true);
-        return  json_encode($array);
-    }
-
-    /**
-     * Convert an HTML string to JSON string.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromHtmlToJson($data): string
-    {
-        return $this->fromXmlToJson($data);
-    }
-
-    /**
-     * Convert an image string to JSON string.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromImageToJson($data): string
-    {
-        return $this->fromTextToJson($data);
-    }
-
-    /**
      * Convert file to JSON string.
      *
-     * @param $data
-     *
-     * @return string
+     * @param $file
      *
      * @throws ApiException
      */
-    public function fromFileToJson($data): string
+    public function fromFileToJson($file)
     {
         throw new ApiException('Cannot cast file to JSON', 6, -1, 400);
     }
 
     /**
-     * Convert an XML doc to JSON string.
+     * Convert float to JSON string.
      *
-     * @param SimpleXMLElement $xml XML element.
+     * @param float|string|null $float
      *
-     * @return array
+     * @return float|string|null
      */
-    public function xml2json(SimpleXMLElement &$xml): array
+    public function fromFloatToJson($float)
     {
-        $root = (!(func_num_args() > 1));
-        $jsnode = [];
-
-        if (!$root) {
-            if (count($xml->attributes()) > 0) {
-                $jsnode["$"] = [];
-                foreach ($xml->attributes() as $key => $value) {
-                    $jsnode["$"][$key] = (string)$value;
-                }
-            }
-
-            $textcontent = trim((string)$xml);
-            if (!empty($textcontent)) {
-                $jsnode["_"] = $textcontent;
-            }
-
-            foreach ($xml->children() as $childxmlnode) {
-                $childname = $childxmlnode->getName();
-                if (!array_key_exists($childname, $jsnode)) {
-                    $jsnode[$childname] = [];
-                }
-                array_push($jsnode[$childname], $this->xml2json($childxmlnode));
-            }
-            return $jsnode;
-        } else {
-            $nodename = $xml->getName();
-            $jsnode[$nodename] = [];
-            array_push($jsnode[$nodename], $this->xml2json($xml));
-            $result = json_encode($jsnode);
-            return !is_array($result) ? [$result] : $result;
+        if (is_infinite($float)) {
+            $float = $float < 0 ? '-Infinity' : 'Infinity';
+        } elseif (is_nan($float)) {
+            $float = 'NAN';
         }
+        return $float;
+    }
+
+    /**
+     * Convert an HTML string to JSON string.
+     *
+     * @param string $html
+     *
+     * @return string
+     */
+    public function fromHtmlToJson(string $html): string
+    {
+        $convertHtml = new ConvertHtml();
+        return $convertHtml->htmlToJson($html);
+    }
+
+    /**
+     * Convert an image string to JSON string.
+     *
+     * @param $image
+     *
+     * @return string
+     */
+    public function fromImageToJson($image): string
+    {
+        return $this->fromTextToJson($image);
+    }
+
+    /**
+     * Convert integer to JSON string.
+     *
+     * @param int|string|null $integer
+     *
+     * @return int|string|null
+     */
+    public function fromIntegerToJson($integer)
+    {
+        if (is_infinite($integer)) {
+            $integer = $integer < 0 ? '-Infinity' : 'Infinity';
+        } elseif (is_nan($integer)) {
+            $integer = 'NAN';
+        }
+        return $integer;
+    }
+
+    /**
+     * Convert JSON string to JSON string.
+     *
+     * @param $json
+     *
+     * @return mixed
+     */
+    public function fromJsonToJson($json)
+    {
+        return $json;
+    }
+
+    /**
+     * Convert text to JSON string.
+     *
+     * @param string $text
+     *
+     * @return string
+     */
+    public function fromTextToJson(string $text): string
+    {
+        if ($text == '') {
+            // Empty string should be returned as double quotes so that it is not returned as null.
+            return '""';
+        }
+        return $text;
+    }
+
+    /**
+     * Convert XML string to JSON string.
+     *
+     * @param string $xml
+     *
+     * @return string
+     *
+     * @throws ApiException
+     */
+    public function fromXmlToJson(string $xml): string
+    {
+        try {
+            $sxe = new SimpleXMLElement($xml);
+        } catch (Exception $e) {
+            throw new ApiException($e->getMessage(), 6, -1, 500);
+        }
+        $baseTagName = $sxe->getName();
+        $formatter = Formatter::make($xml, Formatter::XML);
+        $array = json_decode($formatter->toJson(), true);
+        return json_encode([$baseTagName => $array]);
     }
 }
