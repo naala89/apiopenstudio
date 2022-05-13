@@ -40,9 +40,9 @@ class VarFile extends Core\ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'File',
+        'name' => 'File (NOT FULLY IMPLEMENTED YET)',
         'machineName' => 'var_file',
-        'description' => 'Return the contents of a file or the file path.',
+        'description' => 'NOTE: This is not fully implemented yet. Return the contents of a file or the file path.',
         'menu' => 'Primitive',
         'input' => [
             'location' => [
