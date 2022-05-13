@@ -23,12 +23,12 @@ class DataContainerTest extends Unit
     {
         $container = new DataContainer(true);
         $this->assertIsBool($container->getData(), 'Boolean true is no longer a boolean.');
-        $this->assertTrue($container->getData(), 'Boolean true is no longer a boolean.');
+        $this->assertTrue($container->getData(), 'Boolean true is no longer true.');
         $this->assertEquals('boolean', $container->getType(), 'Boolean true has the wrong data type.');
 
         $container = new DataContainer(true, 'boolean');
         $this->assertIsBool($container->getData(), 'Explicitly cast boolean true is no longer a boolean.');
-        $this->assertTrue($container->getData(), 'Boolean true is no longer a boolean.');
+        $this->assertTrue($container->getData(), 'Explicitly cast boolean true is no longer true.');
         $this->assertEquals('boolean', $container->getType(), 'Boolean true has the wrong data type.');
 
         $container = new DataContainer(false);
