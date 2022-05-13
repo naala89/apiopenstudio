@@ -22,9 +22,18 @@ namespace ApiOpenStudio\Core;
 class DataContainer extends Entity
 {
     // phpcs:ignore
-    use DetectTypeTrait, ConvertToBooleanTrait, ConvertToIntegerTrait, ConvertToFloatTrait, ConvertToTextTrait, ConvertToArrayTrait, ConvertToJsonTrait, ConvertToXmlTrait, ConvertToHtmlTrait, ConvertToImageTrait {
-        ConvertToJsonTrait::xml2json insteadof ConvertToArrayTrait;
-    }
+    use DetectTypeTrait,
+        ConvertToArrayTrait,
+        ConvertToBooleanTrait,
+        ConvertToEmptyTrait,
+        ConvertToFileTrait,
+        ConvertToFloatTrait,
+        ConvertToHtmlTrait,
+        ConvertToImageTrait,
+        ConvertToIntegerTrait,
+        ConvertToJsonTrait,
+        ConvertToTextTrait,
+        ConvertToXmlTrait;
 
     /**
      * All data types.
@@ -32,17 +41,17 @@ class DataContainer extends Entity
      * @var array Data types.
      */
     private array $types = [
-        'boolean',
-        'integer',
-        'float',
-        'text',
         'array',
-        'json',
-        'xml',
+        'boolean',
+        'empty',
+        'file',
+        'float',
         'html',
         'image',
-        'file',
-        'empty',
+        'integer',
+        'json',
+        'text',
+        'xml',
     ];
 
     /**
@@ -62,28 +71,23 @@ class DataContainer extends Entity
     /**
      * DataContainer constructor.
      *
+     * If the data type is specified, the data will automatically be cast to this type.
+     *
      * @param mixed $data Data stored in the container.
-     * @param string|null $dataType Data type.
+     * @param string|null $type Data type.
      *
      * @throws ApiException
      */
-    public function __construct($data, string $dataType = null)
+    public function __construct($data, string $type = null)
     {
-        if (empty($dataType)) {
-            $this->setData($data);
+        if (empty($type)) {
+            $type = $this->detectType($data);
         } else {
-            if (!in_array($dataType, $this->types)) {
-                throw new ApiException("invalid datatype, cannot set DataContainer to: $dataType", 0, -1, 500);
-            }
-            $detectedType = $this->detectType($data);
-            $method = 'from' . ucfirst(strtolower($detectedType)) . 'To' . ucfirst(strtolower($dataType));
-            if (!method_exists(__CLASS__, $method)) {
-                throw new ApiException("could not find method to cast: $method", 0, -1, 500);
-            }
+            $method = $this->getCastMethod($data, $type);
             $data = $this->$method($data);
-            $this->data = $data;
-            $this->type = $dataType;
         }
+        $this->data = $data;
+        $this->type = $type;
     }
 
     /**
@@ -97,7 +101,29 @@ class DataContainer extends Entity
     }
 
     /**
+     * Get the data.
+     *
+     * @return mixed
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Get the data type.
+     *
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
      * Set the data.
+     *
+     * Data type is automatically detected and set.
      *
      * @param mixed $data
      *   Data.
@@ -106,16 +132,6 @@ class DataContainer extends Entity
     {
         $this->data = $data;
         $this->type = $this->detectType($data);
-    }
-
-    /**
-     * Get the data.
-     *
-     * @return mixed
-     */
-    public function getData()
-    {
-        return $this->data;
     }
 
     /**
@@ -130,26 +146,36 @@ class DataContainer extends Entity
      */
     public function setType(string $type)
     {
-        $detectedType = $this->detectType($this->data);
-        if (!in_array($type, $this->types)) {
-            throw new ApiException("invalid datatype, cannot set DataContainer to: $type", 0, -1, 500);
-        }
-        $method = 'from' . ucfirst(strtolower($detectedType)) . 'To' . ucfirst(strtolower($type));
-        if (!method_exists(__CLASS__, $method)) {
-            throw new ApiException("could not find method to cast: $method", 0, -1, 500);
-        }
-        $data = $this->$method($this->data);
-        $this->data = $data;
+        $method = $this->getCastMethod($this->data, $type);
+        $this->data = $this->$method($this->data);
         $this->type = $type;
     }
 
     /**
-     * Get the data type.
+     * Calculate the required cast method.
+     *
+     * @param $data
+     * @param string $type
      *
      * @return string
+     *
+     * @throws ApiException
      */
-    public function getType(): string
+    protected function getCastMethod($data, string $type): string
     {
-        return $this->type;
+        if (!in_array($type, $this->types)) {
+            $message = "invalid datatype, cannot set DataContainer to: $type";
+            throw new ApiException($message, 0, -1, 500);
+        }
+
+        $detectedType = $this->detectType($data);
+        $method = 'from' . ucfirst(strtolower($detectedType)) . 'To' . ucfirst(strtolower($type));
+
+        if (!method_exists(__CLASS__, $method)) {
+            $message = "could not find method to cast: $method";
+            throw new ApiException($message, 0, -1, 500);
+        }
+
+        return $method;
     }
 }

@@ -1,0 +1,31 @@
+name: Testing cast on an integer -34
+
+description: Test cast processor with integer -34
+
+uri: cast/integer
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast integer security
+    roles:
+        - Developer
+
+process:
+    processor: cast
+    id: test cast integer cast
+    data:
+        processor: var_literal
+        id: test cast integer data
+        value: -34
+        type: integer
+    data_type:
+        processor: var_get
+        id: test cast integer data_type
+        key: data_type
+        expected_type: text

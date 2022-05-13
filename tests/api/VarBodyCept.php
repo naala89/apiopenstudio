@@ -37,9 +37,9 @@ $I->seeResponseContainsJson([
 ]);
 $I->deleteHeader('Accept');
 
-$I->wantTo('Test VarBody with a raw JSON body, expected type json, nullable false.');
+$I->wantTo('Test VarBody with a raw JSON body, nullable false.');
 $I->haveHttpHeader('Accept', 'application/json');
-$I->sendPOST("$uri?expected_type=json&nullable=false", [
+$I->sendPOST("$uri?nullable=false", [
     "test" => true
 ]);
 $I->seeResponseCodeIs(200);

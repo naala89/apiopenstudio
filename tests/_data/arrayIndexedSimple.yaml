@@ -1,0 +1,33 @@
+name: Testing return of a simple indexed array
+
+description: Testing return of a simple indexed array
+
+uri: array/indexed/simple
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test simple indexed array security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test simple indexed array data
+    value:
+        -
+            this
+        -
+            is
+        -
+            a
+        -
+            simple
+        -
+            array
+    type: array

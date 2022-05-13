@@ -22,66 +22,6 @@ namespace ApiOpenStudio\Core;
 trait ConvertToFileTrait
 {
     /**
-     * Convert empty to file.
-     *
-     * @param $data
-     *
-     * @return null
-     */
-    public function fromEmptyToFile($data)
-    {
-        return null;
-    }
-
-    /**
-     * Convert boolean to file.
-     *
-     * @param $data
-     *
-     * @return boolean
-     */
-    public function fromBooleanToFile($data): bool
-    {
-        return $data ? 'true' : 'false';
-    }
-
-    /**
-     * Convert integer to file.
-     *
-     * @param $data
-     *
-     * @return boolean
-     */
-    public function fromIntegerToFile($data): bool
-    {
-        return $data;
-    }
-
-    /**
-     * Convert float to file.
-     *
-     * @param $data
-     *
-     * @return boolean
-     */
-    public function fromFloatToFile($data): bool
-    {
-        return $data;
-    }
-
-    /**
-     * Convert text to file.
-     *
-     * @param $data
-     *
-     * @return boolean
-     */
-    public function fromTextToFile($data): bool
-    {
-        return $data;
-    }
-
-    /**
      * Convert array to file.
      *
      * @param $data
@@ -101,25 +41,49 @@ trait ConvertToFileTrait
     }
 
     /**
-     * Convert JSON to file.
+     * Convert boolean to file.
      *
      * @param $data
      *
      * @return boolean
      */
-    public function fromJsonToFile($data): bool
+    public function fromBooleanToFile($data): bool
+    {
+        return $data ? 'true' : 'false';
+    }
+
+    /**
+     * Convert empty to file.
+     *
+     * @param $data
+     *
+     * @return null
+     */
+    public function fromEmptyToFile($data)
+    {
+        return null;
+    }
+
+    /**
+     * Convert file to file.
+     *
+     * @param $data
+     *
+     * @return boolean
+     */
+    public function fromFileToFile($data): bool
     {
         return $data;
     }
 
     /**
-     * Convert XML to file.
+     * Convert float to file.
      *
      * @param $data
      *
      * @return boolean
      */
-    public function fromXmlToFile($data): bool
+    public function fromFloatToFile($data): bool
     {
         return $data;
     }
@@ -149,13 +113,49 @@ trait ConvertToFileTrait
     }
 
     /**
-     * Convert file to file.
+     * Convert integer to file.
      *
      * @param $data
      *
      * @return boolean
      */
-    public function fromFileToFile($data): bool
+    public function fromIntegerToFile($data): bool
+    {
+        return $data;
+    }
+
+    /**
+     * Convert JSON to file.
+     *
+     * @param $data
+     *
+     * @return boolean
+     */
+    public function fromJsonToFile($data): bool
+    {
+        return $data;
+    }
+
+    /**
+     * Convert text to file.
+     *
+     * @param $data
+     *
+     * @return boolean
+     */
+    public function fromTextToFile($data): bool
+    {
+        return $data;
+    }
+
+    /**
+     * Convert XML to file.
+     *
+     * @param $data
+     *
+     * @return boolean
+     */
+    public function fromXmlToFile($data): bool
     {
         return $data;
     }

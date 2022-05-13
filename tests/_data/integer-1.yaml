@@ -1,0 +1,23 @@
+name: Testing return of an integer -1
+
+description: Testing return of an integer -1
+
+uri: integer/-1
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast integer -1 security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test cast integer -1 data
+    value: -1
+    type: integer

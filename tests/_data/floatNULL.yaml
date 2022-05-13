@@ -1,0 +1,23 @@
+name: Testing return of an float NULL
+
+description: Testing return of an float NULL
+
+uri: float/null
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast float NULL security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test cast float NULL data
+    value: null
+    type: float

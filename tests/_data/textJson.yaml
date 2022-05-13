@@ -1,0 +1,23 @@
+name: Testing return of text containing an integer
+
+description: Testing return of text containing an integer
+
+uri: text/json
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test text containing a json string security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test text containing a json string process
+    value: '{"pronoun":"this","intransitive_verb":"is","indefinite_article":"an","noun":"array","arr":{"item1":"one","item2":"two","item3":"three","sub":{"foo":"bar","bar":"foo"}}}'
+    type: text

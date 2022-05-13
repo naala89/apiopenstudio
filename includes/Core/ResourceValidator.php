@@ -212,7 +212,14 @@ class ResourceValidator
                     $limitValues = $inputDef['limitValues'];
                     $count = 0;
 
-                    if (isset($node[$inputKey]) && (!empty($node[$inputKey]) || $node[$inputKey] === false)) {
+                    if (
+                        isset($node[$inputKey])
+                        && (
+                            !is_null($node[$inputKey])
+                            || $node[$inputKey] === false
+                            || $node[$inputKey] === 0
+                        )
+                    ) {
                         $input = $node[$inputKey];
 
                         if ($this->helper->isProcessor($input)) {

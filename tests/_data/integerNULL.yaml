@@ -1,0 +1,23 @@
+name: Testing return of an integer NULL
+
+description: Testing return of an integer NULL
+
+uri: integer/null
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast integer NULL security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test cast integer NULL data
+    value: null
+    type: integer

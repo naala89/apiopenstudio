@@ -1,0 +1,23 @@
+name: Testing return of an integer INF
+
+description: Testing return of an integer INF
+
+uri: integer/inf
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast integer INF security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test cast integer INF data
+    value: INF
+    type: integer

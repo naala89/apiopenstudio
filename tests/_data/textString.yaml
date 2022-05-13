@@ -1,0 +1,23 @@
+name: Testing return of text containing an integer
+
+description: Testing return of text containing an integer
+
+uri: text/string
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test text containing a string security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test text containing a string process
+    value: "Lorem ipsum dolor sit amet, consectetur..."
+    type: text

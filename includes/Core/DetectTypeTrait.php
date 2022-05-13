@@ -68,7 +68,7 @@ trait DetectTypeTrait
      */
     public function isEmpty($var): bool
     {
-        return $var === null || (is_string($var) && strlen($var) < 1);
+        return $var !== false && $var !== 0 && ($var === null || (is_string($var) && strlen($var) < 1));
     }
 
     /**

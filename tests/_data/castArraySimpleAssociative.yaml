@@ -1,0 +1,35 @@
+name: Testing cast on a simple associative array
+
+description: Test cast processor with simple associative array
+
+uri: cast/array
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast simple associative array security
+    roles:
+        - Developer
+
+process:
+    processor: cast
+    id: test cast simple associative array cast
+    data:
+        processor: var_literal
+        id: test cast simple associative array data
+        value:
+            pronoun: this
+            intransitive_verb: is
+            indefinite_article: an
+            noun: array
+        type: array
+    data_type:
+        processor: var_get
+        id: test cast simple associative array data_type
+        key: data_type
+        expected_type: text

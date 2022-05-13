@@ -1,0 +1,23 @@
+name: Testing return of an float NAN
+
+description: Testing return of an float NAN
+
+uri: float/nan
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast float NAN security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test cast float NAN data
+    value: NAN
+    type: float

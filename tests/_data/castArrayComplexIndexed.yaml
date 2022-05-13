@@ -1,0 +1,48 @@
+name: Testing cast on a complex indexed array
+
+description: Test cast processor with complex indexed array
+
+uri: cast/array
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast complex indexed array security
+    roles:
+        - Developer
+
+process:
+    processor: cast
+    id: test cast complex indexed array cast
+    data:
+        processor: var_literal
+        id: test cast complex indexed array data
+        value:
+            -
+                this
+            -
+                is
+            -
+                an
+            -
+                array
+            -
+                -
+                    this
+                -
+                    is
+                -
+                    a
+                -
+                    sub-array
+        type: array
+    data_type:
+        processor: var_get
+        id: test cast complex indexed array data_type
+        key: data_type
+        expected_type: text

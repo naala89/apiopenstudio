@@ -1,0 +1,23 @@
+name: Testing return of an integer NAN
+
+description: Testing return of an integer NAN
+
+uri: integer/nan
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast integer NAN security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test cast integer NAN data
+    value: NAN
+    type: integer

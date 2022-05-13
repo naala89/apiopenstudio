@@ -65,12 +65,13 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test with type json and see the result.');
+// Note this test will return null, because we have invalid json = this is an unquoted text string.
 $I->sendGet($uri, ['type' => 'json']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => 'text',
+    'data' => null,
 ]);
 
 $I->wantTo('Test with type xml & JSON output and see the result.');
@@ -79,7 +80,11 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => ['text'],
+    'data' => [
+        'apiOpenStudioWrapper' => [
+            'item' => 'text'
+        ],
+    ],
 ]);
 
 $I->deleteHeader('Accept');
@@ -90,8 +95,8 @@ $I->haveHttpHeader('Accept', 'application/xml');
 $I->sendGet($uri, ['type' => 'xml']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsXml();
-$I->seeResponseContains('<?xml version="1.0"?>
-<apiOpenStudioWrapper>text</apiOpenStudioWrapper>');
+$I->seeResponseContains('<?xml version="1.0" encoding="utf-8"?>
+<apiOpenStudioWrapper><item>text</item></apiOpenStudioWrapper>');
 
 $I->deleteHeader('Accept');
 $I->haveHttpHeader('Accept', 'application/json');
@@ -164,7 +169,11 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => [34],
+    'data' => [
+        'apiOpenStudioWrapper' => [
+            'item' => 34
+        ],
+    ],
 ]);
 
 $I->deleteHeader('Accept');
@@ -175,8 +184,8 @@ $I->haveHttpHeader('Accept', 'application/xml');
 $I->sendGet($uri, ['type' => 'xml']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsXml();
-$I->seeResponseContains('<?xml version="1.0"?>
-<apiOpenStudioWrapper>34</apiOpenStudioWrapper>');
+$I->seeResponseContains('<?xml version="1.0" encoding="utf-8"?>
+<apiOpenStudioWrapper><item>34</item></apiOpenStudioWrapper>');
 
 $I->deleteHeader('Accept');
 $I->haveHttpHeader('Accept', 'application/json');
@@ -253,7 +262,11 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => [34.141],
+    'data' => [
+        'apiOpenStudioWrapper' => [
+            'item' => 34.141,
+        ],
+    ],
 ]);
 
 $I->deleteHeader('Accept');
@@ -264,8 +277,8 @@ $I->haveHttpHeader('Accept', 'application/xml');
 $I->sendGet($uri, ['type' => 'xml']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsXml();
-$I->seeResponseContains('<?xml version="1.0"?>
-<apiOpenStudioWrapper>34.141</apiOpenStudioWrapper>');
+$I->seeResponseContains('<?xml version="1.0" encoding="utf-8"?>
+<apiOpenStudioWrapper><item>34.141</item></apiOpenStudioWrapper>');
 
 $I->deleteHeader('Accept');
 $I->haveHttpHeader('Accept', 'application/json');
@@ -280,11 +293,15 @@ $I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'))
 
 $I->wantTo('Test without type and see the result.');
 $I->sendGet($uri);
-$I->seeResponseCodeIs(200);
+$I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    'result' => 'ok',
-    'data' => ['pi' => 3.141],
+    'result' => 'error',
+    'data' => [
+        'code' => 6,
+        'id' => 'test var_literal array var_literal',
+        'message' => "Cannot cast array to text."
+    ],
 ]);
 
 $I->wantTo('Test with type text and see the result.');
@@ -350,7 +367,11 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => ['pi' => 3.141],
+    'data' => [
+        'apiOpenStudioWrapper' => [
+            'pi' => '3.141',
+        ],
+    ],
 ]);
 
 $I->deleteHeader('Accept');

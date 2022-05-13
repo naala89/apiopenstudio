@@ -1,0 +1,23 @@
+name: Testing return of an boolean NULL
+
+description: Testing return of an boolean NULL
+
+uri: boolean/null
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test boolean NULL security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test boolean NULL data
+    value: null
+    type: boolean

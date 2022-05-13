@@ -14,7 +14,7 @@
 
 namespace ApiOpenStudio\Core;
 
-use SimpleXMLElement;
+use SoapBox\Formatter\Formatter;
 
 /**
  * Trait ConvertToArrayTrait.
@@ -23,6 +23,30 @@ use SimpleXMLElement;
  */
 trait ConvertToArrayTrait
 {
+    /**
+     * Convert array to array.
+     *
+     * @param array $array
+     *
+     * @return array
+     */
+    public function fromArrayToArray(array $array): array
+    {
+        return $array;
+    }
+
+    /**
+     * Convert boolean to array.
+     *
+     * @param bool $boolean
+     *
+     * @return array
+     */
+    public function fromBooleanToArray(bool $boolean): array
+    {
+        return [$boolean];
+    }
+
     /**
      * Convert empty to array.
      *
@@ -36,170 +60,102 @@ trait ConvertToArrayTrait
     }
 
     /**
-     * Convert boolean to array.
-     *
-     * @param $data
-     *
-     * @return array
-     */
-    public function fromBooleanToArray($data): array
-    {
-        return [$data];
-    }
-
-    /**
-     * Convert integer to array.
-     *
-     * @param $data
-     *
-     * @return array
-     */
-    public function fromIntegerToArray($data): array
-    {
-        return [$data];
-    }
-
-    /**
-     * Convert float to array.
-     *
-     * @param $data
-     *
-     * @return array
-     */
-    public function fromFloatToArray($data): array
-    {
-        return [$data];
-    }
-
-    /**
-     * Convert text to array.
-     *
-     * @param $data
-     *
-     * @return array
-     */
-    public function fromTextToArray($data): array
-    {
-        return [$data];
-    }
-
-    /**
-     * Convert array to array.
-     *
-     * @param $data
-     *
-     * @return array
-     */
-    public function fromArrayToArray($data): array
-    {
-        return $data;
-    }
-
-    /**
-     * Convert JSON to array.
-     *
-     * @param $data
-     *
-     * @return array
-     */
-    public function fromJsonToArray($data): array
-    {
-        return json_decode($data, true);
-    }
-
-    /**
-     * Convert XML to array.
-     *
-     * @param $data
-     *
-     * @return array
-     */
-    public function fromXmlToArray($data): array
-    {
-        $json = json_encode($this->xml2json($data));
-        return json_decode($json, true);
-    }
-
-    /**
-     * Convert HTML to array.
-     *
-     * @param $data
-     *
-     * @return array
-     */
-    public function fromHtmlToArray($data): array
-    {
-        $json = json_encode($this->xml2json($data));
-        return json_decode($json, true);
-    }
-
-    /**
-     * Convert image to array.
-     *
-     * @param $data
-     *
-     * @return array
-     *
-     * @throws ApiException
-     */
-    public function fromImageToArray($data): array
-    {
-        throw new ApiException('Cannot cast image to array', 6, -1, 400);
-    }
-
-    /**
      * Convert file to array.
      *
-     * @param $data
-     *
-     * @return array
+     * @param $file
      *
      * @throws ApiException
      */
-    public function fromFileToArray($data): array
+    public function fromFileToArray($file)
     {
         throw new ApiException('Cannot cast file to array', 6, -1, 400);
     }
 
     /**
-     * Convert an XML doc to JSON string.
+     * Convert float to array.
      *
-     * @param SimpleXMLElement $xml XML element.
+     * @param float $float
      *
      * @return array
      */
-    public function xml2json(SimpleXMLElement &$xml): array
+    public function fromFloatToArray(float $float): array
     {
-        $root = !(func_num_args() > 1);
-        $jsnode = [];
+        return [$float];
+    }
 
-        if (!$root) {
-            if (count($xml->attributes()) > 0) {
-                $jsnode["$"] = [];
-                foreach ($xml->attributes() as $key => $value) {
-                    $jsnode["$"][$key] = (string)$value;
-                }
-            }
+    /**
+     * Convert HTML to array.
+     *
+     * @param string $html
+     *
+     * @return array
+     */
+    public function fromHtmlToArray(string $html): array
+    {
+        $convertHtml = new ConvertHtml();
+        return $convertHtml->htmlToArray($html);
+    }
 
-            $textcontent = trim((string)$xml);
-            if (count($textcontent) > 0) {
-                $jsnode["_"] = $textcontent;
-            }
+    /**
+     * Convert image to array.
+     *
+     * @param $image
+     *
+     * @throws ApiException
+     */
+    public function fromImageToArray($image)
+    {
+        throw new ApiException('Cannot cast image to array', 6, -1, 400);
+    }
 
-            foreach ($xml->children() as $childxmlnode) {
-                $childname = $childxmlnode->getName();
-                if (!array_key_exists($childname, $jsnode)) {
-                    $jsnode[$childname] = [];
-                }
-                array_push($jsnode[$childname], $this->xml2json($childxmlnode));
-            }
-            return $jsnode;
-        } else {
-            $nodename = $xml->getName();
-            $jsnode[$nodename] = [];
-            array_push($jsnode[$nodename], $this->xml2json($xml));
-            $result = json_encode($jsnode);
-            return !is_array($result) ? [$result] : $result;
-        }
+    /**
+     * Convert integer to array.
+     *
+     * @param int $integer
+     *
+     * @return array
+     */
+    public function fromIntegerToArray(int $integer): array
+    {
+        return [$integer];
+    }
+
+    /**
+     * Convert JSON string to array.
+     *
+     * @param $json
+     *
+     * @return array
+     */
+    public function fromJsonToArray($json): array
+    {
+        $formatter = Formatter::make($json, Formatter::JSON);
+        $array = $formatter->toArray();
+        return (!is_array($array) ? [$array] : $array);
+    }
+
+    /**
+     * Convert text to array.
+     *
+     * @param string $text
+     *
+     * @return array
+     */
+    public function fromTextToArray(string $text): array
+    {
+        return [$text];
+    }
+
+    /**
+     * Convert XML string to array.
+     *
+     * @param string $xml
+     *
+     * @return array
+     */
+    public function fromXmlToArray(string $xml): array
+    {
+        $formatter = Formatter::make($xml, Formatter::XML);
+        return $formatter->toArray();
     }
 }

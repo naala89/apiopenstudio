@@ -1,0 +1,23 @@
+name: Testing return of an float -INF
+
+description: Testing return of an float -INF
+
+uri: float/-inf
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast float -INF security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test cast float -INF data
+    value: -INF
+    type: float

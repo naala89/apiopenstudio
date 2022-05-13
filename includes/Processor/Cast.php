@@ -16,8 +16,11 @@ namespace ApiOpenStudio\Processor;
 
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DetectTypeTrait;
 use ApiOpenStudio\Core\ConvertToArrayTrait;
 use ApiOpenStudio\Core\ConvertToBooleanTrait;
+use ApiOpenStudio\Core\ConvertToEmptyTrait;
+use ApiOpenStudio\Core\ConvertToFileTrait;
 use ApiOpenStudio\Core\ConvertToFloatTrait;
 use ApiOpenStudio\Core\ConvertToHtmlTrait;
 use ApiOpenStudio\Core\ConvertToImageTrait;
@@ -25,7 +28,6 @@ use ApiOpenStudio\Core\ConvertToIntegerTrait;
 use ApiOpenStudio\Core\ConvertToJsonTrait;
 use ApiOpenStudio\Core\ConvertToTextTrait;
 use ApiOpenStudio\Core\ConvertToXmlTrait;
-use ApiOpenStudio\Core\DetectTypeTrait;
 
 /**
  * Class Cast
@@ -35,9 +37,18 @@ use ApiOpenStudio\Core\DetectTypeTrait;
 class Cast extends Core\ProcessorEntity
 {
     // phpcs:ignore
-    use DetectTypeTrait, ConvertToBooleanTrait, ConvertToIntegerTrait, ConvertToFloatTrait, ConvertToTextTrait, ConvertToArrayTrait, ConvertToJsonTrait, ConvertToXmlTrait, ConvertToHtmlTrait, ConvertToImageTrait {
-        ConvertToJsonTrait::xml2json insteadof ConvertToArrayTrait;
-    }
+    use DetectTypeTrait,
+        ConvertToArrayTrait,
+        ConvertToBooleanTrait,
+        ConvertToEmptyTrait,
+        ConvertToFileTrait,
+        ConvertToFloatTrait,
+        ConvertToHtmlTrait,
+        ConvertToImageTrait,
+        ConvertToIntegerTrait,
+        ConvertToJsonTrait,
+        ConvertToTextTrait,
+        ConvertToXmlTrait;
 
     /**
      * {@inheritDoc}
@@ -64,21 +75,21 @@ class Cast extends Core\ProcessorEntity
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => [],
+                'limitTypes' => ['text'],
                 'limitValues' => [
-                    'boolean',
-                    'integer',
-                    'float',
-                    'text',
                     'array',
-                    'json',
-                    'xml',
+                    'boolean',
+                    'empty',
+                    'float',
+//                    'file',
                     'html',
                     'image',
-                    'file',
-                    'empty',
+                    'integer',
+                    'json',
+                    'text',
+                    'xml',
                 ],
-                'default' => '',
+                'default' => 'text',
             ],
         ],
     ];
@@ -102,7 +113,8 @@ class Cast extends Core\ProcessorEntity
             if (!method_exists(__CLASS__, $method)) {
                 throw new ApiException("unable to cast data, method not found: $method");
             }
-            $container->setData($this->$method($container->getData()));
+            $data = $this->$method($container->getData());
+            $container->setData($data);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), 6, $this->id, 400);
         }

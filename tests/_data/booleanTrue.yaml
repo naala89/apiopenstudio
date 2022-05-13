@@ -1,0 +1,23 @@
+name: Testing return of an boolean true
+
+description: Testing return of an boolean true
+
+uri: boolean/true
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test boolean true security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test boolean true data
+    value: true
+    type: boolean
