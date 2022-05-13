@@ -1,0 +1,23 @@
+name: Testing return of an float 3.141
+
+description: Testing return of an float 3.141
+
+uri: float/3.141
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast float 3.141 security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test cast float 3.141 data
+    value: 3.141
+    type: float

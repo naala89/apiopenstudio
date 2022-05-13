@@ -1,0 +1,58 @@
+name: Testing cast on a html string
+
+description: Test cast processor with a html string
+
+uri: cast/html
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast html security
+    roles:
+        - Developer
+
+process:
+    processor: cast
+    id: test cast html cast
+    data:
+        processor: var_literal
+        id: test cast html data
+        value: >
+            <!doctype html>
+            <html itemscope="" itemtype="http://schema.org/WebPage" lang="en-AU">
+            <head>
+            <meta charset="UTF-8">
+            <meta content="origin" name="referrer">
+            <meta content="/images/branding/googleg/1x/googleg_standard_color_128dp.png" itemprop="image">
+            <link href="/manifest?pwa=webhp" crossorigin="use-credentials" rel="manifest">
+            <title>Google</title>
+            <script nonce="K6yMFw3t_j87HL4HOZMfxg">var f={};</script>
+            <script nonce="K6yMFw3t_j87HL4HOZMfxg">var g=[];</script>
+            <style>h1,ol,ul,li,button{margin:0;padding:0}</style>
+            </head>
+            <body>
+            <div class="o3j99 n1xJcf Ne6nSd">
+            <a class="MV3Tnb" href="https://about.google">About</a>
+            <a class="MV3Tnb" href="https://store.google.com">Store</a>
+            <div class="LX3sZb">
+            <div class="gb_e gb_f">
+            <a class="gb_d" data-pid="23" href="https://mail.google.com" target="_top">Gmail</a>
+            </div>
+            <div class="gb_e gb_f">
+            <a class="gb_d" data-pid="2" href="https://www.google.com.au" target="_top">Images</a>
+            </div>
+            </div>
+            </div>
+            </body>
+            </html>
+        type: html
+    data_type:
+        processor: var_get
+        id: test cast html data_type
+        key: data_type
+        expected_type: text

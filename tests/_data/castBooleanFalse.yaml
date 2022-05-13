@@ -1,0 +1,31 @@
+name: Testing cast on a boolean false
+
+description: Test cast processor with boolean false
+
+uri: cast/boolean
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast boolean security
+    roles:
+        - Developer
+
+process:
+    processor: cast
+    id: test cast boolean cast
+    data:
+        processor: var_literal
+        id: test cast boolean data
+        value: false
+        type: boolean
+    data_type:
+        processor: var_get
+        id: test cast boolean data_type
+        key: data_type
+        expected_type: text

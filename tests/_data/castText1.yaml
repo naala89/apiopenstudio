@@ -1,0 +1,31 @@
+name: Testing cast on a text string 1
+
+description: Test cast processor with text string 1
+
+uri: cast/text
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast text string 1 security
+    roles:
+        - Developer
+
+process:
+    processor: cast
+    id: test cast text string 1 cast
+    data:
+        processor: var_literal
+        id: test cast text string 1 data
+        value: "1"
+        type: text
+    data_type:
+        processor: var_get
+        id: test cast text string 1 data_type
+        key: data_type
+        expected_type: text

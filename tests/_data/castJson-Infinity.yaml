@@ -1,0 +1,31 @@
+name: Testing cast on a JSON -Infinity
+
+description: Test cast processor with JSON -Infinity
+
+uri: cast/json
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast json -Infinity security
+    roles:
+        - Developer
+
+process:
+    processor: cast
+    id: test cast json -Infinity cast
+    data:
+        processor: var_literal
+        id: test cast json -Infinity data
+        value: '"-Infinity"'
+        type: json
+    data_type:
+        processor: var_get
+        id: test cast json -Infinity data_type
+        key: data_type
+        expected_type: text

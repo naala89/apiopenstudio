@@ -1,0 +1,30 @@
+name: Testing return of a nested associative array
+
+description: Testing return of a nested associative array
+
+uri: array/associative/nested
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test nested associative array security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test nested associative array data
+    value:
+        one:
+            one_one: this
+            one_two: is
+            one_three: an
+        two:
+            two_one: associative
+            two_two: array
+    type: array

@@ -1,0 +1,31 @@
+name: Testing return of a nested indexed array
+
+description: Testing return of a nested indexed array
+
+uri: array/indexed/nested
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test nested indexed array security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test nested indexed array data
+    value:
+        -
+            - this
+            - is
+            - one
+        -
+            - this
+            - is
+            - two
+    type: array

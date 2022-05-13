@@ -1,0 +1,23 @@
+name: Testing return of text containing a float
+
+description: Testing return of text containing a float
+
+uri: text/float
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test text containing a float security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test text containing a float process
+    value: 3.141
+    type: text
