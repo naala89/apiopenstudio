@@ -38,12 +38,12 @@ class VarLiteral extends ProcessorEntity
         'input' => [
             'value' => [
                 'description' => 'The value of the literal.',
-                'cardinality' => [1, 1],
+                'cardinality' => [0, '*'],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'type' => [
                 'description' => 'The literal type.',
@@ -51,8 +51,20 @@ class VarLiteral extends ProcessorEntity
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
+                'limitValues' => [
+                    'array',
+                    'boolean',
+                    'empty',
+                    'float',
+                    'file',
+                    'html',
+                    'image',
+                    'integer',
+                    'json',
+                    'text',
+                    'xml',
+                ],
+                'default' => 'text',
             ],
         ],
     ];
