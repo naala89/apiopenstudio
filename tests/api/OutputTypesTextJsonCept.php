@@ -7,7 +7,7 @@ $text = '{"pronoun":"this","intransitive_verb":"is","indefinite_article":"an","n
 
 $xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
 // phpcs:ignore
-$xml .= '<apiOpenStudioWrapper><pronoun>this</pronoun><intransitive_verb>is</intransitive_verb><indefinite_article>an</indefinite_article><noun>array</noun><arr><item1>one</item1><item2>two</item2><item3>three</item3><sub><foo>bar</foo><bar>foo</bar></sub></arr></apiOpenStudioWrapper>';
+$xml .= '<apiOpenStudioWrapper><item>{"pronoun":"this","intransitive_verb":"is","indefinite_article":"an","noun":"array","arr":{"item1":"one","item2":"two","item3":"three","sub":{"foo":"bar","bar":"foo"}}}</item></apiOpenStudioWrapper>';
 
 $html = "<!DOCTYPE html>\n";
 // phpcs:ignore

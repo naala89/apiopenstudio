@@ -22,7 +22,7 @@ process:
     data:
         processor: var_literal
         id: test cast json empty string data
-        value: ""
+        value: '""'
         type: json
     data_type:
         processor: var_get

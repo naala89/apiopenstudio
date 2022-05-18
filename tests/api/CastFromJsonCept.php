@@ -27,7 +27,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast 0 to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -157,7 +157,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast 1 to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -291,7 +291,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast -1 to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -424,8 +424,8 @@ $I->seeResponseContainsJson([
     ],
 ]);
 
-$I->wantTo('Test cast -Infinity to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->wantTo('Test cast -Infinity to undefined.');
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -513,7 +513,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => '-Infinity',
+    'data' => '"-Infinity"',
 ]);
 
 $I->wantTo('Test cast -Infinity to xml.');
@@ -524,7 +524,7 @@ $I->seeResponseContainsJson([
     'result' => 'ok',
     'data' => [
         'apiOpenStudioWrapper' => [
-            'item' => "-Infinity",
+            'item' => '-Infinity',
         ],
     ],
 ]);
@@ -542,20 +542,24 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => [],
+    'data' => [""],
 ]);
 
 $I->wantTo('Test cast empty string to boolean.');
 $I->sendGet($uri, ['data_type' => 'boolean']);
-$I->seeResponseCodeIs(200);
+$I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    'result' => 'ok',
-    'data' => null,
+    "result" => "error",
+    "data" => [
+        "id" => "test cast json empty string cast",
+        "code" => 6,
+        "message" => "Cannot cast JSON to boolean.",
+    ],
 ]);
 
 $I->wantTo('Test cast empty string to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -565,11 +569,15 @@ $I->seeResponseContainsJson([
 
 $I->wantTo('Test cast empty string to float.');
 $I->sendGet($uri, ['data_type' => 'float']);
-$I->seeResponseCodeIs(200);
+$I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    'result' => 'ok',
-    'data' => null,
+    "result" => "error",
+    "data" => [
+        "id" => "test cast json empty string cast",
+        "code" => 6,
+        "message" => "Cannot cast JSON to float.",
+    ],
 ]);
 
 $I->wantTo('Test cast empty string to html.');
@@ -596,9 +604,7 @@ $I->seeResponseContainsJson([
             ], [
                 "body" => [
                     [
-                        "div" => [
-                            ["#text" => "null"],
-                        ],
+                        "div" => [],
                     ],
                 ],
             ],
@@ -608,20 +614,28 @@ $I->seeResponseContainsJson([
 
 $I->wantTo('Test cast empty string to image.');
 $I->sendGet($uri, ['data_type' => 'image']);
-$I->seeResponseCodeIs(200);
+$I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    'result' => 'ok',
-    'data' => null,
+    "result" => "error",
+    "data" => [
+        "id" => "test cast json empty string cast",
+        "code" => 6,
+        "message" => "Cannot cast JSON to image.",
+    ],
 ]);
 
 $I->wantTo('Test cast empty string to integer.');
 $I->sendGet($uri, ['data_type' => 'integer']);
-$I->seeResponseCodeIs(200);
+$I->seeResponseCodeIs(400);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    'result' => 'ok',
-    'data' => null,
+    "result" => "error",
+    "data" => [
+        "id" => "test cast json empty string cast",
+        "code" => 6,
+        "message" => "Cannot cast JSON to integer.",
+    ],
 ]);
 
 $I->wantTo('Test cast empty string to json.');
@@ -630,7 +644,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => null,
+    'data' => '',
 ]);
 
 $I->wantTo('Test cast empty string to text.');
@@ -639,7 +653,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => null,
+    'data' => '',
 ]);
 
 $I->wantTo('Test cast empty string to xml.');
@@ -685,7 +699,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast Infinity to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -773,7 +787,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => 'Infinity',
+    'data' => '"Infinity"',
 ]);
 
 $I->wantTo('Test cast Infinity to xml.');
@@ -819,7 +833,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast integer to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -953,7 +967,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast NAN to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1041,7 +1055,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => 'NAN',
+    'data' => '"NAN"',
 ]);
 
 $I->wantTo('Test cast NAN to xml.');
@@ -1070,7 +1084,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => [],
+    'data' => null,
 ]);
 
 $I->wantTo('Test cast null to boolean.');
@@ -1083,7 +1097,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast null to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1177,9 +1191,7 @@ $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
     'data' => [
-        'apiOpenStudioWrapper' => [
-            'item' => [],
-        ],
+        'apiOpenStudioWrapper' => [],
     ],
 ]);
 
@@ -1218,7 +1230,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast object to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1371,12 +1383,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => [
-        "foo" => [
-            ["foo" => "bar"],
-            ["bar" => "foo"],
-        ],
-    ],
+    'data' => '{"foo":[{"foo":"bar"},{"bar":"foo"}]}',
 ]);
 
 $I->wantTo('Test cast object to xml.');
@@ -1425,7 +1432,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast text to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1521,7 +1528,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => "Lorem ipsum dolor sit amet, consectetur...",
+    'data' => '"Lorem ipsum dolor sit amet, consectetur..."',
 ]);
 
 $I->wantTo('Test cast object to xml.');

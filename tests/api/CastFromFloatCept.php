@@ -31,7 +31,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast -3.141 to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -165,7 +165,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast 0.0 to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -295,7 +295,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast 1.0 to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -429,7 +429,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast 3.141 to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([

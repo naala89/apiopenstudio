@@ -1,8 +1,8 @@
-name: Testing cast on a empty null
+name: Testing cast on a undefined null
 
-description: Test cast processor with empty null
+description: Test cast processor with undefined null
 
-uri: cast/empty
+uri: cast/undefined
 
 method: get
 
@@ -12,20 +12,20 @@ ttl: 0
 
 security:
     processor: validate_token_roles
-    id: test cast empty security
+    id: test cast undefined security
     roles:
         - Developer
 
 process:
     processor: cast
-    id: test cast empty cast
+    id: test cast undefined cast
     data:
         processor: var_literal
-        id: test cast empty data
+        id: test cast undefined data
         value: null
-        type: empty
+        type: undefined
     data_type:
         processor: var_get
-        id: test cast empty data_type
+        id: test cast undefined data_type
         key: data_type
         expected_type: text

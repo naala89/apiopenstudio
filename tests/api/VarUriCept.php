@@ -90,7 +90,7 @@ $I->seeResponseContainsJson(
         'result' => 'error',
         'data' => [
             'code' => 6,
-            'message' => "URI var does not exist or is empty: 3.",
+            'message' => "URI var does not exist or is undefined: 3.",
             'id' => 'test varuri processor process',
         ],
     ]

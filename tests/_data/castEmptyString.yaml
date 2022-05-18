@@ -23,7 +23,7 @@ process:
         processor: var_literal
         id: test cast empty string data
         value: ""
-        type: empty
+        type: text
     data_type:
         processor: var_get
         id: test cast empty string data_type

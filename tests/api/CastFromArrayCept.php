@@ -38,7 +38,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast simple indexed array to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -245,7 +245,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast complex indexed array to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -492,7 +492,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast simple associative array to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -692,7 +692,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast complex associative array to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
