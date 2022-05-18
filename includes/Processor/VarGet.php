@@ -14,14 +14,16 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ApiException;
 
 /**
  * Class VarGet
  *
  * Processor class to return a requests get variables.
  */
-class VarGet extends Core\ProcessorEntity
+class VarGet extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -41,7 +43,7 @@ class VarGet extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'expected_type' => [
                 // phpcs:ignore
@@ -51,17 +53,17 @@ class VarGet extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [
-                    'boolean',
-                    'integer',
-                    'float',
-                    'text',
                     'array',
-                    'json',
-                    'xml',
+                    'boolean',
+                    'float',
                     'html',
-                    'empty',
+                    'integer',
+                    'json',
+                    'text',
+                    'undefined',
+                    'xml',
                 ],
-                'default' => '',
+                'default' => null,
             ],
             'nullable' => [
                 'description' => 'Allow the processing to continue if the GET variable does not exist.',
@@ -78,11 +80,11 @@ class VarGet extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -101,21 +103,26 @@ class VarGet extends Core\ProcessorEntity
                 $data = $vars[$key];
             }
         } else {
-            $data = '';
+            $data = null;
         }
 
         if (!empty($expectedType)) {
             try {
-                $result = new Core\DataContainer($data, $expectedType);
-            } catch (Core\ApiException $e) {
-                throw new Core\ApiException($e->getMessage(), 6, $this->id, 400);
+                $result = new DataContainer($data, $expectedType);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), 6, $this->id, 400);
             }
         } else {
-            $result = new Core\DataContainer($data);
+            $result = new DataContainer($data);
         }
 
-        if (!$nullable && $result->getType() == 'empty') {
-            throw new Core\ApiException("GET variable ($key) does not exist or is empty", 6, $this->id, 400);
+        if (!$nullable && ($result->getType() == 'undefined' || is_null($result->getData()))) {
+            throw new ApiException(
+                "GET variable ($key) does not exist or is undefined",
+                6,
+                $this->id,
+                400
+            );
         }
 
         return $result;

@@ -46,18 +46,6 @@ trait ConvertToImageTrait
     }
 
     /**
-     * Convert empty to image.
-     *
-     * @param $data
-     *
-     * @return null
-     */
-    public function fromEmptyToImage($data)
-    {
-        return null;
-    }
-
-    /**
      * Convert file to image.
      *
      * @param $file
@@ -139,6 +127,18 @@ trait ConvertToImageTrait
     public function fromTextToImage(string $text): string
     {
         return $text;
+    }
+
+    /**
+     * Convert undefined to image.
+     *
+     * @param $data
+     *
+     * @return null
+     */
+    public function fromUndefinedToImage($data)
+    {
+        return null;
     }
 
     /**

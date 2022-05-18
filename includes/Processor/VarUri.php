@@ -56,9 +56,9 @@ class VarUri extends Core\ProcessorEntity
                     'integer',
                     'float',
                     'text',
-                    'empty',
+                    'undefined',
                 ],
-                'default' => '',
+                'default' => null,
             ],
             'nullable' => [
                 'description' => 'Allow the processing to continue if the URI index does not exist (returns "").',
@@ -88,7 +88,10 @@ class VarUri extends Core\ProcessorEntity
         $expectedType = $this->val('expected_type', true);
         $args = $this->request->getArgs();
 
-        $data = $args[$index] ?? '';
+        if (!$nullable && !isset($args[$index])) {
+            throw new Core\ApiException("URI var does not exist or is undefined: $index", 6, $this->id, 400);
+        }
+        $data = $args[$index] ?? null;
 
         if (!empty($expectedType)) {
             try {
@@ -98,10 +101,6 @@ class VarUri extends Core\ProcessorEntity
             }
         } else {
             $result = new Core\DataContainer($data);
-        }
-
-        if (!$nullable && $result->getType() == 'empty') {
-            throw new Core\ApiException("URI var does not exist or is empty: $index", 6, $this->id, 400);
         }
 
         return $result;

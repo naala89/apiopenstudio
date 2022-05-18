@@ -75,7 +75,7 @@ abstract class ResourceBase extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => ['get', 'post', 'delete', 'push'],
-                'default' => '',
+                'default' => null,
             ],
             'accName' => [
                 'description' => 'The application name that the resource is associated with.',
@@ -84,7 +84,7 @@ abstract class ResourceBase extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'appName' => [
                 'description' => 'The application name that the resource is associated with.',
@@ -93,7 +93,7 @@ abstract class ResourceBase extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'uri' => [
                 // phpcs:ignore
@@ -103,7 +103,7 @@ abstract class ResourceBase extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'resourceString' => [
                 // phpcs:ignore
@@ -113,7 +113,7 @@ abstract class ResourceBase extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'resourceFile' => [
                 // phpcs:ignore
@@ -123,7 +123,7 @@ abstract class ResourceBase extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ]
     ];

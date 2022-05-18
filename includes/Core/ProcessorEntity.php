@@ -270,7 +270,7 @@ abstract class ProcessorEntity extends Entity
         } else {
             $test = $this->isDataContainer($this->meta->$key) ? $this->meta->$key->getData() : $this->meta->$key;
         }
-        if ($test === null || $test === '') {
+        if ($test === null) {
             try {
                 $this->meta->$key = new DataContainer($default);
             } catch (ApiException $e) {
@@ -379,7 +379,7 @@ abstract class ProcessorEntity extends Entity
         int $min,
         string $key
     ): void {
-        if (empty($limitTypes) || ($min < 1 && $type == 'empty')) {
+        if (empty($limitTypes) || ($min < 1 && $type == 'undefined')) {
             return;
         }
         if (!in_array($type, $limitTypes)) {

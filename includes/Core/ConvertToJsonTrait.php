@@ -28,12 +28,15 @@ trait ConvertToJsonTrait
     /**
      * Convert array to JSON string.
      *
-     * @param array $array
+     * @param array|null $array
      *
-     * @return string
+     * @return string|null
      */
-    public function fromArrayToJson(array $array): string
+    public function fromArrayToJson(?array $array): ?string
     {
+        if (is_null($array)) {
+            return null;
+        }
         return json_encode($array);
     }
 
@@ -47,18 +50,6 @@ trait ConvertToJsonTrait
     public function fromBooleanToJson(?bool $boolean): ?bool
     {
         return $boolean;
-    }
-
-    /**
-     * Convert empty to JSON.
-     *
-     * @param $data
-     *
-     * @return null
-     */
-    public function fromEmptyToJson($data)
-    {
-        return null;
     }
 
     /**
@@ -108,11 +99,11 @@ trait ConvertToJsonTrait
      *
      * @param $image
      *
-     * @return string
+     * @return string|null
      */
-    public function fromImageToJson($image): string
+    public function fromImageToJson($image): ?string
     {
-        return $this->fromTextToJson($image);
+        return $image;
     }
 
     /**
@@ -147,17 +138,25 @@ trait ConvertToJsonTrait
     /**
      * Convert text to JSON string.
      *
-     * @param string $text
+     * @param ?string $text
      *
-     * @return string
+     * @return string|null
      */
-    public function fromTextToJson(string $text): string
+    public function fromTextToJson(?string $text): ?string
     {
-        if ($text == '') {
-            // Empty string should be returned as double quotes so that it is not returned as null.
-            return '""';
-        }
         return $text;
+    }
+
+    /**
+     * Convert undefined to JSON.
+     *
+     * @param $data
+     *
+     * @return null
+     */
+    public function fromUndefinedToJson($data)
+    {
+        return null;
     }
 
     /**

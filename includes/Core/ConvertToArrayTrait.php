@@ -48,18 +48,6 @@ trait ConvertToArrayTrait
     }
 
     /**
-     * Convert empty to array.
-     *
-     * @param $data
-     *
-     * @return array
-     */
-    public function fromEmptyToArray($data): array
-    {
-        return [];
-    }
-
-    /**
      * Convert file to array.
      *
      * @param $file
@@ -144,6 +132,18 @@ trait ConvertToArrayTrait
     public function fromTextToArray(string $text): array
     {
         return [$text];
+    }
+
+    /**
+     * Convert undefined to array.
+     *
+     * @param $data
+     *
+     * @return null
+     */
+    public function fromUndefinedToArray($data)
+    {
+        return null;
     }
 
     /**

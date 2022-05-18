@@ -46,18 +46,6 @@ trait ConvertToBooleanTrait
     }
 
     /**
-     * Convert empty to boolean.
-     *
-     * @param $data
-     *
-     * @return null
-     */
-    public function fromEmptyToBoolean($data)
-    {
-        return null;
-    }
-
-    /**
      * Convert file to boolean.
      *
      * @param $file
@@ -163,6 +151,18 @@ trait ConvertToBooleanTrait
             throw new ApiException('Cannot cast text to boolean', 6, -1, 400);
         }
         return $boolean;
+    }
+
+    /**
+     * Convert undefined to boolean.
+     *
+     * @param $data
+     *
+     * @return null
+     */
+    public function fromUndefinedToBoolean($data)
+    {
+        return null;
     }
 
     /**

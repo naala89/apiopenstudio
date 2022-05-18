@@ -42,7 +42,7 @@ class VarLooselyTyped extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

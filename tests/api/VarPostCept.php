@@ -13,37 +13,55 @@ $I->wantTo('populate a varPost with text and see the result.');
 $I->sendPOST($uri, ['value' => 'text']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains("text");
+$I->seeResponseContainsJson([
+    'result' => 'ok',
+    'data' => 'text',
+]);
 
 $I->wantTo('populate a varPost with true and see the result.');
 $I->sendPOST($uri, ['value' => 'true']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains("true");
+$I->seeResponseContainsJson([
+    'result' => 'ok',
+    'data' => 'true',
+]);
 
 $I->wantTo('populate a varPost with 1.6 and see the result.');
 $I->sendPOST($uri, ['value' => '1.6']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('1.6');
+$I->seeResponseContainsJson([
+    'result' => 'ok',
+    'data' => 1.6,
+]);
 
 $I->wantTo('populate a varPost with 1.6 and see the result.');
 $I->sendPOST($uri, ['value' => 1.6]);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('1.6');
+$I->seeResponseContainsJson([
+    'result' => 'ok',
+    'data' => 1.6,
+]);
 
 $I->wantTo('populate a varPost with 1 and see the result.');
 $I->sendPOST($uri, ['value' => 1]);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('1');
+$I->seeResponseContainsJson([
+    'result' => 'ok',
+    'data' => 1,
+]);
 
 $I->wantTo('populate a varPost with 1.0 and see the result.');
 $I->sendPOST($uri, ['value' => 1.0]);
 $I->seeResponseCodeIs(200);
 //$I->seeResponseIsJson();
-$I->seeResponseContains('1');
+$I->seeResponseContainsJson([
+    'result' => 'ok',
+    'data' => 1,
+]);
 
 $I->wantTo('populate a varPost with -11 and see the result.');
 $I->sendPOST($uri, ['value' => -11]);

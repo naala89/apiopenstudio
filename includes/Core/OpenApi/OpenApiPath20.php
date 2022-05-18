@@ -168,7 +168,7 @@ class OpenApiPath20 extends OpenApiPathAbstract
                     case 'json':
                     case 'xml':
                     case 'html':
-                    case 'empty':
+                    case 'undefined':
                         $parameter->type = 'string';
                         break;
                     case 'array':
@@ -218,7 +218,7 @@ class OpenApiPath20 extends OpenApiPathAbstract
                 case 'json':
                 case 'xml':
                 case 'html':
-                case 'empty':
+                case 'undefined':
                     $parameters->{$content}->schema->properties->{$item['key']}->type = 'string';
                     break;
                 case 'array':

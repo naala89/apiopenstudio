@@ -88,7 +88,7 @@ class ApplicationCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'name' => [
                 'description' => 'The application name.',
@@ -97,7 +97,7 @@ class ApplicationCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'openapi' => [
                 'description' => 'The OpenApi schema fragment for the application.',
@@ -106,7 +106,7 @@ class ApplicationCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['json'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

@@ -43,7 +43,7 @@ class Merge extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'merge_type' => [
                 'description' => 'The merge operation to perform.',

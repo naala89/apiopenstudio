@@ -27,7 +27,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast boolean true to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -157,7 +157,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast boolean false to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([

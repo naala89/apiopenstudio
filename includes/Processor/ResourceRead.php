@@ -55,7 +55,7 @@ class ResourceRead extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'appid' => [
                 'description' => 'The application IDs to filter by.',
@@ -64,7 +64,7 @@ class ResourceRead extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'order_by' => [
                 'description' => 'order by column',
@@ -91,7 +91,7 @@ class ResourceRead extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

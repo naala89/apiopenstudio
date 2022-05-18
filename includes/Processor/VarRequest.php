@@ -41,7 +41,7 @@ class VarRequest extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'expected_type' => [
                 // phpcs:ignore
@@ -51,19 +51,19 @@ class VarRequest extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [
-                    'boolean',
-                    'integer',
-                    'float',
-                    'text',
                     'array',
-                    'json',
-                    'xml',
+                    'boolean',
+                    'file',
+                    'float',
                     'html',
                     'image',
-                    'file',
-                    'empty',
+                    'integer',
+                    'json',
+                    'text',
+                    'undefined',
+                    'xml',
                 ],
-                'default' => '',
+                'default' => 'text',
             ],
             'nullable' => [
                 'description' => 'Allow the processing to continue if the GET or POST variable does not exist.',
@@ -93,7 +93,7 @@ class VarRequest extends Core\ProcessorEntity
         $expectedType = $this->val('expected_type', true);
         $vars = array_merge($this->request->getGetVars(), $this->request->getPostVars());
 
-        $data = $vars[$key] ?? '';
+        $data = $vars[$key] ?? null;
         if (!$nullable && empty($data)) {
             throw new Core\ApiException("Request var does not exist or is empty: $key", 6, 400);
         }

@@ -44,18 +44,6 @@ trait ConvertToFloatTrait
     }
 
     /**
-     * Convert empty to float.
-     *
-     * @param $data
-     *
-     * @return ?float
-     */
-    public function fromEmptyToFloat($data): ?float
-    {
-        return null;
-    }
-
-    /**
      * Convert a file to a float.
      *
      * @param $file
@@ -167,6 +155,18 @@ trait ConvertToFloatTrait
             throw new ApiException("Cannot cast text to float", 6, -1, 400);
         }
         return $float;
+    }
+
+    /**
+     * Convert undefined to float.
+     *
+     * @param $data
+     *
+     * @return null
+     */
+    public function fromUndefinedToFloat($data)
+    {
+        return null;
     }
 
     /**

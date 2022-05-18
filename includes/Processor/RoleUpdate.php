@@ -62,7 +62,7 @@ class RoleUpdate extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer', 'text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ]
         ],
     ];

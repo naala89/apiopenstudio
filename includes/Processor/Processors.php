@@ -45,7 +45,7 @@ class Processors extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

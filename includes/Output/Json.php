@@ -94,8 +94,9 @@ class Json extends Output
 
             if ($this->settings->__get(['api', 'wrap_json_in_response_object'])) {
                 // Wrap JSON in the wrapper object if required by the settings.
-                if (in_array($inputType, ['json', 'array', 'xml', 'html'])) {
-                    $resultData = json_decode($resultData, true);
+                if (in_array($inputType, ['json', 'array', 'xml', 'html']) && !is_bool($resultData)) {
+                    $decoded = json_decode($resultData, true);
+                    $resultData = is_null($decoded) ? $resultData : $decoded;
                 }
                 if (
                     !is_array($resultData)

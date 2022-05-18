@@ -41,7 +41,7 @@ class VarStr extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

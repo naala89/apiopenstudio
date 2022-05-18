@@ -78,15 +78,6 @@ class ValTest extends Unit
         $meta = json_decode(json_encode([
             'processor' => 'var_bool',
             'id' => 'var_bool default',
-            'value' => '',
-        ]));
-        $varBool = new VarBool($meta, $this->request,null, $this->logger);
-        $val = $varBool->val('value', true);
-        $this->assertTrue($val === false);
-
-        $meta = json_decode(json_encode([
-            'processor' => 'var_bool',
-            'id' => 'var_bool default',
             'value' => null,
         ]));
         $varBool = new VarBool($meta, $this->request, null, $this->logger);

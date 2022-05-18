@@ -71,7 +71,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => null,
+    'data' => 'text',
 ]);
 
 $I->wantTo('Test with type xml & JSON output and see the result.');
@@ -293,15 +293,11 @@ $I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'))
 
 $I->wantTo('Test without type and see the result.');
 $I->sendGet($uri);
-$I->seeResponseCodeIs(400);
+$I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
-    'result' => 'error',
-    'data' => [
-        'code' => 6,
-        'id' => 'test var_literal array var_literal',
-        'message' => "Cannot cast array to text."
-    ],
+    'result' => 'ok',
+    'data' => ['pi' => 3.141],
 ]);
 
 $I->wantTo('Test with type text and see the result.');

@@ -106,7 +106,7 @@ class ApplicationUpdate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'openapi' => [
                 'description' => 'The OpenApi schema fragment for the application.',
@@ -115,7 +115,7 @@ class ApplicationUpdate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['json'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];
@@ -248,7 +248,7 @@ class ApplicationUpdate extends ProcessorEntity
     /**
      * Return an OpenApi object, based on openapi_version in settings.
      *
-     * @param string $inputSchema
+     * @param ?string $inputSchema
      * @param Application $application
      *
      * @return mixed
@@ -257,7 +257,7 @@ class ApplicationUpdate extends ProcessorEntity
      *
      * @todo Validate final schema fragment version against openapi_version in settings.
      */
-    protected function getOpenApi(string $inputSchema, Application $application)
+    protected function getOpenApi(?string $inputSchema, Application $application)
     {
         $openApiParentClassName = Utilities::getOpenApiParentClassPath($this->settings);
         $openApiParentClass = new $openApiParentClassName();

@@ -73,7 +73,7 @@ class ApplicationRead extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'application_id' => [
                 // phpcs:ignore
@@ -83,7 +83,7 @@ class ApplicationRead extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'keyword' => [
                 'description' => 'Application keyword to filter by.',
@@ -92,7 +92,7 @@ class ApplicationRead extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text', 'integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'order_by' => [
                 'description' => 'Order by column.',
@@ -101,7 +101,7 @@ class ApplicationRead extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => ['accid', 'appid', 'name'],
-                'default' => '',
+                'default' => null,
             ],
             'direction' => [
                 'description' => 'Order by direction.',
@@ -110,7 +110,7 @@ class ApplicationRead extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => ['asc', 'desc'],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

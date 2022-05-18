@@ -99,7 +99,7 @@ $I->seeResponseContainsJson([
     'result' => 'error',
     'data' => [
         'code' => 6,
-        'message' => "GET variable (value) does not exist or is empty.",
+        'message' => "GET variable (value) does not exist or is undefined.",
         'id' => 'test var_get process',
     ],
 ]);
@@ -112,7 +112,7 @@ $I->seeResponseContainsJson([
     'result' => 'error',
     'data' => [
         'code' => 6,
-        'message' => "GET variable (value) does not exist or is empty.",
+        'message' => "GET variable (value) does not exist or is undefined.",
         'id' => 'test var_get process',
     ],
 ]);

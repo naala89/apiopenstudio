@@ -1,0 +1,23 @@
+name: Testing return array of NULL
+
+description: Testing return array of NULL
+
+uri: array/null
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test array of NULL security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test array of NULL data
+    value: null
+    type: array

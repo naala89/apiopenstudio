@@ -14,6 +14,7 @@
 
 namespace ApiOpenStudio\Core;
 
+use Exception;
 use SimpleXMLElement;
 use SoapBox\Formatter\Formatter;
 
@@ -27,46 +28,33 @@ trait ConvertToXmlTrait
     /**
      * Convert array to XML string.
      *
-     * @param array $array
+     * @param array|null $array
      *
-     * @return string
+     * @return string|null
      *
      * @throws ApiException
      */
-    public function fromArrayToXml(array $array): string
+    public function fromArrayToXml(?array $array): string
     {
         $xml = $this->getBaseXmlWrapper();
+        $array = $array ?? ['item' => []];
         return $this->array2xml($array, $xml);
     }
 
     /**
      * Convert boolean to XML string.
      *
-     * @param ?bool $boolean
+     * @param bool|null $boolean
      *
      * @return string
      */
     public function fromBooleanToXml(?bool $boolean): string
     {
-        if (is_null($boolean)) {
-            $boolean = null;
+        if (!is_null($boolean)) {
+            $formatter = Formatter::make(['item' => ($boolean ? 'true' : 'false')], Formatter::ARR);
         } else {
-            $boolean = $boolean ? 'true' : 'false';
+            $formatter = Formatter::make(['item' => []], Formatter::ARR);
         }
-        $formatter = Formatter::make(['item' => $boolean], Formatter::ARR);
-        return $formatter->toXml('apiOpenStudioWrapper');
-    }
-
-    /**
-     * Convert empty to XML.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromEmptyToXml($data): string
-    {
-        $formatter = Formatter::make('{"item":""}', Formatter::JSON);
         return $formatter->toXml('apiOpenStudioWrapper');
     }
 
@@ -79,7 +67,7 @@ trait ConvertToXmlTrait
      */
     public function fromFileToXml($file): string
     {
-        $formatter = Formatter::make($file, Formatter::JSON);
+        $formatter = Formatter::make(['item' => $file], Formatter::ARR);
         return $formatter->toXml('apiOpenStudioWrapper');
     }
 
@@ -104,11 +92,11 @@ trait ConvertToXmlTrait
     /**
      * Convert an HTML string to XML string.
      *
-     * @param string $html
+     * @param string|null $html
      *
      * @return string
      */
-    public function fromHtmlToXml(string $html): string
+    public function fromHtmlToXml(?string $html): string
     {
         $convertHtml = new ConvertHtml();
         return $convertHtml->htmlToXml($html);
@@ -123,7 +111,7 @@ trait ConvertToXmlTrait
      */
     public function fromImageToXml($image): string
     {
-        $formatter = Formatter::make($image, Formatter::JSON);
+        $formatter = Formatter::make(['item' => $image], Formatter::ARR);
         return $formatter->toXml('apiOpenStudioWrapper');
     }
 
@@ -148,11 +136,11 @@ trait ConvertToXmlTrait
     /**
      * Convert JSON string to XML string.
      *
-     * @param string $json
+     * @param string|null $json
      *
      * @return string
      */
-    public function fromJsonToXml(string $json): string
+    public function fromJsonToXml(?string $json): string
     {
         $testObject = json_decode($json, true);
         if (!is_array($testObject)) {
@@ -165,28 +153,37 @@ trait ConvertToXmlTrait
     /**
      * Convert text to XML string.
      *
-     * @param string $text
+     * @param string|null $text
      *
      * @return string
      */
-    public function fromTextToXml(string $text): string
+    public function fromTextToXml(?string $text): string
     {
-        $testObject = json_decode($text, true);
-        if (!is_array($testObject) || $text == '[]') {
-            $text = json_encode(['item' => $text]);
-        }
-        $formatter = Formatter::make($text, Formatter::JSON);
+        $formatter = Formatter::make(['item' => $text], Formatter::ARR);
+        return $formatter->toXml('apiOpenStudioWrapper');
+    }
+
+    /**
+     * Convert undefined to XML.
+     *
+     * @param $data
+     *
+     * @return string
+     */
+    public function fromUndefinedToXml($data): string
+    {
+        $formatter = Formatter::make(['item' => null], Formatter::ARR);
         return $formatter->toXml('apiOpenStudioWrapper');
     }
 
     /**
      * Convert XML string to XML string.
      *
-     * @param string $xml
+     * @param string|null $xml
      *
      * @return string
      */
-    public function fromXmlToXml(string $xml): string
+    public function fromXmlToXml(?string $xml): ?string
     {
         return $xml;
     }
@@ -218,6 +215,7 @@ trait ConvertToXmlTrait
      * Get the base SimpleXMLElement wrapper for XML for converting non XML inputs to XML output.
      *
      * @param string $baseTag
+     *
      * @return SimpleXMLElement
      *
      * @throws ApiException

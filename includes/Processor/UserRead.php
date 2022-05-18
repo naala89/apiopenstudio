@@ -61,7 +61,7 @@ class UserRead extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'email' => [
                 'description' => 'Filter the results by email.',
@@ -70,7 +70,7 @@ class UserRead extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'keyword' => [
                 // phpcs:ignore
@@ -80,7 +80,7 @@ class UserRead extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text', 'integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'orderBy' => [
                 'description' => 'Order by column.',

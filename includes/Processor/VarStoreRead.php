@@ -73,7 +73,7 @@ class VarStoreRead extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'appid' => [
                 'description' => 'Application ID. If empty, all vars that the user has access to will be returned.',
@@ -82,7 +82,7 @@ class VarStoreRead extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'key' => [
                 'description' => 'Var key. If empty, all vars that the user has access to will be returned.',
@@ -91,7 +91,7 @@ class VarStoreRead extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'keyword' => [
                 'description' => 'Keyword search',
@@ -100,7 +100,7 @@ class VarStoreRead extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer', 'text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'order_by' => [
                 'description' => 'order by column',

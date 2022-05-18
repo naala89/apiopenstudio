@@ -52,7 +52,7 @@ class InviteRead extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'email' => [
                 'description' => 'Invite email filter.',
@@ -61,7 +61,7 @@ class InviteRead extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'order_by' => [
                 'description' => 'Column to order by.',
@@ -88,7 +88,7 @@ class InviteRead extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'limit' => [
                 'description' => 'Limit.',
@@ -97,7 +97,7 @@ class InviteRead extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

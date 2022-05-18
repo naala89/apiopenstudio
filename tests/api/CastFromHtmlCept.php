@@ -132,7 +132,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test cast html to empty.');
-$I->sendGet($uri, ['data_type' => 'empty']);
+$I->sendGet($uri, ['data_type' => 'undefined']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([

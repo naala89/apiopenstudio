@@ -52,7 +52,7 @@ class RoleRead extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'order_by' => [
                 'description' => 'order by column',
@@ -61,7 +61,7 @@ class RoleRead extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => ['rid', 'name'],
-                'default' => '',
+                'default' => null,
             ],
             'direction' => [
                 'description' => 'Sort direction',
@@ -79,7 +79,7 @@ class RoleRead extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];
