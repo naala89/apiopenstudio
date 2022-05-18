@@ -25,7 +25,6 @@ class DataContainer extends Entity
     use DetectTypeTrait,
         ConvertToArrayTrait,
         ConvertToBooleanTrait,
-        ConvertToEmptyTrait,
         ConvertToFileTrait,
         ConvertToFloatTrait,
         ConvertToHtmlTrait,
@@ -33,6 +32,7 @@ class DataContainer extends Entity
         ConvertToIntegerTrait,
         ConvertToJsonTrait,
         ConvertToTextTrait,
+        ConvertToUndefinedTrait,
         ConvertToXmlTrait;
 
     /**
@@ -43,7 +43,6 @@ class DataContainer extends Entity
     private array $types = [
         'array',
         'boolean',
-        'empty',
         'file',
         'float',
         'html',
@@ -51,6 +50,7 @@ class DataContainer extends Entity
         'integer',
         'json',
         'text',
+        'undefined',
         'xml',
     ];
 
@@ -59,7 +59,7 @@ class DataContainer extends Entity
      *
      * @var string Default data type
      */
-    private string $type = 'empty';
+    private string $type = 'undefined';
 
     /**
      * Data.
