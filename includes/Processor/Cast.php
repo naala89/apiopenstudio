@@ -14,12 +14,12 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\DataContainer;
 use ApiOpenStudio\Core\DetectTypeTrait;
 use ApiOpenStudio\Core\ConvertToArrayTrait;
 use ApiOpenStudio\Core\ConvertToBooleanTrait;
-use ApiOpenStudio\Core\ConvertToEmptyTrait;
 use ApiOpenStudio\Core\ConvertToFileTrait;
 use ApiOpenStudio\Core\ConvertToFloatTrait;
 use ApiOpenStudio\Core\ConvertToHtmlTrait;
@@ -27,6 +27,7 @@ use ApiOpenStudio\Core\ConvertToImageTrait;
 use ApiOpenStudio\Core\ConvertToIntegerTrait;
 use ApiOpenStudio\Core\ConvertToJsonTrait;
 use ApiOpenStudio\Core\ConvertToTextTrait;
+use ApiOpenStudio\Core\ConvertToUndefinedTrait;
 use ApiOpenStudio\Core\ConvertToXmlTrait;
 
 /**
@@ -34,13 +35,12 @@ use ApiOpenStudio\Core\ConvertToXmlTrait;
  *
  * Processor class to cast an input value (or DataContainer) to another data type.
  */
-class Cast extends Core\ProcessorEntity
+class Cast extends ProcessorEntity
 {
     // phpcs:ignore
     use DetectTypeTrait,
         ConvertToArrayTrait,
         ConvertToBooleanTrait,
-        ConvertToEmptyTrait,
         ConvertToFileTrait,
         ConvertToFloatTrait,
         ConvertToHtmlTrait,
@@ -48,6 +48,7 @@ class Cast extends Core\ProcessorEntity
         ConvertToIntegerTrait,
         ConvertToJsonTrait,
         ConvertToTextTrait,
+        ConvertToUndefinedTrait,
         ConvertToXmlTrait;
 
     /**
@@ -68,7 +69,7 @@ class Cast extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'data_type' => [
                 'description' => 'The data type to cast to.',
@@ -79,7 +80,6 @@ class Cast extends Core\ProcessorEntity
                 'limitValues' => [
                     'array',
                     'boolean',
-                    'empty',
                     'float',
 //                    'file',
                     'html',
@@ -87,6 +87,7 @@ class Cast extends Core\ProcessorEntity
                     'integer',
                     'json',
                     'text',
+                    'undefined',
                     'xml',
                 ],
                 'default' => 'text',
@@ -97,11 +98,11 @@ class Cast extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -114,7 +115,7 @@ class Cast extends Core\ProcessorEntity
                 throw new ApiException("unable to cast data, method not found: $method");
             }
             $data = $this->$method($container->getData());
-            $container->setData($data);
+            $container = new DataContainer($data, $dataType);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), 6, $this->id, 400);
         }
