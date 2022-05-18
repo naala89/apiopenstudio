@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Trait ConvertToEmptyTrait.
+ * Trait ConvertToUndefinedTrait.
  *
  * @package    ApiOpenStudio\Core
  * @author     john89 (https://gitlab.com/john89)
@@ -15,140 +15,140 @@
 namespace ApiOpenStudio\Core;
 
 /**
- * Trait ConvertToEmptyTrait.
+ * Trait ConvertToUndefinedTrait.
  *
- * Trait to cast an input value to empty.
+ * Trait to cast an input value to undefined.
  */
-trait ConvertToEmptyTrait
+trait ConvertToUndefinedTrait
 {
     /**
-     * Convert array to empty.
+     * Convert array to undefined.
      *
      * @param array $array
      *
      * @return null
      */
-    public function fromArrayToEmpty(array $array)
+    public function fromArrayToUndefined(array $array)
     {
         return null;
     }
 
     /**
-     * Convert boolean to empty.
+     * Convert boolean to undefined.
      *
      * @param bool $boolean
      *
      * @return null
      */
-    public function fromBooleanToEmpty(bool $boolean)
+    public function fromBooleanToUndefined(bool $boolean)
     {
         return null;
     }
 
     /**
-     * Convert empty to empty.
-     *
-     * @param $data
-     *
-     * @return null
-     */
-    public function fromEmptyToEmpty($data)
-    {
-        return null;
-    }
-
-    /**
-     * Convert file to empty.
+     * Convert file to undefined.
      *
      * @param $file
      *
      * @return null
      */
-    public function fromFileToEmpty($file)
+    public function fromFileToUndefined($file)
     {
         return null;
     }
 
     /**
-     * Convert float to empty.
+     * Convert float to undefined.
      *
      * @param float $float
      *
      * @return null
      */
-    public function fromFloatToEmpty(float $float)
+    public function fromFloatToUndefined(float $float)
     {
         return null;
     }
 
     /**
-     * Convert HTML to empty.
+     * Convert HTML to undefined.
      *
      * @param string $html
      *
      * @return null
      */
-    public function fromHtmlToEmpty(string $html)
+    public function fromHtmlToUndefined(string $html)
     {
         return null;
     }
 
     /**
-     * Convert image to empty.
+     * Convert image to undefined.
      *
      * @param $image
      *
      * @return null
      */
-    public function fromImageToEmpty($image)
+    public function fromImageToUndefined($image)
     {
         return null;
     }
 
     /**
-     * Convert integer to empty.
+     * Convert integer to undefined.
      *
      * @param int $integer
      *
      * @return null
      */
-    public function fromIntegerToEmpty(int $integer)
+    public function fromIntegerToUndefined(int $integer)
     {
         return null;
     }
 
     /**
-     * Convert JSON to empty.
+     * Convert JSON to undefined.
      *
      * @param string $json
      *
      * @return null
      */
-    public function fromJsonToEmpty(string $json)
+    public function fromJsonToUndefined(string $json)
     {
         return null;
     }
 
     /**
-     * Convert text to empty.
+     * Convert text to undefined.
      *
      * @param string $string
      *
      * @return null
      */
-    public function fromTextToEmpty(string $string)
+    public function fromTextToUndefined(string $string)
     {
         return null;
     }
 
     /**
-     * Convert XML to empty.
+     * Convert undefined to undefined.
+     *
+     * @param $data
+     *
+     * @return null
+     */
+    public function fromUndefinedToUndefined($data)
+    {
+        return null;
+    }
+
+    /**
+     * Convert XML to undefined.
      *
      * @param string $xml
      *
      * @return null
      */
-    public function fromXmlToEmpty(string $xml)
+    public function fromXmlToUndefined(string $xml)
     {
         return null;
     }
