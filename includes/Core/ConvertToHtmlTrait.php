@@ -27,12 +27,13 @@ trait ConvertToHtmlTrait
      * If the array does not have a html element at the root, then the array will be converted to a data-list and will
      * be appended to the body of the new HTML doc.
      *
-     * @param array $array
+     * @param array|null $array
      *
      * @return string
      */
-    public function fromArrayToHtml(array $array): string
+    public function fromArrayToHtml(?array $array): string
     {
+        $array = $array ?? [];
         if (!isset($array['html'])) {
             return $this->wrapDataHtmlFormat($this->fromArrayToDataList($array));
         }
@@ -56,19 +57,6 @@ trait ConvertToHtmlTrait
             $boolean = $boolean ? 'true' : 'false';
         }
         return $this->wrapDataHtmlFormat("<div>$boolean</div>");
-    }
-
-    /**
-     * Convert empty to HTML.
-     * Creates an empty HTML doc.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromEmptyToHtml($data): string
-    {
-        return $this->wrapDataHtmlFormat('<div>null</div>');
     }
 
     /**
@@ -135,15 +123,17 @@ trait ConvertToHtmlTrait
     /**
      * Convert JSON string to HTML string.
      *
-     * @param string $json
+     * @param string|null $json
      *
      * @return string
      */
-    public function fromJsonToHtml(string $json): string
+    public function fromJsonToHtml(?string $json): string
     {
         $jsonDecoded = json_decode($json, true);
         if (is_numeric($jsonDecoded)) {
             return $this->fromFloatToHtml($jsonDecoded);
+        } elseif (is_null($jsonDecoded)) {
+            return $this->fromUndefinedToHtml($jsonDecoded);
         } elseif (is_string($jsonDecoded)) {
             return $this->fromTextToHtml($jsonDecoded);
         } elseif (is_bool($jsonDecoded)) {
@@ -156,16 +146,29 @@ trait ConvertToHtmlTrait
      * Convert text to HTML string.
      * The text will be within a div in the body of the new HTML doc.
      *
-     * @param string $html
+     * @param string $text
      *
      * @return string
      */
-    public function fromTextToHtml(string $html): string
+    public function fromTextToHtml(string $text): string
     {
-        if (!$this->isHtml($html)) {
-            return $this->wrapDataHtmlFormat("<div>$html</div>");
+        if (!$this->isHtml($text)) {
+            return $this->wrapDataHtmlFormat("<div>$text</div>");
         }
-        return $html;
+        return $text;
+    }
+
+    /**
+     * Convert undefined to HTML.
+     * Creates an empty HTML doc.
+     *
+     * @param $data
+     *
+     * @return string
+     */
+    public function fromUndefinedToHtml($data): string
+    {
+        return $this->wrapDataHtmlFormat('<div>null</div>');
     }
 
     /**
