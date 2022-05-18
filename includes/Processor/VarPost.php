@@ -41,7 +41,7 @@ class VarPost extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'expected_type' => [
                 // phpcs:ignore
@@ -51,19 +51,19 @@ class VarPost extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [
-                    'boolean',
-                    'integer',
-                    'float',
-                    'text',
                     'array',
-                    'json',
-                    'xml',
+                    'boolean',
+                    'file',
+                    'float',
                     'html',
                     'image',
-                    'file',
-                    'empty',
+                    'integer',
+                    'json',
+                    'text',
+                    'undefined',
+                    'xml',
                 ],
-                'default' => '',
+                'default' => null,
             ],
             'nullable' => [
                 'description' => 'Allow the processing to continue if the POST variable does not exist.',
@@ -93,7 +93,7 @@ class VarPost extends Core\ProcessorEntity
         $expectedType = $this->val('expected_type', true);
         $vars = $this->request->getPostVars();
 
-        $data = $vars[$key] ?? '';
+        $data = $vars[$key] ?? null;
 
         if (!empty($expectedType)) {
             try {
@@ -105,8 +105,8 @@ class VarPost extends Core\ProcessorEntity
             $result = new Core\DataContainer($data);
         }
 
-        if (!$nullable && $result->getType() == 'empty') {
-            throw new Core\ApiException("POST var does not exist or is empty: $key", 6, $this->id, 400);
+        if (!$nullable && $result->getType() == 'undefined') {
+            throw new Core\ApiException("POST var does not exist or is undefined: $key", 6, $this->id, 400);
         }
 
         return $result;
