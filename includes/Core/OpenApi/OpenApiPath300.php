@@ -123,7 +123,7 @@ class OpenApiPath300 extends OpenApiPathAbstract
                     case 'json':
                     case 'xml':
                     case 'html':
-                    case 'empty':
+                    case 'undefined':
                         $parameter->schema->type = 'string';
                         break;
                     case 'array':
@@ -170,7 +170,7 @@ class OpenApiPath300 extends OpenApiPathAbstract
                         case 'json':
                         case 'xml':
                         case 'html':
-                        case 'empty':
+                        case 'undefined':
                             $parameter->schema->type = 'string';
                             break;
                         case 'array':
