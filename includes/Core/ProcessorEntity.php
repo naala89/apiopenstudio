@@ -313,15 +313,19 @@ abstract class ProcessorEntity extends Entity
     /**
      * Generate the params array for the sql search.
      *
-     * @param string $keyword Search keyword.
-     * @param array $keywordCols Columns to search for the keyword.
-     * @param string $orderBy Order by column.
-     * @param string $direction Order direction.
+     * @param string|null $keyword Search keyword.
+     * @param array|null $keywordCols Columns to search for the keyword.
+     * @param string|null $orderBy Order by column.
+     * @param string|null $direction Order direction.
      *
      * @return array
      */
-    protected function generateParams(string $keyword, array $keywordCols, string $orderBy, string $direction): array
-    {
+    protected function generateParams(
+        ?string $keyword,
+        ?array $keywordCols,
+        ?string $orderBy,
+        ?string $direction
+    ): array {
         $params = [];
         if (!empty($keyword) && !empty($keywordCols)) {
             foreach ($keywordCols as $keywordCol) {
