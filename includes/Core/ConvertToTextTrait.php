@@ -24,12 +24,17 @@ trait ConvertToTextTrait
     /**
      * Convert array to text.
      *
-     * @param array $array
+     * @param array|null $array
+     *
+     * @return null
      *
      * @throws ApiException
      */
-    public function fromArrayToText(array $array)
+    public function fromArrayToText(?array $array)
     {
+        if (is_null($array)) {
+            return null;
+        }
         throw new ApiException('Cannot cast array to text', 6, -1, 400);
     }
 
@@ -43,18 +48,6 @@ trait ConvertToTextTrait
     public function fromBooleanToText(?bool $boolean): string
     {
         return var_export($boolean, true);
-    }
-
-    /**
-     * Convert empty to text.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromEmptyToText($data): string
-    {
-        return '';
     }
 
     /**
@@ -126,7 +119,7 @@ trait ConvertToTextTrait
      */
     public function fromJsonToText(string $json): string
     {
-        return $json;
+        return $json == '""' ? '' : $json;
     }
 
     /**
@@ -139,6 +132,18 @@ trait ConvertToTextTrait
     public function fromTextToText(string $text): string
     {
         return $text;
+    }
+
+    /**
+     * Convert Undefined to text.
+     *
+     * @param $data
+     *
+     * @return null
+     */
+    public function fromUndefinedToText($data)
+    {
+        return null;
     }
 
     /**
