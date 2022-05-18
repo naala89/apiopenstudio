@@ -78,7 +78,7 @@ class Url extends Core\ProcessorEntity
                 'limitProcessors' => ['AuthCookie', 'AuthOauthHeader', 'AuthBasic', 'AuthDigest'],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'reportError' => [
                 'description' => 'Stop processing if the remote source responds with an error.',
@@ -97,7 +97,7 @@ class Url extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'timeout' => [
                 // phpcs:ignore
@@ -107,7 +107,7 @@ class Url extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

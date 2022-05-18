@@ -61,7 +61,7 @@ class OpenapiUpdate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['json'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

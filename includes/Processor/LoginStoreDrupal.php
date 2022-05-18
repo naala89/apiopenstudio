@@ -50,7 +50,7 @@ class LoginStoreDrupal extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'externalEntity' => [
                   // phpcs:ignore

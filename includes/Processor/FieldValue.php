@@ -41,7 +41,7 @@ class FieldValue extends Core\ProcessorEntity
                 'limitProcessors' => ['var_field'],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'key_value' => [
                 'description' => 'Return the key or value.',

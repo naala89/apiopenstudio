@@ -91,7 +91,7 @@ class VarStoreCreate extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer', 'text', 'float'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'val' => [
                 'description' => 'The variable value',
@@ -100,7 +100,7 @@ class VarStoreCreate extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

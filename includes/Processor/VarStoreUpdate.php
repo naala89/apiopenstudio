@@ -73,7 +73,7 @@ class VarStoreUpdate extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'key' => [
                 'description' => 'Var store key.',
@@ -82,7 +82,7 @@ class VarStoreUpdate extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer', 'text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'appid' => [
                 'description' => 'Var store appid.',
@@ -100,7 +100,7 @@ class VarStoreUpdate extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

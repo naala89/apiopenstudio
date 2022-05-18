@@ -42,7 +42,7 @@ class Filter extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'filter' => [
                 'description' => 'The literal values to filter out.',
@@ -51,7 +51,7 @@ class Filter extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text', 'array'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'regex' => [
                 // phpcs:ignore

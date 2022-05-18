@@ -46,7 +46,7 @@ class UserRoleCreate extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'accid' => [
                 'description' => 'The account ID of user roles.',
@@ -55,7 +55,7 @@ class UserRoleCreate extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'appid' => [
                 'description' => 'The application ID of user roles.',
@@ -64,7 +64,7 @@ class UserRoleCreate extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'rid' => [
                 'description' => 'The user role ID of user roles.',
@@ -73,7 +73,7 @@ class UserRoleCreate extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

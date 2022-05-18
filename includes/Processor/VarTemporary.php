@@ -44,7 +44,7 @@ class VarTemporary extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'value' => [
                 'description' => 'The value of the variable. This input is only used in save operations.',
@@ -53,7 +53,7 @@ class VarTemporary extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'operation' => [
                 'description' => 'The operation to be performed on the variable.',
@@ -62,7 +62,7 @@ class VarTemporary extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => ['save', 'delete', 'fetch'],
-                'default' => '',
+                'default' => null,
             ],
             'strict' => [
                 // phpcs:ignore

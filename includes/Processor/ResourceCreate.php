@@ -90,7 +90,7 @@ class ResourceCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'description' => [
                 'description' => 'The resource description.',
@@ -99,7 +99,7 @@ class ResourceCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'appid' => [
                 'description' => 'The application ID the resource is associated with.',
@@ -108,7 +108,7 @@ class ResourceCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'method' => [
                 'description' => 'The resource HTTP method.',
@@ -117,7 +117,7 @@ class ResourceCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => ['get', 'post', 'put', 'delete'],
-                'default' => '',
+                'default' => null,
             ],
             'uri' => [
                 'description' => 'The resource URI.',
@@ -126,7 +126,7 @@ class ResourceCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'ttl' => [
                 'description' => 'The resource TTL in seconds.',
@@ -144,7 +144,7 @@ class ResourceCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['json'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'openapi' => [
                 'description' => 'The resource OpenApi definition partial, for this path only.',
@@ -153,7 +153,7 @@ class ResourceCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['json'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

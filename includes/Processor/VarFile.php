@@ -53,7 +53,7 @@ class VarFile extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'filename' => [
                 // phpcs:ignore
@@ -63,7 +63,7 @@ class VarFile extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'nullable' => [
                 'description' => 'Allow the processing to continue if the file does not exist.',

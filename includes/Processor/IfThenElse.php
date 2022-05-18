@@ -43,7 +43,7 @@ class IfThenElse extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
                 'conditional' => false,
             ],
             'rhs' => [
@@ -53,7 +53,7 @@ class IfThenElse extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
                 'conditional' => false,
             ],
             'operator' => [
@@ -63,7 +63,7 @@ class IfThenElse extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => ['==', '!=', '>', '>=', '<', '<='],
-                'default' => '',
+                'default' => null,
                 'conditional' => false,
             ],
             'strict' => [
@@ -83,7 +83,7 @@ class IfThenElse extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
                 'conditional' => true,
             ],
             'else' => [
@@ -93,7 +93,7 @@ class IfThenElse extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
                 'conditional' => true,
             ],
         ],
