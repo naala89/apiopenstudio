@@ -32,9 +32,6 @@ trait DetectTypeTrait
      */
     public function detectType($data): string
     {
-        if ($this->isEmpty($data)) {
-            return 'empty';
-        }
         if ($this->isBool($data)) {
             return 'boolean';
         }
@@ -55,6 +52,9 @@ trait DetectTypeTrait
         }
         if ($this->isXml($data)) {
             return 'xml';
+        }
+        if (is_null($data)) {
+            return 'undefined';
         }
         return 'text';
     }
@@ -92,7 +92,7 @@ trait DetectTypeTrait
      */
     public function isInt($var): bool
     {
-        return is_int($var);
+        return is_int($var) || $var === 'Infinite' || $var === '-Infinite';
     }
 
     /**
@@ -104,7 +104,7 @@ trait DetectTypeTrait
      */
     public function isFloat($var): bool
     {
-        return is_float($var);
+        return is_float($var) || $var === 'Infinite' || $var === '-Infinite';
     }
 
     /**
