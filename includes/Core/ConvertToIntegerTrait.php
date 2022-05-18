@@ -46,18 +46,6 @@ trait ConvertToIntegerTrait
     }
 
     /**
-     * Convert empty to integer.
-     *
-     * @param $data
-     *
-     * @return null
-     */
-    public function fromEmptyToInteger($data)
-    {
-        return null;
-    }
-
-    /**
      * Convert a file to an integer.
      *
      * @param $file
@@ -74,12 +62,18 @@ trait ConvertToIntegerTrait
      *
      * @param float $float
      *
-     * @return int
+     * @return int|float
      *
      * @throws ApiException
      */
-    public function fromFloatToInteger(float $float): int
+    public function fromFloatToInteger(float $float)
     {
+        if (is_infinite($float)) {
+            return $float < 0 ? -INF : INF;
+        }
+        if (is_nan($float)) {
+            return NAN;
+        }
         $integer = filter_var($float, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
         if ($integer === null) {
             throw new ApiException('Cannot cast float to integer', 6, -1, 400);
@@ -128,7 +122,7 @@ trait ConvertToIntegerTrait
      *
      * @param string $json
      *
-     * @return float|int|mixed
+     * @return float|int|null
      *
      * @throws ApiException
      */
@@ -151,7 +145,7 @@ trait ConvertToIntegerTrait
      *
      * @param string $text
      *
-     * @return float|int|mixed
+     * @return int|float|null
      *
      * @throws ApiException
      */
@@ -175,6 +169,18 @@ trait ConvertToIntegerTrait
             throw new ApiException("Cannot cast text to integer", 6, -1, 400);
         }
         return $integer;
+    }
+
+    /**
+     * Convert undefined to integer.
+     *
+     * @param $data
+     *
+     * @return null
+     */
+    public function fromUndefinedToInteger($data)
+    {
+        return null;
     }
 
     /**
