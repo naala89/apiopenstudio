@@ -53,18 +53,6 @@ trait ConvertToFileTrait
     }
 
     /**
-     * Convert empty to file.
-     *
-     * @param $data
-     *
-     * @return null
-     */
-    public function fromEmptyToFile($data)
-    {
-        return null;
-    }
-
-    /**
      * Convert file to file.
      *
      * @param $data
@@ -146,6 +134,18 @@ trait ConvertToFileTrait
     public function fromTextToFile($data): bool
     {
         return $data;
+    }
+
+    /**
+     * Convert undefined to file.
+     *
+     * @param $data
+     *
+     * @return null
+     */
+    public function fromUndefinedToFile($data)
+    {
+        return null;
     }
 
     /**
