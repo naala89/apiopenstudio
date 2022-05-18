@@ -54,7 +54,6 @@ class VarLiteral extends ProcessorEntity
                 'limitValues' => [
                     'array',
                     'boolean',
-                    'empty',
                     'float',
                     'file',
                     'html',
@@ -62,9 +61,10 @@ class VarLiteral extends ProcessorEntity
                     'integer',
                     'json',
                     'text',
+                    'undefined',
                     'xml',
                 ],
-                'default' => 'text',
+                'default' => null,
             ],
         ],
     ];
