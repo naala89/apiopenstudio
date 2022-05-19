@@ -72,6 +72,11 @@ class UserRoleDelete extends Core\ProcessorEntity
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
+
+        if (empty($userRoles)) {
+            throw new ApiException('Invalid user role', 6, $this->id, 400);
+        }
+
         $userRole = $userRoles[0];
         if (empty($userRole->getUrid())) {
             throw new Core\ApiException('User role does not exist', 6, $this->id, 400);
