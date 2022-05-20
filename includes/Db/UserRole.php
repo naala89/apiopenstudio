@@ -82,7 +82,7 @@ class UserRole
     /**
      * Get the user role ID.
      *
-     * @return integer user role ID.
+     * @return integer|null user role ID.
      */
     public function getUrid(): ?int
     {
@@ -92,11 +92,11 @@ class UserRole
     /**
      * Set the user role ID.
      *
-     * @param integer $urid User role ID.
+     * @param integer|null $urid User role ID.
      *
      * @return void
      */
-    public function setUrid(int $urid)
+    public function setUrid(?int $urid)
     {
         $this->urid = $urid;
     }
@@ -104,7 +104,7 @@ class UserRole
     /**
      * Get the account ID.
      *
-     * @return integer Account ID.
+     * @return integer|null Account ID.
      */
     public function getAccid(): ?int
     {
@@ -114,11 +114,11 @@ class UserRole
     /**
      * Set the account ID.
      *
-     * @param integer $accid Account ID.
+     * @param integer|null $accid Account ID.
      *
      * @return void
      */
-    public function setAccid(int $accid)
+    public function setAccid(?int $accid)
     {
         $this->accid = $accid;
     }
@@ -126,7 +126,7 @@ class UserRole
     /**
      * Get the application ID.
      *
-     * @return integer Application ID.
+     * @return integer|null Application ID.
      */
     public function getAppid(): ?int
     {
@@ -136,11 +136,11 @@ class UserRole
     /**
      * Set the application ID.
      *
-     * @param integer $appid Application ID.
+     * @param integer|null $appid Application ID.
      *
      * @return void
      */
-    public function setAppid(int $appid)
+    public function setAppid(?int $appid)
     {
         $this->appid = $appid;
     }
@@ -150,7 +150,7 @@ class UserRole
      *
      * @return integer User ID.
      */
-    public function getUid(): ?int
+    public function getUid(): int
     {
         return $this->uid;
     }
@@ -172,7 +172,7 @@ class UserRole
      *
      * @return integer The role ID.
      */
-    public function getRid(): ?int
+    public function getRid(): int
     {
         return $this->rid;
     }
