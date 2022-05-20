@@ -96,11 +96,11 @@ class VarGet extends ProcessorEntity
         if (isset($vars[$key])) {
             if (is_array($vars[$key])) {
                 foreach ($vars[$key] as $index => $val) {
-                    $vars[$key][$index] = urldecode($val);
+                    $vars[$key][$index] = empty($val) ? null :  urldecode($val);
                 }
                 $data = $vars[$key];
             } else {
-                $data = $vars[$key];
+                $data = empty($vars[$key]) ? null : $vars[$key];
             }
         } else {
             $data = null;

@@ -93,7 +93,7 @@ class VarPost extends Core\ProcessorEntity
         $expectedType = $this->val('expected_type', true);
         $vars = $this->request->getPostVars();
 
-        $data = $vars[$key] ?? null;
+        $data = empty($vars[$key]) ? null : $vars[$key];
 
         if (!empty($expectedType)) {
             try {

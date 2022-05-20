@@ -91,9 +91,10 @@ class VarRequest extends Core\ProcessorEntity
         $key = $this->val('key', true);
         $nullable = $this->val('nullable', true);
         $expectedType = $this->val('expected_type', true);
-        $vars = array_merge($this->request->getGetVars(), $this->request->getPostVars());
 
-        $data = $vars[$key] ?? null;
+        $vars = array_merge($this->request->getGetVars(), $this->request->getPostVars());
+        $data = empty($vars[$key]) ? null : $vars[$key];
+
         if (!$nullable && empty($data)) {
             throw new Core\ApiException("Request var does not exist or is empty: $key", 6, 400);
         }
