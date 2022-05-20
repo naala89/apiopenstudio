@@ -97,7 +97,7 @@ class UserRoleBase extends ProcessorEntity
 
         $permitted = false;
         foreach ($applications as $application) {
-            $permitted = $application->getappid() == $appid ? true : $permitted;
+            $permitted = $application->getAppid() == $appid ? true : $permitted;
         }
         if (!$permitted) {
             throw new ApiException('permission denied for this application', 4, $this->id, 403);
@@ -125,7 +125,7 @@ class UserRoleBase extends ProcessorEntity
 
         $permitted = false;
         foreach ($accounts as $account) {
-            $permitted = $account->getappid() == $accid ? true : $permitted;
+            $permitted = $account->getAccid() == $accid ? true : $permitted;
         }
         if (!$permitted) {
             throw new ApiException('permission denied for this account', 4, $this->id, 403);
