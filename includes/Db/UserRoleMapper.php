@@ -86,6 +86,22 @@ class UserRoleMapper extends Mapper
     }
 
     /**
+     * Find a user role by urid.
+     *
+     * @param int $urid
+     *
+     * @return array
+     *
+     * @throws ApiException
+     */
+    public function findByUrid(int $urid): array
+    {
+        $sql = 'SELECT * FROM user_role WHERE urid = ?';
+        $bindParams = [$urid];
+        return $this->fetchRow($sql, $bindParams);
+    }
+
+    /**
      * Fetch a user role by uid, appid and rolename.
      *
      * @param integer $uid User ID.
@@ -271,33 +287,52 @@ class UserRoleMapper extends Mapper
      */
     public function findForUidWithFilter(int $uid, array $params): array
     {
-        $priviligedRoles = ["Administrator", "Account manager", "Application manager"];
-        $sql = 'SELECT *';
-        $sql .= ' FROM user_role';
-        $sql .= ' WHERE urid';
-        $sql .= ' IN (';
-        $sql .= ' SELECT ur.urid';
-        $sql .= ' FROM user_role AS ur';
-        $sql .= ' WHERE EXISTS (';
-        $sql .= ' SELECT *';
-        $sql .= ' FROM user_role AS ur';
-        $sql .= ' INNER JOIN role AS r';
-        $sql .= ' ON r.rid = ur.rid';
-        $sql .= ' AND r.name IN ("' . implode('", "', $priviligedRoles) . '")';
-        $sql .= ' AND ur.uid = ?)';
-        $sql .= ' UNION DISTINCT';
-        $sql .= ' SELECT ur.urid';
-        $sql .= ' FROM user_role AS ur';
-        $sql .= ' WHERE ur.uid = ?';
-        $sql .= ' AND NOT EXISTS (';
-        $sql .= ' SELECT *';
-        $sql .= ' FROM user_role AS ur';
-        $sql .= ' INNER JOIN role AS r';
-        $sql .= ' ON r.rid = ur.rid';
-        $sql .= ' AND r.name IN ("' . implode('", "', $priviligedRoles) . '")';
-        $sql .= ' AND ur.uid = ?))';
+        $sql = <<<SQL
+SELECT *
+FROM user_role AS ur
+WHERE ur.urid IN (
+    SELECT ur.urid
+    FROM user_role AS ur
+    WHERE EXISTS (
+        SELECT ur.*
+        FROM user_role AS ur
+        INNER JOIN role AS r
+        ON ur.rid = r.rid
+        WHERE ur.uid = ?
+        AND r.name = "Administrator"
+    )
+    UNION DISTINCT
+    SELECT ur.urid
+    FROM user_role AS ur
+    WHERE ur.accid in (
+        SELECT ur.accid
+        FROM user_role AS ur
+        INNER JOIN role AS r
+        ON ur.rid = r.rid
+        WHERE ur.uid = ?
+        AND r.name = "Account manager"
+    )
+    UNION DISTINCT
+    SELECT ur.urid
+    FROM user_role AS ur
+    WHERE ur.appid in (
+        SELECT ur.appid
+        FROM user_role AS ur
+        INNER JOIN role AS r
+        ON ur.rid = r.rid
+        WHERE ur.uid = ?
+        AND r.name = "Application manager"
+    )
+    UNION DISTINCT
+    SELECT ur.urid
+    FROM user_role AS ur
+    INNER JOIN role AS r
+    ON ur.rid = r.rid
+    WHERE ur.uid = ?
+)
+SQL;
 
-        $bindParams = [$uid, $uid, $uid];
+        $bindParams = [$uid, $uid, $uid, $uid];
         $where = $order = [];
 
         if (!empty($params['col'])) {
@@ -363,8 +398,31 @@ class UserRoleMapper extends Mapper
         return $this->fetchRows($sql, $bindParams, $order);
     }
 
-    public function findByUidAccidRolename(int $uid, ?int $getAccid, string $string)
+    /**
+     * Find user roles for a user by accid and rolename.
+     *
+     * @param int $uid
+     * @param int $accid
+     * @param string $roleName
+     *
+     * @return array
+     *
+     * @throws ApiException
+     */
+    public function findByUidAccidRolename(int $uid, int $accid, string $roleName): array
     {
+        $sql = <<<SQL
+SELECT ur.*
+FROM user_role AS ur
+INNER JOIN role AS r
+ON r.rid = ur.rid
+WHERE ur.uid = ?
+AND ur.accid = ?
+AND r.name = ?
+SQL;
+        $bindParams = [$uid, $accid, $roleName];
+
+        return $this->fetchRows($sql, $bindParams);
     }
 
     /**
@@ -378,11 +436,11 @@ class UserRoleMapper extends Mapper
     {
         $userRole = new UserRole();
 
-        $userRole->setUrid($row['urid'] ?? 0);
-        $userRole->setAccid($row['accid'] ?? 0);
-        $userRole->setAppid($row['appid'] ?? 0);
-        $userRole->setUid($row['uid'] ?? 0);
-        $userRole->setRid($row['rid'] ?? 0);
+        $userRole->setUrid($row['urid'] ?? null);
+        $userRole->setAccid($row['accid'] ?? null);
+        $userRole->setAppid($row['appid'] ?? null);
+        $userRole->setUid($row['uid'] ?? null);
+        $userRole->setRid($row['rid'] ?? null);
 
         return $userRole;
     }
