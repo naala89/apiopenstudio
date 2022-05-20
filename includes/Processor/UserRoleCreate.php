@@ -14,19 +14,17 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
-use ApiOpenStudio\Core\MonologWrapper;
-use ApiOpenStudio\Core\Request;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\UserRole;
 
 /**
  * Class UserRoleCreate
  *
  * Processor class to create a user role.
  */
-class UserRoleCreate extends Core\ProcessorEntity
+class UserRoleCreate extends UserRoleBase
 {
     /**
      * {@inheritDoc}
@@ -40,7 +38,7 @@ class UserRoleCreate extends Core\ProcessorEntity
         'menu' => 'Admin',
         'input' => [
             'uid' => [
-                'description' => 'The user id of the user.',
+                'description' => 'The user id of the user for the user role.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
@@ -49,7 +47,7 @@ class UserRoleCreate extends Core\ProcessorEntity
                 'default' => null,
             ],
             'accid' => [
-                'description' => 'The account ID of user roles.',
+                'description' => 'The account ID for the user role.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
@@ -58,7 +56,7 @@ class UserRoleCreate extends Core\ProcessorEntity
                 'default' => null,
             ],
             'appid' => [
-                'description' => 'The application ID of user roles.',
+                'description' => 'The application ID for the user role.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
@@ -67,7 +65,7 @@ class UserRoleCreate extends Core\ProcessorEntity
                 'default' => null,
             ],
             'rid' => [
-                'description' => 'The user role ID of user roles.',
+                'description' => 'The user role ID for the user role.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
@@ -79,42 +77,13 @@ class UserRoleCreate extends Core\ProcessorEntity
     ];
 
     /**
-     * @var Db\UserRoleMapper User Role Mapper.
-     */
-    private Db\UserRoleMapper $userRoleMapper;
-
-    /**
-     * @var Db\UserMapper User Mapper.
-     */
-    private Db\UserMapper $userMapper;
-    private Db\AccountMapper $accountMapper;
-    private Db\ApplicationMapper $applicationMapper;
-    private Db\RoleMapper $roleMapper;
-
-    /**
-     * @param $meta
-     * @param Request $request
-     * @param ADOConnection|null $db
-     * @param MonologWrapper|null $logger
-     */
-    public function __construct($meta, Request &$request, ADOConnection $db = null, MonologWrapper $logger = null)
-    {
-        parent::__construct($meta, $request, $db, $logger);
-        $this->userRoleMapper = new Db\UserRoleMapper($this->db, $this->logger);
-        $this->userMapper = new Db\UserMapper($this->db, $this->logger);
-        $this->accountMapper = new Db\AccountMapper($this->db, $this->logger);
-        $this->applicationMapper = new Db\ApplicationMapper($this->db, $this->logger);
-        $this->roleMapper = new Db\RoleMapper($this->db, $this->logger);
-    }
-
-    /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -125,77 +94,23 @@ class UserRoleCreate extends Core\ProcessorEntity
         $appid = !empty($appid) ? $appid : null;
         $rid = $this->val('rid', true);
 
-        // Validate user role attributes exist.
-        try {
-            $user = $this->userMapper->findByUid($uid);
-        } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-        }
-        if (empty($user->getUid())) {
-            throw new Core\ApiException('invalid user ID', 6, $this->id, 400);
-        }
-        if ($accid !== null) {
-            try {
-                $account = $this->accountMapper->findByAccid($accid);
-            } catch (ApiException $e) {
-                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-            }
-            if (empty($account->getAccid())) {
-                throw new Core\ApiException('invalid account ID', 6, $this->id, 400);
-            }
-        }
-        if ($appid !== null) {
-            try {
-                $application = $this->applicationMapper->findByAppid($appid);
-            } catch (ApiException $e) {
-                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-            }
-            if (empty($application->getAppid())) {
-                throw new Core\ApiException('invalid application ID', 6, $this->id, 400);
-            }
-        }
-        try {
-            $role = $this->roleMapper->findByRid($rid);
-        } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-        }
-        if (empty($role->getRid())) {
-            throw new Core\ApiException('invalid role ID', 6, $this->id, 400);
+        // Validate current user has access to create roles for the application.
+        if (!empty($appid)) {
+            $this->validateCurrentUserApplicationPermission($appid);
+        } elseif (!empty($accid)) {
+            $this->validateCurrentUserAccountPermission($accid);
+        } elseif (!$this->userRoleMapper->hasRole(Utilities::getUidFromToken(), 'Administrator')) {
+            throw new ApiException('permission denied', 4, $this->id, 403);
         }
 
-        // Validate roles that do not need appid or accid
-        $roleName = $role->getName();
-        if ($roleName != 'Administrator' && $roleName != 'Account manager' && empty($appid)) {
-            $message = 'only Administrator or Account manager roles can have NULL assigned to application';
-            throw new Core\ApiException($message, 6, $this->id, 400);
-        }
-        if ($roleName != 'Administrator' && empty($accid)) {
-            throw new Core\ApiException('only Administrator role can have NULL assigned to account', 6, $this->id, 400);
-        }
-        if ($roleName == 'Administrator' || $roleName == 'Account manager') {
-            // Administrator or Account manager should not be assigned an appid.
-            $appid = null;
-        }
-        if ($roleName == 'Administrator') {
-            // Administrator should not be assigned an accid.
-            $accid = null;
-        }
+        $this->validateUserRoleAttributes($uid, $rid, $accid, $appid);
 
-        try {
-            $userRole = $this->userRoleMapper->findByFilter(['col' => [
-                'uid' => $uid,
-                'accid' => $accid,
-                'appid' => $appid,
-                'rid' => $rid,
-            ]]);
-        } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-        }
-        if (!empty($userRole)) {
-            throw new Core\ApiException('user role already exists', 6, $this->id, 400);
-        }
+        $this->validateRoleExists($uid, $rid, $accid, $appid);
 
-        $userRole = new Db\UserRole(null, $accid, $appid, $uid, $rid);
+        $userRole = new UserRole(null, $accid, $appid, $uid, $rid);
+        $this->validateElevatedPermissions($userRole);
+
+        // Create the new role.
         try {
             $this->userRoleMapper->save($userRole);
             $userRole = $this->userRoleMapper->findByFilter(['col' => [
@@ -209,6 +124,6 @@ class UserRoleCreate extends Core\ProcessorEntity
         }
 
         $userRole = $userRole[0];
-        return new Core\DataContainer($userRole->dump(), 'array');
+        return new DataContainer($userRole->dump(), 'array');
     }
 }

@@ -14,16 +14,18 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\UserRole;
+use ApiOpenStudio\Db\UserRoleMapper;
 
 /**
  * Class UserRoleDelete
  *
  * Processor class to delete a user role.
  */
-class UserRoleDelete extends Core\ProcessorEntity
+class UserRoleDelete extends UserRoleBase
 {
     /**
      * {@inheritDoc}
@@ -51,57 +53,54 @@ class UserRoleDelete extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
         $urid = $this->val('urid', true);
-
-        $userRoleMapper = new Db\UserRoleMapper($this->db, $this->logger);
-
         try {
-            $userRoles = $userRoleMapper->findByFilter([
-                'col' => [
-                    'urid' => $urid,
-                ],
-            ]);
+            $userRoleMapper = new UserRoleMapper($this->db, $this->logger);
+            $userRole = $userRoleMapper->findByUrid($urid);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
-
-        if (empty($userRoles)) {
+        if (empty($userRole['urid'])) {
             throw new ApiException('Invalid user role', 6, $this->id, 400);
         }
 
-        $userRole = $userRoles[0];
-        if (empty($userRole->getUrid())) {
-            throw new Core\ApiException('User role does not exist', 6, $this->id, 400);
+        // Validate current user has access to create roles for the application.
+        if (!empty($userRole['appid'])) {
+            $this->validateCurrentUserApplicationPermission($userRole['appid']);
+        } elseif (!empty($userRole['accid'])) {
+            $this->validateCurrentUserAccountPermission($userRole['accid']);
+        } elseif (!$this->userRoleMapper->hasRole(Utilities::getUidFromToken(), 'Administrator')) {
+            throw new ApiException('permission denied', 4, $this->id, 403);
         }
-        if ($userRole->getUrid() == 1) {
+
+        if ($userRole['urid'] == 1) {
             try {
                 $userRoles = $userRoleMapper->findByFilter([
-                    'col' => [
-                        'rid' => 1,
-                    ],
+                    'col' => ['rid' => 1],
                 ]);
             } catch (ApiException $e) {
                 throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
             }
             if (count($userRoles) < 2) {
-                throw new Core\ApiException('Cannot delete Administrator role if only one exists', 6, $this->id, 400);
+                throw new ApiException('Cannot delete Administrator role if only one exists', 6, $this->id, 400);
             }
         }
 
         try {
+            $userRole = new UserRole($userRole['urid']);
             $userRoleMapper->delete($userRole);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        return new Core\DataContainer(true, 'boolean');
+        return new DataContainer(true, 'boolean');
     }
 }
