@@ -133,7 +133,7 @@ class UserRoleBase extends ProcessorEntity
     }
 
     /**
-     * Validate that the current user has sufficient privileges to assign the new role.
+     * Validate that the current user has sufficient privileges to assign or delete a role.
      *
      * @param UserRole $userRole
      *   User role to be created.
@@ -142,62 +142,58 @@ class UserRoleBase extends ProcessorEntity
      */
     protected function validateElevatedPermissions(UserRole $userRole)
     {
-        $uid = Utilities::getUidFromToken();
+        $currentUid = Utilities::getUidFromToken();
         $role = $this->roleMapper->findByRid($userRole->getRid());
+        $permissionGranted = false;
 
         switch ($role->getName()) {
             case 'Administrator':
             case 'Account manager':
-                if (!$this->userRoleMapper->hasRole($uid, 'Administrator')) {
-                    throw new ApiException('Permission denied', 4, $this->id, 403);
+                if ($this->userRoleMapper->hasRole($currentUid, 'Administrator')) {
+                    $permissionGranted = true;
                 }
                 break;
             case 'Application manager':
-                $permissionDenied = true;
-                if ($this->userRoleMapper->hasRole($uid, 'Administrator')) {
-                    $permissionDenied = false;
+                if ($this->userRoleMapper->hasRole($currentUid, 'Administrator')) {
+                    $permissionGranted = true;
                 }
+                $application = $this->applicationMapper->findByAppid($userRole->getAppid());
                 if (
                     !empty($this->userRoleMapper->findByUidAccidRolename(
-                        $uid,
-                        $userRole->getAccid(),
+                        $currentUid,
+                        $application->getAccid(),
                         'Account manager'
                     ))
                 ) {
-                    $permissionDenied = false;
-                }
-                if ($permissionDenied) {
-                    throw new ApiException('Permission denied', 4, $this->id, 403);
+                    $permissionGranted = true;
                 }
                 break;
-            case 'Developer':
             default:
-                $permissionDenied = true;
-                if ($this->userRoleMapper->hasRole($uid, 'Administrator')) {
-                    $permissionDenied = false;
+                if ($this->userRoleMapper->hasRole($currentUid, 'Administrator')) {
+                    $permissionGranted = true;
                 }
                 if (
                     !empty($this->userRoleMapper->findByUidAccidRolename(
-                        $uid,
-                        $userRole->getAccid(),
+                        $currentUid,
+                        $userRole->getAppid(),
                         'Account manager'
                     ))
                 ) {
-                    $permissionDenied = false;
+                    $permissionGranted = true;
                 }
                 if (
                     !empty($this->userRoleMapper->findByUidAccidRolename(
-                        $uid,
+                        $currentUid,
                         $userRole->getAppid(),
                         'Application manager'
                     ))
                 ) {
-                    $permissionDenied = false;
-                }
-                if ($permissionDenied) {
-                    throw new ApiException('Permission denied', 4, $this->id, 403);
+                    $permissionGranted = true;
                 }
                 break;
+        }
+        if (!$permissionGranted) {
+            throw new ApiException('Permission denied', 4, $this->id, 403);
         }
     }
 

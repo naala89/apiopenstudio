@@ -136,11 +136,14 @@ class UserRoleMapper extends Mapper
      */
     public function hasRole(int $uid, string $rolename): bool
     {
-        $sql = 'SELECT * FROM user_role AS ur';
-        $sql .= ' INNER JOIN role as r';
-        $sql .= ' ON ur.rid = r.rid';
-        $sql .= ' WHERE ur.uid=?';
-        $sql .= ' AND r.name=?';
+        $sql = <<<SQL
+SELECT *
+FROM user_role AS ur
+INNER JOIN role as r
+ON ur.rid = r.rid
+WHERE ur.uid = ?
+AND r.name = ?
+SQL;
         $bindParams = [$uid, $rolename];
         $rows = $this->fetchRows($sql, $bindParams);
         return !empty($rows);
