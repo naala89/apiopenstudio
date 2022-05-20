@@ -90,11 +90,11 @@ class UserRoleMapper extends Mapper
      *
      * @param int $urid
      *
-     * @return array
+     * @return UserRole
      *
      * @throws ApiException
      */
-    public function findByUrid(int $urid): array
+    public function findByUrid(int $urid): UserRole
     {
         $sql = 'SELECT * FROM user_role WHERE urid = ?';
         $bindParams = [$urid];

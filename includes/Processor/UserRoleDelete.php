@@ -68,20 +68,20 @@ class UserRoleDelete extends UserRoleBase
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
-        if (empty($userRole['urid'])) {
+        if (empty($userRole->getUrid())) {
             throw new ApiException('Invalid user role', 6, $this->id, 400);
         }
 
         // Validate current user has access to create roles for the application.
-        if (!empty($userRole['appid'])) {
-            $this->validateCurrentUserApplicationPermission($userRole['appid']);
-        } elseif (!empty($userRole['accid'])) {
-            $this->validateCurrentUserAccountPermission($userRole['accid']);
+        if (!empty($userRole->getAppid())) {
+            $this->validateCurrentUserApplicationPermission($userRole->getAppid());
+        } elseif (!empty($userRole->getAccid())) {
+            $this->validateCurrentUserAccountPermission($userRole->getAccid());
         } elseif (!$this->userRoleMapper->hasRole(Utilities::getUidFromToken(), 'Administrator')) {
             throw new ApiException('permission denied', 4, $this->id, 403);
         }
 
-        if ($userRole['urid'] == 1) {
+        if ($userRole->getUrid() == 1) {
             try {
                 $userRoles = $userRoleMapper->findByFilter([
                     'col' => ['rid' => 1],
@@ -95,7 +95,6 @@ class UserRoleDelete extends UserRoleBase
         }
 
         try {
-            $userRole = new UserRole($userRole['urid']);
             $userRoleMapper->delete($userRole);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
