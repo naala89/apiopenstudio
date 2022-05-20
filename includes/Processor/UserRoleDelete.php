@@ -81,6 +81,8 @@ class UserRoleDelete extends UserRoleBase
             throw new ApiException('permission denied', 4, $this->id, 403);
         }
 
+        $this->validateElevatedPermissions($userRole);
+
         if ($userRole->getUrid() == 1) {
             try {
                 $userRoles = $userRoleMapper->findByFilter([
