@@ -149,7 +149,7 @@ class UserRoleBase extends ProcessorEntity
             case 'Administrator':
             case 'Account manager':
                 if (!$this->userRoleMapper->hasRole($uid, 'Administrator')) {
-                    throw new ApiException('Permission denied', 6, $this->id, 403);
+                    throw new ApiException('Permission denied', 4, $this->id, 403);
                 }
                 break;
             case 'Application manager':
@@ -167,7 +167,7 @@ class UserRoleBase extends ProcessorEntity
                     $permissionDenied = false;
                 }
                 if ($permissionDenied) {
-                    throw new ApiException('Permission denied', 6, $this->id, 403);
+                    throw new ApiException('Permission denied', 4, $this->id, 403);
                 }
                 break;
             case 'Developer':
@@ -195,7 +195,7 @@ class UserRoleBase extends ProcessorEntity
                     $permissionDenied = false;
                 }
                 if ($permissionDenied) {
-                    throw new ApiException('Permission denied', 6, $this->id, 403);
+                    throw new ApiException('Permission denied', 4, $this->id, 403);
                 }
                 break;
         }
