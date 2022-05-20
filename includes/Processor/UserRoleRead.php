@@ -15,31 +15,35 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\UserMapper;
+use ApiOpenStudio\Db\UserRoleMapper;
 
 /**
  * Class UserRoleRead
  *
  * Processor class to fetch a user role.
  */
-class UserRoleRead extends Core\ProcessorEntity
+class UserRoleRead extends ProcessorEntity
 {
     /**
      * User mapper class.
      *
-     * @var Db\UserMapper
+     * @var UserMapper
      */
-    protected Db\UserMapper $userMapper;
+    protected UserMapper $userMapper;
 
     /**
      * User role mapper class.
      *
-     * @var Db\UserRoleMapper
+     * @var UserRoleMapper
      */
-    protected Db\UserRoleMapper $userRoleMapper;
+    protected UserRoleMapper $userRoleMapper;
 
     /**
      * {@inheritDoc}
@@ -115,28 +119,28 @@ class UserRoleRead extends Core\ProcessorEntity
      * @param mixed $meta Output meta.
      * @param Request $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->userMapper = new Db\UserMapper($db, $logger);
-        $this->userRoleMapper = new Db\UserRoleMapper($db, $logger);
+        $this->userMapper = new UserMapper($db, $logger);
+        $this->userRoleMapper = new UserRoleMapper($db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
         try {
-            $currentUser = $this->userMapper->findByUid(Core\Utilities::getUidFromToken());
+            $currentUser = $this->userMapper->findByUid(Utilities::getUidFromToken());
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
@@ -178,6 +182,6 @@ class UserRoleRead extends Core\ProcessorEntity
             $result[] = $userRole->dump();
         }
 
-        return new Core\DataContainer($result, 'array');
+        return new DataContainer($result, 'array');
     }
 }

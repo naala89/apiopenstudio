@@ -109,12 +109,13 @@ class Json extends Output
                         'data' => $resultData,
                     ];
                 }
+                $resultData = json_encode($resultData);
             } elseif ($inputType == 'text') {
                 // Wrap text values in double quotes so that they are parseable as valid JSON.
                 $resultData = '"' . $resultData . '"';
             }
 
-            $this->data->setData(json_encode($resultData));
+            $this->data->setData($resultData);
             $this->data->setType('json');
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
