@@ -148,9 +148,9 @@ class UserRole
     /**
      * Get the user ID.
      *
-     * @return integer User ID.
+     * @return integer|null User ID.
      */
-    public function getUid(): int
+    public function getUid(): ?int
     {
         return $this->uid;
     }
@@ -158,11 +158,11 @@ class UserRole
     /**
      * Set the user ID.
      *
-     * @param integer $uid User ID.
+     * @param integer|null $uid User ID.
      *
      * @return void
      */
-    public function setUid(int $uid)
+    public function setUid(?int $uid)
     {
         $this->uid = $uid;
     }
@@ -170,9 +170,9 @@ class UserRole
     /**
      * Get the role ID.
      *
-     * @return integer The role ID.
+     * @return integer|null The role ID.
      */
-    public function getRid(): int
+    public function getRid(): ?int
     {
         return $this->rid;
     }
@@ -180,11 +180,11 @@ class UserRole
     /**
      * Set the role ID.
      *
-     * @param integer $rid The role ID.
+     * @param integer|null $rid The role ID.
      *
      * @return void
      */
-    public function setRid(int $rid)
+    public function setRid(?int $rid)
     {
         $this->rid = $rid;
     }
