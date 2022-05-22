@@ -28,7 +28,6 @@ use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
 use ApiOpenStudio\Core\ResourceValidator;
-use ReflectionException;
 
 /**
  * Class ResourceCreate
@@ -37,41 +36,6 @@ use ReflectionException;
  */
 class ResourceCreate extends ProcessorEntity
 {
-    /**
-     * Config class.
-     *
-     * @var Config
-     */
-    private Config $settings;
-
-    /**
-     * Resource mapper class.
-     *
-     * @var ResourceMapper
-     */
-    private ResourceMapper $resourceMapper;
-
-    /**
-     * Account mapper class.
-     *
-     * @var AccountMapper
-     */
-    private AccountMapper $accountMapper;
-
-    /**
-     * Application mapper class.
-     *
-     * @var ApplicationMapper
-     */
-    private ApplicationMapper $applicationMapper;
-
-    /**
-     * Resource validator class.
-     *
-     * @var ResourceValidator
-     */
-    private ResourceValidator $validator;
-
     /**
      * {@inheritDoc}
      *
@@ -157,6 +121,41 @@ class ResourceCreate extends ProcessorEntity
             ],
         ],
     ];
+
+    /**
+     * Config class.
+     *
+     * @var Config
+     */
+    private Config $settings;
+
+    /**
+     * Resource mapper class.
+     *
+     * @var ResourceMapper
+     */
+    private ResourceMapper $resourceMapper;
+
+    /**
+     * Account mapper class.
+     *
+     * @var AccountMapper
+     */
+    private AccountMapper $accountMapper;
+
+    /**
+     * Application mapper class.
+     *
+     * @var ApplicationMapper
+     */
+    private ApplicationMapper $applicationMapper;
+
+    /**
+     * Resource validator class.
+     *
+     * @var ResourceValidator
+     */
+    private ResourceValidator $validator;
 
     /**
      * ResourceCreate constructor.
