@@ -73,5 +73,5 @@ process:
         processor: var_post
         id: resource_create_openapi
         expected_type: json
-        nullable: false
+        nullable: true
         key: openapi
