@@ -63,7 +63,7 @@ class UserRoleRead extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => 0,
+                'default' => null,
             ],
             'accid' => [
                 'description' => 'The account ID of user roles.',
@@ -72,7 +72,7 @@ class UserRoleRead extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => 0,
+                'default' => null,
             ],
             'appid' => [
                 'description' => 'The application ID of user roles.',
@@ -81,7 +81,7 @@ class UserRoleRead extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => 0,
+                'default' => null,
             ],
             'rid' => [
                 'description' => 'The user role ID of user roles.',
@@ -90,7 +90,7 @@ class UserRoleRead extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => 0,
+                'default' => null,
             ],
             'order_by' => [
                 'description' => 'The column to order the results by.',
@@ -152,22 +152,22 @@ class UserRoleRead extends ProcessorEntity
         $direction = $this->val('direction', true);
 
         $params = [];
-        if ($uid > 0) {
+        if (!is_null($uid)) {
             $params['col']['uid'] = $uid;
         }
-        if ($accid > 0) {
+        if (!is_null($accid)) {
             $params['col']['accid'] = $accid;
         }
-        if ($appid > 0) {
+        if (!is_null($appid)) {
             $params['col']['appid'] = $appid;
         }
-        if ($rid > 0) {
+        if (!is_null($rid)) {
             $params['col']['rid'] = $rid;
         }
-        if (!empty($order_by)) {
+        if (!is_null($order_by)) {
             $params['order_by'] = $order_by;
         }
-        if (!empty($order_by)) {
+        if (!is_null($direction)) {
             $params['direction'] = $direction;
         }
 
