@@ -14,14 +14,16 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ProcessorEntity;
 
 /**
  * Class VarPost
  *
  * Processor class to return the post variables in a request.
  */
-class VarPost extends Core\ProcessorEntity
+class VarPost extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -31,7 +33,8 @@ class VarPost extends Core\ProcessorEntity
     protected array $details = [
         'name' => 'Post',
         'machineName' => 'var_post',
-        'description' => 'A "post" variable. It fetches a variable from the post request.',
+        // phpcs:ignore
+        'description' => 'A "post" variable. It fetches a variable from the post request. Empty values are treated as NULL.',
         'menu' => 'Request',
         'input' => [
             'key' => [
@@ -80,33 +83,53 @@ class VarPost extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
         $key = $this->val('key', true);
         $nullable = $this->val('nullable', true);
         $expectedType = $this->val('expected_type', true);
+        $data = null;
+
         $vars = $this->request->getPostVars();
-
-        $data = $vars[$key] ?? null;
-
-        if (!empty($expectedType)) {
-            try {
-                $result = new Core\DataContainer($data, $expectedType);
-            } catch (Core\ApiException $e) {
-                throw new Core\ApiException($e->getMessage(), 6, $this->id, 400);
+        if (isset($vars[$key])) {
+            if (is_array($vars[$key])) {
+                foreach ($vars[$key] as $index => $val) {
+                    $vars[$key][$index] = !empty($val) || $val === '0' ? $val : null;
+                }
+                $data = $vars[$key];
+            } else {
+                $data = !empty($vars[$key]) || $vars[$key] === '0' ? $vars[$key] : null;
             }
-        } else {
-            $result = new Core\DataContainer($data);
         }
 
-        if (!$nullable && $result->getType() == 'undefined') {
-            throw new Core\ApiException("POST var does not exist or is undefined: $key", 6, $this->id, 400);
+        if (!empty($expectedType)) {
+            if (!empty($data)) {
+                try {
+                    $result = new DataContainer($data, $expectedType);
+                } catch (ApiException $e) {
+                    throw new ApiException($e->getMessage(), 6, $this->id, 400);
+                }
+            } else {
+                $result = new DataContainer($data);
+                $result->setType($expectedType);
+            }
+        } else {
+            $result = new DataContainer($data);
+        }
+
+        if (!$nullable && ($result->getType() == 'undefined' || is_null($result->getData()))) {
+            throw new ApiException(
+                "POST variable ($key) does not exist or is undefined",
+                6,
+                $this->id,
+                400
+            );
         }
 
         return $result;

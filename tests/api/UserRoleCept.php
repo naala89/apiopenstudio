@@ -259,6 +259,8 @@ $I->comment('Adding new perms to new user to test delete and read rules for cons
 $I->performLogin(getenv('TESTER_ADMINISTRATOR_NAME'), getenv('TESTER_ADMINISTRATOR_PASS'));
 $I->sendPost($userRoleUri, [
     'uid' => $newUser['uid'],
+    'appid' => null,
+    'accid' => null,
     'rid' => $allRoles['Administrator'],
 ]);
 $I->seeResponseCodeIs(200);
@@ -277,6 +279,7 @@ $administratorUrid = $json['data']['urid'];
 $I->sendPost($userRoleUri, [
     'uid' => $newUser['uid'],
     'accid' => $testAccId,
+    'appid' => null,
     'rid' => $allRoles['Account manager'],
 ]);
 $I->seeResponseCodeIs(200);
@@ -465,6 +468,7 @@ $I->wantTo('Test developer role canNOT assign the Account manager role to the ne
 $I->sendPost($userRoleUri, [
     'uid' => $newUser['uid'],
     'accid' => $testAccId,
+    'appid' => null,
     'rid' => $allRoles['Account manager'],
 ]);
 $I->seeResponseCodeIs(403);
@@ -536,6 +540,8 @@ $I->comment('Adding new perms to new user to test delete and read rules for deve
 $I->performLogin(getenv('TESTER_ADMINISTRATOR_NAME'), getenv('TESTER_ADMINISTRATOR_PASS'));
 $I->sendPost($userRoleUri, [
     'uid' => $newUser['uid'],
+    'appid' => null,
+    'accid' => null,
     'rid' => $allRoles['Administrator'],
 ]);
 $I->seeResponseCodeIs(200);
@@ -554,6 +560,7 @@ $administratorUrid = $json['data']['urid'];
 $I->sendPost($userRoleUri, [
     'uid' => $newUser['uid'],
     'accid' => $testAccId,
+    'appid' => null,
     'rid' => $allRoles['Account manager'],
 ]);
 $I->seeResponseCodeIs(200);
@@ -725,6 +732,8 @@ $I->performLogin(getenv('TESTER_APPLICATION_MANAGER_NAME'), getenv('TESTER_APPLI
 $I->wantTo('Test Application manager role canNOT assign the Administrator role to the new user.');
 $I->sendPost($userRoleUri, [
     'uid' => $newUser['uid'],
+    'appid' => null,
+    'accid' => null,
     'rid' => $allRoles['Administrator'],
 ]);
 $I->seeResponseCodeIs(403);
@@ -742,6 +751,7 @@ $I->wantTo('Test Application manager role canNOT assign the Account manager role
 $I->sendPost($userRoleUri, [
     'uid' => $newUser['uid'],
     'accid' => $testAccId,
+    'appid' => null,
     'rid' => $allRoles['Account manager'],
 ]);
 $I->seeResponseCodeIs(403);
@@ -819,6 +829,8 @@ $I->comment('Adding new perms to new user to test delete and read rules for deve
 $I->performLogin(getenv('TESTER_ADMINISTRATOR_NAME'), getenv('TESTER_ADMINISTRATOR_PASS'));
 $I->sendPost($userRoleUri, [
     'uid' => $newUser['uid'],
+    'appid' => null,
+    'accid' => null,
     'rid' => $allRoles['Administrator'],
 ]);
 $I->seeResponseCodeIs(200);
@@ -837,6 +849,7 @@ $administratorUrid = $json['data']['urid'];
 $I->sendPost($userRoleUri, [
     'uid' => $newUser['uid'],
     'accid' => $testAccId,
+    'appid' => null,
     'rid' => $allRoles['Account manager'],
 ]);
 $I->seeResponseCodeIs(200);
@@ -980,6 +993,8 @@ $I->performLogin(getenv('TESTER_ACCOUNT_MANAGER_NAME'), getenv('TESTER_ACCOUNT_M
 $I->wantTo('Test Account manager role canNOT assign the Administrator role to the new user.');
 $I->sendPost($userRoleUri, [
     'uid' => $newUser['uid'],
+    'appid' => null,
+    'accid' => null,
     'rid' => $allRoles['Administrator'],
 ]);
 $I->seeResponseCodeIs(403);
@@ -997,6 +1012,7 @@ $I->wantTo('Test Account manager role canNOT assign the Account manager role to 
 $I->sendPost($userRoleUri, [
     'uid' => $newUser['uid'],
     'accid' => $testAccId,
+    'appid' => null,
     'rid' => $allRoles['Account manager'],
 ]);
 $I->seeResponseCodeIs(403);
@@ -1077,6 +1093,8 @@ $I->comment('Adding new perms to new user to test delete and read rules for deve
 $I->performLogin(getenv('TESTER_ADMINISTRATOR_NAME'), getenv('TESTER_ADMINISTRATOR_PASS'));
 $I->sendPost($userRoleUri, [
     'uid' => $newUser['uid'],
+    'appid' => null,
+    'accid' => null,
     'rid' => $allRoles['Administrator'],
 ]);
 $I->seeResponseCodeIs(200);
@@ -1095,6 +1113,7 @@ $administratorUrid = $json['data']['urid'];
 $I->sendPost($userRoleUri, [
     'uid' => $newUser['uid'],
     'accid' => $testAccId,
+    'appid' => null,
     'rid' => $allRoles['Account manager'],
 ]);
 $I->seeResponseCodeIs(200);
@@ -1220,6 +1239,8 @@ $I->performLogin(getenv('TESTER_ADMINISTRATOR_NAME'), getenv('TESTER_ADMINISTRAT
 $I->wantTo('Test Administrator role can assign the Administrator role to the new user.');
 $I->sendPost($userRoleUri, [
     'uid' => $newUser['uid'],
+    'appid' => null,
+    'accid' => null,
     'rid' => $allRoles['Administrator'],
 ]);
 $I->seeResponseCodeIs(200);
@@ -1240,6 +1261,7 @@ $I->wantTo('Test Administrator role can assign the Account manager role to the n
 $I->sendPost($userRoleUri, [
     'uid' => $newUser['uid'],
     'accid' => $testAccId,
+    'appid' => null,
     'rid' => $allRoles['Account manager'],
 ]);
 $I->seeResponseCodeIs(200);
