@@ -14,9 +14,9 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core\ProcessorEntity;
-use ApiOpenStudio\Core\DataContainer;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ProcessorEntity;
 
 /**
  * Class VarGet
@@ -33,7 +33,8 @@ class VarGet extends ProcessorEntity
     protected array $details = [
         'name' => 'Get',
         'machineName' => 'var_get',
-        'description' => 'A "get" variable. It fetches a url-decoded variable from the get request.',
+        // phpcs:ignore
+        'description' => 'A "get" variable. It fetches a url-decoded variable from the get request. Empty values are treated as NULL.',
         'menu' => 'Request',
         'input' => [
             'key' => [
@@ -92,25 +93,29 @@ class VarGet extends ProcessorEntity
         $expectedType = $this->val('expected_type', true);
         $nullable = $this->val('nullable', true);
         $vars = $this->request->getGetVars();
+        $data = null;
 
         if (isset($vars[$key])) {
             if (is_array($vars[$key])) {
                 foreach ($vars[$key] as $index => $val) {
-                    $vars[$key][$index] = empty($val) ? null :  urldecode($val);
+                    $vars[$key][$index] = !empty($val) || $val === '0' ? urldecode($val) : null;
                 }
                 $data = $vars[$key];
             } else {
-                $data = empty($vars[$key]) ? null : $vars[$key];
+                $data = !empty($vars[$key]) || $vars[$key] === '0' ? $vars[$key] : null;
             }
-        } else {
-            $data = null;
         }
 
         if (!empty($expectedType)) {
-            try {
-                $result = new DataContainer($data, $expectedType);
-            } catch (ApiException $e) {
-                throw new ApiException($e->getMessage(), 6, $this->id, 400);
+            if (!empty($data)) {
+                try {
+                    $result = new DataContainer($data, $expectedType);
+                } catch (ApiException $e) {
+                    throw new ApiException($e->getMessage(), 6, $this->id, 400);
+                }
+            } else {
+                $result = new DataContainer($data);
+                $result->setType($expectedType);
             }
         } else {
             $result = new DataContainer($data);
