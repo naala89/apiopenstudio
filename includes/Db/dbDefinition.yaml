@@ -169,9 +169,10 @@ user_role:
 var_store:
     columns:
         vid: {type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: var id}
-        appid: {type: int(10) unsigned, notnull: true, comment: application id}
+        accid: {type: int(10) unsigned, notnull: false, comment: account id}
+        appid: {type: int(10) unsigned, notnull: false, comment: application id}
         key: {type: varchar(255), notnull: true, comment: key of the var}
-        val: {type: blob, notnull: true, comment: value of the var}
+        val: {type: blob, notnull: false, comment: value of the var}
     data:
         -
             appid: 1
