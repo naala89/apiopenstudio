@@ -14,14 +14,16 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ProcessorEntity;
 
 /**
  * Class VarRequest
  *
  * Processor class to return the post and get variables in a request.
  */
-class VarRequest extends Core\ProcessorEntity
+class VarRequest extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -31,7 +33,8 @@ class VarRequest extends Core\ProcessorEntity
     protected array $details = [
         'name' => 'Request',
         'machineName' => 'var_request',
-        'description' => 'A "get" or "post" variable. It fetches a variable from the get or post requests.',
+        // phpcs:ignore
+        'description' => 'A "get" or "post" variable. It fetches a variable from the get (url-decoded) or post requests. Empty values are treated as NULL. If there are identical keys in get and post, get trumps post',
         'menu' => 'Request',
         'input' => [
             'key' => [
@@ -80,28 +83,67 @@ class VarRequest extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
         $key = $this->val('key', true);
         $nullable = $this->val('nullable', true);
         $expectedType = $this->val('expected_type', true);
+        $data = null;
 
-        $vars = array_merge($this->request->getGetVars(), $this->request->getPostVars());
-        $data = empty($vars[$key]) ? null : $vars[$key];
+        $vars = $this->request->getPostVars();
+        if (isset($vars[$key])) {
+            if (is_array($vars[$key])) {
+                foreach ($vars[$key] as $index => $val) {
+                    $vars[$key][$index] = !empty($val) || $val === '0' ? $val : null;
+                }
+                $data = $vars[$key];
+            } else {
+                $data = !empty($vars[$key]) || $vars[$key] === '0' ? $vars[$key] : null;
+            }
+        }
 
-        if (!$nullable && empty($data)) {
-            throw new Core\ApiException("Request var does not exist or is empty: $key", 6, 400);
+        $vars = $this->request->getGetVars();
+        if (isset($vars[$key])) {
+            if (is_array($vars[$key])) {
+                foreach ($vars[$key] as $index => $val) {
+                    $vars[$key][$index] = !empty($val) || $val === '0' ? urldecode($val) : null;
+                }
+                $data = $vars[$key];
+            } else {
+                $data = !empty($vars[$key]) || $vars[$key] === '0' ? $vars[$key] : null;
+            }
         }
 
         if (!empty($expectedType)) {
-            return new Core\DataContainer($data, $expectedType);
+            if (!empty($data)) {
+                try {
+                    $result = new DataContainer($data, $expectedType);
+                } catch (ApiException $e) {
+                    throw new ApiException($e->getMessage(), 6, $this->id, 400);
+                }
+            } else {
+                $result = new DataContainer($data);
+                $result->setType($expectedType);
+            }
+        } else {
+            $result = new DataContainer($data);
         }
-        return new Core\DataContainer($data);
+
+        if (!$nullable && ($result->getType() == 'undefined' || is_null($result->getData()))) {
+            throw new ApiException(
+                "REQUEST variable ($key) does not exist or is undefined",
+                6,
+                $this->id,
+                400
+            );
+        }
+
+        return $result;
     }
 }
