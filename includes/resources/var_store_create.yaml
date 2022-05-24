@@ -22,11 +22,19 @@ ttl: 0
 
 security:
     id: var store create security
-    processor: validate_token
+    processor: validate_token_roles
+    roles:
+        - Administrator
+        - Account manager
+        - Application developer
+        - Developer
+    validate_account: false
+    validate_application: false
 
 process:
     id: var store create process
     processor: var_store_create
+    validate_access: true
     accid:
         id: var store create accid
         processor: var_post
