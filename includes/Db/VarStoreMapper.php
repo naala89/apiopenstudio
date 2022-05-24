@@ -142,48 +142,52 @@ class VarStoreMapper extends Mapper
     public function findByUid(int $uid, array $params = []): array
     {
         $sql = <<<QUERY
-SELECT vs.*
-FROM var_store AS vs 
-WHERE EXISTS (
-	SELECT ur.urid
-	FROM user_role AS ur
-	INNER JOIN role AS r ON ur.rid = r.rid
-	WHERE r.name = "Administrator"
-	AND ur.uid = ?
-)
-UNION DISTINCT
-SELECT vs.*
-FROM var_store AS vs 
-WHERE vs.accid in (
-	SELECT ur.accid
-	FROM user_role AS ur
-	INNER JOIN role AS r ON ur.rid = r.rid
-	WHERE r.name != "Administrator"
-	AND ur.uid = ?
-)
-UNION DISTINCT
-SELECT vs.*
-FROM var_store AS vs
-WHERE vs.appid IN (
-	SELECT app.appid
-	FROM application AS app
-	WHERE app.accid IN (
-		SELECT ur.accid
-		FROM user_role AS ur
-		INNER JOIN role AS r ON ur.rid = r.rid
-		WHERE r.name = "Account manager"
-		AND ur.uid = ?
-	)
-)
-UNION DISTINCT
-SELECT vs.*
-FROM var_store AS vs 
-WHERE vs.appid in (
-	SELECT ur.appid
-	FROM user_role AS ur
-	INNER JOIN role AS r ON ur.rid = r.rid
-	WHERE r.name NOT IN ("Administrator", "Account manager")
-	AND ur.uid = ?
+SELECT *
+FROM var_store
+WHERE vid IN (
+    SELECT vs.vid
+    FROM var_store AS vs 
+    WHERE EXISTS (
+        SELECT ur.urid
+        FROM user_role AS ur
+        INNER JOIN role AS r ON ur.rid = r.rid
+        WHERE r.name = "Administrator"
+        AND ur.uid = ?
+    )
+    UNION DISTINCT
+    SELECT vs.vid
+    FROM var_store AS vs 
+    WHERE vs.accid in (
+        SELECT ur.accid
+        FROM user_role AS ur
+        INNER JOIN role AS r ON ur.rid = r.rid
+        WHERE r.name = "Account manager"
+        AND ur.uid = ?
+    )
+    UNION DISTINCT
+    SELECT vs.vid
+    FROM var_store AS vs
+    WHERE vs.appid IN (
+        SELECT app.appid
+        FROM application AS app
+        WHERE app.accid IN (
+            SELECT ur.accid
+            FROM user_role AS ur
+            INNER JOIN role AS r ON ur.rid = r.rid
+            WHERE r.name = "Account manager"
+            AND ur.uid = ?
+        )
+    )
+    UNION DISTINCT
+    SELECT vs.vid
+    FROM var_store AS vs 
+    WHERE vs.appid in (
+        SELECT ur.appid
+        FROM user_role AS ur
+        INNER JOIN role AS r ON ur.rid = r.rid
+        WHERE r.name = "Developer"
+        AND ur.uid = ?
+    )
 )
 QUERY;
 
