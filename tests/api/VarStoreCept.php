@@ -308,6 +308,363 @@ $I->seeResponseMatchesJsonType([
 $response = json_decode($I->getResponse(), true);
 $appVarStores[2][$response['data']['key']] = $response['data']['vid'];
 
+// Test create var_store with validate_access: false.
+
+$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
+$yaml = 'var_store_create_without_validation.yaml';
+$uri = $I->getMyBaseUri() . '/var_store/no_validation';
+$I->createResourceFromYaml($yaml);
+
+$I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
+
+$I->wantTo('Test a consumer can create a var for an account they are assigned to');
+$I->sendPost($uri, ['accid' => 2, 'key' => 'varkey9', 'val' => 'varval9']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'integer:>1:<3',
+        'appid' => 'null',
+        'key' => 'string:regex(~varkey9~)',
+        'val' => 'string:regex(~varval9~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$accVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->wantTo('Test a consumer can create a var for an application they are assigned to');
+$I->sendPost($uri, ['appid' => 2, 'key' => 'varkey10', 'val' => 'varval10']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'null',
+        'appid' => 'integer:>1:<3',
+        'key' => 'string:regex(~varkey10~)',
+        'val' => 'string:regex(~varval10~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$appVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->wantTo('Test a consumer can create a var for an account they are not assigned to');
+$I->sendPost($uri, ['accid' => 1, 'key' => 'varkey11', 'val' => 'varval11']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'integer:>0:<2',
+        'appid' => 'null',
+        'key' => 'string:regex(~varkey11~)',
+        'val' => 'string:regex(~varval11~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$accVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->wantTo('Test a consumer can create a var for an application they are not assigned to');
+$I->sendPost($uri, ['appid' => 1, 'key' => 'varkey12', 'val' => 'varval12']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'null',
+        'appid' => 'integer:>0:<2',
+        'key' => 'string:regex(~varkey12~)',
+        'val' => 'string:regex(~varval12~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$accVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
+
+$I->wantTo('Test a developer can create a var for an account they are assigned to');
+$I->sendPost($uri, ['accid' => 2, 'key' => 'varkey13', 'val' => 'varval13']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'integer:>1:<3',
+        'appid' => 'null',
+        'key' => 'string:regex(~varkey13~)',
+        'val' => 'string:regex(~varval13~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$accVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->wantTo('Test a developer can create a var for an application they are assigned to');
+$I->sendPost($uri, ['appid' => 2, 'key' => 'varkey14', 'val' => 'varval14']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'null',
+        'appid' => 'integer:>1:<3',
+        'key' => 'string:regex(~varkey14~)',
+        'val' => 'string:regex(~varval14~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$appVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->wantTo('Test a developer can create a var for an account they are not assigned to');
+$I->sendPost($uri, ['accid' => 1, 'key' => 'varkey15', 'val' => 'varval15']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'integer:>0:<2',
+        'appid' => 'null',
+        'key' => 'string:regex(~varkey15~)',
+        'val' => 'string:regex(~varval15~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$accVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->wantTo('Test a developer can create a var for an application they are not assigned to');
+$I->sendPost($uri, ['appid' => 1, 'key' => 'varkey16', 'val' => 'varval16']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'null',
+        'appid' => 'integer:>0:<2',
+        'key' => 'string:regex(~varkey16~)',
+        'val' => 'string:regex(~varval16~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$accVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->performLogin(getenv('TESTER_APPLICATION_MANAGER_NAME'), getenv('TESTER_APPLICATION_MANAGER_PASS'));
+
+$I->wantTo('Test an application manager can create a var for an account they are assigned to');
+$I->sendPost($uri, ['accid' => 2, 'key' => 'varkey17', 'val' => 'varval17']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'integer:>1:<3',
+        'appid' => 'null',
+        'key' => 'string:regex(~varkey17~)',
+        'val' => 'string:regex(~varval17~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$accVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->wantTo('Test an application manager can create a var for an application they are assigned to');
+$I->sendPost($uri, ['appid' => 2, 'key' => 'varkey18', 'val' => 'varval18']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'null',
+        'appid' => 'integer:>1:<3',
+        'key' => 'string:regex(~varkey18~)',
+        'val' => 'string:regex(~varval18~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$appVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->wantTo('Test an application manager can create a var for an account they are not assigned to');
+$I->sendPost($uri, ['accid' => 1, 'key' => 'varkey19', 'val' => 'varval19']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'integer:>0:<2',
+        'appid' => 'null',
+        'key' => 'string:regex(~varkey19~)',
+        'val' => 'string:regex(~varval19~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$accVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->wantTo('Test an application manager can create a var for an application they are not assigned to');
+$I->sendPost($uri, ['appid' => 1, 'key' => 'varkey20', 'val' => 'varval20']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'null',
+        'appid' => 'integer:>0:<2',
+        'key' => 'string:regex(~varkey20~)',
+        'val' => 'string:regex(~varval20~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$accVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->performLogin(getenv('TESTER_ACCOUNT_MANAGER_NAME'), getenv('TESTER_ACCOUNT_MANAGER_PASS'));
+
+$I->wantTo('Test an account manager can create a var for an account they are assigned to');
+$I->sendPost($uri, ['accid' => 2, 'key' => 'varkey21', 'val' => 'varval21']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'integer:>1:<3',
+        'appid' => 'null',
+        'key' => 'string:regex(~varkey21~)',
+        'val' => 'string:regex(~varval21~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$accVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->wantTo('Test an account manager can create a var for an application they are assigned to');
+$I->sendPost($uri, ['appid' => 2, 'key' => 'varkey22', 'val' => 'varval22']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'null',
+        'appid' => 'integer:>1:<3',
+        'key' => 'string:regex(~varkey22~)',
+        'val' => 'string:regex(~varval22~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$appVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->wantTo('Test an account manager can create a var for an account they are not assigned to');
+$I->sendPost($uri, ['accid' => 1, 'key' => 'varkey23', 'val' => 'varval23']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'integer:>0:<2',
+        'appid' => 'null',
+        'key' => 'string:regex(~varkey23~)',
+        'val' => 'string:regex(~varval23~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$accVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->wantTo('Test an account manager can create a var for an application they are not assigned to');
+$I->sendPost($uri, ['appid' => 1, 'key' => 'varkey24', 'val' => 'varval24']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'null',
+        'appid' => 'integer:>0:<2',
+        'key' => 'string:regex(~varkey24~)',
+        'val' => 'string:regex(~varval24~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$accVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->performLogin(getenv('TESTER_ADMINISTRATOR_NAME'), getenv('TESTER_ADMINISTRATOR_PASS'));
+
+$I->wantTo('Test an administrator can create a var for an account they are assigned to');
+$I->sendPost($uri, ['accid' => 2, 'key' => 'varkey25', 'val' => 'varval25']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'integer:>1:<3',
+        'appid' => 'null',
+        'key' => 'string:regex(~varkey25~)',
+        'val' => 'string:regex(~varval25~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$accVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->wantTo('Test an administrator can create a var for an application they are assigned to');
+$I->sendPost($uri, ['appid' => 2, 'key' => 'varkey26', 'val' => 'varval26']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'null',
+        'appid' => 'integer:>1:<3',
+        'key' => 'string:regex(~varkey26~)',
+        'val' => 'string:regex(~varval26~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$appVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->wantTo('Test an administrator can create a var for an account they are not assigned to');
+$I->sendPost($uri, ['accid' => 1, 'key' => 'varkey27', 'val' => 'varval27']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'integer:>0:<2',
+        'appid' => 'null',
+        'key' => 'string:regex(~varkey27~)',
+        'val' => 'string:regex(~varval27~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$accVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
+$I->wantTo('Test an administrator can create a var for an application they are not assigned to');
+$I->sendPost($uri, ['appid' => 1, 'key' => 'varkey28', 'val' => 'varval28']);
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseMatchesJsonType([
+    'result' => 'string:regex(~ok~)',
+    'data' => [
+        'vid' => 'integer:>0',
+        'accid' => 'null',
+        'appid' => 'integer:>0:<2',
+        'key' => 'string:regex(~varkey28~)',
+        'val' => 'string:regex(~varval28~)',
+    ],
+]);
+$response = json_decode($I->getResponse(), true);
+$accVarStores[2][$response['data']['key']] = $response['data']['vid'];
+
 
 
 
