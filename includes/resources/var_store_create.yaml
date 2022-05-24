@@ -21,25 +21,32 @@ appid: 1
 ttl: 0
 
 security:
-    id: var_store_create_security
+    id: var store create security
     processor: validate_token
 
 process:
-    id: var_store_create_process
+    id: var store create process
     processor: var_store_create
-    appid:
-        id: var_store_create_appid
+    accid:
+        id: var store create accid
         processor: var_post
-        nullable: false
+        nullable: true
+        expected_type: integer
+        key: accid
+    appid:
+        id: var store create appid
+        processor: var_post
+        nullable: true
         expected_type: integer
         key: appid
     key:
-        id: var_store_create_key
+        id: var store create key
         processor: var_post
         nullable: false
+        expected_type: text
         key: key
     val:
-        id: var_store_create_val
+        id: var store create val
         processor: var_post
         nullable: true
         key: val
