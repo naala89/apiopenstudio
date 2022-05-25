@@ -21,14 +21,47 @@ appid: 1
 ttl: 0
 
 security:
-    id: var_store_delete_security
-    processor: validate_token
+    id: var store delete security
+    processor: validate_token_roles
+    roles:
+        - Administrator
+        - Account manager
+        - Application manager
+        - Developer
+    validate_account: false
+    validate_application: false
 
 process:
-    id: var_store_delete_process
+    id: var store delete process
     processor: var_store_delete
+    validate_access: true
     vid:
-        id: var_store_delete_vid
-        processor: var_uri
-        nullable: false
-        index: 0
+        id: var store delete vid
+        processor: var_get
+        nullable: true
+        expected_type: integer
+        key: vid
+    accid:
+        id: var store delete accid
+        processor: var_get
+        nullable: true
+        expected_type: integer
+        key: accid
+    appid:
+        id: var store delete appid
+        processor: var_get
+        nullable: true
+        expected_type: integer
+        key: appid
+    key:
+        id: var store delete key
+        processor: var_get
+        nullable: true
+        expected_type: text
+        key: key
+    keyword:
+        processor: var_get
+        id: var store delete keyword
+        nullable: true
+        expected_type: text
+        key: keyword

@@ -105,7 +105,7 @@ class VarStoreRead extends ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => ['integer', 'text'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => null,
             ],
