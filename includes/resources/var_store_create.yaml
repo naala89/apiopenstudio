@@ -26,7 +26,7 @@ security:
     roles:
         - Administrator
         - Account manager
-        - Application developer
+        - Application manager
         - Developer
     validate_account: false
     validate_application: false
