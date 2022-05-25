@@ -226,8 +226,7 @@ class VarStoreRead extends ProcessorEntity
         ?string $keyword,
         ?string $orderBy,
         ?string $direction
-    ): array
-    {
+    ): array {
         $params = [];
         if (!empty($vid)) {
             $params['filter'][] = ['value' => $vid, 'column' => '`vid`'];
