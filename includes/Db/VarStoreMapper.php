@@ -78,10 +78,10 @@ class VarStoreMapper extends Mapper
     /**
      * Delete multiple vars.
      *
-     * @param $vars[] $varStore
+     * @param VarStore[] $vars
      *   Array of VarStore object.
      *
-     * @return boolean Success.
+     * @return bool Success.
      *
      * @throws ApiException Return an ApiException on DB error.
      */

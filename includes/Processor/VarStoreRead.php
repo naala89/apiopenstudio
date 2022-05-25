@@ -177,7 +177,7 @@ class VarStoreRead extends ProcessorEntity
         $strict = $this->val('strict', true);
 
         try {
-            $vars = $this-> fetchVars($vid, $accid, $appid, $key, $keyword, $orderBy, $direction);
+            $vars = $this->fetchVars($vid, $accid, $appid, $key, $keyword, $orderBy, $direction);
             if ($validateAccess) {
                 $vars = $this->filterVarsByPerms($vars, Utilities::getRolesFromToken());
             }

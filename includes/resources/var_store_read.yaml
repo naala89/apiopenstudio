@@ -57,19 +57,23 @@ process:
         processor: var_get
         id: var store read key
         key: key
+        expected_type: text
         nullable: true
     keyword:
         processor: var_get
         id: var store read keyword
         nullable: true
+        expected_type: text
         key: keyword
     order_by:
         processor: var_get
         id: var store read order by
         nullable: true
+        expected_type: text
         key: order_by
     direction:
         processor: var_get
         id: var store read direction
         nullable: true
+        expected_type: text
         key: direction
