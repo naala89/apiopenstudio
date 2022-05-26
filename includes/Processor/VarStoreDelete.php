@@ -213,7 +213,7 @@ class VarStoreDelete extends ProcessorEntity
         if (!empty($vid)) {
             $params['filter'][] = ['value' => $vid, 'column' => '`vid`'];
         }
-        if (!empty($appid)) {
+        if (!empty($accid)) {
             $params['filter'][] = ['value' => $accid, 'column' => '`accid`'];
         }
         if (!empty($appid)) {
