@@ -258,11 +258,7 @@ class VarStoreDelete extends ProcessorEntity
                         }
                     }
                 } else {
-                    if (!empty($var->getAccid())) {
-                        if ($var->getAccid() == $role['accid']) {
-                            $permitted = true;
-                        }
-                    } elseif ($var->getAppid() == $role['appid']) {
+                    if (!empty($var->getAppid()) && $var->getAppid() == $role['appid']) {
                         $permitted = true;
                     }
                 }

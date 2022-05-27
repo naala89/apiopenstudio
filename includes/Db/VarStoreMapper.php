@@ -125,6 +125,9 @@ class VarStoreMapper extends Mapper
     public function findAll(array $params = []): array
     {
         $sql = 'SELECT * FROM `var_store`';
+        if (!empty($params['filter'])) {
+            $sql .= ' WHERE 1=1 ';
+        }
 
         return $this->fetchRows($sql, [], $params);
     }
