@@ -37,31 +37,31 @@ process:
     validate_access: true
     vid:
         id: var store delete vid
-        processor: var_get
+        processor: var_uri
         nullable: true
         expected_type: integer
-        key: vid
+        index: 0
     accid:
         id: var store delete accid
-        processor: var_get
+        processor: var_uri
         nullable: true
         expected_type: integer
-        key: accid
+        index: 1
     appid:
         id: var store delete appid
-        processor: var_get
+        processor: var_uri
         nullable: true
         expected_type: integer
-        key: appid
+        index: 2
     key:
         id: var store delete key
-        processor: var_get
+        processor: var_uri
         nullable: true
         expected_type: text
-        key: key
+        index: 3
     keyword:
-        processor: var_get
+        processor: var_uri
         id: var store delete keyword
         nullable: true
         expected_type: text
-        key: keyword
+        index: 4

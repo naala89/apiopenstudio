@@ -150,7 +150,8 @@ class VarStoreDelete extends ProcessorEntity
         $keyword = $this->val('keyword', true);
 
         try {
-            $vars = $this->fetchVars($vid, $accid, $appid, $key, $keyword);
+            $params = $this->filterParams($vid, $accid, $appid, $key, $keyword);
+            $vars = $this->varStoreMapper->findAllFilter($params);
             if (empty($vars)) {
                 throw new ApiException(
                     'no variables matching matching the criteria',
@@ -199,10 +200,8 @@ class VarStoreDelete extends ProcessorEntity
      *   Var name search filter.
      *
      * @return array
-     *
-     * @throws ApiException
      */
-    protected function fetchVars(
+    protected function filterParams(
         ?int $vid,
         ?int $accid,
         ?int $appid,
@@ -226,7 +225,7 @@ class VarStoreDelete extends ProcessorEntity
             $params['filter'][] = ['keyword' => "%$keyword%", 'column' => '`key`'];
         }
 
-        return $this->varStoreMapper->findAll($params);
+        return $params;
     }
 
     /**
@@ -268,6 +267,6 @@ class VarStoreDelete extends ProcessorEntity
             }
         }
 
-        return array_values($vars);
+        return $vars;
     }
 }
