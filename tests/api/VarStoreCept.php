@@ -924,7 +924,7 @@ $I->seeResponseContainsJson([
 $I->performLogin(getenv('TESTER_ADMINISTRATOR_NAME'), getenv('TESTER_ADMINISTRATOR_PASS'));
 
 $I->wantTo('Test an administrator can read all vars.');
-$I->sendGet($uri, ['accid' => 2, 'order_by' => 'vid']);
+$I->sendGet($uri, ['order_by' => 'vid']);
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
