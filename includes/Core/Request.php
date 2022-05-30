@@ -278,13 +278,16 @@ class Request
     /**
      * Set the request args.
      *
-     * @param array $var Request URI args.
+     * @param array $args Request URI args.
      *
      * @return void
      */
-    public function setArgs(array $var)
+    public function setArgs(array $args)
     {
-        $this->args = $var;
+        foreach ($args as $index => $arg) {
+            $args[$index] = $arg === 'null' ? null : urldecode($arg);
+        }
+        $this->args = $args;
     }
 
     /**
