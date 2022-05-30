@@ -1182,9 +1182,10 @@ $I->seeResponseContainsJson([
 // Test role access to delete var_store.
 
 $uri = $I->getCoreBaseUri() . '/var_store';
+
 $I->performLogin(getenv('TESTER_CONSUMER_NAME'), getenv('TESTER_CONSUMER_PASS'));
 
-$I->wantTo('Test a consumer cannot delete a var for an account they are assigned to');
+$I->wantTo('Test a consumer cannot delete a var for an account they are associated to via appid');
 $I->sendDelete($uri, ['accid' => 2]);
 $I->seeResponseCodeIs(403);
 $I->seeResponseIsJson();
@@ -1238,8 +1239,8 @@ $I->seeResponseContainsJson([
 
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 
-$I->wantTo('Test a developer cannot delete a var for an account they are assigned to');
-$I->sendDelete($uri, [ 'accid' => 2, 'key' => 'varkey3']);
+$I->wantTo('Test a developer cannot delete a var for an account they are associated to via appid');
+$I->sendDelete("$uri/null/2/null/varkey3/null");
 $I->seeResponseCodeIs(403);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1252,7 +1253,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test a developer can delete a var for an application they are assigned to');
-$I->sendDelete($uri, [ 'appid' => 2, 'key' => 'varkey1']);
+$I->sendDelete("$uri/null/null/2/varkey1/null");
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1261,7 +1262,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test a developer cannot delete a var for an account they are not assigned to');
-$I->sendDelete($uri, ['accid' => 1]);
+$I->sendDelete("$uri/null/1/null/null/null");
 $I->seeResponseCodeIs(403);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1274,7 +1275,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test a developer cannot delete a var for an application they are not assigned to');
-$I->sendDelete($uri, ['appid' => 1]);
+$I->sendDelete("$uri/null/null/1/null/null");
 $I->seeResponseCodeIs(403);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1288,8 +1289,8 @@ $I->seeResponseContainsJson([
 
 $I->performLogin(getenv('TESTER_APPLICATION_MANAGER_NAME'), getenv('TESTER_APPLICATION_MANAGER_PASS'));
 
-$I->wantTo('Test an application manager can delete a var for an account they are assigned to');
-$I->sendDelete($uri, [ 'accid' => 2, 'key' => 'varkey6']);
+$I->wantTo('Test an application manager cannot delete a var for an account they are associated with via appid');
+$I->sendDelete("$uri/null/2/null/varkey6/null");
 $I->seeResponseCodeIs(403);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1302,7 +1303,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test an application manager can delete a var for an application they are assigned to');
-$I->sendDelete($uri, [ 'appid' => 2, 'key' => 'varkey2']);
+$I->sendDelete("$uri/null/null/2/varkey2/null");
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1311,7 +1312,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test an application manager cannot delete a var for an account they are not assigned to');
-$I->sendDelete($uri, ['accid' => 1]);
+$I->sendDelete("$uri/null/1/null/null/null");
 $I->seeResponseCodeIs(403);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1324,7 +1325,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test an application manager cannot delete a var for an application they are not assigned to');
-$I->sendDelete($uri, ['appid' => 1]);
+$I->sendDelete("$uri/null/null/1/null/null");
 $I->seeResponseCodeIs(403);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1339,7 +1340,7 @@ $I->seeResponseContainsJson([
 $I->performLogin(getenv('TESTER_ACCOUNT_MANAGER_NAME'), getenv('TESTER_ACCOUNT_MANAGER_PASS'));
 
 $I->wantTo('Test an account manager can delete a var for an account they are assigned to');
-$I->sendDelete($uri, [ 'accid' => 2, 'key' => 'varkey5']);
+$I->sendDelete("$uri/null/2/null/varkey6/null");
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1347,8 +1348,8 @@ $I->seeResponseContainsJson([
     'data' => true,
 ]);
 
-$I->wantTo('Test an account manager can delete a var for an application they are assigned to');
-$I->sendDelete($uri, [ 'appid' => 2, 'key' => 'varkey4']);
+$I->wantTo('Test an account manager can delete a var for an application they are associated with via accid');
+$I->sendDelete("$uri/null/null/2/varkey4/null");
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1357,7 +1358,8 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test an account manager cannot delete a var for an account they are not assigned to');
-$I->sendDelete($uri, ['accid' => 1]);
+$I->sendDelete("$uri/null/1/null/null/null");
+// $I->sendDelete($uri, ['accid' => 1]);
 $I->seeResponseCodeIs(403);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1369,8 +1371,9 @@ $I->seeResponseContainsJson([
     ]
 ]);
 
-$I->wantTo('Test an account manager cannot delete a var for an application they are not assigned to');
-$I->sendDelete($uri, ['appid' => 1]);
+$I->wantTo('Test an account manager cannot delete a var for an application they are not associated with');
+$I->sendDelete("$uri/null/null/1/null/null");
+// $I->sendDelete($uri, ['appid' => 1]);
 $I->seeResponseCodeIs(403);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1385,7 +1388,7 @@ $I->seeResponseContainsJson([
 $I->performLogin(getenv('TESTER_ADMINISTRATOR_NAME'), getenv('TESTER_ADMINISTRATOR_PASS'));
 
 $I->wantTo('Test an administrator can delete a var from the test account.');
-$I->sendDelete($uri, [ 'accid' => 2, 'key' => 'varkey9']);
+$I->sendDelete("$uri/null/2/null/varkey9/null");
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1394,7 +1397,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test an administrator can delete a var from the test application.');
-$I->sendDelete($uri, [ 'appid' => 2, 'key' => 'varkey8']);
+$I->sendDelete("$uri/null/null/2/varkey8/null");
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1403,7 +1406,7 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test an administrator can delete a var from the apiopenstudio account');
-$I->sendDelete($uri, ['accid' => 1, 'key' => 'varkey5']);
+$I->sendDelete("$uri/null/1/null/varkey5/null");
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
@@ -1412,7 +1415,16 @@ $I->seeResponseContainsJson([
 ]);
 
 $I->wantTo('Test an administrator can delete a var from the core application');
-$I->sendDelete($uri, ['accid' => 1, 'key' => 'varkey28']);
+$I->sendDelete("$uri/null/1/null/varkey11/null");
+$I->seeResponseCodeIs(200);
+$I->seeResponseIsJson();
+$I->seeResponseContainsJson([
+    'result' => 'ok',
+    'data' => true,
+]);
+
+// Tidy up data
+$I->sendDelete("$uri/null/null/null/null/varkey");
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
