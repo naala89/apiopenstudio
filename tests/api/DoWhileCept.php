@@ -30,7 +30,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $array = json_decode($I->getResponse(), true);
 assertEquals('ok', $array['result'], 'validate result is ok.');
-assertEquals('50', $array['data'][0]['val'], 'validate data value is 70.');
+assertEquals('70', $array['data'][0]['val'], 'validate data value is 70.');
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 $I->tearDownTestFromYaml($yaml);
 
