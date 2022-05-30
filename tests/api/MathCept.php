@@ -40,7 +40,7 @@ $errorData = [
     ['()', 'Stack must be empty.'],
     [') (', 'Unidentified error.'],
     ['(1+1)5', 'Stack must be empty.'],
-    ['pi e', 'Pie.'],
+    ['pi e', 'Stack must be empty.'],
     ['1*E1', 'E1.'],
     ['3 * x6', 'X6.', ['x' => '1']],
     ['  ', 'Stack must be empty.'],

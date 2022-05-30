@@ -22,4 +22,5 @@ $I->seeResponseContainsJson([
 $I->deleteHeader('Authorization');
 $I->performLogin(getenv('TESTER_DEVELOPER_NAME'), getenv('TESTER_DEVELOPER_PASS'));
 $I->tearDownTestFromYaml($yamlFilename);
+$I->sendDelete($I->getCoreBaseUri() . '/var_store/null/null/2/null/null');
 $I->deleteHeader('Authorization');

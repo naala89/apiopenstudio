@@ -15,9 +15,14 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\ApplicationMapper;
+use ApiOpenStudio\Db\VarStore;
 use ApiOpenStudio\Db\VarStoreMapper;
 
 /**
@@ -25,15 +30,8 @@ use ApiOpenStudio\Db\VarStoreMapper;
  *
  * Processor class to fetch a var-store variable.
  */
-class VarStoreRead extends Core\ProcessorEntity
+class VarStoreRead extends ProcessorEntity
 {
-    /**
-     * Var store mapper class.
-     *
-     * @var VarStoreMapper
-     */
-    private VarStoreMapper $varStoreMapper;
-
     /**
      * {@inheritDoc}
      *
@@ -58,7 +56,7 @@ class VarStoreRead extends Core\ProcessorEntity
             ],
             'strict' => [
                 // phpcs:ignore
-                'description' => 'If set to true then return null if var does not exist. If set to false throw exception if var does not exist. Default is strict. Only used in fetch or delete operations.',
+                'description' => 'If set to false then an empty array will be returned if the var/s do not exist. If set to true, an exception will be thrown if var does not exist. Default is true.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
@@ -68,6 +66,15 @@ class VarStoreRead extends Core\ProcessorEntity
             ],
             'vid' => [
                 'description' => 'Var ID. If empty, all vars that the user has access to will be returned.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => null,
+            ],
+            'accid' => [
+                'description' => 'Account ID. If empty, all vars that the user has access to will be returned.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
@@ -98,7 +105,7 @@ class VarStoreRead extends Core\ProcessorEntity
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => ['integer', 'text'],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => null,
             ],
@@ -124,32 +131,44 @@ class VarStoreRead extends Core\ProcessorEntity
     ];
 
     /**
+     * @var VarStoreMapper Var store mapper class.
+     */
+    private VarStoreMapper $varStoreMapper;
+
+    /**
+     * @var ApplicationMapper Application mapper class.
+     */
+    private ApplicationMapper $applicationMapper;
+
+    /**
      * VarStoreRead constructor.
      *
      * @param mixed $meta Output meta.
      * @param Request $request Request object.
      * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @param MonologWrapper $logger Logger object.
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->varStoreMapper = new VarStoreMapper($db, $logger);
+        $this->applicationMapper = new ApplicationMapper($db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
         $validateAccess = $this->val('validate_access', true);
         $vid = $this->val('vid', true);
+        $accid = $this->val('accid', true);
         $appid = $this->val('appid', true);
         $key = $this->val('key', true);
         $keyword = $this->val('keyword', true);
@@ -157,16 +176,23 @@ class VarStoreRead extends Core\ProcessorEntity
         $direction = $this->val('direction', true);
         $strict = $this->val('strict', true);
 
-        if ($validateAccess) {
-            $vars = $this->fetchWithValidation($vid, $appid, $key, $keyword, $orderBy, $direction);
-            if (empty($vars) && $strict) {
-                throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
+        try {
+            $params = $this->fetchVars($vid, $accid, $appid, $key, $keyword, $orderBy, $direction);
+            if (!is_null($accid) && !is_null(!$appid)) {
+                // OR logic.
+                $vars = $this->varStoreMapper->findAll($params);
+            } else {
+                // AND logic.
+                $vars = $this->varStoreMapper->findAllFilter($params);
             }
-        } else {
-            $vars = $this->fetchWithoutValidation($vid, $appid, $key, $keyword, $orderBy, $direction);
-            if (empty($vars) && $strict) {
-                throw new Core\ApiException('no results found', 6, $this->id, 400);
+            if ($validateAccess) {
+                $vars = $this->filterVarsByPerms($vars, Utilities::getRolesFromToken());
             }
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        if (empty($vars) && $strict) {
+            throw new ApiException('no results found or permission denied', 6, $this->id, 400);
         }
 
         $result = [];
@@ -174,56 +200,47 @@ class VarStoreRead extends Core\ProcessorEntity
             $result[] = $var->dump();
         }
 
-        return new Core\DataContainer($result, 'array');
+        return new DataContainer($result, 'array');
     }
 
     /**
-     * Fetch all variables for the search without any user role validation.
+     * Fetch the variables without any user role validation.
      *
-     * @param $vid
+     * @param int|null $vid
      *   Var ID filter.
-     * @param $appid
-     *   App ID filter.
-     * @param $key
+     * @param int|null $accid
+     *   Account ID filter.
+     * @param int|null $appid
+     *   Application ID filter.
+     * @param string|null $key
      *   Var name filter.
-     * @param $keyword
+     * @param string|null $keyword
      *   Var name search filter.
-     * @param $orderBy
+     * @param string|null $orderBy
      *   Order by filter.
-     * @param $direction
+     * @param string|null $direction
      *   Direction filter.
      *
      * @return array
-     *
-     * @throws Core\ApiException
      */
-    protected function fetchWithoutValidation($vid, $appid, $key, $keyword, $orderBy, $direction): array
-    {
-        if (!empty($vid)) {
-            try {
-                $result = $this->varStoreMapper->findByVid($vid);
-            } catch (ApiException $e) {
-                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-            }
-            if (empty($result->getVid())) {
-                throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
-            }
-            return [$result];
-        }
-        if (!empty($appid) && !empty($key)) {
-            try {
-                $result = $this->varStoreMapper->findByAppIdKey($appid, $key);
-            } catch (ApiException $e) {
-                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-            }
-            if (empty($result->getVid())) {
-                throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
-            }
-            return [$result];
-        }
+    protected function fetchVars(
+        ?int $vid,
+        ?int $accid,
+        ?int $appid,
+        ?string $key,
+        ?string $keyword,
+        ?string $orderBy,
+        ?string $direction
+    ): array {
         $params = [];
+        if (!empty($vid)) {
+            $params['filter'][] = ['value' => $vid, 'column' => '`vid`'];
+        }
+        if (!empty($accid)) {
+            $params['filter'][] = ['value' => $accid, 'column' => '`accid`'];
+        }
         if (!empty($appid)) {
-            $params['filter'][] = ['value' => (int) $appid, 'column' => '`appid`'];
+            $params['filter'][] = ['value' => $appid, 'column' => '`appid`'];
         }
         if (!empty($key)) {
             $params['filter'][] = ['value' => $key, 'column' => '`key`'];
@@ -238,87 +255,52 @@ class VarStoreRead extends Core\ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        try {
-            $result = $this->varStoreMapper->findAll($params);
-        } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-        }
-
-        return $result;
+        return $params;
     }
 
     /**
-     * Fetch all variables for the search with user role validation.
+     * Take an array of variables and return an array of variables the users has permissions to read.
      *
-     * @param $vid
-     *   Var ID filter.
-     * @param $appid
-     *   App ID filter.
-     * @param $key
-     *   Var name filter.
-     * @param $keyword
-     *   Var name search filter.
-     * @param $orderBy
-     *   Order by filter.
-     * @param $direction
-     *   Direction filter.
+     * @param VarStore[] $vars
+     * @param array $roles
      *
-     * @return array
+     * @return VarStore[]
      *
-     * @throws Core\ApiException
+     * @throws ApiException
      */
-    protected function fetchWithValidation($vid, $appid, $key, $keyword, $orderBy, $direction): array
+    protected function filterVarsByPerms(array $vars, array $roles): array
     {
-        try {
-            $uid = Core\Utilities::getUidFromToken();
-        } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-        }
-        if (!empty($vid)) {
-            try {
-                $result = $this->varStoreMapper->findByUidVid($uid, $vid);
-            } catch (ApiException $e) {
-                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        foreach ($vars as $index => $var) {
+            $permitted = false;
+            foreach ($roles as $role) {
+                if ($role['role_name'] == 'Administrator') {
+                    $permitted = true;
+                } elseif ($role['role_name'] == 'Account manager') {
+                    if (!empty($var->getAccid())) {
+                        if ($var->getAccid() == $role['accid']) {
+                            $permitted = true;
+                        }
+                    } else {
+                        $application = $this->applicationMapper->findByAppid($var->getAppid());
+                        if ($application->getAccid() == $role['accid']) {
+                            $permitted = true;
+                        }
+                    }
+                } else {
+                    if (!empty($var->getAccid())) {
+                        if ($var->getAccid() == $role['accid']) {
+                            $permitted = true;
+                        }
+                    } elseif ($var->getAppid() == $role['appid']) {
+                        $permitted = true;
+                    }
+                }
             }
-            if (empty($result->getVid())) {
-                throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
+            if (!$permitted) {
+                unset($vars[$index]);
             }
-            return [$result];
-        }
-        if (!empty($appid) && !empty($key)) {
-            try {
-                $result = $this->varStoreMapper->findByUidAppidKey($uid, $appid, $key);
-            } catch (ApiException $e) {
-                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-            }
-            if (empty($result->getVid())) {
-                throw new Core\ApiException('no results found or permission denied', 6, $this->id, 400);
-            }
-            return [$result];
-        }
-        $params = [];
-        if (!empty($appid)) {
-            $params['filter'][] = ['value' => (int) $appid, 'column' => 'vs.appid'];
-        }
-        if (!empty($key)) {
-            $params['filter'][] = ['value' => $key, 'column' => 'vs.key'];
-        }
-        if (!empty($keyword)) {
-            $params['filter'][] = ['keyword' => "%$keyword%", 'column' => 'vs.key'];
-        }
-        if (!empty($orderBy)) {
-            $params['order_by'] = "vs.$orderBy";
-        }
-        if (!empty($direction)) {
-            $params['direction'] = $direction;
         }
 
-        try {
-            $result = $this->varStoreMapper->findByUid($uid, $params);
-        } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-        }
-
-        return $result;
+        return array_values($vars);
     }
 }

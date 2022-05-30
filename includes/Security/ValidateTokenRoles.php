@@ -14,7 +14,9 @@
 
 namespace ApiOpenStudio\Security;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Db\Application;
 
 /**
  * Class ValidateTokenRoles
@@ -72,13 +74,18 @@ class ValidateTokenRoles extends ValidateToken
     ];
 
     /**
+     * @var Application current request Application object.
+     */
+    protected Application $application;
+
+    /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -87,11 +94,11 @@ class ValidateTokenRoles extends ValidateToken
         $validateApplication = $this->val('validate_application', true);
 
         // Get roles and validate the user against them.
-        if ($this->validateUserRoles($permittedRoles, $validateAccount, $validateApplication)) {
-            return new Core\DataContainer(true, 'boolean');
+        if (!$this->validatePermitted($permittedRoles, $validateAccount, $validateApplication)) {
+            throw new ApiException('permission denied', 4, $this->id, 403);
         }
 
-        throw new Core\ApiException('permission denied', 4, $this->id, 403);
+        return new DataContainer(true, 'boolean');
     }
 
     /**
@@ -103,27 +110,37 @@ class ValidateTokenRoles extends ValidateToken
      *
      * @return boolean
      */
-    protected function validateUserRoles(array $permittedRoles, bool $validateAccount, bool $validateApplication): bool
+    protected function validatePermitted(array $permittedRoles, bool $validateAccount, bool $validateApplication): bool
     {
-        foreach ($this->roles as $userRole) {
-            $tempValidateAccount = $validateAccount;
-            $tempValidateApplication = $validateApplication;
-            // Do not validate accid or appid for Administrator role.
-            if ($userRole['role_name'] == 'Administrator') {
-                $tempValidateAccount = false;
-                $tempValidateApplication = false;
-            }
-            // Only validate accid for Account manager role.
-            if ($userRole['role_name'] == 'Account manager') {
-                $tempValidateApplication = false;
-            }
-            // Validate role, accid, appid
-            if (
-                in_array($userRole['role_name'], $permittedRoles)
-                && (!$tempValidateAccount || $this->request->getAccId() == $userRole['accid'])
-                && (!$tempValidateApplication || $this->request->getAppId() == $userRole['appid'])
-            ) {
-                return true;
+        foreach ($this->roles as $role) {
+            if (in_array($role['role_name'], $permittedRoles)) {
+                switch ($role['role_name']) {
+                    case 'Administrator':
+                        return true;
+                    case 'Account manager':
+                        if (!$validateAccount || $this->request->getAccId() == $role['accid']) {
+                            return true;
+                        }
+                        break;
+                    default:
+                        if (!$validateAccount && !$validateApplication) {
+                            return true;
+                        } elseif (!$validateAccount && $validateApplication) {
+                            if ($this->request->getAppId() == $role['appid']) {
+                                return true;
+                            }
+                        } elseif ($validateAccount && !$validateApplication) {
+                            if ($this->request->getAccId() == $role['accid']) {
+                                return true;
+                            }
+                        } elseif (
+                            $this->request->getAccId() == $role['accid'] &&
+                            $this->request->getAppId() == $role['appid']
+                        ) {
+                            return true;
+                        }
+                        break;
+                }
             }
         }
 

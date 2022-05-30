@@ -17,34 +17,31 @@ namespace ApiOpenStudio\Db;
 /**
  * Class VarStore.
  *
- * DB class for for storing var row data.
+ * DB class for storing var row data.
  */
 class VarStore
 {
     /**
-     * The varstore ID.
-     *
      * @var integer|null Var store ID.
      */
     protected ?int $vid;
 
     /**
-     * The application ID.
-     *
+     * @var integer|null account ID.
+     */
+    protected ?int $accid;
+
+    /**
      * @var integer|null Application ID.
      */
     protected ?int $appid;
 
     /**
-     * The var key.
-     *
      * @var string|null Var key.
      */
     protected ?string $key;
 
-    /**
-     * The var value.
-     *
+    /**\
      * @var mixed Var value.
      */
     protected $val;
@@ -53,13 +50,15 @@ class VarStore
      * VarStore constructor.
      *
      * @param int|null $vid The var ID.
+     * @param int|null $accid The var account ID.
      * @param int|null $appid The var application ID.
      * @param string|null $key The var key.
      * @param mixed $val The var value.
      */
-    public function __construct(int $vid = null, int $appid = null, string $key = null, $val = null)
+    public function __construct(int $vid = null, int $accid = null, int $appid = null, string $key = null, $val = null)
     {
         $this->vid = $vid;
+        $this->accid = $accid;
         $this->appid = $appid;
         $this->key = $key;
         $this->val = $val;
@@ -68,7 +67,7 @@ class VarStore
     /**
      * Get the var ID.
      *
-     * @return integer The var ID.
+     * @return integer|null The var ID.
      */
     public function getVid(): ?int
     {
@@ -78,19 +77,41 @@ class VarStore
     /**
      * Set the var ID.
      *
-     * @param integer $vid The var ID.
+     * @param integer|null $vid The var ID.
      *
      * @return void
      */
-    public function setVid(int $vid)
+    public function setVid(?int $vid)
     {
         $this->vid = $vid;
     }
 
     /**
+     * Get the var account ID.
+     *
+     * @return integer|null The var account ID.
+     */
+    public function getAccid(): ?int
+    {
+        return $this->accid;
+    }
+
+    /**
+     * Set the var account ID.
+     *
+     * @param integer|null $accid The var account ID.
+     *
+     * @return void
+     */
+    public function setAccid(?int $accid)
+    {
+        $this->accid = $accid;
+    }
+
+    /**
      * Get the var application ID.
      *
-     * @return integer The var application ID.
+     * @return integer|null The var application ID.
      */
     public function getAppid(): ?int
     {
@@ -100,11 +121,11 @@ class VarStore
     /**
      * Set the var application ID.
      *
-     * @param integer $appid The avr application ID.
+     * @param integer|null $appid The avr application ID.
      *
      * @return void
      */
-    public function setAppid(int $appid)
+    public function setAppid(?int $appid)
     {
         $this->appid = $appid;
     }
@@ -112,7 +133,7 @@ class VarStore
     /**
      * Get the var key.
      *
-     * @return string
+     * @return string|null
      *   The var key.
      */
     public function getKey(): ?string
@@ -123,11 +144,12 @@ class VarStore
     /**
      * Set the var key.
      *
-     * @param string $key The var key.
+     * @param string|null $key
+     *   The var key.
      *
      * @return void
      */
-    public function setKey(string $key)
+    public function setKey(?string $key)
     {
         $this->key = $key;
     }
@@ -135,10 +157,10 @@ class VarStore
     /**
      * Get the var value.
      *
-     * @return string
+     * @return string|null
      *   The var value.
      */
-    public function getVal(): string
+    public function getVal(): ?string
     {
         return $this->val;
     }
@@ -164,6 +186,7 @@ class VarStore
     {
         return [
             'vid' => $this->vid,
+            'accid' => $this->accid,
             'appid' => $this->appid,
             'key' => $this->key,
             'val' => $this->val,
