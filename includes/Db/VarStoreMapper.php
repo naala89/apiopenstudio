@@ -125,8 +125,34 @@ class VarStoreMapper extends Mapper
     public function findAll(array $params = []): array
     {
         $sql = 'SELECT * FROM `var_store`';
+
+        return $this->fetchRows($sql, [], $params);
+    }
+
+    /**
+     * Return all vars using AND logic for the filters
+     *
+     * @param array $params Filter params.
+     *
+     * @return array Array of varStore objects.
+     *
+     * @throws ApiException Return an ApiException on DB error.
+     */
+    public function findAllFilter(array $params = []): array
+    {
+        $sql = 'SELECT * FROM `var_store`';
         if (!empty($params['filter'])) {
-            $sql .= ' WHERE 1=1 ';
+            foreach ($params['filter'] as $index => $filter) {
+                $sql .= stripos($sql, 'where') === false ? ' WHERE' : ' AND';
+                if (isset($filter['keyword'])) {
+                    $sql .= ' ' . $filter['column'] . ' LIKE ';
+                    $sql .= '"' . mysqli_real_escape_string($this->db->_connectionID, $filter['keyword']) . '"';
+                } else {
+                    $sql .= ' ' . $filter['column'] . ' = ';
+                    $sql .= '"' . mysqli_real_escape_string($this->db->_connectionID, $filter['value']) . '"';
+                }
+                unset($params['filter'][$index]);
+            }
         }
 
         return $this->fetchRows($sql, [], $params);
