@@ -177,7 +177,14 @@ class VarStoreRead extends ProcessorEntity
         $strict = $this->val('strict', true);
 
         try {
-            $vars = $this->fetchVars($vid, $accid, $appid, $key, $keyword, $orderBy, $direction);
+            $params = $this->fetchVars($vid, $accid, $appid, $key, $keyword, $orderBy, $direction);
+            if (!is_null($accid) && !is_null(!$appid)) {
+                // OR logic.
+                $vars = $this->varStoreMapper->findAll($params);
+            } else {
+                // AND logic.
+                $vars = $this->varStoreMapper->findAllFilter($params);
+            }
             if ($validateAccess) {
                 $vars = $this->filterVarsByPerms($vars, Utilities::getRolesFromToken());
             }
@@ -215,8 +222,6 @@ class VarStoreRead extends ProcessorEntity
      *   Direction filter.
      *
      * @return array
-     *
-     * @throws ApiException
      */
     protected function fetchVars(
         ?int $vid,
@@ -250,7 +255,7 @@ class VarStoreRead extends ProcessorEntity
             $params['direction'] = $direction;
         }
 
-        return $this->varStoreMapper->findAll($params);
+        return $params;
     }
 
     /**
