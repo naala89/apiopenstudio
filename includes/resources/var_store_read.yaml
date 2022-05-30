@@ -46,7 +46,7 @@ process:
         id: var store read appid
         nullable: true
         expected_type: integer
-        key: appid
+        key: accid
     appid:
         processor: var_get
         id: var store read appid
