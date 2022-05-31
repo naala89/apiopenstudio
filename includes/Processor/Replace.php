@@ -14,14 +14,16 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ProcessorEntity;
 
 /**
- * Class PasswordReset
+ * Class Replace
  *
- * Processor class to perform a str replace for a substring within a string.
+ * Processor to perform a str replace for a substring within a string.
  */
-class Replace extends Core\ProcessorEntity
+class Replace extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -41,25 +43,25 @@ class Replace extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text', 'json', 'xml'],
                 'limitValues' => [],
-                'default' => ''
+                'default' => null,
             ],
             'needle' => [
                 'description' => 'The substring to replace.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => ['text'],
+                'limitTypes' => ['text', 'json', 'xml', 'number'],
                 'limitValues' => [],
-                'default' => ''
+                'default' => null,
             ],
             'value' => [
                 'description' => 'The value to replace the needle.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => ['text'],
+                'limitTypes' => ['text', 'json', 'xml', 'number'],
                 'limitValues' => [],
-                'default' => ''
+                'default' => null,
             ],
             'ignore_case' => [
                 'description' => 'Ignore case while searching for the needle.',
@@ -68,7 +70,7 @@ class Replace extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['boolean'],
                 'limitValues' => [],
-                'default' => true,
+                'default' => false,
             ],
         ],
     ];
@@ -76,11 +78,11 @@ class Replace extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -98,6 +100,6 @@ class Replace extends Core\ProcessorEntity
             $result = str_replace($needle, $value, $haystack);
         }
 
-        return new Core\DataContainer($result, $type);
+        return new DataContainer($result, $type);
     }
 }
