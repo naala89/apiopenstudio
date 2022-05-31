@@ -1,0 +1,39 @@
+name: Test field_value
+
+description: Testing the field_value processor
+
+uri: field/value
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test field_value security
+    roles:
+        - Developer
+
+process:
+    processor: field_value
+    id: test field_value process
+    field:
+        processor: var_field
+        id: test field_value var_field
+        key:
+            processor: var_get
+            id: test field_value key
+            key: key
+            nullable: false
+        value:
+            processor: var_get
+            id: test field_value value
+            key: value
+            nullable: false
+    key_value:
+        processor: var_get
+        id: test field_value key_value
+        key: key_value
+        nullable: false
