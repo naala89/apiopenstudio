@@ -1,0 +1,42 @@
+name: Test replace on text
+
+description: Testing the replace processor on a text value
+
+uri: replace/text
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test replace on text security
+    roles:
+        - Developer
+
+process:
+    processor: replace
+    id: test replace on text process
+    haystack:
+        processor: var_literal
+        id: test replace on text haystack
+        value: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        type: text
+    needle:
+        processor: var_get
+        id: test replace on text needle
+        key: needle
+        nullable: true
+    value:
+        processor: var_get
+        id: test replace on text value
+        key: value
+        nullable: true
+    ignore_case:
+        processor: var_get
+        id: test replace on text ignore_case
+        key: ignore_case
+        expected_type: boolean
+        nullable: true
