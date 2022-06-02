@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Core;
 
 use ADOConnection;
 use ApiOpenStudio\Db;
+use stdClass;
 
 /**
  * Class Api
@@ -158,7 +159,7 @@ class Api
             $this->cache->set($this->request->getCacheKey(), $cacheData, $ttl);
         }
 
-        return $this->getOutput($result);
+        return $this->getOutput($result, $meta);
     }
 
     /**
@@ -287,21 +288,23 @@ class Api
      *
      * @param mixed $data Data to format.
      *
+     * @param mixed $meta Data to format.
+     *
      * @return mixed
      *
      * @throws ApiException
      */
-    private function getOutput($data)
+    private function getOutput($data, $meta)
     {
-        $result = true;
+        $result = null;
 
-        if (!isset($data->output)) {
+        if (!isset($meta->output)) {
             // Default response output if no output defined.
             $this->logger->notice('api', 'no output section defined - returning the result in the response');
             $outputs = ['response'];
         } else {
             // Test for single output defined.
-            $outputs = Utilities::isAssoc($data->output) ? [$data->output] : $data->output;
+            $outputs = Utilities::isAssoc($meta->output) ? [$meta->output] : $meta->output;
         }
 
         foreach ($outputs as $index => $output) {
@@ -311,13 +314,18 @@ class Api
                     'processor' => $this->request->getOutFormat(),
                     'id' => 'header defined output',
                 ];
-            }
-            if (!isset($output['destination'])) {
-                // Return the output to the correct format and return in the response.
+                // Convert the output to the correct format to return it in the response.
                 $result = $this->processOutputResponse($output, $data, $index);
             } else {
-                // Process an output item to a remote server.
+                // Process an output item.
                 $this->processOutputRemote($output, $data, $index);
+                if (empty($result)) {
+                    $output = [
+                        'processor' => $this->request->getOutFormat(),
+                        'id' => 'header defined output',
+                    ];
+                    $result = $this->processOutputResponse($output, new DataContainer(true, 'boolean'));
+                }
             }
         }
 
@@ -325,7 +333,7 @@ class Api
     }
 
     /**
-     * Process the output and return in the response.
+     * Process the output and return it in the response.
      *
      * @param array $meta Output metadata.
      * @param mixed $data Response data.
@@ -343,32 +351,29 @@ class Api
         $outFormat = ucfirst($this->cleanData($meta['processor']));
         $class = $this->helper->getProcessorString($outFormat, ['Output']);
         $obj = new $class($data, 200, $this->logger);
-        $result = $obj->process();
-        $obj->setStatus();
-        $obj->setHeader();
-        return $result;
+        return $obj->process();
     }
 
     /**
      * Process the output.
      *
-     * @param array $meta Output metadata.
+     * @param stdClass $meta Output metadata.
      * @param mixed $data Response data.
      * @param int|null $index Index in the output array.
      *
-     * @return void
+     * @return mixed
      *
      * @throws ApiException Invalid output processor.
      */
-    private function processOutputRemote(array $meta, $data, int $index = null)
+    private function processOutputRemote(stdClass $meta, $data, int $index = null)
     {
-        if (!isset($meta['processor'])) {
+        if (!isset($meta->processor)) {
             throw new ApiException("No processor found in the output section: $index.", 1, 'oops', 500);
         }
-        $outFormat = ucfirst($this->cleanData($meta['processor']));
+        $outFormat = ucfirst($this->cleanData($meta->processor));
         $class = $this->helper->getProcessorString($outFormat, ['Output']);
-        $obj = new $class($data, 200, $meta);
-        $obj->process();
+        $obj = new $class($data, $this->logger, $meta);
+        return $obj->process();
     }
 
     /**
