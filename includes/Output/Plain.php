@@ -21,12 +21,6 @@ namespace ApiOpenStudio\Output;
  */
 class Plain extends Text
 {
-    /**
-     * {@inheritDoc}
-     *
-     * @var string The string to contain the content type header value.
-     */
-    protected string $header = 'Content-Type:text/plain';
 
     /**
      * {@inheritDoc}
@@ -36,37 +30,9 @@ class Plain extends Text
     protected array $details = [
         'name' => 'Plain',
         'machineName' => 'plain',
-        'description' => 'Output in the results of the resource in plain-text format to a remote server.',
+        // phpcs:ignore
+        'description' => 'Output the results of the resource in plain text format in the response. This does not need to be added to the resource - it will be automatically detected by the Accept header.',
         'menu' => 'Output',
-        'input' => [
-            'destination' => [
-                'description' => 'Destination URLs for the output.',
-                'cardinality' => [0, '*'],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
-            'method' => [
-                'description' => 'HTTP delivery method when sending output. Only used in the output section.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => ['get', 'post', 'push', 'delete', 'put'],
-                'default' => '',
-            ],
-            'options' => [
-                // phpcs:ignore
-                'description' => 'Extra Curl options to be applied when sent to the destination (e.g. cursor: -1, screen_name: foobarapi, skip_status: true, etc).',
-                'cardinality' => [0, '*'],
-                'literalAllowed' => true,
-                'limitProcessors' => ['field'],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
-        ],
+        'input' => [],
     ];
 }
