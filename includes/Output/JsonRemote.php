@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Json.
+ * Class JsonRemote.
  *
  * @package    ApiOpenStudio\Output
  * @author     john89 (https://gitlab.com/john89)
@@ -19,14 +19,14 @@ use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core\ConvertToJsonTrait;
 use ApiOpenStudio\Core\DetectTypeTrait;
 use ApiOpenStudio\Core\MonologWrapper;
-use ApiOpenStudio\Core\OutputResponse;
+use ApiOpenStudio\Core\OutputRemote;
 
 /**
- * Class Json
+ * Class JsonRemote
  *
- * Outputs the results as a JSON string.
+ * Outputs the results as a JSON string to a remote location.
  */
-class Json extends OutputResponse
+class JsonRemote extends OutputRemote
 {
     use ConvertToJsonTrait;
     use DetectTypeTrait;
@@ -37,20 +37,47 @@ class Json extends OutputResponse
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Json',
-        'machineName' => 'json',
-        // phpcs:ignore
-        'description' => 'Output the results of the resource in JSON format in the response. This does not need to be added to the resource - it will be automatically detected by the Accept header.',
+        'name' => 'Json remote',
+        'machineName' => 'json_remote',
+        'description' => 'Output in the results of the resource in JSON format to a remote server.',
         'menu' => 'Output',
-        'input' => [],
+        'input' => [
+            'filename' => [
+                'description' => 'The output filename.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => 'apiopenstudio.json',
+            ],
+            'method' => [
+                'description' => 'The method for uploading.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [
+                    'azure_blob',
+                    'ftp',
+                    'google_cloud',
+                    's3',
+                    'sftp',
+                ],
+                'default' => 'sftp',
+            ],
+            'parameters' => [
+                // phpcs:ignore
+                'description' => 'Name/Value pairs for parameters required by the uploader, e.g. username, password, etc.',
+                'cardinality' => [0, '*'],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => [],
+            ],
+        ],
     ];
-
-    /**
-     * {@inheritDoc}
-     *
-     * @var string The string to contain the content type header value.
-     */
-    protected string $header = 'Content-Type: application/json';
 
     /**
      * Config object.
@@ -59,9 +86,9 @@ class Json extends OutputResponse
      */
     protected Config $settings;
 
-    public function __construct($data, int $status, MonologWrapper $logger, $meta = null)
+    public function __construct($data, MonologWrapper $logger, $meta = null)
     {
-        parent::__construct($data, $status, $logger, $meta);
+        parent::__construct($data, $logger, $meta);
         $this->settings = new Config();
     }
 
@@ -71,7 +98,7 @@ class Json extends OutputResponse
      * @throws ApiException
      *   Throw an exception if unable to convert the data.
      */
-    protected function castData(): void
+    protected function castData()
     {
         $currentType = $this->data->getType();
         if ($currentType == 'json') {
