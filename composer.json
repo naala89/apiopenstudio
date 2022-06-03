@@ -62,7 +62,8 @@
     "league/flysystem-aws-s3-v3": "^3.0",
     "league/flysystem-azure-blob-storage": "^3.0",
     "league/flysystem-google-cloud-storage": "^3.0",
-    "league/flysystem-ftp": "^3.0"
+    "league/flysystem-ftp": "^3.0",
+    "selective/image-type": "^1.1"
   },
   "autoload": {
     "psr-4": {

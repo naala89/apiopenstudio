@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Image.
+ * Class ImageRemote.
  *
  * @package    ApiOpenStudio\Output
  * @author     john89 (https://gitlab.com/john89)
@@ -17,7 +17,7 @@ namespace ApiOpenStudio\Output;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\ConvertToImageTrait;
 use ApiOpenStudio\Core\DetectTypeTrait;
-use ApiOpenStudio\Core\OutputResponse;
+use ApiOpenStudio\Core\OutputRemote;
 use RuntimeException;
 use Selective\ImageType\ImageTypeDetector;
 use Selective\ImageType\ImageTypeDetectorException;
@@ -25,11 +25,11 @@ use Selective\ImageType\Provider\RasterProvider;
 use SplTempFileObject;
 
 /**
- * Class Image
+ * Class ImageRemote
  *
- * Outputs the results as an image.
+ * Outputs the results as image to a remote location.
  */
-class Image extends OutputResponse
+class ImageRemote extends OutputRemote
 {
     use ConvertToImageTrait;
     use DetectTypeTrait;
@@ -40,25 +40,53 @@ class Image extends OutputResponse
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Image',
-        'machineName' => 'image',
-        // phpcs:ignore
-        'description' => 'Output the results of the resource as an image in the response. This does not need to be added to the resource - it will be automatically detected by the Accept header.',
+        'name' => 'Image remote',
+        'machineName' => 'image_remote',
+        'description' => 'Output in the results of the resource in image format to a remote server.',
         'menu' => 'Output',
-        'input' => [],
+        'input' => [
+            'filename' => [
+                'description' => 'The output filename.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => 'apiopenstudio.jpeg',
+            ],
+            'destinations' => [
+                'description' => 'Destination URLs for the output.',
+                'cardinality' => [1, '*'],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'method' => [
+                'description' => 'HTTP delivery method when sending output.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => ['get', 'post', 'push', 'delete', 'put'],
+                'default' => '',
+            ],
+            'options' => [
+                // phpcs:ignore
+                'description' => 'Extra Curl options to be applied when sent to the destination (e.g. cursor: -1, screen_name: foobarapi, skip_status: true, etc).',
+                'cardinality' => [0, '*'],
+                'literalAllowed' => true,
+                'limitProcessors' => ['var_field'],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => '',
+            ],
+        ],
     ];
 
     /**
-     * {@inheritDoc}
-     *
-     * We currently do not define image type, so image if subtype wildcard is returned.
-     *
-     * @var string The string to contain the content type header value.
-     */
-    protected string $header = 'Content-Type: image/*';
-
-    /**
-     * Cast the data to image.
+     * Cast the data to JSON.
      *
      * @throws ApiException
      *   Throw an exception if unable to convert the data.
@@ -70,17 +98,8 @@ class Image extends OutputResponse
 
         try {
             $data = $this->$method($this->data->getData());
-            $imageType = $this->detectImageType($data);
-            $mimeSubType = $this->request->getOutFormat()['mimeSubType'];
-            if ($mimeSubType != '*' && $mimeSubType != $imageType) {
-                throw new ApiException(
-                    "Invalid image type requested ($mimeSubType), actual: $imageType",
-                    3,
-                    $this->id,
-                    400
-                );
-            }
             if (substr($data, 0, 11) != 'data:image/') {
+                $imageType = $this->detectImageType($data);
                 $data = "data:image/$imageType;base64,$data";
             }
             $this->data->setData($data);
