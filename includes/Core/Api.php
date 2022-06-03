@@ -311,7 +311,7 @@ class Api
             if ($output == 'response') {
                 // Output format is response, so set the output format from the request header.
                 $output = [
-                    'processor' => $this->request->getOutFormat(),
+                    'processor' => $this->request->getOutFormat()['mimeType'],
                     'id' => 'header defined output',
                 ];
                 // Convert the output to the correct format to return it in the response.
@@ -324,7 +324,7 @@ class Api
                         'processor' => $this->request->getOutFormat(),
                         'id' => 'header defined output',
                     ];
-                    $result = $this->processOutputResponse($output, new DataContainer(true, 'boolean'));
+                    $result = $this->processOutputResponse($output, new DataContainer(true, 'boolean'), 200, $index);
                 }
             }
         }
@@ -337,20 +337,22 @@ class Api
      *
      * @param array $meta Output metadata.
      * @param mixed $data Response data.
-     * @param int|null $index Index in the output array.
+     * @param int $index Index in the output array.
      *
      * @return mixed
      *
      * @throws ApiException
      */
-    private function processOutputResponse(array $meta, $data, int $index = null)
+    private function processOutputResponse(array $meta, $data, $status, int $index = -1)
     {
         if (!isset($meta['processor'])) {
             throw new ApiException("No processor found in the output section: $index.", 1, 'oops', 500);
         }
+
         $outFormat = ucfirst($this->cleanData($meta['processor']));
         $class = $this->helper->getProcessorString($outFormat, ['Output']);
-        $obj = new $class($data, 200, $this->logger);
+        $obj = new $class($meta, $this->request, $this->logger, $data, $status);
+
         return $obj->process();
     }
 
@@ -370,9 +372,11 @@ class Api
         if (!isset($meta->processor)) {
             throw new ApiException("No processor found in the output section: $index.", 1, 'oops', 500);
         }
+
         $outFormat = ucfirst($this->cleanData($meta->processor));
         $class = $this->helper->getProcessorString($outFormat, ['Output']);
-        $obj = new $class($data, $this->logger, $meta);
+        $obj = new $class($meta, $this->request, $this->logger, $data);
+
         return $obj->process();
     }
 
@@ -401,11 +405,21 @@ class Api
     /**
      * Calculate a format from string of header Content-Type or Accept.
      *
-     * @param mixed $default Default value.
+     * This is in the format [mimeType, mimeSubType] for use internally.
      *
-     * @return boolean|string
+     * example:
+     *   ['mimeType' => 'image', 'mimeSubType' => 'jpeg']
+     *   ['mimeType' => 'image', 'mimeSubType' => 'png']
+     *   ['mimeType' => 'json', 'mimeSubType' => '']
+     *   ['mimeType' => 'xml', 'mimeSubType' => '']
+     *   ['mimeType' => 'text', 'mimeSubType' => '']
+     *   ['mimeType' => 'html', 'mimeSubType' => '']
+     *
+     * @param string|null $default Default value.
+     *
+     * @return array
      */
-    public function getAccept($default = null)
+    public function getAccept(string $default = null): array
     {
         $key = 'accept';
         $headers = getallheaders();
@@ -427,14 +441,16 @@ class Api
             }
             usort($values, ['self', 'sortHeadersWeight']);
         }
+
+        $result = ['mimeType' => $default, 'mimeSubType' => ''];
         if (sizeof($values) < 1) {
-            return $default;
+            return $result;
         }
 
-        $result = $default;
         switch ($values[0]['mimeType']) {
             case 'image':
-                $result = 'image';
+                $result['mimeType'] = 'image';
+                $result['mimeSubType'] = $values[0]['mimeSubType'];
                 break;
             case 'text':
             case 'application':
@@ -443,7 +459,7 @@ class Api
                     case '**':
                         break;
                     default:
-                        $result = $values[0]['mimeSubType'];
+                        $result['mimeType'] = $values[0]['mimeSubType'];
                         break;
                 }
                 break;
