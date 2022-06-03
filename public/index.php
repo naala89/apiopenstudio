@@ -25,6 +25,7 @@ use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Api;
 use ApiOpenStudio\Core\Error;
 use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\Request;
 
 ob_start();
 
@@ -42,32 +43,30 @@ try {
     $api = new Api($config->all());
     $logger = new MonologWrapper($config->__get(['debug']));
     $defaultFormat = $config->__get(['api', 'default_format']);
-    $outputClass = ucfirst($api->getAccept($defaultFormat));
-    if ($outputClass == 'Text' || $outputClass == 'Plain') {
+
+    $outputType = $api->getAccept($defaultFormat)['mimeType'];
+    $outputType = $outputType == 'image' ? $defaultFormat : $outputType;
+    if ($outputType == 'text' || $outputType == 'plain') {
         $logger->error('api', $e->getMessage());
-        header(':', true, $e->getHtmlCode());
+        http_response_code($e->getHtmlCode());
         echo 'Error: ' . $e->getMessage();
         exit();
     }
-    $outputClass = 'ApiOpenStudio\\Output\\' . $outputClass;
+    $outputClass = 'ApiOpenStudio\\Output\\' . ucfirst($outputType);
     if (!class_exists($outputClass)) {
-        $logger->error('api', 'Error: no default format defined in the config!');
-        echo 'Error: no default format defined in the config!';
+        $message = 'Error: no default response format defined in the config and none defined in the request!';
+        $logger->error('api', $message);
+        echo $message;
         exit();
     }
+
     $error = new Error($e->getCode(), $e->getProcessor(), $e->getMessage());
     $dataContainer = $error->process();
     $output = new $outputClass(
-        $dataContainer,
-        $e->getHtmlCode(),
-        $logger
+        ['processor' => $outputType, 'id' => 'header defined output'], new Request(), $logger, $dataContainer, 400
     );
     ob_end_flush();
     echo $output->process()->getData();
-    exit();
-} catch (Exception $e) {
-    ob_end_flush();
-    echo 'Error: ' . $e->getCode() . '. ' . $e->getMessage();
     exit();
 }
 
