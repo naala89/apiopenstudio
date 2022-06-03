@@ -52,14 +52,14 @@ class Url extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => '',
             ],
-            'sourceType' => [
+            'expected_type' => [
                 // phpcs:ignore
-                'description' => 'Manually declare the source type (the fastest), or allow Datagator to detect the type ("auto"). If auto is selected, CSV and invalid JSON/XML will be treated as text.',
+                'description' => 'Manually declare the source type (the fastest), or allow ApiOpenStudio to detect the type ("auto"). If auto is selected, CSV and invalid JSON/XML will be treated as text.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
-                'limitValues' => ['xml', 'json', 'text', 'html', 'auto'],
+                'limitValues' => ['image', 'xml', 'json', 'text', 'html', 'auto'],
                 'default' => 'auto',
             ],
             'body' => [
@@ -80,7 +80,7 @@ class Url extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => null,
             ],
-            'reportError' => [
+            'report_error' => [
                 'description' => 'Stop processing if the remote source responds with an error.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
@@ -89,7 +89,7 @@ class Url extends Core\ProcessorEntity
                 'limitValues' => [],
                 'default' => true,
             ],
-            'connectTimeout' => [
+            'connect_timeout' => [
                 // phpcs:ignore
                 'description' => 'The number of seconds to wait while trying to connect. Indefinite wait time of 0 is disallowed (optional).',
                 'cardinality' => [0, 1],
@@ -129,12 +129,12 @@ class Url extends Core\ProcessorEntity
         parent::process();
 
         $method = $this->val('method', true);
-        $connectTimeout = $this->val('connectTimeout', true);
+        $connectTimeout = $this->val('connect_timeout', true);
         $timeout = $this->val('timeout', true);
         $url = $this->val('url', true);
         $body = $this->val('body', true);
-        $reportError = $this->val('reportError', true);
-        $sourceType = $this->val('sourceType', true);
+        $reportError = $this->val('report_error', true);
+        $expectedType = $this->val('expected_type', true);
         $auth = $this->val('auth', true);
 
         //get static curl options for this call
@@ -165,11 +165,11 @@ class Url extends Core\ProcessorEntity
             throw new Core\ApiException(json_encode($this->data), 5, $this->id, $curl->httpStatus);
         }
 
-        if ($sourceType == 'auto') {
-            $sourceType = $this->calcFormat();
+        if ($expectedType == 'auto') {
+            $expectedType = $this->calcFormat();
         }
 
-        return new Core\DataContainer($this->data, $sourceType);
+        return new Core\DataContainer($this->data, $expectedType);
     }
 
     /**
