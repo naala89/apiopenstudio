@@ -29,18 +29,20 @@ abstract class OutputEntity extends Entity
     protected DataContainer $data;
 
     /**
-     * Output constructor.
+     * OutputEntity constructor.
      *
-     * @param mixed $data
-     *   HTTP output status.
+     * @param $meta
+     *   Metadata for the processor.
+     * @param Request $request
+     *   The full request object.
      * @param MonologWrapper $logger
      *   Logger.
-     * @param mixed|null $meta
-     *   Output meta.
+     * @param mixed $data
+     *   HTTP output data.
      */
-    public function __construct($data, MonologWrapper $logger, $meta = null)
+    public function __construct($meta, Request &$request, MonologWrapper $logger, $data)
     {
-        parent::__construct($meta, $logger);
+        parent::__construct($meta, $request, $logger);
         $this->data = $data;
     }
 

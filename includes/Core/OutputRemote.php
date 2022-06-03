@@ -54,18 +54,20 @@ abstract class OutputRemote extends OutputEntity
     private GoogleCloud $googleCloud;
 
     /**
-     * Output constructor.
+     * OutputRemote constructor.
      *
-     * @param mixed $data
-     *   Output data.
-     * @param MonologWrapper $logger
-     *   Logger.
      * @param mixed|null $meta
      *   Output meta.
+     * @param Request $request
+     *   The full request object.
+     * @param MonologWrapper $logger
+     *   Logger.
+     * @param mixed $data
+     *   Output data.
      */
-    public function __construct($data, MonologWrapper $logger, $meta = null)
+    public function __construct($meta, Request &$request, MonologWrapper $logger, $data)
     {
-        parent::__construct($data, $logger, $meta);
+        parent::__construct($meta,$request, $logger, $data);
         $this->sftp = new Ftp();
         $this->s3 = new S3();
         $this->azureBlob = new AzureBlob();

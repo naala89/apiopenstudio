@@ -24,13 +24,6 @@ use ADOConnection;
 abstract class ProcessorEntity extends Entity
 {
     /**
-     * All the request details.
-     *
-     * @var Request Request.
-     */
-    protected Request $request;
-
-    /**
      * DB connections.
      *
      * @var ADOConnection $dbLayer
@@ -51,8 +44,7 @@ abstract class ProcessorEntity extends Entity
      */
     public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger = null)
     {
-        parent::__construct($meta, $logger);
-        $this->request = $request;
+        parent::__construct($meta, $request, $logger);
         $this->db = $db;
     }
 

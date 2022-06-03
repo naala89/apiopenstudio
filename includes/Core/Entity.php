@@ -22,6 +22,13 @@ namespace ApiOpenStudio\Core;
 abstract class Entity
 {
     /**
+     * All the request details.
+     *
+     * @var Request Request.
+     */
+    protected Request $request;
+
+    /**
      * Processor ID.
      *
      * @var integer Processor ID.
@@ -152,16 +159,19 @@ abstract class Entity
     protected array $details = array();
 
     /**
-     * Constructor. Store processor metadata and request data in object.
+     * Entity constructor.
      *
      * @param $meta
      *   Metadata for the processor.
+     * @param Request $request
+     *   The full request object.
      * @param MonologWrapper|null $logger
      *   The logger.
      */
-    public function __construct($meta, MonologWrapper $logger = null)
+    public function __construct($meta, Request &$request, MonologWrapper $logger = null)
     {
         $this->meta = $meta;
+        $this->request = $request;
         $this->id = $meta->id ?? -1;
         $this->logger = $logger;
     }

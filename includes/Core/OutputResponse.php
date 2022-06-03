@@ -43,20 +43,22 @@ abstract class OutputResponse extends OutputEntity
     public $status;
 
     /**
-     * Output constructor.
+     * OutputResponse constructor.
      *
+     * @param mixed|null $meta
+     *   Output meta.
+     * @param Request $request
+     *   The full request object.
+     * @param MonologWrapper $logger
+     *   Logger.
      * @param mixed $data
      *   Output data.
      * @param integer $status
      *   HTTP output status.
-     * @param MonologWrapper $logger
-     *   Logger.
-     * @param mixed|null $meta
-     *   Output meta.
      */
-    public function __construct($data, int $status, MonologWrapper $logger, $meta = null)
+    public function __construct($meta, Request &$request, MonologWrapper $logger, $data, int $status)
     {
-        parent::__construct($data, $logger, $meta);
+        parent::__construct($meta,$request, $logger, $data);
         $this->data = $data;
         $this->status = $status;
     }
@@ -71,8 +73,28 @@ abstract class OutputResponse extends OutputEntity
     public function process()
     {
         parent::process();
-        http_response_code($this->status);
-        header($this->header);
+        $this->setHeader();
+        $this->setResponseCode();
         return $this->data;
+    }
+
+    /**
+     * Set the response headers.
+     *
+     * @return void
+     */
+    public function setHeader()
+    {
+        header($this->header);
+    }
+
+    /**
+     * Set the HTML response code.
+     *
+     * @return void
+     */
+    public function setResponseCode()
+    {
+        http_response_code($this->status);
     }
 }
