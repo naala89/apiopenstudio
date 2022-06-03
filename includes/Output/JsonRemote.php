@@ -20,6 +20,7 @@ use ApiOpenStudio\Core\ConvertToJsonTrait;
 use ApiOpenStudio\Core\DetectTypeTrait;
 use ApiOpenStudio\Core\MonologWrapper;
 use ApiOpenStudio\Core\OutputRemote;
+use ApiOpenStudio\Core\Request;
 
 /**
  * Class JsonRemote
@@ -86,9 +87,21 @@ class JsonRemote extends OutputRemote
      */
     protected Config $settings;
 
-    public function __construct($data, MonologWrapper $logger, $meta = null)
+    /**
+     * JsonRemote output constructor.
+     *
+     * @param mixed|null $meta
+     *   Output meta.
+     * @param Request $request
+     *   The full request object.
+     * @param MonologWrapper $logger
+     *   Logger.
+     * @param mixed $data
+     *   Output data.
+     */
+    public function __construct__construct($meta, Request &$request, MonologWrapper $logger, $data)
     {
-        parent::__construct($data, $logger, $meta);
+        parent::__construct($meta,$request, $logger, $data);
         $this->settings = new Config();
     }
 

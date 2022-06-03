@@ -20,6 +20,7 @@ use ApiOpenStudio\Core\ConvertToJsonTrait;
 use ApiOpenStudio\Core\DetectTypeTrait;
 use ApiOpenStudio\Core\MonologWrapper;
 use ApiOpenStudio\Core\OutputResponse;
+use ApiOpenStudio\Core\Request;
 
 /**
  * Class Json
@@ -59,9 +60,23 @@ class Json extends OutputResponse
      */
     protected Config $settings;
 
-    public function __construct($data, int $status, MonologWrapper $logger, $meta = null)
+    /**
+     * JSON output constructor.
+     *
+     * @param mixed|null $meta
+     *   Output meta.
+     * @param Request $request
+     *   The full request object.
+     * @param MonologWrapper $logger
+     *   Logger.
+     * @param mixed $data
+     *   Output data.
+     * @param integer $status
+     *   HTTP output status.
+     */
+    public function __construct($meta, Request &$request, MonologWrapper $logger, $data, int $status)
     {
-        parent::__construct($data, $status, $logger, $meta);
+        parent::__construct($meta, $request, $logger, $data, $status);
         $this->settings = new Config();
     }
 
