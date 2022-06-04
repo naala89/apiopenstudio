@@ -84,7 +84,7 @@ class Image extends OutputResponse
                 $data = "data:image/$imageType;base64,$data";
             }
             $this->data->setData($data);
-            $this->data->setType('image');
+            $this->data->setType('text');
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
