@@ -130,7 +130,7 @@ class Api
         $result = $this->getCache($this->request->getCacheKey());
         if ($result !== false) {
             $this->logger->info('api', 'Returning cached results');
-            return $this->getOutput(true);
+            return $this->getOutput(true, $meta);
         }
         // set fragments in Meta class
         if (isset($meta->fragments)) {
@@ -287,7 +287,6 @@ class Api
      * Get the formatted output.
      *
      * @param mixed $data Data to format.
-     *
      * @param mixed $meta Data to format.
      *
      * @return mixed
@@ -315,16 +314,16 @@ class Api
                     'id' => 'header defined output',
                 ];
                 // Convert the output to the correct format to return it in the response.
-                $result = $this->processOutputResponse($output, $data, $index);
+                $result = $this->processOutputResponse($output, $data, 200, $index);
             } else {
                 // Process an output item.
-                $this->processOutputRemote($output, $data, $index);
+                $outputRemoteResult = $this->processOutputRemote($output, $data, $index);
                 if (empty($result)) {
                     $output = [
-                        'processor' => $this->request->getOutFormat(),
+                        'processor' => $this->request->getOutFormat()['mimeType'],
                         'id' => 'header defined output',
                     ];
-                    $result = $this->processOutputResponse($output, new DataContainer(true, 'boolean'), 200, $index);
+                    $result = $this->processOutputResponse($output, $outputRemoteResult, 200, $index);
                 }
             }
         }
@@ -337,13 +336,14 @@ class Api
      *
      * @param array $meta Output metadata.
      * @param mixed $data Response data.
+     * @param int $status ApiOpenStudio result status code.
      * @param int $index Index in the output array.
      *
      * @return mixed
      *
      * @throws ApiException
      */
-    private function processOutputResponse(array $meta, $data, $status, int $index = -1)
+    private function processOutputResponse(array $meta, $data, int $status, int $index = -1)
     {
         if (!isset($meta['processor'])) {
             throw new ApiException("No processor found in the output section: $index.", 1, 'oops', 500);
