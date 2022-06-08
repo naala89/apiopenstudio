@@ -62,12 +62,13 @@ try {
 
     $error = new Error($e->getCode(), $e->getProcessor(), $e->getMessage());
     $dataContainer = $error->process();
+    $request = new Request();
     $output = new $outputClass(
         [
             'processor' => $outputType,
             'id' => 'header defined output'
         ],
-        new Request(),
+        $request,
         $logger,
         $dataContainer,
         400
