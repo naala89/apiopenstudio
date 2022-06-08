@@ -26,9 +26,9 @@ abstract class ProcessorEntity extends Entity
     /**
      * DB connections.
      *
-     * @var ADOConnection $dbLayer
+     * @var ADOConnection|null $dbLayer
      */
-    protected ADOConnection $db;
+    protected ?ADOConnection $db;
 
     /**
      * Constructor. Store processor metadata and request data in object.
@@ -37,12 +37,12 @@ abstract class ProcessorEntity extends Entity
      *   Metadata for the processor.
      * @param Request $request
      *   The full request object.
-     * @param ADOConnection $db
+     * @param ADOConnection|null $db
      *   The DB connection object.
      * @param MonologWrapper|null $logger
      *   The logger.
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger = null)
+    public function __construct($meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $logger);
         $this->db = $db;
