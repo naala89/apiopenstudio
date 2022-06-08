@@ -67,7 +67,7 @@ abstract class OutputRemote extends OutputEntity
      */
     public function __construct($meta, Request &$request, MonologWrapper $logger, $data)
     {
-        parent::__construct($meta,$request, $logger, $data);
+        parent::__construct($meta, $request, $logger, $data);
         $this->sftp = new Ftp();
         $this->s3 = new S3();
         $this->azureBlob = new AzureBlob();

@@ -99,9 +99,9 @@ class JsonRemote extends OutputRemote
      * @param mixed $data
      *   Output data.
      */
-    public function __construct__construct($meta, Request &$request, MonologWrapper $logger, $data)
+    public function __construct($meta, Request &$request, MonologWrapper $logger, $data)
     {
-        parent::__construct($meta,$request, $logger, $data);
+        parent::__construct($meta, $request, $logger, $data);
         $this->settings = new Config();
     }
 

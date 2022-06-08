@@ -63,7 +63,14 @@ try {
     $error = new Error($e->getCode(), $e->getProcessor(), $e->getMessage());
     $dataContainer = $error->process();
     $output = new $outputClass(
-        ['processor' => $outputType, 'id' => 'header defined output'], new Request(), $logger, $dataContainer, 400
+        [
+            'processor' => $outputType,
+            'id' => 'header defined output'
+        ],
+        new Request(),
+        $logger,
+        $dataContainer,
+        400
     );
     ob_end_flush();
     echo $output->process()->getData();

@@ -21,7 +21,6 @@ namespace ApiOpenStudio\Output;
  */
 class Plain extends Text
 {
-
     /**
      * {@inheritDoc}
      *
