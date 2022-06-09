@@ -88,20 +88,17 @@ class Json extends OutputResponse
      */
     protected function castData(): void
     {
-        $currentType = $this->data->getType();
-        if ($currentType == 'json') {
-            return;
+        if ($this->data->getType() != 'json') {
+            $method = 'from' . ucfirst(strtolower($this->data->getType())) . 'ToJson';
+            $resultData = $this->$method($this->data->getData());
+        } else {
+            $resultData = $this->data->getData();
         }
 
-        $inputData = $this->data->getData();
-        $inputType = $this->data->getType();
-
-        $method = 'from' . ucfirst(strtolower($currentType)) . 'ToJson';
-        $resultData = $this->$method($inputData);
 
         if ($this->settings->__get(['api', 'wrap_json_in_response_object'])) {
             // Wrap JSON in the wrapper object if required by the settings.
-            if (in_array($inputType, ['json', 'array', 'xml', 'html']) && !is_bool($resultData)) {
+            if (in_array($this->data->getType(), ['json', 'array', 'xml', 'html']) && !is_bool($resultData)) {
                 $decoded = json_decode($resultData, true);
                 $resultData = is_null($decoded) ? $resultData : $decoded;
             }
@@ -117,11 +114,10 @@ class Json extends OutputResponse
                 ];
             }
             $resultData = json_encode($resultData);
-        } elseif ($inputType == 'text') {
+        } elseif ($this->data->getType() == 'text') {
             // Wrap text values in double quotes so that they are parseable as valid JSON.
             $resultData = '"' . $resultData . '"';
         }
-
 
         try {
             $this->data->setData($resultData);
