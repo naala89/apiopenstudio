@@ -33,7 +33,7 @@ abstract class Entity
      *
      * @var mixed Processor ID.
      */
-    protected $id = '';
+    public $id = '';
 
     /**
      * Meta required for this processor.
