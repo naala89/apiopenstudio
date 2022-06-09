@@ -71,7 +71,7 @@ try {
         $request,
         $logger,
         $dataContainer,
-        400
+        $e->getHtmlCode()
     );
     ob_end_flush();
     echo $output->process()->getData();
