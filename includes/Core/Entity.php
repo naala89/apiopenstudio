@@ -31,7 +31,7 @@ abstract class Entity
     /**
      * Processor ID.
      *
-     * @var integer Processor ID.
+     * @var mixed Processor ID.
      */
     protected $id = '';
 
