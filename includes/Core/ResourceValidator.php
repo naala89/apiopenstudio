@@ -194,7 +194,9 @@ class ResourceValidator
                     $class = $parent;
                 }
                 if (in_array('ApiOpenStudio\Core\OutputRemote', $parents)) {
-                    $class = new $classStr(new DataContainer(''), $this->logger, []);
+                    $request = new Request();
+                    $data = new DataContainer('', 'text');
+                    $class = new $classStr($meta, $request, $this->logger, $data);
                 } else {
                     $request = new Request();
                     $class = new $classStr($meta, $request, $this->db, $this->logger);
