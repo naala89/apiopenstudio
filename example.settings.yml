@@ -99,9 +99,6 @@ api:
   openapi_directory: "includes/openapiSchema"
 
 email:
-  host: apiopenstudio-email
-  username: "admin@apiopenstudio.com"
-  password: "secret"
-  from:
-    email: "admin@apiopenstudio.com"
-    name: "ApiOpenStudio admin"
+  from: "Admin <admin@example.com>"
+  reply_to: "Contact <contact@example.com>"
+  dsn: "smtp://USERNAME:PASSWORD@DOMAIN:PORT"
