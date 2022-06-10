@@ -1,0 +1,23 @@
+name: Image relay
+
+description: Fetch an image from a URL and return it.
+
+uri: image/relay
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+process:
+    processor: url
+    id: image relay process
+    method: get
+    url:
+        processor: var_get
+        id: image relay url
+        key: url
+        expected_type: text
+        nullable: false
+    expected_type: image
