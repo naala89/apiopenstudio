@@ -344,7 +344,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_read_process',
+            'id' => 'resource_delete_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -382,7 +382,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_read_process',
+            'id' => 'resource_delete_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -447,7 +447,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_read_process',
+            'id' => 'resource_delete_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -484,7 +484,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_read_process',
+            'id' => 'resource_delete_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -542,7 +542,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_read_process',
+            'id' => 'resource_delete_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -600,7 +600,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_read_process',
+            'id' => 'resource_delete_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -637,7 +637,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_read_process',
+            'id' => 'resource_delete_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -674,7 +674,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_read_process',
+            'id' => 'resource_delete_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -711,7 +711,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_read_process',
+            'id' => 'resource_delete_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -748,7 +748,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_read_process',
+            'id' => 'resource_delete_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -787,7 +787,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_read_process',
+            'id' => 'resource_delete_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -826,7 +826,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_read_process',
+            'id' => 'resource_delete_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -867,7 +867,7 @@ foreach ($goodIdentities as $goodIdentity) {
             ],
         ]
     );
-    $I->seeResponseCodeIs(400);
+    $I->seeResponseCodeIs(500);
     $I->seeResponseIsJson();
     $I->seeResponseContainsJson([
         'result' => 'error',
@@ -883,7 +883,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_read_process',
+            'id' => 'resource_delete_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -919,7 +919,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_read_process',
+            'id' => 'resource_delete_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -956,7 +956,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_read_process',
+            'id' => 'resource_delete_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -983,7 +983,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 4,
             'message' => 'Unauthorised: you do not have permissions for this application.',
         ],
     ]);
@@ -1030,7 +1030,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_read_process',
+            'id' => 'resource_delete_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],

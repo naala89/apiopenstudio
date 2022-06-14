@@ -22,6 +22,48 @@ namespace ApiOpenStudio\Core;
 abstract class OutputRemote extends OutputEntity
 {
     /**
+     * {@inheritDoc}
+     *
+     * @var array Details of the processor.
+     */
+    protected array $details = [
+        'name' => 'Base remote',
+        'machineName' => 'base_remote',
+        'description' => 'Base class to output in the results of the resource to a remote server.',
+        'menu' => '',
+        'input' => [
+            'filename' => [
+                'description' => 'The output filename.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'transport' => [
+                'description' => 'The Transport for uploading. example: s3, sftp, google_cloud, azure_blob.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'parameters' => [
+                // phpcs:ignore
+                'description' => 'Name/Value pairs for parameters required by the transport, e.g. username, password, etc.',
+                'cardinality' => [0, '*'],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => [],
+            ],
+        ],
+    ];
+
+    /**
      * The output data.
      *
      * @var DataContainer The output data.
@@ -29,29 +71,16 @@ abstract class OutputRemote extends OutputEntity
     protected DataContainer $data;
 
     /**
-     * @var Ftp SFTP client.
+     * @var mixed Transport class.
      */
-    protected Ftp $sftp;
+    protected $transport;
 
     /**
-     * @var S3 S3 client.
+     * Processor helper class.
+     *
+     * @var ProcessorHelper
      */
-    protected S3 $s3;
-
-    /**
-     * @var AzureBlob Azure Blob Storage client.
-     */
-    protected AzureBlob $azureBlob;
-
-    /**
-     * @var Ftp $ftp FTP client.
-     */
-    protected Ftp $ftp;
-
-    /**
-     * @var GoogleCloud $googleCloud Google Cloud client.
-     */
-    private GoogleCloud $googleCloud;
+    protected ProcessorHelper $helper;
 
     /**
      * OutputRemote constructor.
@@ -68,12 +97,7 @@ abstract class OutputRemote extends OutputEntity
     public function __construct($meta, Request &$request, MonologWrapper $logger, $data)
     {
         parent::__construct($meta, $request, $logger, $data);
-        $this->sftp = new Ftp();
-        $this->s3 = new S3();
-        $this->azureBlob = new AzureBlob();
-        $this->googleCloud = new GoogleCloud();
-        $this->ftp = new Ftp();
-        $this->data = $data;
+        $this->helper = new ProcessorHelper();
     }
 
     /**
@@ -83,30 +107,17 @@ abstract class OutputRemote extends OutputEntity
      */
     public function process()
     {
+        $data = parent::process();
+
         $filename = $this->val('filename', true);
-        $method = $this->val('method', true);
+        $transportName = $this->val('transport', true);
         $parameters = $this->val('parameters', true);
 
+        $classString = $this->helper->getProcessorString($transportName, ['Output']);
+        $transport = new $classString();
+
         try {
-            switch ($method) {
-                case 'sftp':
-                    $this->sftp->uploadFile($parameters, $filename, $this->data->getData());
-                    break;
-                case 's3':
-                    $this->s3->uploadFile($parameters, $filename, $this->data->getData());
-                    break;
-                case 'azure_blob':
-                    $this->azureBlob->uploadFile($parameters, $filename, $this->data->getData());
-                    break;
-                case 'google_loud':
-                    $this->googleCloud->uploadFile($parameters, $filename, $this->data->getData());
-                    break;
-                case 'ftp':
-                    $this->ftp->uploadFile($parameters, $filename, $this->data->getData());
-                    break;
-                default:
-                    throw new ApiException('Unsupported upload method', 6, $this->id, 400);
-            }
+            $transport->uploadFile($parameters, $filename, $data->getData());
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }

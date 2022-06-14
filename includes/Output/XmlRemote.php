@@ -49,24 +49,18 @@ class XmlRemote extends OutputRemote
                 'limitValues' => [],
                 'default' => 'apiopenstudio.xml',
             ],
-            'method' => [
-                'description' => 'The method for uploading.',
+            'transport' => [
+                'description' => 'The Transport for uploading. example: s3, sftp, google_cloud, azure_blob.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
-                'limitValues' => [
-                    'azure_blob',
-                    'ftp',
-                    'google_cloud',
-                    's3',
-                    'sftp',
-                ],
-                'default' => 'sftp',
+                'limitValues' => [],
+                'default' => '',
             ],
             'parameters' => [
                 // phpcs:ignore
-                'description' => 'Name/Value pairs for parameters required by the uploader, e.g. username, password, etc.',
+                'description' => 'Name/Value pairs for parameters required by the transport, e.g. username, password, etc.',
                 'cardinality' => [0, '*'],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
