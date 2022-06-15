@@ -1,0 +1,29 @@
+name: Testing var_literal array
+
+description: Test var_literal processor with array
+
+uri: var_literal/array
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test var_literal array security
+    roles:
+        - Consumer
+
+process:
+    processor: var_literal
+    id: test var_literal array var_literal
+    value:
+        pi: 3.141
+    type:
+        processor: var_get
+        id: test var_literal array type
+        key: type
+        nullable: true
+        expected_type: text

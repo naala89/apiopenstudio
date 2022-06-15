@@ -1,0 +1,31 @@
+name: Testing cast on a empty string
+
+description: Test cast processor with empty string
+
+uri: cast/empty
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast empty string security
+    roles:
+        - Developer
+
+process:
+    processor: cast
+    id: test cast empty string cast
+    data:
+        processor: var_literal
+        id: test cast empty string data
+        value: ""
+        type: text
+    data_type:
+        processor: var_get
+        id: test cast empty string data_type
+        key: data_type
+        expected_type: text

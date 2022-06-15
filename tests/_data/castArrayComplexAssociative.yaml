@@ -1,0 +1,42 @@
+name: Testing cast on a complex associative array
+
+description: Test cast processor with complex associative array
+
+uri: cast/array
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast complex associative array security
+    roles:
+        - Developer
+
+process:
+    processor: cast
+    id: test cast complex associative array cast
+    data:
+        processor: var_literal
+        id: test cast complex associative array data
+        value:
+            pronoun: this
+            intransitive_verb: is
+            indefinite_article: an
+            noun: array
+            arr:
+                item1: one
+                item2: two
+                item3: three
+                sub:
+                    foo: bar
+                    bar: foo
+        type: array
+    data_type:
+        processor: var_get
+        id: test cast complex associative array data_type
+        key: data_type
+        expected_type: text

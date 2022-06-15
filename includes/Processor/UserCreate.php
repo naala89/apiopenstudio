@@ -52,7 +52,7 @@ class UserCreate extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'email' => [
                 'description' => 'The email of the user.',
@@ -61,7 +61,7 @@ class UserCreate extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'password' => [
                 'description' => 'The password of the user.',
@@ -187,7 +187,7 @@ class UserCreate extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text', 'integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'phone_work' => [
                 'description' => 'The work phone of the user.',
@@ -196,7 +196,7 @@ class UserCreate extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text', 'integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

@@ -6,20 +6,21 @@ uri: concatenate/strings
 
 method: get
 
+appid: 2
+
 ttl: 0
 
 security:
-    processor: token_consumer
-    id: 1
-    token:
-        processor: var_get
-        id: 2
-        name: token
+    id: test concatenate strings security
+    processor: validate_token_roles
+    roles:
+        - Consumer
+        - Developer
 
 process:
     processor: concatenate
-    id: 3
-    sources:
+    id: test concatenate strings concatenate
+    items:
         - field1
         - field2
         - field3

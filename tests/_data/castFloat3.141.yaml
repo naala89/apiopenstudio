@@ -1,0 +1,31 @@
+name: Testing cast on an float 3.141
+
+description: Test cast processor with float 3.141
+
+uri: cast/float
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast float security
+    roles:
+        - Developer
+
+process:
+    processor: cast
+    id: test cast float cast
+    data:
+        processor: var_literal
+        id: test cast float data
+        value: 3.141
+        type: float
+    data_type:
+        processor: var_get
+        id: test cast float data_type
+        key: data_type
+        expected_type: text

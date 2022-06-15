@@ -1,0 +1,31 @@
+name: Testing cast on a undefined null
+
+description: Test cast processor with undefined null
+
+uri: cast/undefined
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast undefined security
+    roles:
+        - Developer
+
+process:
+    processor: cast
+    id: test cast undefined cast
+    data:
+        processor: var_literal
+        id: test cast undefined data
+        value: null
+        type: undefined
+    data_type:
+        processor: var_get
+        id: test cast undefined data_type
+        key: data_type
+        expected_type: text

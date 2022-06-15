@@ -35,15 +35,17 @@ class VarStoreMapper extends Mapper
     public function save(VarStore $varStore): bool
     {
         if ($varStore->getVid() == null) {
-            $sql = 'INSERT INTO `var_store` (`appid`, `key`, `val`) VALUES (?, ?, ?)';
+            $sql = 'INSERT INTO `var_store` (`accid`, `appid`, `key`, `val`) VALUES (?, ?, ?, ?)';
             $bindParams = [
+                $varStore->getAccid(),
                 $varStore->getAppid(),
                 $varStore->getKey(),
                 $varStore->getVal(),
             ];
         } else {
-            $sql = 'UPDATE `var_store` SET `appid`=?, `key`=?, `val`=? WHERE `vid` = ?';
+            $sql = 'UPDATE `var_store` SET `accid`=?, `appid`=?, `key`=?, `val`=? WHERE `vid` = ?';
             $bindParams = [
+                $varStore->getAccid(),
                 $varStore->getAppid(),
                 $varStore->getKey(),
                 $varStore->getVal(),
@@ -55,7 +57,7 @@ class VarStoreMapper extends Mapper
     }
 
     /**
-     * Delete the vars.
+     * Delete a var.
      *
      * @param VarStore $varStore VarStore object.
      *
@@ -70,6 +72,28 @@ class VarStoreMapper extends Mapper
         }
         $sql = 'DELETE FROM `var_store` WHERE `vid` = ?';
         $bindParams = [$varStore->getVid()];
+        return $this->saveDelete($sql, $bindParams);
+    }
+
+    /**
+     * Delete multiple vars.
+     *
+     * @param VarStore[] $vars
+     *   Array of VarStore object.
+     *
+     * @return bool Success.
+     *
+     * @throws ApiException Return an ApiException on DB error.
+     */
+    public function deleteMultiple(array $vars): bool
+    {
+        $bindParams = [];
+        $vidPlaceholders = [];
+        foreach ($vars as $var) {
+            $bindParams[] = $var->getVid();
+            $vidPlaceholders[] = '?';
+        }
+        $sql = 'DELETE FROM `var_store` WHERE `vid` IN (' . implode(', ', $vidPlaceholders) . ')';
         return $this->saveDelete($sql, $bindParams);
     }
 
@@ -100,7 +124,36 @@ class VarStoreMapper extends Mapper
      */
     public function findAll(array $params = []): array
     {
-        $sql = 'SELECT * FROM var_store';
+        $sql = 'SELECT * FROM `var_store`';
+
+        return $this->fetchRows($sql, [], $params);
+    }
+
+    /**
+     * Return all vars using AND logic for the filters
+     *
+     * @param array $params Filter params.
+     *
+     * @return array Array of varStore objects.
+     *
+     * @throws ApiException Return an ApiException on DB error.
+     */
+    public function findAllFilter(array $params = []): array
+    {
+        $sql = 'SELECT * FROM `var_store`';
+        if (!empty($params['filter'])) {
+            foreach ($params['filter'] as $index => $filter) {
+                $sql .= stripos($sql, 'where') === false ? ' WHERE' : ' AND';
+                if (isset($filter['keyword'])) {
+                    $sql .= ' ' . $filter['column'] . ' LIKE ';
+                    $sql .= '"' . mysqli_real_escape_string($this->db->_connectionID, $filter['keyword']) . '"';
+                } else {
+                    $sql .= ' ' . $filter['column'] . ' = ';
+                    $sql .= '"' . mysqli_real_escape_string($this->db->_connectionID, $filter['value']) . '"';
+                }
+                unset($params['filter'][$index]);
+            }
+        }
 
         return $this->fetchRows($sql, [], $params);
     }
@@ -118,25 +171,56 @@ class VarStoreMapper extends Mapper
     public function findByUid(int $uid, array $params = []): array
     {
         $sql = <<<QUERY
-SELECT vs.* FROM var_store AS vs WHERE vs.appid in (
-    SELECT app.appid FROM application AS app WHERE (
-        SELECT ur.urid FROM user_role AS ur INNER JOIN role AS r ON ur.rid = r.rid 
-            WHERE r.name = "Administrator" AND ur.uid = ?)
-    UNION ALL
-    SELECT app.appid FROM application AS app WHERE app.accid IN (
-        SELECT ur.accid FROM user_role AS ur INNER JOIN role AS r ON ur.rid = r.rid
-            WHERE r.name = "Account manager" AND ur.uid = ?
+SELECT *
+FROM var_store
+WHERE vid IN (
+    SELECT vs.vid
+    FROM var_store AS vs 
+    WHERE EXISTS (
+        SELECT ur.urid
+        FROM user_role AS ur
+        INNER JOIN role AS r ON ur.rid = r.rid
+        WHERE r.name = "Administrator"
+        AND ur.uid = ?
     )
-    UNION ALL
-    SELECT app.appid FROM application AS app WHERE app.appid IN (
-        SELECT ur.appid FROM user_role AS ur INNER JOIN role AS r ON ur.rid = r.rid WHERE r.name IN (
-            "Application manager", "Developer"
-        ) AND ur.uid = ?
+    UNION DISTINCT
+    SELECT vs.vid
+    FROM var_store AS vs 
+    WHERE vs.accid in (
+        SELECT ur.accid
+        FROM user_role AS ur
+        INNER JOIN role AS r ON ur.rid = r.rid
+        WHERE r.name = "Account manager"
+        AND ur.uid = ?
+    )
+    UNION DISTINCT
+    SELECT vs.vid
+    FROM var_store AS vs
+    WHERE vs.appid IN (
+        SELECT app.appid
+        FROM application AS app
+        WHERE app.accid IN (
+            SELECT ur.accid
+            FROM user_role AS ur
+            INNER JOIN role AS r ON ur.rid = r.rid
+            WHERE r.name = "Account manager"
+            AND ur.uid = ?
+        )
+    )
+    UNION DISTINCT
+    SELECT vs.vid
+    FROM var_store AS vs 
+    WHERE vs.appid in (
+        SELECT ur.appid
+        FROM user_role AS ur
+        INNER JOIN role AS r ON ur.rid = r.rid
+        WHERE r.name = "Developer"
+        AND ur.uid = ?
     )
 )
 QUERY;
 
-        $bindParams = [$uid, $uid, $uid];
+        $bindParams = [$uid, $uid, $uid, $uid];
 
         return $this->fetchRows($sql, $bindParams, $params);
     }
@@ -270,19 +354,38 @@ QUERY;
     }
 
     /**
-     * Find a var by application ID and var key.
+     * Find a var by account ID and var key.
      *
-     * @param integer $appId Application ID.
+     * @param integer $accId Account ID.
      * @param string $key Var key.
      *
      * @return VarStore VarStore object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByAppIdKey(int $appId, string $key): VarStore
+    public function findByAccidKey(int $accId, string $key): VarStore
     {
-        $sql = 'SELECT * FROM `var_store` WHERE `appid` = ? AND `key` = ?';
-        $bindParams = [$appId, $key];
+        $sql = 'SELECT * FROM `var_store` WHERE `key` = ? AND `accid` = ?';
+        $bindParams = [$key, $accId];
+
+        return $this->fetchRow($sql, $bindParams);
+    }
+
+    /**
+     * Find a var by account ID and var key.
+     *
+     * @param int $appId Application ID.
+     * @param string $key Var key.
+     *
+     * @return VarStore VarStore object.
+     *
+     * @throws ApiException Return an ApiException on DB error.
+     */
+    public function findByAppidKey(int $appId, string $key): VarStore
+    {
+        $sql = 'SELECT * FROM `var_store` WHERE `key` = ? AND `appid` = ?';
+        $bindParams = [$key, $appId];
+
         return $this->fetchRow($sql, $bindParams);
     }
 
@@ -291,15 +394,15 @@ QUERY;
      *
      * @param integer $appId Application ID.
      *
-     * @return array Array of VarStore objects.
+     * @return VarStore VarStore object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
-    public function findByAppId(int $appId): array
+    public function findByAppId(int $appId): VarStore
     {
         $sql = 'SELECT * FROM `var_store` WHERE `appid` = ?';
         $bindParams = [$appId];
-        return $this->fetchRows($sql, $bindParams);
+        return $this->fetchRow($sql, $bindParams);
     }
 
     /**
@@ -314,9 +417,10 @@ QUERY;
         $varStore = new VarStore();
 
         $varStore->setVid($row['vid'] ?? 0);
-        $varStore->setAppid($row['appid'] ?? 0);
-        $varStore->setKey($row['key'] ?? '');
-        $varStore->setVal($row['val'] ?? '');
+        $varStore->setAccid($row['accid'] ?? null);
+        $varStore->setAppid($row['appid'] ?? null);
+        $varStore->setKey($row['key'] ?? null);
+        $varStore->setVal($row['val'] ?? null);
 
         return $varStore;
     }

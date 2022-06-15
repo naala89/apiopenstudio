@@ -66,7 +66,7 @@ class AccountUpdate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'name' => [
                 'description' => 'The new name for the account.',
@@ -75,7 +75,7 @@ class AccountUpdate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

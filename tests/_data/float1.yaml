@@ -1,0 +1,23 @@
+name: Testing return of an float 1.0
+
+description: Testing return of an float 1.0
+
+uri: float/1
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast float 1.0 security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test cast float 1.0 data
+    value: 1.0
+    type: float

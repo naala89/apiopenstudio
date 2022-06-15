@@ -105,7 +105,7 @@ class ResourceImport extends ProcessorEntity
                 'limitProcessors' => ['var_file'],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

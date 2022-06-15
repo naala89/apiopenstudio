@@ -1,0 +1,46 @@
+name: Testing return of text containing an xml string
+
+description: Testing return of text containing an xml string
+
+uri: text/xml
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test text containing an xml string security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test text containing an xml string process
+    value: |
+        <?xml version="1.0" encoding="utf-8"?>
+        <dl>
+            <dt>one</dt>
+            <dd>
+                <dl>
+                    <dt>one_one</dt>
+                    <dd>this</dd>
+                    <dt>one_two</dt>
+                    <dd>is</dd>
+                    <dt>one_three</dt>
+                    <dd>an</dd>
+                </dl>
+            </dd>
+            <dt>two</dt>
+            <dd>
+                <dl>
+                    <dt>two_one</dt>
+                    <dd>associative</dd>
+                    <dt>two_two</dt>
+                    <dd>array</dd>
+                </dl>
+            </dd>
+        </dl>
+    type: text

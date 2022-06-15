@@ -152,7 +152,7 @@ TEXT,
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'variables' => [
                 'description' => 'The variables. This is an object of var-field.',

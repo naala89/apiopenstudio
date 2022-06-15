@@ -96,3 +96,76 @@ function add_open_api_columns(ADODB_mysqli $db)
 
     update_all_core_processors_beta($db);
 }
+
+/**
+ * Update var_store: Add accid column and make appid and value nullable.
+ *
+ * @param ADODB_mysqli $db
+ *
+ * @throws ApiException
+ *
+ * @version V1.0.0-beta
+ *
+ * @see https://gitlab.com/apiopenstudio/apiopenstudio/-/issues/48
+ */
+function update_var_store_table(ADODB_mysqli $db)
+{
+    $config = new Config();
+
+    echo "Adding the the accid column to the var_store table...\n";
+    try {
+        $sql = "SELECT * FROM information_schema.COLUMNS ";
+        $sql .= "WHERE TABLE_SCHEMA = '" . $config->__get(['db', 'database']) . "' ";
+        $sql .= "AND TABLE_NAME = 'var_store' ";
+        $sql .= "AND COLUMN_NAME = 'accid'";
+        $result = $db->execute($sql);
+    } catch (ApiException $e) {
+        echo 'An error occurred: ' . $e->getMessage() . "\n";
+        exit;
+    }
+    if ($result->recordCount() !== 0) {
+        echo "Cannot create var_store.accid, it already exists\n";
+    } else {
+        // phpcs:ignore
+        $sql = <<<SQL
+ALTER TABLE var_store 
+ADD COLUMN accid INT UNSIGNED DEFAULT NULL COMMENT "account id"
+AFTER `vid`
+SQL;
+        if (!$db->execute($sql)) {
+            echo "Adding accid column failed, please check the logs\n";
+            exit;
+        }
+    }
+
+    $nullableTables = ['appid', 'value'];
+    foreach ($nullableTables as $nullableTable) {
+        echo "Validating the the $nullableTable column to be nullable...\n";
+        $sql = <<<SQL
+SELECT * 
+FROM information_schema.COLUMNS 
+WHERE TABLE_SCHEMA = "?" 
+AND TABLE_NAME = "var_store" 
+AND COLUMN_NAME = "?"
+SQL;
+        $bindParams = [
+            $config->__get(['db', 'database']),
+            $nullableTable,
+        ];
+        $result = $db->execute($sql, $bindParams);
+        if ($result->recordCount() !== 0) {
+            echo "Cannot update var_store.$nullableTable, it does not exist\n";
+            exit;
+        }
+    }
+    $sql = "ALTER TABLE var_store MODIFY `appid` INT(10) UNSIGNED DEFAULT NULL COMMENT 'application id'";
+    if (!$db->execute($sql)) {
+        echo "updating appid column failed, please check the logs\n";
+        exit;
+    }
+    $sql = 'ALTER TABLE var_store MODIFY `val` BLOB DEFAULT NULL COMMENT "value of the var"';
+    if (!$db->execute($sql)) {
+        echo "updating val column failed, please check the logs\n";
+        exit;
+    }
+}

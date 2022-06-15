@@ -1,0 +1,28 @@
+name: Testing var_literal text
+
+description: Test var_literal processor with text
+
+uri: var_literal/text
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test var_literal text security
+    roles:
+        - Consumer
+
+process:
+    processor: var_literal
+    id: test var_literal text var_literal
+    value: text
+    type:
+        processor: var_get
+        id: test var_literal text type
+        key: type
+        nullable: true
+        expected_type: text

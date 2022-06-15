@@ -42,7 +42,7 @@ class Sort extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'direction' => [
                 'description' => 'Sort ascending or descending.',

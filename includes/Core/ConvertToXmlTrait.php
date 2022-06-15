@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Core;
 
 use Exception;
 use SimpleXMLElement;
+use SoapBox\Formatter\Formatter;
 
 /**
  * Trait ConvertToXmlTrait.
@@ -25,197 +26,166 @@ use SimpleXMLElement;
 trait ConvertToXmlTrait
 {
     /**
-     * Convert empty to XML.
+     * Convert array to XML string.
      *
-     * @param $data
+     * @param array|null $array
      *
-     * @return string
+     * @return string|null
+     *
+     * @throws ApiException
      */
-    public function fromEmptyToXml($data): string
+    public function fromArrayToXml(?array $array): string
     {
-        return $this->wrapDataXmlFormat('');
+        $xml = $this->getBaseXmlWrapper();
+        $array = $array ?? ['item' => []];
+        return $this->array2xml($array, $xml);
     }
 
     /**
      * Convert boolean to XML string.
      *
-     * @param $data
-     *
-     * @return string
-     *
-     * @throws ApiException
-     */
-    public function fromBooleanToXml($data): string
-    {
-        $xml = $this->getBaseXmlWrapper();
-        $node = $xml->xpath('//');
-        $node = $node[0];
-        $node->{0} = $data;
-        return $xml->asXML();
-    }
-
-    /**
-     * Convert integer to XML string.
-     *
-     * @param $data
-     *
-     * @return string
-     *
-     * @throws ApiException
-     */
-    public function fromIntegerToXml($data): string
-    {
-        $xml = $this->getBaseXmlWrapper();
-        $node = $xml->xpath('//');
-        $node = $node[0];
-        $node->{0} = $data;
-        return $xml->asXML();
-    }
-
-    /**
-     * Convert float to XML string.
-     *
-     * @param $data
-     *
-     * @return string
-     *
-     * @throws ApiException
-     */
-    public function fromFloatToXml($data): string
-    {
-        $xml = $this->getBaseXmlWrapper();
-        $node = $xml->xpath('//');
-        $node = $node[0];
-        $node->{0} = $data;
-        return $xml->asXML();
-    }
-
-    /**
-     * Convert text to XML string.
-     *
-     * @param $data
-     *
-     * @return string
-     *
-     * @throws ApiException
-     */
-    public function fromTextToXml($data): string
-    {
-        $xml = $this->getBaseXmlWrapper();
-        $node = $xml->xpath('//apiOpenStudioWrapper');
-        $node = $node[0];
-        $node->{0} = $data;
-        return $xml->asXML();
-    }
-
-    /**
-     * Convert array to XML string.
-     *
-     * @param $data
-     *
-     * @return string
-     *
-     * @throws ApiException
-     */
-    public function fromArrayToXml($data): string
-    {
-        $xml_data = $this->getBaseXmlWrapper();
-        $this->array2xml($data, $xml_data);
-        return $xml_data->asXML();
-    }
-
-    /**
-     * Convert JSON string to XML string.
-     *
-     * @param $data
-     *
-     * @return string
-     *
-     * @throws ApiException
-     */
-    public function fromJsonToXml($data): string
-    {
-        $data = json_decode($data, true);
-        return $this->fromArrayToXml($data);
-    }
-
-    /**
-     * Convert XML string to XML string.
-     *
-     * @param $data
+     * @param bool|null $boolean
      *
      * @return string
      */
-    public function fromXmlToXml($data): string
+    public function fromBooleanToXml(?bool $boolean): string
     {
-        return $data;
-    }
-
-    /**
-     * Convert an HTML string to XML string.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromHtmlToXml($data): string
-    {
-        return $data;
-    }
-
-    /**
-     * Convert an image string to XML string.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromImageToXml($data): string
-    {
-        return $this->wrapDataXmlFormat($data);
+        if (!is_null($boolean)) {
+            $formatter = Formatter::make(['item' => ($boolean ? 'true' : 'false')], Formatter::ARR);
+        } else {
+            $formatter = Formatter::make(['item' => []], Formatter::ARR);
+        }
+        return $formatter->toXml('apiOpenStudioWrapper');
     }
 
     /**
      * Convert file to XML string.
      *
-     * @param $data
+     * @param $file
      *
      * @return string
      */
-    public function fromFileToXml($data): string
+    public function fromFileToXml($file): string
     {
-        return $this->wrapDataXmlFormat($data);
+        $formatter = Formatter::make(['item' => $file], Formatter::ARR);
+        return $formatter->toXml('apiOpenStudioWrapper');
     }
 
     /**
-     * Get the base SimpleXMLElement wrapper for XML for converting non XML inputs to XML output.
+     * Convert float to XML string.
      *
-     * @return SimpleXMLElement
+     * @param float|null $float
      *
-     * @throws ApiException
+     * @return string
      */
-    protected function getBaseXmlWrapper(): SimpleXMLElement
+    public function fromFloatToXml(?float $float): string
     {
-        try {
-            $xml = new SimpleXMLElement('<apiOpenStudioWrapper/>');
-        } catch (Exception $e) {
-            throw new ApiException($e->getMessage(), 0, -1, 500);
+        if (is_infinite($float)) {
+            $float = $float < 0 ? '-INF' : 'INF';
+        } elseif (is_nan($float)) {
+            $float = 'NAN';
         }
-        return $xml;
+        $formatter = Formatter::make(['item' => $float], Formatter::ARR);
+        return $formatter->toXml('apiOpenStudioWrapper');
     }
 
     /**
-     * Wrap Data in MML string wrapper.
+     * Convert an HTML string to XML string.
+     *
+     * @param string|null $html
+     *
+     * @return string
+     */
+    public function fromHtmlToXml(?string $html): string
+    {
+        $convertHtml = new ConvertHtml();
+        return $convertHtml->htmlToXml($html);
+    }
+
+    /**
+     * Convert an image string to XML string.
+     *
+     * @param $image
+     *
+     * @return string
+     */
+    public function fromImageToXml($image): string
+    {
+        $formatter = Formatter::make(['item' => $image], Formatter::ARR);
+        return $formatter->toXml('apiOpenStudioWrapper');
+    }
+
+    /**
+     * Convert integer to XML string.
+     *
+     * @param int|float|null $integer
+     *
+     * @return string
+     */
+    public function fromIntegerToXml($integer): string
+    {
+        if (is_infinite($integer)) {
+            $integer = $integer < 0 ? '-INF' : 'INF';
+        } elseif (is_nan($integer)) {
+            $integer = 'NAN';
+        }
+        $formatter = Formatter::make(['item' => $integer], Formatter::ARR);
+        return $formatter->toXml('apiOpenStudioWrapper');
+    }
+
+    /**
+     * Convert JSON string to XML string.
+     *
+     * @param string|null $json
+     *
+     * @return string
+     */
+    public function fromJsonToXml(?string $json): string
+    {
+        $testObject = json_decode($json, true);
+        if (!is_array($testObject)) {
+            $json = json_encode(['item' => $testObject]);
+        }
+        $formatter = Formatter::make($json, Formatter::JSON);
+        return $formatter->toXml('apiOpenStudioWrapper');
+    }
+
+    /**
+     * Convert text to XML string.
+     *
+     * @param string|null $text
+     *
+     * @return string
+     */
+    public function fromTextToXml(?string $text): string
+    {
+        $formatter = Formatter::make(['item' => $text], Formatter::ARR);
+        return $formatter->toXml('apiOpenStudioWrapper');
+    }
+
+    /**
+     * Convert undefined to XML.
      *
      * @param $data
      *
      * @return string
      */
-    protected function wrapDataXmlFormat($data): string
+    public function fromUndefinedToXml($data): string
     {
-        $data = str_replace('<apiOpenStudioWrapper>', '', $data);
-        $data = str_replace('</apiOpenStudioWrapper>', '', $data);
-        return '<?xml version="1.0"?><apiOpenStudioWrapper>' . $data . '</apiOpenStudioWrapper>';
+        $formatter = Formatter::make(['item' => null], Formatter::ARR);
+        return $formatter->toXml('apiOpenStudioWrapper');
+    }
+
+    /**
+     * Convert XML string to XML string.
+     *
+     * @param string|null $xml
+     *
+     * @return string
+     */
+    public function fromXmlToXml(?string $xml): ?string
+    {
+        return $xml;
     }
 
     /**
@@ -230,7 +200,7 @@ trait ConvertToXmlTrait
     {
         foreach ($array as $key => $value) {
             if (is_numeric($key)) {
-                $key = "item$key";
+                $key = "item";
             }
             if (is_array($value)) {
                 $this->array2xml($value, $xml->addChild($key));
@@ -239,5 +209,24 @@ trait ConvertToXmlTrait
             }
         }
         return $xml->asXML();
+    }
+
+    /**
+     * Get the base SimpleXMLElement wrapper for XML for converting non XML inputs to XML output.
+     *
+     * @param string $baseTag
+     *
+     * @return SimpleXMLElement
+     *
+     * @throws ApiException
+     */
+    protected function getBaseXmlWrapper(string $baseTag = 'apiOpenStudioWrapper'): SimpleXMLElement
+    {
+        try {
+            $xml = new SimpleXMLElement("<$baseTag/>");
+        } catch (Exception $e) {
+            throw new ApiException($e->getMessage(), 0, -1, 500);
+        }
+        return $xml;
     }
 }

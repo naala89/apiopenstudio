@@ -22,15 +22,22 @@ namespace ApiOpenStudio\Core;
 trait ConvertToFileTrait
 {
     /**
-     * Convert empty to file.
+     * Convert array to file.
      *
      * @param $data
      *
-     * @return null
+     * @return boolean
+     *
+     * @throws ApiException
      */
-    public function fromEmptyToFile($data)
+    public function fromArrayToFile($data): bool
     {
-        return null;
+        throw new ApiException(
+            'Cannot cast array to file',
+            6,
+            -1,
+            400
+        );
     }
 
     /**
@@ -46,13 +53,13 @@ trait ConvertToFileTrait
     }
 
     /**
-     * Convert integer to file.
+     * Convert file to file.
      *
      * @param $data
      *
      * @return boolean
      */
-    public function fromIntegerToFile($data): bool
+    public function fromFileToFile($data): bool
     {
         return $data;
     }
@@ -65,56 +72,6 @@ trait ConvertToFileTrait
      * @return boolean
      */
     public function fromFloatToFile($data): bool
-    {
-        return $data;
-    }
-
-    /**
-     * Convert text to file.
-     *
-     * @param $data
-     *
-     * @return boolean
-     */
-    public function fromTextToFile($data): bool
-    {
-        return $data;
-    }
-
-    /**
-     * Convert array to file.
-     *
-     * @param $data
-     *
-     * @return boolean
-     *
-     * @throws ApiException
-     */
-    public function fromArrayToFile($data): bool
-    {
-        throw new ApiException('Cannot convert an array to file, please convert to JSON or XML first');
-    }
-
-    /**
-     * Convert JSON to file.
-     *
-     * @param $data
-     *
-     * @return boolean
-     */
-    public function fromJsonToFile($data): bool
-    {
-        return $data;
-    }
-
-    /**
-     * Convert XML to file.
-     *
-     * @param $data
-     *
-     * @return boolean
-     */
-    public function fromXmlToFile($data): bool
     {
         return $data;
     }
@@ -144,13 +101,61 @@ trait ConvertToFileTrait
     }
 
     /**
-     * Convert file to file.
+     * Convert integer to file.
      *
      * @param $data
      *
      * @return boolean
      */
-    public function fromFileToFile($data): bool
+    public function fromIntegerToFile($data): bool
+    {
+        return $data;
+    }
+
+    /**
+     * Convert JSON to file.
+     *
+     * @param $data
+     *
+     * @return boolean
+     */
+    public function fromJsonToFile($data): bool
+    {
+        return $data;
+    }
+
+    /**
+     * Convert text to file.
+     *
+     * @param $data
+     *
+     * @return boolean
+     */
+    public function fromTextToFile($data): bool
+    {
+        return $data;
+    }
+
+    /**
+     * Convert undefined to file.
+     *
+     * @param $data
+     *
+     * @return null
+     */
+    public function fromUndefinedToFile($data)
+    {
+        return null;
+    }
+
+    /**
+     * Convert XML to file.
+     *
+     * @param $data
+     *
+     * @return boolean
+     */
+    public function fromXmlToFile($data): bool
     {
         return $data;
     }

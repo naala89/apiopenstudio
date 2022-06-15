@@ -89,8 +89,8 @@ class Html extends Output
         $method = 'from' . ucfirst(strtolower($currentType)) . 'ToHtml';
 
         try {
-            $this->data->setData($this->$method($this->data->getData()));
-            $this->data->setType('html');
+            $html = $this->$method($this->data->getData());
+            $this->data->setData($html);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }

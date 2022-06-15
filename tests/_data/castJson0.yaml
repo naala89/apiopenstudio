@@ -1,0 +1,31 @@
+name: Testing cast on a JSON zero
+
+description: Test cast processor with JSON zero
+
+uri: cast/json
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test cast json zero security
+    roles:
+        - Developer
+
+process:
+    processor: cast
+    id: test cast json zero cast
+    data:
+        processor: var_literal
+        id: test cast json zero data
+        value: 0
+        type: json
+    data_type:
+        processor: var_get
+        id: test cast json zero data_type
+        key: data_type
+        expected_type: text

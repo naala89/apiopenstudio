@@ -17,7 +17,7 @@ $I->seeResponseContainsJson([
     'result' => 'error',
     'data' => [
         'code' => 6,
-        'message' => "Failed to convert 'text' to integer.",
+        'message' => 'Cannot cast text to integer.',
         'id' => 'test var_int value',
     ],
 ]);
@@ -36,7 +36,7 @@ $I->seeResponseContainsJson([
     'result' => 'error',
     'data' => [
         'code' => 6,
-        'message' => "Failed to convert 'true' to integer.",
+        'message' => 'Cannot cast text to integer.',
         'id' => 'test var_int value',
     ],
 ]);
@@ -50,7 +50,7 @@ $I->seeResponseContainsJson([
     'data' => [
         "id" => "test var_int value",
         "code" => 6,
-        "message" => "Failed to convert '1.6' to integer."
+        "message" => 'Cannot cast text to integer.'
     ],
 ]);
 

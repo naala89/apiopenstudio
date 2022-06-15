@@ -22,134 +22,139 @@ namespace ApiOpenStudio\Core;
 trait ConvertToTextTrait
 {
     /**
-     * Convert empty to text.
+     * Convert array to text.
      *
-     * @param $data
+     * @param array|null $array
      *
      * @return null
+     *
+     * @throws ApiException
      */
-    public function fromEmptyToText($data)
+    public function fromArrayToText(?array $array)
     {
-        return null;
+        if (is_null($array)) {
+            return null;
+        }
+        throw new ApiException('Cannot cast array to text', 6, -1, 400);
     }
 
     /**
      * Convert boolean to text.
      *
-     * @param $data
+     * @param ?bool $boolean
      *
      * @return string
      */
-    public function fromBooleanToText($data): string
+    public function fromBooleanToText(?bool $boolean): string
     {
-        return var_export($data, true);
-    }
-
-    /**
-     * Convert integer to text.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromIntegerToText($data): string
-    {
-        return var_export($data, true);
-    }
-
-    /**
-     * Convert float to text.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromFloatToText($data): string
-    {
-        return var_export($data, true);
-    }
-
-    /**
-     * Convert text to text.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromTextToText($data): string
-    {
-        return $data;
-    }
-
-    /**
-     * Convert array to text.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromArrayToText($data): string
-    {
-        return json_encode($data);
-    }
-
-    /**
-     * Convert JSON to text.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromJsonToText($data): string
-    {
-        return $data;
-    }
-
-    /**
-     * Convert XML to text.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromXmlToText($data): string
-    {
-        return $data;
-    }
-
-    /**
-     * Convert HTML to text.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromHtmlToText($data): string
-    {
-        return $data;
-    }
-
-    /**
-     * Convert image to text.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromImageToText($data): string
-    {
-        return $data;
+        return var_export($boolean, true);
     }
 
     /**
      * Convert file to text.
      *
-     * @param $data
+     * @param $file
      *
      * @return string
      */
-    public function fromFileToText($data): string
+    public function fromFileToText($file): string
     {
-        return $data;
+        return $file;
+    }
+
+    /**
+     * Convert float to text.
+     *
+     * @param ?float $float
+     *
+     * @return string
+     */
+    public function fromFloatToText(?float $float): string
+    {
+        return var_export($float, true);
+    }
+
+    /**
+     * Convert HTML to text.
+     *
+     * @param string $html
+     *
+     * @return string
+     */
+    public function fromHtmlToText(string $html): string
+    {
+        return $html;
+    }
+
+    /**
+     * Convert image to text.
+     *
+     * @param $image
+     *
+     * @return string
+     */
+    public function fromImageToText($image): string
+    {
+        return $image;
+    }
+
+    /**
+     * Convert integer to text.
+     *
+     * @param int|float|null $integer
+     *
+     * @return string
+     */
+    public function fromIntegerToText($integer): string
+    {
+        return var_export($integer, true);
+    }
+
+    /**
+     * Convert JSON to text.
+     *
+     * @param string $json
+     *
+     * @return string
+     */
+    public function fromJsonToText(string $json): string
+    {
+        return $json == '""' ? '' : $json;
+    }
+
+    /**
+     * Convert text to text.
+     *
+     * @param string $text
+     *
+     * @return string
+     */
+    public function fromTextToText(string $text): string
+    {
+        return $text;
+    }
+
+    /**
+     * Convert Undefined to text.
+     *
+     * @param $data
+     *
+     * @return null
+     */
+    public function fromUndefinedToText($data)
+    {
+        return null;
+    }
+
+    /**
+     * Convert XML to text.
+     *
+     * @param string $xml
+     *
+     * @return string
+     */
+    public function fromXmlToText(string $xml): string
+    {
+        return $xml;
     }
 }

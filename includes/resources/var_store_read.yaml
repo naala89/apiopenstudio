@@ -21,46 +21,59 @@ appid: 1
 ttl: 0
 
 security:
-    id: var_store_read_security
-    processor: validate_token
+    id: var store read security
+    processor: validate_token_roles
+    roles:
+        - Administrator
+        - Account manager
+        - Application manager
+        - Developer
+    validate_account: false
+    validate_application: false
 
 process:
     processor: var_store_read
-    id: var_store_read_process
-    validate_access:
-        processor: literal
-        id: var_store_read_validate_access
-        value: true
-        type: boolean
+    id: var store read process
+    validate_access: true
     vid:
         processor: var_get
-        id: var_store_read_vid
+        id: var store read vid
         nullable: true
         expected_type: integer
         key: vid
+    accid:
+        processor: var_get
+        id: var store read appid
+        nullable: true
+        expected_type: integer
+        key: accid
     appid:
         processor: var_get
-        id: var_store_read_appid
+        id: var store read appid
         nullable: true
         expected_type: integer
         key: appid
     key:
         processor: var_get
-        id: var_store_read_key
+        id: var store read key
         key: key
+        expected_type: text
         nullable: true
     keyword:
         processor: var_get
-        id: var_store_read_keyword
+        id: var store read keyword
         nullable: true
+        expected_type: text
         key: keyword
     order_by:
         processor: var_get
-        id: var_store_read_order_by
+        id: var store read order by
         nullable: true
+        expected_type: text
         key: order_by
     direction:
         processor: var_get
-        id: var_store_read_direction
+        id: var store read direction
         nullable: true
+        expected_type: text
         key: direction

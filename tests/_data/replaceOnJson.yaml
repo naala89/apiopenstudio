@@ -1,0 +1,42 @@
+name: Test replace on json
+
+description: Testing the replace processor on a json value
+
+uri: replace/json
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test replace on json security
+    roles:
+        - Developer
+
+process:
+    processor: replace
+    id: test replace on json process
+    haystack:
+        processor: var_literal
+        id: test replace on json haystack
+        value: '{"fruit": "Apple","size": "Large","color": "Red"}'
+        type: json
+    needle:
+        processor: var_get
+        id: test replace on json needle
+        key: needle
+        nullable: true
+    value:
+        processor: var_get
+        id: test replace on json value
+        key: value
+        nullable: true
+    ignore_case:
+        processor: var_get
+        id: test replace on json ignore_case
+        key: ignore_case
+        expected_type: boolean
+        nullable: true

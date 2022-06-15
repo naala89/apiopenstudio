@@ -229,7 +229,7 @@ foreach ($json['data'] as $index => $processor) {
                 'xml',
                 'image',
                 'file',
-                'empty',
+                'undefined',
             ];
             if (!in_array($limitType, $limitTypes)) {
                 $message = "The processor: $processorName can only have a value of ";

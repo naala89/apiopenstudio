@@ -22,148 +22,134 @@ namespace ApiOpenStudio\Core;
 trait ConvertToImageTrait
 {
     /**
-     * Convert empty to image.
+     * Convert array to image.
      *
-     * @param $data
+     * @param array $array
      *
-     * @return null
+     * @throws ApiException
      */
-    public function fromEmptyToImage($data)
+    public function fromArrayToImage(array $array)
     {
-        return null;
+        throw new ApiException('Cannot cast array to image', 6, -1, 400);
     }
 
     /**
      * Convert boolean to image.
      *
-     * @param $data
-     *
-     * @return string
+     * @param bool $boolean
      *
      * @throws ApiException
      */
-    public function fromBooleanToImage($data): string
+    public function fromBooleanToImage(bool $boolean)
     {
-        throw new ApiException('Cannot cast boolean to image');
-    }
-
-    /**
-     * Convert integer to image.
-     *
-     * @param $data
-     *
-     * @return string
-     *
-     * @throws ApiException
-     */
-    public function fromIntegerToImage($data): string
-    {
-        throw new ApiException('Cannot cast integer to image');
-    }
-
-    /**
-     * Convert float to image.
-     *
-     * @param $data
-     *
-     * @return string
-     *
-     * @throws ApiException
-     */
-    public function fromFloatToImage($data): string
-    {
-        throw new ApiException('Cannot cast float to image');
-    }
-
-    /**
-     * Convert text to image.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromTextToImage($data): string
-    {
-        return $data;
-    }
-
-    /**
-     * Convert array to image.
-     *
-     * @param $data
-     *
-     * @return string
-     *
-     * @throws ApiException
-     */
-    public function fromArrayToImage($data): string
-    {
-        throw new ApiException('Cannot cast array to image');
-    }
-
-    /**
-     * Convert JSON to image.
-     *
-     * @param $data
-     *
-     * @return string
-     *
-     * @throws ApiException
-     */
-    public function fromJsonToImage($data): string
-    {
-        throw new ApiException('Cannot cast JSON to image');
-    }
-
-    /**
-     * Convert XML to image.
-     *
-     * @param $data
-     *
-     * @return string
-     *
-     * @throws ApiException
-     */
-    public function fromXmlToImage($data): string
-    {
-        throw new ApiException('Cannot cast XML to image');
-    }
-
-    /**
-     * Convert HTML to image.
-     *
-     * @param $data
-     *
-     * @return string
-     *
-     * @throws ApiException
-     */
-    public function fromHtmlToImage($data): string
-    {
-        throw new ApiException('Cannot cast HTML to image');
-    }
-
-    /**
-     * Convert image to image.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromImageToImage($data): string
-    {
-        return $data;
+        throw new ApiException('Cannot cast boolean to image', 6, -1, 400);
     }
 
     /**
      * Convert file to image.
      *
-     * @param $data
+     * @param $file
      *
      * @return string
      */
-    public function fromFileToImage($data): string
+    public function fromFileToImage($file): string
     {
-        return $data;
+        return $file;
+    }
+
+    /**
+     * Convert float to image.
+     *
+     * @param float $float
+     *
+     * @throws ApiException
+     */
+    public function fromFloatToImage(float $float)
+    {
+        throw new ApiException('Cannot cast float to image', 6, -1, 400);
+    }
+
+    /**
+     * Convert HTML to image.
+     *
+     * @param string $html
+     *
+     * @throws ApiException
+     */
+    public function fromHtmlToImage(string $html)
+    {
+        throw new ApiException('Cannot cast HTML to image', 6, -1, 400);
+    }
+
+    /**
+     * Convert image to image.
+     *
+     * @param $image
+     *
+     * @return string
+     */
+    public function fromImageToImage($image): string
+    {
+        return $image;
+    }
+
+    /**
+     * Convert integer to image.
+     *
+     * @param int $integer
+     *
+     * @throws ApiException
+     */
+    public function fromIntegerToImage(int $integer)
+    {
+        throw new ApiException('Cannot cast integer to image', 6, -1, 400);
+    }
+
+    /**
+     * Convert JSON to image.
+     *
+     * @param string $json
+     *
+     * @throws ApiException
+     */
+    public function fromJsonToImage(string $json)
+    {
+        throw new ApiException('Cannot cast JSON to image', 6, -1, 400);
+    }
+
+    /**
+     * Convert text to image.
+     *
+     * @param string $text
+     *
+     * @return string
+     */
+    public function fromTextToImage(string $text): string
+    {
+        return $text;
+    }
+
+    /**
+     * Convert undefined to image.
+     *
+     * @param $data
+     *
+     * @return null
+     */
+    public function fromUndefinedToImage($data)
+    {
+        return null;
+    }
+
+    /**
+     * Convert XML to image.
+     *
+     * @param string $xml
+     *
+     * @throws ApiException
+     */
+    public function fromXmlToImage(string $xml)
+    {
+        throw new ApiException('Cannot cast XML to image', 6, -1, 400);
     }
 }

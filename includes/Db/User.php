@@ -368,11 +368,11 @@ class User
     /**
      * Set the honorific.
      *
-     * @param string $honorific Honorific.
+     * @param string|null $honorific Honorific.
      *
      * @return void
      */
-    public function setHonorific(string $honorific)
+    public function setHonorific(string $honorific = null)
     {
         $this->honorific = $honorific;
     }
@@ -390,11 +390,11 @@ class User
     /**
      * Set the first name.
      *
-     * @param string $nameFirst First name.
+     * @param string|null $nameFirst First name.
      *
      * @return void
      */
-    public function setNameFirst(string $nameFirst)
+    public function setNameFirst(string $nameFirst = null)
     {
         $this->nameFirst = $nameFirst;
     }
@@ -412,11 +412,11 @@ class User
     /**
      * Set the last name.
      *
-     * @param string $nameLast Last name.
+     * @param string|null $nameLast Last name.
      *
      * @return void
      */
-    public function setNameLast(string $nameLast)
+    public function setNameLast(string $nameLast = null)
     {
         $this->nameLast = $nameLast;
     }
@@ -434,11 +434,11 @@ class User
     /**
      * Set the company.
      *
-     * @param string $company Company.
+     * @param string|null $company Company.
      *
      * @return void
      */
-    public function setCompany(string $company)
+    public function setCompany(string $company = null)
     {
         $this->company = $company;
     }
@@ -456,11 +456,11 @@ class User
     /**
      * Set the website.
      *
-     * @param string $website Website.
+     * @param string|null $website Website.
      *
      * @return void
      */
-    public function setWebsite(string $website)
+    public function setWebsite(string $website = null)
     {
         $this->website = $website;
     }
@@ -478,11 +478,11 @@ class User
     /**
      * Set the street address.
      *
-     * @param string $addressStreet Street address.
+     * @param string|null $addressStreet Street address.
      *
      * @return void
      */
-    public function setAddressStreet(string $addressStreet)
+    public function setAddressStreet(string $addressStreet = null)
     {
         $this->addressStreet = $addressStreet;
     }
@@ -500,11 +500,11 @@ class User
     /**
      * Set the suburb.
      *
-     * @param string $addressSuburb Suburb.
+     * @param string|null $addressSuburb Suburb.
      *
      * @return void
      */
-    public function setAddressSuburb(string $addressSuburb)
+    public function setAddressSuburb(string $addressSuburb = null)
     {
         $this->addressSuburb = $addressSuburb;
     }
@@ -522,11 +522,11 @@ class User
     /**
      * Set the city.
      *
-     * @param string $addressCity City.
+     * @param string|null $addressCity City.
      *
      * @return void
      */
-    public function setAddressCity(string $addressCity)
+    public function setAddressCity(string $addressCity = null)
     {
         $this->addressCity = $addressCity;
     }
@@ -544,11 +544,11 @@ class User
     /**
      * Set the state.
      *
-     * @param string $addressState State.
+     * @param string|null $addressState State.
      *
      * @return void
      */
-    public function setAddressState(string $addressState)
+    public function setAddressState(string $addressState = null)
     {
         $this->addressState = $addressState;
     }
@@ -566,11 +566,11 @@ class User
     /**
      * Set the country.
      *
-     * @param string $addressCountry Country.
+     * @param string|null $addressCountry Country.
      *
      * @return void
      */
-    public function setAddressCountry(string $addressCountry)
+    public function setAddressCountry(string $addressCountry = null)
     {
         $this->addressCountry = $addressCountry;
     }
@@ -588,11 +588,11 @@ class User
     /**
      * Set the postcode.
      *
-     * @param string $addressPostcode Postcode.
+     * @param string|null $addressPostcode Postcode.
      *
      * @return void
      */
-    public function setAddressPostcode(string $addressPostcode)
+    public function setAddressPostcode(string $addressPostcode = null)
     {
         $this->addressPostcode = $addressPostcode;
     }
@@ -610,11 +610,11 @@ class User
     /**
      * Set the mobile phone number.
      *
-     * @param string $phoneMobile Mobile phone number.
+     * @param string|null $phoneMobile Mobile phone number.
      *
      * @return void
      */
-    public function setPhoneMobile(string $phoneMobile)
+    public function setPhoneMobile(string $phoneMobile = null)
     {
         $this->phoneMobile = $phoneMobile;
     }
@@ -632,11 +632,11 @@ class User
     /**
      * Set the work phone number.
      *
-     * @param string $phoneWork Work phone number.
+     * @param string|null $phoneWork Work phone number.
      *
      * @return void
      */
-    public function setPhoneWork(string $phoneWork)
+    public function setPhoneWork(string $phoneWork = null)
     {
         $this->phoneWork = $phoneWork;
     }

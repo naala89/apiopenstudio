@@ -45,6 +45,7 @@ try {
     $outputClass = ucfirst($api->getAccept($defaultFormat));
     if ($outputClass == 'Text' || $outputClass == 'Plain') {
         $logger->error('api', $e->getMessage());
+        header(':', true, $e->getHtmlCode());
         echo 'Error: ' . $e->getMessage();
         exit();
     }

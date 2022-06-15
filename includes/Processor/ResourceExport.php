@@ -57,7 +57,7 @@ class ResourceExport extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'format' => [
                 'description' => 'The format to save the file as.',

@@ -14,14 +14,16 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ApiException;
 
 /**
  * Class Mapper
  *
  * Processor class te merge multiple data sets.
  */
-class Merge extends Core\ProcessorEntity
+class Merge extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -34,61 +36,82 @@ class Merge extends Core\ProcessorEntity
         'description' => 'Merge multiple data-sets.',
         'menu' => 'Data operation',
         'input' => [
-          'sources' => [
-            'description' => 'The data-sets to be merged.',
-            'cardinality' => [2, '*'],
-            'literalAllowed' => true,
-            'limitProcessors' => [],
-            'limitTypes' => [],
-            'limitValues' => [],
-            'default' => '',
-          ],
-          'mergeType' => [
-            'description' => 'The merge operation to perform.',
-            'cardinality' => [1, 1],
-            'literalAllowed' => true,
-            'limitProcessors' => [],
-            'limitTypes' => ['text'],
-            'limitValues' => ['union', 'intersect', 'difference'],
-            'default' => 'union',
-          ],
-          'unique' => [
-            'description' => 'Disallow duplicate values.',
-            'cardinality' => [0, 1],
-            'literalAllowed' => true,
-            'limitProcessors' => [],
-            'limitTypes' => ['boolean'],
-            'limitValues' => [],
-            'default' => false,
-          ],
+            'sources' => [
+                'description' => 'The data-sets to be merged.',
+                'cardinality' => [2, '*'],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => null,
+            ],
+            'merge_type' => [
+                'description' => 'The merge operation to perform.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => ['union', 'intersect', 'difference'],
+                'default' => 'union',
+            ],
+            'unique' => [
+                'description' => 'Remove duplicate values.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => false,
+            ],
+            'reset_keys' => [
+                // phpcs:ignore
+                'description' => 'Reset the result array keys. This will only apply when using numeric keys in the source arrays, after removing duplicates',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => false,
+            ],
         ],
     ];
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
         $sources = $this->val('sources', true);
         $unique = $this->val('unique', true);
-        $mergeType = $this->val('mergeType', true);
-        $method = strtolower(trim($mergeType));
+        $resetKeys = $this->val('reset_keys', true);
+        $mergeType = $this->val('merge_type', true);
+        $mergeType = strtolower(trim($mergeType));
 
-        if (!method_exists($this, $method)) {
-            throw new Core\ApiException("invalid mergeType: $mergeType", 6, $this->id, 400);
+        if (!method_exists($this, $mergeType)) {
+            throw new ApiException("invalid mergeType: $mergeType", 6, $this->id, 400);
         }
 
-        if ($unique === true) {
-            return new Core\DataContainer(array_unique($this->$method($sources)), 'array');
+        $result = $this->$mergeType($sources);
+        if ($unique) {
+            $result = array_unique($result);
+        }
+        if ($resetKeys) {
+            $result = array_values($result);
         }
 
-        return new Core\DataContainer($this->$method($sources), 'array');
+        try {
+            $result = new DataContainer($result, 'array');
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+
+        return $result;
     }
 
     /**

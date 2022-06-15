@@ -1,0 +1,42 @@
+name: Test replace on xml
+
+description: Testing the replace processor on a xml value
+
+uri: replace/xml
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test replace on xml security
+    roles:
+        - Developer
+
+process:
+    processor: replace
+    id: test replace on xml process
+    haystack:
+        processor: var_literal
+        id: test replace on xml haystack
+        value: <?xml version='1.0' encoding='utf-8' ?><note><to>Tove</to><from>Jani</from><heading>Reminder</heading><body>Don't forget me this weekend!</body></note>
+        type: xml
+    needle:
+        processor: var_get
+        id: test replace on xml needle
+        key: needle
+        nullable: true
+    value:
+        processor: var_get
+        id: test replace on xml value
+        key: value
+        nullable: true
+    ignore_case:
+        processor: var_get
+        id: test replace on xml ignore_case
+        key: ignore_case
+        expected_type: boolean
+        nullable: true

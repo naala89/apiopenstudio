@@ -28,7 +28,6 @@ use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
 use ApiOpenStudio\Core\ResourceValidator;
-use ReflectionException;
 
 /**
  * Class ResourceCreate
@@ -37,6 +36,92 @@ use ReflectionException;
  */
 class ResourceCreate extends ProcessorEntity
 {
+    /**
+     * {@inheritDoc}
+     *
+     * @var array Details of the processor.
+     */
+    protected array $details = [
+        'name' => 'Resource create',
+        'machineName' => 'resource_create',
+        'description' => 'Create a resource.',
+        'menu' => 'Admin',
+        'input' => [
+            'name' => [
+                'description' => 'The resource name.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => null,
+            ],
+            'description' => [
+                'description' => 'The resource description.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => null,
+            ],
+            'appid' => [
+                'description' => 'The application ID the resource is associated with.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => null,
+            ],
+            'method' => [
+                'description' => 'The resource HTTP method.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => ['get', 'post', 'put', 'delete'],
+                'default' => null,
+            ],
+            'uri' => [
+                'description' => 'The resource URI.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => null,
+            ],
+            'ttl' => [
+                'description' => 'The resource TTL in seconds.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => 0,
+            ],
+            'metadata' => [
+                'description' => 'The resource metadata (security and process sections) as a JSON string.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['json'],
+                'limitValues' => [],
+                'default' => null,
+            ],
+            'openapi' => [
+                'description' => 'The resource OpenApi definition partial, for this path only.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['json'],
+                'limitValues' => [],
+                'default' => null,
+            ],
+        ],
+    ];
+
     /**
      * Config class.
      *
@@ -71,92 +156,6 @@ class ResourceCreate extends ProcessorEntity
      * @var ResourceValidator
      */
     private ResourceValidator $validator;
-
-    /**
-     * {@inheritDoc}
-     *
-     * @var array Details of the processor.
-     */
-    protected array $details = [
-        'name' => 'Resource create',
-        'machineName' => 'resource_create',
-        'description' => 'Create a resource.',
-        'menu' => 'Admin',
-        'input' => [
-            'name' => [
-                'description' => 'The resource name.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
-            'description' => [
-                'description' => 'The resource description.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
-            'appid' => [
-                'description' => 'The application ID the resource is associated with.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['integer'],
-                'limitValues' => [],
-                'default' => '',
-            ],
-            'method' => [
-                'description' => 'The resource HTTP method.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => ['get', 'post', 'put', 'delete'],
-                'default' => '',
-            ],
-            'uri' => [
-                'description' => 'The resource URI.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
-            'ttl' => [
-                'description' => 'The resource TTL in seconds.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['integer'],
-                'limitValues' => [],
-                'default' => 0,
-            ],
-            'metadata' => [
-                'description' => 'The resource metadata (security and process sections) as a JSON string.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['json'],
-                'limitValues' => [],
-                'default' => '',
-            ],
-            'openapi' => [
-                'description' => 'The resource OpenApi definition partial, for this path only.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['json'],
-                'limitValues' => [],
-                'default' => '',
-            ],
-        ],
-    ];
 
     /**
      * ResourceCreate constructor.

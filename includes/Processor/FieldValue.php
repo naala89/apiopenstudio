@@ -14,14 +14,16 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ProcessorEntity;
 
 /**
  * Class FieldValue
  *
  * Processor class to fetch the key or value from a field.
  */
-class FieldValue extends Core\ProcessorEntity
+class FieldValue extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -41,7 +43,7 @@ class FieldValue extends Core\ProcessorEntity
                 'limitProcessors' => ['var_field'],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'key_value' => [
                 'description' => 'Return the key or value.',
@@ -58,11 +60,11 @@ class FieldValue extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -71,6 +73,6 @@ class FieldValue extends Core\ProcessorEntity
 
         $keys = array_keys($field);
 
-        return new Core\DataContainer($keyValue == 'value' ? $field[$keys[0]] : $keys[0]);
+        return new DataContainer($keyValue == 'value' ? $field[$keys[0]] : $keys[0]);
     }
 }

@@ -1,0 +1,23 @@
+name: Testing return of text containing a boolean
+
+description: Testing return of text containing a boolean
+
+uri: text/boolean
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test text containing a boolean security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test text containing a boolean process
+    value: true
+    type: text

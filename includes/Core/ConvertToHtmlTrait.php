@@ -22,173 +22,206 @@ namespace ApiOpenStudio\Core;
 trait ConvertToHtmlTrait
 {
     /**
-     * Convert empty to HTML.
+     * Convert array to HTML string.
      *
-     * @param $data
+     * If the array does not have a html element at the root, then the array will be converted to a data-list and will
+     * be appended to the body of the new HTML doc.
+     *
+     * @param array|null $array
      *
      * @return string
      */
-    public function fromEmptyToHtml($data): string
+    public function fromArrayToHtml(?array $array): string
     {
-        return $this->wrapDataHtmlFormat($data);
+        $array = $array ?? [];
+        if (!isset($array['html'])) {
+            return $this->wrapDataHtmlFormat($this->fromArrayToDataList($array));
+        }
+        $htmlConverter = new ConvertHtml();
+        return $htmlConverter->arrayToHtml($array);
     }
 
     /**
      * Convert boolean to HTML string.
+     * The boolean will be within a div in the body of the new HTML doc.
      *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromBooleanToHtml($data): string
-    {
-        return $this->wrapDataHtmlFormat($data ? 'true' : 'false');
-    }
-
-    /**
-     * Convert integer to HTML string.
-     *
-     * @param $data
+     * @param ?bool $boolean
      *
      * @return string
      */
-    public function fromIntegerToHtml($data): string
+    public function fromBooleanToHtml(?bool $boolean): string
     {
-        return $this->wrapDataHtmlFormat("<div>$data</div>");
-    }
-
-    /**
-     * Convert float to HTML string.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromFloatToHtml($data): string
-    {
-        return $this->wrapDataHtmlFormat("<div>$data</div>");
-    }
-
-    /**
-     * Convert text to HTML string.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromTextToHtml($data): string
-    {
-        if (!$this->isHtml($data)) {
-            return $this->wrapDataHtmlFormat("<div>$data</div>");
+        if (is_null($boolean)) {
+            $boolean = '';
+        } else {
+            $boolean = $boolean ? 'true' : 'false';
         }
-        return $data;
-    }
-
-    /**
-     * Convert array to HTML string.
-     *
-     * @param array $data
-     *
-     * @return string
-     */
-    public function fromArrayToHtml(array $data): string
-    {
-        return $this->wrapDataHtmlFormat($this->fromArrayToDataList($data));
-    }
-
-    /**
-     * Convert array to HTML Data List string.
-     *
-     * @param array $data
-     *
-     * @return string
-     */
-    protected function fromArrayToDataList(array $data): string
-    {
-        $arrayString = '<dl>';
-        foreach ($data as $key => $val) {
-            if (is_array($val)) {
-                $val = $this->fromArrayToDataList($val);
-            }
-            $arrayString .= "<dt>$key</dt><dd>$val</dd>";
-        }
-        $arrayString .= '</dl>';
-        return $arrayString;
-    }
-
-    /**
-     * Convert JSON string to HTML string.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromJsonToHtml($data): string
-    {
-        $array = json_decode($data, true);
-        return $this->fromArrayToHtml($array);
-    }
-
-    /**
-     * Convert XML string to HTML string.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromXmlToHtml($data): string
-    {
-        return $data;
-    }
-
-    /**
-     * Convert an HTML string to HTML string.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromHtmlToHtml($data): string
-    {
-        return $data;
-    }
-
-    /**
-     * Convert an image string to HTML string.
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function fromImageToHtml($data): string
-    {
-        return $this->wrapDataHtmlFormat("<div>$data</div>");
+        return $this->wrapDataHtmlFormat("<div>$boolean</div>");
     }
 
     /**
      * Convert file to HTML string.
      *
+     * @param $file
+     *
+     * @return string
+     */
+    public function fromFileToHtml($file): string
+    {
+        return $this->wrapDataHtmlFormat("<div>$file</div>");
+    }
+
+    /**
+     * Convert float to HTML string.
+     * The float will be within a div in the body of the new HTML doc.
+     *
+     * @param float|null $float
+     * @return string
+     */
+    public function fromFloatToHtml(?float $float): string
+    {
+        return $this->wrapDataHtmlFormat("<div>$float</div>");
+    }
+
+    /**
+     * Convert an HTML string to HTML string.
+     *
+     * @param string $html
+     *
+     * @return string
+     */
+    public function fromHtmlToHtml(string $html): string
+    {
+        return $html;
+    }
+
+    /**
+     * Convert an image string to HTML string.
+     *
+     * @param $image
+     *
+     * @return string
+     */
+    public function fromImageToHtml($image): string
+    {
+        return $this->wrapDataHtmlFormat("<div>$image</div>");
+    }
+
+    /**
+     * Convert integer to HTML string.
+     * The integer will be within a div in the body of the new HTML doc.
+     *
+     * @param integer|float|null $integer
+     *
+     * @return string
+     */
+    public function fromIntegerToHtml($integer): string
+    {
+        return $this->wrapDataHtmlFormat("<div>$integer</div>");
+    }
+
+    /**
+     * Convert JSON string to HTML string.
+     *
+     * @param string|null $json
+     *
+     * @return string
+     */
+    public function fromJsonToHtml(?string $json): string
+    {
+        $jsonDecoded = json_decode($json, true);
+        if (is_numeric($jsonDecoded)) {
+            return $this->fromFloatToHtml($jsonDecoded);
+        } elseif (is_null($jsonDecoded)) {
+            return $this->fromUndefinedToHtml($jsonDecoded);
+        } elseif (is_string($jsonDecoded)) {
+            return $this->fromTextToHtml($jsonDecoded);
+        } elseif (is_bool($jsonDecoded)) {
+            return $this->fromBooleanToHtml($jsonDecoded);
+        }
+        return $this->fromArrayToHtml($jsonDecoded);
+    }
+
+    /**
+     * Convert text to HTML string.
+     * The text will be within a div in the body of the new HTML doc.
+     *
+     * @param string $text
+     *
+     * @return string
+     */
+    public function fromTextToHtml(string $text): string
+    {
+        if (!$this->isHtml($text)) {
+            return $this->wrapDataHtmlFormat("<div>$text</div>");
+        }
+        return $text;
+    }
+
+    /**
+     * Convert undefined to HTML.
+     * Creates an empty HTML doc.
+     *
      * @param $data
      *
      * @return string
      */
-    public function fromFileToHtml($data): string
+    public function fromUndefinedToHtml($data): string
     {
-        return $this->wrapDataHtmlFormat("<div>$data</div>");
+        return $this->wrapDataHtmlFormat('<div>null</div>');
+    }
+
+    /**
+     * Convert XML string to HTML string.
+     *
+     * @param string $xml
+     *
+     * @return string
+     */
+    public function fromXmlToHtml(string $xml): string
+    {
+        $xml = preg_replace("|<\?\s*xml.*\?>|", '', $xml);
+        return $this->wrapDataHtmlFormat($xml);
+    }
+
+    /**
+     * Convert array to HTML Data List string.
+     *
+     * @param array $array
+     *
+     * @return string
+     */
+    protected function fromArrayToDataList(array $array): string
+    {
+        $dataList = '<dl>';
+        foreach ($array as $key => $val) {
+            if (is_array($val)) {
+                $val = $this->fromArrayToDataList($val);
+            }
+            $dataList .= "<dt>$key</dt><dd>$val</dd>";
+        }
+        $dataList .= '</dl>';
+        return $dataList;
     }
 
     /**
      * Wrap Data in HTML string wrapper.
      *
-     * @param $data
+     * @param string $body
+     *   Body content.
+     * @param string $pageTitle
+     *   HTML doc title.
      *
      * @return string
      */
-    protected function wrapDataHtmlFormat($data): string
+    protected function wrapDataHtmlFormat(string $body, string $pageTitle = 'HTML generated by ApiOpenStudio'): string
     {
-        $prefix = '<!DOCTYPE html><html lang="en-us">';
-        $prefix .= '<head><meta charset="utf-8" /><title>HTML generated by ApiOpenStudio</title></head><body>';
-        $suffix = '</body></html>';
-        return $prefix . $data . $suffix;
+        $html = "<!DOCTYPE html>\n";
+        $html .= '<html lang="en-us">';
+        $html .= '<head><meta charset="utf-8" /><title>' . $pageTitle . '</title></head>';
+        $html .= "<body>$body</body>";
+        $html .= '</html>';
+
+        return $html;
     }
 }

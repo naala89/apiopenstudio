@@ -21,7 +21,7 @@ use ApiOpenStudio\Core\DetectTypeTrait;
 /**
  * Class Json
  *
- * Outputs the results as a JSON.
+ * Outputs the results as a JSON string.
  */
 class Json extends Output
 {
@@ -85,22 +85,37 @@ class Json extends Output
      */
     protected function castData(): void
     {
+        $inputData = $this->data->getData();
+        $inputType = $this->data->getType();
+
         try {
-            $data = $this->data->getData();
-            $currentType = $this->data->getType();
-            $method = 'from' . ucfirst(strtolower($currentType)) . 'ToJson';
-            $data = $this->$method($data);
-            try {
-                if (
-                    $this->settings->__get(['api', 'wrap_json_in_response_object'])
-                    && (!is_array($this->data->getData()) || array_keys($this->data->getData()) != ['result', 'data'])
-                ) {
-                    $data = json_encode(['result' => 'ok', 'data' => json_decode($data)]);
+            $method = 'from' . ucfirst(strtolower($inputType)) . 'ToJson';
+            $resultData = $this->$method($inputData);
+
+            if ($this->settings->__get(['api', 'wrap_json_in_response_object'])) {
+                // Wrap JSON in the wrapper object if required by the settings.
+                if (in_array($inputType, ['json', 'array', 'xml', 'html']) && !is_bool($resultData)) {
+                    $decoded = json_decode($resultData, true);
+                    $resultData = is_null($decoded) ? $resultData : $decoded;
                 }
-            } catch (ApiException $e) {
-                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+                if (
+                    !is_array($resultData)
+                    || sizeof($resultData) != 2
+                    || !isset($resultData['result'])
+                    || !isset($resultData['data'])
+                ) {
+                    $resultData = [
+                        'result' => 'ok',
+                        'data' => $resultData,
+                    ];
+                }
+                $resultData = json_encode($resultData);
+            } elseif ($inputType == 'text') {
+                // Wrap text values in double quotes so that they are parseable as valid JSON.
+                $resultData = '"' . $resultData . '"';
             }
-            $this->data->setData($data);
+
+            $this->data->setData($resultData);
             $this->data->setType('json');
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());

@@ -83,7 +83,7 @@ class PasswordReset extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'token' => [
                 'description' => 'The password reset token.',
@@ -92,7 +92,7 @@ class PasswordReset extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'password' => [
                 'description' => 'The new password.',
@@ -101,7 +101,7 @@ class PasswordReset extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

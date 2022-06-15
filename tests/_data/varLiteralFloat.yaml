@@ -1,0 +1,28 @@
+name: Testing var_literal float
+
+description: Test var_literal processor with float
+
+uri: var_literal/float
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test var_literal float security
+    roles:
+        - Consumer
+
+process:
+    processor: var_literal
+    id: test var_literal float var_literal
+    value: 34.141
+    type:
+        processor: var_get
+        id: test var_literal float type
+        key: type
+        nullable: true
+        expected_type: text

@@ -43,19 +43,19 @@ class VarBody extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [
-                    'boolean',
-                    'integer',
-                    'float',
-                    'text',
                     'array',
-                    'json',
-                    'xml',
+                    'boolean',
+                    'file',
                     'html',
                     'image',
-                    'file',
-                    'empty',
+                    'integer',
+                    'json',
+                    'float',
+                    'text',
+                    'undefined',
+                    'xml',
                 ],
-                'default' => '',
+                'default' => null,
             ],
             'nullable' => [
                 'description' => 'Throw an error if the body is empty.',
@@ -85,7 +85,7 @@ class VarBody extends Core\ProcessorEntity
         $data = file_get_contents('php://input');
 
         if (empty($data) && !$nullable) {
-            throw new ApiException("Body is empty", 6, $this->id);
+            throw new ApiException("Body is empty", 6, $this->id, 400);
         }
 
         if (!empty($expectedType)) {

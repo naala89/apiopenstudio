@@ -301,4 +301,7 @@ $I->seeResponseMatchesJsonType([
 $I->sendDelete("$uri/$accid");
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
-$I->seeResponseContains('true');
+$I->seeResponseContainsJson([
+    'result' => 'ok',
+    'data' => true,
+]);

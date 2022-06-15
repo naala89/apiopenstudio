@@ -65,7 +65,7 @@ class AccountRead extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'order_by' => [
                 'description' => 'Order by column. This is only used when getting "all" accounts.',
@@ -74,7 +74,7 @@ class AccountRead extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => ['accid', 'name'],
-                'default' => '',
+                'default' => null,
             ],
             'direction' => [
                 'description' => 'Order by direction. This is only used when getting "all" accounts.',
@@ -83,7 +83,7 @@ class AccountRead extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => ['asc', 'desc'],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];

@@ -1,0 +1,33 @@
+name: Testing var_body
+
+description: Test var_body processor
+
+uri: var_body
+
+method: post
+
+appid: 2
+
+ttl: 0
+
+security:
+    id: test var_body security
+    processor: validate_token_roles
+    roles:
+        - Consumer
+        - Developer
+
+process:
+    processor: var_body
+    id: test var_body process
+    expected_type:
+        processor: var_get
+        id: test var_body expected_type
+        key: expected_type
+        nullable: true
+    nullable:
+        processor: var_get
+        id: test var_body nullable
+        key: nullable
+        nullable: true
+        expected_type: boolean

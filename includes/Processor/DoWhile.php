@@ -50,7 +50,7 @@ class DoWhile extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
                 'conditional' => true,
             ],
             'rhs' => [
@@ -60,7 +60,7 @@ class DoWhile extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
                 'conditional' => true,
             ],
             'operator' => [
@@ -70,7 +70,7 @@ class DoWhile extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => ['==', '!=', '>', '>=', '<', '<='],
-                'default' => '',
+                'default' => null,
                 'conditional' => true,
             ],
             'process_loop' => [

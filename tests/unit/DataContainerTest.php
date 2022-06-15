@@ -23,12 +23,12 @@ class DataContainerTest extends Unit
     {
         $container = new DataContainer(true);
         $this->assertIsBool($container->getData(), 'Boolean true is no longer a boolean.');
-        $this->assertTrue($container->getData(), 'Boolean true is no longer a boolean.');
+        $this->assertTrue($container->getData(), 'Boolean true is no longer true.');
         $this->assertEquals('boolean', $container->getType(), 'Boolean true has the wrong data type.');
 
         $container = new DataContainer(true, 'boolean');
         $this->assertIsBool($container->getData(), 'Explicitly cast boolean true is no longer a boolean.');
-        $this->assertTrue($container->getData(), 'Boolean true is no longer a boolean.');
+        $this->assertTrue($container->getData(), 'Explicitly cast boolean true is no longer true.');
         $this->assertEquals('boolean', $container->getType(), 'Boolean true has the wrong data type.');
 
         $container = new DataContainer(false);
@@ -235,12 +235,12 @@ class DataContainerTest extends Unit
         $container = new DataContainer('');
         $this->assertEquals('', $container->getData(), 'Data not stored correctly.');
         $this->assertEmpty($container->getData(), 'Data not stored correctly.');
-        $this->assertEquals('empty', $container->getType(), 'Incorrect data type stored.');
+        $this->assertEquals('text', $container->getType(), 'Incorrect data type stored.');
 
         $container = new DataContainer(null);
         $this->assertEquals(null, $container->getData(), 'Data not stored correctly.');
         $this->assertEmpty($container->getData(), 'Data not stored correctly.');
-        $this->assertEquals('empty', $container->getType(), 'Incorrect data type stored.');
+        $this->assertEquals('undefined', $container->getType(), 'Incorrect data type stored.');
     }
 
     public function testDataContainerArray()

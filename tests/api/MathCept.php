@@ -40,7 +40,7 @@ $errorData = [
     ['()', 'Stack must be empty.'],
     [') (', 'Unidentified error.'],
     ['(1+1)5', 'Stack must be empty.'],
-    ['pi e', 'Pie.'],
+    ['pi e', 'Stack must be empty.'],
     ['1*E1', 'E1.'],
     ['3 * x6', 'X6.', ['x' => '1']],
     ['  ', 'Stack must be empty.'],
@@ -49,7 +49,7 @@ $errorData = [
     ['(x))', 'Unidentified error.'],
 ];
 
-$I->wantTo('Test formulas that will return NaN.');
+$I->wantTo('Test formulas that will return NAN.');
 foreach ($nanData as $formula) {
     $I->wantTo("Test formula $formula.");
     $I->sendGet($uri, ['formula' => $formula]);
@@ -57,7 +57,7 @@ foreach ($nanData as $formula) {
     $I->seeResponseIsJson();
     $I->seeResponseContainsJson([
         'result' => 'ok',
-        'data' => 'NaN',
+        'data' => 'NAN',
     ]);
 }
 

@@ -14,30 +14,42 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\DetectTypeTrait;
 use ApiOpenStudio\Core\ConvertToArrayTrait;
 use ApiOpenStudio\Core\ConvertToBooleanTrait;
+use ApiOpenStudio\Core\ConvertToFileTrait;
 use ApiOpenStudio\Core\ConvertToFloatTrait;
 use ApiOpenStudio\Core\ConvertToHtmlTrait;
 use ApiOpenStudio\Core\ConvertToImageTrait;
 use ApiOpenStudio\Core\ConvertToIntegerTrait;
 use ApiOpenStudio\Core\ConvertToJsonTrait;
 use ApiOpenStudio\Core\ConvertToTextTrait;
+use ApiOpenStudio\Core\ConvertToUndefinedTrait;
 use ApiOpenStudio\Core\ConvertToXmlTrait;
-use ApiOpenStudio\Core\DetectTypeTrait;
 
 /**
  * Class Cast
  *
  * Processor class to cast an input value (or DataContainer) to another data type.
  */
-class Cast extends Core\ProcessorEntity
+class Cast extends ProcessorEntity
 {
     // phpcs:ignore
-    use DetectTypeTrait, ConvertToBooleanTrait, ConvertToIntegerTrait, ConvertToFloatTrait, ConvertToTextTrait, ConvertToArrayTrait, ConvertToJsonTrait, ConvertToXmlTrait, ConvertToHtmlTrait, ConvertToImageTrait {
-        ConvertToJsonTrait::xml2json insteadof ConvertToArrayTrait;
-    }
+    use DetectTypeTrait,
+        ConvertToArrayTrait,
+        ConvertToBooleanTrait,
+        ConvertToFileTrait,
+        ConvertToFloatTrait,
+        ConvertToHtmlTrait,
+        ConvertToImageTrait,
+        ConvertToIntegerTrait,
+        ConvertToJsonTrait,
+        ConvertToTextTrait,
+        ConvertToUndefinedTrait,
+        ConvertToXmlTrait;
 
     /**
      * {@inheritDoc}
@@ -57,28 +69,28 @@ class Cast extends Core\ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'data_type' => [
                 'description' => 'The data type to cast to.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => [],
+                'limitTypes' => ['text'],
                 'limitValues' => [
-                    'boolean',
-                    'integer',
-                    'float',
-                    'text',
                     'array',
-                    'json',
-                    'xml',
+                    'boolean',
+                    'float',
+//                    'file',
                     'html',
                     'image',
-                    'file',
-                    'empty',
+                    'integer',
+                    'json',
+                    'text',
+                    'undefined',
+                    'xml',
                 ],
-                'default' => '',
+                'default' => 'text',
             ],
         ],
     ];
@@ -86,11 +98,11 @@ class Cast extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -102,7 +114,8 @@ class Cast extends Core\ProcessorEntity
             if (!method_exists(__CLASS__, $method)) {
                 throw new ApiException("unable to cast data, method not found: $method");
             }
-            $container->setData($this->$method($container->getData()));
+            $data = $this->$method($container->getData());
+            $container = new DataContainer($data, $dataType);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), 6, $this->id, 400);
         }

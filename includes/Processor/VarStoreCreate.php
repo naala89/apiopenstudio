@@ -18,7 +18,9 @@ use ADOConnection;
 use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Request;
+use ApiOpenStudio\Db\Application;
 use ApiOpenStudio\Db\ApplicationMapper;
+use ApiOpenStudio\Db\Role;
 use ApiOpenStudio\Db\VarStore;
 use ApiOpenStudio\Db\VarStoreMapper;
 
@@ -30,13 +32,65 @@ use ApiOpenStudio\Db\VarStoreMapper;
 class VarStoreCreate extends Core\ProcessorEntity
 {
     /**
-     * @var array|string[] Array of permitted roles
+     * {@inheritDoc}
+     *
+     * @var array Details of the processor.
      */
-    protected array $permittedRoles = [
-        'Administrator',
-        'Account manager',
-        'Application manager',
-        'Developer',
+    protected array $details = [
+        'name' => 'Var store create',
+        'machineName' => 'var_store_create',
+        // phpcs:ignore
+        'description' => 'Create a global variable. This is available to all resources within an account or application group. The return result is an error object (on failure) or the newly created object.',
+        'menu' => 'Variables',
+        'input' => [
+            'validate_access' => [
+                // phpcs:ignore
+                'description' => 'If set to true, the calling users roles access will be validated. If set to false, then access is open. By default this is true for security reasons, but to allow consumers to use this in a resource, you will need to set it to false (otherwise access will be denied).',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['boolean'],
+                'limitValues' => [],
+                'default' => true,
+            ],
+            'accid' => [
+                'description' => 'Account ID that the var will be assigned to. One of accid or appid must be populated',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => null,
+            ],
+            'appid' => [
+                // phpcs:ignore
+                'description' => 'Application ID that the var will be assigned to. One of accid or appid must be populated',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => null,
+            ],
+            'key' => [
+                'description' => 'The variable key',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['integer', 'text', 'float'],
+                'limitValues' => [],
+                'default' => null,
+            ],
+            'val' => [
+                'description' => 'The variable value',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => null,
+            ],
+        ],
     ];
 
     /**
@@ -52,58 +106,6 @@ class VarStoreCreate extends Core\ProcessorEntity
      * @var ApplicationMapper
      */
     private ApplicationMapper $applicationMapper;
-
-    /**
-     * {@inheritDoc}
-     *
-     * @var array Details of the processor.
-     */
-    protected array $details = [
-        'name' => 'Var store create',
-        'machineName' => 'var_store_create',
-        // phpcs:ignore
-        'description' => 'Create a global variable. This is available to all resources within an application group. The return result is an error object (on failure) or the newly created object.',
-        'menu' => 'Variables',
-        'input' => [
-            'validate_access' => [
-                // phpcs:ignore
-                'description' => 'If set to true, the calling users roles access will be validated. If set to false, then access is open. By default this is true for security reasons, but to allow consumers to use this in a resource, you will need to set it to false (otherwise access will be denied).',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['boolean'],
-                'limitValues' => [],
-                'default' => true,
-            ],
-            'appid' => [
-                'description' => 'Application ID that the var will be assigned to.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['integer'],
-                'limitValues' => [],
-                'default' => -1,
-            ],
-            'key' => [
-                'description' => 'The variable key',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['integer', 'text', 'float'],
-                'limitValues' => [],
-                'default' => '',
-            ],
-            'val' => [
-                'description' => 'The variable value',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => [],
-                'limitValues' => [],
-                'default' => '',
-            ],
-        ],
-    ];
 
 
     /**
@@ -132,67 +134,140 @@ class VarStoreCreate extends Core\ProcessorEntity
     {
         parent::process();
 
+        $accid = $this->val('accid', true);
         $appid = $this->val('appid', true);
         $key = $this->val('key', true);
         $val = $this->val('val', true);
-        $permitted = !($this->val('validate_access', true));
+        $validateAccess = $this->val('validate_access', true);
 
-        if (!$permitted) {
-            try {
-                $roles = Core\Utilities::getRolesFromToken();
-            } catch (ApiException $e) {
-                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-            }
-            $accounts = [];
-            foreach ($roles as $role) {
-                if ($role['role_name'] == 'Administrator' && in_array('Administrator', $this->permittedRoles)) {
-                    $permitted = true;
-                } elseif (
-                    $role['role_name'] == 'Account manager' &&
-                    in_array('Account manager', $this->permittedRoles)
-                ) {
-                    $accid = $role['accid'];
-                    if (!isset($accounts[$accid])) {
-                        try {
-                            $accountsObjects = $this->applicationMapper->findByAccid($accid);
-                        } catch (ApiException $e) {
-                            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-                        }
-                        foreach ($accountsObjects as $accountObject) {
-                            $accounts[$accid][] = $accountObject->getAppid();
-                        }
-                    }
-                    if (in_array($appid, $accounts[$accid])) {
-                        $permitted = true;
-                    }
-                } elseif ($role['appid'] == $appid && in_array($role['role_name'], $this->permittedRoles)) {
-                    $permitted = true;
-                }
-            }
+        if ((empty($accid) && empty($appid)) || (!empty($accid) && !empty($appid))) {
+            throw new ApiException('variable must be assigned to an account or application', 6, $this->id, 400);
         }
 
-        if (!$permitted) {
-            throw new Core\ApiException("permission denied", 6, $this->id, 400);
+        if ($validateAccess) {
+            $this->validateCreatePermission($accid, $appid);
         }
 
-        try {
-            $varStore = $this->varStoreMapper->findByAppIdKey($appid, $key);
-        } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-        }
-        if (!empty($varStore->getVid())) {
-            throw new Core\ApiException("var store already exists", 6, $this->id, 400);
-        }
+        $this->validateExists($accid, $appid, $key);
 
-        $varStore = new VarStore(null, $appid, $key, $val);
-
+        $varStore = new VarStore(null, $accid, $appid, $key, $val);
         try {
             $this->varStoreMapper->save($varStore);
-            $varStore = $this->varStoreMapper->findByAppIdKey($appid, $key);
+            if (!empty($accid)) {
+                $varStore = $this->varStoreMapper->findByAccidKey($accid, $key);
+            } else {
+                $varStore = $this->varStoreMapper->findByAppidKey($appid, $key);
+            }
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
         return new Core\DataContainer($varStore->dump(), 'array');
+    }
+
+    /**
+     * Validate permissions to create a var store.
+     *
+     * @param int|null $accid
+     * @param int|null $appid
+     *
+     * @throws ApiException
+     */
+    protected function validateCreatePermission(?int $accid, ?int $appid)
+    {
+        try {
+            /** @var Role[] */
+            $roles = Core\Utilities::getRolesFromToken();
+            /** @var Application[] */
+            $applications = $this->applicationMapper->findAll();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        }
+        $permitted = false;
+        foreach ($roles as $role) {
+            if ($permitted) {
+                continue;
+            }
+            if ($role['role_name'] == 'Administrator') {
+                $permitted = true;
+            } elseif ($role['role_name'] == 'Account manager') {
+                foreach ($applications as $application) {
+                    if (!empty($accid)) {
+                        if ($application->getAccid() == $accid && $application->getAccid() == $role['accid']) {
+                            $permitted = true;
+                        }
+                    } else {
+                        if ($application->getAppid() == $appid && $application->getAccid() == $role['accid']) {
+                            $permitted = true;
+                        }
+                    }
+                }
+            } elseif ($role['role_name'] == 'Application manager' || $role['role_name'] == 'Developer') {
+                foreach ($applications as $application) {
+                    if (
+                        !empty($appid) &&
+                        $application->getAppid() == $appid &&
+                        $application->getAppid() == $role['appid']
+                    ) {
+                        $permitted = true;
+                    }
+                }
+            }
+        }
+        if (!$permitted) {
+            throw new Core\ApiException("permission denied", 4, $this->id, 403);
+        }
+    }
+
+    /**
+     * Validate that a var_store exists.
+     *
+     * @param int|null $accid
+     * @param int|null $appid
+     * @param $key
+     *
+     * @throws ApiException
+     */
+    protected function validateExists(?int $accid, ?int $appid, $key)
+    {
+        $exists = false;
+        if (!empty($accid)) {
+            $varStore = $this->varStoreMapper->findByAccidKey($accid, $key);
+            if (!empty($varStore->getVid())) {
+                $exists = true;
+            }
+            $applications = $this->applicationMapper->findByAccid($accid);
+            if (empty($applications)) {
+                throw new ApiException(
+                    'could not find an application that maps to accid',
+                    6,
+                    $this->id,
+                    400
+                );
+            }
+            $varStore = $this->varStoreMapper->findByAppidKey($applications[0]->getAppid(), $key);
+            if (!empty($varStore->getVid())) {
+                $exists = true;
+            }
+        }
+        if (!empty($appid)) {
+            $application = $this->applicationMapper->findByAppid($appid);
+            $varStore = $this->varStoreMapper->findByAccidKey($application->getAccid(), $key);
+            if (!empty($varStore->getVid())) {
+                $exists = true;
+            }
+            $varStore = $this->varStoreMapper->findByAppidKey($appid, $key);
+            if (!empty($varStore->getVid())) {
+                $exists = true;
+            }
+        }
+        if ($exists) {
+            throw new ApiException(
+                'a var_store already exists with this key for the account or application',
+                6,
+                $this->id,
+                400
+            );
+        }
     }
 }

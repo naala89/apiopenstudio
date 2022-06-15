@@ -31,18 +31,22 @@ process:
         id: var_store_create_vid
         processor: var_uri
         nullable: false
+        expected_type: integer
         index: 0
     key:
         id: var_store_create_key
         processor: var_get
         key: key
+        expected_type: text
         nullable: true
     appid:
         id: var_store_create_appid
         processor: var_get
         key: appid
+        expected_type: integer
         nullable: true
     val:
         id: var_store_create_val
         processor: var_body
+        expected_type: text
         nullable: false

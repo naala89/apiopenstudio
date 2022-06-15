@@ -1,0 +1,28 @@
+name: Testing return of a simple associative array
+
+description: Testing return of a simple associative array
+
+uri: array/associative/simple
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: test simple associative array security
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: test simple associative array data
+    value:
+        one: this
+        two: is
+        three: an
+        four: associative
+        five: array
+    type: array

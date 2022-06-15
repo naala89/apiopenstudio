@@ -14,14 +14,16 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ProcessorEntity;
 
 /**
  * Class VarUri
  *
  * Processor class to return a value from the request URI.
  */
-class VarUri extends Core\ProcessorEntity
+class VarUri extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -32,7 +34,7 @@ class VarUri extends Core\ProcessorEntity
         'name' => 'Uri',
         'machineName' => 'var_uri',
         // phpcs:ignore
-        'description' => 'A url-decoded value from the request URI. It fetches the value of a particular param in the URI, based on the index value.',
+        'description' => 'A url-decoded value from the request URI. It fetches the value of a particular param in the URI, based on the index value. To pass null as a URI parameter, send the value "null", e.g. /4/null/foobar.',
         'menu' => 'Request',
         'input' => [
             'index' => [
@@ -56,9 +58,9 @@ class VarUri extends Core\ProcessorEntity
                     'integer',
                     'float',
                     'text',
-                    'empty',
+                    'undefined',
                 ],
-                'default' => '',
+                'default' => null,
             ],
             'nullable' => [
                 'description' => 'Allow the processing to continue if the URI index does not exist (returns "").',
@@ -75,11 +77,11 @@ class VarUri extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -88,20 +90,19 @@ class VarUri extends Core\ProcessorEntity
         $expectedType = $this->val('expected_type', true);
         $args = $this->request->getArgs();
 
-        $data = $args[$index] ?? '';
+        if (!$nullable && !isset($args[$index])) {
+            throw new ApiException("URI var does not exist or is undefined: $index", 6, $this->id, 400);
+        }
+        $data = $args[$index] ?? null;
 
         if (!empty($expectedType)) {
             try {
-                $result = new Core\DataContainer($data, $expectedType);
-            } catch (Core\ApiException $e) {
-                throw new Core\ApiException($e->getMessage(), 6, $this->id, 400);
+                $result = new DataContainer($data, $expectedType);
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), 6, $this->id, 400);
             }
         } else {
-            $result = new Core\DataContainer($data);
-        }
-
-        if (!$nullable && $result->getType() == 'empty') {
-            throw new Core\ApiException("URI var does not exist or is empty: $index", 6, $this->id, 400);
+            $result = new DataContainer($data);
         }
 
         return $result;

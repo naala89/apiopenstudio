@@ -22,167 +22,162 @@ namespace ApiOpenStudio\Core;
 trait ConvertToFloatTrait
 {
     /**
-     * Convert empty to float.
+     * Convert an array to a float.
      *
-     * @param $data
-     *
-     * @return null
+     * @throws ApiException
      */
-    public function fromEmptyToFloat($data)
+    public function fromArrayToFloat(array $array)
     {
-        return null;
+        throw new ApiException('Cannot cast array to float', 6, -1, 400);
     }
 
     /**
      * Convert a boolean to a float.
      *
-     * @param $data
-     *
-     * @return float
-     *
-     * @throws ApiException
-     */
-    public function fromBooleanToFloat($data): float
-    {
-        $result = filter_var($data, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
-        if ($result === null) {
-            throw new ApiException('Failed to convert boolean to float');
-        }
-        return $result;
-    }
-
-    /**
-     * Convert an integer to a float.
-     *
-     * @param $data
-     *
-     * @return float
-     *
-     * @throws ApiException
-     */
-    public function fromIntegerToFloat($data): float
-    {
-        $result = filter_var($data, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
-        if ($result === null) {
-            throw new ApiException("Failed to convert '$data' to float");
-        }
-        return $result;
-    }
-
-    /**
-     * Convert a float to a float.
-     *
-     * @param $data
+     * @param bool $boolean
      *
      * @return float
      */
-    public function fromFloatToFloat($data): float
+    public function fromBooleanToFloat(bool $boolean): float
     {
-        return $data;
-    }
-
-    /**
-     * Convert text to a float.
-     *
-     * @param $data
-     *
-     * @return float
-     *
-     * @throws ApiException
-     */
-    public function fromTextToFloat($data): float
-    {
-        if ($data != "0" && strpos($data, '.') === false) {
-            $data = preg_replace('/^0*/', '', $data);
-        }
-        $result = filter_var($data, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
-        if ($result === null) {
-            throw new ApiException("Failed to convert '$data' to float");
-        }
-        return $result;
-    }
-
-    /**
-     * Convert an array to a float.
-     *
-     * @param $data
-     *
-     * @return float
-     *
-     * @throws ApiException
-     */
-    public function fromArrayToFloat($data): float
-    {
-        throw new ApiException('Cannot cast array to float');
-    }
-
-    /**
-     * Convert a JSON string to a float.
-     *
-     * @param $data
-     *
-     * @return float
-     *
-     * @throws ApiException
-     */
-    public function fromJsonToFloat($data): float
-    {
-        return $this->fromTextToFloat($data);
-    }
-
-    /**
-     * Convert an XML string to a float.
-     *
-     * @param $data
-     *
-     * @return float
-     *
-     * @throws ApiException
-     */
-    public function fromXmlToFloat($data): float
-    {
-        throw new ApiException('Cannot cast XML to float');
-    }
-
-    /**
-     * Convert an HTML string to a float.
-     *
-     * @param $data
-     *
-     * @return float
-     *
-     * @throws ApiException
-     */
-    public function fromHtmlToFloat($data): float
-    {
-        throw new ApiException('Cannot cast HTML to float');
-    }
-
-    /**
-     * Convert an image to a float.
-     *
-     * @param $data
-     *
-     * @return float
-     *
-     * @throws ApiException
-     */
-    public function fromImageToFloat($data): float
-    {
-        throw new ApiException('Cannot cast image to float');
+        return $boolean ? 1.0 : 0.0;
     }
 
     /**
      * Convert a file to a float.
      *
-     * @param $data
+     * @param $file
+     *
+     * @throws ApiException
+     */
+    public function fromFileToFloat($file)
+    {
+        throw new ApiException('Cannot cast file to float', 6, -1, 400);
+    }
+
+    /**
+     * Convert a float to a float.
+     *
+     * @param float $float
+     *
+     * @return float
+     */
+    public function fromFloatToFloat(float $float): float
+    {
+        return $float;
+    }
+
+    /**
+     * Convert an HTML string to a float.
+     *
+     * @param string $html
+     *
+     * @throws ApiException
+     */
+    public function fromHtmlToFloat(string $html)
+    {
+        throw new ApiException('Cannot cast HTML to float', 6, -1, 400);
+    }
+
+    /**
+     * Convert an image to a float.
+     *
+     * @param $image
+     *
+     * @throws ApiException
+     */
+    public function fromImageToFloat($image)
+    {
+        throw new ApiException('Cannot cast image to float', 6, -1, 400);
+    }
+
+    /**
+     * Convert an integer to a float.
+     *
+     * @param int $integer
+     *
+     * @return float
+     */
+    public function fromIntegerToFloat(int $integer): float
+    {
+        return filter_var($integer, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
+    }
+
+    /**
+     * Convert a JSON string to a float.
+     *
+     * @param string $json
      *
      * @return float
      *
      * @throws ApiException
      */
-    public function fromFileToFloat($data): float
+    public function fromJsonToFloat(string $json): float
     {
-        throw new ApiException('Cannot cast file to float');
+        try {
+            return $this->fromTextToFloat($json);
+        } catch (ApiException $e) {
+            throw new ApiException(
+                "Cannot cast JSON to float",
+                $e->getCode(),
+                $e->getProcessor(),
+                $e->getHtmlCode()
+            );
+        }
+    }
+
+    /**
+     * Convert text to a float.
+     *
+     * @param string $text
+     *
+     * @return float|int|mixed|null
+     *
+     * @throws ApiException
+     */
+    public function fromTextToFloat(string $text)
+    {
+        $text = trim($text, '"');
+        if (strtolower($text) == 'nan') {
+            return NAN;
+        } elseif (strtolower($text) == 'null') {
+            return null;
+        } elseif (strtolower($text) == '-infinity' || strtolower($text) == '-inf') {
+            return -INF;
+        } elseif (strtolower($text) == 'infinity' || strtolower($text) == 'inf') {
+            return INF;
+        }
+        if ($text != "0" && strpos($text, '.') === false) {
+            $text = preg_replace('/^0*/', '', $text);
+        }
+        $float = filter_var($text, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
+        if ($float === null) {
+            throw new ApiException("Cannot cast text to float", 6, -1, 400);
+        }
+        return $float;
+    }
+
+    /**
+     * Convert undefined to float.
+     *
+     * @param $data
+     *
+     * @return null
+     */
+    public function fromUndefinedToFloat($data)
+    {
+        return null;
+    }
+
+    /**
+     * Convert an XML string to a float.
+     *
+     * @param string $xml
+     *
+     * @throws ApiException
+     */
+    public function fromXmlToFloat(string $xml)
+    {
+        throw new ApiException('Cannot cast XML to float', 6, -1, 400);
     }
 }

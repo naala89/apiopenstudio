@@ -56,7 +56,7 @@ class OpenapiImport extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text', 'json'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
         ],
     ];
