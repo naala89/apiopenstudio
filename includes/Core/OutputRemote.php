@@ -76,48 +76,31 @@ abstract class OutputRemote extends OutputEntity
     protected $transport;
 
     /**
-     * Processor helper class.
-     *
-     * @var ProcessorHelper
-     */
-    protected ProcessorHelper $helper;
-
-    /**
-     * OutputRemote constructor.
-     *
-     * @param mixed|null $meta
-     *   Output meta.
-     * @param Request $request
-     *   The full request object.
-     * @param MonologWrapper $logger
-     *   Logger.
-     * @param mixed $data
-     *   Output data.
-     */
-    public function __construct($meta, Request &$request, MonologWrapper $logger, $data)
-    {
-        parent::__construct($meta, $request, $logger, $data);
-        $this->helper = new ProcessorHelper();
-    }
-
-    /**
      * {@inheritDoc}
      *
      * @throws ApiException
      */
     public function process()
     {
-        $data = parent::process();
+        parent::process();
 
         $filename = $this->val('filename', true);
-        $transportName = $this->val('transport', true);
+        $transportString = $this->val('transport', true);
         $parameters = $this->val('parameters', true);
 
-        $classString = $this->helper->getProcessorString($transportName, ['Output']);
-        $transport = new $classString();
+        $classString = preg_replace('/\\{1}/', '\\\\', $transportString);
+        if (!class_exists($classString)) {
+            throw new ApiException(
+                "invalid remote output transport: $transportString",
+                1,
+                $this->id,
+                500
+            );
+        }
 
         try {
-            $transport->uploadFile($parameters, $filename, $data->getData());
+            $transport = new $classString();
+            $transport->uploadFile($parameters, $filename, $this->data->getData());
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
