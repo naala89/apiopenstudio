@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Json.
+ * Class JsonRemote.
  *
  * @package    ApiOpenStudio\Output
  * @author     john89 (https://gitlab.com/john89)
@@ -19,15 +19,15 @@ use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core\ConvertToJsonTrait;
 use ApiOpenStudio\Core\DetectTypeTrait;
 use ApiOpenStudio\Core\MonologWrapper;
-use ApiOpenStudio\Core\OutputResponse;
+use ApiOpenStudio\Core\OutputRemote;
 use ApiOpenStudio\Core\Request;
 
 /**
- * Class Json
+ * Class JsonRemote
  *
- * Outputs the results as a JSON string.
+ * Outputs the results as a JSON string to a remote location.
  */
-class Json extends OutputResponse
+class JsonRemote extends OutputRemote
 {
     use ConvertToJsonTrait;
     use DetectTypeTrait;
@@ -38,20 +38,41 @@ class Json extends OutputResponse
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'Json',
-        'machineName' => 'json',
-        // phpcs:ignore
-        'description' => 'Output the results of the resource in JSON format in the response. This does not need to be added to the resource - it will be automatically detected by the Accept header.',
+        'name' => 'Json remote',
+        'machineName' => 'json_remote',
+        'description' => 'Output in the results of the resource in JSON format to a remote server.',
         'menu' => 'Output',
-        'input' => [],
+        'input' => [
+            'filename' => [
+                'description' => 'The output filename.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => 'apiopenstudio.json',
+            ],
+            'transport' => [
+                'description' => 'The Transport for uploading. example: ApiOpenStudio\Plugins\TransportS3.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'parameters' => [
+                // phpcs:ignore
+                'description' => 'Name/Value pairs for parameters required by the uploader, e.g. username, password, etc.',
+                'cardinality' => [0, '*'],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => [],
+                'limitValues' => [],
+                'default' => [],
+            ],
+        ],
     ];
-
-    /**
-     * {@inheritDoc}
-     *
-     * @var string The string to contain the content type header value.
-     */
-    protected string $header = 'Content-Type: application/json';
 
     /**
      * Config object.
@@ -61,7 +82,7 @@ class Json extends OutputResponse
     protected Config $settings;
 
     /**
-     * JSON output constructor.
+     * JsonRemote output constructor.
      *
      * @param mixed|null $meta
      *   Output meta.
@@ -71,12 +92,10 @@ class Json extends OutputResponse
      *   Logger.
      * @param mixed $data
      *   Output data.
-     * @param integer $status
-     *   HTTP output status.
      */
-    public function __construct($meta, Request &$request, MonologWrapper $logger, $data, int $status)
+    public function __construct($meta, Request &$request, MonologWrapper $logger, $data)
     {
-        parent::__construct($meta, $request, $logger, $data, $status);
+        parent::__construct($meta, $request, $logger, $data);
         $this->settings = new Config();
     }
 
@@ -86,19 +105,22 @@ class Json extends OutputResponse
      * @throws ApiException
      *   Throw an exception if unable to convert the data.
      */
-    protected function castData(): void
+    protected function castData()
     {
-        if ($this->data->getType() != 'json') {
-            $method = 'from' . ucfirst(strtolower($this->data->getType())) . 'ToJson';
-            $resultData = $this->$method($this->data->getData());
-        } else {
-            $resultData = $this->data->getData();
+        $currentType = $this->data->getType();
+        if ($currentType == 'json') {
+            return;
         }
 
+        $inputData = $this->data->getData();
+        $inputType = $this->data->getType();
+
+        $method = 'from' . ucfirst(strtolower($currentType)) . 'ToJson';
+        $resultData = $this->$method($inputData);
 
         if ($this->settings->__get(['api', 'wrap_json_in_response_object'])) {
             // Wrap JSON in the wrapper object if required by the settings.
-            if (in_array($this->data->getType(), ['json', 'array', 'xml', 'html']) && !is_bool($resultData)) {
+            if (in_array($inputType, ['json', 'array', 'xml', 'html']) && !is_bool($resultData)) {
                 $decoded = json_decode($resultData, true);
                 $resultData = is_null($decoded) ? $resultData : $decoded;
             }
@@ -114,10 +136,11 @@ class Json extends OutputResponse
                 ];
             }
             $resultData = json_encode($resultData);
-        } elseif ($this->data->getType() == 'text') {
+        } elseif ($inputType == 'text') {
             // Wrap text values in double quotes so that they are parseable as valid JSON.
             $resultData = '"' . $resultData . '"';
         }
+
 
         try {
             $this->data->setData($resultData);

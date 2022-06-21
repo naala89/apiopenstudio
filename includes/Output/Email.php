@@ -14,17 +14,24 @@
 
 namespace ApiOpenStudio\Output;
 
-use ApiOpenStudio\Core;
-use Swift_Mailer;
-use Swift_Message;
-use Swift_SmtpTransport;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\Config;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\OutputEntity;
+use ApiOpenStudio\Core\OutputRemote;
+use ApiOpenStudio\Core\Request;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mime\Email as SymfonyEmail;
 
 /**
  * Class Email
  *
  * Outputs the results as an email.
  */
-class Email extends Output
+class Email extends OutputRemote
 {
     /**
      * {@inheritDoc}
@@ -38,7 +45,7 @@ class Email extends Output
         'menu' => 'Output',
         'input' => [
             'to' => [
-                'description' => 'The destination emails for the output.',
+                'description' => 'The destination email/s for the output.',
                 'cardinality' => [1, '*'],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
@@ -46,17 +53,35 @@ class Email extends Output
                 'limitValues' => [],
                 'default' => '',
             ],
-            'from_email' => [
-                'description' => 'The from email.',
-                'cardinality' => [0, 1],
+            'cc' => [
+                'description' => 'The cc email/s for the output.',
+                'cardinality' => [0, '*'],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => '',
             ],
-            'from_name' => [
-                'description' => 'The from name.',
+            'bcc' => [
+                'description' => 'The bcc email/s for the output.',
+                'cardinality' => [0, '*'],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'from' => [
+                'description' => 'The from email/s.',
+                'cardinality' => [0, '*'],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
+            ],
+            'reply_to' => [
+                'description' => 'The reply-to email.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
@@ -73,75 +98,142 @@ class Email extends Output
                 'limitValues' => [],
                 'default' => '',
             ],
-            'message' => [
-                'description' => 'The body of the email.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => [],
-                'limitValues' => [],
-                'default' => '',
-            ],
-            'format' => [
-                'description' => 'The format of the body of the email.',
+            'text' => [
+                'description' => 'The body "text" fallback if using HTML email.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
-                'limitTypes' => [],
-                'limitValues' => ['html', 'plain', 'text', 'json', 'xml'],
-                'default' => 'html',
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => '',
             ],
         ],
     ];
 
     /**
+     * @var Config Config object.
+     */
+    protected Config $settings;
+
+    /**
+     * OutputEntity constructor.
+     *
+     * @param $meta
+     *   Metadata for the processor.
+     * @param Request $request
+     *   The full request object.
+     * @param MonologWrapper $logger
+     *   Logger.
+     * @param mixed $data
+     *   HTTP output data.
+     */
+    public function __construct($meta, Request &$request, MonologWrapper $logger, $data)
+    {
+        OutputEntity::__construct($meta, $request, $logger, $data);
+        $this->settings = new Config();
+    }
+
+    /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if email send failed.
+     * @throws ApiException Exception if email send failed.
+     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
-        $this->logger->info('api', 'Output: ' . $this->details()['machineName']);
-        $config = new Core\Config();
+        OutputEntity::process();
 
         $to = $this->val('to', true);
-        $fromEmail = $this->val('from_email', true);
-        $fromName = $this->val('from_name', true);
-        try {
-            $fromEmail = empty($fromEmail) ? $config->__get(['email', 'from', 'email']) : $fromEmail;
-            $fromName = empty($fromName) ? $config->__get(['email', 'from', 'name']) : $fromName;
-        } catch (Core\ApiException $e) {
-            throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-        }
+        $cc = $this->val('cc', true);
+        $bcc = $this->val('to', true);
+        $from = $this->val('from', true);
+        $replyTo = $this->val('reply_to', true);
         $subject = $this->val('subject', true);
-        $message = $this->val('message', true);
-        $format = $this->val('format', true);
-
-        $class = '\\ApiOpenStudio\\Output\\' . $format;
-        $obj = new $class($message, 200, '');
-        $message = $obj->getData();
+        $text = $this->val('text', true);
 
         try {
-            $transport = (new Swift_SmtpTransport($config->__get(['email', 'host']), 25))
-                ->setUsername($config->__get(['email', 'username']))
-                ->setPassword($config->__get(['email', 'password']));
-        } catch (Core\ApiException $e) {
-            throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-        }
-        $mailer = new Swift_Mailer($transport);
-        $email = (new Swift_Message($subject))
-            ->setFrom([$fromEmail => $fromName])
-            ->setTo($to)
-            ->setBody($message);
-        $result = $mailer->send($email);
-
-        if (!$result) {
-            throw new Core\ApiException('Email message send failed', 1, $this->id, 500);
+            $dsn = $this->settings->__get(['email', 'dsn']);
+            $defaultFrom = $this->settings->__get(['email', 'from']);
+            $defaultReplyTo = $this->settings->__get(['email', 'reply_to']);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        return new Core\DataContainer("$result messages sent.", 'text');
+        $transport = Transport::fromDSN($dsn);
+        $mailer = new Mailer($transport);
+        $email = new SymfonyEmail();
+
+        $email->subject($subject);
+
+        if (empty($from)) {
+            $from = $defaultFrom;
+            if (empty($replyTo)) {
+                $replyTo = $defaultReplyTo;
+            }
+        }
+        if (empty($replyTo)) {
+            $replyTo = $from;
+        }
+
+        if (is_array($from)) {
+            foreach ($from as $item) {
+                $email->addFrom($item);
+            }
+        } else {
+            $email->from($from);
+        }
+
+        if (is_array($to)) {
+            foreach ($to as $item) {
+                $email->to($item);
+            }
+        } else {
+            $email->to($to);
+        }
+
+        if (!empty($replyTo)) {
+            $email->replyTo($replyTo);
+        }
+
+        if (!empty($cc)) {
+            if (is_array($cc)) {
+                foreach ($cc as $item) {
+                    $email->addCc($item);
+                }
+            } else {
+                $email->cc($cc);
+            }
+        }
+
+        if (!empty($bcc)) {
+            if (is_array($bcc)) {
+                foreach ($bcc as $item) {
+                    $email->addBcc($item);
+                }
+            } else {
+                $email->bcc($bcc);
+            }
+        }
+
+        if ($this->data->getType() == 'html') {
+            $email->html($this->data->getData());
+            if (empty($text)) {
+                $email->text($this->data->getData());
+            } else {
+                $email->text($text);
+            }
+        } else {
+            $email->text($this->data->getData());
+        }
+
+        try {
+            $mailer->send($email);
+        } catch (TransportExceptionInterface $e) {
+            throw new ApiException($e->getMessage(), 8, $this->id, 500);
+        }
+        return new DataContainer(true, 'boolean');
     }
 
     /**

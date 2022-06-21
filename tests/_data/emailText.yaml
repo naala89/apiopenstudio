@@ -1,0 +1,35 @@
+name: Text email
+
+description: Testing sending a text body email.
+
+uri: email/text
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    id: email plain text security
+    processor: validate_token_roles
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: email plain text
+    value: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tincidunt tristique est vel hendrerit. Morbi sit amet dui gravida, suscipit quam mattis, venenatis orci. Maecenas nec urna sagittis, posuere erat sed, dapibus risus. Ut tincidunt gravida est eget rutrum. Sed magna ex, imperdiet eu malesuada et, volutpat at tortor. Integer non odio non leo tincidunt finibus et vitae ligula. In hac habitasse platea dictumst. Praesent in lacinia erat. Proin malesuada erat id enim viverra, a ornare lorem tempus. Phasellus ut metus pretium, imperdiet odio quis, interdum mi. Nam eget nisl accumsan, imperdiet quam at, lacinia metus. Nunc suscipit egestas libero quis feugiat. Aenean nec mollis turpis. In pharetra velit id rhoncus aliquam.
+    type: text
+
+output:
+    -
+        processor: email
+        id: test email output processor with text
+        to:
+            - test@example.com
+            - test+3@example.com
+        cc:
+            - test+1@example.com
+            - test+2@example.com
+        subject: This is a computed sample plain text string result sent over email from ApiOpenStudio

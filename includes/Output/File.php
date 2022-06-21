@@ -17,23 +17,17 @@ namespace ApiOpenStudio\Output;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\ConvertToFileTrait;
 use ApiOpenStudio\Core\DetectTypeTrait;
+use ApiOpenStudio\Core\OutputResponse;
 
 /**
  * Class File
  *
- * Outputs the results as a file.
+ * Outputs the results as a file in the response.
  */
-class File extends Output
+class File extends OutputResponse
 {
     use ConvertToFileTrait;
     use DetectTypeTrait;
-
-    /**
-     * {@inheritDoc}
-     *
-     * @var string The string to contain the content type header value.
-     */
-    protected string $header = 'Content-Type: application/octet-stream';
 
     /**
      * {@inheritDoc}
@@ -43,51 +37,21 @@ class File extends Output
     protected array $details = [
         'name' => 'File',
         'machineName' => 'file',
-        'description' => 'Output a file.',
+        // phpcs:ignore
+        'description' => 'Output the results of the resource in file format in the response. This does not need to be added to the resource - it will be automatically detected by the Accept header.',
         'menu' => 'Output',
-        'input' => [
-            'filename' => [
-                'description' => 'The output suggested filename.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => 'apiopenstudio.txt',
-            ],
-            'destination' => [
-                'description' => 'Destination URLs for the output.',
-                'cardinality' => [0, '*'],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
-            'method' => [
-                'description' => 'HTTP delivery method when sending output. Only used in the output section.',
-                'cardinality' => [0, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => ['get', 'post', 'push', 'delete', 'put'],
-                'default' => '',
-            ],
-            'options' => [
-                // phpcs:ignore
-                'description' => 'Extra Curl options to be applied when sent to the destination (e.g. cursor: -1, screen_name: foobarapi, skip_status: true, etc).',
-                'cardinality' => [0, '*'],
-                'literalAllowed' => true,
-                'limitProcessors' => ['field'],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
-        ],
+        'input' => [],
     ];
 
     /**
-     * Set the Content-Type header.
+     * {@inheritDoc}
+     *
+     * @var string The string to contain the content type header value.
+     */
+    protected string $header = 'Content-Type: application/octet-stream';
+
+    /**
+     * Set the response headers.
      *
      * @return void
      *

@@ -57,6 +57,7 @@ class VarUri extends ProcessorEntity
                     'boolean',
                     'integer',
                     'float',
+                    'image',
                     'text',
                     'undefined',
                 ],

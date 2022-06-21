@@ -1,0 +1,32 @@
+name: Email JSON
+
+description: Test sending a JSON body email.
+
+uri: email/json
+
+method: get
+
+appid: 2
+
+ttl: 0
+
+security:
+    id: email plain JSON security
+    processor: validate_token_roles
+    roles:
+        - Developer
+
+process:
+    processor: var_literal
+    id: email JSON text
+    value: "[{color: \"red\",value: \"#f00\"},{color: \"green\",value: \"#0f0\"},{color: \"blue\",value: \"#00f\"},{color: \"cyan\",value: \"#0ff\"},{color: \"magenta\",value: \"#f0f\"},{color: \"yellow\",value: \"#ff0\"},{color: \"black\",value: \"#000\"}]"
+    type: json
+
+output:
+    -
+        processor: email
+        id: test email output processor with JSON
+        to: test@example.com
+        cc: test+1@example.com
+        subject: This is a computed sample JSON string result sent over email from ApiOpenStudio
+    - response

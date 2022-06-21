@@ -92,7 +92,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => "Lorem ipsum dolor sit amet, consectetur...",
+    'data' => 'TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyLi4u',
 ]);
 
 $I->wantTo('Test cast text string to integer.');
@@ -222,7 +222,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => '0',
+    'data' => 'MA==',
 ]);
 
 $I->wantTo('Test cast text 0 to integer.');
@@ -348,7 +348,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => '1',
+    'data' => 'MQ==',
 ]);
 
 $I->wantTo('Test cast text 1 to integer.');
@@ -478,7 +478,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => '-1',
+    'data' => 'LTE=',
 ]);
 
 $I->wantTo('Test cast text -1 to integer.');
@@ -996,7 +996,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => 'false',
+    'data' => 'ZmFsc2U=',
 ]);
 
 $I->wantTo('Test cast text false to integer.');
@@ -1134,7 +1134,7 @@ $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'result' => 'ok',
-    'data' => '[]',
+    'data' => 'W10=',
 ]);
 
 $I->wantTo('Test cast text empty array to integer.');
