@@ -54,22 +54,13 @@ class ImageRemote extends OutputRemote
                 'limitValues' => [],
                 'default' => 'apiopenstudio.jpeg',
             ],
-            'destinations' => [
-                'description' => 'Destination URLs for the output.',
-                'cardinality' => [1, '*'],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['text'],
-                'limitValues' => [],
-                'default' => '',
-            ],
-            'method' => [
-                'description' => 'HTTP delivery method when sending output.',
+            'transport' => [
+                'description' => 'The Transport for uploading. example: ApiOpenStudio\Plugins\TransportS3.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
-                'limitValues' => ['get', 'post', 'push', 'delete', 'put'],
+                'limitValues' => [],
                 'default' => '',
             ],
             'options' => [

@@ -49,20 +49,14 @@ class HtmlRemote extends OutputRemote
                 'limitValues' => [],
                 'default' => 'apiopenstudio.html',
             ],
-            'method' => [
-                'description' => 'The method for uploading.',
+            'transport' => [
+                'description' => 'The Transport for uploading. example: ApiOpenStudio\Plugins\TransportS3.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
-                'limitValues' => [
-                    'azure_blob',
-                    'ftp',
-                    'google_cloud',
-                    's3',
-                    'sftp',
-                ],
-                'default' => 'sftp',
+                'limitValues' => [],
+                'default' => '',
             ],
             'parameters' => [
                 // phpcs:ignore
