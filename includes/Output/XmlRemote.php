@@ -50,7 +50,7 @@ class XmlRemote extends OutputRemote
                 'default' => 'apiopenstudio.xml',
             ],
             'transport' => [
-                'description' => 'The Transport for uploading. example: s3, sftp, google_cloud, azure_blob.',
+                'description' => 'The Transport for uploading. example: ApiOpenStudio\Plugins\TransportS3.',
                 'cardinality' => [1, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
