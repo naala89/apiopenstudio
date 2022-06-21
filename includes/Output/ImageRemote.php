@@ -63,15 +63,15 @@ class ImageRemote extends OutputRemote
                 'limitValues' => [],
                 'default' => '',
             ],
-            'options' => [
+            'parameters' => [
                 // phpcs:ignore
-                'description' => 'Extra Curl options to be applied when sent to the destination (e.g. cursor: -1, screen_name: foobarapi, skip_status: true, etc).',
+                'description' => 'Name/Value pairs for parameters required by the uploader, e.g. username, password, etc.',
                 'cardinality' => [0, '*'],
                 'literalAllowed' => true,
-                'limitProcessors' => ['var_field'],
+                'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],
-                'default' => '',
+                'default' => [],
             ],
         ],
     ];
