@@ -89,7 +89,7 @@ test-7.4:
   rules:
     - !reference [.merge_request_to_apiopenstudio_develop, rules]
     - !reference [.merge_request_to_apiopenstudio_master, rules]
-  image: naala89/apiopenstudio-nginx-php-7.4:1.0
+  image: naala89/apiopenstudio-nginx-php-7.4:1.0.1
   services:
     - mariadb:latest
   variables:
@@ -154,7 +154,7 @@ test-8.0:
   rules:
     - !reference [.merge_request_to_apiopenstudio_develop, rules]
     - !reference [.merge_request_to_apiopenstudio_master, rules]
-  image: naala89/apiopenstudio-nginx-php-8.0:1.0
+  image: naala89/apiopenstudio-nginx-php-8.0:1.0.1
   services:
     - mariadb:latest
   variables:
