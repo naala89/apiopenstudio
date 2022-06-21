@@ -126,7 +126,11 @@ trait ConvertToImageTrait
      */
     public function fromTextToImage(string $text): string
     {
-        return $text;
+        if (base64_encode(base64_decode($text, true)) === $text) {
+            return $text;
+        } else {
+            return base64_encode($text);
+        }
     }
 
     /**

@@ -111,9 +111,17 @@ class Request
     /**
      * Request output format.
      *
-     * @var string Value of the accept header, translated into readable string.
+     * example:
+     *   ['mimeType' => 'image', 'mimeSubType' => 'jpeg']
+     *   ['mimeType' => 'image', 'mimeSubType' => 'png']
+     *   ['mimeType' => 'json', 'mimeSubType' => '']
+     *   ['mimeType' => 'xml', 'mimeSubType' => '']
+     *   ['mimeType' => 'text', 'mimeSubType' => '']
+     *   ['mimeType' => 'html', 'mimeSubType' => '']
+     *
+     * @var array Value of the Accept header, translated into readable string.
      */
-    private string $outFormat;
+    private array $outFormat;
 
     /**
      * Contents of $_POST.
@@ -391,11 +399,11 @@ class Request
     /**
      * Set the output format.
      *
-     * @param string $var Output format.
+     * @param array $var Output format.
      *
      * @return void
      */
-    public function setOutFormat(string $var)
+    public function setOutFormat(array $var)
     {
         $this->outFormat = $var;
     }
@@ -403,9 +411,9 @@ class Request
     /**
      * Get the output format.
      *
-     * @return string
+     * @return array
      */
-    public function getOutFormat(): string
+    public function getOutFormat(): array
     {
         return $this->outFormat;
     }

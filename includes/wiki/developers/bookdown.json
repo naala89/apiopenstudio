@@ -16,6 +16,7 @@
     "coding-standards.md",
     "linting.md",
     "processors.md",
+    "output.md",
     "creating-processors.md",
     "testing/bookdown.json",
     "xdebug.md"

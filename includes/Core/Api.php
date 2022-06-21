@@ -16,6 +16,7 @@ namespace ApiOpenStudio\Core;
 
 use ADOConnection;
 use ApiOpenStudio\Db;
+use stdClass;
 
 /**
  * Class Api
@@ -129,7 +130,7 @@ class Api
         $result = $this->getCache($this->request->getCacheKey());
         if ($result !== false) {
             $this->logger->info('api', 'Returning cached results');
-            return $this->getOutput(true);
+            return $this->getOutput(true, $meta);
         }
         // set fragments in Meta class
         if (isset($meta->fragments)) {
@@ -158,7 +159,7 @@ class Api
             $this->cache->set($this->request->getCacheKey(), $cacheData, $ttl);
         }
 
-        return $this->getOutput($result);
+        return $this->getOutput($result, $meta);
     }
 
     /**
@@ -286,38 +287,44 @@ class Api
      * Get the formatted output.
      *
      * @param mixed $data Data to format.
+     * @param mixed $meta Data to format.
      *
      * @return mixed
      *
      * @throws ApiException
      */
-    private function getOutput($data)
+    private function getOutput($data, $meta)
     {
-        $result = true;
+        $result = null;
 
-        if (!isset($data->output)) {
+        if (!isset($meta->output)) {
             // Default response output if no output defined.
             $this->logger->notice('api', 'no output section defined - returning the result in the response');
             $outputs = ['response'];
         } else {
             // Test for single output defined.
-            $outputs = Utilities::isAssoc($data->output) ? [$data->output] : $data->output;
+            $outputs = Utilities::isAssoc($meta->output) ? [$meta->output] : $meta->output;
         }
 
         foreach ($outputs as $index => $output) {
             if ($output == 'response') {
                 // Output format is response, so set the output format from the request header.
                 $output = [
-                    'processor' => $this->request->getOutFormat(),
+                    'processor' => $this->request->getOutFormat()['mimeType'],
                     'id' => 'header defined output',
                 ];
-            }
-            if (!isset($output['destination'])) {
-                // Return the output to the correct format and return in the response.
-                $result = $this->processOutputResponse($output, $data, $index);
+                // Convert the output to the correct format to return it in the response.
+                $result = $this->processOutputResponse($output, $data, 200, $index);
             } else {
-                // Process an output item to a remote server.
-                $this->processOutputRemote($output, $data, $index);
+                // Process an output item.
+                $outputRemoteResult = $this->processOutputRemote($output, $data, $index);
+                if (empty($result)) {
+                    $output = [
+                        'processor' => $this->request->getOutFormat()['mimeType'],
+                        'id' => 'header defined output',
+                    ];
+                    $result = $this->processOutputResponse($output, $outputRemoteResult, 200, $index);
+                }
             }
         }
 
@@ -325,50 +332,52 @@ class Api
     }
 
     /**
-     * Process the output and return in the response.
+     * Process the output and return it in the response.
      *
      * @param array $meta Output metadata.
      * @param mixed $data Response data.
-     * @param int|null $index Index in the output array.
+     * @param int $status ApiOpenStudio result status code.
+     * @param int $index Index in the output array.
      *
      * @return mixed
      *
      * @throws ApiException
      */
-    private function processOutputResponse(array $meta, $data, int $index = null)
+    private function processOutputResponse(array $meta, $data, int $status, int $index = -1)
     {
         if (!isset($meta['processor'])) {
             throw new ApiException("No processor found in the output section: $index.", 1, 'oops', 500);
         }
+
         $outFormat = ucfirst($this->cleanData($meta['processor']));
         $class = $this->helper->getProcessorString($outFormat, ['Output']);
-        $obj = new $class($data, 200, $this->logger);
-        $result = $obj->process();
-        $obj->setStatus();
-        $obj->setHeader();
-        return $result;
+        $obj = new $class($meta, $this->request, $this->logger, $data, $status);
+
+        return $obj->process();
     }
 
     /**
      * Process the output.
      *
-     * @param array $meta Output metadata.
+     * @param stdClass $meta Output metadata.
      * @param mixed $data Response data.
      * @param int|null $index Index in the output array.
      *
-     * @return void
+     * @return mixed
      *
      * @throws ApiException Invalid output processor.
      */
-    private function processOutputRemote(array $meta, $data, int $index = null)
+    private function processOutputRemote(stdClass $meta, $data, int $index = null)
     {
-        if (!isset($meta['processor'])) {
+        if (!isset($meta->processor)) {
             throw new ApiException("No processor found in the output section: $index.", 1, 'oops', 500);
         }
-        $outFormat = ucfirst($this->cleanData($meta['processor']));
+
+        $outFormat = ucfirst($this->cleanData($meta->processor));
         $class = $this->helper->getProcessorString($outFormat, ['Output']);
-        $obj = new $class($data, 200, $meta);
-        $obj->process();
+        $obj = new $class($meta, $this->request, $this->logger, $data);
+
+        return $obj->process();
     }
 
     /**
@@ -396,11 +405,21 @@ class Api
     /**
      * Calculate a format from string of header Content-Type or Accept.
      *
-     * @param mixed $default Default value.
+     * This is in the format [mimeType, mimeSubType] for use internally.
      *
-     * @return boolean|string
+     * example:
+     *   ['mimeType' => 'image', 'mimeSubType' => 'jpeg']
+     *   ['mimeType' => 'image', 'mimeSubType' => 'png']
+     *   ['mimeType' => 'json', 'mimeSubType' => '']
+     *   ['mimeType' => 'xml', 'mimeSubType' => '']
+     *   ['mimeType' => 'text', 'mimeSubType' => '']
+     *   ['mimeType' => 'html', 'mimeSubType' => '']
+     *
+     * @param string|null $default Default value.
+     *
+     * @return array
      */
-    public function getAccept($default = null)
+    public function getAccept(string $default = null): array
     {
         $key = 'accept';
         $headers = getallheaders();
@@ -422,14 +441,16 @@ class Api
             }
             usort($values, ['self', 'sortHeadersWeight']);
         }
+
+        $result = ['mimeType' => $default, 'mimeSubType' => ''];
         if (sizeof($values) < 1) {
-            return $default;
+            return $result;
         }
 
-        $result = $default;
         switch ($values[0]['mimeType']) {
             case 'image':
-                $result = 'image';
+                $result['mimeType'] = 'image';
+                $result['mimeSubType'] = $values[0]['mimeSubType'];
                 break;
             case 'text':
             case 'application':
@@ -438,7 +459,7 @@ class Api
                     case '**':
                         break;
                     default:
-                        $result = $values[0]['mimeSubType'];
+                        $result['mimeType'] = $values[0]['mimeSubType'];
                         break;
                 }
                 break;
