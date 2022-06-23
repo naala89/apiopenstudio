@@ -71,13 +71,14 @@ class Api
      * Api constructor.
      *
      * @param array $config Config array.
+     *
      * @throws ApiException
      */
     public function __construct(array $config)
     {
         $this->settings = $config;
         $this->logger = new MonologWrapper($config['debug']);
-        $this->cache = new Cache($this->settings, $this->logger, $this->settings['api']['cache']);
+        $this->cache = new Cache($this->settings['api']['cache'], $this->logger);
         $this->helper = new ProcessorHelper();
     }
 
@@ -130,7 +131,7 @@ class Api
         $result = $this->getCache($this->request->getCacheKey());
         if ($result !== false) {
             $this->logger->info('api', 'Returning cached results');
-            return $this->getOutput(true, $meta);
+            return $this->getOutput($result, $meta);
         }
         // set fragments in Meta class
         if (isset($meta->fragments)) {
@@ -154,9 +155,8 @@ class Api
         if (is_object($result) && get_class($result) == 'Error') {
             $this->logger->notice('api', 'Not caching, result is error object');
         } else {
-            $cacheData = ['data' => $result];
             $ttl = empty($this->request->getTtl()) ? 0 : $this->request->getTtl();
-            $this->cache->set($this->request->getCacheKey(), $cacheData, $ttl);
+            $this->cache->set($this->request->getCacheKey(), $result, $ttl);
         }
 
         return $this->getOutput($result, $meta);
@@ -220,7 +220,7 @@ class Api
         $cacheStr = implode('_', [$accId, $appId, $cacheStr]);
         $request->setCacheKey($cacheStr);
         $request->setFragments(!empty($meta->fragments) ? $meta->fragments : []);
-        $request->setTtl(!empty($meta->ttl) ? $meta->ttl : 0);
+        $request->setTtl($result['resource']->getTtl());
 
         return $request;
     }
@@ -261,22 +261,20 @@ class Api
      *
      * @param string $cacheKey Cache key.
      *
-     * @return boolean
-     *
      * @throws ApiException Allow any exceptions to flow through.
      */
-    private function getCache(string $cacheKey): bool
+    private function getCache(string $cacheKey)
     {
-        if (!$this->cache->cacheActive()) {
-            $this->logger->info('api', 'not searching for cache - inactive');
+        if (!$this->cache->active()) {
+            $this->logger->debug('api', 'not searching for cache - inactive');
             return false;
         }
 
         $data = $this->cache->get($cacheKey);
 
         if (!empty($data)) {
-            $this->logger->debug('api', 'from cache: ' . $data);
-            return $this->getOutput($data);
+            $this->logger->debug('api', 'data fetched from cache');
+            return $this->getOutput($data, $this->request->getMeta());
         }
 
         $this->logger->info('api', 'no cache entry found');
@@ -287,7 +285,7 @@ class Api
      * Get the formatted output.
      *
      * @param mixed $data Data to format.
-     * @param mixed $meta Data to format.
+     * @param mixed $meta Resource metadata.
      *
      * @return mixed
      *
@@ -343,7 +341,7 @@ class Api
      *
      * @throws ApiException
      */
-    private function processOutputResponse(array $meta, $data, int $status, int $index = -1)
+    private function processOutputResponse(array $meta, $data, int $status = 1, int $index = -1)
     {
         if (!isset($meta['processor'])) {
             throw new ApiException("No processor found in the output section: $index.", 1, 'oops', 500);
