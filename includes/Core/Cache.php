@@ -79,22 +79,22 @@ class Cache
      * Store a value in the cache
      *
      * @param string $key Cache key.
-     * @param mixed $val Value to store.
+     * @param DataContainer $val Value to store.
      * @param integer $ttl Cache TTL. Time to live (in seconds). 0|-1 = no cache.
      *
      * @return boolean
      *
      * @throws ApiException
      */
-    public function set(string $key, $val, int $ttl): bool
+    public function set(string $key, DataContainer $val, int $ttl): bool
     {
         if (!$this->active || $ttl < 1) {
             $this->logger->debug('api', 'not caching');
             return false;
         }
 
-        $this->logger->debug('api', 'setting in cache (key, ttl): ' . $key . ', ' . $ttl);
-        return $this->cacheObj->set($key, $val, $ttl);
+        $this->logger->debug('api', 'Setting in cache (key, ttl): ' . $key . ', ' . $ttl);
+        return $this->cacheObj->set($key, $val->getData(), $ttl);
     }
 
     /**
@@ -102,18 +102,20 @@ class Cache
      *
      * @param string $key Get value for a cache key.
      *
-     * @return mixed results on success, false on failure
+     * @return DataContainer|null results on success, null if the key does not exist.
      *
      * @throws ApiException
      */
-    public function get(string $key)
+    public function get(string $key): ?DataContainer
     {
         if (!$this->active) {
+            $this->logger->debug('api', 'not searching for cache - inactive');
             return null;
         }
 
-        $this->logger->debug('api', "fetching from cache key: $key");
-        return $this->cacheObj->get($key);
+        $this->logger->debug('api', "Fetching from cache key: $key");
+        $result = $this->cacheObj->get($key);
+        return is_null($result) ? null : new DataContainer($this->cacheObj->get($key));
     }
 
     /**
@@ -125,9 +127,9 @@ class Cache
      */
     public function clear(): bool
     {
-        $this->logger->notice('api', 'clearing cache');
+        $this->logger->notice('api', 'Clearing cache');
         if (!$this->active) {
-            $this->logger->warning('api', 'could not clear cache - inactive');
+            $this->logger->warning('api', 'Could not clear cache - inactive');
             return false;
         }
 
