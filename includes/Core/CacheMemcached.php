@@ -52,25 +52,34 @@ class CacheMemcached
      * Initiate the memcached servers.
      *
      * @param array $servers
+     *
      * @return bool
+     *
      * @throws ApiException
      */
     public function init(array $servers): bool
     {
         if (Utilities::isAssoc($servers)) {
-            return $this->addServer($servers['host'], $servers['port'], $servers['weight']);
+            if (!empty($servers['weight'])) {
+                return $this->addServer($servers['host'], $servers['port'], $servers['weight']);
+            }
+            return $this->addServer($servers['host'], $servers['port']);
         }
 
         $result = true;
         foreach ($servers as $server) {
-            $added = $this->addServer($server['host'], $server['port'], $server['weight']);
+            if (!empty($servers['weight'])) {
+                $added = $this->addServer($server['host'], $server['port'], $server['weight']);
+            } else {
+                $added = $this->addServer($server['host'], $server['port']);
+            }
             $result = !$added ? false : $result;
         }
         return $result;
     }
 
     /**
-     * Add a sinle or array of servers to memcached.
+     * Add a single server to memcached.
      *
      * @param string $host
      * @param int $port
@@ -88,14 +97,13 @@ class CacheMemcached
                 if ($server['host'] == $host && $server['port'] == $port) {
                     $this->logger->error(
                         'api',
-                        'Memcached instance already exists: ' . $server['host'] . ':' . $server['port']
+                        'Memcached server already added: ' . $server['host'] . ':' . $server['port']
                     );
                     return false;
                 }
             }
         }
-        $this->memcached->addServer($host, $port, $weight);
-        return true;
+        return $this->memcached->addServer($host, $port, $weight);
     }
 
     /**
@@ -105,7 +113,7 @@ class CacheMemcached
      * @param mixed $val Value to store in Memcache.
      * @param integer $ttl Cache TTL.
      *
-     * @return boolean
+     * @return bool
      */
     public function set(string $key, $val, int $ttl): bool
     {
@@ -113,7 +121,7 @@ class CacheMemcached
     }
 
     /**
-     * Fetch a value from MemCache
+     * Fetch a value from MemCache. If the key does not exist, null is returned.
      *
      * @param string $key Memcache cache key.
      *
@@ -121,13 +129,14 @@ class CacheMemcached
      */
     public function get(string $key)
     {
-        return $this->memcached->get($key);
+        $result = $this->memcached->get($key);
+        return $result === false ? null : $result;
     }
 
     /**
      * Clear the MmeCache cache.
      *
-     * @return boolean
+     * @return bool
      */
     public function clear(): bool
     {
