@@ -11,6 +11,7 @@
     "resources.md",
     "logic/bookdown.json",
     "configuring-debug.md",
+    "caching.md",
     "3rd-party-packages/bookdown.json",
     "contributing/bookdown.json",
     "coding-standards.md",

@@ -1,7 +1,7 @@
 Coding standards
 ================
 
-ApiOpenStidio adheres to the PSR-12 Extended coding style.
+ApiOpenStudio adheres to the PSR-12 Extended coding style.
 
 See [PSR-12][psr_12] for the full formal definition
 
