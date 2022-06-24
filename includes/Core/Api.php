@@ -128,11 +128,11 @@ class Api
         }
 
         // fetch the cache of the call, and process into output if it is not stale
-        $result = $this->getCache($this->request->getCacheKey());
-        if ($result !== false) {
+        if (!is_null($result = $this->getCache($this->request->getCacheKey()))) {
             $this->logger->info('api', 'Returning cached results');
             return $this->getOutput($result, $meta);
         }
+
         // set fragments in Meta class
         if (isset($meta->fragments)) {
             $fragments = $meta->fragments;
@@ -149,7 +149,6 @@ class Api
         $parser->pushToProcessingStack($meta->process);
         $result = $parser->crawlMeta();
         $this->logger->debug('api', 'Results: ' . print_r($result, true));
-
 
         // store the results in cache for next time
         if (is_object($result) && get_class($result) == 'Error') {
@@ -265,20 +264,15 @@ class Api
      */
     private function getCache(string $cacheKey)
     {
-        if (!$this->cache->active()) {
-            $this->logger->debug('api', 'not searching for cache - inactive');
-            return false;
-        }
-
         $data = $this->cache->get($cacheKey);
 
-        if (!empty($data)) {
+        if (!is_null($data)) {
             $this->logger->debug('api', 'data fetched from cache');
             return $this->getOutput($data, $this->request->getMeta());
         }
 
-        $this->logger->info('api', 'no cache entry found');
-        return false;
+        $this->logger->debug('api', 'no cache entry found');
+        return null;
     }
 
     /**
