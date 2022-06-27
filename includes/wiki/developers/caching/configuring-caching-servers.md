@@ -1,11 +1,8 @@
-Caching
-=======
+Configuring caching servers
+===========================
 
 ApiOpenStudio allows you to cache responses on `Memcached` or `Redis`, using
 single or cluster architectures.
-
-Caching allows you to cache on the final result, as well as individual
-processors.
 
 This is configured in the `settings.yml` file, in the `api` section.
 
@@ -16,10 +13,10 @@ Setting NO cache
         cache:
             active: false
 
-Setting `Memcached` server/s
-----------------------------
+Setting Memcached server/s
+--------------------------
 
-**Note:** Weight is optional and will default to `1`. 
+**Note:** `weight` is optional and will default to `1`.
 
 ### Single server
 
@@ -47,10 +44,10 @@ Setting `Memcached` server/s
                     port: 11211
                     weight: 200
 
-Setting `Redis` server/s
-----------------------------
+Setting Redis server/s
+----------------------
 
-**Note:** Password is optional.
+**Note:** `password` is optional.
 
 ### Single server
 
@@ -61,7 +58,6 @@ Setting `Redis` server/s
             servers:
                 host: apiopenstudio-memcached
                 port: 11211
-                password:
 
 ### Cluster servers
 
