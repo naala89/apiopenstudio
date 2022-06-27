@@ -1,0 +1,10 @@
+{
+  "title": "Caching",
+  "content": [
+    "introduction.md",
+    "configuring-caching-servers.md",
+    "caching-resources.md",
+    "caching-processors.md"
+  ],
+  "tocDepth": 1
+}

@@ -38,18 +38,25 @@ use stdClass;
 class TreeParser
 {
     /**
+     * ApiOpenStudio Cache instance.
+     *
+     * @var Cache
+     */
+    protected Cache $cache;
+
+    /**
      * Processor helper class.
      *
      * @var ProcessorHelper
      */
-    private ProcessorHelper $helper;
+    protected ProcessorHelper $helper;
 
     /**
      * Logging class.
      *
      * @var MonologWrapper $logger
      */
-    private MonologWrapper $logger;
+    protected MonologWrapper $logger;
 
     /**
      * Stack of nodes to be processed.
@@ -70,14 +77,14 @@ class TreeParser
      *
      * @var ADOConnection
      */
-    private ADOConnection $db;
+    protected ADOConnection $db;
 
     /**
      * Request object class.
      *
      * @var Request
      */
-    private Request $request;
+    protected Request $request;
 
     /**
      * Constructor.
@@ -89,12 +96,13 @@ class TreeParser
      * @param MonologWrapper $logger
      *   Logger.
      */
-    public function __construct(Request $request, ADOConnection $db, MonologWrapper $logger)
+    public function __construct(Request $request, ADOConnection $db, MonologWrapper $logger, Cache $cache)
     {
         $this->helper = new ProcessorHelper();
         $this->request = $request;
         $this->db = $db;
         $this->logger = $logger;
+        $this->cache = $cache;
     }
 
     /**
@@ -195,10 +203,20 @@ class TreeParser
      * Attempt to process a node from the stack. If the required attributes are not yet calculated,
      * re-add to the unprocessed stack followed by the unprocessed attributes.
      *
+     * @param stdClass $node Metadata for the node to process.
+     *
+     * @return void
+     *
      * @throws ApiException
      */
     protected function processNode(stdClass $node)
     {
+        // Check for cached processor result.
+        if (!is_null($cachedResult = $this->getProcessorCache($node))) {
+            $this->addToResultStack($node->id, $cachedResult);
+            return;
+        }
+
         $childNodes = [];
         $classStr = $this->helper->getProcessorString($node->processor);
         $class = new $classStr($node, $this->request, $this->db, $this->logger);
@@ -237,17 +255,64 @@ class TreeParser
             $result->id = $node->id;
             $this->pushToProcessingStack($result);
         } else {
-            $this->addToResultStack($node->id, $class->process());
+            $result = $class->process();
+            $this->setProcessorCache($node, $result);
+            $this->addToResultStack($node->id, $result);
         }
     }
 
     /**
-     * Re-add a node to the processingStack, after its child dependencies.
+     * Fetch a processor result from cache. Null is returned if no results.
+     *
+     * @param stdClass $node Metadata for the node to fetch from cache.
+     *
+     * @return DataContainer|null
+     *
+     * @throws ApiException
+     */
+    protected function getProcessorCache(stdClass $node): ?DataContainer
+    {
+        if (isset($node->cache_ttl)) {
+            $processorCacheKey = $node->cache_id ?? '';
+            if (empty($processorCacheKey)) {
+                $resource = $this->request->getResource();
+                $processorCacheKey = $this->cache->getProcessorCacheKey($resource->getResid(), $node->id);
+            }
+            return $this->cache->get($processorCacheKey);
+        }
+        return null;
+    }
+
+    /**
+     * Store a processor result in cache.
+     *
+     * @param stdClass $node Metadata for the node to fetch from cache.
+     * @param DataContainer|stdClass $data Result data to store.
+     *
+     * @return bool
+     *
+     * @throws ApiException
+     */
+    protected function setProcessorCache(stdClass $node, $data): bool
+    {
+        if (isset($node->cache_ttl)) {
+            $processorCacheKey = $node->cache_id ?? '';
+            if (empty($processorCacheKey)) {
+                $resource = $this->request->getResource();
+                $processorCacheKey = $this->cache->getProcessorCacheKey($resource->getResid(), $node->id);
+            }
+            return $this->cache->set($processorCacheKey, $data, $node->cache_ttl);
+        }
+        return false;
+    }
+
+    /**
+     * Pre-process a node's children.
      *
      * @param $node
-     *   Node to be processed last.
      * @param array $childNodes
-     *   The modes children to be processed first.
+     *
+     * @return void
      */
     protected function reprocessAfterChildren($node, array $childNodes)
     {
