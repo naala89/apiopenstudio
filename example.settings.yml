@@ -78,7 +78,22 @@ api:
     - https
   base_path: "/var/www/html/api/"
   url: "api.apiopenstudio.local"
-  cache: false
+#  cache:
+#    active: false
+#  cache:
+#    active: true
+#    type: memcached
+#    servers:
+#        host: apiopenstudio-memcached
+#        port: 11211
+#        wight: 1
+  cache:
+    active: true
+    type: redis
+    servers:
+      host: apiopenstudio-redis
+      port: 6379
+      password:
   default_format: json
   wrap_json_in_response_object: true
   core_account: apiopenstudio

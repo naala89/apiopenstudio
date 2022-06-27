@@ -59,7 +59,6 @@ abstract class OutputResponse extends OutputEntity
     public function __construct($meta, Request &$request, MonologWrapper $logger, $data, int $status)
     {
         parent::__construct($meta, $request, $logger, $data);
-        $this->data = $data;
         $this->status = $status;
     }
 

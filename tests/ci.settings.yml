@@ -52,7 +52,8 @@ api:
     - https
   base_path: CI_PROJECT_DIR/
   url: localhost
-  cache: false
+  cache:
+    active: false
   default_format: json
   wrap_json_in_response_object: true
   core_account: apiopenstudio

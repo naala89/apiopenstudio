@@ -189,7 +189,7 @@ abstract class Entity
     public function process()
     {
         try {
-            $this->logger->info('api', 'Processor: ' . $this->details()['machineName']);
+            $this->logger->info('api', 'Evaluating processor: ' . $this->details()['machineName']);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
@@ -215,16 +215,18 @@ abstract class Entity
      * Setting $realValue to true will force the value to be the actual value, rather than a potential dataContainer.
      *
      * @param string $key The key for the input variable in the meta.
-     * @param bool|null $realValue Return the real value or a dataContainer.
+     * @param bool|null $rawData Return the raw data or a DataContainer.
      *
      * @return mixed|DataContainer
      *
      * @throws ApiException Invalid key or data.
      */
-    public function val(string $key, bool $realValue = null)
+    public function val(string $key, bool $rawData = null)
     {
-        $this->logger->debug('api', "Fetching val for: $key");
-        $this->logger->debug('api', "Real value: $realValue");
+        $this->logger->debug(
+            'api',
+            "Fetching val for entity (raw data): $key (" . ($rawData ? 'true' : 'false') . ')'
+        );
         $inputDet = $this->details['input'];
         if (!isset($inputDet[$key])) {
             // undefined input key for this processor type
@@ -277,9 +279,12 @@ abstract class Entity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        $this->logger->debug('api', 'Value: ' . print_r($container->getData(), true));
+        $this->logger->debug(
+            'api',
+            "Got value for entity ($key): " . print_r($container->getData(), true)
+        );
 
-        return $realValue ? $container->getData() : $container;
+        return $rawData ? $container->getData() : $container;
     }
 
     /**
