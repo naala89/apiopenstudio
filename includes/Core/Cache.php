@@ -14,6 +14,8 @@
 
 namespace ApiOpenStudio\Core;
 
+use stdClass;
+
 /**
  * Class Cache
  *
@@ -54,7 +56,7 @@ class Cache
     {
         $this->logger = $logger;
         $this->active = $config['active'];
-        $this->logger->debug('api', 'Cache active: ' . print_r($this->active, true));
+        $this->logger->info('api', 'Cache active: ' . ($this->active ? 'true' : 'false'));
 
         if ($this->active) {
             switch ($config['type']) {
@@ -89,11 +91,11 @@ class Cache
     public function set(string $key, DataContainer $val, int $ttl): bool
     {
         if (!$this->active || $ttl < 1) {
-            $this->logger->debug('api', 'not caching');
+            $this->logger->notice('api', "Not caching: $key");
             return false;
         }
 
-        $this->logger->debug('api', 'Setting in cache (key, ttl): ' . $key . ', ' . $ttl);
+        $this->logger->debug('api', "Setting in cache key (ttl): $key ($ttl)");
         return $this->cacheObj->set($key, $val->getData(), $ttl);
     }
 
@@ -101,21 +103,31 @@ class Cache
      * Fetch a value from the cache.
      *
      * @param string $key Get value for a cache key.
+     * @param bool $rawData Return raw data or DataContainer.
      *
      * @return DataContainer|null results on success, null if the key does not exist.
      *
      * @throws ApiException
      */
-    public function get(string $key): ?DataContainer
+    public function get(string $key, bool $rawData = false): ?DataContainer
     {
         if (!$this->active) {
-            $this->logger->debug('api', 'not searching for cache - inactive');
+            $this->logger->notice('api', 'Not searching in cache - inactive');
             return null;
         }
 
-        $this->logger->debug('api', "Fetching from cache key: $key");
+        $this->logger->debug('api', "Looking for cache (key): $key");
         $result = $this->cacheObj->get($key);
-        return is_null($result) ? null : new DataContainer($this->cacheObj->get($key));
+        if (is_null($result)) {
+            $this->logger->debug('api', "Cache not found (key): $key");
+        } else {
+            $this->logger->debug('api', "Cache found (key): $key");
+            if (!$rawData) {
+                $result = new DataContainer($result);
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -144,5 +156,31 @@ class Cache
     public function active(): bool
     {
         return $this->active;
+    }
+
+    /**
+     * Returns the cache key for a resource.
+     *
+     * @param int $resId Resource ID.
+     *
+     * @return string
+     */
+    public function getResourceCacheKey(int $resId): string
+    {
+        return "resource_$resId";
+    }
+
+    /**
+     * Returns the cache key for a processor.
+     *
+     * @param int $resId Resource ID.
+     * @param string $processorId Processor ID.
+     *
+     * @return string
+     */
+    public function getProcessorCacheKey(int $resId, string $processorId): string
+    {
+        $processorId = preg_replace('/[^a-z\d]/i', '_', strtolower($processorId));
+        return "processor_$resId" . '_' . $processorId;
     }
 }
