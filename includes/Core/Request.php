@@ -60,13 +60,6 @@ class Request
     private array $args;
 
     /**
-     * Cache key.
-     *
-     * @var string Cache key.
-     */
-    private string $cacheKey;
-
-    /**
      * Contents of $_FILES.
      *
      * @var array Server $_FILES.
@@ -504,27 +497,5 @@ class Request
     public function getFragments(): array
     {
         return $this->fragments;
-    }
-
-    /**
-     * Set the cache key.
-     *
-     * @param string $var Cache key.
-     *
-     * @return void
-     */
-    public function setCacheKey(string $var)
-    {
-        $this->cacheKey = $var;
-    }
-
-    /**
-     * Get the cache key.
-     *
-     * @return string
-     */
-    public function getCacheKey(): string
-    {
-        return $this->cacheKey;
     }
 }
