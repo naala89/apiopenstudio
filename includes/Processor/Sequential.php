@@ -15,6 +15,8 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
+use ApiOpenStudio\Core\Cache;
+use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core\MonologWrapper;
 use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
@@ -62,7 +64,14 @@ class Sequential extends ProcessorEntity
     protected DeepCopy $deepCopy;
 
     /**
+     * @var TreeParser
+     *   TreeParser.
+     */
+    protected TreeParser $treeParser;
+
+    /**
      * {@inheritDoc}
+     * @throws ApiException
      */
     public function __construct(
         $meta,
@@ -72,6 +81,9 @@ class Sequential extends ProcessorEntity
     ) {
         parent::__construct($meta, $request, $db, $logger);
         $this->deepCopy = new DeepCopy();
+        $settings = new Config();
+        $cache = new Cache($settings->__get(['api', 'cache']), $this->logger);
+        $this->treeParser = new TreeParser($this->request, $this->db, $this->logger, $cache);
     }
 
     /**
@@ -85,9 +97,8 @@ class Sequential extends ProcessorEntity
         $sequence = $this->meta->sequence;
 
         for ($index = 0; $index < sizeof($sequence) - 1; $index++) {
-            $treeParser = new TreeParser($this->request, $this->db, $this->logger);
-            $treeParser->pushToProcessingStack($sequence[$index]);
-            $treeParser->crawlMeta();
+            $this->treeParser->pushToProcessingStack($sequence[$index]);
+            $this->treeParser->crawlMeta();
         }
 
         return $sequence[$index];

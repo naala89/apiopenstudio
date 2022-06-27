@@ -15,6 +15,8 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
+use ApiOpenStudio\Core\Cache;
+use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core\DataContainer;
 use ApiOpenStudio\Core\MonologWrapper;
 use ApiOpenStudio\Core\ProcessorEntity;
@@ -116,6 +118,7 @@ class DoWhile extends ProcessorEntity
 
     /**
      * {@inheritDoc}
+     * @throws ApiException
      */
     public function __construct(
         $meta,
@@ -126,7 +129,9 @@ class DoWhile extends ProcessorEntity
         parent::__construct($meta, $request, $db, $logger);
         $this->deepCopy = new DeepCopy();
         $this->processorHelper = new ProcessorHelper();
-        $this->treeParser = new TreeParser($this->request, $this->db, $this->logger);
+        $settings = new Config();
+        $cache = new Cache($settings->__get(['api', 'cache']), $this->logger);
+        $this->treeParser = new TreeParser($this->request, $this->db, $this->logger, $cache);
     }
 
     /**
