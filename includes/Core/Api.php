@@ -136,19 +136,22 @@ class Api
 
         // set fragments in Meta class
         if (isset($meta->fragments)) {
-            $fragments = $meta->fragments;
-            foreach ($fragments as $fragKey => $fragVal) {
-                $this->logger->debug('api', 'Process fragment: ' . print_r($fragVal, true));
-                $parser->pushToProcessingStack($fragVal);
-                $fragments->$fragKey = $parser->crawlMeta();
+            foreach ($meta->fragments as $fragKey => $fragMeta) {
+                $this->logger->debug('api', 'Process fragment: ' . print_r($fragMeta, true));
+                $parser->pushToProcessingStack($fragMeta);
+                $this->request->setFragment($fragKey, $parser->crawlMeta());
             }
-            $this->request->setFragments($fragments);
+            $parser->setRequest($this->request);
         }
 
         // process the call
         $this->logger->debug('api', 'Process resource: ' . print_r($meta->process, true));
-        $parser->pushToProcessingStack($meta->process);
-        $result = $parser->crawlMeta();
+        if (!$this->helper->isProcessor($meta->process)) {
+            $result = new DataContainer($meta->process);
+        } else {
+            $parser->pushToProcessingStack($meta->process);
+            $result = $parser->crawlMeta();
+        }
         $this->logger->debug('api', 'Results: ' . print_r($result, true));
 
         // store the results in cache for next time
