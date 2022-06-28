@@ -283,8 +283,6 @@ class ResourceCreate extends ProcessorEntity
             throw new ApiException("Invalid application: $appid", 6, $this->id, 400);
         }
 
-        $this->validateCoreProtection($application);
-
         // Validate user has developer role for the application
         try {
             $userRoles = Utilities::getRolesFromToken();
@@ -312,28 +310,6 @@ class ResourceCreate extends ProcessorEntity
             $this->validator->validate(json_decode($metadata, true));
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-        }
-    }
-
-    /**
-     * Validate application is not core and core not locked.
-     *
-     * @param Application $application
-     *
-     * @throws ApiException
-     */
-    protected function validateCoreProtection(Application $application)
-    {
-        try {
-            $account = $this->accountMapper->findByAccid($application->getAccid());
-            $coreAccount = $this->settings->__get(['api', 'core_account']);
-            $coreApplication = $this->settings->__get(['api', 'core_application']);
-            $coreLock = $this->settings->__get(['api', 'core_resource_lock']);
-        } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-        }
-        if ($account->getName() == $coreAccount && $application->getName() == $coreApplication && $coreLock) {
-            throw new ApiException("Unauthorised: this is a core resource", 4, $this->id, 403);
         }
     }
 }
