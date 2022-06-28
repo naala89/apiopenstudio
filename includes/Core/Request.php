@@ -478,15 +478,45 @@ class Request
     }
 
     /**
-     * Set the fragments.
+     * Set a fragment.
      *
-     * @param array $var Fragments.
+     * @param string $key Fragment key.
+     * @param mixed $val Fragment value.
      *
      * @return void
      */
-    public function setFragments(array $var)
+    public function setFragment(string $key, $val)
     {
-        $this->fragments = $var;
+        $this->fragments[$key] = $val;
+    }
+
+    /**
+     * Get a fragment.
+     *
+     * @param string $key Fragment key.
+     *
+     * @return mixed
+     *
+     * @throws ApiException
+     */
+    public function getFragment(string $key)
+    {
+        if (!isset($this->fragments[$key])) {
+            throw new ApiException("invalid fragment key: $key", 6, -1, 500);
+        }
+        return $this->fragments[$key];
+    }
+
+    /**
+     * Set the fragments.
+     *
+     * @param array $fragments Fragments array.
+     *
+     * @return void
+     */
+    public function setFragments(array $fragments)
+    {
+        $this->fragments = $fragments;
     }
 
     /**
