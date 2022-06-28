@@ -106,6 +106,18 @@ class TreeParser
     }
 
     /**
+     * Update the request object.
+     *
+     * @param Request $request
+     *
+     * @return void
+     */
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
+    }
+
+    /**
      * Append a node tree structure to the end of the processingStack.
      *
      * @param array|stdClass $tree
