@@ -466,7 +466,8 @@ class ResourceValidator
         if (empty($limitProcessors)) {
             return;
         }
-        if ($this->helper->isProcessor($node[$inputKey])
+        if (
+            $this->helper->isProcessor($node[$inputKey])
             && !in_array($node[$inputKey]['processor'], $limitProcessors)
         ) {
             throw new ApiException("Invalid processor in $inputKey in " . $node['id'], 6, -1, 400);
