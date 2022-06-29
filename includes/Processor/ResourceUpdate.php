@@ -276,7 +276,16 @@ class ResourceUpdate extends ProcessorEntity
         }
         if (!empty($metadata) && $metadata != '"false"') {
             try {
-                $this->validator->validate(json_decode($metadata, true));
+                $this->validator->validate([
+                    'name' => $name,
+                    'description' => $description,
+                    'uri' => $uri,
+                    'method' => $method,
+                    'appid' => $appid,
+                    'ttl' => $ttl,
+                    'meta' => json_decode($metadata, true),
+                    'schema' => $schema,
+                ]);
             } catch (ReflectionException $e) {
                 throw new ApiException($e->getMessage(), 6, $this->id, 400);
             }
