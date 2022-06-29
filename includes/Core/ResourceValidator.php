@@ -490,18 +490,23 @@ class ResourceValidator
      */
     protected function validateLimitTypes(string $inputKey, array $limitTypes, array $node)
     {
-        if (empty($limitTypes) || empty($node[$inputKey]) || $this->helper->isProcessor($node[$inputKey])) {
+        if (empty($limitTypes) || !isset($node[$inputKey]) || $this->helper->isProcessor($node[$inputKey])) {
             return;
         }
         $type = '';
         $type = is_array($node[$inputKey]) ? 'array' : $type;
         $type = is_string($node[$inputKey]) ? 'text' : $type;
-        $type = filter_var($node[$inputKey], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ? 'boolean' : $type;
-        $type = filter_var($node[$inputKey], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ? 'integer' : $type;
         $type = filter_var($node[$inputKey], FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) ? 'float' : $type;
+        $type = filter_var($node[$inputKey], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ? 'integer' : $type;
+        $type = filter_var($node[$inputKey], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ? 'boolean' : $type;
 
         if (!in_array($type, $limitTypes)) {
-            throw new ApiException("Invalid type in $inputKey ($type) in " . $node['id'], 6, -1, 400);
+            throw new ApiException(
+                "Invalid type in '$inputKey' ($type) in '" . $node['id'] . "'",
+                6,
+                -1,
+                400
+            );
         }
     }
 
