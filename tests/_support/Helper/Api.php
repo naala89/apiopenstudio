@@ -234,25 +234,30 @@ class Api extends Module
         $yamlArr = $this->getResourceFromYaml($yamlFilename);
         $this->haveHttpHeader('Accept', 'application/json');
         $this->haveHttpHeader('Authorization', 'Bearer ' . $this->getMyStoredToken());
-        $this->getModule('REST')->sendGET(
-            $this->getCoreBaseUri() . '/resource/',
-            ['appid' => $yamlArr['appid']]
-        );
+
+        $filter = [];
+        if (isset($yamlArr['name'])) {
+            $filter['name'] = $yamlArr['name'];
+        }
+        if (isset($yamlArr['appid'])) {
+            $filter['appid'] = $yamlArr['appid'];
+        }
+        if (isset($yamlArr['method'])) {
+            $filter['method'] = $yamlArr['method'];
+        }
+        if (isset($yamlArr['uri'])) {
+            $filter['uri'] = $yamlArr['uri'];
+        }
+        $this->getModule('REST')->sendGET($this->getCoreBaseUri() . '/resource/', $filter);
         $resources = json_decode($this->getModule('REST')->response, true);
-        $resid = 0;
         if (isset($resources['result']) && $resources['result'] == 'ok') {
             foreach ($resources['data'] as $resource) {
-                if (
-                    strtolower($resource['method']) == strtolower($yamlArr['method'])
-                    && $resource['uri'] == $yamlArr['uri']
-                ) {
-                    $resid = $resource['resid'];
-                }
+                $resid = $resource['resid'];
+                $this->getModule('REST')->sendDELETE(
+                    $this->getCoreBaseUri() . '/resource/' . $resid,
+                    []
+                );
             }
-            $this->getModule('REST')->sendDELETE(
-                $this->getCoreBaseUri() . '/resource/' . $resid,
-                []
-            );
         }
     }
 
