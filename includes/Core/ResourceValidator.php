@@ -211,12 +211,12 @@ class ResourceValidator
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
         }
-        if (!isset($this->meta['ttl'])) {
+        if (!isset($this->meta['ttl']) || $this->meta['ttl'] == '') {
             $message = 'Missing ttl in new resource';
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
         }
-        if (empty($this->meta['meta']['process'])) {
+        if (!isset($this->meta['meta']['process']) || $this->meta['meta']['process'] == '') {
             $message = 'Missing process in new resource';
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
