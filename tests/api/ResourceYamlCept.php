@@ -691,7 +691,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'data' => [
             'id' => 'resource_import_process',
             'code' => 6,
-            'message' => 'Invalid output declaration. Only processor, array of processors or "response" allowed.',
+            'message' => "Invalid output declaration. Only a processor, array of processors or 'response' allowed.",
         ],
     ]);
     $I->tearDownTestFromYaml($yamlFilename);
@@ -730,7 +730,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'data' => [
             'id' => 'resource_import_process',
             'code' => 6,
-            'message' => 'Invalid output declaration. Only processor, array of processors or "response" allowed.',
+            'message' => "Invalid output declaration. Only a processor, array of processors or 'response' allowed.",
         ],
     ]);
     $I->tearDownTestFromYaml($yamlFilename);
@@ -769,7 +769,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'data' => [
             'id' => 'resource_import_process',
             'code' => 6,
-            'message' => 'Invalid output declaration. Only processor, array of processors or "response" allowed.',
+            'message' => "Invalid output declaration. Only a processor, array of processors or 'response' allowed.",
         ],
     ]);
     $I->tearDownTestFromYaml($yamlFilename);
