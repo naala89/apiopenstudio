@@ -308,7 +308,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => 'Missing name in new resource.',
         ],
     ]);
@@ -334,7 +334,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => 'Missing uri in new resource.',
         ],
     ]);
@@ -344,7 +344,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_delete_process',
+            'id' => 'resource_read_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -372,7 +372,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => 'Missing description in new resource.',
         ],
     ]);
@@ -382,7 +382,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_delete_process',
+            'id' => 'resource_read_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -409,7 +409,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => 'Missing method in new resource.',
         ],
     ]);
@@ -437,7 +437,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => 'Missing ttl in new resource.',
         ],
     ]);
@@ -447,7 +447,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_delete_process',
+            'id' => 'resource_read_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -474,7 +474,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => 'Negative ttl in new resource.',
         ],
     ]);
@@ -484,7 +484,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_delete_process',
+            'id' => 'resource_read_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -532,7 +532,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => 'Missing process in new resource.',
         ],
     ]);
@@ -542,7 +542,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_delete_process',
+            'id' => 'resource_read_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -590,7 +590,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => 'Invalid process declaration, only processors allowed.',
         ],
     ]);
@@ -600,7 +600,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_delete_process',
+            'id' => 'resource_read_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -627,7 +627,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => 'Invalid process declaration, only processors allowed.',
         ],
     ]);
@@ -637,7 +637,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_delete_process',
+            'id' => 'resource_read_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -664,7 +664,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => 'Invalid process declaration, only processors allowed.',
         ],
     ]);
@@ -674,7 +674,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_delete_process',
+            'id' => 'resource_read_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -701,7 +701,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => 'Invalid process declaration, only processors allowed.',
         ],
     ]);
@@ -711,7 +711,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_delete_process',
+            'id' => 'resource_read_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -738,7 +738,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => 'Invalid output declaration. Only processor, array of processors or "response" allowed.',
         ],
     ]);
@@ -748,7 +748,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_delete_process',
+            'id' => 'resource_read_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -777,7 +777,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => 'Invalid output declaration. Only processor, array of processors or "response" allowed.',
         ],
     ]);
@@ -787,7 +787,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_delete_process',
+            'id' => 'resource_read_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -816,7 +816,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => 'Invalid output declaration. Only processor, array of processors or "response" allowed.',
         ],
     ]);
@@ -826,7 +826,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_delete_process',
+            'id' => 'resource_read_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -873,7 +873,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => 'Unknown processor: Fucntions.',
         ],
     ]);
@@ -883,7 +883,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_delete_process',
+            'id' => 'resource_read_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -910,7 +910,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => "Input 'items' in processor 'test resource with bad min process' requires min 2.",
         ],
     ]);
@@ -919,7 +919,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_delete_process',
+            'id' => 'resource_read_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -946,7 +946,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => "Input 'value' in processor 'test resource with bad max process' requires max 1.",
         ],
     ]);
@@ -956,7 +956,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_delete_process',
+            'id' => 'resource_read_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
@@ -1020,7 +1020,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 1,
+            'code' => 6,
             'message' => 'Identical IDs in new resource: resource identical ids.',
         ],
     ]);
@@ -1030,7 +1030,7 @@ foreach ($goodIdentities as $goodIdentity) {
     $I->seeResponseContainsJson([
         'result' => 'error',
         'data' => [
-            'id' => 'resource_delete_process',
+            'id' => 'resource_read_process',
             'code' => 6,
             'message' => 'No resources found or insufficient privileges.',
         ],
