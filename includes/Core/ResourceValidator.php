@@ -421,7 +421,7 @@ class ResourceValidator
                     400
                 );
             }
-            if ($max != '*' && count($node[$inputKey]) > $max) {
+            if ($max != '*' && !$this->helper->isProcessor($node[$inputKey]) && count($node[$inputKey]) > $max) {
                 throw new ApiException(
                     "Bad maximum inputs in '$inputKey' in '$id', $max expected",
                     6,
