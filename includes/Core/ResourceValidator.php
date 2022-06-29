@@ -396,7 +396,7 @@ class ResourceValidator
         if (empty($node[$inputKey])) {
             if ($min > 0) {
                 throw new ApiException(
-                    "Input is empty in '$inputKey' in '$id', $min expected",
+                    "Input '$inputKey' in processor '$id' requires min $min",
                     6,
                     -1,
                     400
@@ -408,7 +408,7 @@ class ResourceValidator
         if (!is_array($node[$inputKey])) {
             if ($min > 1) {
                 throw new ApiException(
-                    "Bad minimum inputs in '$inputKey' in '$id', $min expected",
+                    "Input '$inputKey' in processor '$id' requires min $min",
                     6,
                     -1,
                     400
@@ -417,7 +417,7 @@ class ResourceValidator
         } elseif (!$this->helper->isProcessor($node[$inputKey])) {
             if (count($node[$inputKey]) < $min) {
                 throw new ApiException(
-                    "Bad minimum inputs in '$inputKey' in '$id', $min expected",
+                    "Input '$inputKey' in processor '$id' requires min $min",
                     6,
                     -1,
                     400
@@ -425,7 +425,7 @@ class ResourceValidator
             }
             if ($max != '*' && !$this->helper->isProcessor($node[$inputKey]) && count($node[$inputKey]) > $max) {
                 throw new ApiException(
-                    "Bad maximum inputs in '$inputKey' in '$id', $max expected",
+                    "Input '$inputKey' in processor '$id' requires max $max",
                     6,
                     -1,
                     400
