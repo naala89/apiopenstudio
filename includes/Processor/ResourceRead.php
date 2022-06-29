@@ -66,6 +66,24 @@ class ResourceRead extends ProcessorEntity
                 'limitValues' => [],
                 'default' => null,
             ],
+            'method' => [
+                'description' => 'The resource HTTP method.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => ['get', 'put', 'push', 'delete', 'post'],
+                'default' => null,
+            ],
+            'uri' => [
+                'description' => 'The resource URI.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => [],
+                'default' => null,
+            ],
             'order_by' => [
                 'description' => 'order by column',
                 'cardinality' => [0, 1],
@@ -123,6 +141,8 @@ class ResourceRead extends ProcessorEntity
 
         $resid = $this->val('resid', true);
         $appid = $this->val('appid', true);
+        $method = $this->val('method', true);
+        $uri = $this->val('uri', true);
         $keyword = $this->val('keyword', true);
         $orderBy = $this->val('order_by', true);
         $direction = $this->val('direction', true);
@@ -145,7 +165,19 @@ class ResourceRead extends ProcessorEntity
                 'column' => 'appid',
             ];
         }
-        if (!empty($appid)) {
+        if (!empty($method)) {
+            $params['filter'][] = [
+                'keyword' => $method,
+                'column' => 'method',
+            ];
+        }
+        if (!empty($uri)) {
+            $params['filter'][] = [
+                'keyword' => $uri,
+                'column' => 'uri',
+            ];
+        }
+        if (!empty($keyword)) {
             $params['filter'][] = [
                 'keyword' => "%$keyword%",
                 'column' => 'name',
