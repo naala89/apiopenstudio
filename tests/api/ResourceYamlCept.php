@@ -825,7 +825,7 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'error',
         'data' => [
             'id' => 'resource_import_process',
-            'code' => 6,
+            'code' => 1,
             'message' => 'Unknown processor: Fucntions.',
         ],
     ]);

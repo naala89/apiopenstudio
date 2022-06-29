@@ -27,12 +27,9 @@ output:
         id: test resource required func type output email
         to: john@naala.com.au
         subject: "test email"
-        format: html
-        message: test message
     -
         processor: xml_remote
         id: test resource required func type xml
-        destination: www.foo.bar
         transport: s3
         parameters:
             processor: fucntions
