@@ -393,14 +393,19 @@ class ResourceValidator
         $max = $cardinality[1];
         $id = $node['id'];
 
-        if (empty($node[$inputKey]) && $min > 0) {
-            throw new ApiException(
-                "Input is empty in '$inputKey' in '$id', $min expected",
-                6,
-                -1,
-                400
-            );
-        } elseif (!is_array($node[$inputKey])) {
+        if (empty($node[$inputKey])) {
+            if ($min > 0) {
+                throw new ApiException(
+                    "Input is empty in '$inputKey' in '$id', $min expected",
+                    6,
+                    -1,
+                    400
+                );
+            } else {
+                return;
+            }
+        }
+        if (!is_array($node[$inputKey])) {
             if ($min > 1) {
                 throw new ApiException(
                     "Bad minimum inputs in '$inputKey' in '$id', $min expected",
@@ -409,7 +414,7 @@ class ResourceValidator
                     400
                 );
             }
-        } else {
+        } elseif (!$this->helper->isProcessor($node[$inputKey])) {
             if (count($node[$inputKey]) < $min) {
                 throw new ApiException(
                     "Bad minimum inputs in '$inputKey' in '$id', $min expected",
