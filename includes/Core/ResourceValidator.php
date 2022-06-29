@@ -187,37 +187,37 @@ class ResourceValidator
             throw new ApiException($message, 6, -1, 400);
         }
         if (empty($this->meta['name'])) {
-            $message = 'Missing or empty name in new resource';
+            $message = 'Missing name in new resource';
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
         }
         if (empty($this->meta['description'])) {
-            $message = 'Missing or empty description in new resource';
+            $message = 'Missing description in new resource';
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
         }
         if (empty($this->meta['uri'])) {
-            $message = 'Missing or empty uri in new resource';
+            $message = 'Missing uri in new resource';
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
         }
         if (empty($this->meta['method'])) {
-            $message = 'Missing or empty method in new resource';
+            $message = 'Missing method in new resource';
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
         }
         if (empty($this->meta['appid'])) {
-            $message = 'Missing or empty appid in new resource';
+            $message = 'Missing appid in new resource';
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
         }
         if (!isset($this->meta['ttl'])) {
-            $message = 'Missing or empty ttl in new resource';
+            $message = 'Missing ttl in new resource';
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
         }
         if (empty($this->meta['meta']['process'])) {
-            $message = 'Missing or empty process in new resource';
+            $message = 'Missing process in new resource';
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
         }
