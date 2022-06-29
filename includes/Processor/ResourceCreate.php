@@ -196,7 +196,16 @@ class ResourceCreate extends ProcessorEntity
         $schema = $this->val('openapi', true);
 
         try {
-            $this->validate($appid, $method, $uri, $metadata);
+            $this->validate(
+                $name,
+                $description,
+                $uri,
+                $method,
+                $appid,
+                $ttl,
+                json_decode($metadata, true),
+                json_decode($schema, true)
+            );
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
@@ -267,15 +276,29 @@ class ResourceCreate extends ProcessorEntity
     /**
      * Validate the input.
      *
-     * @param int $appid
-     * @param string $method
-     * @param string $uri
-     * @param string $metadata
+     * @param string $name Resource name.
+     * @param string $description Resource Description.
+     * @param string $uri Resource request URI.
+     * @param string $method Resource request method.
+     * @param int $appid  Resource application ID.
+     * @param int $ttl Resource cache TTL.
+     * @param array $metadata Resource definition metadata.
+     * @param ?array $schema Resource OpenAPI schema.
+     *
+     * @return void
      *
      * @throws ApiException
      */
-    protected function validate(int $appid, string $method, string $uri, string $metadata)
-    {
+    protected function validate(
+        string $name,
+        string $description,
+        string $uri,
+        string $method,
+        int $appid,
+        int $ttl,
+        array $metadata,
+        ?array $schema
+    ) {
         // Validate the application exists.
         try {
             $application = $this->applicationMapper->findByAppid($appid);
@@ -307,7 +330,16 @@ class ResourceCreate extends ProcessorEntity
 
         // Validate the metadada.
         try {
-            $this->validator->validate(json_decode($metadata, true));
+            $this->validator->validate([
+                'name' => $name,
+                'description' => $description,
+                'uri' => $uri,
+                'method' => $method,
+                'appid' => $appid,
+                'ttl' => $ttl,
+                'meta' => $metadata,
+                'schema' => $schema,
+            ]);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
