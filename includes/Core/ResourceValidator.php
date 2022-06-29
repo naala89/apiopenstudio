@@ -17,7 +17,6 @@ namespace ApiOpenStudio\Core;
 use ADOConnection;
 use ADODB_mysqli;
 use ApiOpenStudio\Db\AccountMapper;
-use ApiOpenStudio\Db\Application;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ReflectionClass;
 use ReflectionException;
@@ -135,13 +134,11 @@ class ResourceValidator
                         throw new ApiException($message, 6, -1, 400);
                     }
                 }
-            } else {
-                if ($meta['meta']['output'] != 'response') {
-                    $message = 'Invalid output declaration. ';
-                    $message .= "Only a processor, array of processors or 'response' allowed";
-                    $this->logger->error('api', $message);
-                    throw new ApiException($message, 6, -1, 400);
-                }
+            } elseif ($meta['meta']['output'] != 'response') {
+                $message = 'Invalid output declaration. ';
+                $message .= "Only a processor, array of processors or 'response' allowed";
+                $this->logger->error('api', $message);
+                throw new ApiException($message, 6, -1, 400);
             }
         }
     }
@@ -466,17 +463,17 @@ class ResourceValidator
         if (empty($limitProcessors)) {
             return;
         }
+
         if (
             $this->helper->isProcessor($node[$inputKey])
             && !in_array($node[$inputKey]['processor'], $limitProcessors)
         ) {
-            throw new ApiException("Invalid processor in $inputKey in " . $node['id'], 6, -1, 400);
-        } elseif (is_array($node[$inputKey])) {
-            foreach ($node[$inputKey] as $index => $item) {
-                if ($this->helper->isProcessor($item) && !in_array($item['processor'], $limitProcessors)) {
-                    throw new ApiException("Invalid processor in $inputKey ($index) in " . $node['id'], 6, -1, 400);
-                }
-            }
+            throw new ApiException(
+                "Invalid processor in '$inputKey' in '" . $node['id'] . "'",
+                6,
+                -1,
+                400
+            );
         }
     }
 
