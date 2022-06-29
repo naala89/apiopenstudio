@@ -584,26 +584,14 @@ foreach ($goodIdentities as $goodIdentity) {
             ],
         ]
     );
-    $I->seeResponseCodeIs(400);
+    $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson([
-        'result' => 'error',
-        'data' => [
-            'id' => 'resource_import_process',
-            'code' => 6,
-            'message' => 'Invalid process declaration, only processors allowed.',
-        ],
-    ]);
     $I->tearDownTestFromYaml($yamlFilename);
-    $I->seeResponseCodeIs(400);
+    $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
     $I->seeResponseContainsJson([
-        'result' => 'error',
-        'data' => [
-            'id' => 'resource_read_process',
-            'code' => 6,
-            'message' => 'No resources found or insufficient privileges.',
-        ],
+        'result' => 'ok',
+        'data' => true,
     ]);
 
     $I->wantTo('create a new resource from YAML with an integer value in process attr for ' . $goodIdentity[0]);
@@ -621,26 +609,14 @@ foreach ($goodIdentities as $goodIdentity) {
             ],
         ]
     );
-    $I->seeResponseCodeIs(400);
+    $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson([
-        'result' => 'error',
-        'data' => [
-            'id' => 'resource_import_process',
-            'code' => 6,
-            'message' => 'Invalid process declaration, only processors allowed.',
-        ],
-    ]);
     $I->tearDownTestFromYaml($yamlFilename);
-    $I->seeResponseCodeIs(400);
+    $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
     $I->seeResponseContainsJson([
-        'result' => 'error',
-        'data' => [
-            'id' => 'resource_read_process',
-            'code' => 6,
-            'message' => 'No resources found or insufficient privileges.',
-        ],
+        'result' => 'ok',
+        'data' => true,
     ]);
 
     $I->wantTo('create a new resource from YAML with an array value in process attr for ' . $goodIdentity[0]);
@@ -658,26 +634,14 @@ foreach ($goodIdentities as $goodIdentity) {
             ],
         ]
     );
-    $I->seeResponseCodeIs(400);
+    $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson([
-        'result' => 'error',
-        'data' => [
-            'id' => 'resource_import_process',
-            'code' => 6,
-            'message' => 'Invalid process declaration, only processors allowed.',
-        ],
-    ]);
     $I->tearDownTestFromYaml($yamlFilename);
-    $I->seeResponseCodeIs(400);
+    $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
     $I->seeResponseContainsJson([
-        'result' => 'error',
-        'data' => [
-            'id' => 'resource_read_process',
-            'code' => 6,
-            'message' => 'No resources found or insufficient privileges.',
-        ],
+        'result' => 'ok',
+        'data' => true,
     ]);
 
     $I->wantTo('create a new resource from YAML with an object value in process attr for ' . $goodIdentity[0]);
@@ -695,26 +659,14 @@ foreach ($goodIdentities as $goodIdentity) {
             ],
         ]
     );
-    $I->seeResponseCodeIs(400);
+    $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
-    $I->seeResponseContainsJson([
-        'result' => 'error',
-        'data' => [
-            'id' => 'resource_import_process',
-            'code' => 6,
-            'message' => 'Invalid process declaration, only processors allowed.',
-        ],
-    ]);
     $I->tearDownTestFromYaml($yamlFilename);
-    $I->seeResponseCodeIs(400);
+    $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
     $I->seeResponseContainsJson([
-        'result' => 'error',
-        'data' => [
-            'id' => 'resource_read_process',
-            'code' => 6,
-            'message' => 'No resources found or insufficient privileges.',
-        ],
+        'result' => 'ok',
+        'data' => true,
     ]);
 
     $I->wantTo('create a new resource from YAML with an non array output structure for ' . $goodIdentity[0]);
