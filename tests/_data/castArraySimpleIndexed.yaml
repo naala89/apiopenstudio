@@ -20,20 +20,16 @@ process:
     processor: cast
     id: test cast simple indexed array cast
     data:
-        processor: var_literal
-        id: test cast simple indexed array data
-        value:
-            -
-                this
-            -
-                is
-            -
-                an
-            -
-                array
-            -
-                0
-        type: array
+        -
+            this
+        -
+            is
+        -
+            an
+        -
+            array
+        -
+            0
     data_type:
         processor: var_get
         id: test cast simple indexed array data_type
