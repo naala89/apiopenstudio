@@ -501,9 +501,13 @@ class ResourceValidator
         $type = '';
         $type = is_array($node[$inputKey]) ? 'array' : $type;
         $type = is_string($node[$inputKey]) ? 'text' : $type;
-        $type = filter_var($node[$inputKey], FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) ? 'float' : $type;
-        $type = filter_var($node[$inputKey], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ? 'integer' : $type;
-        $type = filter_var($node[$inputKey], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ? 'boolean' : $type;
+        $type = filter_var($node[$inputKey], FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) !== null ? 'float' : $type;
+        $type = filter_var($node[$inputKey], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) !== null ? 'integer' : $type;
+        $type = filter_var(
+            $node[$inputKey],
+            FILTER_VALIDATE_BOOLEAN,
+            FILTER_NULL_ON_FAILURE
+        ) !== null ? 'boolean' : $type;
 
         if (!in_array($type, $limitTypes)) {
             throw new ApiException(
