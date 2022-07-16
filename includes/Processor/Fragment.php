@@ -14,7 +14,9 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ProcessorEntity;
 
 /**
  * Class Fragment
@@ -22,7 +24,7 @@ use ApiOpenStudio\Core;
  * Processor class to define a fragment.
  * This is a like a routine that can be called multiple times in a resource.
  */
-class Fragment extends Core\ProcessorEntity
+class Fragment extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -32,11 +34,11 @@ class Fragment extends Core\ProcessorEntity
     protected array $details = [
         'name' => 'Fragment',
         'machineName' => 'fragment',
-        'description' => 'Insert the result of a fragment declaration.',
+        'description' => 'Use the result of a pre-calculated fragment block.',
         'menu' => 'Logic',
         'input' => [
-          'name' => [
-            'description' => 'The name of the fragment',
+          'key' => [
+            'description' => 'The key-name of the fragment',
             'cardinality' => [1, 1],
             'literalAllowed' => true,
             'limitProcessors' => [],
@@ -50,20 +52,22 @@ class Fragment extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
-        $name = $this->val('name');
-        $fragments = $this->request->getFragments();
-        if (empty($fragments) || empty($fragments->$name)) {
-            throw new Core\ApiException("invalid fragment name: $name", $this->id);
+        $key = $this->val('key');
+
+        try {
+            $fragment = $this->request->getFragment($key);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        return $fragments->$name;
+        return $fragment;
     }
 }
