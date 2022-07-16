@@ -15,7 +15,6 @@
 namespace ApiOpenStudio\Core;
 
 use ADOConnection;
-use ADODB_mysqli;
 use ApiOpenStudio\Db\AccountMapper;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ReflectionClass;
@@ -34,9 +33,9 @@ class ResourceValidator
     protected ProcessorHelper $helper;
 
     /**
-     * @var ADODB_mysqli DB connection class.
+     * @var ADOConnection|null DB connection class.
      */
-    private $db;
+    private ?ADOConnection $db;
 
     /**
      * @var MonologWrapper Logging class.
@@ -89,7 +88,7 @@ class ResourceValidator
      *
      * @throws ApiException
      */
-    public function validate(array $meta)
+    public function validate(array $meta): void
     {
         $this->logger->notice('api', 'Validating a new resource...');
 
@@ -150,7 +149,7 @@ class ResourceValidator
      *
      * @throws ApiException
      */
-    protected function validateNonMetaValues()
+    protected function validateNonMetaValues(): void
     {
         // Validate TTL in the imported file.
         if ($this->meta['ttl'] < 0) {
@@ -178,7 +177,7 @@ class ResourceValidator
      *
      * @throws ApiException
      */
-    protected function validateRequiredResourceAttributes()
+    protected function validateRequiredResourceAttributes(): void
     {
         // Check mandatory elements exists in data.
         if (empty($this->meta)) {
@@ -230,7 +229,7 @@ class ResourceValidator
      *
      * @throws ApiException Identical ID found.
      */
-    protected function validateIdenticalIds()
+    protected function validateIdenticalIds(): void
     {
         $ids = [];
         $meta = $this->meta['meta'];
@@ -277,7 +276,7 @@ class ResourceValidator
      *
      * @throws ApiException Error found in validating the resource.
      */
-    private function validateSection(array $stack, bool $allowFragments)
+    private function validateSection(array $stack, bool $allowFragments): void
     {
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
@@ -310,7 +309,7 @@ class ResourceValidator
      *
      * @throws ApiException
      */
-    protected function validateNode(array $node, array $details)
+    protected function validateNode(array $node, array $details): void
     {
         $this->validateMissingInputs($node, $details['input']);
         $this->validateExtraInputs($node, $details['input']);
@@ -336,7 +335,7 @@ class ResourceValidator
      *
      * @throws ApiException
      */
-    protected function validateMissingInputs(array $node, array $inputs)
+    protected function validateMissingInputs(array $node, array $inputs): void
     {
         if (empty($node['id'])) {
             throw new ApiException("Missing processor id", 6, -1, 400);
@@ -363,7 +362,7 @@ class ResourceValidator
      *
      * @throws ApiException
      */
-    protected function validateExtraInputs(array $node, array $inputs)
+    protected function validateExtraInputs(array $node, array $inputs): void
     {
         $id = $node['id'];
         foreach ($node as $key => $val) {
@@ -387,7 +386,7 @@ class ResourceValidator
      *
      * @throws ApiException
      */
-    protected function validateCardinality(string $inputKey, array $cardinality, array $node)
+    protected function validateCardinality(string $inputKey, array $cardinality, array $node): void
     {
         $min = $cardinality[0];
         $max = $cardinality[1];
@@ -445,7 +444,7 @@ class ResourceValidator
      *
      * @throws ApiException
      */
-    protected function validateLiteralAllowed(string $inputKey, bool $literalAllowed, array $node)
+    protected function validateLiteralAllowed(string $inputKey, bool $literalAllowed, array $node): void
     {
         if (!$literalAllowed && !$this->helper->isProcessor($node[$inputKey])) {
             throw new ApiException("Literal not allowed in $inputKey in " . $node['id'], 6, -1, 400);
@@ -463,7 +462,7 @@ class ResourceValidator
      *
      * @throws ApiException
      */
-    protected function validateLimitProcessors(string $inputKey, array $limitProcessors, array $node)
+    protected function validateLimitProcessors(string $inputKey, array $limitProcessors, array $node): void
     {
         if (empty($limitProcessors)) {
             return;
@@ -493,7 +492,7 @@ class ResourceValidator
      *
      * @throws ApiException
      */
-    protected function validateLimitTypes(string $inputKey, array $limitTypes, array $node)
+    protected function validateLimitTypes(string $inputKey, array $limitTypes, array $node): void
     {
         if (empty($limitTypes) || !isset($node[$inputKey]) || $this->helper->isProcessor($node[$inputKey])) {
             return;
@@ -530,7 +529,7 @@ class ResourceValidator
      *
      * @throws ApiException
      */
-    protected function validateLimitValues(string $inputKey, array $limitValues, array $node)
+    protected function validateLimitValues(string $inputKey, array $limitValues, array $node): void
     {
         if (empty($limitValues) || !isset($node[$inputKey]) || $this->helper->isProcessor($node[$inputKey])) {
             return;
@@ -548,7 +547,7 @@ class ResourceValidator
      *
      * @throws ApiException
      */
-    protected function getProcessorClass(array $node)
+    protected function getProcessorClass(array $node): mixed
     {
         $classStr = $this->helper->getProcessorString($node['processor']);
 
@@ -580,9 +579,11 @@ class ResourceValidator
     /**
      * Validate application is not core and core not locked.
      *
+     * @return void
+     *
      * @throws ApiException
      */
-    protected function validateCoreProtection()
+    protected function validateCoreProtection(): void
     {
         $application = $this->applicationMapper->findByAppid($this->meta['appid']);
         $account = $this->accountMapper->findByAccid($application->getAccid());
