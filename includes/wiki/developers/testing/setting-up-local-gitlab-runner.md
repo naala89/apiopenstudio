@@ -1,12 +1,13 @@
 Setting up a local GitLab runner
 ================================
 
-This is useful for local dev testing of GitLab CI.
+This is useful for local dev testing of `gitlab-ci.yml`.
 
 Install gitlab-runner
 ---------------------
 
-See [install][all_install] for platform specific GitLab runner installation.
+See [Install GitLab Runner][all_install] for platform specific GitLab runner
+installation.
 
 ### Mac OSx
 
@@ -62,7 +63,8 @@ Register the runner
 Registering a runner is the process that binds the runner with one or more
 GitLab instances.
 
-See [register][all_register] for details on platform specific register commands.
+See [Registering runners][all_register] for details on platform specific
+register commands.
 
 Set the URL:
 
@@ -71,8 +73,12 @@ Set the URL:
 
 Set the token:
 
+_Get the token:_ Visit your repository fork in GitLab, navigate to
+`Settings -> CI / CD -> Runners`, Copy the registration token in the
+`Specific runners` section.
+
     Please enter the gitlab-ci token for this runner:
-    Fetch from Settings -> CI / CD -> Runners
+    <registration token>
 
 Give the runner a name:
 
@@ -84,18 +90,47 @@ Add tags:
     Please enter the gitlab-ci tags for this runner (comma separated):
     apiopenstudio-runner
 
+Add notes (optional):
+
+    Enter optional maintenance note for the runner:
+    <leave this empty>
+
 Select the executor:
 
     Please enter the executor: docker+machine, kubernetes, custom, docker-ssh, parallels, shell, ssh, virtualbox, docker, docker-ssh+machine:
     docker
 
-The runner will now appear in GitLab: Settings -> CI / CD -> Runners
+Enter the default Docker image (this is always overridden, but we need to set a default):
+
+    Enter the default Docker image (for example, ruby:2.7):
+    apiopenstudio-nginx-php-8.0
+
+The runner will now appear in GitLab: Settings -> CI / CD -> Runners, in the
+section `Available specific runners`.
+
+Run a pipelines locally
+-----------------------
+
+### SSH keys
+
+GitLab requires an SSH private key, which is normally provided in the GitLab
+config, however we can add this locally as a variable in `.gitlab-ci.yml`.
+You can copy the value of a private key from your own `.ssh` directory, e.g.:
+
+    cat ~/.ssh/id_rsa
+
+Edit `.gitlab-ci.yml`. Add an `SSH_PRIVATE_KEY` variable to the `variables`
+section. Example:
+
+    variables:
+      SSH_PRIVATE_KEY: "-----BEGIN OPENSSH PRIVATE KEY-----\nkey\nstring\n-----END OPENSSH PRIVATE KEY-----\n"
 
 Links
 -----
 
-* [https://docs.gitlab.com/runner/install](https://docs.gitlab.com/runner/install)
-* [https://medium.com/@umutuluer/how-to-test-gitlab-ci-locally-f9e6cef4f054](https://medium.com/@umutuluer/how-to-test-gitlab-ci-locally-f9e6cef4f054)
+* [Install GitLab Runner][all_install]
+* [Registering runners][all_register]
+* [How to Test Gitlab Ci Locally][how_to_test_gitlab_locally]
 
 [windows_64_bit]: https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-windows-amd64.exe
 [windows_32_bit]: https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-windows-386.exe
@@ -105,3 +140,4 @@ Links
 [linux_other_tagged_release]: https://docs.gitlab.com/runner/install/bleeding-edge.html#download-any-other-tagged-release
 [all_register]: https://docs.gitlab.com/runner/register/index.html
 [all_install]: https://docs.gitlab.com/runner/install/
+[how_to_test_gitlab_locally]: https://medium.com/@umutuluer/how-to-test-gitlab-ci-locally-f9e6cef4f054

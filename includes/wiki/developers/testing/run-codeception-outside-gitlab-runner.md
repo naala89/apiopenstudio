@@ -7,7 +7,7 @@ docker.
 Running tests inside docker
 ---------------------------
 
-clone, configure and run the [ApiOpenStudio docker dev][apiopenstudio_docker_dev]
+clone, configure and run the [ApiOpenStudio docker dev][docker_dev]
 repository.
 
 At a bare minimum, you will need the following containers:
@@ -30,12 +30,13 @@ Install the database (ensure you say 'Y' to installing the test users):
 
     $ ./includes/scripts/install.php
 
+Copy 
+
 The log path streams are configured for GitLab CI, which uses the internal
 docker instance as the root. To see the logs, you will need to update
-```debug.handlers.api_log_file.stream``` and 
-```debug.handlers.db_log_file.stream``` to use and absolute path in
-```settings.yml```. For example (so that you can view the logs in your local
-development area):
+`debug.handlers.api_log_file.stream` and `debug.handlers.db_log_file.stream` to
+use and absolute path in `settings.yml`. For example (so that you can view the
+logs in your local development area):
 
     stream: /var/www/html/api/log/api.log
 
@@ -49,16 +50,17 @@ To run functional tests:
 
     $ ./vendor/bin/codecept run --env ci api
 
-To run specific functional tests, for example ```LoginCept```:
+To run specific functional tests, for example `LoginCept`:
 
     $ ./vendor/bin/codecept run --env ci api LoginCept
 
-Failed test logs are stored at ```tests/_output/```
+Failed test logs are stored at `tests/_output/`
 
 Links
 -----
 
-- [codeception docs][codeception_docs]
+- [codeception docs][codecept_docs]
+- [ApiOpenStudio docker dev][docker_dev]
 
-[apiopenstudio_docker_dev]: https://github.com/naala89/apiopenstudio_docker_dev
-[codeception_docs]: https://codeception.com/docs/
+[docker_dev]: https://github.com/naala89/apiopenstudio_docker_dev
+[codecept_docs]: https://codeception.com/docs/
