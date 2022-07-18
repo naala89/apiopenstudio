@@ -117,7 +117,7 @@ GitLab requires an SSH private key, which is normally provided in the GitLab
 config, however we can add this locally as a variable in `.gitlab-ci.yml`.
 You can copy the value of a private key from your own `.ssh` directory, e.g.:
 
-    cat ~/.ssh/id_rsa
+    $ cat ~/.ssh/id_rsa
 
 Edit `.gitlab-ci.yml`. Add an `SSH_PRIVATE_KEY` variable to the `variables`
 section. Example:
