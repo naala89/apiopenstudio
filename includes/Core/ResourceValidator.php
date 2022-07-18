@@ -464,7 +464,7 @@ class ResourceValidator
      */
     protected function validateLimitProcessors(string $inputKey, array $limitProcessors, array $node): void
     {
-        if (empty($limitProcessors)) {
+        if (empty($limitProcessors) || !isset($node[$inputKey])) {
             return;
         }
 
