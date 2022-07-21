@@ -31,16 +31,16 @@ abstract class OutputEntity extends Entity
     /**
      * OutputEntity constructor.
      *
-     * @param $meta
+     * @param array $meta
      *   Metadata for the processor.
      * @param Request $request
      *   The full request object.
-     * @param MonologWrapper $logger
+     * @param ?MonologWrapper $logger
      *   Logger.
      * @param mixed $data
      *   HTTP output data.
      */
-    public function __construct($meta, Request &$request, MonologWrapper $logger, $data)
+    public function __construct(array &$meta, Request &$request, ?MonologWrapper $logger, $data)
     {
         parent::__construct($meta, $request, $logger);
         $this->data = $data;

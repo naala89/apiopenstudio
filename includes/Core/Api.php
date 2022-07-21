@@ -15,8 +15,9 @@
 namespace ApiOpenStudio\Core;
 
 use ADOConnection;
-use ApiOpenStudio\Db;
-use stdClass;
+use ApiOpenStudio\Db\AccountMapper;
+use ApiOpenStudio\Db\ApplicationMapper;
+use ApiOpenStudio\Db\ResourceMapper;
 
 /**
  * Class Api
@@ -54,11 +55,11 @@ class Api
     private ADOConnection $db;
 
     /**
-     * Config class.
+     * Config array.
      *
-     * @var Config
+     * @var array
      */
-    private $settings;
+    private array $settings;
 
     /**
      * Logging class.
@@ -115,15 +116,15 @@ class Api
         $this->logger->info('api', 'request: ' . print_r($this->request, true));
         $resource = $this->request->getResource();
         $this->logger->info('api', 'resource: ' . print_r($resource, true));
-        $meta = json_decode($resource->getMeta());
+        $meta = json_decode($resource->getMeta(), true);
         $this->logger->debug('api', 'meta: ' . print_r($meta, true));
 
         $parser = new TreeParser($this->request, $this->db, $this->logger, $this->cache);
 
         // validate user access rights for the call.
-        if (!empty($meta->security)) {
-            $this->logger->debug('api', 'Process security: ' . print_r($meta->security, true));
-            $parser->pushToProcessingStack($meta->security);
+        if (!empty($meta['security'])) {
+            $this->logger->debug('api', 'Process security: ' . print_r($meta['security'], true));
+            $parser->pushToProcessingStack($meta['security']);
             $parser->crawlMeta();
         }
 
@@ -135,8 +136,8 @@ class Api
         }
 
         // set fragments in Meta class
-        if (isset($meta->fragments)) {
-            foreach ($meta->fragments as $fragKey => $fragMeta) {
+        if (isset($meta['fragments'])) {
+            foreach ($meta['fragments'] as $fragKey => $fragMeta) {
                 $this->logger->debug('api', 'Process fragment: ' . print_r($fragMeta, true));
                 $parser->pushToProcessingStack($fragMeta);
                 $this->request->setFragment($fragKey, $parser->crawlMeta());
@@ -145,11 +146,11 @@ class Api
         }
 
         // process the call
-        $this->logger->debug('api', 'Process resource: ' . print_r($meta->process, true));
-        if (!$this->helper->isProcessor($meta->process)) {
-            $result = new DataContainer($meta->process);
+        $this->logger->debug('api', 'Process resource: ' . print_r($meta['process'], true));
+        if (!$this->helper->isProcessor($meta['process'])) {
+            $result = new DataContainer($meta['process']);
         } else {
-            $parser->pushToProcessingStack($meta->process);
+            $parser->pushToProcessingStack($meta['process']);
             $result = $parser->crawlMeta();
         }
         $this->logger->debug('api', 'Results: ' . print_r($result, true));
@@ -192,14 +193,14 @@ class Api
         $uriParts = explode('/', trim($get['request'], '/'));
 
         $accName = array_shift($uriParts);
-        $accMapper = new Db\AccountMapper($this->db, $this->logger);
+        $accMapper = new AccountMapper($this->db, $this->logger);
         $account = $accMapper->findByName($accName);
         if (empty($accId = $account->getAccid())) {
             throw new ApiException('invalid request', 3, 'oops', 404);
         }
 
         $appName = array_shift($uriParts);
-        $appMapper = new Db\ApplicationMapper($this->db, $this->logger);
+        $appMapper = new ApplicationMapper($this->db, $this->logger);
         $application = $appMapper->findByAccidAppname($accId, $appName);
         if (empty($appId = $application->getAppid())) {
             throw new ApiException('invalid request', 3, 'oops', 404);
@@ -219,10 +220,10 @@ class Api
         $request->setOutFormat($this->getAccept($this->settings['api']['default_format']));
         $request->setArgs($result['args']);
         $request->setResource($result['resource']);
-        $meta = json_decode($result['resource']->getMeta());
+        $meta = json_decode($result['resource']->getMeta(), true);
         $request->setMeta($meta);
         $request->setUri($result['resource']->getUri());
-        $request->setFragments(!empty($meta->fragments) ? $meta->fragments : []);
+        $request->setFragments(!empty($meta['fragments']) ? $meta['fragments'] : []);
         $request->setTtl($result['resource']->getTtl());
 
         return $request;
@@ -241,7 +242,7 @@ class Api
      */
     private function getResource(int $appId, string $method, array $uriParts): array
     {
-        $resourceMapper = new Db\ResourceMapper($this->db, $this->logger);
+        $resourceMapper = new ResourceMapper($this->db, $this->logger);
 
         $args = [];
         while (sizeof($uriParts) > 0) {
@@ -263,23 +264,23 @@ class Api
      * Get the formatted output.
      *
      * @param mixed $data Data to format.
-     * @param mixed $meta Resource metadata.
+     * @param array $meta Resource metadata.
      *
      * @return mixed
      *
      * @throws ApiException
      */
-    private function getOutput($data, $meta)
+    private function getOutput($data, array $meta)
     {
         $result = null;
 
-        if (!isset($meta->output)) {
+        if (!isset($meta['output'])) {
             // Default response output if no output defined.
             $this->logger->notice('api', 'No output section defined - returning the result in the response');
             $outputs = ['response'];
         } else {
             // Test for single output defined.
-            $outputs = Utilities::isAssoc($meta->output) ? [$meta->output] : $meta->output;
+            $outputs = Utilities::isAssoc($meta['output']) ? [$meta['output']] : $meta['output'];
         }
 
         foreach ($outputs as $index => $output) {
@@ -335,7 +336,7 @@ class Api
     /**
      * Process the output.
      *
-     * @param stdClass $meta Output metadata.
+     * @param array $meta Output metadata.
      * @param mixed $data Response data.
      * @param int|null $index Index in the output array.
      *
@@ -343,7 +344,7 @@ class Api
      *
      * @throws ApiException Invalid output processor.
      */
-    private function processOutputRemote(stdClass $meta, $data, int $index = null)
+    private function processOutputRemote(array $meta, $data, int $index = null)
     {
         if (!isset($meta->processor)) {
             throw new ApiException("No processor found in the output section: $index.", 1, 'oops', 500);
@@ -361,7 +362,7 @@ class Api
      *
      * @return string
      *
-     * @throws ApiException Thow exception for unexpected headers.
+     * @throws ApiException Throw exception for unexpected headers.
      */
     private function getMethod(): string
     {
@@ -391,11 +392,11 @@ class Api
      *   ['mimeType' => 'text', 'mimeSubType' => '']
      *   ['mimeType' => 'html', 'mimeSubType' => '']
      *
-     * @param string|null $default Default value.
+     * @param ?string $default Default value.
      *
      * @return array
      */
-    public function getAccept(string $default = null): array
+    public function getAccept(?string $default = null): array
     {
         $key = 'accept';
         $headers = getallheaders();

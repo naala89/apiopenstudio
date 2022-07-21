@@ -185,37 +185,37 @@ class ResourceValidator
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
         }
-        if (empty($this->meta['name'])) {
+        if (!isset($this->meta['name']) || empty($this->meta['name'])) {
             $message = 'Missing name in new resource';
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
         }
-        if (empty($this->meta['description'])) {
+        if (!isset($this->meta['description']) || empty($this->meta['description'])) {
             $message = 'Missing description in new resource';
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
         }
-        if (empty($this->meta['uri'])) {
+        if (!isset($this->meta['uri']) || empty($this->meta['uri'])) {
             $message = 'Missing uri in new resource';
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
         }
-        if (empty($this->meta['method'])) {
+        if (!isset($this->meta['method']) || empty($this->meta['method'])) {
             $message = 'Missing method in new resource';
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
         }
-        if (empty($this->meta['appid'])) {
+        if (!isset($this->meta['appid']) || empty($this->meta['appid'])) {
             $message = 'Missing appid in new resource';
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
         }
-        if (!isset($this->meta['ttl']) || $this->meta['ttl'] == '') {
+        if (!isset($this->meta['ttl'])) {
             $message = 'Missing ttl in new resource';
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
         }
-        if (!isset($this->meta['meta']['process']) || $this->meta['meta']['process'] == '') {
+        if (!isset($this->meta['meta']['process'])) {
             $message = 'Missing process in new resource';
             $this->logger->error('api', $message);
             throw new ApiException($message, 6, -1, 400);
@@ -547,7 +547,7 @@ class ResourceValidator
      *
      * @throws ApiException
      */
-    protected function getProcessorClass(array $node): mixed
+    protected function getProcessorClass(array $node)
     {
         $classStr = $this->helper->getProcessorString($node['processor']);
 

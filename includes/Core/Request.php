@@ -15,7 +15,6 @@
 namespace ApiOpenStudio\Core;
 
 use ApiOpenStudio\Db\Resource;
-use stdClass;
 
 /**
  * Class Request
@@ -90,9 +89,9 @@ class Request
     /**
      * The request metadata.
      *
-     * @var stdClass Request metadata.
+     * @var array Request metadata.
      */
-    private stdClass $meta;
+    private array $meta;
 
     /**
      * The request method.
@@ -112,7 +111,7 @@ class Request
      *   ['mimeType' => 'text', 'mimeSubType' => '']
      *   ['mimeType' => 'html', 'mimeSubType' => '']
      *
-     * @var array Value of the Accept header, translated into readable string.
+     * @var array Value of the `Accept` header, translated into readable string.
      */
     private array $outFormat;
 
@@ -151,7 +150,7 @@ class Request
      *
      * @return void
      */
-    public function setAccId(int $var)
+    public function setAccId(int $var): void
     {
         $this->accId = $var;
     }
@@ -173,7 +172,7 @@ class Request
      *
      * @return void
      */
-    public function setAccName(string $var)
+    public function setAccName(string $var): void
     {
         $this->accName = $var;
     }
@@ -195,7 +194,7 @@ class Request
      *
      * @return void
      */
-    public function setAppId(int $var)
+    public function setAppId(int $var): void
     {
         $this->appId = $var;
     }
@@ -217,7 +216,7 @@ class Request
      *
      * @return void
      */
-    public function setAppName(string $var)
+    public function setAppName(string $var): void
     {
         $this->appName = $var;
     }
@@ -239,7 +238,7 @@ class Request
      *
      * @return void
      */
-    public function setUri(string $var)
+    public function setUri(string $var): void
     {
         $this->uri = $var;
     }
@@ -261,7 +260,7 @@ class Request
      *
      * @return void
      */
-    public function setMethod(string $var)
+    public function setMethod(string $var): void
     {
         $this->method = $var;
     }
@@ -283,7 +282,7 @@ class Request
      *
      * @return void
      */
-    public function setArgs(array $args)
+    public function setArgs(array $args): void
     {
         foreach ($args as $index => $arg) {
             $args[$index] = $arg === 'null' ? null : urldecode($arg);
@@ -308,7 +307,7 @@ class Request
      *
      * @return void
      */
-    public function setGetVars(array $var)
+    public function setGetVars(array $var): void
     {
         $this->getVars = $var;
     }
@@ -330,7 +329,7 @@ class Request
      *
      * @return void
      */
-    public function setPostVars(array $var)
+    public function setPostVars(array $var): void
     {
         $this->postVars = $var;
     }
@@ -352,7 +351,7 @@ class Request
      *
      * @return void
      */
-    public function setFiles(array $var)
+    public function setFiles(array $var): void
     {
         $this->files = $var;
     }
@@ -374,7 +373,7 @@ class Request
      *
      * @return void
      */
-    public function setIp(string $var)
+    public function setIp(string $var): void
     {
         $this->ip = $var;
     }
@@ -396,7 +395,7 @@ class Request
      *
      * @return void
      */
-    public function setOutFormat(array $var)
+    public function setOutFormat(array $var): void
     {
         $this->outFormat = $var;
     }
@@ -418,7 +417,7 @@ class Request
      *
      * @return void
      */
-    public function setResource(Resource $var)
+    public function setResource(Resource $var): void
     {
         $this->resource = $var;
     }
@@ -436,11 +435,11 @@ class Request
     /**
      * Set the metadata.
      *
-     * @param stdClass $var Resource metadata.
+     * @param array $var Resource metadata.
      *
      * @return void
      */
-    public function setMeta(stdClass $var)
+    public function setMeta(array $var): void
     {
         $this->meta = $var;
     }
@@ -448,9 +447,9 @@ class Request
     /**
      * Get the metadata,
      *
-     * @return stdClass
+     * @return array
      */
-    public function getMeta(): stdClass
+    public function getMeta(): array
     {
         return $this->meta;
     }
@@ -462,7 +461,7 @@ class Request
      *
      * @return void
      */
-    public function setTtl(int $var)
+    public function setTtl(int $var): void
     {
         $this->ttl = $var;
     }
@@ -485,7 +484,7 @@ class Request
      *
      * @return void
      */
-    public function setFragment(string $key, $val)
+    public function setFragment(string $key, $val): void
     {
         $this->fragments[$key] = $val;
     }
@@ -514,7 +513,7 @@ class Request
      *
      * @return void
      */
-    public function setFragments(array $fragments)
+    public function setFragments(array $fragments): void
     {
         $this->fragments = $fragments;
     }
