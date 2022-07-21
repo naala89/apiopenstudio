@@ -34,6 +34,29 @@ use ApiOpenStudio\Db\UserRoleMapper;
 class ApplicationDelete extends ProcessorEntity
 {
     /**
+     * {@inheritDoc}
+     *
+     * @var array Details of the processor.
+     */
+    protected array $details = [
+        'name' => 'Application delete',
+        'machineName' => 'application_delete',
+        'description' => 'Delete an application.',
+        'menu' => 'Admin',
+        'input' => [
+            'applicationId' => [
+                'description' => 'The appication ID of the application.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => null,
+            ],
+        ],
+    ];
+
+    /**
      * User role mapper class.
      *
      * @var UserRoleMapper
@@ -63,36 +86,8 @@ class ApplicationDelete extends ProcessorEntity
 
     /**
      * {@inheritDoc}
-     *
-     * @var array Details of the processor.
      */
-    protected array $details = [
-        'name' => 'Application delete',
-        'machineName' => 'application_delete',
-        'description' => 'Delete an application.',
-        'menu' => 'Admin',
-        'input' => [
-            'applicationId' => [
-                'description' => 'The appication ID of the application.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['integer'],
-                'limitValues' => [],
-                'default' => null,
-            ],
-        ],
-    ];
-
-    /**
-     * ApplicationDelete constructor.
-     *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param MonologWrapper $logger Logger object.
-     */
-    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->userRoleMapper = new UserRoleMapper($this->db, $logger);

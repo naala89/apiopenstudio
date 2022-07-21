@@ -15,8 +15,10 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db\RoleMapper;
 
@@ -25,15 +27,8 @@ use ApiOpenStudio\Db\RoleMapper;
  *
  * Processor class to create a role.
  */
-class RoleCreate extends Core\ProcessorEntity
+class RoleCreate extends ProcessorEntity
 {
-    /**
-     * Role mapper class.
-     *
-     * @var RoleMapper
-     */
-    private RoleMapper $roleMapper;
-
     /**
      * {@inheritDoc}
      *
@@ -58,14 +53,16 @@ class RoleCreate extends Core\ProcessorEntity
     ];
 
     /**
-     * RoleCreate constructor.
+     * Role mapper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @var RoleMapper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    private RoleMapper $roleMapper;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->roleMapper = new RoleMapper($db, $logger);
@@ -74,11 +71,11 @@ class RoleCreate extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -90,7 +87,7 @@ class RoleCreate extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         if (!empty($role->getRid())) {
-            throw new Core\ApiException("A role with the name '$name' already exists", 7, $this->id);
+            throw new ApiException("A role with the name '$name' already exists", 7, $this->id);
         }
 
         try {
@@ -101,6 +98,6 @@ class RoleCreate extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        return new Core\DataContainer($role->dump(), 'array');
+        return new DataContainer($role->dump(), 'array');
     }
 }

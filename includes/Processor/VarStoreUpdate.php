@@ -15,9 +15,12 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
+use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\VarStoreMapper;
 
 /**
@@ -25,25 +28,8 @@ use ApiOpenStudio\Db\VarStoreMapper;
  *
  * Processor class to update a var-store variable.
  */
-class VarStoreUpdate extends Core\ProcessorEntity
+class VarStoreUpdate extends ProcessorEntity
 {
-    /**
-     * @var array|string[] Array of permitted roles
-     */
-    protected array $permittedRoles = [
-        'Administrator',
-        'Account manager',
-        'Application manager',
-        'Developer',
-    ];
-
-    /**
-     * Var store mapper class.
-     *
-     * @var VarStoreMapper
-     */
-    private VarStoreMapper $varStoreMapper;
-
     /**
      * {@inheritDoc}
      *
@@ -106,14 +92,26 @@ class VarStoreUpdate extends Core\ProcessorEntity
     ];
 
     /**
-     * VarStoreUpdate constructor.
-     *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @var array|string[] Array of permitted roles
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    protected array $permittedRoles = [
+        'Administrator',
+        'Account manager',
+        'Application manager',
+        'Developer',
+    ];
+
+    /**
+     * Var store mapper class.
+     *
+     * @var VarStoreMapper
+     */
+    private VarStoreMapper $varStoreMapper;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->varStoreMapper = new VarStoreMapper($db, $logger);
@@ -122,11 +120,11 @@ class VarStoreUpdate extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -143,7 +141,7 @@ class VarStoreUpdate extends Core\ProcessorEntity
                 throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
             }
             if (empty($var->getVid())) {
-                throw new Core\ApiException("unknown vid: $vid", 6, $this->id, 400);
+                throw new ApiException("unknown vid: $vid", 6, $this->id, 400);
             }
         } elseif (!empty($key) && !empty($appid)) {
             try {
@@ -152,10 +150,10 @@ class VarStoreUpdate extends Core\ProcessorEntity
                 throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
             }
             if (empty($var->getVid())) {
-                throw new Core\ApiException("unknown vid: $vid", 6, $this->id, 400);
+                throw new ApiException("unknown vid: $vid", 6, $this->id, 400);
             }
         } else {
-            throw new Core\ApiException(
+            throw new ApiException(
                 'Cannot find VarStore, required vid or appid + key',
                 6,
                 $this->id,
@@ -168,7 +166,7 @@ class VarStoreUpdate extends Core\ProcessorEntity
             $permitted = false;
             $currentAppid = $var->getAppid();
             try {
-                $roles = Core\Utilities::getRolesFromToken();
+                $roles = Utilities::getRolesFromToken();
             } catch (ApiException $e) {
                 throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
             }
@@ -178,7 +176,7 @@ class VarStoreUpdate extends Core\ProcessorEntity
                 }
             }
             if (!$permitted) {
-                throw new Core\ApiException("permission denied", 6, $this->id, 400);
+                throw new ApiException("permission denied", 6, $this->id, 400);
             }
 
             // Validate access to the var's NEW application
@@ -190,7 +188,7 @@ class VarStoreUpdate extends Core\ProcessorEntity
                     }
                 }
                 if (!$permitted) {
-                    throw new Core\ApiException("permission denied", 6, $this->id, 400);
+                    throw new ApiException("permission denied", 6, $this->id, 400);
                 }
             }
         }
@@ -211,6 +209,6 @@ class VarStoreUpdate extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        return new Core\DataContainer($var->dump(), 'array');
+        return new DataContainer($var->dump(), 'array');
     }
 }

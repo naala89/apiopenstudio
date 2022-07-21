@@ -15,9 +15,11 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db\RoleMapper;
 
@@ -26,15 +28,8 @@ use ApiOpenStudio\Db\RoleMapper;
  *
  * Processor class to delete a role.
  */
-class RoleDelete extends Core\ProcessorEntity
+class RoleDelete extends ProcessorEntity
 {
-    /**
-     * Role mapper class.
-     *
-     * @var RoleMapper
-     */
-    private RoleMapper $roleMapper;
-
     /**
      * {@inheritDoc}
      *
@@ -59,19 +54,21 @@ class RoleDelete extends Core\ProcessorEntity
     ];
 
     /**
+     * Role mapper class.
+     *
+     * @var RoleMapper
+     */
+    private RoleMapper $roleMapper;
+
+    /**
      * @var Config ApiOpenStudio settings.
      */
     private Config $settings;
 
     /**
-     * RoleDelete constructor.
-     *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * {@inheritDoc}
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->roleMapper = new RoleMapper($db, $logger);
@@ -81,11 +78,11 @@ class RoleDelete extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -98,7 +95,7 @@ class RoleDelete extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         if ($coreLock && $rid < 6) {
-            throw new Core\ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
+            throw new ApiException("Unauthorised: this is a core resource", 6, $this->id, 400);
         }
 
         try {
@@ -108,9 +105,9 @@ class RoleDelete extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         if (empty($role->getRid())) {
-            throw new Core\ApiException("A role with RID: $rid does not exist", 7, $this->id);
+            throw new ApiException("A role with RID: $rid does not exist", 7, $this->id);
         }
 
-        return new Core\DataContainer(true);
+        return new DataContainer(true);
     }
 }

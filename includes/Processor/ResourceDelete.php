@@ -35,6 +35,29 @@ use ApiOpenStudio\Db\ResourceMapper;
 class ResourceDelete extends ProcessorEntity
 {
     /**
+     * {@inheritDoc}
+     *
+     * @var array Details of the processor.
+     */
+    protected array $details = [
+        'name' => 'Resource delete',
+        'machineName' => 'resource_delete',
+        'description' => 'Delete a resource.',
+        'menu' => 'Admin',
+        'input' => [
+            'resid' => [
+                'description' => 'The resource ID.',
+                'cardinality' => [1, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => null,
+            ],
+        ],
+    ];
+
+    /**
      * Account mapper class.
      *
      * @var AccountMapper
@@ -64,36 +87,8 @@ class ResourceDelete extends ProcessorEntity
 
     /**
      * {@inheritDoc}
-     *
-     * @var array Details of the processor.
      */
-    protected array $details = [
-        'name' => 'Resource delete',
-        'machineName' => 'resource_delete',
-        'description' => 'Delete a resource.',
-        'menu' => 'Admin',
-        'input' => [
-            'resid' => [
-                'description' => 'The resource ID.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => true,
-                'limitProcessors' => [],
-                'limitTypes' => ['integer'],
-                'limitValues' => [],
-                'default' => null,
-            ],
-        ],
-    ];
-
-    /**
-     * ResourceDelete constructor.
-     *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param MonologWrapper $logger Logger object.
-     */
-    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Config();

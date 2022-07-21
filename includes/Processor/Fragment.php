@@ -60,7 +60,7 @@ class Fragment extends ProcessorEntity
     {
         parent::process();
 
-        $key = $this->val('key');
+        $key = $this->val('key', true);
 
         try {
             $fragment = $this->request->getFragment($key);

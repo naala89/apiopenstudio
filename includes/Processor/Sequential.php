@@ -59,7 +59,7 @@ class Sequential extends ProcessorEntity
 
     /**
      * @var DeepCopy
-     *   Enable deepy copy of objects.
+     *   Enable deep copy of objects.
      */
     protected DeepCopy $deepCopy;
 
@@ -71,14 +71,11 @@ class Sequential extends ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
      * @throws ApiException
      */
-    public function __construct(
-        $meta,
-        Request &$request,
-        ADOConnection $db = null,
-        MonologWrapper $logger = null
-    ) {
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
+    {
         parent::__construct($meta, $request, $db, $logger);
         $this->deepCopy = new DeepCopy();
         $settings = new Config();
@@ -94,7 +91,7 @@ class Sequential extends ProcessorEntity
     public function process()
     {
         parent::process();
-        $sequence = $this->meta->sequence;
+        $sequence = $this->meta['sequence'];
 
         for ($index = 0; $index < sizeof($sequence) - 1; $index++) {
             $this->treeParser->pushToProcessingStack($sequence[$index]);

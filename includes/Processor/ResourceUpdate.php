@@ -38,48 +38,6 @@ use ReflectionException;
 class ResourceUpdate extends ProcessorEntity
 {
     /**
-     * Account mapper class.
-     *
-     * @var AccountMapper
-     */
-    private AccountMapper $accountMapper;
-
-    /**
-     * Config class.
-     *
-     * @var Config
-     */
-    private Config $settings;
-
-    /**
-     * User role mapper class.
-     *
-     * @var UserRoleMapper
-     */
-    private UserRoleMapper $userRoleMapper;
-
-    /**
-     * Resource mapper class.
-     *
-     * @var ResourceMapper
-     */
-    private ResourceMapper $resourceMapper;
-
-    /**
-     * Application mapper class.
-     *
-     * @var ApplicationMapper
-     */
-    private ApplicationMapper $applicationMapper;
-
-    /**
-     * Resource validator class.
-     *
-     * @var ResourceValidator
-     */
-    private ResourceValidator $validator;
-
-    /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
@@ -175,14 +133,51 @@ class ResourceUpdate extends ProcessorEntity
     ];
 
     /**
-     * ResourceUpdate constructor.
+     * Account mapper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param MonologWrapper $logger Logger object.
+     * @var AccountMapper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
+    private AccountMapper $accountMapper;
+
+    /**
+     * Config class.
+     *
+     * @var Config
+     */
+    private Config $settings;
+
+    /**
+     * User role mapper class.
+     *
+     * @var UserRoleMapper
+     */
+    private UserRoleMapper $userRoleMapper;
+
+    /**
+     * Resource mapper class.
+     *
+     * @var ResourceMapper
+     */
+    private ResourceMapper $resourceMapper;
+
+    /**
+     * Application mapper class.
+     *
+     * @var ApplicationMapper
+     */
+    private ApplicationMapper $applicationMapper;
+
+    /**
+     * Resource validator class.
+     *
+     * @var ResourceValidator
+     */
+    private ResourceValidator $validator;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->settings = new Config();

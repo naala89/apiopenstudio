@@ -15,25 +15,23 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\Config;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
 use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Class VarFile
  *
  * Processor class to hold a file variable.
  */
-class VarFile extends Core\ProcessorEntity
+class VarFile extends ProcessorEntity
 {
-    /**
-     * Config object.
-     *
-     * @var Core\Config
-     */
-    private Core\Config $settings;
-
     /**
      * {@inheritDoc}
      *
@@ -88,27 +86,29 @@ class VarFile extends Core\ProcessorEntity
     ];
 
     /**
-     * VarFile constructor.
+     * Config object.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @var Config
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    private Config $settings;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->settings = new Core\Config();
+        $this->settings = new Config();
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -133,23 +133,23 @@ class VarFile extends Core\ProcessorEntity
      * @param boolean $getContents Return the contents or the filepath.
      * @param boolean $nullable Thrown an error if empty.
      *
-     * @return Core\DataContainer
+     * @return DataContainer
      *
-     * @throws Core\ApiException Exception.
+     * @throws ApiException Exception.
      */
-    private function getFileFiles(string $filename, bool $getContents, bool $nullable): Core\DataContainer
+    private function getFileFiles(string $filename, bool $getContents, bool $nullable): DataContainer
     {
         $this->validateFilesError($filename, $nullable);
         try {
             $dir = $this->settings->__get(['api', 'dir_tmp']);
-        } catch (Core\ApiException $e) {
-            throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         $extension = pathinfo($_FILES[$filename]['name'], PATHINFO_EXTENSION);
         try {
             $basename = bin2hex(random_bytes(8));
         } catch (Exception $e) {
-            throw new Core\ApiException($e->getMessage(), 5, $this->id, 417);
+            throw new ApiException($e->getMessage(), 5, $this->id, 417);
         }
         $basename = sprintf('%s.%0.8s', $basename, $extension);
         $dest = $dir . $basename;
@@ -158,10 +158,10 @@ class VarFile extends Core\ProcessorEntity
         if ($getContents) {
             $fileContent = file_get_contents($dest);
             unlink($dest);
-            return new Core\DataContainer($fileContent, 'text');
+            return new DataContainer($fileContent, 'text');
         }
 
-        return new Core\DataContainer($dest, 'file');
+        return new DataContainer($dest, 'file');
     }
 
     /**
@@ -170,22 +170,22 @@ class VarFile extends Core\ProcessorEntity
      * @param string $location Remote server URL and directory structure.
      * @param string $filename The file to fetch.
      * @param boolean $getContents Return file contents of path to locally stored file.
-     * @param boolean $nullable Thrown an exceoption if the file contents are empty.
+     * @param boolean $nullable Thrown an exception if the file contents are empty.
      *
-     * @return Core\DataContainer
+     * @return DataContainer
      *
-     * @throws Core\ApiException Exception.
+     * @throws ApiException Exception.
      */
     private function getFileRemote(
         string $location,
         string $filename,
         bool $getContents,
         bool $nullable
-    ): Core\DataContainer {
+    ): DataContainer {
         try {
             $dir = $this->settings->__get(['api', 'base_path']) . $this->settings->__get(['api', 'dirFileStorage']);
-        } catch (Core\ApiException $e) {
-            throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         $name = md5($filename . time());
         $extension = '.' . pathinfo($_FILES[$filename]['tmp_name'], PATHINFO_EXTENSION);
@@ -195,9 +195,9 @@ class VarFile extends Core\ProcessorEntity
         if (!$getContents) {
             try {
                 $client->get("$location/$filename", ['sink', $fileString]);
-                return new Core\DataContainer($fileString, 'file');
-            } catch (Exception $e) {
-                throw new Core\ApiException($e->getMessage(), 5, $this->id, 417);
+                return new DataContainer($fileString, 'file');
+            } catch (Exception | GuzzleException $e) {
+                throw new ApiException($e->getMessage(), 5, $this->id, 417);
             }
         } else {
             try {
@@ -205,12 +205,12 @@ class VarFile extends Core\ProcessorEntity
                 $fileContent = file_get_contents($fileString);
                 unlink($fileString);
                 if (empty($fileContent) && !$nullable) {
-                    throw new Core\ApiException('file contents are empty', 5, $this->id, 417);
+                    throw new ApiException('file contents are empty', 5, $this->id, 417);
                 }
                 // todo Add a detectType function.
-                return new Core\DataContainer($fileContent, $this->detectType($fileContent));
+                return new DataContainer($fileContent);
             } catch (Exception $e) {
-                throw new Core\ApiException($e->getMessage(), 5, $this->id, 417);
+                throw new ApiException($e->getMessage(), 5, $this->id, 417);
             }
         }
     }
@@ -223,7 +223,7 @@ class VarFile extends Core\ProcessorEntity
      *
      * @return void Valid file received.
      *
-     * @throws Core\ApiException Exception.
+     * @throws ApiException Exception.
      *
      * @see https://www.php.net/manual/en/features.file-upload.php
      */
@@ -232,7 +232,7 @@ class VarFile extends Core\ProcessorEntity
         if (
             !isset($_FILES[$filename]['error']) || is_array($_FILES[$filename]['error'])
         ) {
-            throw new Core\ApiException('Undefined, multiple files or file corrupt', 5, $this->id, 417);
+            throw new ApiException('Undefined, multiple files or file corrupt', 5, $this->id, 417);
         }
 
         switch ($_FILES[$filename]['error']) {
@@ -240,16 +240,14 @@ class VarFile extends Core\ProcessorEntity
                 break;
             case UPLOAD_ERR_NO_FILE:
                 if (!$nullable) {
-                    throw new Core\ApiException('No file sent', 5, $this->id, 417);
+                    throw new ApiException('No file sent', 5, $this->id, 417);
                 }
                 break;
             case UPLOAD_ERR_INI_SIZE:
             case UPLOAD_ERR_FORM_SIZE:
-                throw new Core\ApiException('Exceeded filesize limit', 5, $this->id, 417);
-                break;
+                throw new ApiException('Exceeded filesize limit', 5, $this->id, 417);
             default:
-                throw new Core\ApiException('Unknown errors, please check the logs', 5, $this->id, 417);
-                break;
+                throw new ApiException('Unknown errors, please check the logs', 5, $this->id, 417);
         }
     }
 }

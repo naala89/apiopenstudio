@@ -31,13 +31,6 @@ use ApiOpenStudio\Db\ResourceMapper;
 class ResourceRead extends ProcessorEntity
 {
     /**
-     * Resource mapper class.
-     *
-     * @var ResourceMapper
-     */
-    private ResourceMapper $resourceMapper;
-
-    /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
@@ -115,14 +108,16 @@ class ResourceRead extends ProcessorEntity
     ];
 
     /**
-     * ResourceRead constructor.
+     * Resource mapper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param MonologWrapper $logger Logger object.
+     * @var ResourceMapper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
+    private ResourceMapper $resourceMapper;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->resourceMapper = new ResourceMapper($db, $logger);

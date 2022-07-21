@@ -34,27 +34,6 @@ use stdClass;
 class ApplicationRead extends ProcessorEntity
 {
     /**
-     * Application mapper class.
-     *
-     * @var ApplicationMapper
-     */
-    protected ApplicationMapper $applicationMapper;
-
-    /**
-     * User role mapper class.
-     *
-     * @var UserRoleMapper
-     */
-    protected UserRoleMapper $userRoleMapper;
-
-    /**
-     * User mapper class.
-     *
-     * @var UserMapper
-     */
-    protected UserMapper $userMapper;
-
-    /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
@@ -116,14 +95,30 @@ class ApplicationRead extends ProcessorEntity
     ];
 
     /**
-     * ApplicationRead constructor.
+     * Application mapper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param MonologWrapper $logger Logger object.
+     * @var ApplicationMapper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
+    protected ApplicationMapper $applicationMapper;
+
+    /**
+     * User role mapper class.
+     *
+     * @var UserRoleMapper
+     */
+    protected UserRoleMapper $userRoleMapper;
+
+    /**
+     * User mapper class.
+     *
+     * @var UserMapper
+     */
+    protected UserMapper $userMapper;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->applicationMapper = new ApplicationMapper($this->db, $logger);

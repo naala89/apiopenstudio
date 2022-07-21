@@ -15,8 +15,10 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Db\RoleMapper;
 
@@ -25,15 +27,8 @@ use ApiOpenStudio\Db\RoleMapper;
  *
  * Processor class to fetch a role.
  */
-class RoleRead extends Core\ProcessorEntity
+class RoleRead extends ProcessorEntity
 {
-    /**
-     * Role mapper class.
-     *
-     * @var RoleMapper
-     */
-    private RoleMapper $roleMapper;
-
     /**
      * {@inheritDoc}
      *
@@ -85,14 +80,16 @@ class RoleRead extends Core\ProcessorEntity
     ];
 
     /**
-     * RoleRead constructor.
+     * Role mapper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @var RoleMapper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    private RoleMapper $roleMapper;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->roleMapper = new RoleMapper($db, $logger);
@@ -101,11 +98,11 @@ class RoleRead extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -127,11 +124,11 @@ class RoleRead extends Core\ProcessorEntity
      *
      * @param integer $rid A role ID.
      *
-     * @return Core\DataContainer
+     * @return DataContainer
      *
-     * @throws Core\ApiException Error.
+     * @throws ApiException Error.
      */
-    private function findByRid(int $rid): Core\DataContainer
+    private function findByRid(int $rid): DataContainer
     {
         try {
             $role = $this->roleMapper->findByRid($rid);
@@ -139,9 +136,9 @@ class RoleRead extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         if (empty($role->getRid())) {
-            throw new Core\ApiException("Unknown role: $rid", 6, $this->id, 400);
+            throw new ApiException("Unknown role: $rid", 6, $this->id, 400);
         }
-        return new Core\DataContainer($role->dump(), 'array');
+        return new DataContainer($role->dump(), 'array');
     }
 
     /**
@@ -149,11 +146,11 @@ class RoleRead extends Core\ProcessorEntity
      *
      * @param array $params SQL query params.
      *
-     * @return Core\DataContainer An array of associative arrays of a roles rows.
+     * @return DataContainer An array of associative arrays of a roles rows.
      *
-     * @throws Core\ApiException Error.
+     * @throws ApiException Error.
      */
-    private function findAll(array $params): Core\DataContainer
+    private function findAll(array $params): DataContainer
     {
         try {
             $result = $this->roleMapper->findAll($params);
@@ -164,6 +161,6 @@ class RoleRead extends Core\ProcessorEntity
         foreach ($result as $item) {
             $roles[] = $item->dump();
         }
-        return new Core\DataContainer($roles, 'array');
+        return new DataContainer($roles, 'array');
     }
 }

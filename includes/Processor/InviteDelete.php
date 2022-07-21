@@ -15,25 +15,20 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Db\InviteMapper;
 
 /**
  * Class InviteDelete
  *
  * Processor class delete an invite.
  */
-class InviteDelete extends Core\ProcessorEntity
+class InviteDelete extends ProcessorEntity
 {
-    /**
-     * Invite mapper class.
-     *
-     * @var Db\InviteMapper
-     */
-    private Db\InviteMapper $inviteMapper;
-
     /**
      * {@inheritDoc}
      *
@@ -58,27 +53,29 @@ class InviteDelete extends Core\ProcessorEntity
     ];
 
     /**
-     * InviteDelete constructor.
+     * Invite mapper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @var InviteMapper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    private InviteMapper $inviteMapper;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->inviteMapper = new Db\InviteMapper($db, $logger);
+        $this->inviteMapper = new InviteMapper($db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
         $iid = $this->val('iid', true);
@@ -89,7 +86,7 @@ class InviteDelete extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         if (empty($invite->getIid())) {
-            throw new Core\ApiException('Invalid iid: ' . $iid);
+            throw new ApiException('Invalid iid: ' . $iid);
         }
 
         try {
@@ -98,6 +95,6 @@ class InviteDelete extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        return new Core\DataContainer('Deleted user invite for ' . $invite->getEmail(), 'text');
+        return new DataContainer('Deleted user invite for ' . $invite->getEmail(), 'text');
     }
 }

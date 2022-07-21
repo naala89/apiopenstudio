@@ -23,7 +23,6 @@ use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\AccountMapper;
-use ApiOpenStudio\Db\Application;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
@@ -158,14 +157,9 @@ class ResourceCreate extends ProcessorEntity
     private ResourceValidator $validator;
 
     /**
-     * ResourceCreate constructor.
-     *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param MonologWrapper $logger Logger object.
+     * {@inheritDoc}
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->applicationMapper = new ApplicationMapper($db, $logger);
@@ -298,7 +292,7 @@ class ResourceCreate extends ProcessorEntity
         int $ttl,
         array $metadata,
         ?array $schema
-    ) {
+    ): void {
         // Validate the application exists.
         try {
             $application = $this->applicationMapper->findByAppid($appid);
@@ -328,7 +322,7 @@ class ResourceCreate extends ProcessorEntity
             throw new ApiException('Resource already exists', 6, $this->id, 400);
         }
 
-        // Validate the metadada.
+        // Validate the metadata.
         try {
             $this->validator->validate([
                 'name' => $name,
