@@ -51,9 +51,7 @@ class File extends OutputResponse
     protected string $header = 'Content-Type: application/octet-stream';
 
     /**
-     * Set the response headers.
-     *
-     * @return void
+     * {@inheritDoc}
      *
      * @throws ApiException
      */
