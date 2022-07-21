@@ -14,8 +14,6 @@
 
 namespace ApiOpenStudio\Core;
 
-use stdClass;
-
 /**
  * Class Cache
  *
@@ -105,7 +103,7 @@ class Cache
      * @param string $key Get value for a cache key.
      * @param bool $rawData Return raw data or DataContainer.
      *
-     * @return DataContainer|null results on success, null if the key does not exist.
+     * @return ?DataContainer results on success, null if the key does not exist.
      *
      * @throws ApiException
      */
