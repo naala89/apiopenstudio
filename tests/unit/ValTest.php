@@ -50,11 +50,11 @@ class ValTest extends Unit
      */
     public function testValReturnsContainerOrValue()
     {
-        $meta = json_decode(json_encode([
+        $meta = [
             'processor' => 'var_bool',
             'id' => 'var_bool literal true',
             'value' => true,
-        ]));
+        ];
         $varBool = new VarBool($meta, $this->request, null, $this->logger);
         $val = $varBool->val('value');
         $this->assertIsObject($val, 'Return value is not class.');
@@ -75,11 +75,11 @@ class ValTest extends Unit
      */
     public function testValReturnsDefault()
     {
-        $meta = json_decode(json_encode([
+        $meta = [
             'processor' => 'var_bool',
             'id' => 'var_bool default',
             'value' => null,
-        ]));
+        ];
         $varBool = new VarBool($meta, $this->request, null, $this->logger);
         $val = $varBool->val('value', true);
         $this->assertTrue($val === false);
@@ -135,11 +135,11 @@ class ValTest extends Unit
     public function testInvalidValueArray()
     {
         $this->expectException(ApiException::class);
-        $meta = json_decode(json_encode([
+        $meta = [
             'processor' => 'var_bool',
             'id' => 'var_bool literal true',
             'value' => ['I will fail'],
-        ]));
+        ];
         $varBool = new VarBool($meta, $this->request, null, $this->logger);
         $val = $varBool->val('value', true);
     }
@@ -152,14 +152,14 @@ class ValTest extends Unit
     public function testInvalidNumberInputs()
     {
         $this->expectException(ApiException::class);
-        $meta = json_decode(json_encode([
+        $meta = [
             'processor' => 'var_bool',
             'id' => 'var_bool literal true',
             'value' => [
                 'I will fail',
                 true,
             ]
-        ]));
+        ];
         $varBool = new VarBool($meta, $this->request, null, $this->logger);
         $val = $varBool->val('value', true);
     }
