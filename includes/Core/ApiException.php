@@ -44,14 +44,14 @@ class ApiException extends Exception
      * @param int $code The Exception code.
      * @param mixed $processor The processor where the error occurred.
      * @param int $htmlCode The HTML return code.
-     * @param Exception|null $previous The previous exception used for the exception chaining. Since 5.3.0.
+     * @param ?Exception $previous The previous exception used for the exception chaining. Since 5.3.0.
      */
     public function __construct(
         string $message = 'Unknown error',
         int $code = 0,
         $processor = -1,
         int $htmlCode = 400,
-        Exception $previous = null
+        ?Exception $previous = null
     ) {
         $this->processor = $processor;
         $this->htmlCode = $htmlCode;
