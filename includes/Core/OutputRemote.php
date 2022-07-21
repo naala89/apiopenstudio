@@ -14,6 +14,8 @@
 
 namespace ApiOpenStudio\Core;
 
+use ADOConnection;
+
 /**
  * Class OutputRemote
  *
