@@ -14,14 +14,16 @@
 
 namespace ApiOpenStudio\Endpoint;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ProcessorEntity;
 
 /**
  * Class AuthBasic
  *
  * Provide Auth basic authentication to a resource.
  */
-class AuthBasic extends Core\ProcessorEntity
+class AuthBasic extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -58,17 +60,17 @@ class AuthBasic extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException
+     * @throws ApiException
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
         $username = $this->val('username', true);
         $password = $this->val('password', true);
 
-        return new Core\DataContainer([CURLOPT_USERPWD => "$username:$password"], 'array');
+        return new DataContainer([CURLOPT_USERPWD => "$username:$password"], 'array');
     }
 }
