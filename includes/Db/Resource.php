@@ -122,7 +122,7 @@ class Resource
     /**
      * Get the resource ID.
      *
-     * @return int The resource ID
+     * @return ?int The resource ID
      */
     public function getResid(): ?int
     {
@@ -136,7 +136,7 @@ class Resource
      *
      * @return void
      */
-    public function setResid(int $resid)
+    public function setResid(int $resid): void
     {
         $this->resid = $resid;
     }
@@ -144,7 +144,7 @@ class Resource
     /**
      * Get the application ID.
      *
-     * @return int The application ID.
+     * @return ?int The application ID.
      */
     public function getAppId(): ?int
     {
@@ -158,15 +158,15 @@ class Resource
      *
      * @return void
      */
-    public function setAppId(int $appid)
+    public function setAppId(int $appid): void
     {
         $this->appid = $appid;
     }
 
     /**
-     * Get the resource nanme.
+     * Get the resource name.
      *
-     * @return string The resource name.
+     * @return ?string The resource name.
      */
     public function getName(): ?string
     {
@@ -180,7 +180,7 @@ class Resource
      *
      * @return void
      */
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -188,7 +188,7 @@ class Resource
     /**
      * Get the resource description.
      *
-     * @return string The resource description.
+     * @return ?string The resource description.
      */
     public function getDescription(): ?string
     {
@@ -202,7 +202,7 @@ class Resource
      *
      * @return void
      */
-    public function setDescription(string $description)
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }
@@ -210,7 +210,7 @@ class Resource
     /**
      * Get the resource method.
      *
-     * @return string Resource method.
+     * @return ?string Resource method.
      */
     public function getMethod(): ?string
     {
@@ -224,7 +224,7 @@ class Resource
      *
      * @return void
      */
-    public function setMethod(string $method)
+    public function setMethod(string $method): void
     {
         $this->method = $method;
     }
@@ -232,7 +232,7 @@ class Resource
     /**
      * Get the resource URI.
      *
-     * @return string The  resource URI.
+     * @return ?string The  resource URI.
      */
     public function getUri(): ?string
     {
@@ -246,7 +246,7 @@ class Resource
      *
      * @return void
      */
-    public function setUri(string $uri)
+    public function setUri(string $uri): void
     {
         $this->uri = $uri;
     }
@@ -254,7 +254,7 @@ class Resource
     /**
      * Get the json encoded resource metadata.
      *
-     * @return string Json encoded resource metadata.
+     * @return ?string Json encoded resource metadata.
      */
     public function getMeta(): ?string
     {
@@ -268,7 +268,7 @@ class Resource
      *
      * @return void
      */
-    public function setMeta(string $meta)
+    public function setMeta(string $meta): void
     {
         $this->meta = $meta;
     }
@@ -276,7 +276,7 @@ class Resource
     /**
      * Get the json encoded OpenApi path fragment.
      *
-     * @return string OpenApi path fragment.
+     * @return ?string OpenApi path fragment.
      */
     public function getOpenapi(): ?string
     {
@@ -290,7 +290,7 @@ class Resource
      *
      * @return void
      */
-    public function setOpenapi(string $openapi)
+    public function setOpenapi(string $openapi): void
     {
         $this->openapi = $openapi;
     }
@@ -298,7 +298,7 @@ class Resource
     /**
      * Get the resource TTL.
      *
-     * @return int Time to live.
+     * @return ?int Time to live.
      */
     public function getTtl(): ?int
     {
@@ -312,7 +312,7 @@ class Resource
      *
      * @return void
      */
-    public function setTtl(int $ttl)
+    public function setTtl(int $ttl): void
     {
         $this->ttl = $ttl;
     }

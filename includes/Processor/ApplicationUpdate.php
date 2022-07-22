@@ -36,41 +36,6 @@ use ApiOpenStudio\Db\UserRoleMapper;
 class ApplicationUpdate extends ProcessorEntity
 {
     /**
-     * Account mapper class.
-     *
-     * @var AccountMapper
-     */
-    protected AccountMapper $accountMapper;
-
-    /**
-     * Application mapper class.
-     *
-     * @var ApplicationMapper
-     */
-    protected ApplicationMapper $applicationMapper;
-
-    /**
-     * User role mapper class.
-     *
-     * @var UserRoleMapper
-     */
-    protected UserRoleMapper $userRoleMapper;
-
-    /**
-     * User mapper class.
-     *
-     * @var UserMapper
-     */
-    protected UserMapper $userMapper;
-
-    /**
-     * Config class.
-     *
-     * @var Config
-     */
-    protected Config $settings;
-
-    /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
@@ -121,14 +86,44 @@ class ApplicationUpdate extends ProcessorEntity
     ];
 
     /**
-     * ApplicationUpdate constructor.
+     * Account mapper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param MonologWrapper $logger Logger object.
+     * @var AccountMapper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
+    protected AccountMapper $accountMapper;
+
+    /**
+     * Application mapper class.
+     *
+     * @var ApplicationMapper
+     */
+    protected ApplicationMapper $applicationMapper;
+
+    /**
+     * User role mapper class.
+     *
+     * @var UserRoleMapper
+     */
+    protected UserRoleMapper $userRoleMapper;
+
+    /**
+     * User mapper class.
+     *
+     * @var UserMapper
+     */
+    protected UserMapper $userMapper;
+
+    /**
+     * Config class.
+     *
+     * @var Config
+     */
+    protected Config $settings;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->accountMapper = new AccountMapper($this->db, $logger);

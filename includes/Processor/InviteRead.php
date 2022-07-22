@@ -15,25 +15,20 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Db\InviteMapper;
 
 /**
  * Class InviteRead
  *
  * Processor class fetch an invite.
  */
-class InviteRead extends Core\ProcessorEntity
+class InviteRead extends ProcessorEntity
 {
-    /**
-     * Invite mapper class.
-     *
-     * @var Db\InviteMapper
-     */
-    private Db\InviteMapper $inviteMapper;
-
     /**
      * {@inheritDoc}
      *
@@ -103,27 +98,29 @@ class InviteRead extends Core\ProcessorEntity
     ];
 
     /**
-     * InviteRead constructor.
+     * Invite mapper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @var InviteMapper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    private InviteMapper $inviteMapper;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->inviteMapper = new Db\InviteMapper($db, $logger);
+        $this->inviteMapper = new InviteMapper($db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -170,6 +167,6 @@ class InviteRead extends Core\ProcessorEntity
             $result[] = $invite->dump();
         }
 
-        return new Core\DataContainer($result, 'array');
+        return new DataContainer($result, 'array');
     }
 }

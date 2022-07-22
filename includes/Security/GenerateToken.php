@@ -14,8 +14,11 @@
 
 namespace ApiOpenStudio\Security;
 
+use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\Hash;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Db;
 use DateTimeImmutable;
 use Lcobucci\JWT\Configuration;
@@ -26,7 +29,7 @@ use Lcobucci\JWT\Signer\Key\LocalFileReference;
  *
  * Processor class to return a JWT token for a valid username/password.
  */
-class GenerateToken extends Core\ProcessorEntity
+class GenerateToken extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -63,11 +66,11 @@ class GenerateToken extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
         $username = $this->val('username', true);
@@ -84,19 +87,19 @@ class GenerateToken extends Core\ProcessorEntity
             // Invalid username or user inactive.
             $message = 'invalid username or password';
             $this->logger->warning('api', $message);
-            throw new Core\ApiException($message, 4, $this->id, 401);
+            throw new ApiException($message, 4, $this->id, 401);
         }
         if (empty($storedHash = $user->getHash())) {
             // No password hash stored yet.
             $message = 'invalid username or password';
             $this->logger->warning('api', $message);
-            throw new Core\ApiException($message, 4, $this->id, 401);
+            throw new ApiException($message, 4, $this->id, 401);
         }
-        if (!Core\Hash::verifyPassword($password, $storedHash)) {
+        if (!Hash::verifyPassword($password, $storedHash)) {
             // Invalid password.
             $message = 'invalid username or password';
             $this->logger->warning('api', $message);
-            throw new Core\ApiException($message, 4, $this->id, 401);
+            throw new ApiException($message, 4, $this->id, 401);
         }
 
         // Get all user roles.
@@ -118,13 +121,13 @@ class GenerateToken extends Core\ProcessorEntity
             $jwt_issuer = $config->__get(['api', 'jwt_issuer']);
             $jwt_permitted_for = $config->__get(['api', 'jwt_permitted_for']);
             $jwt_life = $config->__get(['api', 'jwt_life']);
-        } catch (Core\ApiException $e) {
-            throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         $algorithm = "Lcobucci\\JWT\\Signer\\$jwt_alg_type\\$jwt_alg";
         if (!class_exists($algorithm)) {
             $this->logger->error('api', "Invalid algorithm path: $algorithm");
-            throw new Core\ApiException('Invalid config for encryption, please check the logs', 8, $this->id, 500);
+            throw new ApiException('Invalid config for encryption, please check the logs', 8, $this->id, 500);
         }
         $jwtConfig = Configuration::forAsymmetricSigner(
             new $algorithm(),
@@ -142,13 +145,11 @@ class GenerateToken extends Core\ProcessorEntity
             ->withClaim('roles', $finalRoles)
             ->getToken($jwtConfig->signer(), $jwtConfig->signingKey());
 
-        return new Core\DataContainer(
-            [
-                'token' => $token->toString(),
-                'uid' => $user->getUid(),
-                'expires' => $now->modify($jwt_life)->format('d-M-y H:i:s T'),
-            ],
-            'array'
-        );
+        $array = [
+            'token' => $token->toString(),
+            'uid' => $user->getUid(),
+            'expires' => $now->modify($jwt_life)->format('d-M-y H:i:s T'),
+        ];
+        return new DataContainer($array, 'array');
     }
 }

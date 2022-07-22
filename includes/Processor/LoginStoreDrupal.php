@@ -25,13 +25,6 @@ use ApiOpenStudio\Db;
 class LoginStoreDrupal extends Core\ProcessorEntity
 {
     /**
-     * Default external entity type.
-     *
-     * @var string
-     */
-    private string $defaultEntity = 'drupal';
-
-    /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
@@ -53,7 +46,7 @@ class LoginStoreDrupal extends Core\ProcessorEntity
                 'default' => null,
             ],
             'externalEntity' => [
-                  // phpcs:ignore
+                // phpcs:ignore
                 'description' => 'The name of the external entity this user is tied to (use custom names if you access more than one drupal site).',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
@@ -64,6 +57,13 @@ class LoginStoreDrupal extends Core\ProcessorEntity
             ],
         ],
     ];
+
+    /**
+     * Default external entity type.
+     *
+     * @var string
+     */
+    private string $defaultEntity = 'drupal';
 
     /**
      * {@inheritDoc}
@@ -81,7 +81,7 @@ class LoginStoreDrupal extends Core\ProcessorEntity
         if (empty($source->token) || empty($source->user) || empty($source->user->uid)) {
             throw new Core\ApiException('login failed, no token received', 4, $this->id, 419);
         }
-        $externalEntity = !empty($this->meta->externalEntity) ? $this->val('externalEntity') : $this->defaultEntity;
+        $externalEntity = !empty($this->meta['externalEntity']) ? $this->val('externalEntity') : $this->defaultEntity;
         $externalId = $source->user->uid;
         $appid = $this->request->getAppId();
 

@@ -64,8 +64,8 @@ class Cast extends ProcessorEntity
         'input' => [
             'data' => [
                 'description' => 'The input data that needs to be cast.',
-                'cardinality' => [1, 1],
-                'literalAllowed' => false,
+                'cardinality' => [1, '*'],
+                'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => [],
                 'limitValues' => [],

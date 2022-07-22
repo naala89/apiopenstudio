@@ -118,14 +118,11 @@ class DoWhile extends ProcessorEntity
 
     /**
      * {@inheritDoc}
+     *
      * @throws ApiException
      */
-    public function __construct(
-        $meta,
-        Request &$request,
-        ADOConnection $db = null,
-        MonologWrapper $logger = null
-    ) {
+    public function __construct(array $meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
+    {
         parent::__construct($meta, $request, $db, $logger);
         $this->deepCopy = new DeepCopy();
         $this->processorHelper = new ProcessorHelper();
@@ -154,7 +151,7 @@ class DoWhile extends ProcessorEntity
         );
 
         while ($comparisonTrue && $maxLoops-- != 0) {
-            $processLoopMeta = $this->deepCopy->copy($this->meta->process_loop);
+            $processLoopMeta = $this->deepCopy->copy($this->meta['process_loop']);
             $this->treeParser->pushToProcessingStack($processLoopMeta);
             $this->treeParser->crawlMeta();
 
@@ -178,9 +175,9 @@ class DoWhile extends ProcessorEntity
      */
     protected function getComparisonVals(): array
     {
-        $lhsMeta = $this->deepCopy->copy($this->meta->lhs);
-        $rhsMeta = $this->deepCopy->copy($this->meta->rhs);
-        $operatorMeta = $this->deepCopy->copy($this->meta->operator);
+        $lhsMeta = $this->deepCopy->copy($this->meta['lhs']);
+        $rhsMeta = $this->deepCopy->copy($this->meta['rhs']);
+        $operatorMeta = $this->deepCopy->copy($this->meta['operator']);
 
         if ($this->processorHelper->isProcessor($lhsMeta)) {
             $this->treeParser->pushToProcessingStack($lhsMeta);

@@ -32,20 +32,6 @@ use ApiOpenStudio\Db\UserRoleMapper;
 class UserRoleRead extends ProcessorEntity
 {
     /**
-     * User mapper class.
-     *
-     * @var UserMapper
-     */
-    protected UserMapper $userMapper;
-
-    /**
-     * User role mapper class.
-     *
-     * @var UserRoleMapper
-     */
-    protected UserRoleMapper $userRoleMapper;
-
-    /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
@@ -114,14 +100,23 @@ class UserRoleRead extends ProcessorEntity
     ];
 
     /**
-     * UserRoleRead constructor.
+     * User mapper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param MonologWrapper $logger Logger object.
+     * @var UserMapper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
+    protected UserMapper $userMapper;
+
+    /**
+     * User role mapper class.
+     *
+     * @var UserRoleMapper
+     */
+    protected UserRoleMapper $userRoleMapper;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->userMapper = new UserMapper($db, $logger);

@@ -58,9 +58,9 @@ class Api extends Module
     /**
      * Set the store YAML filename.
      *
-     * @param $yamlFilename
+     * @param string $yamlFilename
      */
-    public function setYamlFilename($yamlFilename)
+    public function setYamlFilename(string $yamlFilename)
     {
         $this->yamlFilename = $yamlFilename;
     }
@@ -78,12 +78,12 @@ class Api extends Module
     /**
      * Set a header & value.
      *
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param string $value
      *
      * @throws ModuleException
      */
-    public function haveHttpHeader($name, $value)
+    public function haveHttpHeader(string $name, string $value)
     {
         $this->getModule('REST')->haveHttpHeader($name, $value);
     }
@@ -109,10 +109,7 @@ class Api extends Module
     public function storeMyToken()
     {
         $response = $this->getModule('REST')->response;
-        $arr = \GuzzleHttp\json_decode(
-            \GuzzleHttp\json_encode(\GuzzleHttp\json_decode($response)),
-            true
-        );
+        $arr = json_decode(json_encode(json_decode($response)), true);
         if (isset($arr['data']['token'])) {
             $this->token = $arr['data']['token'];
         }
@@ -159,11 +156,11 @@ class Api extends Module
     /**
      * Get a resource from a YAML file.
      *
-     * @param null $yamlFilename
+     * @param ?string $yamlFilename
      *
      * @return array
      */
-    public function getResourceFromYaml($yamlFilename = null): array
+    public function getResourceFromYaml(?string $yamlFilename = null): array
     {
         $yamlFilename = empty($yamlFilename) ? $this->yamlFilename : $yamlFilename;
         $yamlArr = file_get_contents(codecept_data_dir($yamlFilename));
@@ -173,11 +170,11 @@ class Api extends Module
     /**
      * Create a resource from a YAML file.
      *
-     * @param null $yamlFilename
+     * @param ?string $yamlFilename
      *
      * @throws ModuleException
      */
-    public function createResourceFromYaml($yamlFilename = null)
+    public function createResourceFromYaml(?string $yamlFilename = null)
     {
         $yamlFilename = empty($yamlFilename) ? $this->yamlFilename : $yamlFilename;
         $this->getModule('REST')->sendPost(
@@ -204,7 +201,7 @@ class Api extends Module
      *
      * @throws ModuleException
      */
-    public function callResourceFromYaml($params = array())
+    public function callResourceFromYaml(array $params = [])
     {
         $yamlArr = $this->getResourceFromYaml($this->yamlFilename);
         $method = strtolower($yamlArr['method']);
@@ -224,35 +221,40 @@ class Api extends Module
     /**
      * Delete a resource from an input YAML file.
      *
-     * @param null $yamlFilename
+     * @param ?string $yamlFilename
      *
      * @throws ModuleException
      */
-    public function tearDownTestFromYaml($yamlFilename = null)
+    public function tearDownTestFromYaml(?string $yamlFilename = null)
     {
         $yamlFilename = empty($yamlFilename) ? $this->yamlFilename : $yamlFilename;
         $yamlArr = $this->getResourceFromYaml($yamlFilename);
         $this->haveHttpHeader('Accept', 'application/json');
         $this->haveHttpHeader('Authorization', 'Bearer ' . $this->getMyStoredToken());
-        $this->getModule('REST')->sendGET(
-            $this->getCoreBaseUri() . '/resource/',
-            ['appid' => $yamlArr['appid']]
-        );
+
+        $filter = [];
+        if (isset($yamlArr['name'])) {
+            $filter['name'] = $yamlArr['name'];
+        }
+        if (isset($yamlArr['appid'])) {
+            $filter['appid'] = $yamlArr['appid'];
+        }
+        if (isset($yamlArr['method'])) {
+            $filter['method'] = $yamlArr['method'];
+        }
+        if (isset($yamlArr['uri'])) {
+            $filter['uri'] = $yamlArr['uri'];
+        }
+        $this->getModule('REST')->sendGET($this->getCoreBaseUri() . '/resource/', $filter);
         $resources = json_decode($this->getModule('REST')->response, true);
-        $resid = 0;
         if (isset($resources['result']) && $resources['result'] == 'ok') {
             foreach ($resources['data'] as $resource) {
-                if (
-                    strtolower($resource['method']) == strtolower($yamlArr['method'])
-                    && $resource['uri'] == $yamlArr['uri']
-                ) {
-                    $resid = $resource['resid'];
-                }
+                $resid = $resource['resid'];
+                $this->getModule('REST')->sendDELETE(
+                    $this->getCoreBaseUri() . '/resource/' . $resid,
+                    []
+                );
             }
-            $this->getModule('REST')->sendDELETE(
-                $this->getCoreBaseUri() . '/resource/' . $resid,
-                []
-            );
         }
     }
 

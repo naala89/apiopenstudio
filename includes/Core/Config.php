@@ -47,7 +47,7 @@ class Config
      *
      * @param array|string $key The key of the config value.
      *
-     * @return string|NULL The value of the config key or NULL.
+     * @return mixed The value of the config key or NULL.
      *
      * @throws ApiException Invalid config defined.
      */

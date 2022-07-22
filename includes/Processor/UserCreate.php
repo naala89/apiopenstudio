@@ -15,25 +15,20 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Db\UserMapper;
 
 /**
  * Class UserCreate
  *
  * Processor class to create a user.
  */
-class UserCreate extends Core\ProcessorEntity
+class UserCreate extends ProcessorEntity
 {
-    /**
-     * User mapper class.
-     *
-     * @var Db\UserMapper
-     */
-    private Db\UserMapper $userMapper;
-
     /**
      * {@inheritDoc}
      *
@@ -202,27 +197,29 @@ class UserCreate extends Core\ProcessorEntity
     ];
 
     /**
-     * UserCreate constructor.
+     * User mapper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @var UserMapper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    private UserMapper $userMapper;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->userMapper = new Db\UserMapper($db, $logger);
+        $this->userMapper = new UserMapper($db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -236,7 +233,7 @@ class UserCreate extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         if (!empty($user->getUid())) {
-            throw new Core\ApiException("Username $username already exists", 6, $this->id, 400);
+            throw new ApiException("Username $username already exists", 6, $this->id, 400);
         }
 
         try {
@@ -245,7 +242,7 @@ class UserCreate extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         if (!empty($user->getUid())) {
-            throw new Core\ApiException("Email $email already exists", 6, $this->id, 400);
+            throw new ApiException("Email $email already exists", 6, $this->id, 400);
         }
 
         $user->setUsername($username);
@@ -279,6 +276,6 @@ class UserCreate extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        return new Core\DataContainer($user->dump(), 'array');
+        return new DataContainer($user->dump(), 'array');
     }
 }

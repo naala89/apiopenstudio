@@ -117,14 +117,9 @@ class VarStoreDelete extends ProcessorEntity
     private ApplicationMapper $applicationMapper;
 
     /**
-     * VarStoreDelete constructor.
-     *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param MonologWrapper $logger Logger object.
+     * {@inheritDoc}
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->varStoreMapper = new VarStoreMapper($db, $logger);

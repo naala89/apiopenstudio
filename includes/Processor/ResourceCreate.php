@@ -23,7 +23,6 @@ use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\AccountMapper;
-use ApiOpenStudio\Db\Application;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
@@ -158,14 +157,9 @@ class ResourceCreate extends ProcessorEntity
     private ResourceValidator $validator;
 
     /**
-     * ResourceCreate constructor.
-     *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param MonologWrapper $logger Logger object.
+     * {@inheritDoc}
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->applicationMapper = new ApplicationMapper($db, $logger);
@@ -196,7 +190,16 @@ class ResourceCreate extends ProcessorEntity
         $schema = $this->val('openapi', true);
 
         try {
-            $this->validate($appid, $method, $uri, $metadata);
+            $this->validate(
+                $name,
+                $description,
+                $uri,
+                $method,
+                $appid,
+                $ttl,
+                json_decode($metadata, true),
+                json_decode($schema, true)
+            );
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
@@ -267,23 +270,35 @@ class ResourceCreate extends ProcessorEntity
     /**
      * Validate the input.
      *
-     * @param int $appid
-     * @param string $method
-     * @param string $uri
-     * @param string $metadata
+     * @param string $name Resource name.
+     * @param string $description Resource Description.
+     * @param string $uri Resource request URI.
+     * @param string $method Resource request method.
+     * @param int $appid  Resource application ID.
+     * @param int $ttl Resource cache TTL.
+     * @param array $metadata Resource definition metadata.
+     * @param ?array $schema Resource OpenAPI schema.
+     *
+     * @return void
      *
      * @throws ApiException
      */
-    protected function validate(int $appid, string $method, string $uri, string $metadata)
-    {
+    protected function validate(
+        string $name,
+        string $description,
+        string $uri,
+        string $method,
+        int $appid,
+        int $ttl,
+        array $metadata,
+        ?array $schema
+    ): void {
         // Validate the application exists.
         try {
             $application = $this->applicationMapper->findByAppid($appid);
         } catch (ApiException $e) {
             throw new ApiException("Invalid application: $appid", 6, $this->id, 400);
         }
-
-        $this->validateCoreProtection($application);
 
         // Validate user has developer role for the application
         try {
@@ -307,33 +322,20 @@ class ResourceCreate extends ProcessorEntity
             throw new ApiException('Resource already exists', 6, $this->id, 400);
         }
 
-        // Validate the metadada.
+        // Validate the metadata.
         try {
-            $this->validator->validate(json_decode($metadata, true));
+            $this->validator->validate([
+                'name' => $name,
+                'description' => $description,
+                'uri' => $uri,
+                'method' => $method,
+                'appid' => $appid,
+                'ttl' => $ttl,
+                'meta' => $metadata,
+                'schema' => $schema,
+            ]);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-        }
-    }
-
-    /**
-     * Validate application is not core and core not locked.
-     *
-     * @param Application $application
-     *
-     * @throws ApiException
-     */
-    protected function validateCoreProtection(Application $application)
-    {
-        try {
-            $account = $this->accountMapper->findByAccid($application->getAccid());
-            $coreAccount = $this->settings->__get(['api', 'core_account']);
-            $coreApplication = $this->settings->__get(['api', 'core_application']);
-            $coreLock = $this->settings->__get(['api', 'core_resource_lock']);
-        } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-        }
-        if ($account->getName() == $coreAccount && $application->getName() == $coreApplication && $coreLock) {
-            throw new ApiException("Unauthorised: this is a core resource", 4, $this->id, 403);
         }
     }
 }

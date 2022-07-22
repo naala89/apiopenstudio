@@ -15,8 +15,12 @@
 namespace ApiOpenStudio\Security;
 
 use ADODB_mysqli;
-use ApiOpenStudio\Core;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\UserMapper;
 use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use ApiOpenStudio\Core\Request;
@@ -26,25 +30,8 @@ use ApiOpenStudio\Core\Request;
  *
  * Validate a JWT token.
  */
-class ValidateToken extends Core\ProcessorEntity
+class ValidateToken extends ProcessorEntity
 {
-    /**
-     * @var int $uid User ID.
-     */
-    protected int $uid;
-    /**
-     * @var array $roles User roles.
-     */
-    protected array $roles;
-    /**
-     * @var UnencryptedToken $token Decrypted token.
-     */
-    protected UnencryptedToken $token;
-    /**
-     * @var Db\UserMapper User mapper class.
-     */
-    protected Db\UserMapper $userMapper;
-
     /**
      * {@inheritDoc}
      *
@@ -59,37 +46,41 @@ class ValidateToken extends Core\ProcessorEntity
     ];
 
     /**
-     * Token constructor.
-     *
-     * @param mixed $meta The processor metadata.
-     * @param mixed $request Request object.
-     * @param ADODB_mysqli $db Database object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @var int $uid User ID.
      */
-    public function __construct($meta, Request &$request, ADODB_mysqli $db, Core\MonologWrapper $logger)
-    {
-        parent::__construct($meta, $request, $db, $logger);
-    }
+    protected int $uid;
+    /**
+     * @var array $roles User roles.
+     */
+    protected array $roles;
+    /**
+     * @var UnencryptedToken $token Decrypted token.
+     */
+    protected UnencryptedToken $token;
+    /**
+     * @var UserMapper User mapper class.
+     */
+    protected UserMapper $userMapper;
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
         try {
-            $this->token = Core\Utilities::decryptToken();
-        } catch (Core\ApiException $e) {
-            throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            $this->token = Utilities::decryptToken();
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         $this->validateToken();
 
-        return new Core\DataContainer(true, 'boolean');
+        return new DataContainer(true, 'boolean');
     }
 
     /**
@@ -97,21 +88,21 @@ class ValidateToken extends Core\ProcessorEntity
      *
      * @return void
      *
-     * @throws Core\ApiException
+     * @throws ApiException
      */
     protected function validateToken()
     {
         try {
-            $this->uid = Core\Utilities::getUidFromToken($this->token);
+            $this->uid = Utilities::getUidFromToken($this->token);
             if (!assert(!empty($this->uid))) {
                 throw new RequiredConstraintsViolated('invalid token');
             }
-            $this->roles = Core\Utilities::getRolesFromToken($this->token);
+            $this->roles = Utilities::getRolesFromToken($this->token);
             if (!assert(!empty($this->roles))) {
                 throw new RequiredConstraintsViolated('invalid token');
             }
         } catch (RequiredConstraintsViolated $e) {
-            throw new Core\ApiException($e->getMessage(), 4, $this->id, 401);
+            throw new ApiException($e->getMessage(), 4, $this->id, 401);
         }
     }
 }

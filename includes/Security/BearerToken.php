@@ -14,14 +14,16 @@
 
 namespace ApiOpenStudio\Security;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\Utilities;
 
 /**
  * Class BearerToken.
  *
  * Security class to return a bearer token from the current call.
  */
-class BearerToken extends Core\ProcessorEntity
+class BearerToken extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -40,12 +42,12 @@ class BearerToken extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
-        return new Core\DataContainer(Core\Utilities::getAuthHeaderToken(), 'text');
+        return new DataContainer(Utilities::getAuthHeaderToken(), 'text');
     }
 }

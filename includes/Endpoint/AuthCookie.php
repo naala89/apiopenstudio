@@ -14,14 +14,16 @@
 
 namespace ApiOpenStudio\Endpoint;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ProcessorEntity;
 
 /**
  * Class AuthCookie
  *
  * Provide cookie authentication to a resource.
  */
-class AuthCookie extends Core\ProcessorEntity
+class AuthCookie extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -49,16 +51,16 @@ class AuthCookie extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException
+     * @throws ApiException
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
         $cookie = $this->val('cookie', true);
 
-        return new Core\DataContainer([CURLOPT_COOKIE => $cookie], 'array');
+        return new DataContainer([CURLOPT_COOKIE => $cookie], 'array');
     }
 }

@@ -21,10 +21,3 @@ output:
         id: test bad resource no security output email
         to: john@naala.com.au
         subject: "test email"
-        format: html
-        message: "test email"
-    -
-        processor: xml
-        id: output xml
-        destination: www.foo.bar
-        method: post

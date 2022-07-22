@@ -15,9 +15,12 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
+use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\Application;
 use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\Role;
@@ -29,7 +32,7 @@ use ApiOpenStudio\Db\VarStoreMapper;
  *
  * Processor class to create a var-store variable.
  */
-class VarStoreCreate extends Core\ProcessorEntity
+class VarStoreCreate extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -109,14 +112,9 @@ class VarStoreCreate extends Core\ProcessorEntity
 
 
     /**
-     * VarStoreCreate constructor.
-     *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * {@inheritDoc}
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->varStoreMapper = new VarStoreMapper($db, $logger);
@@ -126,11 +124,11 @@ class VarStoreCreate extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -162,7 +160,7 @@ class VarStoreCreate extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        return new Core\DataContainer($varStore->dump(), 'array');
+        return new DataContainer($varStore->dump(), 'array');
     }
 
     /**
@@ -177,7 +175,7 @@ class VarStoreCreate extends Core\ProcessorEntity
     {
         try {
             /** @var Role[] */
-            $roles = Core\Utilities::getRolesFromToken();
+            $roles = Utilities::getRolesFromToken();
             /** @var Application[] */
             $applications = $this->applicationMapper->findAll();
         } catch (ApiException $e) {
@@ -215,7 +213,7 @@ class VarStoreCreate extends Core\ProcessorEntity
             }
         }
         if (!$permitted) {
-            throw new Core\ApiException("permission denied", 4, $this->id, 403);
+            throw new ApiException("permission denied", 4, $this->id, 403);
         }
     }
 
