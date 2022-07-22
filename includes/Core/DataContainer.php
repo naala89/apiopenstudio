@@ -80,6 +80,9 @@ class DataContainer extends Entity
      */
     public function __construct($data, string $type = null)
     {
+        if (is_object($data)) {
+            $data = (array) $data;
+        }
         if (empty($type)) {
             $type = $this->detectType($data);
         } else {

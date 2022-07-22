@@ -81,7 +81,7 @@ class VarLiteral extends ProcessorEntity
         parent::process();
 
         $value = $this->val('value', true);
-        $value = is_object($value) ? json_decode(json_encode($value), true) : $value;
+        $value = is_object($value) || is_array($value) ? json_decode(json_encode($value), true) : $value;
         $type = $this->val('type', true);
 
         try {

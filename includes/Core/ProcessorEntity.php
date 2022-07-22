@@ -31,18 +31,16 @@ abstract class ProcessorEntity extends Entity
     protected ?ADOConnection $db;
 
     /**
-     * Constructor. Store processor metadata and request data in object.
-     *
-     * @param $meta
+     * @param array $meta
      *   Metadata for the processor.
      * @param Request $request
      *   The full request object.
-     * @param ADOConnection|null $db
+     * @param ?ADOConnection $db
      *   The DB connection object.
-     * @param MonologWrapper|null $logger
+     * @param ?MonologWrapper $logger
      *   The logger.
      */
-    public function __construct($meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $logger);
         $this->db = $db;
@@ -51,10 +49,10 @@ abstract class ProcessorEntity extends Entity
     /**
      * Generate the params array for the sql search.
      *
-     * @param string|null $keyword Search keyword.
-     * @param array|null $keywordCols Columns to search for the keyword.
-     * @param string|null $orderBy Order by column.
-     * @param string|null $direction Order direction.
+     * @param ?string $keyword Search keyword.
+     * @param ?array $keywordCols Columns to search for the keyword.
+     * @param ?string $orderBy Order by column.
+     * @param ?string $direction Order direction.
      *
      * @return array
      */

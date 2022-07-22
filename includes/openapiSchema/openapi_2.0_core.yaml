@@ -835,21 +835,24 @@ paths:
                     description: The resource ID to filter by
                     required: false
                     type: integer
-                    minimum: 1
-                -
-                    in: query
-                    name: accid
-                    description: The account ID to filter by
-                    required: false
-                    type: integer
-                    minimum: 1
                 -
                     in: query
                     name: appid
                     description: The application ID to filter by
                     required: false
                     type: integer
-                    minimum: 1
+                -
+                    in: query
+                    name: method
+                    description: The resource method to filter by
+                    required: false
+                    type: string
+                -
+                    in: query
+                    name: uri
+                    description: The resource URI to filter by
+                    required: false
+                    type: string
                 -
                     in: query
                     name: keyword

@@ -15,10 +15,17 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\Config;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\AccountMapper;
+use ApiOpenStudio\Db\ApplicationMapper;
+use ApiOpenStudio\Db\UserMapper;
+use ApiOpenStudio\Db\VarStoreMapper;
 use Swift_SmtpTransport;
 use Swift_Mailer;
 use Swift_Message;
@@ -28,42 +35,42 @@ use Swift_Message;
  *
  * Processor class te reset a user's password.
  */
-class PasswordReset extends Core\ProcessorEntity
+class PasswordReset extends ProcessorEntity
 {
     /**
      * User mapper class.
      *
-     * @var Db\UserMapper
+     * @var UserMapper
      */
-    private Db\UserMapper $userMapper;
+    private UserMapper $userMapper;
 
     /**
      * Config class.
      *
-     * @var Core\Config
+     * @var Config
      */
-    private Core\Config $settings;
+    private Config $settings;
 
     /**
      * Var store mapper class.
      *
-     * @var Db\VarStoreMapper
+     * @var VarStoreMapper
      */
-    private Db\VarStoreMapper $varStoreMapper;
+    private VarStoreMapper $varStoreMapper;
 
     /**
      * Account mapper class.
      *
-     * @var Db\AccountMapper
+     * @var AccountMapper
      */
-    private Db\AccountMapper $accountMapper;
+    private AccountMapper $accountMapper;
 
     /**
      * Application mapper class.
      *
-     * @var Db\ApplicationMapper
+     * @var ApplicationMapper
      */
-    private Db\ApplicationMapper $applicationMapper;
+    private ApplicationMapper $applicationMapper;
 
     /**
      * {@inheritDoc}
@@ -107,31 +114,26 @@ class PasswordReset extends Core\ProcessorEntity
     ];
 
     /**
-     * PasswordReset constructor.
-     *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * {@inheritDoc}
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->userMapper = new Db\UserMapper($db, $logger);
-        $this->varStoreMapper = new Db\VarStoreMapper($db, $logger);
-        $this->settings = new Core\Config();
-        $this->accountMapper = new Db\AccountMapper($db, $logger);
-        $this->applicationMapper = new Db\ApplicationMapper($db, $logger);
+        $this->userMapper = new UserMapper($db, $logger);
+        $this->varStoreMapper = new VarStoreMapper($db, $logger);
+        $this->settings = new Config();
+        $this->accountMapper = new AccountMapper($db, $logger);
+        $this->applicationMapper = new ApplicationMapper($db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -148,10 +150,10 @@ class PasswordReset extends Core\ProcessorEntity
                 throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
             }
             if (empty($user->getUid())) {
-                return new Core\DataContainer('true', 'text');
+                return new DataContainer('true', 'text');
             }
 
-            $token = Core\Utilities::randomString(32);
+            $token = Utilities::randomString(32);
 
             try {
                 $account = $this->accountMapper->findByName('apiopenstudio');
@@ -179,23 +181,23 @@ class PasswordReset extends Core\ProcessorEntity
                 ->setBody($message)
                 ->setContentType('text/html');
             if ($mailer->send($emailMessage) == 0) {
-                throw new Core\ApiException("Reset password email send failed", 6, $this->id, 400);
+                throw new ApiException("Reset password email send failed", 6, $this->id, 400);
             }
 
             $user->setPasswordReset($token);
-            $user->setPasswordResetTtl(Core\Utilities::datePhp2mysql(strtotime("+15 minute")));
+            $user->setPasswordResetTtl(Utilities::datePhp2mysql(strtotime("+15 minute")));
             try {
                 $this->userMapper->save($user);
             } catch (ApiException $e) {
                 throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
             }
 
-            return new Core\DataContainer('true', 'text');
+            return new DataContainer('true', 'text');
         }
 
         // Final password reset step - we should have a password and token.
         if (empty($token) || empty($password)) {
-            return new Core\DataContainer('true', 'text');
+            return new DataContainer('true', 'text');
         }
 
         try {
@@ -204,7 +206,7 @@ class PasswordReset extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         if (empty($user->getUid())) {
-            return new Core\DataContainer('true', 'text');
+            return new DataContainer('true', 'text');
         }
 
         try {
@@ -214,6 +216,6 @@ class PasswordReset extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        return new Core\DataContainer('true', 'text');
+        return new DataContainer('true', 'text');
     }
 }

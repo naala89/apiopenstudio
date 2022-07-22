@@ -82,18 +82,11 @@ class JsonRemote extends OutputRemote
     protected Config $settings;
 
     /**
-     * JsonRemote output constructor.
+     * JsonRemote constructor.
      *
-     * @param mixed|null $meta
-     *   Output meta.
-     * @param Request $request
-     *   The full request object.
-     * @param MonologWrapper $logger
-     *   Logger.
-     * @param mixed $data
-     *   Output data.
+     * {@inheritDoc}
      */
-    public function __construct($meta, Request &$request, MonologWrapper $logger, $data)
+    public function __construct(array &$meta, Request &$request, ?MonologWrapper $logger, $data)
     {
         parent::__construct($meta, $request, $logger, $data);
         $this->settings = new Config();

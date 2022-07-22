@@ -15,7 +15,8 @@
 namespace ApiOpenStudio\Core;
 
 use ADOConnection;
-use ADODB_mysqli;
+use ApiOpenStudio\Db\AccountMapper;
+use ApiOpenStudio\Db\ApplicationMapper;
 use ReflectionClass;
 use ReflectionException;
 
@@ -27,25 +28,39 @@ use ReflectionException;
 class ResourceValidator
 {
     /**
-     * Processor helper class.
-     *
-     * @var ProcessorHelper
+     * @var ProcessorHelper Processor helper class.
      */
     protected ProcessorHelper $helper;
 
     /**
-     * DB connection class.
-     *
-     * @var ADODB_mysqli
+     * @var ADOConnection|null DB connection class.
      */
-    private $db;
+    private ?ADOConnection $db;
 
     /**
-     * Logging class.
-     *
-     * @var MonologWrapper
+     * @var MonologWrapper Logging class.
      */
     private MonologWrapper $logger;
+
+    /**
+     * @var array Resource metadata.
+     */
+    private array $meta;
+
+    /**
+     * @var Config Config class.
+     */
+    private Config $settings;
+
+    /**
+     * @var ApplicationMapper Application mapper class.
+     */
+    private ApplicationMapper $applicationMapper;
+
+    /**
+     * @var AccountMapper Account mapper class.
+     */
+    private AccountMapper $accountMapper;
 
     /**
      * Constructor. Store processor metadata and request data in object.
@@ -58,292 +73,526 @@ class ResourceValidator
         $this->helper = new ProcessorHelper();
         $this->db = $db;
         $this->logger = $logger;
+        $this->settings = new Config();
+        $this->applicationMapper = new ApplicationMapper($this->db, $this->logger);
+        $this->accountMapper = new AccountMapper($this->db, $this->logger);
     }
 
     /**
-     * Validate input data is well formed.
+     * Validate a complete resource metadata is well-formed.
+     * An exception is thrown if the resource is invalid.
      *
-     * @param array $data Resource metadata array.
+     * @param array $meta Resource metadata.
      *
      * @return void
      *
      * @throws ApiException
-     *   Input data not well-formed.
      */
-    public function validate(array $data)
+    public function validate(array $meta): void
     {
-        $this->logger->notice('api', 'Validating the new resource...');
-        // Check mandatory elements exists in data.
-        if (empty($data)) {
-            $message = 'Empty resource uploaded';
-            $this->logger->error('api', $message);
-            throw new ApiException($message, 1, -1, 400);
-        }
-        if (!isset($data['process'])) {
-            $message = 'Missing process in new resource';
-            $this->logger->error('api', $message);
-            throw new ApiException($message, 1, -1, 400);
+        $this->logger->notice('api', 'Validating a new resource...');
+
+        $this->meta = $meta;
+
+        $this->validateRequiredResourceAttributes();
+
+        $this->validateNonMetaValues();
+
+        $this->validateCoreProtection();
+
+        $this->validateIdenticalIds();
+
+        if (isset($this->meta['meta']['security'])) {
+            $this->validateSection([$this->meta['meta']['security']], false);
         }
 
-        // Validate for identical IDs.
-        $this->validateIdenticalIds($data);
-
-        // Validate dictionaries.
-        if (isset($data['security'])) {
-            $this->validateDetails($data['security']);
-        }
-        if (!empty($data['fragments'])) {
-            if (!Utilities::isAssoc($data['fragments'])) {
+        if (isset($meta['meta']['fragments'])) {
+            if (!Utilities::isAssoc($meta['meta']['fragments'])) {
                 $message = 'Invalid fragments structure in new resource';
                 $this->logger->error('api', $message);
-                throw new ApiException($message, 1, -1, 400);
+                throw new ApiException($message, 6, -1, 400);
             }
-            foreach ($data['fragments'] as $fragVal) {
-                $this->validateDetails($fragVal);
+            foreach ($meta['meta']['fragments'] as $fragVal) {
+                $this->validateSection($fragVal, true);
             }
         }
 
-        if (!$this->helper->isProcessor($data['process'])) {
-            $message = 'Invalid process declaration, only processors allowed';
-            $this->logger->error('api', $message);
-            throw new ApiException($message, 1, -1, 400);
-        }
-        $this->validateDetails($data['process']);
+        $this->validateSection([$meta['meta']['process']], true);
 
-        if (isset($data['output'])) {
-            if ($this->helper->isProcessor($data['output'])) {
-                $this->validateDetails($data['output']);
-            } elseif (is_array($data['output'])) {
-                foreach ($data['output'] as $output) {
+        if (isset($meta['meta']['output'])) {
+            if ($this->helper->isProcessor($meta['meta']['output'])) {
+                $this->validateSection([$meta['meta']['output']], true);
+            } elseif (is_array($meta['meta']['output'])) {
+                foreach ($meta['meta']['output'] as $output) {
                     if ($this->helper->isProcessor($output)) {
-                        $this->validateDetails($output);
+                        $this->validateSection([$output], true);
                     } elseif ($output != 'response') {
                         $message = 'Invalid output declaration. ';
-                        $message .= 'Only processor, array of processors or "response" allowed';
+                        $message .= "Only a processor, array of processors or 'response' allowed";
                         $this->logger->error('api', $message);
-                        throw new ApiException($message, 1, -1, 400);
+                        throw new ApiException($message, 6, -1, 400);
                     }
                 }
-            } else {
-                if ($data['output'] != 'response') {
-                    $message = 'Invalid output declaration. ';
-                    $message .= 'Only processor, array of processors or "response" allowed';
-                    $this->logger->error('api', $message);
-                    throw new ApiException($message, 1, -1, 400);
-                }
+            } elseif ($meta['meta']['output'] != 'response') {
+                $message = 'Invalid output declaration. ';
+                $message .= "Only a processor, array of processors or 'response' allowed";
+                $this->logger->error('api', $message);
+                throw new ApiException($message, 6, -1, 400);
             }
+        }
+    }
+
+    /**
+     * Validate non-meta security/fragment/process/output values 9in the resource.
+     *
+     * @return void
+     *
+     * @throws ApiException
+     */
+    protected function validateNonMetaValues(): void
+    {
+        // Validate TTL in the imported file.
+        if ($this->meta['ttl'] < 0) {
+            $this->logger->error('api', 'Negative ttl in new resource');
+            throw new ApiException("Negative ttl in new resource", 6, -1, 400);
+        }
+
+        // Validate the application exists.
+        $application = $this->applicationMapper->findByAppid($this->meta['appid']);
+        if (empty($application)) {
+            $this->logger->error('api', 'Invalid application: ' . $this->meta['appid']);
+            throw new ApiException(
+                'Invalid application: ' . $this->meta['appid'],
+                6,
+                -1,
+                400
+            );
+        }
+    }
+
+    /**
+     * Validate the required resource attributes exist in the metadata.
+     *
+     * @return void
+     *
+     * @throws ApiException
+     */
+    protected function validateRequiredResourceAttributes(): void
+    {
+        // Check mandatory elements exists in data.
+        if (empty($this->meta)) {
+            $message = 'Empty resource uploaded';
+            $this->logger->error('api', $message);
+            throw new ApiException($message, 6, -1, 400);
+        }
+        if (!isset($this->meta['name']) || empty($this->meta['name'])) {
+            $message = 'Missing name in new resource';
+            $this->logger->error('api', $message);
+            throw new ApiException($message, 6, -1, 400);
+        }
+        if (!isset($this->meta['description']) || empty($this->meta['description'])) {
+            $message = 'Missing description in new resource';
+            $this->logger->error('api', $message);
+            throw new ApiException($message, 6, -1, 400);
+        }
+        if (!isset($this->meta['uri']) || empty($this->meta['uri'])) {
+            $message = 'Missing uri in new resource';
+            $this->logger->error('api', $message);
+            throw new ApiException($message, 6, -1, 400);
+        }
+        if (!isset($this->meta['method']) || empty($this->meta['method'])) {
+            $message = 'Missing method in new resource';
+            $this->logger->error('api', $message);
+            throw new ApiException($message, 6, -1, 400);
+        }
+        if (!isset($this->meta['appid']) || empty($this->meta['appid'])) {
+            $message = 'Missing appid in new resource';
+            $this->logger->error('api', $message);
+            throw new ApiException($message, 6, -1, 400);
+        }
+        if (!isset($this->meta['ttl'])) {
+            $message = 'Missing ttl in new resource';
+            $this->logger->error('api', $message);
+            throw new ApiException($message, 6, -1, 400);
+        }
+        if (!isset($this->meta['meta']['process'])) {
+            $message = 'Missing process in new resource';
+            $this->logger->error('api', $message);
+            throw new ApiException($message, 6, -1, 400);
         }
     }
 
     /**
      * Search for identical IDs.
      *
-     * @param array $meta Resource metadata array.
-     *
-     * @return boolean
+     * @return void
      *
      * @throws ApiException Identical ID found.
      */
-    private function validateIdenticalIds(array $meta): bool
+    protected function validateIdenticalIds(): void
     {
-        $id = [];
-        $stack = [$meta];
+        $ids = [];
+        $meta = $this->meta['meta'];
+
+        // Stack array for parsing for identical IDs.
+        $stack = [$meta['process']];
+        if (!empty($meta['security'])) {
+            $stack[] = $meta['security'];
+        }
+        if (!empty($meta['output'])) {
+            $stack[] = $meta['output'];
+        }
+        if (!empty($meta['fragments'])) {
+            $stack[] = $meta['fragments'];
+        }
 
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
-                if (in_array($node['id'], $id)) {
-                    $this->logger->error('api', 'identical IDs in new resource: ' . $node['id']);
-                    throw new ApiException('identical IDs in new resource: ' . $node['id'], 1, -1, 400);
+                $id = $node['id'];
+                if (in_array($id, $ids)) {
+                    $message = "identical IDs in new resource: $id";
+                    $this->logger->error('api', $message);
+                    throw new ApiException($message, 6, -1, 400);
                 }
-                $id[] = $node['id'];
-            }
-            if (is_array($node)) {
+                $ids[] = $id;
+                foreach ($node as $item) {
+                    array_unshift($stack, $item);
+                }
+            } elseif (is_array($node)) {
                 foreach ($node as $item) {
                     array_unshift($stack, $item);
                 }
             }
         }
-
-        return true;
     }
 
     /**
-     * Validate the details of a security or process processor.
+     * Validate the details of a metadata section (security, fragment, process or output).
      *
-     * @param array $meta Resource metadata array.
+     * @param array $stack Stack of nodes to parse.
+     * @param bool $allowFragments Allow fragments in the processor.
      *
      * @return void
      *
      * @throws ApiException Error found in validating the resource.
      */
-    private function validateDetails(array $meta)
+    private function validateSection(array $stack, bool $allowFragments): void
     {
-        $stack = [$meta];
-
         while ($node = array_shift($stack)) {
             if ($this->helper->isProcessor($node)) {
-                $classStr = $this->helper->getProcessorString($node['processor']);
-                try {
-                    $class = new ReflectionClass($classStr);
-                } catch (ReflectionException $e) {
-                    throw new ApiException($e->getMessage(), $e->getCode(), -1, 500);
+                if (!$allowFragments && $node['processor'] == 'fragment') {
+                    throw new ApiException('Fragment not allowed in this section: ' . $node['id'], 6, -1, 400);
                 }
-                $parents = [];
-                while ($parent = $class->getParentClass()) {
-                    $parents[] = $parent->getName();
-                    $class = $parent;
-                }
-                if (in_array('ApiOpenStudio\Core\OutputRemote', $parents)) {
-                    $request = new Request();
-                    $class = new $classStr($meta, $request, $this->logger, new DataContainer('', 'text'));
-                } elseif (in_array('ApiOpenStudio\Core\OutputResponse', $parents)) {
-                    $request = new Request();
-                    $class = new $classStr($meta, $request, $this->logger, new DataContainer('', 'text'), 0);
-                } else {
-                    $request = new Request();
-                    $class = new $classStr($meta, $request, $this->db, $this->logger);
-                }
+                $class = $this->getProcessorClass($node);
                 $details = $class->details();
-                $id = $node['id'];
-                $this->logger->notice('api', 'Validating: ' . $id);
-
-                foreach ($details['input'] as $inputKey => $inputDef) {
-                    $min = $inputDef['cardinality'][0];
-                    $max = $inputDef['cardinality'][1];
-                    $literalAllowed = $inputDef['literalAllowed'];
-                    $limitProcessors = $inputDef['limitProcessors'];
-                    $limitTypes = $inputDef['limitTypes'];
-                    $limitValues = $inputDef['limitValues'];
-                    $count = 0;
-
-                    if (
-                        isset($node[$inputKey])
-                        && (
-                            !is_null($node[$inputKey])
-                            || $node[$inputKey] === false
-                            || $node[$inputKey] === 0
-                        )
-                    ) {
-                        $input = $node[$inputKey];
-
-                        if ($this->helper->isProcessor($input)) {
-                            if (!empty($limitProcessors) && !in_array($input['processor'], $limitProcessors)) {
-                                $message = 'processor ' . $input['id'] . ' is an invalid processor type (only "'
-                                    . implode('", ', $limitProcessors) . '" allowed)';
-                                $this->logger->error('api', $message);
-                                throw new ApiException($message, 1, -1, 400);
-                            }
-                            array_unshift($stack, $input);
-                            $count = 1;
-                        } elseif (is_array($input)) {
-                            foreach ($input as $item) {
-                                if ($this->helper->isProcessor($item)) {
-                                    array_unshift($stack, $item);
-                                } else {
-                                    $this->validateTypeValue($item, $limitTypes, $id);
-                                }
-                            }
-                            $count = sizeof($input);
-                        } elseif (!$literalAllowed) {
-                            $message = "literals not allowed as input for '$inputKey' in processor: $id";
-                            $this->logger->error('api', $message);
-                            throw new ApiException($message, 1, -1, 400);
-                        } else {
-                            if (!empty($limitValues) && !in_array($input, $limitValues)) {
-                                $message = "invalid value type for '$inputKey' in processor: $id";
-                                $this->logger->error('api', $message);
-                                throw new ApiException($message, 1, -1, 400);
-                            }
-                            if (!empty($limitTypes)) {
-                                $this->validateTypeValue($input, $limitTypes, $id);
-                            }
-                            $count = 1;
-                        }
-                    }
-
-                    // validate cardinality
-                    if ($count < $min) {
-                        // check for nothing to validate and if that is ok.
-                        $message = "input '$inputKey' in processor '" . $node['id'] . "' requires min $min";
-                        $this->logger->error('api', $message);
-                        throw new ApiException($message, 1, -1, 400);
-                    }
-                    if ($max != '*' && $count > $max) {
-                        $message = "input '$inputKey' in processor '" . $node['id'] . "' requires max $max";
-                        $this->logger->error('api', $message);
-                        throw new ApiException($message, 1, -1, 400);
+                $this->validateNode($node, $details);
+                foreach ($node as $input) {
+                    if ($this->helper->isProcessor($input)) {
+                        array_unshift($stack, $input);
                     }
                 }
             } elseif (is_array($node)) {
-                if (isset($node['processor']) && empty($node['id'])) {
-                    $this->logger->error('api', 'Invalid processor, id attribute missing');
-                    throw new ApiException('Invalid processor, id attribute missing', 1, -1, 400);
-                }
-                foreach ($node as $value) {
-                    array_unshift($stack, $value);
+                foreach ($node as $item) {
+                    array_unshift($stack, $item);
                 }
             }
         }
     }
 
     /**
-     * Compare an element type and possible literal value or type in the input resource with the definition in the
-     * Processor it refers to. If the element type is processor, recursively iterate through, using the calling
-     * function _validateProcessor().
+     * Validate the attributes on a node in the metadata.
      *
-     * @param mixed $element Literal value in a resource to validate against $accepts.
-     * @param array $accepts Array of types the processor can accept.
+     * @param array $node
+     * @param array $details
      *
-     * @return boolean
+     * @return void
      *
-     * @throws ApiException Invalid $element.
+     * @throws ApiException
      */
-    private function validateTypeValue($element, array $accepts): bool
+    protected function validateNode(array $node, array $details): void
     {
-        if (empty($accepts)) {
-            return true;
-        }
-        $valid = false;
+        $this->validateMissingInputs($node, $details['input']);
+        $this->validateExtraInputs($node, $details['input']);
+        $id = $node['id'];
 
-        foreach ($accepts as $accept) {
-            if ($accept == 'file') {
-                $valid = true;
-                break;
-            } elseif ($accept == 'literal' && (is_string($element) || is_numeric($element))) {
-                $valid = true;
-                break;
-            } elseif (
-                $accept == 'boolean'
-                && filter_var($element, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) !== null
-            ) {
-                $valid = true;
-                break;
-            } elseif (
-                $accept == 'integer'
-                && filter_var($element, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) !== null
-            ) {
-                $valid = true;
-                break;
-            } elseif ($accept == 'text' && is_string($element)) {
-                $valid = true;
-                break;
-            } elseif (
-                $accept == 'float'
-                && filter_var($element, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) !== null
-            ) {
-                $valid = true;
-                break;
-            } elseif ($accept == 'array' && is_array($element)) {
-                $valid = true;
-                break;
+        foreach ($details['input'] as $inputKey => $inputDef) {
+            $this->logger->notice('api', "Validating input processor $id input: $inputKey");
+            $this->validateCardinality($inputKey, $inputDef['cardinality'], $node);
+            $this->validateLiteralAllowed($inputKey, $inputDef['literalAllowed'], $node);
+            $this->validateLimitProcessors($inputKey, $inputDef['limitProcessors'], $node);
+            $this->validateLimitTypes($inputKey, $inputDef['limitTypes'], $node);
+            $this->validateLimitValues($inputKey, $inputDef['limitValues'], $node);
+        }
+    }
+
+    /**
+     * Validate that no required inputs are missing in a node.
+     *
+     * @param array $node
+     * @param array $inputs
+     *
+     * @return void
+     *
+     * @throws ApiException
+     */
+    protected function validateMissingInputs(array $node, array $inputs): void
+    {
+        if (empty($node['id'])) {
+            throw new ApiException("Missing processor id", 6, -1, 400);
+        }
+        $id = $node['id'];
+        if (empty($node['processor'])) {
+            throw new ApiException("Missing processor attribute in $id", 6, -1, 400);
+        }
+        $keys = array_keys($inputs);
+        foreach ($keys as $key) {
+            if (!isset($node[$key]) && $inputs[$key]['cardinality'][0] > 0) {
+                throw new ApiException("Missing processor attribute $key in $id", 6, -1, 400);
             }
         }
-        if (!$valid) {
-            $message = 'invalid literal in new resource (' . print_r($element, true) . '). only "' .
-                implode("', '", $accepts) . '" accepted';
-            $this->logger->error('api', $message);
-            throw new ApiException($message, 6, -1, 400);
+    }
+
+    /**
+     * Validate that no extra inputs in a node.
+     *
+     * @param array $node
+     * @param array $inputs
+     *
+     * @return void
+     *
+     * @throws ApiException
+     */
+    protected function validateExtraInputs(array $node, array $inputs): void
+    {
+        $id = $node['id'];
+        foreach ($node as $key => $val) {
+            if ($key == 'id' || $key == 'processor') {
+                continue;
+            }
+            if (!isset($inputs[$key])) {
+                throw new ApiException("Invalid input '$key' in processor '$id'", 6, -1, 400);
+            }
         }
-        return true;
+    }
+
+    /**
+     * Validate the cardinality of an input.
+     *
+     * @param string $inputKey Input key.
+     * @param array $cardinality Processor input cardinality.
+     * @param array $node processor metadata.
+     *
+     * @return void
+     *
+     * @throws ApiException
+     */
+    protected function validateCardinality(string $inputKey, array $cardinality, array $node): void
+    {
+        $min = $cardinality[0];
+        $max = $cardinality[1];
+        $id = $node['id'];
+
+        if (empty($node[$inputKey])) {
+            if ($min > 0) {
+                throw new ApiException(
+                    "Input '$inputKey' in processor '$id' requires min $min",
+                    6,
+                    -1,
+                    400
+                );
+            } else {
+                return;
+            }
+        }
+        if (!is_array($node[$inputKey])) {
+            if ($min > 1) {
+                throw new ApiException(
+                    "Input '$inputKey' in processor '$id' requires min $min",
+                    6,
+                    -1,
+                    400
+                );
+            }
+        } elseif (!$this->helper->isProcessor($node[$inputKey])) {
+            if (count($node[$inputKey]) < $min) {
+                throw new ApiException(
+                    "Input '$inputKey' in processor '$id' requires min $min",
+                    6,
+                    -1,
+                    400
+                );
+            }
+            if ($max != '*' && !$this->helper->isProcessor($node[$inputKey]) && count($node[$inputKey]) > $max) {
+                throw new ApiException(
+                    "Input '$inputKey' in processor '$id' requires max $max",
+                    6,
+                    -1,
+                    400
+                );
+            }
+        }
+    }
+
+    /**
+     * Validate the cardinality of an input.
+     *
+     * @param string $inputKey Input key.
+     * @param bool $literalAllowed Literal allowed for an input.
+     * @param array $node processor metadata.
+     *
+     * @return void
+     *
+     * @throws ApiException
+     */
+    protected function validateLiteralAllowed(string $inputKey, bool $literalAllowed, array $node): void
+    {
+        if (!$literalAllowed && !$this->helper->isProcessor($node[$inputKey])) {
+            throw new ApiException("Literal not allowed in $inputKey in " . $node['id'], 6, -1, 400);
+        }
+    }
+
+    /**
+     * Validate the processors in an input.
+     *
+     * @param string $inputKey Input key.
+     * @param array $limitProcessors Limit processors allowed in an input.
+     * @param array $node processor metadata.
+     *
+     * @return void
+     *
+     * @throws ApiException
+     */
+    protected function validateLimitProcessors(string $inputKey, array $limitProcessors, array $node): void
+    {
+        if (empty($limitProcessors) || !isset($node[$inputKey])) {
+            return;
+        }
+
+        if (
+            $this->helper->isProcessor($node[$inputKey])
+            && !in_array($node[$inputKey]['processor'], $limitProcessors)
+        ) {
+            throw new ApiException(
+                "Invalid processor in '$inputKey' in '" . $node['id'] . "'",
+                6,
+                -1,
+                400
+            );
+        }
+    }
+
+    /**
+     * Validate the literal input types in an input.
+     *
+     * @param string $inputKey Input key.
+     * @param array $limitTypes Limit var types allowed in an input.
+     * @param array $node processor metadata.
+     *
+     * @return void
+     *
+     * @throws ApiException
+     */
+    protected function validateLimitTypes(string $inputKey, array $limitTypes, array $node): void
+    {
+        if (empty($limitTypes) || !isset($node[$inputKey]) || $this->helper->isProcessor($node[$inputKey])) {
+            return;
+        }
+        $type = '';
+        $type = is_array($node[$inputKey]) ? 'array' : $type;
+        $type = is_string($node[$inputKey]) ? 'text' : $type;
+        $type = filter_var($node[$inputKey], FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) !== null ? 'float' : $type;
+        $type = filter_var($node[$inputKey], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) !== null ? 'integer' : $type;
+        $type = filter_var(
+            $node[$inputKey],
+            FILTER_VALIDATE_BOOLEAN,
+            FILTER_NULL_ON_FAILURE
+        ) !== null ? 'boolean' : $type;
+
+        if (!in_array($type, $limitTypes)) {
+            throw new ApiException(
+                "Invalid type in '$inputKey' ($type) in '" . $node['id'] . "'",
+                6,
+                -1,
+                400
+            );
+        }
+    }
+
+    /**
+     * Validate the literal values in an input.
+     *
+     * @param string $inputKey Input key.
+     * @param array $limitValues Limit values allowed in an input.
+     * @param array $node processor metadata.
+     *
+     * @return void
+     *
+     * @throws ApiException
+     */
+    protected function validateLimitValues(string $inputKey, array $limitValues, array $node): void
+    {
+        if (empty($limitValues) || !isset($node[$inputKey]) || $this->helper->isProcessor($node[$inputKey])) {
+            return;
+        } elseif (!is_array($node[$inputKey]) && !in_array($node[$inputKey], $limitValues)) {
+            throw new ApiException("Invalid value in $inputKey in " . $node['id'], 6, -1, 400);
+        }
+    }
+
+    /**
+     * Fetch the class for a processor.
+     *
+     * @param array $node
+     *
+     * @return mixed
+     *
+     * @throws ApiException
+     */
+    protected function getProcessorClass(array $node)
+    {
+        $classStr = $this->helper->getProcessorString($node['processor']);
+
+        try {
+            $class = new ReflectionClass($classStr);
+        } catch (ReflectionException $e) {
+            throw new ApiException($e->getMessage(), 6, -1, 500);
+        }
+
+        $parents = [];
+        while ($parent = $class->getParentClass()) {
+            $parents[] = $parent->getName();
+            $class = $parent;
+        }
+        if (in_array('ApiOpenStudio\Core\OutputRemote', $parents)) {
+            $request = new Request();
+            $class = new $classStr($this->meta, $request, $this->logger, new DataContainer('', 'text'));
+        } elseif (in_array('ApiOpenStudio\Core\OutputResponse', $parents)) {
+            $request = new Request();
+            $class = new $classStr($this->meta, $request, $this->logger, new DataContainer('', 'text'), 0);
+        } else {
+            $request = new Request();
+            $class = new $classStr($this->meta, $request, $this->db, $this->logger);
+        }
+
+        return $class;
+    }
+
+    /**
+     * Validate application is not core and core not locked.
+     *
+     * @return void
+     *
+     * @throws ApiException
+     */
+    protected function validateCoreProtection(): void
+    {
+        $application = $this->applicationMapper->findByAppid($this->meta['appid']);
+        $account = $this->accountMapper->findByAccid($application->getAccid());
+        $coreAccount = $this->settings->__get(['api', 'core_account']);
+        $coreApplication = $this->settings->__get(['api', 'core_application']);
+        $coreLock = $this->settings->__get(['api', 'core_resource_lock']);
+
+        if ($account->getName() == $coreAccount && $application->getName() == $coreApplication && $coreLock) {
+            throw new ApiException("Unauthorised: this is a core resource", 4, -1, 403);
+        }
     }
 }

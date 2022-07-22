@@ -27,18 +27,18 @@ process:
         processor: var_get
         id: test url url
         key: url
-    sourceType:
+    expected_type:
         processor: var_get
         id: test url source_type
         key: source_type
         nullable: true
-    reportError:
+    report_error:
         processor: var_get
         id: test url report_error
-        key: repor_error
+        key: report_error
         expected_type: boolean
         nullable: true
-    connectTimeout:
+    connect_timeout:
         processor: var_get
         id: test url connect_timeout
         key: connect_timeout

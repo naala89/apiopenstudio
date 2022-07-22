@@ -44,7 +44,7 @@ class ValidateTokenRoles extends ValidateToken
             'roles' => [
                 'description' => 'User roles that are permitted.',
                 'cardinality' => [1, '*'],
-                'literalAllowed' => false,
+                'literalAllowed' => true,
                 'limitProcessors' => ['collection'],
                 'limitTypes' => [],
                 'limitValues' => [],

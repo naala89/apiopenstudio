@@ -14,14 +14,17 @@
 
 namespace ApiOpenStudio\Endpoint;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\Curl;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ProcessorEntity;
 
 /**
  * Class Url
  *
  * Provide the results from a remote endpoint.
  */
-class Url extends Core\ProcessorEntity
+class Url extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -120,11 +123,11 @@ class Url extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -155,21 +158,21 @@ class Url extends Core\ProcessorEntity
         }
 
         //send request
-        $curl = new Core\Curl($this->logger);
+        $curl = new Curl($this->logger);
         $this->data = $curl->$method($url, $curlOpts);
         if ($this->data === false) {
-            throw new Core\ApiException('could not get response from remote server: '
+            throw new ApiException('could not get response from remote server: '
             . $curl->errorMsg, 5, $this->id, $curl->httpStatus);
         }
         if ($reportError && $curl->httpStatus != 200) {
-            throw new Core\ApiException(json_encode($this->data), 5, $this->id, $curl->httpStatus);
+            throw new ApiException(json_encode($this->data), 5, $this->id, $curl->httpStatus);
         }
 
         if ($expectedType == 'auto') {
             $expectedType = $this->calcFormat();
         }
 
-        return new Core\DataContainer($this->data, $expectedType);
+        return new DataContainer($this->data, $expectedType);
     }
 
     /**

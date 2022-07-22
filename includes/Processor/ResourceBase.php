@@ -36,27 +36,6 @@ use ApiOpenStudio\Db\ResourceMapper;
 abstract class ResourceBase extends ProcessorEntity
 {
     /**
-     * Processor helper class.
-     *
-     * @var ProcessorHelper
-     */
-    protected ProcessorHelper $helper;
-
-    /**
-     * Account mapper class.
-     *
-     * @var AccountMapper
-     */
-    private AccountMapper $accountMapper;
-
-    /**
-     * Config class.
-     *
-     * @var Config
-     */
-    private Config $settings;
-
-    /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
@@ -129,14 +108,30 @@ abstract class ResourceBase extends ProcessorEntity
     ];
 
     /**
-     * ResourceBase constructor.
+     * Processor helper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param MonologWrapper $logger Logger object.
+     * @var ProcessorHelper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
+    protected ProcessorHelper $helper;
+
+    /**
+     * Account mapper class.
+     *
+     * @var AccountMapper
+     */
+    private AccountMapper $accountMapper;
+
+    /**
+     * Config class.
+     *
+     * @var Config
+     */
+    private Config $settings;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->helper = new ProcessorHelper();
@@ -384,8 +379,8 @@ abstract class ResourceBase extends ProcessorEntity
         if (empty($data)) {
             throw new ApiException("empty resource uploaded", 6, $this->id, 406);
         }
-        if (is_array($data) && sizeof($data) == 1 && $data[0] == $this->meta->resource) {
-            $message = 'Form-data element with name: "' . $this->meta->resource . '" not found.';
+        if (is_array($data) && sizeof($data) == 1 && $data[0] == $this->meta['resource']) {
+            $message = 'Form-data element with name: "' . $this->meta['resource'] . '" not found.';
             throw new ApiException($message, 6, $this->id, 406);
         }
         if (!isset($data['name'])) {

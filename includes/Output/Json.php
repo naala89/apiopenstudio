@@ -61,20 +61,11 @@ class Json extends OutputResponse
     protected Config $settings;
 
     /**
-     * JSON output constructor.
+     * Json constructor.
      *
-     * @param mixed|null $meta
-     *   Output meta.
-     * @param Request $request
-     *   The full request object.
-     * @param MonologWrapper $logger
-     *   Logger.
-     * @param mixed $data
-     *   Output data.
-     * @param integer $status
-     *   HTTP output status.
+     * {@inheritDoc}
      */
-    public function __construct($meta, Request &$request, MonologWrapper $logger, $data, int $status)
+    public function __construct(array &$meta, Request &$request, MonologWrapper $logger, $data, int $status)
     {
         parent::__construct($meta, $request, $logger, $data, $status);
         $this->settings = new Config();

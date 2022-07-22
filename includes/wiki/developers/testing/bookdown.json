@@ -3,9 +3,9 @@
   "content": [
     "introduction.md",
     "setting-up-local-gitlab-runner.md",
-    "running-test-locally.md",
-    "debugging-test-results.md",
+    "running-test-locally-using-gitlab-runner.md",
     "run-linting-outside-gitlab-runner.md",
+    "debugging-test-results.md",
     "run-codeception-outside-gitlab-runner.md"
   ],
   "tocDepth": 1

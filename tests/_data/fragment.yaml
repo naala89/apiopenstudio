@@ -4,51 +4,51 @@ description: Test fragment.
 
 uri: fragments
 
+appid: 2
+
 method: get
 
 ttl: 0
 
 security:
-    processor: token_consumer
-    id: 1
-    token:
-        processor: var_get
-        id: 2
-        name: token
+    processor: validate_token_roles
+    id: test fragments security
+    roles:
+        - Developer
 
 process:
     processor: concatenate
-    id: 3
+    id: test fragments concatenate
     items:
         -
             processor: fragment
-            name: frag1
-            id: 4
+            id: test fragments item1
+            key: frag1
         -
             processor: fragment
-            name: frag2
-            id: 5
+            id: test fragments item2
+            key: frag2
         -
             processor: fragment
-            name: frag3
-            id: 6
+            id: test fragments item3
+            key: frag3
         -
             processor: fragment
-            name: frag1
-            id: 7
+            id: test fragments item4
+            key: frag1
         - 4
         - 5
 
 fragments:
     frag1:
         processor: var_get
-        id: 8
-        name: val1
+        id: test fragments frag1
+        key: val1
     frag2:
         processor: var_get
-        id: 9
-        name: val2
+        id: test fragments frag2
+        key: val2
     frag3:
         processor: var_get
-        id: 10
-        name: val3
+        id: test fragments frag3
+        key: val3

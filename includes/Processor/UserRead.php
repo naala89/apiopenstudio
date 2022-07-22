@@ -15,25 +15,21 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\UserMapper;
 
 /**
  * Class UserRead
  *
  * Processor class to fetch a user.
  */
-class UserRead extends Core\ProcessorEntity
+class UserRead extends ProcessorEntity
 {
-    /**
-     * User mapper class.
-     *
-     * @var Db\UserMapper
-     */
-    private Db\UserMapper $userMapper;
-
     /**
      * {@inheritDoc}
      *
@@ -104,27 +100,29 @@ class UserRead extends Core\ProcessorEntity
     ];
 
     /**
-     * UserRead constructor.
+     * User mapper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @var UserMapper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    private UserMapper $userMapper;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->userMapper = new Db\UserMapper($db, $logger);
+        $this->userMapper = new UserMapper($db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -137,7 +135,7 @@ class UserRead extends Core\ProcessorEntity
         $direction = $this->val('direction', true);
 
         try {
-            $currentUser = $this->userMapper->findByUid(Core\Utilities::getUidFromToken());
+            $currentUser = $this->userMapper->findByUid(Utilities::getUidFromToken());
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
@@ -168,7 +166,7 @@ class UserRead extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         if (empty($users)) {
-            throw new Core\ApiException("User not found", 6, $this->id, 400);
+            throw new ApiException("User not found", 6, $this->id, 400);
         }
 
         $result = [];
@@ -176,6 +174,6 @@ class UserRead extends Core\ProcessorEntity
             $result[] = $user->dump();
         }
 
-        return new Core\DataContainer($result, 'array');
+        return new DataContainer($result, 'array');
     }
 }

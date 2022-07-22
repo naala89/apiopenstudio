@@ -15,10 +15,19 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\Config;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\AccountMapper;
+use ApiOpenStudio\Db\ApplicationMapper;
+use ApiOpenStudio\Db\Invite;
+use ApiOpenStudio\Db\InviteMapper;
+use ApiOpenStudio\Db\UserMapper;
+use ApiOpenStudio\Db\VarStoreMapper;
 use Swift_SmtpTransport;
 use Swift_Mailer;
 use Swift_Message;
@@ -28,50 +37,8 @@ use Swift_Message;
  *
  * Processor class create an invite.
  */
-class InviteCreate extends Core\ProcessorEntity
+class InviteCreate extends ProcessorEntity
 {
-    /**
-     * Config class.
-     *
-     * @var Core\Config
-     */
-    private Core\Config $settings;
-
-    /**
-     * User mapper class.
-     *
-     * @var Db\UserMapper
-     */
-    private Db\UserMapper $userMapper;
-
-    /**
-     * Invite mapper class.
-     *
-     * @var Db\InviteMapper
-     */
-    private Db\InviteMapper $inviteMapper;
-
-    /**
-     * Var store mapper class.
-     *
-     * @var Db\VarStoreMapper
-     */
-    private Db\VarStoreMapper $varStoreMapper;
-
-    /**
-     * Account mapper class.
-     *
-     * @var Db\AccountMapper
-     */
-    private Db\AccountMapper $accountMapper;
-
-    /**
-     * Application mapper class.
-     *
-     * @var Db\ApplicationMapper
-     */
-    private Db\ApplicationMapper $applicationMapper;
-
     /**
      * {@inheritDoc}
      *
@@ -96,32 +63,69 @@ class InviteCreate extends Core\ProcessorEntity
     ];
 
     /**
-     * InviteCreate constructor.
+     * Config class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @var Config
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    private Config $settings;
+
+    /**
+     * User mapper class.
+     *
+     * @var UserMapper
+     */
+    private UserMapper $userMapper;
+
+    /**
+     * Invite mapper class.
+     *
+     * @var InviteMapper
+     */
+    private InviteMapper $inviteMapper;
+
+    /**
+     * Var store mapper class.
+     *
+     * @var VarStoreMapper
+     */
+    private VarStoreMapper $varStoreMapper;
+
+    /**
+     * Account mapper class.
+     *
+     * @var AccountMapper
+     */
+    private AccountMapper $accountMapper;
+
+    /**
+     * Application mapper class.
+     *
+     * @var ApplicationMapper
+     */
+    private ApplicationMapper $applicationMapper;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->settings = new Core\Config();
-        $this->userMapper = new Db\UserMapper($db, $logger);
-        $this->inviteMapper = new Db\InviteMapper($db, $logger);
-        $this->varStoreMapper = new Db\VarStoreMapper($db, $logger);
-        $this->accountMapper = new Db\AccountMapper($db, $logger);
-        $this->applicationMapper = new Db\ApplicationMapper($db, $logger);
+        $this->settings = new Config();
+        $this->userMapper = new UserMapper($db, $logger);
+        $this->inviteMapper = new InviteMapper($db, $logger);
+        $this->varStoreMapper = new VarStoreMapper($db, $logger);
+        $this->accountMapper = new AccountMapper($db, $logger);
+        $this->applicationMapper = new ApplicationMapper($db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -135,7 +139,7 @@ class InviteCreate extends Core\ProcessorEntity
             foreach ($emails as $email) {
                 $user = $this->userMapper->findByEmail(trim($email));
                 if (!empty($user->getUid())) {
-                    throw new Core\ApiException("User already exists: $email", 6, $this->id, 400);
+                    throw new ApiException("User already exists: $email", 6, $this->id, 400);
                 }
             }
         } catch (ApiException $e) {
@@ -156,8 +160,8 @@ class InviteCreate extends Core\ProcessorEntity
                 $emailUsername = $this->settings->__get(['email', 'username']);
                 $emailPassword = $this->settings->__get(['email', 'password']);
                 $emailHost = $this->settings->__get(['email', 'host']);
-            } catch (Core\ApiException $e) {
-                throw new Core\ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
+            } catch (ApiException $e) {
+                throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
             }
             $message = str_replace('[domain]', $domain, $message);
 
@@ -173,7 +177,7 @@ class InviteCreate extends Core\ProcessorEntity
                     $result['resent'][] = $email;
                 }
 
-                $token = Core\Utilities::randomString(32);
+                $token = Utilities::randomString(32);
                 $finalMessage = str_replace('[token]', $token, $message);
                 $mailer = new Swift_Mailer($transport);
                 $emailMessage = (new Swift_Message($subject))
@@ -183,7 +187,7 @@ class InviteCreate extends Core\ProcessorEntity
                     ->setContentType('text/html');
 
                 if ($mailer->send($emailMessage) > 0) {
-                    $invite = new Db\Invite(null, $email, $token);
+                    $invite = new Invite(null, $email, $token);
                     $this->inviteMapper->save($invite);
 
                     $result['success'][] = "$email";
@@ -195,6 +199,6 @@ class InviteCreate extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        return new Core\DataContainer($result, 'json');
+        return new DataContainer($result, 'json');
     }
 }

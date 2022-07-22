@@ -23,9 +23,6 @@ use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
 use ApiOpenStudio\Core\ResourceValidator;
 use ApiOpenStudio\Core\Utilities;
-use ApiOpenStudio\Db\AccountMapper;
-use ApiOpenStudio\Db\Application;
-use ApiOpenStudio\Db\ApplicationMapper;
 use ApiOpenStudio\Db\Resource;
 use ApiOpenStudio\Db\ResourceMapper;
 use Symfony\Component\Yaml\Exception\ParseException;
@@ -38,55 +35,6 @@ use Symfony\Component\Yaml\Yaml;
  */
 class ResourceImport extends ProcessorEntity
 {
-    /**
-     * Required keys in a resource yaml file.
-     *
-     * @var string[]
-     */
-    private array $requiredKeys = [
-        'name',
-        'description',
-        'uri',
-        'method',
-        'appid',
-        'ttl',
-    ];
-
-    /**
-     * Account mapper class.
-     *
-     * @var AccountMapper
-     */
-    private AccountMapper $accountMapper;
-
-    /**
-     * Config class.
-     *
-     * @var Config
-     */
-    private Config $settings;
-
-    /**
-     * Resource mapper class.
-     *
-     * @var ResourceMapper
-     */
-    private ResourceMapper $resourceMapper;
-
-    /**
-     * Application mapper class.
-     *
-     * @var ApplicationMapper
-     */
-    private ApplicationMapper $applicationMapper;
-
-    /**
-     * Resource validator class.
-     *
-     * @var ResourceValidator
-     */
-    private ResourceValidator $validator;
-
     /**
      * {@inheritDoc}
      *
@@ -111,19 +59,25 @@ class ResourceImport extends ProcessorEntity
     ];
 
     /**
-     * ResourceImport constructor.
+     * Resource mapper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param MonologWrapper $logger Logger object.
+     * @var ResourceMapper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
+    private ResourceMapper $resourceMapper;
+
+    /**
+     * Resource validator class.
+     *
+     * @var ResourceValidator
+     */
+    private ResourceValidator $validator;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->settings = new Config();
-        $this->accountMapper = new AccountMapper($db, $logger);
-        $this->applicationMapper = new ApplicationMapper($db, $logger);
         $this->resourceMapper = new ResourceMapper($db, $logger);
         $this->validator = new ResourceValidator($db, $logger);
     }
@@ -151,15 +105,16 @@ class ResourceImport extends ProcessorEntity
         $resource = $this->extractNewResource($fileContents);
         $this->logger->debug('api', 'Decoded new resource: ' . print_r($resource, true));
 
-        $this->validateImportPermissions($uid, $resource);
-        $this->validateNewResource($resource);
-
         // Validate the metadata.
         try {
-            $this->validator->validate($resource['meta']);
+            $this->validator->validate($resource);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
+
+        $this->validateImportPermissions($uid, $resource);
+
+        $this->validateResourceExists($resource);
 
         // Create the final Resource object for saving into the DB.
         $resourceObj = new Resource(
@@ -220,9 +175,11 @@ class ResourceImport extends ProcessorEntity
      * @param int $uid
      * @param array $resource
      *
+     * @return void
+     *
      * @throws ApiException
      */
-    protected function validateImportPermissions(int $uid, array $resource)
+    protected function validateImportPermissions(int $uid, array $resource): void
     {
         if (!isset($resource['appid'])) {
             throw new ApiException(
@@ -295,6 +252,10 @@ class ResourceImport extends ProcessorEntity
             $resource['meta'] = array_merge($resource['meta'], ['process' => $resource['process']]);
             unset($resource['process']);
         }
+        if (isset($resource['fragments'])) {
+            $resource['meta'] = array_merge($resource['meta'], ['fragments' => $resource['fragments']]);
+            unset($resource['fragments']);
+        }
         if (isset($resource['output'])) {
             $resource['meta'] = array_merge($resource['meta'], ['output' => $resource['output']]);
             unset($resource['output']);
@@ -304,42 +265,16 @@ class ResourceImport extends ProcessorEntity
     }
 
     /**
-     * Validate the new resource array.
+     * Validate the new resource does not already exist.
      *
      * @param array $resource
      *
+     * @return void
+     *
      * @throws ApiException
      */
-    protected function validateNewResource(array $resource)
+    protected function validateResourceExists(array $resource): void
     {
-        // Validate required keys in the imported file.
-        foreach ($this->requiredKeys as $requiredKey) {
-            if (!isset($resource[$requiredKey])) {
-                $this->logger->error('api', "Missing $requiredKey in new resource");
-                throw new ApiException("Missing $requiredKey in new resource", 1, $this->id, 400);
-            }
-        }
-
-        // Validate TTL in the imported file.
-        if ($resource['ttl'] < 0) {
-            $this->logger->error('api', 'Negative ttl in new resource');
-            throw new ApiException("Negative ttl in new resource", 1, $this->id, 400);
-        }
-
-        // Validate the application exists.
-        $application = $this->applicationMapper->findByAppid($resource['appid']);
-        if (empty($application)) {
-            $this->logger->error('api', 'Invalid application: ' . $resource['appid']);
-            throw new ApiException(
-                'Invalid application: ' . $resource['appid'],
-                1,
-                $this->id,
-                400
-            );
-        }
-
-        $this->validateCoreProtection($application);
-
         // Validate the resource does not already exist.
         $resourceExists = $this->resourceMapper->findByAppIdMethodUri(
             $resource['appid'],
@@ -349,28 +284,6 @@ class ResourceImport extends ProcessorEntity
         if (!empty($resourceExists->getresid())) {
             $this->logger->error('api', 'Resource already exists');
             throw new ApiException('Resource already exists', 6, $this->id, 400);
-        }
-    }
-
-    /**
-     * Validate application is not core and core not locked.
-     *
-     * @param Application $application
-     *
-     * @throws ApiException
-     */
-    protected function validateCoreProtection(Application $application)
-    {
-        try {
-            $account = $this->accountMapper->findByAccid($application->getAccid());
-            $coreAccount = $this->settings->__get(['api', 'core_account']);
-            $coreApplication = $this->settings->__get(['api', 'core_application']);
-            $coreLock = $this->settings->__get(['api', 'core_resource_lock']);
-        } catch (ApiException $e) {
-            throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
-        }
-        if ($account->getName() == $coreAccount && $application->getName() == $coreApplication && $coreLock) {
-            throw new ApiException("Unauthorised: this is a core resource", 4, $this->id, 403);
         }
     }
 }

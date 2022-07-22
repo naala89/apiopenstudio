@@ -31,13 +31,6 @@ use ApiOpenStudio\Db\AccountMapper;
 class AccountRead extends ProcessorEntity
 {
     /**
-     * Account mapper class.
-     *
-     * @var AccountMapper
-     */
-    private AccountMapper $accountMapper;
-
-    /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
@@ -89,14 +82,16 @@ class AccountRead extends ProcessorEntity
     ];
 
     /**
-     * AccountRead constructor.
+     * Account mapper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param MonologWrapper $logger Logger object.
+     * @var AccountMapper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
+    private AccountMapper $accountMapper;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->accountMapper = new AccountMapper($db, $logger);

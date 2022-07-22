@@ -87,16 +87,11 @@ class OpenapiImport extends ProcessorEntity
     protected $openApiPath;
 
     /**
-     * OpenapiRead constructor.
-     *
-     * @param $meta
-     * @param Request $request
-     * @param ADOConnection|null $db
-     * @param MonologWrapper|null $logger
+     * {@inheritDoc}
      *
      * @throws ApiException
      */
-    public function __construct($meta, Request &$request, ADOConnection $db = null, MonologWrapper $logger = null)
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->accountMapper = new AccountMapper($db, $logger);

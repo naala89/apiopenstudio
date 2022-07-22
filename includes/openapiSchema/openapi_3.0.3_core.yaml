@@ -788,18 +788,25 @@ paths:
                         type: integer
                 -
                     in: query
-                    name: accid
-                    description: The account ID to filter by
-                    required: false
-                    schema:
-                        type: integer
-                -
-                    in: query
                     name: appid
                     description: The application ID to filter by
                     required: false
                     schema:
                         type: integer
+                -
+                    in: query
+                    name: method
+                    description: The resource method to filter by
+                    required: false
+                    schema:
+                        type: string
+                -
+                    in: query
+                    name: uri
+                    description: The resource URI to filter by
+                    required: false
+                    schema:
+                        type: string
                 -
                     in: query
                     name: keyword

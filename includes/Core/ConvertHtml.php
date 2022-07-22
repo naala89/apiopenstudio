@@ -69,18 +69,6 @@ class ConvertHtml
      *
      * @param string $html
      *
-     * @return stdClass
-     */
-    public function htmlToObject(string $html): stdClass
-    {
-        return json_decode(json_encode($this->htmlToArray($html)));
-    }
-
-    /**
-     * Convert a valid HTML document string into an object.
-     *
-     * @param string $html
-     *
      * @return string
      */
     public function htmlToJson(string $html): string

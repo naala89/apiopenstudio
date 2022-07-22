@@ -36,13 +36,6 @@ abstract class Entity
     public $id = '';
 
     /**
-     * Meta required for this processor.
-     *
-     * @var mixed Processor metadata.
-     */
-    protected $meta;
-
-    /**
      * Logger object.
      *
      * @var MonologWrapper
@@ -90,7 +83,7 @@ abstract class Entity
      *
      *    'literalAllowed' (boolean): Allow liter values.
      *
-     *    'limitValues' (array|mixed): Limit the sult values passed into the processor.
+     *    'limitValues' (array|mixed): Limit the result values passed into the processor.
      *
      *    'limitProcessors' (array|string): Limit the input processors.
      *
@@ -157,22 +150,21 @@ abstract class Entity
      *          t, which can take or many input of Processor Field.
      */
     protected array $details = array();
+    protected array $meta;
 
     /**
-     * Entity constructor.
-     *
-     * @param $meta
+     * @param array $meta
      *   Metadata for the processor.
      * @param Request $request
      *   The full request object.
-     * @param MonologWrapper|null $logger
+     * @param ?MonologWrapper $logger
      *   The logger.
      */
-    public function __construct($meta, Request &$request, MonologWrapper $logger = null)
+    public function __construct(array &$meta, Request &$request, ?MonologWrapper $logger = null)
     {
-        $this->meta = $meta;
+        $this->meta =& $meta;
         $this->request = $request;
-        $this->id = $meta->id ?? -1;
+        $this->id = $meta['id'] ?? -1;
         $this->logger = $logger;
     }
 
@@ -215,13 +207,13 @@ abstract class Entity
      * Setting $realValue to true will force the value to be the actual value, rather than a potential dataContainer.
      *
      * @param string $key The key for the input variable in the meta.
-     * @param bool|null $rawData Return the raw data or a DataContainer.
+     * @param ?bool $rawData Return the raw data or a DataContainer.
      *
      * @return mixed|DataContainer
      *
      * @throws ApiException Invalid key or data.
      */
-    public function val(string $key, bool $rawData = null)
+    public function val(string $key, ?bool $rawData = false)
     {
         $this->logger->debug(
             'api',
@@ -239,11 +231,11 @@ abstract class Entity
         $limitTypes = $inputDet[$key]['limitTypes'];
         $default = $inputDet[$key]['default'];
 
-        $count = (empty($this->meta->$key) ? 0 : is_array($this->meta->$key)) ? sizeof($this->meta->$key) : 1;
+        $count = (empty($this->meta[$key]) ? 0 : is_array($this->meta[$key])) ? sizeof($this->meta[$key]) : 1;
         if ($count < $min || ($max != '*' && $count > $max)) {
             // invalid cardinality
             throw new ApiException(
-                "invalid number of inputs ($count) in $key, requires $min - $max",
+                "invalid number of inputs ($count) in $key, requires min($min), max($max)",
                 1,
                 $this->id,
                 400
@@ -251,23 +243,23 @@ abstract class Entity
         }
 
         // Set data to default if empty.
-        if (!isset($this->meta->$key)) {
+        if (!isset($this->meta[$key])) {
             $test = null;
         } else {
-            $test = $this->isDataContainer($this->meta->$key) ? $this->meta->$key->getData() : $this->meta->$key;
+            $test = $this->isDataContainer($this->meta[$key]) ? $this->meta[$key]->getData() : $this->meta[$key];
         }
         if ($test === null) {
             try {
-                $this->meta->$key = new DataContainer($default);
+                $this->meta[$key] = new DataContainer($default);
             } catch (ApiException $e) {
                 throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
             }
         }
 
         try {
-            $container = $this->isDataContainer($this->meta->$key)
-                ? $this->meta->$key
-                : new DataContainer($this->meta->$key);
+            $container = $this->isDataContainer($this->meta[$key])
+                ? $this->meta[$key]
+                : new DataContainer($this->meta[$key]);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
@@ -315,7 +307,7 @@ abstract class Entity
      * Validate an input for allowed variable types
      *
      * @param string $type Input value type.
-     * @param array $limitTypes List of limit on valiable types.
+     * @param array $limitTypes List of limit on variable types.
      * @param integer $min Minimum number of values.
      * @param string $key The key of the input being validated.
      *

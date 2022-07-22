@@ -28,12 +28,11 @@ output:
         id: test resource with bad min email
         to: john@naala.com.au
         subject: "test email"
-        format: html
     -
-        processor: xml
+        processor: xml_remote
         id: test resource with bad min xml
-        destination:
-            - www.foo.bar
-            - www.foo.bar
-            - www.foo.bar
-        method: post
+        transport: sftp
+        parameters:
+            host: "127.0.0.1"
+            username: me
+            root_path: "/home/me"

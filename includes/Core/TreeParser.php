@@ -15,7 +15,6 @@
 namespace ApiOpenStudio\Core;
 
 use ADOConnection;
-use stdClass;
 
 /**
  * Class TreeParser
@@ -80,7 +79,7 @@ class TreeParser
     protected ADOConnection $db;
 
     /**
-     * Request object class.
+     * This request.
      *
      * @var Request
      */
@@ -106,12 +105,26 @@ class TreeParser
     }
 
     /**
+     * Update the request object.
+     *
+     * @param Request $request
+     *
+     * @return void
+     */
+    public function setRequest(Request $request): void
+    {
+        $this->request = $request;
+    }
+
+    /**
      * Append a node tree structure to the end of the processingStack.
      *
-     * @param array|stdClass $tree
+     * @param array $tree
      *   Node tree to add to the stack.
+     *
+     * @return void
      */
-    public function pushToProcessingStack($tree)
+    public function pushToProcessingStack(array $tree): void
     {
         $this->processingStack[] = $tree;
     }
@@ -145,8 +158,10 @@ class TreeParser
    *   ID/Key for the result item.
    * @param $val
    *   Value for the result item.
+   *
+   * @return void
    */
-    public function addToResultStack($id, $val)
+    public function addToResultStack($id, $val): void
     {
         $this->resultStack[$id] = $val;
     }
@@ -157,8 +172,7 @@ class TreeParser
    *
    * @param $id
    *
-   * @return mixed|null
-   *   Result value.
+   * @return mixed|null Result value.
    */
     public function getFromResultStack($id)
     {
@@ -173,6 +187,8 @@ class TreeParser
     /**
      * Process the metadata, using depth first iteration.
      *
+     * @return mixed
+     *
      * @throws ApiException
      */
     public function crawlMeta()
@@ -186,7 +202,7 @@ class TreeParser
                 // currentNode is an array, process each item
                 foreach ($currentNode as $index => $item) {
                     if ($this->helper->isProcessor($item)) {
-                        if (($result = $this->getFromResultStack($item->id)) !== null) {
+                        if (($result = $this->getFromResultStack($item['id'])) !== null) {
                             $currentNode[$index] = $result;
                         } else {
                             $this->processNode($item);
@@ -203,41 +219,41 @@ class TreeParser
      * Attempt to process a node from the stack. If the required attributes are not yet calculated,
      * re-add to the unprocessed stack followed by the unprocessed attributes.
      *
-     * @param stdClass $node Metadata for the node to process.
+     * @param array $node Metadata for the node to process.
      *
      * @return void
      *
      * @throws ApiException
      */
-    protected function processNode(stdClass $node)
+    protected function processNode(array $node): void
     {
         // Check for cached processor result.
         if (!is_null($cachedResult = $this->getProcessorCache($node))) {
-            $this->addToResultStack($node->id, $cachedResult);
+            $this->addToResultStack($node['id'], $cachedResult);
             return;
         }
 
         $childNodes = [];
-        $classStr = $this->helper->getProcessorString($node->processor);
+        $classStr = $this->helper->getProcessorString($node['processor']);
         $class = new $classStr($node, $this->request, $this->db, $this->logger);
         $details = $class->details();
         $conditionalProcessor = isset($details['conditional']) && $details['conditional'];
 
-        $attributeIds = array_keys(get_object_vars($node));
+        $attributeIds = array_keys($node);
         foreach ($attributeIds as $attributeId) {
             $conditionalAttribute = $details['input'][$attributeId]['conditional'] ?? false;
-            if ($this->helper->isProcessor($node->{$attributeId})) {
-                if (($result = $this->getFromResultStack($node->{$attributeId}->id)) !== null) {
-                    $node->{$attributeId} = $result;
+            if ($this->helper->isProcessor($node[$attributeId])) {
+                if (($result = $this->getFromResultStack($node[$attributeId]['id'])) !== null) {
+                    $node[$attributeId] = $result;
                 } elseif (!$conditionalProcessor || !$conditionalAttribute) {
-                    $childNodes[] = $node->{$attributeId};
+                    $childNodes[] = $node[$attributeId];
                 }
-            } elseif (is_array($node->{$attributeId}) && !$conditionalProcessor) {
+            } elseif (is_array($node[$attributeId]) && !$conditionalProcessor) {
                 // currentNode is an array, process each item
-                foreach ($node->{$attributeId} as $index => $item) {
+                foreach ($node[$attributeId] as $index => $item) {
                     if ($this->helper->isProcessor($item)) {
-                        if (($result = $this->getFromResultStack($item->id)) !== null) {
-                            $node->{$attributeId}[$index] = $result;
+                        if (($result = $this->getFromResultStack($item['id'])) !== null) {
+                            $node[$attributeId][$index] = $result;
                         } else {
                             $childNodes[] = $item;
                         }
@@ -252,31 +268,35 @@ class TreeParser
             // We have the result of the logic for a conditional processor.
             // The process() result is the meta for the branch to follow.
             $result = $class->process();
-            $result->id = $node->id;
-            $this->pushToProcessingStack($result);
+            if ($this->helper->isProcessor($result)) {
+                $result['id'] = $node['id'];
+                $this->pushToProcessingStack($result);
+            } else {
+                $this->addToResultStack($node['id'], $result);
+            }
         } else {
             $result = $class->process();
             $this->setProcessorCache($node, $result);
-            $this->addToResultStack($node->id, $result);
+            $this->addToResultStack($node['id'], $result);
         }
     }
 
     /**
      * Fetch a processor result from cache. Null is returned if no results.
      *
-     * @param stdClass $node Metadata for the node to fetch from cache.
+     * @param array $node Metadata for the node to fetch from cache.
      *
      * @return DataContainer|null
      *
      * @throws ApiException
      */
-    protected function getProcessorCache(stdClass $node): ?DataContainer
+    protected function getProcessorCache(array $node): ?DataContainer
     {
-        if (isset($node->cache_ttl)) {
-            $processorCacheKey = $node->cache_id ?? '';
+        if (isset($node['cache_ttl'])) {
+            $processorCacheKey = $node['cache_id'] ?? '';
             if (empty($processorCacheKey)) {
                 $resource = $this->request->getResource();
-                $processorCacheKey = $this->cache->getProcessorCacheKey($resource->getResid(), $node->id);
+                $processorCacheKey = $this->cache->getProcessorCacheKey($resource->getResid(), $node['id']);
             }
             return $this->cache->get($processorCacheKey);
         }
@@ -286,22 +306,22 @@ class TreeParser
     /**
      * Store a processor result in cache.
      *
-     * @param stdClass $node Metadata for the node to fetch from cache.
-     * @param DataContainer|stdClass $data Result data to store.
+     * @param array $node Metadata for the node to fetch from cache.
+     * @param array|DataContainer $data Result data to store.
      *
      * @return bool
      *
      * @throws ApiException
      */
-    protected function setProcessorCache(stdClass $node, $data): bool
+    protected function setProcessorCache(array $node, $data): bool
     {
-        if (isset($node->cache_ttl)) {
-            $processorCacheKey = $node->cache_id ?? '';
+        if (isset($node['cache_ttl'])) {
+            $processorCacheKey = $node['cache_id'] ?? '';
             if (empty($processorCacheKey)) {
                 $resource = $this->request->getResource();
-                $processorCacheKey = $this->cache->getProcessorCacheKey($resource->getResid(), $node->id);
+                $processorCacheKey = $this->cache->getProcessorCacheKey($resource->getResid(), $node['id']);
             }
-            return $this->cache->set($processorCacheKey, $data, $node->cache_ttl);
+            return $this->cache->set($processorCacheKey, $data, $node['cache_ttl']);
         }
         return false;
     }
@@ -309,12 +329,12 @@ class TreeParser
     /**
      * Pre-process a node's children.
      *
-     * @param $node
+     * @param array $node
      * @param array $childNodes
      *
      * @return void
      */
-    protected function reprocessAfterChildren($node, array $childNodes)
+    protected function reprocessAfterChildren(array $node, array $childNodes): void
     {
         $this->pushToProcessingStack($node);
         foreach ($childNodes as $childNode) {

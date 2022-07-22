@@ -14,14 +14,16 @@
 
 namespace ApiOpenStudio\Endpoint;
 
-use ApiOpenStudio\Core;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ProcessorEntity;
 
 /**
  * Class AuthOAuth
  *
  * Provide OAuth authentication to a resource.
  */
-class AuthOauth extends Core\ProcessorEntity
+class AuthOauth extends ProcessorEntity
 {
   /**
    * {@inheritDoc}
@@ -85,11 +87,11 @@ class AuthOauth extends Core\ProcessorEntity
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException
+     * @throws ApiException
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
@@ -103,6 +105,6 @@ class AuthOauth extends Core\ProcessorEntity
             'oauth_version' => $this->val('oauthVersion', true)
         );
 
-        return new Core\DataContainer([CURLOPT_HTTPHEADER => $headers], 'array');
+        return new DataContainer([CURLOPT_HTTPHEADER => $headers], 'array');
     }
 }

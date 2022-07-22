@@ -15,32 +15,22 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Db\InviteMapper;
+use ApiOpenStudio\Db\User;
+use ApiOpenStudio\Db\UserMapper;
 
 /**
  * Class InviteAccept
  *
  * Processor class accept a user invite with an invite token.
  */
-class InviteAccept extends Core\ProcessorEntity
+class InviteAccept extends ProcessorEntity
 {
-    /**
-     * User mapper class.
-     *
-     * @var Db\UserMapper
-     */
-    private Db\UserMapper $userMapper;
-
-    /**
-     * Invite mapper class.
-     *
-     * @var Db\InviteMapper
-     */
-    private Db\InviteMapper $inviteMapper;
-
     /**
      * {@inheritDoc}
      *
@@ -65,28 +55,37 @@ class InviteAccept extends Core\ProcessorEntity
     ];
 
     /**
-     * InviteAccept constructor.
+     * User mapper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @var UserMapper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    private UserMapper $userMapper;
+
+    /**
+     * Invite mapper class.
+     *
+     * @var InviteMapper
+     */
+    private InviteMapper $inviteMapper;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->userMapper = new Db\UserMapper($db, $logger);
-        $this->inviteMapper = new Db\InviteMapper($db, $logger);
+        $this->userMapper = new UserMapper($db, $logger);
+        $this->inviteMapper = new InviteMapper($db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
         $token = $this->val('token', true);
@@ -97,10 +96,10 @@ class InviteAccept extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         if (empty($email = $invite->getEmail())) {
-            throw new Core\ApiException("Invalid invite token", 6, $this->id, 400);
+            throw new ApiException("Invalid invite token", 6, $this->id, 400);
         }
 
-        $user = new Db\User(null, 1, $email, null, null, null, $email);
+        $user = new User(null, 1, $email, null, null, null, $email);
         try {
             $this->userMapper->save($user);
             $this->inviteMapper->delete($invite);
@@ -108,6 +107,6 @@ class InviteAccept extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        return new Core\DataContainer('true', 'text');
+        return new DataContainer('true', 'text');
     }
 }

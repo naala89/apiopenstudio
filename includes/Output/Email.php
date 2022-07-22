@@ -116,20 +116,11 @@ class Email extends OutputRemote
     protected Config $settings;
 
     /**
-     * OutputEntity constructor.
-     *
-     * @param $meta
-     *   Metadata for the processor.
-     * @param Request $request
-     *   The full request object.
-     * @param MonologWrapper $logger
-     *   Logger.
-     * @param mixed $data
-     *   HTTP output data.
+     * {@inheritDoc}
      */
-    public function __construct($meta, Request &$request, MonologWrapper $logger, $data)
+    public function __construct(array &$meta, Request &$request, ?MonologWrapper $logger, $data)
     {
-        OutputEntity::__construct($meta, $request, $logger, $data);
+        parent::__construct($meta, $request, $logger, $data);
         $this->settings = new Config();
     }
 
@@ -139,7 +130,6 @@ class Email extends OutputRemote
      * @return DataContainer Result of the processor.
      *
      * @throws ApiException Exception if email send failed.
-     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
      */
     public function process(): DataContainer
     {

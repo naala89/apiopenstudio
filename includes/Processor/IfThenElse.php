@@ -142,6 +142,6 @@ class IfThenElse extends ProcessorEntity
             }
         }
 
-        return $doThen ? $this->meta->then : $this->meta->else;
+        return $doThen ? $this->meta['then'] : $this->meta['else'];
     }
 }

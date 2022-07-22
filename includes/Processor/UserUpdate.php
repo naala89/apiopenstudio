@@ -15,32 +15,22 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
-use ApiOpenStudio\Core;
 use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\MonologWrapper;
+use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
-use ApiOpenStudio\Db;
+use ApiOpenStudio\Core\Utilities;
+use ApiOpenStudio\Db\UserMapper;
+use ApiOpenStudio\Db\UserRoleMapper;
 
 /**
  * Class UserUpdate
  *
  * Processor class to update a user.
  */
-class UserUpdate extends Core\ProcessorEntity
+class UserUpdate extends ProcessorEntity
 {
-    /**
-     * User mapper class.
-     *
-     * @var Db\UserMapper
-     */
-    private Db\UserMapper $userMapper;
-
-    /**
-     * User role mapper class.
-     *
-     * @var Db\UserRoleMapper
-     */
-    private Db\UserRoleMapper $userRoleMapper;
-
     /**
      * {@inheritDoc}
      *
@@ -218,34 +208,43 @@ class UserUpdate extends Core\ProcessorEntity
     ];
 
     /**
-     * UserUpdate constructor.
+     * User mapper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param Core\MonologWrapper $logger Logger object.
+     * @var UserMapper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, Core\MonologWrapper $logger)
+    private UserMapper $userMapper;
+
+    /**
+     * User role mapper class.
+     *
+     * @var UserRoleMapper
+     */
+    private UserRoleMapper $userRoleMapper;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
-        $this->userMapper = new Db\UserMapper($db, $logger);
-        $this->userRoleMapper = new Db\UserRoleMapper($db, $logger);
+        $this->userMapper = new UserMapper($db, $logger);
+        $this->userRoleMapper = new UserRoleMapper($db, $logger);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
 
         $uid = $this->val('uid', true);
         try {
-            $currentUser = $this->userMapper->findByUid(Core\Utilities::getUidFromToken());
+            $currentUser = $this->userMapper->findByUid(Utilities::getUidFromToken());
             $testAdministrator = $this->userRoleMapper->hasRole($currentUser->getUid(), 'Administrator');
             $testAccountManager = $this->userRoleMapper->hasRole($currentUser->getUid(), 'Account manager');
             $testApplicationManager = $this->userRoleMapper->hasRole($currentUser->getUid(), 'Application manager');
@@ -255,7 +254,7 @@ class UserUpdate extends Core\ProcessorEntity
         if (!$testAdministrator && !$testAccountManager && !$testApplicationManager) {
             // Non-privileged accounts can only edit their own accounts.
             if (!empty($uid) && $uid != $currentUser->getUid()) {
-                throw new Core\ApiException("permission denied", 4, $this->id, 403);
+                throw new ApiException("permission denied", 4, $this->id, 403);
             }
             $uid = $currentUser->getUid();
         }
@@ -266,7 +265,7 @@ class UserUpdate extends Core\ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
         if (empty($user->getUid())) {
-            throw new Core\ApiException("User not found: $uid", 6, $this->id, 400);
+            throw new ApiException("User not found: $uid", 6, $this->id, 400);
         }
 
         $active = (int) $this->val('active', true);
@@ -281,7 +280,7 @@ class UserUpdate extends Core\ProcessorEntity
                 throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
             }
             if (!empty($userCheck->getUid())) {
-                throw new Core\ApiException("Username $username already exists", 6, $this->id, 400);
+                throw new ApiException("Username $username already exists", 6, $this->id, 400);
             }
             $user->setUsername($username);
         }
@@ -293,7 +292,7 @@ class UserUpdate extends Core\ProcessorEntity
                 throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
             }
             if (!empty($userCheck->getUid())) {
-                throw new Core\ApiException("Email $email already exists", 6, $this->id, 400);
+                throw new ApiException("Email $email already exists", 6, $this->id, 400);
             }
             $user->setEmail($email);
         }
@@ -355,9 +354,9 @@ class UserUpdate extends Core\ProcessorEntity
         }
 
         if (!$this->userMapper->save($user)) {
-            throw new Core\ApiException('failed to update the new user, please check the logs', 6, $this->id, 400);
+            throw new ApiException('failed to update the new user, please check the logs', 6, $this->id, 400);
         }
 
-        return new Core\DataContainer($user->dump(), 'array');
+        return new DataContainer($user->dump(), 'array');
     }
 }

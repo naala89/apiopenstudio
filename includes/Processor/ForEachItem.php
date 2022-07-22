@@ -20,6 +20,8 @@
 namespace ApiOpenStudio\Processor;
 
 use ADOConnection;
+use ApiOpenStudio\Core\Cache;
+use ApiOpenStudio\Core\Config;
 use ApiOpenStudio\Core\MonologWrapper;
 use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Request;
@@ -77,16 +79,22 @@ class ForEachItem extends ProcessorEntity
     protected DeepCopy $deepCopy;
 
     /**
-     * {@inheritDoc}
+     * @var Cache
+     *   ApiOpenStudio cache object.
      */
-    public function __construct(
-        $meta,
-        Request &$request,
-        ADOConnection $db = null,
-        MonologWrapper $logger = null
-    ) {
+    protected Cache $cache;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws ApiException
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
+    {
         parent::__construct($meta, $request, $db, $logger);
         $this->deepCopy = new DeepCopy();
+        $settings = new Config();
+        $this->cache = new Cache($settings->__get(['api', 'cache']), $logger);
     }
 
     /**
@@ -103,10 +111,10 @@ class ForEachItem extends ProcessorEntity
         $inputArray = (array) $this->val('input', true);
 
         foreach ($inputArray as $key => $val) {
-            $treeParser = new TreeParser($this->request, $this->db, $this->logger);
+            $treeParser = new TreeParser($this->request, $this->db, $this->logger, $this->cache);
             $_SESSION[$itemKey] = $key;
             $_SESSION[$itemVal] = $val;
-            $processLoop = $this->deepCopy->copy($this->meta->process_loop);
+            $processLoop = $this->deepCopy->copy($this->meta['process_loop']);
             $treeParser->pushToProcessingStack($processLoop);
             $treeParser->crawlMeta();
         }

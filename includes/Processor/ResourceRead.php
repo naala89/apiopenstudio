@@ -31,13 +31,6 @@ use ApiOpenStudio\Db\ResourceMapper;
 class ResourceRead extends ProcessorEntity
 {
     /**
-     * Resource mapper class.
-     *
-     * @var ResourceMapper
-     */
-    private ResourceMapper $resourceMapper;
-
-    /**
      * {@inheritDoc}
      *
      * @var array Details of the processor.
@@ -63,6 +56,24 @@ class ResourceRead extends ProcessorEntity
                 'literalAllowed' => true,
                 'limitProcessors' => [],
                 'limitTypes' => ['integer'],
+                'limitValues' => [],
+                'default' => null,
+            ],
+            'method' => [
+                'description' => 'The resource HTTP method.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
+                'limitValues' => ['get', 'put', 'push', 'delete', 'post'],
+                'default' => null,
+            ],
+            'uri' => [
+                'description' => 'The resource URI.',
+                'cardinality' => [0, 1],
+                'literalAllowed' => true,
+                'limitProcessors' => [],
+                'limitTypes' => ['text'],
                 'limitValues' => [],
                 'default' => null,
             ],
@@ -97,14 +108,16 @@ class ResourceRead extends ProcessorEntity
     ];
 
     /**
-     * ResourceRead constructor.
+     * Resource mapper class.
      *
-     * @param mixed $meta Output meta.
-     * @param Request $request Request object.
-     * @param ADOConnection $db DB object.
-     * @param MonologWrapper $logger Logger object.
+     * @var ResourceMapper
      */
-    public function __construct($meta, Request &$request, ADOConnection $db, MonologWrapper $logger)
+    private ResourceMapper $resourceMapper;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array &$meta, Request &$request, ?ADOConnection $db, ?MonologWrapper $logger)
     {
         parent::__construct($meta, $request, $db, $logger);
         $this->resourceMapper = new ResourceMapper($db, $logger);
@@ -123,6 +136,8 @@ class ResourceRead extends ProcessorEntity
 
         $resid = $this->val('resid', true);
         $appid = $this->val('appid', true);
+        $method = $this->val('method', true);
+        $uri = $this->val('uri', true);
         $keyword = $this->val('keyword', true);
         $orderBy = $this->val('order_by', true);
         $direction = $this->val('direction', true);
@@ -145,7 +160,19 @@ class ResourceRead extends ProcessorEntity
                 'column' => 'appid',
             ];
         }
-        if (!empty($appid)) {
+        if (!empty($method)) {
+            $params['filter'][] = [
+                'keyword' => $method,
+                'column' => 'method',
+            ];
+        }
+        if (!empty($uri)) {
+            $params['filter'][] = [
+                'keyword' => $uri,
+                'column' => 'uri',
+            ];
+        }
+        if (!empty($keyword)) {
             $params['filter'][] = [
                 'keyword' => "%$keyword%",
                 'column' => 'name',
