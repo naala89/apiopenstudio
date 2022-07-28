@@ -17,10 +17,11 @@ So it is worth running phpcs locally before any commit.
 After ```composer install``` has run, the following command will test your code
 locally:
 
-    ./vendor/bin/phpcs --standard=PSR12 \
+    $ ./vendor/bin/phpcs --standard=PSR12 \
         includes/ \
         public/*.php \
         tests/api/ \
+        tests/_support/Helper/ \
         tests/runner_generate_db.php
 
 Line length

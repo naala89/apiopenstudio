@@ -6,10 +6,11 @@ which will install ```phpcs```.
 
 Run:
 
-    ./vendor/bin/phpcs --standard=PSR12 \
+    $ ./vendor/bin/phpcs --standard=PSR12 \
         includes/ \
         public/*.php \
         tests/api/ \
+        tests/_support/Helper/ \
         tests/runner_generate_db.php
 
 Ensure that all code passes linting tests,
