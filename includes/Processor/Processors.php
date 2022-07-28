@@ -14,18 +14,21 @@
 
 namespace ApiOpenStudio\Processor;
 
-use ApiOpenStudio\Core;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
+use ApiOpenStudio\Core\ApiException;
+use ApiOpenStudio\Core\Config;
+use ApiOpenStudio\Core\DataContainer;
+use ApiOpenStudio\Core\ListClassesInDirectory;
+use ApiOpenStudio\Core\ProcessorEntity;
+use ApiOpenStudio\Core\ProcessorHelper;
 use ReflectionClass;
-use RegexIterator;
+use ReflectionException;
 
 /**
  * Class Processors
  *
  * Processor class to list processors.
  */
-class Processors extends Core\ProcessorEntity
+class Processors extends ProcessorEntity
 {
     /**
      * {@inheritDoc}
@@ -39,7 +42,7 @@ class Processors extends Core\ProcessorEntity
         'menu' => 'System',
         'input' => [
             'machine_name' => [
-                'description' => 'The resource machine_name or "all" or empty for all processors.',
+                'description' => 'The resource machine_name, "all" or empty for all processors.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
@@ -55,7 +58,7 @@ class Processors extends Core\ProcessorEntity
      *
      * @var array list of namespaces to fetch.
      */
-    private array $namespaces = [
+    protected array $namespaces = [
         'Endpoint',
         'Output',
         'Processor',
@@ -63,22 +66,33 @@ class Processors extends Core\ProcessorEntity
     ];
 
     /**
+     * @var ProcessorHelper
+     */
+    protected ProcessorHelper $processorHelper;
+
+    protected ListClassesInDirectory $listClassesInDirectory;
+
+    /**
      * {@inheritDoc}
      *
-     * @return Core\DataContainer Result of the processor.
+     * @return DataContainer Result of the processor.
      *
-     * @throws Core\ApiException Exception if invalid result.
+     * @throws ApiException Exception if invalid result.
      */
-    public function process(): Core\DataContainer
+    public function process(): DataContainer
     {
         parent::process();
+        $this->processorHelper = new ProcessorHelper();
+        $this->listClassesInDirectory = new ListClassesInDirectory();
         $machineName = $this->val('machine_name', true);
+        $settings = new Config();
+        $basePath = $settings->__get(['api', 'base_path']);
         $details = [];
 
         foreach ($this->namespaces as $namespace) {
-            $classNames = $this->getClassList($namespace);
+            $classNames = $this->listClassesInDirectory->listClassesInDirectory($basePath . 'includes/' . $namespace);
             foreach ($classNames as $className) {
-                $detail = $this->getDetails($namespace, $className);
+                $detail = $this->getDetails($className);
                 if ($detail !== false) {
                     $details[$detail['machineName']] =  $detail;
                 }
@@ -87,7 +101,7 @@ class Processors extends Core\ProcessorEntity
         sort($details);
 
         if (empty($machineName) || $machineName == 'all') {
-            return new Core\DataContainer($details, 'array');
+            return new DataContainer($details, 'array');
         }
 
         $result = [];
@@ -98,45 +112,31 @@ class Processors extends Core\ProcessorEntity
         }
 
         if (empty($result)) {
-            throw new Core\ApiException("Invalid machine name: $machineName", 6, $this->id, 401);
+            throw new ApiException("Invalid machine name: $machineName", 6, $this->id, 401);
         }
 
-        return new Core\DataContainer($result, 'array');
-    }
-
-    /**
-     * Get a list of classes from a directory.
-     *
-     * @param string $namespace The subdirectory/namespace.
-     *
-     * @return array The list of class names.
-     */
-    private function getClassList(string $namespace): array
-    {
-        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__ . '/../' . $namespace));
-        $objects = new RegexIterator($iterator, '/[a-z0-9]+\.php/i', RegexIterator::GET_MATCH);
-        $result = [];
-        foreach ($objects as $name => $object) {
-            preg_match('/([a-zA-Z0-9]+)\.php$/i', $name, $className);
-            $result[] = $className[1];
-        }
-        return $result;
+        return new DataContainer($result, 'array');
     }
 
     /**
      * Return the default details attributed from a class.
      *
-     * @param string $namespace The namespace that the class belongs to.
      * @param string $className The classname.
      *
      * @return array|false
+     *
+     * @throws ApiException
      */
-    private function getDetails(string $namespace, string $className)
+    private function getDetails(string $className)
     {
-        $reflector = new ReflectionClass("\\ApiOpenStudio\\$namespace\\$className");
+        try {
+            $reflector = new ReflectionClass($this->processorHelper->getProcessorString($className));
+        } catch (ReflectionException $e) {
+            throw new ApiException($e->getMessage(), 6, $this->id);
+        }
         if (!$reflector->isAbstract()) {
             $properties = $reflector->getDefaultProperties();
-            return $properties['details'];
+            return $properties['details'] ?? false;
         }
 
         return false;
