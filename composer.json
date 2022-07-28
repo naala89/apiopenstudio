@@ -27,6 +27,20 @@
     "wiki": "https://wiki.apiopenstudio.com/",
     "source": "https://github.com/naala89/apiopenstudio"
   },
+  "extra": {
+    "installer-types": [
+      "apiopenstudio-endpoint-package",
+      "apiopenstudio-output-package",
+      "apiopenstudio-processor-package",
+      "apiopenstudio-security-package"
+    ],
+    "installer-paths": {
+      "includes/Endpoint/vendor/{$name}/": ["type:apiopenstudio-endpoint-package"],
+      "includes/Output/vendor/{$name}/": ["type:apiopenstudio-output-package"],
+      "includes/Processor/vendor/{$name}/": ["type:apiopenstudio-processor-package"],
+      "includes/Security/vendor/{$name}/": ["type:apiopenstudio-security-package"]
+    }
+  },
   "require-dev": {
     "vlucas/phpdotenv": "^3",
     "codeception/codeception": "^4.1",
@@ -58,7 +72,9 @@
     "soapbox/laravel-formatter": "^3.1",
     "selective/image-type": "^1.1",
     "symfony/mailer": "*",
-    "league/flysystem": "*"
+    "league/flysystem": "*",
+    "oomphinc/composer-installers-extender": "^2.0",
+    "roave/better-reflection": "*"
   },
   "autoload": {
     "psr-4": {
@@ -67,7 +83,9 @@
   },
   "config": {
     "allow-plugins": {
-      "kylekatarnls/update-helper": true
+      "kylekatarnls/update-helper": true,
+      "composer/installers": true,
+      "oomphinc/composer-installers-extender": true
     }
   }
 }
