@@ -53,8 +53,8 @@ class Install extends Script
      */
     public function __construct()
     {
-        $this->config = new Config();
         parent::__construct();
+        $this->config = new Config();
     }
 
     /**
