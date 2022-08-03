@@ -19,9 +19,9 @@ use ApiOpenStudio\Cli\Update;
 
 global $argv;
 
-$install = new Update();
+$update = new Update();
 
-$install->exec($argv);
+$update->exec($argv);
 
 echo "ApiOpenStudio is successfully updated!\n\n";
 
