@@ -20,6 +20,7 @@ use ApiOpenStudio\Core\Config;
 use Berlioz\PhpDoc\Exception\PhpDocException;
 use Berlioz\PhpDoc\PhpDocFactory;
 use Psr\SimpleCache\CacheException;
+use ApiOpenStudio\Core\Utilities;
 
 use function ADONewConnection;
 
@@ -126,7 +127,11 @@ class Update extends Script
             exit;
         }
 
-        $this->setupDBLink();
+        try {
+            $this->db = Utilities::getDbConnection($this->config->__get(['db']));
+        } catch (ApiException $e) {
+            $this->handleException($e);
+        }
 
         $currentVersion = $this->getCurrentVersion();
         echo "\n";
@@ -141,40 +146,21 @@ class Update extends Script
     }
 
     /**
-     * Set up the DB connection.
-     */
-    protected function setupDBLink()
-    {
-        $dsnOptionsArr = [];
-        try {
-            foreach ($this->config->__get(['db', 'options']) as $k => $v) {
-                $dsnOptionsArr[] = "$k=$v";
-            }
-            $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
-            $dsn = $this->config->__get(['db', 'driver']) . '://'
-                . $this->config->__get(['db', 'username']) . ':'
-                . $this->config->__get(['db', 'password']) . '@'
-                . $this->config->__get(['db', 'host']) . '/'
-                . $this->config->__get(['db', 'database'])
-                . $dsnOptions;
-            if (!$this->db = ADONewConnection($dsn)) {
-                echo "Error: DB connection failed, please check your settings.yml file.\n";
-                exit;
-            }
-        } catch (ApiException $e) {
-            $this->handleException($e);
-        }
-    }
-
-    /**
      * Get the current version from the database.
      *
      * @return mixed
+     *
+     * @todo Refactor this function to use InstalledVersionMapper, after the next release.
      */
     protected function getCurrentVersion()
     {
         echo "Finding current version...\n";
-        $sql = 'SELECT version FROM core';
+        $sql = 'SHOW TABLE STATUS WHERE `Name` = "core"';
+        if (!$this->db->GetRow($sql)) {
+            $sql = 'SELECT `version` FROM `installed_version` WHERE `module`="core"';
+        } else {
+            $sql = 'SELECT version FROM core';
+        }
         $row = $this->db->GetRow($sql);
         $version = $row['version'];
         if (empty($version)) {
@@ -205,7 +191,7 @@ class Update extends Script
 
         foreach ($files as $file) {
             include $file;
-            $functions = $this->getDefinedFunctionsInFile($file);
+            $functions = Utilities::getDefinedFunctionsInFile($file);
             if (empty($functions)) {
                 echo "Error: no updates found in $file\n";
                 exit;
@@ -254,7 +240,12 @@ class Update extends Script
             $function($this->db);
             if ($this->sortByVersion($version, $this->lastUpdateVersionRun) > 0) {
                 $this->lastUpdateVersionRun = $version;
-                $sql = 'UPDATE core SET version="' . $version . '"';
+                $sql = 'SHOW TABLE STATUS WHERE `Name` = "core"';
+                if (!$this->db->GetRow($sql)) {
+                    $sql = 'UPDATE `installed_version` SET version="' . $version . '" WHERE `module`="core"';
+                } else {
+                    $sql = 'UPDATE `core` SET version = "' . $version . '"';
+                }
                 if (!$this->db->execute($sql)) {
                     echo "Error: failed to update core version to $version";
                     exit;
@@ -262,71 +253,6 @@ class Update extends Script
             }
             echo "Update $function complete\n";
         }
-    }
-
-    /**
-     * List ann functions defined in a file.
-     *
-     * @param string $file
-     *   Path to the file.
-     *
-     * @return array
-     *   Array of function names.
-     */
-    protected function getDefinedFunctionsInFile(string $file): array
-    {
-        $source = file_get_contents($file);
-        $tokens = token_get_all($source);
-
-        $functions = array();
-        $nextStringIsFunc = false;
-        $inClass = false;
-        $bracesCount = 0;
-
-        foreach ($tokens as $token) {
-            switch ($token[0]) {
-                case T_CLASS:
-                    $inClass = true;
-                    break;
-
-                case T_FUNCTION:
-                    if (!$inClass) {
-                        $nextStringIsFunc = true;
-                    }
-                    break;
-
-                case T_STRING:
-                    if ($nextStringIsFunc) {
-                        $nextStringIsFunc = false;
-                        $functions[] = $token[1];
-                    }
-                    break;
-
-                    // Anonymous functions
-                case '(':
-                case ';':
-                    $nextStringIsFunc = false;
-                    break;
-
-                    // Exclude Classes
-                case '{':
-                    if ($inClass) {
-                        $bracesCount++;
-                    }
-                    break;
-
-                case '}':
-                    if ($inClass) {
-                        $bracesCount--;
-                        if ($bracesCount === 0) {
-                            $inClass = false;
-                        }
-                    }
-                    break;
-            }
-        }
-
-        return $functions;
     }
 
     /**
