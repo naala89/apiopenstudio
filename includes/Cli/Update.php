@@ -31,6 +31,9 @@ use function ADONewConnection;
  */
 class Update extends Script
 {
+    use SortByVersionTrait;
+    use HandleExceptionTrait;
+
     /**
      * @var string Relative path to updates directory.
      */
@@ -253,106 +256,5 @@ class Update extends Script
             }
             echo "Update $function complete\n";
         }
-    }
-
-    /**
-     * Custom sort function to sort array of version string.
-     *
-     * @param string $a
-     * @param string $b
-     *
-     * @return int
-     */
-    public function sortByVersion(string $a, string $b): int
-    {
-        if ($a == $b) {
-            return 0;
-        }
-        $a = explode('.', $a);
-        $a[2] = explode('-', strtolower($a[2]));
-        $b = explode('.', $b);
-        $b[2] = explode('-', strtolower($b[2]));
-        // Major.
-        if ($a[0] < $b[0]) {
-            return -1;
-        }
-        if ($a[0] > $b[0]) {
-            return 1;
-        }
-        // Medium.
-        if ($a[1] < $b[1]) {
-            return -1;
-        }
-        if ($a[1] > $b[1]) {
-            return 1;
-        }
-        // Minor.
-        if ($a[2][0] < $b[2][0]) {
-            return -1;
-        }
-        if ($a[2][0] > $b[2][0]) {
-            return 1;
-        }
-        // RC
-        if (isset($a[2][1]) && strpos($a[2][1], 'rc') !== false) {
-            // RC version is less than minor version.
-            if (!isset($b[2][1])) {
-                return -1;
-            }
-            // RC version is greater than ALPHA/BETA.
-            if (strpos($b[2][1], 'alpha') !== false || strpos($b[2][1], 'beta') !== false) {
-                return 1;
-            }
-            // Compare RC versions.
-            $rcNumA = abs((int) filter_var($a[2][1], FILTER_SANITIZE_NUMBER_INT));
-            $rcNumB = abs((int) filter_var($b[2][1], FILTER_SANITIZE_NUMBER_INT));
-            if ($rcNumA < $rcNumB) {
-                return -1;
-            }
-            return 1;
-        }
-        // Alpha.
-        if (isset($a[2][1]) && strpos($a[2][1], 'alpha') !== false) {
-            // Alpha is less than minor version
-            // && Alpha is less than beta version
-            // && Alpha is less than RC version.
-            if (!isset($b[2][1]) || strpos($b[2][1], 'rc') !== false || strpos($b[2][1], 'beta') !== false) {
-                return -1;
-            }
-            // Compare alpha versions.
-            $alphaNumA = abs((int) filter_var($a[2][1], FILTER_SANITIZE_NUMBER_INT));
-            $alphaNumB = abs((int) filter_var($b[2][1], FILTER_SANITIZE_NUMBER_INT));
-            if ($alphaNumA < $alphaNumB) {
-                return -1;
-            }
-            return 1;
-        }
-        // Beta.
-        if (isset($a[2][1]) && strpos($a[2][1], 'beta') !== false) {
-            // Beta is less than minor version
-            // && Beta is less than RC version.
-            if (!isset($b[2][1]) || strpos($b[2][1], 'rc') !== false) {
-                return -1;
-            }
-            // Beta is greater than alpha version.
-            if (strpos($b[2][1], 'alpha') !== false) {
-                return 1;
-            }
-            // Compare beta versions.
-            $alphaNumA = abs((int) filter_var($a[2][1], FILTER_SANITIZE_NUMBER_INT));
-            $alphaNumB = abs((int) filter_var($b[2][1], FILTER_SANITIZE_NUMBER_INT));
-            if ($alphaNumA < $alphaNumB) {
-                return -1;
-            }
-            return 1;
-        }
-        return 1;
-    }
-
-    protected function handleException(ApiException $e)
-    {
-        echo "An error occurred, please check the logs.\n";
-        echo $e->getMessage() . "\n";
-        exit;
     }
 }
