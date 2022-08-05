@@ -1,0 +1,41 @@
+# Module Read resource.
+#
+# @package   Apiopenstudio\Resources
+# @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
+#            If a copy of the license was not distributed with this file,
+#            You can obtain one at https://www.apiopenstudio.com/license/.
+# @author    john89 (https://gitlab.com/john89)
+# @copyright 2020-2030 Naala Pty Ltd
+# @link      https://www.apiopenstudio.com
+
+name: Modules Read
+
+description: Fetch details of 3rd party plugins and processors.
+
+uri: modules
+
+method: get
+
+appid: 1
+
+ttl: 0
+
+security:
+    id: modules read security
+    processor: validate_token_roles
+    roles:
+        - Administrator
+        - Account manager
+        - Application manager
+        - Developer
+    validate_account: false
+    validate_application: false
+
+process:
+    processor: modules_read
+    id: modules read process
+    filter:
+        processor: var_uri
+        id: modules read filter
+        index: 0
+        nullable: true
