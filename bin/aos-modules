@@ -1,0 +1,34 @@
+#!/usr/local/bin/php
+<?php
+
+/**
+ * Script to install a plugin or processor module in ApiOpenStudio.
+ *
+ * @package   ApiOpenStudio
+ * @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
+ *            If a copy of the license was not distributed with this file,
+ *            You can obtain one at https://www.apiopenstudio.com/license/.
+ * @author    john89 (https://gitlab.com/john89)
+ * @copyright 2020-2030 Naala Pty Ltd
+ * @link      https://www.apiopenstudio.com
+ */
+
+$composerAutoload = [
+    __DIR__ . '/../vendor/autoload.php', // standalone with "composer install" run
+    __DIR__ . '/../../../autoload.php',  // script is installed as a composer binary
+];
+foreach ($composerAutoload as $autoload) {
+    if (file_exists($autoload)) {
+        require($autoload);
+        break;
+    }
+}
+
+use ApiOpenStudio\Cli\Modules;
+
+global $argv;
+
+$modules = new Modules();
+$modules->exec($argv);
+
+exit;
