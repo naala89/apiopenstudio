@@ -12,7 +12,7 @@
  * @link       https://www.apiopenstudio.com
  */
 
-namespace ApiOpenStudio\Cli;
+namespace ApiOpenStudio\Core;
 
 /**
  * Trait SortByVersionTrait.
@@ -23,6 +23,22 @@ Trait SortByVersionTrait
 {
     /**
      * Custom sort function to sort array of version string.
+     *
+     * This assumes example version format of:
+     *   1.2.0
+     *   1.2.1
+     *   1.2.2
+     *   1.2.3-alpha
+     *   1.2.3-alpha1
+     *   1.2.3-alpha2
+     *   1.2.3-beta
+     *   1.2.3-beta1
+     *   1.2.3-beta2
+     *   1.2.3-rc
+     *   1.2.3-rc1
+     *   1.2.3-rc2
+     *   1.2.3
+     *   1.3.0
      *
      * @param string $a
      * @param string $b
