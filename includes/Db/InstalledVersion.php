@@ -43,24 +43,15 @@ class InstalledVersion
     protected ?string $version;
 
     /**
-     * Module update.
-     *
-     * @var string|null
-     */
-    protected ?string $update;
-
-    /**
      * @param int|null $mid
      * @param string|null $module
      * @param string|null $version
-     * @param string|null $update
      */
-    public function __construct(int $mid = null, string $module = null, string $version = null, string $update = null)
+    public function __construct(int $mid = null, string $module = null, string $version = null)
     {
         $this->mid = $mid;
         $this->module = $module;
         $this->version = $version;
-        $this->update = $update;
     }
 
     /**
@@ -130,27 +121,6 @@ class InstalledVersion
     }
 
     /**
-     * Get the module update.
-     *
-     * @return string|null Module version.
-     */
-    public function getUpdate(): ?string
-    {
-        return $this->update;
-    }
-
-    /**
-     * Set the module update.
-     *
-     * @param string|null $update
-     * @return void
-     */
-    public function setUpdate(?string $update)
-    {
-        $this->update = $update;
-    }
-
-    /**
      * Return the values as an associative array.
      *
      * @return array Account.
@@ -161,7 +131,6 @@ class InstalledVersion
             'mid' => $this->mid,
             'module' => $this->module,
             'version' => $this->version,
-            'update' => $this->update,
         ];
     }
 }

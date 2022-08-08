@@ -157,58 +157,47 @@ SQL;
     $result = $db->execute($sql);
 
     if ($result->recordCount() === 0) {
-        echo "Cannot rename core table, skipping...\n";
+        echo "Cannot rename `core` table, skipping...\n";
     } else {
-        echo "Renaming the core table to installed_version...\n";
+        echo "Renaming the `core` table to `installed_version`...\n";
         $sql = <<<SQL
 RENAME TABLE `core` TO `installed_version`
 SQL;
         if (!$db->execute($sql)) {
-            echo "Renaming the core table failed, please check the logs\n";
+            echo "Renaming the `core` table to `installed_version` failed, please check the logs\n";
         }
     }
 
-    echo "Adding the installed_version.mid column to installed_version...\n";
+    echo "Adding the `installed_version`.`mid` column...\n";
     $sql = <<<SQL
 ALTER TABLE `installed_version`
     ADD COLUMN IF NOT EXISTS  `mid`
     int(11) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'row ID'
 SQL;
     if (!$db->execute($sql)) {
-        echo "Adding the installed_version.mid column failed, please check the logs\n";
+        echo "Adding the `installed_version`.`mid` column failed, please check the logs\n";
         exit;
     }
 
-    echo "Adding the installed_version.module column to installed_version...\n";
+    echo "Adding the `installed_version`.`module` column...\n";
     $sql = <<<SQL
 ALTER TABLE `installed_version`
     ADD COLUMN IF NOT EXISTS `module`
     varchar(256) NOT NULL DEFAULT '' COMMENT 'Module name' AFTER `mid`
 SQL;
     if (!$db->execute($sql)) {
-        echo "Adding the installed_version.module column failed, please check the logs\n";
+        echo "Adding the `installed_version`.`module` column failed, please check the logs\n";
         exit;
     }
 
-    echo "Moving the installed_version.version column after module...\n";
+    echo "Moving the `installed_version`.`version` column after `module`...\n";
     $sql = <<<SQL
 ALTER TABLE `installed_version`
     CHANGE COLUMN `version`
     `version` varchar(255) NOT NULL DEFAULT '' COMMENT 'current version' AFTER `module`
 SQL;
     if (!$db->execute($sql)) {
-        echo "Modifying the installed_version.version column failed, please check the logs\n";
-        exit;
-    }
-
-    echo "Adding the installed_version.update column to installed_version...\n";
-    $sql = <<<SQL
-ALTER TABLE `installed_version`
-    ADD COLUMN IF NOT EXISTS `update`
-    varchar(256) COMMENT 'last version update ran' AFTER `version`
-SQL;
-    if (!$db->execute($sql)) {
-        echo "Adding the installed_version.module column failed, please check the logs\n";
+        echo "Modifying the `installed_version`.`version` column failed, please check the logs\n";
         exit;
     }
 

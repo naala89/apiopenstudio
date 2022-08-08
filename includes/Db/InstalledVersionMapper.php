@@ -35,18 +35,16 @@ class InstalledVersionMapper extends Mapper
     public function save(InstalledVersion $installedVersion): bool
     {
         if ($installedVersion->getMid() === null) {
-            $sql = 'INSERT INTO `installed_version` (`module`, `version`, `update`) VALUES (?, ?, ?)';
+            $sql = 'INSERT INTO `installed_version` (`module`, `version`) VALUES (?, ?)';
             $bindParams = [
                 $installedVersion->getModule(),
                 $installedVersion->getVersion(),
-                $installedVersion->getUpdate(),
             ];
         } else {
-            $sql = 'UPDATE `installed_version` SET `module` = ?, `version` = ?, `update` = ? WHERE `mid` = ?';
+            $sql = 'UPDATE `installed_version` SET `module` = ?, `version` = ? WHERE `mid` = ?';
             $bindParams = [
                 $installedVersion->getModule(),
                 $installedVersion->getVersion(),
-                $installedVersion->getUpdate(),
                 $installedVersion->getMid(),
             ];
         }
@@ -113,7 +111,6 @@ class InstalledVersionMapper extends Mapper
         $installedVersion->setMid($row['mid'] ?? null);
         $installedVersion->setModule($row['module'] ?? null);
         $installedVersion->setVersion($row['version'] ?? null);
-        $installedVersion->setUpdate($row['update'] ?? null);
 
         return $installedVersion;
     }

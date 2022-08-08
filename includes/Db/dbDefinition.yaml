@@ -50,7 +50,6 @@ installed_version:
     columns:
         module: {type: varchar(255), notnull: true, comment: module name}
         version: {type: varchar(255), notnull: true, comment: current version}
-        update: {type: varchar(255), notnull: false, comment: last version update ran}
     data:
         -
             module: core
