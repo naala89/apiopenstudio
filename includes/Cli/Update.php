@@ -17,12 +17,11 @@ namespace ApiOpenStudio\Cli;
 use ADOConnection;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\Config;
+use ApiOpenStudio\Core\SortByVersionTrait;
 use Berlioz\PhpDoc\Exception\PhpDocException;
 use Berlioz\PhpDoc\PhpDocFactory;
 use Psr\SimpleCache\CacheException;
 use ApiOpenStudio\Core\Utilities;
-
-use function ADONewConnection;
 
 /**
  * Class Install
@@ -82,14 +81,14 @@ class Update extends Script
     protected function help()
     {
         $help = "Update\n\n";
-        $help .= "This command will update the database.\n";
+        $help .= "This command will update ApiOpenStudio core.\n";
         $help .= "It will run all necessary core update functions in includes/updates.\n\n";
         $help .= "Options\n";
         $help .= "-d: (optional) full path to the update directory containing the update files.\n\n";
         $help .= "Examples:\n";
-        $help .= "./include/scripts/update.php\n";
-        $help .= "./include/scripts/update.php -d ./foobar\n";
-        $help .= "./include/scripts/update.php -d ./foobar/\n";
+        $help .= "./vendor/bin/aos-update\n";
+        $help .= "./vendor/bin/aos-update -d ./foobar\n";
+        $help .= "./vendor/bin/aos-update -d ./foobar/\n";
         echo $help;
     }
 

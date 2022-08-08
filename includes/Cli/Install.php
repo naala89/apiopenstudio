@@ -65,9 +65,9 @@ class Install extends Script
     protected function help()
     {
         $help = "Install\n\n";
-        $help .= "This command will create the database and install ApiOpenStudio.\n\n";
+        $help .= "This command will create the database and install ApiOpenStudio core.\n\n";
         $help .= "Example:\n";
-        $help .= "./include/scripts/install.php\n";
+        $help .= "./vendor/bin/aos-install\n";
         echo $help;
     }
 

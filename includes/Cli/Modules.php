@@ -24,6 +24,8 @@ use ApiOpenStudio\Core\ModuleHelper;
  */
 class Modules extends Script
 {
+    use HandleExceptionTrait;
+
     /**
      * {@inheritDoc}
      */
@@ -32,6 +34,7 @@ class Modules extends Script
         'flags' => [
             'installed' => [],
             'uninstalled' => [],
+            'updates' => [],
             'list' => [],
             'install' => [],
             'uninstall' => [],
@@ -59,22 +62,26 @@ class Modules extends Script
     protected function help()
     {
         $help = "Modules\n\n";
-        $help .= "This command will install a plugin or processor module in ApiOpenStudio.\n\n";
+        $help .= "This command will allow you in install, uninstall, update and list plugins or processor modules in ApiOpenStudio.\n\n";
         $help .= "Flags:\n";
         $help .= "  --list: list the modules in the codebase\n";
         $help .= "  --installed: list the modules that are installed\n";
         $help .= "  --uninstalled: list the modules that are not installed\n";
+        $help .= "  --updates: list the pending updates for all installed modules\n";
         $help .= "  --install: install one or more modules\n";
         $help .= "  --uninstall: uninstall one or more modules\n";
         $help .= "  --update: update one or more modules\n\n";
         $help .= "Examples:\n";
-        $help .= "  ./includes/scripts/modules.php --list\n";
-        $help .= "  ./includes/scripts/modules.php --installed\n";
-        $help .= "  ./includes/scripts/modules.php --uninstalled\n";
-        $help .= "  ./includes/scripts/modules.php --install \"\My\Processor\"\n";
-        $help .= "  ./includes/scripts/modules.php --install \"\My\Processor\" \"\\Another\\Processor\"\n";
-        $help .= "  ./includes/scripts/modules.php --uninstall \"\My\Processor\"\n";
-        $help .= "  ./includes/scripts/modules.php --uninstall \"\My\Processor\" \"\\Another\\Processor\"\n";
+        $help .= "  ./vendor/bin/aos-modules --list\n";
+        $help .= "  ./vendor/bin/aos-modules --installed\n";
+        $help .= "  ./vendor/bin/aos-modules --uninstalled\n";
+        $help .= "  ./vendor/bin/aos-modules --updates\n";
+        $help .= "  ./vendor/bin/aos-modules --install \"\My\Processor\"\n";
+        $help .= "  ./vendor/bin/aos-modules --install \"\My\Processor\" \"\\Another\\Processor\"\n";
+        $help .= "  ./vendor/bin/aos-modules --uninstall \"\My\Processor\"\n";
+        $help .= "  ./vendor/bin/aos-modules --uninstall \"\My\Processor\" \"\\Another\\Processor\"\n";
+        $help .= "  ./vendor/bin/aos-modules --update \"\My\Processor\"\n";
+        $help .= "  ./vendor/bin/aos-modules --update \"\My\Processor\" \"\\Another\\Processor\"\n";
         echo $help;
     }
 
@@ -99,6 +106,9 @@ class Modules extends Script
         if (isset($this->flags['uninstalled'])) {
             $this->uninstalled();
         }
+        if (isset($this->flags['updates'])) {
+            $this->updates();
+        }
         if (isset($this->flags['install'])) {
             $this->install($this->arguments);
         }
@@ -113,31 +123,34 @@ class Modules extends Script
     }
 
     /**
-     * Handle an ApiException.
-     *
-     * @param ApiException $e
-     *
-     * @return void
-     */
-    protected function handleException(ApiException $e)
-    {
-        echo "An error occurred, please check the logs.\n";
-        echo $e->getMessage() . "\n";
-        exit;
-    }
-
-    /**
      * Display a list of non-core plugins and processors installed by composer.
      *
      * @return void
      */
     protected function list()
     {
-        echo "Non-core modules in the codebase (machine_name):\n";
+        echo "Contrib modules in the codebase:\n\n";
         try {
             $modules = $this->moduleHelper->getModules();
-            foreach (array_keys($modules) as $machineName) {
-                echo "$machineName\n";
+            if (empty($modules)) {
+                echo "None\n";
+            } else {
+                foreach ($modules as $machineName => $info) {
+                    echo "$machineName\n";
+                    if ($info['installed']) {
+                        echo '  Installed: ' . $info['installed'] . "\n";
+                        if (empty($info['update_functions'])) {
+                            echo "  Updates: None\n";
+                        } else {
+                            echo "  Updates:\n";
+                            foreach ($info['update_functions'] as $updateFunction) {
+                                echo "    $updateFunction\n";
+                            }
+                        }
+                    } else {
+                        echo "  Installed: false\n";
+                    }
+                }
             }
         } catch (ApiException $e) {
             $this->handleException($e);
@@ -154,9 +167,24 @@ class Modules extends Script
     {
         echo "Installed modules:\n";
         try {
-            $installedModules = $this->moduleHelper->getInstalled();
-            foreach ($installedModules as $module => $version) {
-                echo "$module: $version\n";
+            $modules = $this->moduleHelper->getInstalled();
+            if (empty($modules)) {
+                echo "None\n";
+            } else {
+                foreach ($modules as $machineName => $info) {
+                    echo "$machineName\n";
+                    if ($info['installed']) {
+                        echo '  Installed: ' . $info['installed'] . "\n";
+                        if (!empty($info['update_functions'])) {
+                            echo "  Updates:\n";
+                            foreach ($info['update_functions'] as $updateFunction) {
+                                echo "    $updateFunction\n";
+                            }
+                        }
+                    } else {
+                        echo "  Installed: false\n";
+                    }
+                }
             }
         } catch (ApiException $e) {
             $this->handleException($e);
@@ -173,9 +201,40 @@ class Modules extends Script
     {
         echo "Uninstalled modules:\n";
         try {
-            $uninstalled = $this->moduleHelper->getUninstalled();
-            foreach ($uninstalled as $module) {
-                echo "$module\n";
+            $modules = $this->moduleHelper->getUninstalled();
+            if (empty($modules)) {
+                echo "None\n";
+            } else {
+                foreach ($modules as $machineName => $info) {
+                    echo "$machineName\n";
+                }
+            }
+        } catch (ApiException $e) {
+            $this->handleException($e);
+        }
+        exit;
+    }
+
+    /**
+     * Display a list of pending updates for all or a single module.
+     *
+     * @return void
+     */
+    protected function updates()
+    {
+        try {
+            $updates = $this->moduleHelper->updates($this->arguments);
+            if (empty($updates)) {
+                echo "None\n";
+            } else {
+                echo "Module:\n";
+                foreach ($updates as $machineName => $details) {
+                    echo "  $machineName\n";
+                    echo "    Updates\n";
+                    foreach ($details['update_functions'] as $updateFunction => $version) {
+                        echo "      $updateFunction ($version)\n";
+                    }
+                }
             }
         } catch (ApiException $e) {
             $this->handleException($e);
@@ -237,10 +296,14 @@ class Modules extends Script
         try {
             $updated = $this->moduleHelper->update($modules);
             echo "Modules updated:\n";
-            foreach ($updated as $module => $functions) {
-                echo "$module:\n";
-                foreach ($functions as $function) {
-                    echo "  $function\n";
+            if (empty($updated)) {
+                echo "None\n";
+            } else {
+                foreach ($updated as $module => $functions) {
+                    echo "$module:\n";
+                    foreach ($functions as $function => $version) {
+                        echo "  $function ($version)\n";
+                    }
                 }
             }
         } catch (ApiException $e) {
