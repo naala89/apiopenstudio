@@ -209,4 +209,6 @@ SQL;
         echo "Something went wrong while updating the installed_version.core version row, please check the logs\n";
         exit;
     }
+
+    update_all_core_processors_beta($db);
 }
