@@ -87,7 +87,7 @@ class InstalledVersionMapper extends Mapper
      *
      * @param string $machineName Module machine_name.
      *
-     * @return InstalledVersion.
+     * @return InstalledVersion InstalledVersion object.
      *
      * @throws ApiException Return an ApiException on DB error.
      */
@@ -103,7 +103,7 @@ class InstalledVersionMapper extends Mapper
      *
      * @param array $row DB row object.
      *
-     * @return InstalledVersion
+     * @return InstalledVersion InstalledVersion object.
      */
     protected function mapArray(array $row): InstalledVersion
     {

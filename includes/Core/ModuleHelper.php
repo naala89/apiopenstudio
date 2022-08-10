@@ -489,7 +489,7 @@ class ModuleHelper
      *
      * @param string $module Module machine_name.
      *
-     * @return InstalledVersion|bool
+     * @return false|InstalledVersion
      *
      * @throws ApiException
      */

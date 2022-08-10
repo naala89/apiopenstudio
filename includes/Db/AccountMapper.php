@@ -81,7 +81,7 @@ class AccountMapper extends Mapper
     /**
      * Find an account by ID.
      *
-     * @param integer $accid Account Id.
+     * @param integer $accid Account ID.
      *
      * @return Account Account object.
      *
