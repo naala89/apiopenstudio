@@ -21,7 +21,7 @@ use ApiOpenStudio\Core\ApiException;
  *
  * Trait to handle ApiExceptions in a generic way for CLI.
  */
-Trait HandleExceptionTrait
+trait HandleExceptionTrait
 {
     /**
      * Handle exceptions for CLI in a generic way.

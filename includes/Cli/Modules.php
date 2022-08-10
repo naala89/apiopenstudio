@@ -62,7 +62,8 @@ class Modules extends Script
     protected function help()
     {
         $help = "Modules\n\n";
-        $help .= "This command will allow you in install, uninstall, update and list plugins or processor modules in ApiOpenStudio.\n\n";
+        $help .= "This command will allow you in install, uninstall, ";
+        $help .= "update and list plugins or processor modules in ApiOpenStudio.\n\n";
         $help .= "Flags:\n";
         $help .= "  --list: list the modules in the codebase\n";
         $help .= "  --installed: list the modules that are installed\n";

@@ -19,7 +19,7 @@ namespace ApiOpenStudio\Core;
  *
  * Trait to provide a function for sorting version tags.
  */
-Trait SortByVersionTrait
+trait SortByVersionTrait
 {
     /**
      * Custom sort function to sort array of version string.

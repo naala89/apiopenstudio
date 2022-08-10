@@ -100,7 +100,8 @@ class ModuleHelper
             $classNames = $this->listClassesInDirectory->listClassesInDirectory($includesDir . $directory);
             foreach ($classNames as $className) {
                 $details = $this->getDetails($className);
-                if ($details !== false
+                if (
+                    $details !== false
                     && isset($details['details']['machineName'])
                     && ($includeCore || strrpos($details['details']['machineName'], "\\") !== false)
                 ) {
@@ -112,7 +113,9 @@ class ModuleHelper
         // Get list of update functions for installed modules.
         foreach ($modules as $machineName => &$module) {
             $updateFilePath = dirname($module['path']) . '/update.php';
-            $module['update_functions'] = $module['installed'] === false ? [] : $this->getUpdateFunctions($updateFilePath, $machineName);
+            $module['update_functions'] = $module['installed'] === false
+                ? []
+                : $this->getUpdateFunctions($updateFilePath, $machineName);
         }
 
         return $modules;
@@ -227,8 +230,10 @@ class ModuleHelper
             include_once $installFilePath;
             $installFunction = substr($machineName, 0, strrpos($machineName, "\\")) . '\install';
             if (!function_exists($installFunction)) {
+                $message = "Cannot install, $installFunction not found, ";
+                $message .= "please ensure the correct namespacing in $installFilePath.";
                 throw new ApiException(
-                    "Cannot install, $installFunction not found, please ensure the correct namespacing in $installFilePath.",
+                    $message,
                     0,
                     'oops'
                 );
@@ -237,8 +242,10 @@ class ModuleHelper
 
             $info = $this->composerHelper->getInfo($machineName);
             if (!$info) {
+                $message = "$machineName installed, but could not get the version of the namespace from composer.lock.";
+                $message .= "installed_version table not updated.";
                 throw new ApiException(
-                    "$machineName installed, but could not get the version of the namespace from composer.lock. installed_version table not updated.",
+                    $message,
                     0,
                     'oops'
                 );
