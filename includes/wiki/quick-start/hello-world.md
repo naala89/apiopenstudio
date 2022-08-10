@@ -20,15 +20,15 @@ Click on "Accounts" in the menu or navigate to [accounts page][accounts_page].
 
 Click on the Plus icon:
 
-![Add account](images/account_add_button.png)
+![Add account][add_account_image]
 
 Name new account: "tutorial"
 
-![Create tutorial account](images/create_account.png)
+![Create tutorial account][create_account_image]
 
 You have now created a new top level account:
 
-![Tutorial account created](images/new_account.png)
+![Tutorial account created][account_created_image]
 
 Click on "Applications" in the menu or navigate
 to [applications page][applications_page].
@@ -36,12 +36,12 @@ to [applications page][applications_page].
 Click on the Plus icon to create a new application. Assign the application to
 the "tutorial" account and call it "quick_start".
 
-![Create application](images/create_application.png)
+![Create tutorial application][create_application_image]
 
 You have now created the "quick-start" application that our resource will belong
 to:
 
-![Application created](images/new_application.png)
+![Application created][application_created_image]
 
 Configure users and roles
 -------------------------
@@ -53,7 +53,7 @@ Click on "User Roles" in the menu or navigate to [user roles page][user_roles_pa
 Click on the plus icon and assign yourself the developer role for Account:
 tutorial and application: quick_start.
 
-![Create developer role](images/create_user_role.png)
+![Create developer role][create_developer_role_image]
 
 You now have permission to create a resource for the newly created quick_start
 application.
@@ -68,27 +68,27 @@ user with a developer role. The authentication method will vbe bearer token.
 
 Fill out the following fields in the interface:
 
-* Name: ```Hello world```
+* Name: `Hello world`
     * This is the title of the resource that appears
       in [resources page][resources_page].
-* Description: ```A quick-start hello world resource```
+* Description: `A quick-start hello world resource`
     * This is the description of the resource that appears
       in [resources page][resources_page].
-* Account: ```tutorial```
+* Account: `tutorial`
     * This assigns the resource to the account tutorial.
-* Application: ```quick_start```
+* Application: `quick_start`
     * This assigns the resource to the application quick_start.
-* Method: ```GET```
+* Method: `GET`
     * This declares the HTTP method.
-* URI: ```hello/world```
+* URI: `hello/world`
     * This defines the URI fragment for the request that comes after /<account>
       /<application>/. 8 TTL: 30
     * This gives the resource a cache time of 30 seconds.
 
-![Resource definition](images/resource_definition_1.png)
+![Resource definition][resource_definition_1_image]
 
-So far, we have defined a resource that can be called from (GET) 
-[https://api.apiopenstudio.local/tutorial/quick_start/hello/world][hello_world].
+So far, we have defined a resource that can be called from (GET)
+[hello_world][hello_world_get_request].
 
 However, it does nothing and has no security yet.
 
@@ -101,15 +101,15 @@ Add the following snippet to the Security section:
     roles:
          - Developer
 
-This calls the processor ```validate_token_roles```. We're giving the processor an ID name
+This calls the processor `validate_token_roles`. We're giving the processor an ID name
 of "security", so that if there are any bugs we can see where the error is in
 the result.
 
-The ```validate_token_roles``` processor requires 1 input:
+The `validate_token_roles` processor requires 1 input:
 
 * roles - the roles to validate the requesting user against.
 
-```roles``` will not require processing from another processor, because this does
+`roles` will not require processing from another processor, because this does
 not need to be dynamic. So we're using a static string: "Developer".
 
 #### Define the process
@@ -120,17 +120,17 @@ Add the following snippet to the Process section:
     id: process
     value: 'Hello world!'
 
-This will use a single processor: ```var_str```. This processor returns the
+This will use a single processor: `var_str`. This processor returns the
 value of a strictly typed string.
 
 It's input value does not need to be dynamic here, so we're giving it a static
 string value.
 
-![Resource process](images/resource_definition_3.png)
+![Resource process][resource_definition_3_image]
 
 #### Save
 
-Click on the ```Upload``` button.
+Click on the `Upload` button.
 
 The resource will be parsed and checked for any error, and saved to the
 database.
@@ -138,9 +138,9 @@ database.
 If you navigate back to [resources page][resources_page], you should see your
 new resource.
 
-![Resource created](images/resource_created.png)
+![Resource created][resource_created_image]
 
-If you click on the download button in the listing for ```Hello world``` and
+If you click on the download button in the listing for `Hello world` and
 select YAML format, it should look like this:
 
     name: 'Hello world'
@@ -177,9 +177,9 @@ Open up your REST client
         * username: <username>
         * password: <password>
 
-![User login request header](images/user_login_header.png)
+![User login request header][user_login_request_header_image]
 
-![User login request body](images/user_login_body.png)
+![User login request body][user_login_request_body_image]
 
 The result should be something similar to:
 
@@ -202,9 +202,9 @@ The result should be something similar to:
 
     "Hello world!"
 
-![Hello world result](images/hello_world_result.png)
+![Hello world result][hello_world_result_image]
 
-If we change the Accept value in the header to ```application/xml```, we will
+If we change the Accept value in the header to `application/xml`, we will
 get something similar to:
 
     <?xml version="1.0"?>
@@ -216,7 +216,7 @@ Exercises
 1. Fetch a get variable and assign this to the var_str.
 1. Set up a var in the admin interface, hello_world_string: "Hello world!"
     1. adapt the process section so that it fetches the
-       var ```hello_world_string``` and assigns the value to the var_str.
+       var `hello_world_string` and assigns the value to the var_str.
 
 [accounts_page]: https://admin.apiopenstudio.local/accounts
 
@@ -227,3 +227,29 @@ Exercises
 [resources_page]: https://admin.apiopenstudio.local/resources
 
 [hello_world]: https://api.apiopenstudio.local/tutorial/quick_start/hello/world
+
+[hello_world_get_request]: https://api.apiopenstudio.local/tutorial/quick_start/hello/world
+
+[add_account_image]: images/account_add_button.png
+
+[create_account_image]: images/create_account.png
+
+[account_created_image]: images/new_account.png
+
+[create_application_image]: images/create_application.png
+
+[application_created_image]: images/new_application.png
+
+[create_developer_role_image]: images/create_user_role.png
+
+[resource_definition_1_image]: images/resource_definition_1.png
+
+[resource_definition_3_image]: images/resource_definition_3.png
+
+[resource_created_image]: images/resource_created.png
+
+[user_login_request_header_image]: images/user_login_header.png
+
+[user_login_request_body_image]: images/user_login_body.png
+
+[hello_world_result_image]: images/hello_world_result.png

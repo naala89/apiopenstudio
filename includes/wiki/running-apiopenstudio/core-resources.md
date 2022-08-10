@@ -3,7 +3,7 @@ Core resources
 
 The details of all resources provide by core.
 
-All URL's are in the format: ```https://<api.domain.com>/<account_name>/<application_name>/<uri>/<uri_params>```
+All URL's are in the format: `https://<api.domain.com>/<account_name>/<application_name>/<uri>/<uri_params>`
 
 All get, post and uri params should be url encoded.
 

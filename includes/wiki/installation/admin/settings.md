@@ -1,8 +1,8 @@
 Settings
 ========
 
-Copy ```settings.example.yml``` to ```example.yml```, and then edit the settings
-in ```example.yml```
+Copy `settings.example.yml` to `example.yml`, and then edit the settings
+in `example.yml`
 
 * debug.handlers.*.level
     * Set to the debug verbosity that you require.
@@ -24,7 +24,7 @@ in ```example.yml```
     * dir_tmp
         * the full path to the server temp directory
     * dir_public
-        * path to the public directory, relative to ```base_path```
+        * path to the public directory, relative to `base_path`
     * pagination_step
         * The number of entries on listing pages.
     * slim.displayErrorDetails
@@ -41,5 +41,5 @@ in ```example.yml```
     * options.debug
         * Turn on twig debug mode. This should not be set to true on production.
     * template_path
-        * The relative path to admin templates from ```base_path```. This should
+        * The relative path to admin templates from `base_path`. This should
           not be altered.

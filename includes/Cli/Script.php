@@ -188,7 +188,7 @@ abstract class Script
     private function validateRequired(array $opt, $index)
     {
         $error = false;
-        $messages = array();
+        $messages = [];
         foreach ($this->argMap[$index] as $name => $value) {
             if ($value['required'] && !isset($opt[$name])) {
                 $messages[] = 'ERROR: required argv ' . $index . ' "' . $name . "\" not present\n";
@@ -211,7 +211,7 @@ abstract class Script
     private function validateAllowed(string $name, $index)
     {
         $error = false;
-        $messages = array();
+        $messages = [];
         if (!isset($this->argMap[$index][$name])) {
             $messages[] = 'ERROR: argv ' . $index . ' "' . $name . "\" not allowed";
             $error = true;
@@ -233,7 +233,7 @@ abstract class Script
     private function validateMultiple(string $name, $value, $index)
     {
         $error = false;
-        $messages = array();
+        $messages = [];
         if (!$this->argMap[$index][$name]['multiple'] && is_array($value)) {
             $messages[] = 'ERROR: argv "' . $name . "\" not allowed multiple values";
             $error = true;
@@ -255,7 +255,7 @@ abstract class Script
     private function validatePermitted(string $name, $value, $index)
     {
         $error = false;
-        $messages = array();
+        $messages = [];
         if (is_array($value)) {
             foreach ($value as $val) {
                 if (!in_array($val, $this->argMap[$index][$name]['permittedValues'])) {
@@ -283,13 +283,11 @@ abstract class Script
     {
         $arguments = $args;
         $this->exec = array_shift($arguments);
-        $this->options = array();
-        $this->flags = array();
-        $this->arguments = array();
+        $this->options = $this->flags = $this->arguments = [];
 
         while (sizeof($arguments) > 0) {
             $arg = array_shift($arguments);
-            // Is it an flag? (prefixed with --)
+            // Is it a flag? (prefixed with --)
             if (substr($arg, 0, 2) === '--') {
                 $this->flags[substr($arg, 2)] = substr($arg, 2);
                 continue;

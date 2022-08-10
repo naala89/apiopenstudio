@@ -37,7 +37,11 @@ Links
 - [Run_tests_locally using GitLab runner][run_tests_locally_using_gitlab_runner]
 
 [codecept_docs]: https://codeception.com/docs/
+
 [php_codesniffer_docs]: https://github.com/squizlabs/PHP_CodeSniffer/wiki
+
 [setup_gitlab_runner]: /developers/testing/setting-up-local-gitlab-runner
+
 [run_tests_outside_gitlab_runner]: /developers/testing/run-codeception-outside-gitlab-runner
+
 [run_tests_locally_using_gitlab_runner]: /developers/testing/running-test-locally-using-gitlab-runner

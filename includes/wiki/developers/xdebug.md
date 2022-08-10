@@ -47,10 +47,10 @@ need to set up the PHP interpreters.
 * In the new popup:
 
   ![xdebug_configure_cli_interpreter][xdebug_configure_cli_interpreter]
-  * Select `Docker`.
-  * Image name: `apiopenstudio_docker_dev_php`.
-  * Leave the `PHP interpreter path` as `php`.
-  * Click on `Apply` and `OK`.
+    * Select `Docker`.
+    * Image name: `apiopenstudio_docker_dev_php`.
+    * Leave the `PHP interpreter path` as `php`.
+    * Click on `Apply` and `OK`.
 
 ![CLI interpreters][xdebug_cli_interpreters]
 
@@ -96,13 +96,23 @@ Links
 * [Conditional COPY/ADD in Dockerfile?][conditional_copy_add_in_dockerfile]
 
 [docker_dev]: [https://gitlab.com/apiopenstudio/apiopenstudio_docker_dev]
+
 [jetbrains_configure_xdebug]: https://www.jetbrains.com/help/phpstorm/configuring-xdebug.html
+
 [setup_step_debugging_php_xdebug3_docker]: https://matthewsetter.com/setup-step-debugging-php-xdebug3-docker
+
 [creating_a_php_debug_server_configuration]: https://www.jetbrains.com/help/phpstorm/creating-a-php-debug-server-configuration.html
+
 [conditional_copy_add_in_dockerfile]: https://www.py4u.net/discuss/1621084
+
 [xdebug_set_php_language_level]: images/xdebug_php_language_level.png
+
 [xdebug_select_cli_interpreter]: images/xdebug_select_cli_interpreter.png
+
 [xdebug_configure_cli_interpreter]: images/xdebug_configure_cli_interpreter.png
+
 [xdebug_cli_interpreters]: images/xdebug_cli_interpreters.png
+
 [xdebug_set_port]: images/xdebug_port.png
+
 [xdebug_server]: images/xdebug_server.png

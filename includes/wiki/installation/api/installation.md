@@ -18,32 +18,40 @@ Settings
 
     cp example.settings.yml settings.yml
 
-Update the settings in ```.env```.
-See [settings](/installation/api/settings.html)
+Update the settings in `.env`. See [settings][settings]
 
 Server
 ------
 
 1. Install [Composer][composer]
 2. The following PHP extensions are required:
-    1. php-curl
-    2. php-mbstring
-    3. php-dom
-    4. php-zip
+    1. `php-curl`
+    2. `php-mbstring`
+    3. `php-dom`
+    4. `php-zip`
 3. Set the file permissions:
-    1. ```cd /path/to/apiopenstudio```
-    2. ```chown -R www-data:<my_group> ./*```
+    1. `cd /path/to/apiopenstudio`
+    2. `chown -R www-data:<my_group> ./*`
 4. Run composer install in the docroot:
-    2. ```composer install```
+    1. `composer install`
 5. Set up the database.
-    1. ```./includes/scripts/install.php```
-6. Update ```php.ini``` (if using non-apache server,
+    1. `./vendor/bin/aos-install`
+6. Update `php.ini` (if using non-apache server,
    see [Hardening your HTTP response headers][hardening_headers]):
-    1. ```expose_php = Off```
-7. Update ```httpd.conf```
-    1. ```ServerSignature Off```
-    2. ```ServerTokens Prod```
+    1. `expose_php = Off`
+7. Update `httpd.conf`
+    1. `ServerSignature Off`
+    2. `ServerTokens Prod`
+
+Links
+-----
+
+* [Hardening headers][hardening_headers]
+* [Composer][composer]
+* [ApiOpenStudio settings][settings]
 
 [hardening_headers]: https://scotthelme.co.uk/hardening-your-http-response-headers/#removingheaders
 
 [composer]: https://getcomposer.org/
+
+[settings]: /installation/api/settings.html

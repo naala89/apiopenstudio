@@ -24,13 +24,13 @@ Uncomment The two wiki containers:
 
 * wiki
 
-Ensure that you have add the following to ```/etv/hosts```:
+Ensure that you have add the following to `/etv/hosts`:
 
     127.0.0.1   wiki.apiopenstudio.local
 
-Run ```docker-compose up -d```
+Run `docker-compose up -d`
 
-This will automatically deploy and serve the wiki HTML from ```public/wiki/```
+This will automatically deploy and serve the wiki HTML from `public/wiki/`
 
 Visit [wiki.apiopenstudio.local][wiki_local].
 

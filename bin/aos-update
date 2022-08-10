@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+#!/usr/local/bin/php
 <?php
 
 /**
@@ -13,16 +13,23 @@
  * @link      https://www.apiopenstudio.com
  */
 
-require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+$composerAutoload = [
+    __DIR__ . '/../vendor/autoload.php', // standalone with "composer install" run
+    __DIR__ . '/../../../autoload.php',  // script is installed as a composer binary
+];
+foreach ($composerAutoload as $autoload) {
+    if (file_exists($autoload)) {
+        require($autoload);
+        break;
+    }
+}
 
 use ApiOpenStudio\Cli\Update;
 
 global $argv;
 
-$install = new Update();
-
-$install->exec($argv);
-
+$update = new Update();
+$update->exec($argv);
 echo "ApiOpenStudio is successfully updated!\n\n";
 
 exit;

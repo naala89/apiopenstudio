@@ -39,9 +39,9 @@ class OpenapiDefault extends ProcessorEntity
      * @var array Details of the processor.
      */
     protected array $details = [
-        'name' => 'OpenApi Read',
-        'machineName' => 'openapi_read',
-        'description' => 'Fetch OpenApi documentation for resources in an application that the user has access to.',
+        'name' => 'OpenApi Default',
+        'machineName' => 'openapi_default',
+        'description' => 'Generate default OpenApi documentation for an application and all its resources.',
         'menu' => 'Documentation',
         'input' => [
             'appid' => [

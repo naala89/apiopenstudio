@@ -506,6 +506,143 @@ paths:
                     $ref: '#/components/responses/Unauthorised'
                 '403':
                     $ref: '#/components/responses/Forbidden'
+    /modules/{include_core}:
+        get:
+            summary: Modules Read
+            description: Fetch details of 3rd party plugins and processors.
+            tags:
+                - modules
+            security:
+                -
+                    bearer_token: []
+            parameters:
+                -
+                    in: path
+                    name: include_core
+                    description: Include core modules in the response.
+                    required: true
+                    schema:
+                        type: integer
+                        minimum: 0
+            responses:
+                '200':
+                    description: An array of 3rd party module details.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    schema:
+                                        $ref: "#/components/schemas/ModuleDetailObject"
+
+                '400':
+                    $ref: '#/components/responses/GeneralError'
+                '401':
+                    $ref: '#/components/responses/Unauthorised'
+                '403':
+                    $ref: '#/components/responses/Forbidden'
+    /modules:
+        post:
+            summary: Modules Install
+            description: Install 3rd party plugins and processors.
+            tags:
+                - modules
+            security:
+                -
+                    bearer_token: []
+            requestBody:
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                machine_name:
+                                    description: Machine_name of the module to install.
+                                    type: string
+                                    format: binary
+            responses:
+                '200':
+                    description: An array of 3rd party module machine names installed.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                additionalProperties: {}
+                                items:
+                                    description: Fully namespaced function name.
+                                    type: string
+                '400':
+                    $ref: '#/components/responses/GeneralError'
+                '401':
+                    $ref: '#/components/responses/Unauthorised'
+                '403':
+                    $ref: '#/components/responses/Forbidden'
+        delete:
+            summary: Modules Uninstall
+            description: Uninstall 3rd party plugins and processors.
+            tags:
+                - modules
+            security:
+                -
+                    bearer_token: []
+            parameters:
+                -
+                    in: query
+                    name: machine_name
+                    description: The machine_name of the module to uninstall.
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                '200':
+                    description: An array of 3rd party module machine names installed.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                additionalProperties: {}
+                                items:
+                                    description: Fully namespaced function name.
+                                    type: string
+                '400':
+                    $ref: '#/components/responses/GeneralError'
+                '401':
+                    $ref: '#/components/responses/Unauthorised'
+                '403':
+                    $ref: '#/components/responses/Forbidden'
+        put:
+            summary: Modules Update
+            description: Update 3rd party plugins and processors.
+            tags:
+                - modules
+            security:
+                -
+                    bearer_token: []
+            parameters:
+                -
+                    in: query
+                    name: machine_name
+                    description: The machine_name of the module to update.
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                '200':
+                    description: An array of 3rd party module machine names updated.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                additionalProperties: {}
+                                items:
+                                    description: Fully namespaced function name.
+                                    type: string
+                '400':
+                    $ref: '#/components/responses/GeneralError'
+                '401':
+                    $ref: '#/components/responses/Unauthorised'
+                '403':
+                    $ref: '#/components/responses/Forbidden'
     /openapi/import:
         post:
             summary: Import an OpenApi document.
@@ -1785,6 +1922,46 @@ components:
             type: array
             items:
                 $ref: '#/components/schemas/InviteObject'
+        ModuleDetailObject:
+            type: object
+            properties:
+                details:
+                    $ref: '#/components/schemas/ModuleDetailSummaryObject'
+                path:
+                    description: The path the module class definition.
+                    type: string
+                installed:
+                    description: Has the module been installed in the database.
+                    type: boolean
+                installable:
+                    description: Does the module have an install() function.
+                    type: boolean
+                update_function:
+                    description: Pending update functions to run.
+                    type: array
+                    items:
+                        description: Fully namespaced function name.
+                        type: string
+        ModuleDetailSummaryObject:
+            type: object
+            properties:
+                name:
+                    description: The module's human readable name.
+                    type: string
+                machineName:
+                    description: The module's machine_name.
+                    type: string
+                description:
+                    description: The module's description.
+                    type: string
+                menu:
+                    description: The module's parent menu.
+                    type: string
+                input:
+                    description: The module's input.
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ProcessorInputObject'
         ProcessorInputObject:
             type: object
             properties:

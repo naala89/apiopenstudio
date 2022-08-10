@@ -12,15 +12,16 @@ The GitLab pipelines runner will run phpcs against any commit or merge resquest.
 Any Merge request or commit that fails the phpcs test will not be accepted.
 So it is worth running phpcs locally before any commit.
 
-```php_codesniffer``` will be installed by composer. The standard used is PSR12.
+`php_codesniffer` will be installed by composer. The standard used is PSR12.
 
-After ```composer install``` has run, the following command will test your code
+After `composer install` has run, the following command will test your code
 locally:
 
-    ./vendor/bin/phpcs --standard=PSR12 \
+    $ ./vendor/bin/phpcs --standard=PSR12 \
         includes/ \
         public/*.php \
         tests/api/ \
+        tests/_support/Helper/ \
         tests/runner_generate_db.php
 
 Line length
@@ -61,7 +62,7 @@ Constants
 Get and Post parameters
 -----------------------
 
-* get and post params should be in snake case. 
+* get and post params should be in snake case.
 
 Try/catch and if/else
 ---------------------

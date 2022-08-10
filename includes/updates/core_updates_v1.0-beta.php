@@ -19,9 +19,9 @@ use ApiOpenStudio\Core\Config;
 /**
  * Update all core resources.
  *
- * @param ADODB_mysqli $db
+ * @param ADOConnection $db
  */
-function update_all_core_processors_beta(ADODB_mysqli $db)
+function update_all_core_processors_beta(ADOConnection $db)
 {
     // Update all core resources.
     echo "Removing all core resources from the DB...\n";
@@ -43,7 +43,7 @@ function update_all_core_processors_beta(ADODB_mysqli $db)
 /**
  * Add the OpenApi columns
  *
- * @param ADODB_mysqli $db
+ * @param ADOConnection $db
  *
  * @throws ApiException
  *
@@ -51,7 +51,7 @@ function update_all_core_processors_beta(ADODB_mysqli $db)
  *
  * @see https://gitlab.com/apiopenstudio/apiopenstudio/-/issues/48
  */
-function add_open_api_columns(ADODB_mysqli $db)
+function add_open_api_columns(ADOConnection $db)
 {
     $config = new Config();
 
@@ -100,72 +100,115 @@ function add_open_api_columns(ADODB_mysqli $db)
 /**
  * Update var_store: Add accid column and make appid and value nullable.
  *
- * @param ADODB_mysqli $db
- *
- * @throws ApiException
+ * @param ADOConnection $db
  *
  * @version V1.0.0-beta
  *
  * @see https://gitlab.com/apiopenstudio/apiopenstudio/-/issues/48
  */
-function update_var_store_table(ADODB_mysqli $db)
+function update_var_store_table(ADOConnection $db)
 {
     $config = new Config();
 
-    echo "Adding the the accid column to the var_store table...\n";
-    try {
-        $sql = "SELECT * FROM information_schema.COLUMNS ";
-        $sql .= "WHERE TABLE_SCHEMA = '" . $config->__get(['db', 'database']) . "' ";
-        $sql .= "AND TABLE_NAME = 'var_store' ";
-        $sql .= "AND COLUMN_NAME = 'accid'";
-        $result = $db->execute($sql);
-    } catch (ApiException $e) {
-        echo 'An error occurred: ' . $e->getMessage() . "\n";
+    echo "Renaming var_store.value column to val in the var_store table...\n";
+    $sql = <<<SQL
+ALTER TABLE `var_store` CHANGE COLUMN IF EXISTS `value` `val` blob DEFAULT NULL COMMENT 'value of the var' AFTER `key`;
+SQL;
+    if (!$db->execute($sql)) {
+        echo "Renaming var_store.value column failed, please check the logs\n";
         exit;
     }
-    if ($result->recordCount() !== 0) {
-        echo "Cannot create var_store.accid, it already exists\n";
+
+    echo "Adding the the var_store.accid column to the var_store table...\n";
+    $sql = <<<SQL
+ALTER TABLE `var_store` ADD COLUMN IF NOT EXISTS `accid` INT UNSIGNED DEFAULT NULL COMMENT "account id" AFTER `vid`
+SQL;
+    if (!$db->execute($sql)) {
+        echo "Adding var_store.accid column failed, please check the logs\n";
+        exit;
+    }
+
+    echo "Making the the var_store.appid column nullable...\n";
+    $sql = <<<SQL
+ALTER TABLE `var_store` CHANGE COLUMN `appid` `appid` int(10) unsigned DEFAULT NULL COMMENT 'application id'
+SQL;
+    if (!$db->execute($sql)) {
+        echo "Updating var_store.appid column failed, please check the logs\n";
+        exit;
+    }
+}
+
+/**
+ * Update core: rename to installed_version, add column (module).
+ *
+ * @param ADOConnection $db
+ *
+ * @version V1.0.0-beta
+ *
+ * @see https://gitlab.com/apiopenstudio/apiopenstudio/-/issues/196
+ */
+function update_core_table(ADOConnection $db)
+{
+    $config = new Config();
+
+    $sql = <<<SQL
+SHOW TABLE STATUS WHERE `Name` = 'core'
+SQL;
+    $result = $db->execute($sql);
+
+    if ($result->recordCount() === 0) {
+        echo "Cannot rename `core` table, skipping...\n";
     } else {
-        // phpcs:ignore
+        echo "Renaming the `core` table to `installed_version`...\n";
         $sql = <<<SQL
-ALTER TABLE var_store 
-ADD COLUMN accid INT UNSIGNED DEFAULT NULL COMMENT "account id"
-AFTER `vid`
+RENAME TABLE `core` TO `installed_version`
 SQL;
         if (!$db->execute($sql)) {
-            echo "Adding accid column failed, please check the logs\n";
-            exit;
+            echo "Renaming the `core` table to `installed_version` failed, please check the logs\n";
         }
     }
 
-    $nullableTables = ['appid', 'value'];
-    foreach ($nullableTables as $nullableTable) {
-        echo "Validating the the $nullableTable column to be nullable...\n";
-        $sql = <<<SQL
-SELECT * 
-FROM information_schema.COLUMNS 
-WHERE TABLE_SCHEMA = "?" 
-AND TABLE_NAME = "var_store" 
-AND COLUMN_NAME = "?"
+    echo "Adding the `installed_version`.`mid` column...\n";
+    $sql = <<<SQL
+ALTER TABLE `installed_version`
+    ADD COLUMN IF NOT EXISTS  `mid`
+    int(11) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'row ID'
 SQL;
-        $bindParams = [
-            $config->__get(['db', 'database']),
-            $nullableTable,
-        ];
-        $result = $db->execute($sql, $bindParams);
-        if ($result->recordCount() !== 0) {
-            echo "Cannot update var_store.$nullableTable, it does not exist\n";
-            exit;
-        }
-    }
-    $sql = "ALTER TABLE var_store MODIFY `appid` INT(10) UNSIGNED DEFAULT NULL COMMENT 'application id'";
     if (!$db->execute($sql)) {
-        echo "updating appid column failed, please check the logs\n";
+        echo "Adding the `installed_version`.`mid` column failed, please check the logs\n";
         exit;
     }
-    $sql = 'ALTER TABLE var_store MODIFY `val` BLOB DEFAULT NULL COMMENT "value of the var"';
+
+    echo "Adding the `installed_version`.`module` column...\n";
+    $sql = <<<SQL
+ALTER TABLE `installed_version`
+    ADD COLUMN IF NOT EXISTS `module`
+    varchar(256) NOT NULL DEFAULT '' COMMENT 'Module name' AFTER `mid`
+SQL;
     if (!$db->execute($sql)) {
-        echo "updating val column failed, please check the logs\n";
+        echo "Adding the `installed_version`.`module` column failed, please check the logs\n";
         exit;
     }
+
+    echo "Moving the `installed_version`.`version` column after `module`...\n";
+    $sql = <<<SQL
+ALTER TABLE `installed_version`
+    CHANGE COLUMN `version`
+    `version` varchar(255) NOT NULL DEFAULT '' COMMENT 'current version' AFTER `module`
+SQL;
+    if (!$db->execute($sql)) {
+        echo "Modifying the `installed_version`.`version` column failed, please check the logs\n";
+        exit;
+    }
+
+    echo "Adding module core to the existing core row in installed_version...\n";
+    $sql = <<<SQL
+UPDATE `installed_version` SET `module`="core" WHERE `module` IS NULL OR `module`=''
+SQL;
+    if (!$db->execute($sql)) {
+        echo "Something went wrong while updating the installed_version.core version row, please check the logs\n";
+        exit;
+    }
+
+    update_all_core_processors_beta($db);
 }

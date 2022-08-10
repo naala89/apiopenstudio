@@ -64,9 +64,9 @@ Then run:
 Runner issues
 -------------
 
-### I see ```Error loading key "(stdin)": invalid format```
+### I see `Error loading key "(stdin)": invalid format`
 
-This is caused by a missing ```SSH_PRIVATE_KEY``` (which is usually a pipelines
+This is caused by a missing `SSH_PRIVATE_KEY` (which is usually a pipelines
 variable), and results in the following on your command line:
 
     echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
@@ -89,7 +89,7 @@ commit this into your fork):
 Test YAML files
 ---------------
 
-These are in ```/tests/_data/```
+These are in `/tests/_data/`
 
 Links
 -----

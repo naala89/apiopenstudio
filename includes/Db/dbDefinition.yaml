@@ -36,12 +36,6 @@ blacklist:
         min_ip: {type: varchar(32), notnull: true, comment: ip range minimum}
         max_ip: {type: varchar(32), notnull: true, comment: ip range maximum}
 
-core:
-    columns:
-        version: {type: varchar(255), notnull: true, comment: current core version}
-    data:
-        - {version: 1.0.0-beta}
-
 external_user:
     columns:
         euid: {type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: external user id}
@@ -51,6 +45,16 @@ external_user:
         data_field_1: {type: varchar(255), notnull: false, comment: extra data field 1}
         data_field_2: {type: varchar(255), notnull: false, comment: extra data field 2}
         data_field_3: {type: varchar(255), notnull: false, comment: extra data field 3}
+
+installed_version:
+    columns:
+        mid: {type: int(10) unsigned, notnull: true, primary: true, autoincrement: true, comment: installed module id}
+        module: {type: varchar(255), notnull: true, comment: module name}
+        version: {type: varchar(255), notnull: true, comment: current version}
+    data:
+        -
+            module: core
+            version: 1.0.0-beta
 
 invite:
     columns:
