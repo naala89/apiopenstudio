@@ -4,7 +4,8 @@
     "workflow-and-documentation/bookdown.json",
     "headless.md",
     "user-roles-and-permissions.md",
-    "core-resources.md"
+    "core-resources.md",
+    "install_update_uninstall.md"
   ],
   "tocDepth": 1
 }

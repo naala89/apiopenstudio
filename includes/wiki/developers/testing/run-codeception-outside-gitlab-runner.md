@@ -28,7 +28,7 @@ Navigate to the API docroot:
 
 Install the database (ensure you say 'Y' to installing the test users):
 
-    $ ./vendor/bin/install
+    $ ./vendor/bin/aos-install
 
 Copy
 

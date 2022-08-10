@@ -159,12 +159,12 @@ the [Docker gitlab repo][docker_gitlab]
 ### Set up the DB on a standalone server
 
     cd /var/www/apiopenstudio
-    ./vendor/bin/install
+    ./vendor/bin/aos-install
 
 ### Set up the DB on a docker instance
 
     docker exec -it apiopenstudio-php bash
-    ./api/bin/install.php
+    ./api/bin/aos-install
 
 # Developers and contributors
 

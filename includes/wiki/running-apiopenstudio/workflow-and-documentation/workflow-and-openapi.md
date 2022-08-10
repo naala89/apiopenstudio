@@ -1,10 +1,9 @@
 Workflow and OpenAPI
 ====================
 
-[OpenAPI](https://swagger.io/specification/) has become the current standard for
-API definitions and documentation. It is very important from the consumers and
-developers perspective to have up-to-date and accurate documentation on all API
-resources.
+[OpenAPI][openapi] has become the current standard for API definitions and
+documentation. It is very important from the consumers and developers
+perspective to have up-to-date and accurate documentation on all API resources.
 
 Ideally, a business and its developers will be following an API-First approach
 to developing an API ecosystem. This is where there is an assumption that the
@@ -27,15 +26,23 @@ streamlined as possible. ApiOpenStudio allows you to:
 * Developers (with the necessary application access rights) can automatically
   generate base OpenAPI documentation for applications and its resources.
 * Developers (with the necessary application access rights) to edit and upload
-  the existing documentation in
-  [Swagger editor](https://swagger.io/tools/swagger-editor/).
+  the existing documentation in [Swagger editor][swagger_editor].
 * All users with access right to an application to view the OpenAPI
   documentation for resources in that application, using
-  [Swagger UI](https://swagger.io/tools/swagger-ui/).
+  [Swagger UI][swagger_ui.
 
 ApiOpenStudio currently allows full documentation workflows with
-[OpenAPI 2.0](https://swagger.io/specification/v2/) and
-[OpenAPI 3.0.3](https://swagger.io/specification/).
+[OpenAPI 2.0][openapi_2_0] and [OpenAPI 3.0.3][openapi_3_0_3].
 
 ApiOpenStudio internally groups the resources against the parent application. So
 that documentation can be automatically generated for an application.
+
+[openapi]: https://swagger.io/specification/
+
+[swagger_editor]: https://swagger.io/tools/swagger-editor/
+
+[swagger_ui]: https://swagger.io/tools/swagger-ui/
+
+[openapi_2_0]: https://swagger.io/specification/v2/
+
+[openapi_3_0_3]: https://swagger.io/specification/

@@ -95,7 +95,7 @@ Edit `/etc/hosts` and add the following:
 ### Set up the database
 
     docker-compose exec -it apiopenstudio-php
-    .api/bin/install
+    .api/bin/aos-install
 
 Follow all command prompts.
 

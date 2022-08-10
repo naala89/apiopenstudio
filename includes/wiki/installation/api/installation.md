@@ -35,7 +35,7 @@ Server
 4. Run composer install in the docroot:
     1. `composer install`
 5. Set up the database.
-    1. `./vendor/bin/install`
+    1. `./vendor/bin/aos-install`
 6. Update `php.ini` (if using non-apache server,
    see [Hardening your HTTP response headers][hardening_headers]):
     1. `expose_php = Off`

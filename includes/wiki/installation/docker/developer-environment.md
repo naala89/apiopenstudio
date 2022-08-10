@@ -76,4 +76,4 @@ Spinning up docker
     cd apiopenstudio_docker_dev
     docker-compose up -d
     docker exec -it apiopenstudio-php /bin/bash
-    ./api/vendor/bin/install
+    ./api/vendor/bin/aos-install

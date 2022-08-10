@@ -104,7 +104,7 @@ Minimum requirements are:
 
 #### The src directory
 
-This directory will contain your source class and install/uninstall files, e.g.
+This directory will contain your source class and install/update files, e.g.
 
     src/MyProcessor.php
     src/install.php
