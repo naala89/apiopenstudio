@@ -28,9 +28,9 @@ Navigate to the API docroot:
 
 Install the database (ensure you say 'Y' to installing the test users):
 
-    $ ./includes/scripts/install.php
+    $ ./vendor/bin/install
 
-Copy 
+Copy
 
 The log path streams are configured for GitLab CI, which uses the internal
 docker instance as the root. To see the logs, you will need to update
@@ -63,4 +63,5 @@ Links
 - [ApiOpenStudio docker dev][docker_dev]
 
 [docker_dev]: https://github.com/naala89/apiopenstudio_docker_dev
+
 [codecept_docs]: https://codeception.com/docs/

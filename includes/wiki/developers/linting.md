@@ -1,8 +1,8 @@
 Linting
 =======
 
-Composer will install ```squizlabs/php_codesniffer``` package by default,
-which will install ```phpcs```.
+Composer will install `squizlabs/php_codesniffer` package by default,
+which will install `phpcs`.
 
 Run:
 

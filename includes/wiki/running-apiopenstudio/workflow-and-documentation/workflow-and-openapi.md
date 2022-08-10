@@ -24,7 +24,7 @@ streamlined as possible. ApiOpenStudio allows you to:
     * Update the documentation for all associated applications and resources.
     * Automatically generate stubs in ApiOpenStudio for the resources that do not
       exist yet
-* Developers (with the necessary application access rights) can automatically 
+* Developers (with the necessary application access rights) can automatically
   generate base OpenAPI documentation for applications and its resources.
 * Developers (with the necessary application access rights) to edit and upload
   the existing documentation in

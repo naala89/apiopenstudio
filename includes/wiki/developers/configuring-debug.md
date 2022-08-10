@@ -8,25 +8,25 @@ The codebase uses 2 logging streams:
 * api
     * logging from the api.
 
-Configuration is defined in ```settings.yml```, using a wrapper for
-```Mononlog```. The reason for the wrapper, is so that we can define the
-```db``` and ```api``` logging streams in the same object, and provide the same
-configurability that ```Mononlog``` provides. The two logging streams can then
+Configuration is defined in `settings.yml`, using a wrapper for
+`Mononlog`. The reason for the wrapper, is so that we can define the
+`db` and `api` logging streams in the same object, and provide the same
+configurability that `Mononlog` provides. The two logging streams can then
 be confiured to use as many handlers and formatters as you wish.
 
 Debugging configuration
 -----------------------
 
-This is done in the ```debug``` section in ```settings.yml```.
+This is done in the `debug` section in `settings.yml`.
 
 ### Formatters
 
-A ```default``` formatter is provided in ```debug.formatters```, but you can add
+A `default` formatter is provided in `debug.formatters`, but you can add
 as many as you like. These define the log message layout.
 
 ### Handlers
 
-Sample handlers are provided in ```example.settings.yml```.
+Sample handlers are provided in `example.settings.yml`.
 
 You can use a single handler (to send db and api logs to the same file or DB
 table for example ), or multiple handlers if you want to send the logging to
@@ -34,7 +34,7 @@ multiple handlers.
 
 #### Setting verbosity levels
 
-In the ```level``` attribute, set the value to:
+In the `level` attribute, set the value to:
 
 * DEBUG: Detailed debug information.
 * INFO: Interesting events. Examples: User logs in, SQL logs.
@@ -52,8 +52,8 @@ In the ```level``` attribute, set the value to:
 
 ### Assigning handlers to logging streams
 
-This is done the ```debug.loggers``` section. assign as many handlers as you
-like to the ```db``` and ```api``` loggers.
+This is done the `debug.loggers` section. assign as many handlers as you
+like to the `db` and `api` loggers.
 
 Links
 -----

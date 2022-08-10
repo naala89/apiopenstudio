@@ -7,7 +7,7 @@ This docker will take care of all nxinx, php, composer, node, email, wiki and
 phpdoc in separate containers.
 
 It assumes that you have already setup ApiOpenStudio and ApiOpenStudio Admin
-code-bases with the correct ```.env``` file settings.
+code-bases with the correct `.env` file settings.
 
 Checkout the docker repo
 ------------------------
@@ -19,10 +19,10 @@ Configuration
 
     cp example.env .env
 
-Edit ```.env```
+Edit `.env`
 
-* Set ```API_CODEBASE``` to have the full path to your ApiOpenStudio code.
-* Set ```ADMIN_CODEBASE``` to have the full path to your ApiOpenStudio Admin
+* Set `API_CODEBASE` to have the full path to your ApiOpenStudio code.
+* Set `ADMIN_CODEBASE` to have the full path to your ApiOpenStudio Admin
   code.
 
 If you want to host the wiki and/or PHPDoc, uncomment:
@@ -31,8 +31,8 @@ If you want to host the wiki and/or PHPDoc, uncomment:
     PHPDOC_DOMAIN=phpdoc.apiopenstudio.local
 
 It will work out of the box. However, if you change any settings in
-```apiopenstudio``` or ```apiopenstudio_admin```, such as the domains or SQL
-settings, you will need to edit these in the ```.env``` file too.
+`apiopenstudio` or `apiopenstudio_admin`, such as the domains or SQL
+settings, you will need to edit these in the `.env` file too.
 
 SSL certificates
 ----------------
@@ -48,7 +48,7 @@ SSL certificates
 Wiki & PHPDoc (optional)
 ------------------------
 
-Edit ```docker-composer.yml```
+Edit `docker-composer.yml`
 
 Uncomment the container blocks for:
 
@@ -60,7 +60,7 @@ Uncomment the container blocks for:
 Hosts file
 ----------
 
-Update ```/etc/hosts``` to contain:
+Update `/etc/hosts` to contain:
 
     127.0.0.1      admin.apiopenstudio.local
     127.0.0.1      api.apiopenstudio.local
@@ -76,5 +76,4 @@ Spinning up docker
     cd apiopenstudio_docker_dev
     docker-compose up -d
     docker exec -it apiopenstudio-php /bin/bash
-    cd api
-    ./includes/scripts/install.php
+    ./api/vendor/bin/install

@@ -82,7 +82,7 @@ Always return the result in JSON format
         id: output_response_json
 
 Upload the result in XML format to a remote server. The response will
-contain ```true``` or ```false```, depending on the process success or failure.
+contain `true` or `false`, depending on the process success or failure.
 
     output:
         processor: file

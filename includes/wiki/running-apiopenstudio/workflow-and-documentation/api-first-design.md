@@ -24,7 +24,8 @@ same time.
 6. Design and build the API consuming architecture
 
 Some of the process steps are not part of the remit of OpenApiStudio, in fact,
-OpenApiStudio won't be used until steps 3.4 (or 4) through to 5. However, OpenApiStudio allows to you to import the OpenAPI documents, and it will then
+OpenApiStudio won't be used until steps 3.4 (or 4) through to 5. However, OpenApiStudio allows to you to import the
+OpenAPI documents, and it will then
 automatically generate resource stubs and store the necessary documentation
 for them.
 

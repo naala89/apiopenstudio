@@ -5,12 +5,12 @@ There are 2 optional attributes that can be added to a processor in a resource
 definition:
 
 * `cache_ttl`
-  * The time in seconds to cache the processor result.
+    * The time in seconds to cache the processor result.
 * `cache_id`
-  * Override the automatically generated cache key - this allows expensive
-  processor times to be shared between resources.
-  * **NOTE:** Use with caution, this may produce unexpected resource results
-  if not implemented carefully.
+    * Override the automatically generated cache key - this allows expensive
+      processor times to be shared between resources.
+    * **NOTE:** Use with caution, this may produce unexpected resource results
+      if not implemented carefully.
 
 The automatically generated key: `processor_<resource_id>_<processor_id>`.
 

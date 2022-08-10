@@ -17,5 +17,7 @@ application in the admin interface.
 ![swagger UI][default_documentation]
 
 [generate_default_button]: images/generate_default_button.png
+
 [default_documentation_editor]: images/default_documentation_editor.png
+
 [default_documentation]: images/default_documentation.png

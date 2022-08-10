@@ -3,7 +3,7 @@ Introduction
 
 This is an optional setup, mainly for developers amd contributors.
 
-The wiki markdown is contained in ```includes/wiki```, and compiled into HTML
+The wiki markdown is contained in `includes/wiki`, and compiled into HTML
 using bookdown.
 
 This is done on purpose, to maintainers of the code quick and easy
@@ -18,10 +18,10 @@ host settings are additional offered here.
 Before you serve the wiki, you will need to compile the wiki. This is donw
 through bookdown.
 
-Ensure that you have already run ```composer install```.
+Ensure that you have already run `composer install`.
 
 from the project root, run:
 
     export CSS_BOOTSWATCH=spacelab && export CSS_PRISM=prism && MENU_LOGO=/img/api_open_studio_logo_name_colour.png && php ./vendor/bin/bookdown includes/wiki/bookdown.json
 
-This will compile and place the reault markup in ```public/wiki```.
+This will compile and place the reault markup in `public/wiki`.

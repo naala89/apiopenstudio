@@ -72,7 +72,7 @@ Granular access
 
 Access to ApiOpenStudio is controlled by user roles. Although you can also
 create API resources that do not require user validation. If you want to create
-a resource that is open to the general public.
+a resource that is open to the public.
 
 Each registered user must have a role assigned to them
 
@@ -101,7 +101,7 @@ More security strategies are coming.
 Input
 -----
 
-ApiOpenStudio can fetch data from other endpoints, like API's on a remote,
+ApiOpenStudio can fetch data from other endpoints, like APIs on a remote,
 another ApiOpenStudio resource or a file on a remote server. These remote
 endpoints do not need to be completely open: a resource can be created to use
 whatever authentication you require on that endpoint.
@@ -156,16 +156,15 @@ Serve ApiOpenStudio and admin through Docker. See
 the [Docker github repo][docker_github] or
 the [Docker gitlab repo][docker_gitlab]
 
-### Setup the DB on a standalone server
+### Set up the DB on a standalone server
 
     cd /var/www/apiopenstudio
-    ./includes/scripts/install.php
+    ./vendor/bin/install
 
-### Setup the DB on a docker instance
+### Set up the DB on a docker instance
 
     docker exec -it apiopenstudio-php bash
-    cd api
-    ./includes/scripts/install.php
+    ./api/bin/install.php
 
 # Developers and contributors
 

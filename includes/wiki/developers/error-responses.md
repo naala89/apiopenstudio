@@ -6,25 +6,25 @@ which is translated into the correct output format by ApiOpenStudio.
 
 example (json):
 
-```
+`
 {
-  "error": {
-    "id": "example_function_id",
-    "code": 7,
-    "message": "The application does not exist."
-  }
+"error": {
+"id": "example_function_id",
+"code": 7,
+"message": "The application does not exist."
 }
-```
+}
+`
 
 example (xml):
 
-```
+`
 <error>
-  <id>example_function_id</id>
-  <code>7</code>
-  <message>The application does not exist</message>
+<id>example_function_id</id>
+<code>7</code>
+<message>The application does not exist</message>
 </error>
-```
+`
 
 * **id** is the processor in the resource where the error occurred.
 * **code** is the error type.

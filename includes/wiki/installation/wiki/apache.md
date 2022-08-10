@@ -1,7 +1,7 @@
 Apache (optional)
 =================
 
-Wiki virtualhost 
+Wiki virtualhost
 ----------------
 
     <VirtualHost *:80>

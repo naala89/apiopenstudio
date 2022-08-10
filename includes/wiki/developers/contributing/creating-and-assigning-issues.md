@@ -1,16 +1,16 @@
 Creating and working on issues
 ==============================
 
-To work on issues, you must ```Request Access``` to the repository.
+To work on issues, you must `Request Access` to the repository.
 
 This will give you access to the issue tickets.
 
-Visit the [ApiOpenStudio][gitlab] home page, and click on the ```Request Access```
+Visit the [ApiOpenStudio][gitlab] home page, and click on the `Request Access`
 link:
 
 ![Request Access screenshot][request_access_screenshot]
 
-The maintainer will review and grant you ```Reporter access```. You will then be
+The maintainer will review and grant you `Reporter access`. You will then be
 able to create, edit and assign tickets, and create merge requests.
 
 ### Reporting an issue

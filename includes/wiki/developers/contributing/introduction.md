@@ -33,7 +33,7 @@ the main repository.
 Wiki
 ----
 
-All wiki text is stored in markdown format in ```includes/wiki/```.
+All wiki text is stored in markdown format in `includes/wiki/`.
 
 We use bookdown to compile the markdown to html.
 

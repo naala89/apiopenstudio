@@ -32,9 +32,9 @@ Leave all settings as default
     cd /path/to/my/development/directory/apiopenstudio_docker_dev
     cp example.env .env
 
-Edit ```.env```
+Edit `.env`
 
-Set to values for ```API_CODEBASE``` and ```ADMIN_CODEBASE``` to point to your
+Set to values for `API_CODEBASE` and `ADMIN_CODEBASE` to point to your
 git clones, e.g.:
 
     API_CODEBASE=/path/to/my/development/directory/apiopenstudio
@@ -66,7 +66,7 @@ git clones, e.g.:
 
 #### Enable the wiki and phpdoc (optional).
 
-Edit ```docker-composer.yml```
+Edit `docker-composer.yml`
 
 Uncomment the container blocks for:
 
@@ -76,7 +76,7 @@ Uncomment the container blocks for:
 
 ### Let your computer know where the hostnames reside
 
-Edit ```/etc/hosts``` and add the following:
+Edit `/etc/hosts` and add the following:
 
     127.0.0.1      admin.apiopenstudio.local
     127.0.0.1      api.apiopenstudio.local
@@ -92,11 +92,10 @@ Edit ```/etc/hosts``` and add the following:
     cd <project_root>
     export CSS_BOOTSWATCH=spacelab && export CSS_PRISM=prism && MENU_LOGO=/img/api_open_studio_logo_name_colour.png && php ./vendor/bin/bookdown includes/wiki/bookdown.json
 
-### Setup the database
+### Set up the database
 
     docker-compose exec -it apiopenstudio-php
-    cd api
-    ./includes/scripts/install.php
+    .api/bin/install
 
 Follow all command prompts.
 
