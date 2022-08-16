@@ -1,4 +1,4 @@
-# OpenApi read.
+# Account create resource.
 #
 # @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -8,28 +8,29 @@
 # @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
-name: OpenApi read
+name: Cache clear
 
-description: Fetch OpenApi documentation for an application and its resources, limited by user access rights.
+description: Clear all cache.
 
-uri: openapi
+uri: cache/clear
 
-method: get
+method: post
 
 appid: 1
 
 ttl: 0
 
 security:
-    processor: validate_token
-    id: openapi_read_security
+    processor: validate_token_roles
+    id: cache_clear_security
+    roles:
+        - Administrator
+        - Account manager
+        - Application manager
+        - Developer
+    validate_account: false
+    validate_application: false
 
 process:
-    processor: openapi_read
-    cache_ttl: 3600
-    id: openapi_read_process
-    appid:
-        processor: var_get
-        id: openapi_read_appid
-        expected_type: integer
-        key: appid
+    processor: cache_clear
+    id: cache_clear_process
