@@ -1,0 +1,36 @@
+# Account create resource.
+#
+# @package   Apiopenstudio\Resources
+# @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
+#            If a copy of the license was not distributed with this file,
+#            You can obtain one at https://www.apiopenstudio.com/license/.
+# @author    john89 (https://gitlab.com/john89)
+# @copyright 2020-2030 Naala Pty Ltd
+# @link      https://www.apiopenstudio.com
+
+name: Cache clear
+
+description: Clear all cache.
+
+uri: cache/clear
+
+method: post
+
+appid: 1
+
+ttl: 0
+
+security:
+    processor: validate_token_roles
+    id: cache_clear_security
+    roles:
+        - Administrator
+        - Account manager
+        - Application manager
+        - Developer
+    validate_account: false
+    validate_application: false
+
+process:
+    processor: cache_clear
+    id: cache_clear_process
