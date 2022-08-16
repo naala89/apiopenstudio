@@ -26,6 +26,7 @@ security:
 
 process:
     processor: openapi_read
+    cache_ttl: 3600
     id: openapi_read_process
     appid:
         processor: var_get
