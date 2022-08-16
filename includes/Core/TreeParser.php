@@ -299,7 +299,11 @@ class TreeParser
                 if (is_null($inputsHash = $this->getInputsHash($node))) {
                     return null;
                 }
-                $processorCacheKey = $this->cache->getProcessorCacheKey($resource->getResid(), $node['id'], $inputsHash);
+                $processorCacheKey = $this->cache->getProcessorCacheKey(
+                    $resource->getResid(),
+                    $node['id'],
+                    $inputsHash
+                );
             }
             return $this->cache->get($processorCacheKey);
         }
@@ -325,7 +329,11 @@ class TreeParser
                 if (is_null($inputsHash = $this->getInputsHash($node))) {
                     return false;
                 }
-                $processorCacheKey = $this->cache->getProcessorCacheKey($resource->getResid(), $node['id'], $inputsHash);
+                $processorCacheKey = $this->cache->getProcessorCacheKey(
+                    $resource->getResid(),
+                    $node['id'],
+                    $inputsHash
+                );
             }
             return $this->cache->set($processorCacheKey, $data, $node['cache_ttl']);
         }
