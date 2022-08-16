@@ -296,7 +296,10 @@ class TreeParser
             $processorCacheKey = $node['cache_id'] ?? '';
             if (empty($processorCacheKey)) {
                 $resource = $this->request->getResource();
-                $processorCacheKey = $this->cache->getProcessorCacheKey($resource->getResid(), $node['id']);
+                if (is_null($inputsHash = $this->getInputsHash($node))) {
+                    return null;
+                }
+                $processorCacheKey = $this->cache->getProcessorCacheKey($resource->getResid(), $node['id'], $inputsHash);
             }
             return $this->cache->get($processorCacheKey);
         }
@@ -319,11 +322,38 @@ class TreeParser
             $processorCacheKey = $node['cache_id'] ?? '';
             if (empty($processorCacheKey)) {
                 $resource = $this->request->getResource();
-                $processorCacheKey = $this->cache->getProcessorCacheKey($resource->getResid(), $node['id']);
+                if (is_null($inputsHash = $this->getInputsHash($node))) {
+                    return false;
+                }
+                $processorCacheKey = $this->cache->getProcessorCacheKey($resource->getResid(), $node['id'], $inputsHash);
             }
             return $this->cache->set($processorCacheKey, $data, $node['cache_ttl']);
         }
         return false;
+    }
+
+    /**
+     * Return a hash of all calculated inputs.
+     *
+     * @param array $node
+     *
+     * @return string|null
+     */
+    protected function getInputsHash(array $node): ?string
+    {
+        $inputsHash = '';
+        foreach ($node as $value) {
+            if (is_array($value) && isset($value['processor']) && isset($value['id'])) {
+                if (!isset($this->resultStack[$value['id']])) {
+                    return null;
+                }
+                $result = $this->resultStack[$value['id']];
+                $result = $result->getData();
+                $result = is_null($result) ? 'null' : $result;
+                $inputsHash .= is_array($result) ? json_encode($result) : $result;
+            }
+        }
+        return md5($inputsHash);
     }
 
     /**
