@@ -112,8 +112,17 @@ class ResourceValidator
                 $this->logger->error('api', $message);
                 throw new ApiException($message, 6, -1, 400);
             }
-            foreach ($meta['meta']['fragments'] as $fragVal) {
-                $this->validateSection($fragVal, true);
+            foreach ($meta['meta']['fragments'] as $fragKey => $fragVal) {
+                try {
+                    $this->validateSection([$fragKey => $fragVal], true);
+                } catch (ApiException $e) {
+                    throw new ApiException(
+                        $e->getMessage() . " (fragment: $fragKey)",
+                        $e->getCode(),
+                        $e->getProcessor(),
+                        $e->getHtmlCode()
+                    );
+                }
             }
         }
 
