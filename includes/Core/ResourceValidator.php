@@ -116,7 +116,12 @@ class ResourceValidator
                 try {
                     $this->validateSection([$fragKey => $fragVal], true);
                 } catch (ApiException $e) {
-                    throw new ApiException($e->getMessage() . " (fragment: $fragKey)", $e->getCode(), -1, $e->getHtmlCode());
+                    throw new ApiException(
+                        $e->getMessage() . " (fragment: $fragKey)",
+                        $e->getCode(),
+                        $e->getProcessor(),
+                        $e->getHtmlCode()
+                    );
                 }
             }
         }
