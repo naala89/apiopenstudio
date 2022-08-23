@@ -1,9 +1,0 @@
-{
-  "title": "PHPDoc setup",
-  "content": [
-    "introduction.md",
-    "apache.md",
-    "nginx.md"
-  ],
-  "tocDepth": 1
-}
