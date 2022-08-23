@@ -1,9 +1,0 @@
-{
-  "title": "Logic",
-  "content": [
-    "introduction.md",
-    "if-then-else.md",
-    "for-each.md"
-  ],
-  "tocDepth": 1
-}
