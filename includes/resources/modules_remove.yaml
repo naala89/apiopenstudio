@@ -1,0 +1,43 @@
+# Composer remove.
+#
+# @package   Apiopenstudio\Resources
+# @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
+#            If a copy of the license was not distributed with this file,
+#            You can obtain one at https://www.apiopenstudio.com/license/.
+# @author    john89 (https://gitlab.com/john89)
+# @copyright 2020-2030 Naala Pty Ltd
+# @link      https://www.apiopenstudio.com
+
+name: Composer remove
+
+description: Run a composer remove command.
+
+uri: composer
+
+method: delete
+
+appid: 1
+
+ttl: 0
+
+security:
+    id: composer require security
+    processor: validate_token_roles
+    roles:
+        - Developer
+    validate_account: false
+    validate_application: false
+
+process:
+    processor: composer_command
+    id: composer remove process
+    command:
+        processor: var_literal
+        id: composer remove command
+        value: remove
+        type: text
+    package:
+        processor: var_get
+        id: composer remove package
+        key: package
+        expected_type: text

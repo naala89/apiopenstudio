@@ -1,0 +1,43 @@
+# Composer require.
+#
+# @package   Apiopenstudio\Resources
+# @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
+#            If a copy of the license was not distributed with this file,
+#            You can obtain one at https://www.apiopenstudio.com/license/.
+# @author    john89 (https://gitlab.com/john89)
+# @copyright 2020-2030 Naala Pty Ltd
+# @link      https://www.apiopenstudio.com
+
+name: Composer require
+
+description: Run a composer require command.
+
+uri: composer
+
+method: post
+
+appid: 1
+
+ttl: 0
+
+security:
+    id: composer require security
+    processor: validate_token_roles
+    roles:
+        - Developer
+    validate_account: false
+    validate_application: false
+
+process:
+    processor: composer_command
+    id: composer require process
+    command:
+        processor: var_literal
+        id: composer require command
+        value: require
+        type: text
+    package:
+        processor: var_post
+        id: composer require package
+        key: package
+        expected_type: text
