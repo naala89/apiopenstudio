@@ -1,0 +1,36 @@
+#!/usr/local/bin/php
+<?php
+
+/**
+ * Script to install the ApiOpenStudio DB.
+ *
+ * @package   ApiOpenStudio
+ * @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
+ *            If a copy of the license was not distributed with this file,
+ *            You can obtain one at https://www.apiopenstudio.com/license/.
+ * @author    john89 (https://gitlab.com/john89)
+ * @copyright 2020-2030 Naala Pty Ltd
+ * @link      https://www.apiopenstudio.com
+ */
+
+$composerAutoload = [
+    __DIR__ . '/../vendor/autoload.php', // standalone with "composer install" run
+    __DIR__ . '/../../../autoload.php',  // script is installed as a composer binary
+];
+foreach ($composerAutoload as $autoload) {
+    if (file_exists($autoload)) {
+        require($autoload);
+        break;
+    }
+}
+
+use ApiOpenStudio\Cli\Install;
+
+global $argv;
+
+$install = new Install();
+$install->exec($argv);
+echo "ApiOpenStudio is successfully installed!\n";
+echo "You will now be able to configure and use the admin GUI and/or make REST calls to Api OpenStudio.\n";
+
+exit;

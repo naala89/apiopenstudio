@@ -1,4 +1,4 @@
-# Import an OpenApi document.
+# Composer list repository.
 #
 # @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -8,32 +8,31 @@
 # @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
-name: Import an OpenApi document.
+name: Composer repository list
 
-description: Import an OpenApi document file in a form post and update the existing documentation or generate stubs for resources that do not exist.
+description: Run a composer command to list all repository.
 
-uri: openapi/import
+uri: composer/repository
 
-method: post
+method: get
 
 appid: 1
 
 ttl: 0
 
 security:
+    id: composer repository list security
     processor: validate_token_roles
-    id: openapi_import_security
     roles:
         - Developer
     validate_account: false
     validate_application: false
 
 process:
-    processor: openapi_import
-    id: openapi_import_openapi_import
-    openapi_document:
-        id: openapi_import_file
-        processor: var_file
-        location: _FILES
-        filename: openapi
-        get_contents: true
+    processor: composer_command
+    id: composer repository list process
+    command:
+        processor: var_literal
+        id: composer repository list command
+        value: repository_list
+        type: text

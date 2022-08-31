@@ -92,24 +92,12 @@ class Api
      */
     public function process(): DataContainer
     {
-        // DB link.
-        $dsnOptionsArr = [];
-        foreach ($this->settings['db']['options'] as $k => $v) {
-            $dsnOptionsArr[] = "$k=$v";
+        try {
+            $this->db = Utilities::getDbConnection($this->settings['db']);
+        } catch (ApiException $e) {
+            $this->logger->error('db', $e->getMessage());
+            throw new ApiException($e->getMessage(), $e->getCode(), $e->getProcessor(), $e->getHtmlCode());
         }
-        $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
-        $dsn = $this->settings['db']['driver'] . '://'
-            . $this->settings['db']['username'] . ':'
-            . $this->settings['db']['password'] . '@'
-            . $this->settings['db']['host'] . '/'
-            . $this->settings['db']['database']
-            . $dsnOptions;
-        $conn = ADONewConnection($dsn);
-        if (empty($conn)) {
-            $this->logger->error('db', 'DB connection failed');
-            throw new ApiException('DB connection failed', 2, 'oops', 500);
-        }
-        $this->db = $conn;
 
         // get the request data for processing.
         $this->request = $this->getData();

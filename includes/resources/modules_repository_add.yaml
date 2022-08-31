@@ -1,0 +1,48 @@
+# Composer add repository.
+#
+# @package   Apiopenstudio\Resources
+# @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
+#            If a copy of the license was not distributed with this file,
+#            You can obtain one at https://www.apiopenstudio.com/license/.
+# @author    john89 (https://gitlab.com/john89)
+# @copyright 2020-2030 Naala Pty Ltd
+# @link      https://www.apiopenstudio.com
+
+name: Composer repository add
+
+description: Run a composer command to add a repository.
+
+uri: composer/repository
+
+method: post
+
+appid: 1
+
+ttl: 0
+
+security:
+    id: composer repository add security
+    processor: validate_token_roles
+    roles:
+        - Developer
+    validate_account: false
+    validate_application: false
+
+process:
+    processor: composer_command
+    id: composer repository add process
+    command:
+        processor: var_literal
+        id: composer repository add command
+        value: repository_set
+        type: text
+    repository_key:
+        processor: var_post
+        id: composer repository add key
+        key: repository_key
+        expected_type: text
+    repository_url:
+        processor: var_post
+        id: composer repository add url
+        key: repository_url
+        expected_type: text

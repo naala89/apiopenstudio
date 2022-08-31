@@ -2,12 +2,16 @@
   "name": "apiopenstudio/apiopenstudio",
   "description": "Build APIs faster & at less cost",
   "keywords": [
+    "apiopenstudio",
     "api",
+    "open",
     "open-source",
+    "studio",
+    "low code",
+    "no code",
+    "lcnc",
     "multi-tool",
     "business logic",
-    "studio",
-    "open",
     "community"
   ],
   "license": "NOASSERTION",
@@ -27,16 +31,25 @@
     "wiki": "https://wiki.apiopenstudio.com/",
     "source": "https://github.com/naala89/apiopenstudio"
   },
-  "require-dev": {
-    "vlucas/phpdotenv": "^3",
-    "codeception/codeception": "^4.1",
-    "codeception/module-phpbrowser": "^1.0",
-    "codeception/module-rest": "^1.2",
-    "codeception/module-filesystem": "^1.0",
-    "codeception/module-asserts": "^2.0",
-    "squizlabs/php_codesniffer": "^3.5",
-    "cebe/php-openapi": "^1.5"
+  "extra": {
+    "installer-types": [
+      "apiopenstudio-endpoint-package",
+      "apiopenstudio-output-package",
+      "apiopenstudio-processor-package",
+      "apiopenstudio-security-package"
+    ],
+    "installer-paths": {
+      "includes/Endpoint/vendor/{$name}/": ["type:apiopenstudio-endpoint-package"],
+      "includes/Output/vendor/{$name}/": ["type:apiopenstudio-output-package"],
+      "includes/Processor/vendor/{$name}/": ["type:apiopenstudio-processor-package"],
+      "includes/Security/vendor/{$name}/": ["type:apiopenstudio-security-package"]
+    }
   },
+  "bin": [
+    "bin/aos-install",
+    "bin/aos-modules",
+    "bin/aos-update"
+  ],
   "require": {
     "ext-simplexml": "*",
     "ext-json": "*",
@@ -58,7 +71,20 @@
     "soapbox/laravel-formatter": "^3.1",
     "selective/image-type": "^1.1",
     "symfony/mailer": "*",
-    "league/flysystem": "*"
+    "league/flysystem": "*",
+    "oomphinc/composer-installers-extender": "^2.0",
+    "roave/better-reflection": "*",
+    "composer/composer": "^2.4"
+  },
+  "require-dev": {
+    "vlucas/phpdotenv": "^3",
+    "codeception/codeception": "^4.1",
+    "codeception/module-phpbrowser": "^1.0",
+    "codeception/module-rest": "^1.2",
+    "codeception/module-filesystem": "^1.0",
+    "codeception/module-asserts": "^2.0",
+    "squizlabs/php_codesniffer": "^3.5",
+    "cebe/php-openapi": "^1.5"
   },
   "autoload": {
     "psr-4": {
@@ -67,7 +93,10 @@
   },
   "config": {
     "allow-plugins": {
-      "kylekatarnls/update-helper": true
+      "composer/installers": true,
+      "oomphinc/composer-installers-extender": true,
+      "kylekatarnls/update-helper": true,
+      "kylekatarnls/update": true
     }
   }
 }

@@ -173,12 +173,12 @@ class Cache
      *
      * @param int $resId Resource ID.
      * @param string $processorId Processor ID.
-     *
+     * @param string $inputsHash Hash of input values.
      * @return string
      */
-    public function getProcessorCacheKey(int $resId, string $processorId): string
+    public function getProcessorCacheKey(int $resId, string $processorId, string $inputsHash): string
     {
         $processorId = preg_replace('/[^a-z\d]/i', '_', strtolower($processorId));
-        return "processor_$resId" . '_' . $processorId;
+        return "processor_$resId" . '_' . $processorId . '_' . $inputsHash;
     }
 }

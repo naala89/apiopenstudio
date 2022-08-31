@@ -26,7 +26,12 @@ class ProcessorHelper
      *
      * @var string[]
      */
-    private array $namespaces = array('Security', 'Endpoint', 'Output', 'Processor', 'Core');
+    private array $namespaces = [
+        'Security',
+        'Endpoint',
+        'Output',
+        'Processor',
+    ];
 
     /**
      * Return processor namespace and class name string.

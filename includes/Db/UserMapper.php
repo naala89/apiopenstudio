@@ -117,8 +117,6 @@ class UserMapper extends Mapper
      * @return array $array of Users.
      *
      * @throws ApiException Return an ApiException on DB error.
-     *
-     * @see \ApiOpenStudio\Db\Mapper.
      */
     public function findAllByPermissions(int $uid, array $params = []): array
     {

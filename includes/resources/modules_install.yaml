@@ -1,4 +1,4 @@
-# Import an OpenApi document.
+# Module Install.
 #
 # @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -8,11 +8,11 @@
 # @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
-name: Import an OpenApi document.
+name: Modules Install
 
-description: Import an OpenApi document file in a form post and update the existing documentation or generate stubs for resources that do not exist.
+description: Install 3rd party plugins and processors.
 
-uri: openapi/import
+uri: modules
 
 method: post
 
@@ -21,19 +21,21 @@ appid: 1
 ttl: 0
 
 security:
+    id: modules install security
     processor: validate_token_roles
-    id: openapi_import_security
     roles:
+        - Administrator
+        - Account manager
+        - Application manager
         - Developer
     validate_account: false
     validate_application: false
 
 process:
-    processor: openapi_import
-    id: openapi_import_openapi_import
-    openapi_document:
-        id: openapi_import_file
-        processor: var_file
-        location: _FILES
-        filename: openapi
-        get_contents: true
+    processor: modules_install
+    id: modules install process
+    machine_name:
+        processor: var_post
+        id: modules install machine_name
+        key: machine_name
+        expected_type: text

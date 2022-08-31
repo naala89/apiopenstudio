@@ -172,7 +172,7 @@ class ApplicationMapper extends Mapper
      *
      * @param integer $accid Account ID.
      *
-     * @return array[Application] array of mapped Application objects.
+     * @return array Array of mapped Application objects.
      *
      * @throws ApiException Return an ApiException on DB error.
      */

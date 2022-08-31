@@ -7,7 +7,10 @@
 tests/_support/_generated/
 
 #apiopenstudio
-public/wiki/
+includes/Endpoint/vendor/
+includes/Output/vendor/
+includes/Processor/vendor/
+includes/Security/vendor/
 public/phpdoc/
 dbdata/
 log/

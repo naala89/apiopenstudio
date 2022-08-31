@@ -150,6 +150,12 @@ abstract class Entity
      *          t, which can take or many input of Processor Field.
      */
     protected array $details = array();
+
+    /**
+     * Metadata for the processor.
+     *
+     * @var array
+     */
     protected array $meta;
 
     /**

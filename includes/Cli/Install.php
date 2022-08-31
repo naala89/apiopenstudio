@@ -26,10 +26,12 @@ use stdClass;
 /**
  * Class Install
  *
- * Script to setup the ApiOpenStudio database.
+ * Script to set-up the ApiOpenStudio database.
  */
 class Install extends Script
 {
+    use HandleExceptionTrait;
+
     /**
      * {@inheritDoc}
      */
@@ -53,8 +55,8 @@ class Install extends Script
      */
     public function __construct()
     {
-        $this->config = new Config();
         parent::__construct();
+        $this->config = new Config();
     }
 
     /**
@@ -63,9 +65,9 @@ class Install extends Script
     protected function help()
     {
         $help = "Install\n\n";
-        $help .= "This command will create the database and install ApiOpenStudio.\n\n";
+        $help .= "This command will create the database and install ApiOpenStudio core.\n\n";
         $help .= "Example:\n";
-        $help .= "./include/scripts/install.php\n";
+        $help .= "./vendor/bin/aos-install\n";
         echo $help;
     }
 
@@ -96,31 +98,31 @@ class Install extends Script
         try {
             $rootPassword = $this->config->__get(['db', 'root_password']);
             $username = $this->config->__get(['db', 'username']);
+            $this->createLink(null, null, '', 'root', $rootPassword);
+            echo "\n";
+            $this->dropDatabase();
+            echo "\n";
+            $this->dropUser($username);
+            echo "\n";
+            $this->createDatabase();
+            echo "\n";
+            $this->createUser();
+            echo "\n";
+            $this->useDatabase();
+            echo "\n";
+            $this->createTables();
+            echo "\n";
+            $this->createResources();
+            echo "\n";
+            $this->importOpenApi();
+            echo "\n";
+            $this->createAdminUser();
+            echo "\n";
+            $this->generateJwtKeys();
+            echo "\n";
         } catch (ApiException $e) {
             $this->handleException($e);
         }
-        $this->createLink(null, null, '', 'root', $rootPassword);
-        echo "\n";
-        $this->dropDatabase();
-        echo "\n";
-        $this->dropUser($username);
-        echo "\n";
-        $this->createDatabase();
-        echo "\n";
-        $this->createUser();
-        echo "\n";
-        $this->useDatabase();
-        echo "\n";
-        $this->createTables();
-        echo "\n";
-        $this->createResources();
-        echo "\n";
-        $this->importOpenApi();
-        echo "\n";
-        $this->createAdminUser();
-        echo "\n";
-        $this->generateJwtKeys();
-        echo "\n";
     }
 
     /**
@@ -174,21 +176,6 @@ class Install extends Script
         }
 
         echo "Connection successful!\n";
-    }
-
-    /**
-     * Close the DB link.
-     */
-    public function closeLink()
-    {
-        echo "Closing connection the the database host...\n";
-
-        if (!$this->db->close()) {
-            echo "Error: Could not close the connection, please check the logs.\n";
-            exit;
-        }
-
-        echo "Disconnect successful!\n";
     }
 
     /**
@@ -749,11 +736,5 @@ class Install extends Script
             shell_exec("chmod 600 $private_key_path $public_key_path");
             echo "keys generated\n";
         }
-    }
-
-    protected function handleException(ApiException $e)
-    {
-        echo $e->getMessage() . "\n";
-        exit;
     }
 }

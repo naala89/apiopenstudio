@@ -127,22 +127,22 @@ ApiOpenStudio 1.0.0-alpha3
 - Changed the token auth to JWT tokens.
 - Moved code of conduct into CODE_OF_CONDUCT.md.
 - Updated gitlab-ci:
-  - Updated gitlab-ci the use the new ```naala89/bookdown-rsync```,
-    ```naala89/phpdoc-rsync```& ```naala89/apiopenstudio-nginx-php-7.4```
-    images.
-  - Fixed gitlab runner artifacts.
-  - tests run on all merge requests and deploy to wiki/phpdoc on merges.
-  - Updated gitlab-ci the use the new ```naala89/bookdown-rsync```,
-    ```naala89/phpdoc-rsync```& ```naala89/apiopenstudio-nginx-php-7.4```
-    images.
+    - Updated gitlab-ci the use the new `naala89/bookdown-rsync`,
+      `naala89/phpdoc-rsync`& `naala89/apiopenstudio-nginx-php-7.4`
+      images.
+    - Fixed gitlab runner artifacts.
+    - tests run on all merge requests and deploy to wiki/phpdoc on merges.
+    - Updated gitlab-ci the use the new `naala89/bookdown-rsync`,
+      `naala89/phpdoc-rsync`& `naala89/apiopenstudio-nginx-php-7.4`
+      images.
 - Deprecated Cascade logger and created a wrapper for Monolog.
-- Wiki, Removed ```bookdown/bookdown``` from the composer dev dependencies.
+- Wiki, Removed `bookdown/bookdown` from the composer dev dependencies.
 - Deprecated the Mapper processors.
 - Created new JsonPath and XmlPath processors.
 - Added functional tests for user and role.
 - Created new traits for datatype conversion.
 - Implemented casting on all input vars like VarPost.
-- Create/update CRUD processors now return the value result, rather than 
+- Create/update CRUD processors now return the value result, rather than
   true/false.
 
 ApiOpenStudio 1.0.0-beta
@@ -151,22 +151,22 @@ ApiOpenStudio 1.0.0-beta
 - Implemented full OpenAPI support and generation.
 - Separated the node tree traversal from core Api class.
 - Implemented conditional logic in the node tree traversal.
-- JSON output handles NaN, INF and -INF (return "NaN", "Infinity", "-Infinity") 
+- JSON output handles NaN, INF and -INF (return "NaN", "Infinity", "-Infinity")
 - New processors:
-  - If...Then...Else
-  - For...Each
-  - Do...While
-  - Math
-  - Sequential
-  - Cast
+    - If...Then...Else
+    - For...Each
+    - Do...While
+    - Math
+    - Sequential
+    - Cast
 - Deprecated processors:
-  - ConvertToArray
-  - ConvertToJson
+    - ConvertToArray
+    - ConvertToJson
 - More functional tests.
-- Deprecated ```array``` input in ```var_field```.
+- Deprecated `array` input in `var_field`.
 - Updated all API calls the handle possible new JSON response objects:
-  - New JSON error response object.
-  - Responses can now be raw JSON response or a JSON response object.
+    - New JSON error response object.
+    - Responses can now be raw JSON response or a JSON response object.
 - Fixed remote outputs and email with plugin architecture.
 - Fixed caching, and now works with Memcached and Redis (removed APCu).
 - Added caching per processor as well as resource result.
@@ -177,3 +177,7 @@ ApiOpenStudio 1.0.0-beta
 - Renamed Collection to VarCollection.
 - Renamed Literal to VarLiteral.
 - Allow wrapping JSON responses in an object to ensure always matching JSON standards.
+- Moved `includes/scripts/` to `bin/`.
+- Added Composer config to copy `bin/*` to `vendor/bin/`.
+- Prefixed all scripts with `aos-` to prevent collision in `vendor/bin/`.
+- Implemented CLI and API resources to manage 3rd party modules.

@@ -14,6 +14,7 @@
 
 namespace ApiOpenStudio\Core;
 
+use ADOConnection;
 use DateInterval;
 use DateTimeZone;
 use Lcobucci\Clock\SystemClock;
@@ -430,13 +431,13 @@ class Utilities
 
         $decryptedToken = $jwtConfig->parser()->parse($rawToken);
         if (!assert($decryptedToken instanceof UnencryptedToken)) {
-            throw new ApiException('invalid token', 4, -1, 401);
+            throw new ApiException('invalid token', 4, 'oops', 401);
         }
 
         try {
             $jwtConfig->validator()->assert($decryptedToken, ...$constraints);
         } catch (RequiredConstraintsViolated | NoConstraintsGiven $e) {
-            throw new ApiException('invalid token', 4, -1, 401);
+            throw new ApiException('invalid token', 4, 'oops', 401);
         }
 
         return $decryptedToken;
@@ -459,10 +460,10 @@ class Utilities
         try {
             $uid = $decryptedToken->claims()->get('uid');
             if (!assert(!empty($uid))) {
-                throw new ApiException('user ID not included in the claim', 4, -1, 401);
+                throw new ApiException('user ID not included in the claim', 4, 'oops', 401);
             }
         } catch (RequiredConstraintsViolated $e) {
-            throw new ApiException('Invalid token', 4, -1, 401);
+            throw new ApiException('Invalid token', 4, 'oops', 401);
         }
 
         return $uid;
@@ -485,12 +486,126 @@ class Utilities
         try {
             $roles = $decryptedToken->claims()->get('roles');
             if (!assert(!empty($roles))) {
-                throw new ApiException('user roles not included in the claim', 4, -1, 401);
+                throw new ApiException('user roles not included in the claim', 4, 'oops', 401);
             }
         } catch (RequiredConstraintsViolated $e) {
-            throw new ApiException('Invalid token', 4, -1, 401);
+            throw new ApiException('Invalid token', 4, 'oops', 401);
         }
 
         return $roles;
+    }
+
+    /**
+     * Return the DB connection, defined in the settings.
+     *
+     * @param array $dbConfig
+     *   DB section of the config array.
+     *
+     * @return ADOConnection
+     *
+     * @throws ApiException
+     */
+    public static function getDbConnection(array $dbConfig): ADOConnection
+    {
+        // DB link.
+        $dsnOptionsArr = [];
+        foreach ($dbConfig['options'] as $k => $v) {
+            $dsnOptionsArr[] = "$k=$v";
+        }
+        $dsnOptions = count($dsnOptionsArr) > 0 ? ('?' . implode('&', $dsnOptionsArr)) : '';
+        $dsn = $dbConfig['driver'] . '://'
+            . $dbConfig['username'] . ':'
+            . $dbConfig['password'] . '@'
+            . $dbConfig['host'] . '/'
+            . $dbConfig['database']
+            . $dsnOptions;
+
+        if (empty($conn = ADONewConnection($dsn))) {
+            throw new ApiException('DB connection failed', 2, 'oops', 500);
+        }
+
+        return $conn;
+    }
+
+    /**
+     * Return the logger object, defined in the settings.
+     *
+     * @param array $debugConfig
+     *   Debug section of the config array.
+     *
+     * @return MonologWrapper
+     *
+     * @throws ApiException
+     */
+    public static function getLogger(array $debugConfig): MonologWrapper
+    {
+        return new MonologWrapper($debugConfig);
+    }
+
+    /**
+     * List all functions defined in a file.
+     *
+     * @param string $file
+     *   Path to the file.
+     *
+     * @return array
+     *   Array of function names.
+     *
+     * @see https://stackoverflow.com/questions/2197851/function-list-of-php-file
+     */
+    public static function getDefinedFunctionsInFile(string $file): array
+    {
+        $source = file_get_contents($file);
+        $tokens = token_get_all($source);
+
+        $functions = array();
+        $nextStringIsFunc = false;
+        $inClass = false;
+        $bracesCount = 0;
+
+        foreach ($tokens as $token) {
+            switch ($token[0]) {
+                case T_CLASS:
+                    $inClass = true;
+                    break;
+
+                case T_FUNCTION:
+                    if (!$inClass) {
+                        $nextStringIsFunc = true;
+                    }
+                    break;
+
+                case T_STRING:
+                    if ($nextStringIsFunc) {
+                        $nextStringIsFunc = false;
+                        $functions[] = $token[1];
+                    }
+                    break;
+
+                // Anonymous functions
+                case '(':
+                case ';':
+                    $nextStringIsFunc = false;
+                    break;
+
+                // Exclude Classes
+                case '{':
+                    if ($inClass) {
+                        $bracesCount++;
+                    }
+                    break;
+
+                case '}':
+                    if ($inClass) {
+                        $bracesCount--;
+                        if ($bracesCount === 0) {
+                            $inClass = false;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        return $functions;
     }
 }
