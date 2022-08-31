@@ -2,12 +2,16 @@
   "name": "apiopenstudio/apiopenstudio",
   "description": "Build APIs faster & at less cost",
   "keywords": [
+    "apiopenstudio",
     "api",
+    "open",
     "open-source",
+    "studio",
+    "low code",
+    "no code",
+    "lcnc",
     "multi-tool",
     "business logic",
-    "studio",
-    "open",
     "community"
   ],
   "license": "NOASSERTION",
@@ -69,7 +73,8 @@
     "symfony/mailer": "*",
     "league/flysystem": "*",
     "oomphinc/composer-installers-extender": "^2.0",
-    "roave/better-reflection": "*"
+    "roave/better-reflection": "*",
+    "composer/composer": "^2.4"
   },
   "require-dev": {
     "vlucas/phpdotenv": "^3",
@@ -88,9 +93,10 @@
   },
   "config": {
     "allow-plugins": {
-      "kylekatarnls/update-helper": true,
       "composer/installers": true,
-      "oomphinc/composer-installers-extender": true
+      "oomphinc/composer-installers-extender": true,
+      "kylekatarnls/update-helper": true,
+      "kylekatarnls/update": true
     }
   }
 }

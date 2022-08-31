@@ -1,4 +1,4 @@
-# Module Install.
+# Composer add repository.
 #
 # @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -8,11 +8,11 @@
 # @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
-name: Modules Install
+name: Composer repository add
 
-description: Install 3rd party plugins and processors.
+description: Run a composer command to add a repository.
 
-uri: modules
+uri: composer/repository
 
 method: post
 
@@ -21,21 +21,28 @@ appid: 1
 ttl: 0
 
 security:
-    id: modules install security
+    id: composer repository add security
     processor: validate_token_roles
     roles:
-        - Administrator
-        - Account manager
-        - Application manager
         - Developer
     validate_account: false
     validate_application: false
 
 process:
-    processor: modules_install
-    id: modules install process
-    machine_name:
+    processor: composer_command
+    id: composer repository add process
+    command:
+        processor: var_literal
+        id: composer repository add command
+        value: repository_set
+        type: text
+    repository_key:
         processor: var_post
-        id: modules install machine_name
-        key: machine_name
+        id: composer repository add key
+        key: repository_key
+        expected_type: text
+    repository_url:
+        processor: var_post
+        id: composer repository add url
+        key: repository_url
         expected_type: text

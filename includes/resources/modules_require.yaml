@@ -1,4 +1,4 @@
-# Module Uninstall.
+# Composer require.
 #
 # @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -8,34 +8,36 @@
 # @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
-name: Modules Uninstall
+name: Composer require
 
-description: Uninstall 3rd party plugins and processors.
+description: Run a composer require command.
 
-uri: modules
+uri: composer
 
-method: delete
+method: post
 
 appid: 1
 
 ttl: 0
 
 security:
-    id: modules uninstall security
+    id: composer require security
     processor: validate_token_roles
     roles:
-        - Administrator
-        - Account manager
-        - Application manager
         - Developer
     validate_account: false
     validate_application: false
 
 process:
-    processor: modules_uninstall
-    id: modules uninstall process
-    machine_name:
-        processor: var_get
-        id: modules uninstall machine_name
-        key: machine_name
+    processor: composer_command
+    id: composer require process
+    command:
+        processor: var_literal
+        id: composer require command
+        value: require
+        type: text
+    package:
+        processor: var_post
+        id: composer require package
+        key: package
         expected_type: text

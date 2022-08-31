@@ -1,4 +1,4 @@
-# Module Uninstall.
+# Composer repository remove.
 #
 # @package   Apiopenstudio\Resources
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -8,11 +8,11 @@
 # @copyright 2020-2030 Naala Pty Ltd
 # @link      https://www.apiopenstudio.com
 
-name: Modules Uninstall
+name: Composer repository remove
 
-description: Uninstall 3rd party plugins and processors.
+description: Run a composer command to remove a repository.
 
-uri: modules
+uri: composer/repository
 
 method: delete
 
@@ -21,21 +21,23 @@ appid: 1
 ttl: 0
 
 security:
-    id: modules uninstall security
+    id: composer repository remove security
     processor: validate_token_roles
     roles:
-        - Administrator
-        - Account manager
-        - Application manager
         - Developer
     validate_account: false
     validate_application: false
 
 process:
-    processor: modules_uninstall
-    id: modules uninstall process
-    machine_name:
+    processor: composer_command
+    id: composer repository remove process
+    command:
+        processor: var_literal
+        id: composer repository remove command
+        value: repository_unset
+        type: text
+    repository_key:
         processor: var_get
-        id: modules uninstall machine_name
-        key: machine_name
+        id: composer repository remove key
+        key: repository_key
         expected_type: text

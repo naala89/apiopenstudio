@@ -11,7 +11,6 @@ includes/Endpoint/vendor/
 includes/Output/vendor/
 includes/Processor/vendor/
 includes/Security/vendor/
-public/wiki/
 public/phpdoc/
 dbdata/
 log/
