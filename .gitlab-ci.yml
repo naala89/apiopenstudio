@@ -293,7 +293,7 @@ prod-docker-develop:
     - !reference [.commit_to_apiopenstudio_develop, rules]
   variables:
     BRANCH: develop
-  trigger: apiopenstudio/apiopenstudio_docker_prod
+  trigger: docker_images/apiopenstudio_docker_prod
 
 prod-docker-master:
   stage: prod_docker
@@ -301,7 +301,7 @@ prod-docker-master:
     - !reference [.commit_to_apiopenstudio_master, rules]
   variables:
     BRANCH: master
-  trigger: apiopenstudio/apiopenstudio_docker_prod
+  trigger: docker_images/apiopenstudio_docker_prod
 
 prod-docker-tag:
   stage: prod_docker
@@ -309,4 +309,4 @@ prod-docker-tag:
     - !reference [.tag_to_apiopenstudio_master, rules]
   variables:
     TAG: $CI_COMMIT_TAG
-  trigger: apiopenstudio/apiopenstudio_docker_prod
+  trigger: docker_images/apiopenstudio_docker_prod
