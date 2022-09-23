@@ -78,6 +78,7 @@ workflow:
 stages:
   - test
   - deploy_phpdoc
+  - prod_docker
 
 ##################################
 ## TESTS
@@ -281,3 +282,31 @@ phpdoc-prod:
     - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "sudo chown -R $PROD_DEPLOYER:www-data $PROD_PHPDOC_PATH/*"
     - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "sudo chmod 664 $PROD_PHPDOC_PATH/sitemap.xml"
     - ssh "$PROD_DEPLOYER"@"$PROD_PHPDOC_URL" "php $SITEMAP_GENERATOR file=$PROD_PHPDOC_PATH/sitemap.xml site=https://$PROD_PHPDOC_URL"
+
+##################################
+## Production Docker
+##################################
+
+prod-docker-develop:
+  stage: prod_docker
+  rules:
+    - !reference [.commit_to_apiopenstudio_develop, rules]
+  variables:
+    BRANCH: develop
+  trigger: apiopenstudio/docker_images/apiopenstudio_docker_prod
+
+prod-docker-master:
+  stage: prod_docker
+  rules:
+    - !reference [.commit_to_apiopenstudio_master, rules]
+  variables:
+    BRANCH: master
+  trigger: apiopenstudio/docker_images/apiopenstudio_docker_prod
+
+prod-docker-tag:
+  stage: prod_docker
+  rules:
+    - !reference [.tag_to_apiopenstudio_master, rules]
+  variables:
+    TAG: $CI_COMMIT_TAG
+  trigger: apiopenstudio/docker_images/apiopenstudio_docker_prod
