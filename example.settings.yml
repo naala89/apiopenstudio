@@ -20,12 +20,12 @@ debug:
       class: StreamHandler
       formatter: default
       level: DEBUG
-      stream: /var/log/api.log
+      stream: /var/log/nginx/api.log
     db_log_file:
       class: StreamHandler
       formatter: default
       level: DEBUG
-      stream: /var/log/db.log
+      stream: /var/log/nginx/db.log
   #    fire_php:
   #      class: FirePHPHandler
   #      formatter: default
@@ -61,7 +61,7 @@ debug:
         - db_log_file
 
 db:
-  definition_path: "includes/db/dbDefinition.yaml"
+  definition_path: "includes/Db/dbDefinition.yaml"
   driver: mysqli
   host: apiopenstudio-db
   root_password: apiopenstudio
