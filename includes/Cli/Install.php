@@ -731,8 +731,10 @@ class Install extends Script
 
         if ($generateKeys) {
             echo "Generating keys...\n";
-            shell_exec("echo -e 'y\\n' | ssh-keygen -t rsa -b 4096 -P '' -m PEM -f $private_key_path >/dev/null & sleep 2");
-            shell_exec("echo -e 'y\\n' | openssl rsa -in $private_key_path -pubout -outform PEM -out $public_key_path");
+            $cmd = "echo -e 'y\\n' | ssh-keygen -t rsa -b 4096 -P '' -m PEM -f $private_key_path >/dev/null & sleep 2";
+            shell_exec($cmd);
+            $cmd = "echo -e 'y\\n' | openssl rsa -in $private_key_path -pubout -outform PEM -out $public_key_path";
+            shell_exec($cmd);
             shell_exec("chmod 600 $private_key_path $public_key_path");
             echo "keys generated\n";
         }
