@@ -26,32 +26,37 @@ debug:
       formatter: default
       level: DEBUG
       stream: /var/log/nginx/db.log
-  #    fire_php:
-  #      class: FirePHPHandler
-  #      formatter: default
-  #    chrome_php:
-  #      class: ChromePHPHandler
-  #      formatter: default
-  #    syslog:
-  #      class: SyslogHandler
-  #      ident: ApiOpenStudio
-  #      facility: local6
-  #      level: DEBUG
-  #      formatter: default
-  #    error_log:
-  #      class: ErrorLogHandler
-  #      formatter: default
-  #    processor:
-  #      class: ProcessHandler
-  #      command: '/usr/bin/php /var/www/monolog/someScript.php'
-  #      level: DEBUG
-  #      formatter: default
-  #    mongo_db:
-  #      class: MongoDBHandler
-  #      mongodb: client
-  #      collection: logs
-  #      level: DEBUG
-  #      formatter: default
+    stdout:
+      class: StreamHandler
+      formatter: default
+      level: DEBUG
+      stream: php://stdout
+    fire_php:
+      class: FirePHPHandler
+      formatter: default
+    chrome_php:
+      class: ChromePHPHandler
+      formatter: default
+    syslog:
+      class: SyslogHandler
+      ident: ApiOpenStudio
+      facility: local6
+      level: DEBUG
+      formatter: default
+    error_log:
+      class: ErrorLogHandler
+      formatter: default
+    processor:
+      class: ProcessHandler
+      command: '/usr/bin/php /var/www/monolog/someScript.php'
+      level: DEBUG
+      formatter: default
+    mongo_db:
+      class: MongoDBHandler
+      mongodb: client
+      collection: logs
+      level: DEBUG
+      formatter: default
   loggers:
     api:
       handlers:

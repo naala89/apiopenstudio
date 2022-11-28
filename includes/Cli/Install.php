@@ -711,6 +711,7 @@ class Install extends Script
         echo "You will need the public/private keys for users to login and validate.\n";
         echo "These can be automatically generated for you, or you can manually copy them in yourself\n\n";
 
+        $private_key_path = $public_key_path = '';
         try {
             $private_key_path = $config->__get(['api', 'jwt_private_key']);
             $public_key_path = $config->__get(['api', 'jwt_public_key']);
@@ -731,6 +732,8 @@ class Install extends Script
 
         if ($generateKeys) {
             echo "Generating keys...\n";
+            $cmd = "rm $private_key_path $public_key_path";
+            shell_exec($cmd);
             $cmd = "echo -e 'y\\n' | ssh-keygen -t rsa -b 4096 -P '' -m PEM -f $private_key_path >/dev/null & sleep 2";
             shell_exec($cmd);
             $cmd = "echo -e 'y\\n' | openssl rsa -in $private_key_path -pubout -outform PEM -out $public_key_path";
