@@ -116,7 +116,7 @@ user:
         phone_mobile: {type: varchar(32), default: NULL, comment: user mobile number}
         phone_work: {type: varchar(32), default: NULL, comment: user work number}
         password_reset: {type: varchar(32), default: NULL, comment: password reset token}
-        password_reset_ttl: {type: timestamp, default: NULL, comment: end of life for passowrd reset token}
+        password_reset_ttl: {type: timestamp, default: NULL, comment: end of life for password reset token}
     data:
         -
             username: tester_administrator

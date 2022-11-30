@@ -84,15 +84,13 @@ foreach ($goodIdentities as $goodIdentity) {
         'result' => 'string',
         'data' => [
             'uid' => 'integer',
+            'active' => 'integer',
             'username' => 'string',
             'hash' => 'string',
-            'passwordReset' => 'string',
-            'passwordResetTtl' => 'string',
-            'active' => 'integer',
+            'email' => 'string',
             'honorific' => 'string',
             'nameFirst' => 'string',
             'nameLast' => 'string',
-            'email' => 'string',
             'company' => 'string',
             'website' => 'string',
             'addressStreet' => 'string',
@@ -103,6 +101,8 @@ foreach ($goodIdentities as $goodIdentity) {
             'addressPostcode' => 'string',
             'phoneMobile' => 'string',
             'phoneWork' => 'string',
+            'passwordReset' => 'string',
+            'passwordResetTtl' => 'string',
         ],
     ]);
     $response = json_decode($I->getResponse(), true);
