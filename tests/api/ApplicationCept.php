@@ -651,7 +651,6 @@ $newApplicationOpenApi = [
     ],
     'servers' => [
         ['url' => 'http://localhost/testing_acc/new_application1'],
-        ['url' => 'https://localhost/testing_acc/new_application1'],
     ],
     'paths' => [],
     'components' => [
@@ -776,7 +775,7 @@ $validReadUsers = [
                 'accid' => 2,
                 'appid' => 2,
                 'name' => 'testing_app',
-                'openapi' => [],
+                'openapi' => $testingAppOpenApi,
             ],
         ],
     ],
@@ -788,7 +787,7 @@ $validReadUsers = [
                 'accid' => 2,
                 'appid' => 2,
                 'name' => 'testing_app',
-                'openapi' => [],
+                'openapi' => $testingAppOpenApi,
             ],
         ],
     ], [
@@ -799,7 +798,7 @@ $validReadUsers = [
                 'accid' => 2,
                 'appid' => 2,
                 'name' => 'testing_app',
-                'openapi' => [],
+                'openapi' => $testingAppOpenApi,
             ],
         ],
     ], [
@@ -810,7 +809,7 @@ $validReadUsers = [
                 'accid' => 2,
                 'appid' => 2,
                 'name' => 'testing_app',
-                'openapi' => [],
+                'openapi' => $testingAppOpenApi,
             ],
         ],
     ], [
@@ -821,7 +820,7 @@ $validReadUsers = [
                 'accid' => 2,
                 'appid' => 2,
                 'name' => 'testing_app',
-                'openapi' => [],
+                'openapi' => $testingAppOpenApi,
             ],
         ],
     ],
@@ -858,7 +857,6 @@ foreach ($validCreateEditDeleteUsers as $user) {
         'These are the resources that belong to the edited_name application.';
     $editedNewApplicationOpenApi['servers'] = [
         ['url' => 'http://localhost/testing_acc/edited_name'],
-        ['url' => 'https://localhost/testing_acc/edited_name'],
     ];
     $I->seeResponseContainsJson([
         'result' => 'ok',
@@ -936,15 +934,19 @@ foreach ($validReadUsers as $user) {
     $I->sendGet($uri);
     $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
-    $response = $user['applications'];
+    $response = [
+        'result' => 'ok',
+        'data' => $user['applications'],
+    ];
     if ($user['username'] == getenv('TESTER_ADMINISTRATOR_NAME')) {
-        $response[$appid] = [
+        $response['data'][$appid] = [
             'accid' => 2,
             'appid' => $appid,
             'name' => 'new_application1',
             'openapi' => $newApplicationOpenApi,
         ];
     }
+    var_dump(json_encode($response));
     $I->seeResponseContainsJson($response);
 }
 

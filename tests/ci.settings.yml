@@ -49,7 +49,6 @@ db:
 api:
   protocols:
     - http
-    - https
   base_path: CI_PROJECT_DIR/
   url: localhost
   cache:
@@ -59,8 +58,6 @@ api:
   core_account: apiopenstudio
   core_application: core
   core_resource_lock: false
-  openapi_version: "3.0.3"
-  openapi_directory: "includes/openapiSchema"
   dir_public: public/
   dir_resources: includes/resources/
   dir_uploads: uploads/
@@ -72,3 +69,10 @@ api:
   jwt_life: "+6 hour"
   jwt_issuer: localhost
   jwt_permitted_for: localhost
+  openapi_version: "3.0.3"
+  openapi_directory: "includes/openapiSchema"
+
+email:
+  from: "Admin <admin@localhost.com>"
+  reply_to: "Contact <contact@localhost.com>"
+  dsn: "smtp://USERNAME:PASSWORD@DOMAIN:PORT"
