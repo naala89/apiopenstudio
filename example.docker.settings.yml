@@ -51,12 +51,6 @@ debug:
       command: '/usr/bin/php /var/www/monolog/someScript.php'
       level: ERROR
       formatter: default
-    mongo_db:
-      class: MongoDBHandler
-      mongodb: client
-      collection: logs
-      level: ERROR
-      formatter: default
   loggers:
     api:
       handlers:
@@ -69,9 +63,9 @@ db:
   definition_path: "includes/Db/dbDefinition.yaml"
   driver: mysqli
   host: apiopenstudio-db
-  root_password: apiopenstudio
+  root_password: my_s3cr3t
   username: apiopenstudio
-  password: apiopenstudio
+  password: my_s3cr3t
   database: apiopenstudio
   options:
     debug: false
