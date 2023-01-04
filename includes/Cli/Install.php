@@ -724,10 +724,10 @@ class Install extends Script
         while (!is_bool($generateKeys)) {
             $prompt = "Automatically generate public/private keys for JWT ";
             $prompt .= "(WARNING, this will overwrite any existing keys at ";
-            $prompt .= "the location defined in settings.yml) [y/N]: ";
+            $prompt .= "the location defined in settings.yml) [Y/n]: ";
             $generateKeys = strtolower($this->readlineTerminal($prompt));
-            $generateKeys = $generateKeys === 'n' || $generateKeys === '' ? false : $generateKeys;
-            $generateKeys = $generateKeys === 'y' ? true : $generateKeys;
+            $generateKeys = $generateKeys === 'y' || $generateKeys === '' ? true : $generateKeys;
+            $generateKeys = $generateKeys === 'n' ? false : $generateKeys;
         }
 
         if ($generateKeys) {
