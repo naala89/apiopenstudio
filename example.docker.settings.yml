@@ -31,33 +31,15 @@ debug:
       formatter: default
       level: ERROR
       stream: php://stdout
-    fire_php:
-      class: FirePHPHandler
-      formatter: default
-    chrome_php:
-      class: ChromePHPHandler
-      formatter: default
-    syslog:
-      class: SyslogHandler
-      ident: ApiOpenStudio
-      facility: local6
-      level: ERROR
-      formatter: default
-    error_log:
-      class: ErrorLogHandler
-      formatter: default
-    processor:
-      class: ProcessHandler
-      command: '/usr/bin/php /var/www/monolog/someScript.php'
-      level: ERROR
-      formatter: default
   loggers:
     api:
       handlers:
         - stdout
+        - api_log_file
     db:
       handlers:
         - stdout
+        - db_log_file
 
 db:
   definition_path: "includes/Db/dbDefinition.yaml"
@@ -76,21 +58,21 @@ api:
   protocols:
     - https
   base_path: "/var/www/html/"
-  url: "api.apiopenstudio.local"
+  url: "api.example.com"
   cache:
     active: false
 #  cache:
 #    active: true
 #    type: memcached
 #    servers:
-#        host: apiopenstudio-memcached
+#        host: memcached.example.com
 #        port: 11211
-#        wight: 1
+#        weight: 1
 #  cache:
 #    active: true
 #    type: redis
 #    servers:
-#      host: apiopenstudio-redis
+#      host: redis.example.com
 #      port: 6379
 #      password:
   default_format: json
@@ -107,8 +89,8 @@ api:
   jwt_alg_type: "Rsa"
   jwt_alg: "Sha256"
   jwt_life: "+1 hour"
-  jwt_issuer: "api.apiopenstudio.local"
-  jwt_permitted_for: "api.apiopenstudio.local"
+  jwt_issuer: "api.example.com"
+  jwt_permitted_for: "api.example.com"
   openapi_version: "3.0.3"
   openapi_directory: "includes/openapiSchema"
 
