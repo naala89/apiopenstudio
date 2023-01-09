@@ -21,7 +21,6 @@ $coreOpenApi = [
     ],
     'servers' => [
         ['url' => 'http://localhost/apiopenstudio/core'],
-        ['url' => 'https://localhost/apiopenstudio/core'],
     ],
     'paths' => [],
     'components' => [
@@ -113,6 +112,58 @@ $coreOpenApi = [
             'InviteObjects' => [
                 'type' => 'array',
                 'items' => ['$ref' => '#/components/schemas/InviteObject'],
+            ],
+            'ModuleDetailObject' => [
+                'type' => 'object',
+                'properties' => [
+                    'details' => ['$ref' => '#/components/schemas/ModuleDetailSummaryObject'],
+                    'path' => [
+                        'description' => 'The path the module class definition.',
+                        'type' => 'string',
+                    ],
+                    'installed' => [
+                        'description' => 'Has the module been installed in the database.',
+                        'type' => 'boolean',
+                    ],
+                    'installable' => [
+                        'description' => 'Does the module have an install() function.',
+                        'type' => 'boolean',
+                    ],
+                    'update_function' => [
+                        'description' => 'Pending update functions to run.',
+                        'type' => 'array',
+                        'items' => [
+                            'description' => 'Fully namespaced function name.',
+                            'type' => 'string',
+                        ],
+                    ],
+                ],
+            ],
+            'ModuleDetailSummaryObject' => [
+                'type' => 'object',
+                'properties' => [
+                    'name' => [
+                        'description' => "The module's human readable name.",
+                        'type' => 'string',
+                    ],
+                    'machineName' => [
+                        'description' => "The module's machine_name.",
+                        'type' => 'string',
+                    ],
+                    'description' => [
+                        'description' => "The module's description.",
+                        'type' => 'string',
+                    ],
+                    'menu' => [
+                        'description' => "The module's parent menu.",
+                        'type' => 'string',
+                    ],
+                    'input' => [
+                        'description' => "The module's input.",
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/ProcessorInputObject'],
+                    ],
+                ],
             ],
             'ProcessorInputObject' => [
                 'type' => 'object',
@@ -535,38 +586,34 @@ $testingAppOpenApi = [
         'version' => '1.0.0',
     ],
     'servers' => [
-        ['url' => 'http://api.apiopenstudio.local/testing_acc/testing_app'],
         ['url' => 'https://api.apiopenstudio.local/testing_acc/testing_app']
     ],
     'paths' => [],
     'components' => [
         'schemas' => [
             'GeneralError' => [
-                'type' => 'object',
                 'properties' => [
-                    'result' => [
-                        'type' => 'string',
-                    ],
                     'data' => [
-                        'type' => 'object',
                         'properties' => [
-                            'type' => 'object',
-                            'properties' => [
-                                'id' => [
-                                    'type' => 'integer',
-                                    'format' => 'int32',
-                                ],
-                                'code' => [
-                                    'type' => 'integer',
-                                    'format' => 'int32',
-                                ],
-                                'message' => [
-                                    'type' => 'string',
-                                ],
+                            'code' => [
+                                'format' => 'int32',
+                                'type' => 'integer',
+                            ],
+                            'id' => [
+                                'format' => 'int32',
+                                'type' => 'integer',
+                            ],
+                            'message' => [
+                                'type' => 'string',
                             ],
                         ],
+                        'type' => 'object',
                     ],
+                    'result' => [
+                        'type' => 'string',
+                    ]
                 ],
+                'type' => 'object',
             ],
         ],
         'responses' => [
@@ -946,7 +993,6 @@ foreach ($validReadUsers as $user) {
             'openapi' => $newApplicationOpenApi,
         ];
     }
-    var_dump(json_encode($response));
     $I->seeResponseContainsJson($response);
 }
 
