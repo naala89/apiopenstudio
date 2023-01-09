@@ -65,7 +65,7 @@ class UserCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'active' => [
                 'description' => 'The active flag for the user.',
@@ -83,7 +83,7 @@ class UserCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => ['Mr', 'Ms', 'Miss', 'Mrs', 'Dr', 'Prof', 'Hon'],
-                'default' => '',
+                'default' => null,
             ],
             'name_first' => [
                 'description' => 'The first name of the user.',
@@ -92,7 +92,7 @@ class UserCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'name_last' => [
                 'description' => 'The last name of the user.',
@@ -101,7 +101,7 @@ class UserCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'company' => [
                 'description' => 'The company of the user.',
@@ -110,7 +110,7 @@ class UserCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'website' => [
                 'description' => 'The website of the user.',
@@ -119,7 +119,7 @@ class UserCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'address_street' => [
                 'description' => 'The street address of the user.',
@@ -128,7 +128,7 @@ class UserCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'address_suburb' => [
                 'description' => 'The suburb of the user.',
@@ -137,7 +137,7 @@ class UserCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'address_city' => [
                 'description' => 'The city of the user.',
@@ -146,7 +146,7 @@ class UserCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'address_state' => [
                 'description' => 'The state of the user.',
@@ -155,7 +155,7 @@ class UserCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'address_country' => [
                 'description' => 'The country of the user.',
@@ -164,7 +164,7 @@ class UserCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'address_postcode' => [
                 'description' => 'The postcode of the user.',
@@ -173,7 +173,7 @@ class UserCreate extends ProcessorEntity
                 'limitProcessors' => [],
                 'limitTypes' => ['text'],
                 'limitValues' => [],
-                'default' => '',
+                'default' => null,
             ],
             'phone_mobile' => [
                 'description' => 'The mobile phone of the user.',

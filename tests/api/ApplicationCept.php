@@ -21,7 +21,6 @@ $coreOpenApi = [
     ],
     'servers' => [
         ['url' => 'http://localhost/apiopenstudio/core'],
-        ['url' => 'https://localhost/apiopenstudio/core'],
     ],
     'paths' => [],
     'components' => [
@@ -113,6 +112,58 @@ $coreOpenApi = [
             'InviteObjects' => [
                 'type' => 'array',
                 'items' => ['$ref' => '#/components/schemas/InviteObject'],
+            ],
+            'ModuleDetailObject' => [
+                'type' => 'object',
+                'properties' => [
+                    'details' => ['$ref' => '#/components/schemas/ModuleDetailSummaryObject'],
+                    'path' => [
+                        'description' => 'The path the module class definition.',
+                        'type' => 'string',
+                    ],
+                    'installed' => [
+                        'description' => 'Has the module been installed in the database.',
+                        'type' => 'boolean',
+                    ],
+                    'installable' => [
+                        'description' => 'Does the module have an install() function.',
+                        'type' => 'boolean',
+                    ],
+                    'update_function' => [
+                        'description' => 'Pending update functions to run.',
+                        'type' => 'array',
+                        'items' => [
+                            'description' => 'Fully namespaced function name.',
+                            'type' => 'string',
+                        ],
+                    ],
+                ],
+            ],
+            'ModuleDetailSummaryObject' => [
+                'type' => 'object',
+                'properties' => [
+                    'name' => [
+                        'description' => "The module's human readable name.",
+                        'type' => 'string',
+                    ],
+                    'machineName' => [
+                        'description' => "The module's machine_name.",
+                        'type' => 'string',
+                    ],
+                    'description' => [
+                        'description' => "The module's description.",
+                        'type' => 'string',
+                    ],
+                    'menu' => [
+                        'description' => "The module's parent menu.",
+                        'type' => 'string',
+                    ],
+                    'input' => [
+                        'description' => "The module's input.",
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/ProcessorInputObject'],
+                    ],
+                ],
             ],
             'ProcessorInputObject' => [
                 'type' => 'object',
@@ -535,38 +586,34 @@ $testingAppOpenApi = [
         'version' => '1.0.0',
     ],
     'servers' => [
-        ['url' => 'http://api.apiopenstudio.local/testing_acc/testing_app'],
         ['url' => 'https://api.apiopenstudio.local/testing_acc/testing_app']
     ],
     'paths' => [],
     'components' => [
         'schemas' => [
             'GeneralError' => [
-                'type' => 'object',
                 'properties' => [
-                    'result' => [
-                        'type' => 'string',
-                    ],
                     'data' => [
-                        'type' => 'object',
                         'properties' => [
-                            'type' => 'object',
-                            'properties' => [
-                                'id' => [
-                                    'type' => 'integer',
-                                    'format' => 'int32',
-                                ],
-                                'code' => [
-                                    'type' => 'integer',
-                                    'format' => 'int32',
-                                ],
-                                'message' => [
-                                    'type' => 'string',
-                                ],
+                            'code' => [
+                                'format' => 'int32',
+                                'type' => 'integer',
+                            ],
+                            'id' => [
+                                'format' => 'int32',
+                                'type' => 'integer',
+                            ],
+                            'message' => [
+                                'type' => 'string',
                             ],
                         ],
+                        'type' => 'object',
                     ],
+                    'result' => [
+                        'type' => 'string',
+                    ]
                 ],
+                'type' => 'object',
             ],
         ],
         'responses' => [
@@ -651,7 +698,6 @@ $newApplicationOpenApi = [
     ],
     'servers' => [
         ['url' => 'http://localhost/testing_acc/new_application1'],
-        ['url' => 'https://localhost/testing_acc/new_application1'],
     ],
     'paths' => [],
     'components' => [
@@ -776,7 +822,7 @@ $validReadUsers = [
                 'accid' => 2,
                 'appid' => 2,
                 'name' => 'testing_app',
-                'openapi' => [],
+                'openapi' => $testingAppOpenApi,
             ],
         ],
     ],
@@ -788,7 +834,7 @@ $validReadUsers = [
                 'accid' => 2,
                 'appid' => 2,
                 'name' => 'testing_app',
-                'openapi' => [],
+                'openapi' => $testingAppOpenApi,
             ],
         ],
     ], [
@@ -799,7 +845,7 @@ $validReadUsers = [
                 'accid' => 2,
                 'appid' => 2,
                 'name' => 'testing_app',
-                'openapi' => [],
+                'openapi' => $testingAppOpenApi,
             ],
         ],
     ], [
@@ -810,7 +856,7 @@ $validReadUsers = [
                 'accid' => 2,
                 'appid' => 2,
                 'name' => 'testing_app',
-                'openapi' => [],
+                'openapi' => $testingAppOpenApi,
             ],
         ],
     ], [
@@ -821,7 +867,7 @@ $validReadUsers = [
                 'accid' => 2,
                 'appid' => 2,
                 'name' => 'testing_app',
-                'openapi' => [],
+                'openapi' => $testingAppOpenApi,
             ],
         ],
     ],
@@ -858,7 +904,6 @@ foreach ($validCreateEditDeleteUsers as $user) {
         'These are the resources that belong to the edited_name application.';
     $editedNewApplicationOpenApi['servers'] = [
         ['url' => 'http://localhost/testing_acc/edited_name'],
-        ['url' => 'https://localhost/testing_acc/edited_name'],
     ];
     $I->seeResponseContainsJson([
         'result' => 'ok',
@@ -936,9 +981,12 @@ foreach ($validReadUsers as $user) {
     $I->sendGet($uri);
     $I->seeResponseCodeIs(200);
     $I->seeResponseIsJson();
-    $response = $user['applications'];
+    $response = [
+        'result' => 'ok',
+        'data' => $user['applications'],
+    ];
     if ($user['username'] == getenv('TESTER_ADMINISTRATOR_NAME')) {
-        $response[$appid] = [
+        $response['data'][$appid] = [
             'accid' => 2,
             'appid' => $appid,
             'name' => 'new_application1',

@@ -19,7 +19,7 @@ use ApiOpenStudio\Core\Hash;
 /**
  * Class User.
  *
- * DB class for for storing user row data.
+ * DB class for storing user row data.
  */
 class User
 {
@@ -666,7 +666,7 @@ class User
     /**
      * Get the password reset token TTL.
      *
-     * @return string Password reset token TTL.
+     * @return ?string Password reset token TTL.
      */
     public function getPasswordResetTtl(): ?string
     {
