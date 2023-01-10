@@ -78,7 +78,6 @@ workflow:
 stages:
   - test
   - deploy_phpdoc
-  - prod_docker
 
 ##################################
 ## TESTS
