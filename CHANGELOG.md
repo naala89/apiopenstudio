@@ -181,3 +181,23 @@ ApiOpenStudio 1.0.0-beta
 - Added Composer config to copy `bin/*` to `vendor/bin/`.
 - Prefixed all scripts with `aos-` to prevent collision in `vendor/bin/`.
 - Implemented CLI and API resources to manage 3rd party modules.
+
+ApiOpenStudio 1.0.0-beta1
+=========================
+
+- Update GitLab pipelines to tag and upload production-ready Docker images
+  to https://hub.docker.com/repository/docker/naala89/apiopenstudio (not working)
+
+ApiOpenStudio 1.0.0-beta2
+=========================
+
+- Critical fix to allow the install script to overwrite existing JWT key/pairs. This is for the production docker.
+
+ApiOpenStudio 1.0.0-beta3
+=========================
+
+- Create an example settings file for the new docker.
+- Update ci.settings file for testing.
+- Fixes on testing_app OpenAPI schema.
+- Update User DB classes for nullable values.
+- Fix setting permissions on JWT keys sometimes happening before the file has been created.
