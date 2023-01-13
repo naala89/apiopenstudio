@@ -54,7 +54,7 @@ installed_version:
     data:
         -
             module: core
-            version: 1.0.0-beta
+            version: 1.0.0-beta3
 
 invite:
     columns:
