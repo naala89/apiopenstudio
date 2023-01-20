@@ -10,28 +10,31 @@ GaterData (former name) 0.2.0, 25 April 2016
 - New YAML importer in uploader
 - Infinite loop detector
 - Fixed output classes handling
-- Incorporated Composer -- External packages --- Facebook --- Spyc --- AdoDB ---
-  Pbkdf2 -- Autoload the core classes
+- Incorporated Composer
+    - External packages
+        - Facebook
+        - Spyc
+        - AdoDB
+        - Pbkdf2
+    - Autoload the core classes
 - Implemented data model pattern for DB
 - Fixed Cache class
-- validate inputs now uses details attribute in processors to define
-  cardinality, cardinality changed from [min, max] to '?', '*', n
+- validate inputs now uses details attribute in processors to define cardinality, cardinality changed from [min, max]
+  to '?', '*', n
 - added ability to normalise result in Url processor
 - improved Normalise class
 - object processor working
 - import/export/delete json and yaml working
 - added normalisation option to the Url endpoint processor
-- changed Object processor, so that if input is not an array, then all the
-  fields and values sit at root
+- changed Object processor, so that if input is not an array, then all the fields and values sit at root
 - import resources now has full error feedback to devs
 
 GaterData (former name) 0.2.1, 3 May 2016
 =========================================
 
-- added way of defining specific processors in processor->details->accepts,
-  e'g' 'processor varGet'
-- removed Core\UserInterface, having multiple classes with the same name is
-  confusing and extra abstraction was wastung resources
+- added way of defining specific processors in processor->details->accepts, e.g. 'processor varGet'
+- removed Core\UserInterface, having multiple classes with the same name is confusing and extra abstraction was wastung
+  resources
 - User should not generate a new token when a valid one still exists
 - completed Email output processor
 - fixed multiple output delivery
@@ -44,16 +47,15 @@ GaterData (former name) 0.2.1, 3 May 2016
 - added Sort processor
 - created VarPersistent and VarTemporary
 - removed VarStore
-- created Fragments section - this is a partial meta, allowing reuse of
-  processor results - especially useful in IfThenElse to cut down on processing
-  time
+- created Fragments section - this is a partial meta, allowing reuse of processor results - especially useful in
+  IfThenElse to cut down on processing time
 - change all resource meta 'validation' to 'security'
 
 GaterData (former name) 0.3, 23 May 2016
 ========================================
 
-Run "composer dump-autoload" on in the docroot after transferring files. Run "
-composer update" on in the docroot after transferring files.
+Run "composer dump-autoload" on in the docroot after transferring files. Run "composer update" on in the docroot after
+transferring files.
 
 - unify $request and $resource into one object
 - add crud processor for account, user & application
@@ -61,8 +63,8 @@ composer update" on in the docroot after transferring files.
 - fixed issues in new resource validation
 - consolidated DB structure and data into one file
 - added unit testing framework (codeception)
-- removed validation that request var exist in VarGet, VarPost & VarRequest -
-  this responsibility belongs in the parent processor
+- removed validation that request var exist in VarGet, VarPost & VarRequest - this responsibility belongs in the parent
+  processor
 - fixed security processors not validating user_role.
 - added acceptance tests
 - changed how Object stores Field (no longer as list, but as associative array
@@ -70,7 +72,7 @@ composer update" on in the docroot after transferring files.
 - fixed config override
 
 ApiOpenStudio v1.0.0-alpha-RC1
-=============================
+==============================
 
 - Renamed the code to ApiOpenStudio
     - Docker used
@@ -85,7 +87,7 @@ ApiOpenStudio v1.0.0-alpha-RC1
     - Changed to use Cascade for settings
 
 ApiOpenStudio v1.0.0-alpha-RC2
-=============================
+==============================
 
 - Separated the admin code from the API.
 - Added user logout processor.
@@ -100,7 +102,7 @@ ApiOpenStudio v1.0.0-alpha-RC2
 - Minor bug fixes.
 
 ApiOpenStudio v1.0.0-alpha
-===========================
+==========================
 
 - Additional script for updating.
 
@@ -113,8 +115,7 @@ ApiOpenStudio 1.0.0-alpha2
 ==========================
 
 - Added support for alpha/beta/RC release tags to the update script.
-- Replaced all references to 'function' with 'processor', to remove all
-  ambiguity.
+- Replaced all references to 'function' with 'processor', to remove all ambiguity.
 - Updated the docblock in all files to point to the correct copyright entity.
 - Finalised the Public license.
 - Updated the contributing notes.
@@ -127,14 +128,12 @@ ApiOpenStudio 1.0.0-alpha3
 - Changed the token auth to JWT tokens.
 - Moved code of conduct into CODE_OF_CONDUCT.md.
 - Updated gitlab-ci:
-    - Updated gitlab-ci the use the new `naala89/bookdown-rsync`,
-      `naala89/phpdoc-rsync`& `naala89/apiopenstudio-nginx-php-7.4`
-      images.
+    - Updated gitlab-ci the use the new `naala89/bookdown-rsync`, `naala89/phpdoc-rsync`
+      & `naala89/apiopenstudio-nginx-php-7.4` images.
     - Fixed gitlab runner artifacts.
     - tests run on all merge requests and deploy to wiki/phpdoc on merges.
-    - Updated gitlab-ci the use the new `naala89/bookdown-rsync`,
-      `naala89/phpdoc-rsync`& `naala89/apiopenstudio-nginx-php-7.4`
-      images.
+    - Updated gitlab-ci the use the new `naala89/bookdown-rsync`, `naala89/phpdoc-rsync`
+      & `naala89/apiopenstudio-nginx-php-7.4` images.
 - Deprecated Cascade logger and created a wrapper for Monolog.
 - Wiki, Removed `bookdown/bookdown` from the composer dev dependencies.
 - Deprecated the Mapper processors.
@@ -142,8 +141,7 @@ ApiOpenStudio 1.0.0-alpha3
 - Added functional tests for user and role.
 - Created new traits for datatype conversion.
 - Implemented casting on all input vars like VarPost.
-- Create/update CRUD processors now return the value result, rather than
-  true/false.
+- Create/update CRUD processors now return the value result, rather than true/false.
 
 ApiOpenStudio 1.0.0-beta
 ========================
