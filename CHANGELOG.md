@@ -199,3 +199,8 @@ ApiOpenStudio 1.0.0-beta3
 - Fixes on testing_app OpenAPI schema.
 - Update User DB classes for nullable values.
 - Fix setting permissions on JWT keys sometimes happening before the file has been created.
+
+ApiOpenStudio 1.0.0-beta4
+=========================
+
+- Fix the `bin/aos-install` script occasionally failing on JWT creation.
