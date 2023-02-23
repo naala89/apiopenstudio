@@ -708,22 +708,20 @@ class Install extends Script
     public function generateJwtKeys($generateKeys = null)
     {
         $config = new Config();
-        echo "You will need the public/private keys for users to login and validate.\n";
+        echo "You will need the public/private keys for users to login.\n";
         echo "These can be automatically generated for you, or you can manually copy them in yourself\n\n";
 
         $private_key_path = $public_key_path = '';
         try {
             $private_key_path = $config->__get(['api', 'jwt_private_key']);
             $public_key_path = $config->__get(['api', 'jwt_public_key']);
-            echo "Private JWT key path: $private_key_path\n";
-            echo "Public JWT key path: $public_key_path\n\n";
         } catch (ApiException $e) {
             $this->handleException($e);
         }
 
         while (!is_bool($generateKeys)) {
             $prompt = "Automatically generate public/private keys for JWT ";
-            $prompt .= "(WARNING, this will overwrite any existing keys at ";
+            $prompt .= "(WARNING: this will overwrite any existing keys at ";
             $prompt .= "the location defined in settings.yml) [Y/n]: ";
             $generateKeys = strtolower($this->readlineTerminal($prompt));
             $generateKeys = $generateKeys === 'y' || $generateKeys === '' ? true : $generateKeys;
@@ -731,16 +729,25 @@ class Install extends Script
         }
 
         if ($generateKeys) {
-            echo "Generating keys...\n";
-            $cmd = "rm $private_key_path $public_key_path";
+            if (file_exists($private_key_path)) {
+                echo "Removing existing private key at $private_key_path\n";
+                $cmd = "rm $private_key_path";
+                shell_exec($cmd);
+            }
+            if (file_exists($public_key_path)) {
+                echo "Removing existing public key at $public_key_path\n";
+                $cmd = "rm $public_key_path";
+                shell_exec($cmd);
+            }
+            echo "Generating new private key...\n";
+            $cmd = "echo -e 'y\\n' | ssh-keygen -t rsa -b 4096 -P '' -m PEM -f $private_key_path >/dev/null; sleep 1";
             shell_exec($cmd);
-            $cmd = "echo -e 'y\\n' | ssh-keygen -t rsa -b 4096 -P '' -m PEM -f $private_key_path >/dev/null & sleep 2";
-            shell_exec($cmd);
-            $cmd = "echo -e 'y\\n' | openssl rsa -in $private_key_path -pubout -outform PEM -out $public_key_path";
-            $cmd .= " & sleep 2";
+            echo "Generating new public key...\n";
+            $cmd = "echo -e 'y\\n' | openssl rsa -in $private_key_path -pubout -outform PEM -out $public_key_path; ";
+            $cmd .= "sleep 1";
             shell_exec($cmd);
             shell_exec("chmod 600 $private_key_path $public_key_path");
-            echo "keys generated\n";
+            echo "Keys generated at:\n* $private_key_path\n* $public_key_path\n";
         }
     }
 }
