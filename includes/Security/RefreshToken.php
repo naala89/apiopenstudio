@@ -42,6 +42,7 @@ class RefreshToken extends ProcessorEntity
     protected array $details = [
         'name' => 'Refresh token',
         'machineName' => 'refresh_token',
+        // phpcs:ignore
         'description' => 'Generate a JWT token and refresh token based on a valid token and refresh. Token, refresh token, uid and expiry times returned.',
         'menu' => 'Security',
         'input' => [
@@ -93,11 +94,8 @@ class RefreshToken extends ProcessorEntity
     public function process(): DataContainer
     {
         parent::process();
-        $config = new Config();
         $token = $this->val('token', true);
         $refreshToken = $this->val('refresh_token', true);
-        $userRoleMapper = new Db\UserRoleMapper($this->db, $this->logger);
-        $roleMapper = new Db\RoleMapper($this->db, $this->logger);
 
         // Decrypt the tokens
         try {
@@ -111,7 +109,9 @@ class RefreshToken extends ProcessorEntity
         try {
             $this->uid = Utilities::getClaimFromToken('uid', $this->token);
             $uid = Utilities::getClaimFromToken('uid', $this->refreshToken);
-            if (!assert(!empty($this->uid)) || $this->uid != $uid) {
+            $refresh_expiry = Utilities::getClaimFromToken('exp', $this->refreshToken);
+            $now = date("d-M-y H:i:s T");
+            if (!assert(!empty($this->uid)) || $this->uid != $uid || $refresh_expiry < $now) {
                 throw new RequiredConstraintsViolated('invalid refresh token');
             }
         } catch (RequiredConstraintsViolated $e) {
@@ -128,7 +128,30 @@ class RefreshToken extends ProcessorEntity
             throw new ApiException($message, 4, $this->id, 401);
         }
 
+        $finalRoles = $this->getAllUserRoles($user);
+
+        //Generate tokens.
+        $result = $this->generateTokens($user, $finalRoles);
+        $user->setRefreshToken($result['refresh_token']);
+        $userMapper->save($user);
+
+        return new DataContainer($result, 'array');
+    }
+
+    /**
+     * Generate an auth token result array.
+     *
+     * @param Db\User $user The user.
+     * @param array $finalRoles The roles for the user.
+     *
+     * @return array
+     *
+     * @throws ApiException
+     */
+    protected function generateTokens(Db\User $user, array $finalRoles): array
+    {
         // Get configs
+        $config = new Config();
         try {
             $jwt_alg_type = $config->__get(['api', 'jwt_alg_type']);
             $jwt_alg = $config->__get(['api', 'jwt_alg']);
@@ -143,19 +166,6 @@ class RefreshToken extends ProcessorEntity
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
 
-        // Get all user roles.
-        $userRoles = $userRoleMapper->findByUid($user->getUid());
-        $finalRoles = [];
-        foreach ($userRoles as $userRole) {
-            $role = $roleMapper->findByRid($userRole->getRid());
-            $userRole = $userRole->dump();
-            $userRole['role_name'] = $role->getName();
-            unset($userRole['rid']);
-            $finalRoles[] = $userRole;
-        }
-
-
-        //Generate tokens.
         $algorithm = "Lcobucci\\JWT\\Signer\\$jwt_alg_type\\$jwt_alg";
         if (!class_exists($algorithm)) {
             $this->logger->error('api', "Invalid algorithm path: $algorithm");
@@ -187,17 +197,40 @@ class RefreshToken extends ProcessorEntity
             ->expiresAt($refreshExpiry)
             ->withClaim('uid', $user->getUid())
             ->getToken($jwtConfig->signer(), $jwtConfig->signingKey());
-        $refreshToken = $refreshToken->toString();
-        $user->setRefreshToken($refreshToken);
-        $userMapper->save($user);
 
-        $array = [
+        return [
             'uid' => $user->getUid(),
             'token' => $token->toString(),
             'token_expiry' => $jwtExpiry->format('d-M-y H:i:s T'),
-            'refresh_token' => $refreshToken,
+            'refresh_token' => $refreshToken->toString(),
             'refresh_expiry' => $refreshExpiry->format('d-M-y H:i:s T'),
         ];
-        return new DataContainer($array, 'array');
+    }
+
+    /**
+     * Find all the user roles for a user.
+     *
+     * @param Db\User $user The user object.
+     *
+     * @return array
+     *
+     * @throws ApiException
+     */
+    protected function getAllUserRoles(Db\User $user): array
+    {
+        $userRoleMapper = new Db\UserRoleMapper($this->db, $this->logger);
+        $roleMapper = new Db\RoleMapper($this->db, $this->logger);
+
+        $userRoles = $userRoleMapper->findByUid($user->getUid());
+        $finalRoles = [];
+        foreach ($userRoles as $userRole) {
+            $role = $roleMapper->findByRid($userRole->getRid());
+            $userRole = $userRole->dump();
+            $userRole['role_name'] = $role->getName();
+            unset($userRole['rid']);
+            $finalRoles[] = $userRole;
+        }
+
+        return $finalRoles;
     }
 }

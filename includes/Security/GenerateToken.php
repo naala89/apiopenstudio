@@ -39,6 +39,7 @@ class GenerateToken extends ProcessorEntity
     protected array $details = [
         'name' => 'Generate token',
         'machineName' => 'generate_token',
+        // phpcs:ignore
         'description' => 'Generate a JWT token and refresh token based on a valid username/password. Token, refresh token, uid and expiry times returned.',
         'menu' => 'Security',
         'input' => [
