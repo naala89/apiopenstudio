@@ -121,6 +121,7 @@ class GenerateToken extends ProcessorEntity
             $jwt_issuer = $config->__get(['api', 'jwt_issuer']);
             $jwt_permitted_for = $config->__get(['api', 'jwt_permitted_for']);
             $jwt_life = $config->__get(['api', 'jwt_life']);
+            $refresh_token_life = $config->__get(['api', 'refresh_token_life']);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
@@ -135,20 +136,36 @@ class GenerateToken extends ProcessorEntity
             LocalFileReference::file($jwt_public_key)
         );
         $now = new DateTimeImmutable();
-        $token = $jwtConfig->builder()
+        $jwtExpiry = $now->modify($jwt_life);
+        $refreshExpiry = $now->modify($refresh_token_life);
+        $builder = $jwtConfig->builder();
+        $token = $builder
             ->issuedBy($jwt_issuer)
             ->permittedFor($jwt_permitted_for)
             ->issuedAt($now)
             ->canOnlyBeUsedAfter($now->modify('+1 minute'))
-            ->expiresAt($now->modify($jwt_life))
+            ->expiresAt($jwtExpiry)
             ->withClaim('uid', $user->getUid())
             ->withClaim('roles', $finalRoles)
             ->getToken($jwtConfig->signer(), $jwtConfig->signingKey());
+        $refreshToken = $builder
+            ->issuedBy($jwt_issuer)
+            ->permittedFor($jwt_permitted_for)
+            ->issuedAt($now)
+            ->canOnlyBeUsedAfter($now->modify('+1 minute'))
+            ->expiresAt($refreshExpiry)
+            ->withClaim('uid', $user->getUid())
+            ->getToken($jwtConfig->signer(), $jwtConfig->signingKey());
+        $refreshToken = $refreshToken->toString();
+        $user->setRefreshToken($refreshToken);
+        $userMapper->save($user);
 
         $array = [
-            'token' => $token->toString(),
             'uid' => $user->getUid(),
-            'expires' => $now->modify($jwt_life)->format('d-M-y H:i:s T'),
+            'token' => $token->toString(),
+            'token_expiry' => $jwtExpiry->format('d-M-y H:i:s T'),
+            'refresh_token' => $refreshToken,
+            'refresh_expiry' => $refreshExpiry->format('d-M-y H:i:s T'),
         ];
         return new DataContainer($array, 'array');
     }
