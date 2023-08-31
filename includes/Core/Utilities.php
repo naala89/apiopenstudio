@@ -454,7 +454,7 @@ class Utilities
      *
      * @throws ApiException
      */
-    public static function getClaimFromToken(string $claim, UnencryptedToken $decryptedToken = null): mixed
+    public static function getClaimFromToken(string $claim, UnencryptedToken $decryptedToken = null)
     {
         if (empty($decryptedToken)) {
             $decryptedToken = self::decryptToken();
