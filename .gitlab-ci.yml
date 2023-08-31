@@ -217,36 +217,36 @@ test-8.0:
 ## PHPDOC
 ##################################
 
-phpdoc-dev:
-  stage: deploy_phpdoc
-  rules:
-    - !reference [.commit_to_apiopenstudio_develop, rules]
-  image:
-    name: naala89/phpdoc-rsync:3.1
-    entrypoint: [ "" ]
-  script:
-    - echo "Compile and deploy the phpdoc to dev."
-    - eval $(ssh-agent -s)
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-    # Define verbosity
-    - if [ ! -z "$PHPDOC_VERBOSITY" ]; then export PHPDOC_OPTIONS="-$PHPDOC_VERBOSITY $PHPDOC_OPTIONS"; fi
-    # Define template
-    - if [ ! -z "$PHPDOC_TEMPLATE" ]; then export PHPDOC_OPTIONS="--template=$PHPDOC_TEMPLATE $PHPDOC_OPTIONS"; fi
-    # Include config file
-    - if [ ! -z "$PHPDOC_CONFIG_FILE" ]; then export PHPDOC_OPTIONS="--config=$CI_PROJECT_DIR$PHPDOC_CONFIG_FILE $PHPDOC_OPTIONS"; fi
-    # Include hidden files
-    - if [ ! "$PHPDOC_INCLUDE_HIDDEN" = "true" ]; then export PHPDOC_OPTIONS="--hidden $PHPDOC_OPTIONS"; fi
-    # Include if ignore symlinks
-    - if [ ! "$PHPDOC_IGNORE_SYMLINKS" = "true" ]; then export PHPDOC_OPTIONS="--ignore-symlinks $PHPDOC_OPTIONS"; fi
-    # Include markers
-    - if [ ! "$PHPDOC_MARKERS" = "true" ]; then export PHPDOC_OPTIONS="--markers=$PHPDOC_MARKERS $PHPDOC_OPTIONS"; fi
-    - /opt/phpdoc/bin/phpdoc -d ${CI_PROJECT_DIR}${PHPDOC_PROJECT_ROOT} -t ${CI_PROJECT_DIR}${PHPDOC_OUTPUT} --title="$PHPDOC_TITLE" ${PHPDOC_OPTIONS}
-    - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
-    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
+#phpdoc-dev:
+#  stage: deploy_phpdoc
+#  rules:
+#    - !reference [.commit_to_apiopenstudio_develop, rules]
+#  image:
+#    name: naala89/phpdoc-rsync:3.1
+#    entrypoint: [ "" ]
+#  script:
+#    - echo "Compile and deploy the phpdoc to dev."
+#    - eval $(ssh-agent -s)
+#    - mkdir -p ~/.ssh
+#    - chmod 700 ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+#    - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
+#    - chmod 644 ~/.ssh/known_hosts
+#    # Define verbosity
+#    - if [ ! -z "$PHPDOC_VERBOSITY" ]; then export PHPDOC_OPTIONS="-$PHPDOC_VERBOSITY $PHPDOC_OPTIONS"; fi
+#    # Define template
+#    - if [ ! -z "$PHPDOC_TEMPLATE" ]; then export PHPDOC_OPTIONS="--template=$PHPDOC_TEMPLATE $PHPDOC_OPTIONS"; fi
+#    # Include config file
+#    - if [ ! -z "$PHPDOC_CONFIG_FILE" ]; then export PHPDOC_OPTIONS="--config=$CI_PROJECT_DIR$PHPDOC_CONFIG_FILE $PHPDOC_OPTIONS"; fi
+#    # Include hidden files
+#    - if [ ! "$PHPDOC_INCLUDE_HIDDEN" = "true" ]; then export PHPDOC_OPTIONS="--hidden $PHPDOC_OPTIONS"; fi
+#    # Include if ignore symlinks
+#    - if [ ! "$PHPDOC_IGNORE_SYMLINKS" = "true" ]; then export PHPDOC_OPTIONS="--ignore-symlinks $PHPDOC_OPTIONS"; fi
+#    # Include markers
+#    - if [ ! "$PHPDOC_MARKERS" = "true" ]; then export PHPDOC_OPTIONS="--markers=$PHPDOC_MARKERS $PHPDOC_OPTIONS"; fi
+#    - /opt/phpdoc/bin/phpdoc -d ${CI_PROJECT_DIR}${PHPDOC_PROJECT_ROOT} -t ${CI_PROJECT_DIR}${PHPDOC_OUTPUT} --title="$PHPDOC_TITLE" ${PHPDOC_OPTIONS}
+#    - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
+#    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
 
 phpdoc-prod:
   stage: deploy_phpdoc
