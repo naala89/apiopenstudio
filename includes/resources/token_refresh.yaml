@@ -1,0 +1,32 @@
+# Refresh a JWT token for a valid user.
+#
+# @package   Apiopenstudio\Resources
+# @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
+#            If a copy of the license was not distributed with this file,
+#            You can obtain one at https://www.apiopenstudio.com/license/.
+# @author    john89 (https://gitlab.com/john89)
+# @copyright 2020-2030 Naala Pty Ltd
+# @link      https://www.apiopenstudio.com
+
+name: Refresh token
+
+description: Refresh a JWT token, user validated by expired token and refresh token.
+
+uri: auth/token/refresh
+
+method: post
+
+appid: 1
+
+ttl: 0
+
+process:
+    processor: refresh_token
+    id: refresh_token_process
+    refresh_token:
+        processor: var_post
+        id: refresh_token_refresh_token
+        key: refresh_token
+    token:
+        processor: bearer_token
+        id: refresh_token_token
