@@ -244,7 +244,7 @@ class UserUpdate extends ProcessorEntity
 
         $uid = $this->val('uid', true);
         try {
-            $currentUser = $this->userMapper->findByUid(Utilities::getUidFromToken());
+            $currentUser = $this->userMapper->findByUid(Utilities::getClaimFromToken('uid'));
             $testAdministrator = $this->userRoleMapper->hasRole($currentUser->getUid(), 'Administrator');
             $testAccountManager = $this->userRoleMapper->hasRole($currentUser->getUid(), 'Account manager');
             $testApplicationManager = $this->userRoleMapper->hasRole($currentUser->getUid(), 'Application manager');

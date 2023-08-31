@@ -175,7 +175,7 @@ class VarStoreCreate extends ProcessorEntity
     {
         try {
             /** @var Role[] */
-            $roles = Utilities::getRolesFromToken();
+            $roles = Utilities::getClaimFromToken('roles');
             /** @var Application[] */
             $applications = $this->applicationMapper->findAll();
         } catch (ApiException $e) {

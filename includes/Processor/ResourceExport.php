@@ -97,7 +97,7 @@ class ResourceExport extends ProcessorEntity
         // Validate resource exists.
         try {
             $resource = $this->resourceMapper->findByResid($resid);
-            $userRoles = Utilities::getRolesFromToken();
+            $userRoles = Utilities::getClaimFromToken('roles');
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }

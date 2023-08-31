@@ -94,7 +94,7 @@ class ResourceImport extends ProcessorEntity
         parent::process();
 
         try {
-            $uid = Utilities::getUidFromToken();
+            $uid = Utilities::getClaimFromToken('uid');
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
@@ -190,7 +190,7 @@ class ResourceImport extends ProcessorEntity
             );
         }
         try {
-            $roles = Utilities::getRolesFromToken();
+            $roles = Utilities::getClaimFromToken('roles');
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }

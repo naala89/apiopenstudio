@@ -204,3 +204,8 @@ ApiOpenStudio 1.0.0-beta4
 =========================
 
 - Fix the `bin/aos-install` script occasionally failing on JWT creation.
+
+ApiOpenStudio 1.0.0-beta5
+=========================
+
+- Add a refresh token, so that admin users do not need to continually login.

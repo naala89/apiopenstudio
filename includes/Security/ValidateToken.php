@@ -93,11 +93,11 @@ class ValidateToken extends ProcessorEntity
     protected function validateToken()
     {
         try {
-            $this->uid = Utilities::getUidFromToken($this->token);
+            $this->uid = Utilities::getClaimFromToken('uid', $this->token);
             if (!assert(!empty($this->uid))) {
                 throw new RequiredConstraintsViolated('invalid token');
             }
-            $this->roles = Utilities::getRolesFromToken($this->token);
+            $this->roles = Utilities::getClaimFromToken('roles', $this->token);
             if (!assert(!empty($this->roles))) {
                 throw new RequiredConstraintsViolated('invalid token');
             }
