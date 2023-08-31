@@ -135,7 +135,7 @@ class UserRead extends ProcessorEntity
         $direction = $this->val('direction', true);
 
         try {
-            $currentUser = $this->userMapper->findByUid(Utilities::getUidFromToken());
+            $currentUser = $this->userMapper->findByUid(Utilities::getClaimFromToken('uid'));
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }

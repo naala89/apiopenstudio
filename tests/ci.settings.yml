@@ -69,6 +69,7 @@ api:
   jwt_life: "+6 hour"
   jwt_issuer: localhost
   jwt_permitted_for: localhost
+  refresh_token_life: "+1 week"
   openapi_version: "3.0.3"
   openapi_directory: "includes/openapiSchema"
 

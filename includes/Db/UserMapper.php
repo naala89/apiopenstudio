@@ -35,15 +35,16 @@ class UserMapper extends Mapper
     public function save(User $user): bool
     {
         if (empty($user->getUid())) {
-            $sql = 'INSERT INTO user (active, username, hash, email, honorific, name_first, ';
+            $sql = 'INSERT INTO user (active, username, hash, refresh_token, email, honorific, name_first, ';
             $sql .= 'name_last, company, website, address_street, address_suburb, address_city, address_state, ';
             $sql .= 'address_country, address_postcode, phone_mobile, phone_work, password_reset, password_reset_ttl)';
             $sql .= ' VALUES';
-            $sql .= ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            $sql .= ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
             $bindParams = [
                 $user->getActive(),
                 $user->getUsername(),
                 $user->getHash(),
+                $user->getRefreshToken(),
                 $user->getEmail(),
                 $user->getHonorific(),
                 $user->getNameFirst(),
@@ -62,7 +63,7 @@ class UserMapper extends Mapper
                 $user->getPasswordResetTtl(),
             ];
         } else {
-            $sql = 'UPDATE user SET active=?, username=?, hash=?, email=?, honorific=?, ';
+            $sql = 'UPDATE user SET active=?, username=?, hash=?, refresh_token=?, email=?, honorific=?, ';
             $sql .= 'name_first=?, name_last=?, company=?, website=?, address_street=?, address_suburb=?, ';
             $sql .= 'address_city=?, address_state=?, address_country=?, address_postcode=?, phone_mobile=?, ';
             $sql .= 'phone_work=?, password_reset=?, password_reset_ttl=? WHERE uid=?';
@@ -70,6 +71,7 @@ class UserMapper extends Mapper
                 $user->getActive(),
                 $user->getUsername(),
                 $user->getHash(),
+                $user->getRefreshToken(),
                 $user->getEmail(),
                 $user->getHonorific(),
                 $user->getNameFirst(),
@@ -144,7 +146,7 @@ class UserMapper extends Mapper
     }
 
     /**
-     * Find allUsers
+     * Find all users
      *
      * @return array User objects.
      *
@@ -234,6 +236,7 @@ class UserMapper extends Mapper
         $user->setActive($row['active'] ?? 0);
         $user->setUsername($row['username'] ?? '');
         $user->setHash($row['hash'] ?? null);
+        $user->setRefreshToken($row['refresh_token'] ?? null);
         $user->setEmail($row['email'] ?? '');
         $user->setHonorific($row['honorific'] ?? null);
         $user->setNameFirst($row['name_first'] ?? null);

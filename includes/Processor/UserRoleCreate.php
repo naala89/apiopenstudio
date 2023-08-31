@@ -146,7 +146,7 @@ class UserRoleCreate extends ProcessorEntity
             $this->validateCurrentUserApplicationPermission($appid);
         } elseif (!empty($accid)) {
             $this->validateCurrentUserAccountPermission($accid);
-        } elseif (!$this->userRoleMapper->hasRole(Utilities::getUidFromToken(), 'Administrator')) {
+        } elseif (!$this->userRoleMapper->hasRole(Utilities::getClaimFromToken('uid'), 'Administrator')) {
             throw new ApiException('permission denied', 4, $this->id, 403);
         }
 
@@ -186,7 +186,7 @@ class UserRoleCreate extends ProcessorEntity
     {
         try {
             $applications = $this->applicationMapper->findByUid(
-                Utilities::getUidFromToken(),
+                Utilities::getClaimFromToken('uid'),
                 ['col' => ['appid' => $appid]]
             );
         } catch (ApiException $e) {
@@ -214,7 +214,7 @@ class UserRoleCreate extends ProcessorEntity
     {
         try {
             $accounts = $this->accountMapper->findAllForUser(
-                Utilities::getUidFromToken(),
+                Utilities::getClaimFromToken('uid'),
                 ['col' => ['accid' => $accid]]
             );
         } catch (ApiException $e) {
@@ -240,7 +240,7 @@ class UserRoleCreate extends ProcessorEntity
      */
     protected function validateElevatedPermissions(UserRole $userRole)
     {
-        $currentUid = Utilities::getUidFromToken();
+        $currentUid = Utilities::getClaimFromToken('uid');
         $role = $this->roleMapper->findByRid($userRole->getRid());
         $permissionGranted = false;
 

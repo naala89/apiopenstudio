@@ -140,7 +140,7 @@ class ApplicationCreate extends ProcessorEntity
         $openApi = $this->val('openapi', true);
 
         try {
-            $uid = Utilities::getUidFromToken();
+            $uid = Utilities::getClaimFromToken('uid');
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }

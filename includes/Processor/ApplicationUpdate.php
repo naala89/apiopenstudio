@@ -226,7 +226,7 @@ class ApplicationUpdate extends ProcessorEntity
     protected function validateAccess(Application $application, int $accid = null)
     {
         try {
-            $uid = Utilities::getUidFromToken();
+            $uid = Utilities::getClaimFromToken('uid');
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }

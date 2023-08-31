@@ -157,7 +157,7 @@ class VarStoreDelete extends ProcessorEntity
             }
             if ($validateAccess) {
                 $beforeFilterCount = sizeof($vars);
-                $vars = $this->filterVarsByPerms($vars, Utilities::getRolesFromToken());
+                $vars = $this->filterVarsByPerms($vars, Utilities::getClaimFromToken('roles'));
                 if (sizeof($vars) < $beforeFilterCount) {
                     throw new ApiException(
                         'permission denied. You do not have delete rights to all the variables in the result',

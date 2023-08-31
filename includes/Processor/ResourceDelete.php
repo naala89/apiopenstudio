@@ -122,7 +122,7 @@ class ResourceDelete extends ProcessorEntity
 
         // Validate user has Developer access to its application.
         try {
-            $userRoles = Utilities::getRolesFromToken();
+            $userRoles = Utilities::getClaimFromToken('roles');
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }

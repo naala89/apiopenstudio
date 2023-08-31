@@ -429,8 +429,9 @@ class Utilities
         );
         $constraints = $jwtConfig->validationConstraints();
 
-        $decryptedToken = $jwtConfig->parser()->parse($rawToken);
-        if (!assert($decryptedToken instanceof UnencryptedToken)) {
+        try {
+            $decryptedToken = $jwtConfig->parser()->parse($rawToken);
+        } catch (\Exception $e) {
             throw new ApiException('invalid token', 4, 'oops', 401);
         }
 
@@ -446,53 +447,28 @@ class Utilities
     /**
      * Get the User ID from the JWT token.
      *
+     * @param String $claim Claim to fetch.
      * @param UnencryptedToken|null $decryptedToken Decrypted JWT token.
      *
-     * @return int
+     * @return mixed The value of the claim.
      *
      * @throws ApiException
      */
-    public static function getUidFromToken(UnencryptedToken $decryptedToken = null): int
+    public static function getClaimFromToken(string $claim, UnencryptedToken $decryptedToken = null)
     {
         if (empty($decryptedToken)) {
             $decryptedToken = self::decryptToken();
         }
         try {
-            $uid = $decryptedToken->claims()->get('uid');
-            if (!assert(!empty($uid))) {
-                throw new ApiException('user ID not included in the claim', 4, 'oops', 401);
+            $val = $decryptedToken->claims()->get($claim);
+            if (!assert(!empty($val))) {
+                throw new ApiException("$claim not included in the token", 4, 'oops', 401);
             }
         } catch (RequiredConstraintsViolated $e) {
             throw new ApiException('Invalid token', 4, 'oops', 401);
         }
 
-        return $uid;
-    }
-
-    /**
-     * Get the User roles from the JWT token.
-     *
-     * @param UnencryptedToken|null $decryptedToken Decrypted JWT token.
-     *
-     * @return array
-     *
-     * @throws ApiException
-     */
-    public static function getRolesFromToken(UnencryptedToken $decryptedToken = null): array
-    {
-        if (empty($decryptedToken)) {
-            $decryptedToken = self::decryptToken();
-        }
-        try {
-            $roles = $decryptedToken->claims()->get('roles');
-            if (!assert(!empty($roles))) {
-                throw new ApiException('user roles not included in the claim', 4, 'oops', 401);
-            }
-        } catch (RequiredConstraintsViolated $e) {
-            throw new ApiException('Invalid token', 4, 'oops', 401);
-        }
-
-        return $roles;
+        return $val;
     }
 
     /**

@@ -144,9 +144,11 @@ class Api extends Module
         $this->getModule('REST')->seeResponseMatchesJsonType([
             'result' => 'string',
             'data' => [
-                'token' => 'string',
                 'uid' => 'integer',
-                'expires' => 'string',
+                'token' => 'string',
+                'token_expiry' => 'string',
+                'refresh_token' => 'string',
+                'refresh_expiry' => 'string',
             ],
         ]);
         $this->storeMyToken();

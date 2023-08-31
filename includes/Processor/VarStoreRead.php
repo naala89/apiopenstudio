@@ -181,7 +181,7 @@ class VarStoreRead extends ProcessorEntity
                 $vars = $this->varStoreMapper->findAllFilter($params);
             }
             if ($validateAccess) {
-                $vars = $this->filterVarsByPerms($vars, Utilities::getRolesFromToken());
+                $vars = $this->filterVarsByPerms($vars, Utilities::getClaimFromToken('roles'));
             }
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
