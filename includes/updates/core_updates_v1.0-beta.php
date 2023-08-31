@@ -212,3 +212,29 @@ SQL;
 
     update_all_core_processors_beta($db);
 }
+
+/**
+ * Add the refresh_token column to the user table
+ *
+ * @param ADOConnection $db
+ *
+ * @version V1.0.0-beta5
+ *
+ * @see https://gitlab.com/apiopenstudio/apiopenstudio/-/issues/48
+ */
+function add_refresh_token_column(ADOConnection $db)
+{
+    $config = new Config();
+
+    echo "Adding refresh_token column to the user table...\n";
+    $sql = <<<SQL
+ALTER TABLE `user`
+    ADD COLUMN IF NOT EXISTS `refresh_token`
+    varchar(2048) DEFAULT NULL COMMENT 'refresh token' AFTER `hash`
+SQL;
+    if (!$db->execute($sql)) {
+        echo "Something went wrong while updating the installed_version.core version row, please check the logs\n";
+        exit;
+    }
+    $result = $db->execute($sql);
+}

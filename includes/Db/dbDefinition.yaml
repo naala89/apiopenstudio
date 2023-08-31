@@ -54,7 +54,7 @@ installed_version:
     data:
         -
             module: core
-            version: 1.0.0-beta3
+            version: 1.0.0-beta5
 
 invite:
     columns:
@@ -101,6 +101,7 @@ user:
         active: {type: tinyint(4), notnull: true, default: 1, comment: user status}
         username: {type: varchar(255), notnull: true, comment: user name}
         hash: {type: varchar(64), default: NULL, comment: pasword hash}
+        refresh_token: {type: varchar(2048), default: NULL, comment: refresh token}
         email: {type: varchar(255), notnull: true, comment: user email address}
         honorific: {type: varchar(16), default: NULL, comment: users title}
         name_first: {type: varchar(255), default: NULL, comment: first name}

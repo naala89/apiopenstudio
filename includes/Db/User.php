@@ -52,6 +52,13 @@ class User
     protected ?string $hash;
 
     /**
+     * User refresh token.
+     *
+     * @var ?string User refresh token..
+     */
+    protected ?string $refreshToken;
+
+    /**
      * User email.
      *
      * @var ?string User email.
@@ -171,6 +178,7 @@ class User
      * @param int|null $active Active status.
      * @param string|null $username Username.
      * @param string|null $hash Password hash.
+     * @param string|null $refreshToken Refresh token.
      * @param string|null $email User email.
      * @param string|null $honorific User honorific.
      * @param string|null $nameFirst First name.
@@ -193,6 +201,7 @@ class User
         int $active = null,
         string $username = null,
         string $hash = null,
+        string $refreshToken = null,
         string $email = null,
         string $honorific = null,
         string $nameFirst = null,
@@ -214,6 +223,7 @@ class User
         $this->active = $active;
         $this->username = $username;
         $this->hash = $hash;
+        $this->refreshToken = $refreshToken;
         $this->email = $email;
         $this->honorific = $honorific;
         $this->nameFirst = $nameFirst;
@@ -331,6 +341,28 @@ class User
     public function setHash(string $hash = null)
     {
         $this->hash = $hash;
+    }
+
+    /**
+     * Get the refresh token.
+     *
+     * @return string refresh token.
+     */
+    public function getRefreshToken(): ?string
+    {
+        return $this->refreshToken;
+    }
+
+    /**
+     * Set the refresh token.
+     *
+     * @param string|null $refreshToken refresh token.
+     *
+     * @return void
+     */
+    public function setRefreshToken(string $refreshToken = null)
+    {
+        $this->refreshToken = $refreshToken;
     }
 
     /**
@@ -697,6 +729,7 @@ class User
             'active' => $this->active,
             'username' => $this->username,
             'hash' => $this->hash,
+            'refreshToken' => $this->refreshToken,
             'email' => $this->email,
             'honorific' => $this->honorific,
             'nameFirst' => $this->nameFirst,
