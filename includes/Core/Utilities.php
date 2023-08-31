@@ -429,8 +429,9 @@ class Utilities
         );
         $constraints = $jwtConfig->validationConstraints();
 
-        $decryptedToken = $jwtConfig->parser()->parse($rawToken);
-        if (!assert($decryptedToken instanceof UnencryptedToken)) {
+        try {
+            $decryptedToken = $jwtConfig->parser()->parse($rawToken);
+        } catch (\Exception $e) {
             throw new ApiException('invalid token', 4, 'oops', 401);
         }
 
