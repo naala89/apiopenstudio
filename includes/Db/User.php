@@ -178,7 +178,6 @@ class User
      * @param int|null $active Active status.
      * @param string|null $username Username.
      * @param string|null $hash Password hash.
-     * @param string|null $refreshToken Refresh token.
      * @param string|null $email User email.
      * @param string|null $honorific User honorific.
      * @param string|null $nameFirst First name.
@@ -195,13 +194,13 @@ class User
      * @param string|null $phoneWork Business number.
      * @param string|null $passwordReset Password reset token.
      * @param string|null $passwordResetTtl Password reset token TTL.
+     * @param string|null $refreshToken Refresh token.
      */
     public function __construct(
         int $uid = null,
         int $active = null,
         string $username = null,
         string $hash = null,
-        string $refreshToken = null,
         string $email = null,
         string $honorific = null,
         string $nameFirst = null,
@@ -217,13 +216,13 @@ class User
         string $phoneMobile = null,
         string $phoneWork = null,
         string $passwordReset = null,
-        string $passwordResetTtl = null
+        string $passwordResetTtl = null,
+        string $refreshToken = null
     ) {
         $this->uid = $uid;
         $this->active = $active;
         $this->username = $username;
         $this->hash = $hash;
-        $this->refreshToken = $refreshToken;
         $this->email = $email;
         $this->honorific = $honorific;
         $this->nameFirst = $nameFirst;
@@ -240,6 +239,7 @@ class User
         $this->phoneWork = $phoneWork;
         $this->passwordReset = $passwordReset;
         $this->passwordResetTtl = $passwordResetTtl;
+        $this->refreshToken = $refreshToken;
     }
 
     /**
@@ -729,7 +729,6 @@ class User
             'active' => $this->active,
             'username' => $this->username,
             'hash' => $this->hash,
-            'refreshToken' => $this->refreshToken,
             'email' => $this->email,
             'honorific' => $this->honorific,
             'nameFirst' => $this->nameFirst,
@@ -746,6 +745,7 @@ class User
             'phoneWork' => $this->phoneWork,
             'passwordReset' => $this->passwordReset,
             'passwordResetTtl' => $this->passwordResetTtl,
+            'refreshToken' => $this->refreshToken,
         ];
     }
 }
