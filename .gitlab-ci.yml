@@ -110,6 +110,7 @@ unit:
   rules:
     - !reference [.merge_request_to_apiopenstudio_develop, rules]
     - !reference [.merge_request_to_apiopenstudio_master, rules]
+    - when: on_success
   image: naala89/ci-nginx-php-8.2:latest
   artifacts:
     when: on_failure
@@ -155,6 +156,7 @@ test-8.0:
   rules:
     - !reference [.merge_request_to_apiopenstudio_develop, rules]
     - !reference [.merge_request_to_apiopenstudio_master, rules]
+    - when: on_success
   variables:
     MYSQL_ROOT_PASSWORD: apiopenstudio
     MYSQL_USERNAME: apiopenstudio
@@ -215,6 +217,7 @@ test-8.1:
   rules:
     - !reference [.merge_request_to_apiopenstudio_develop, rules]
     - !reference [.merge_request_to_apiopenstudio_master, rules]
+    - when: on_success
   variables:
     MYSQL_ROOT_PASSWORD: apiopenstudio
     MYSQL_USERNAME: apiopenstudio
@@ -275,6 +278,7 @@ test-8.2:
   rules:
     - !reference [.merge_request_to_apiopenstudio_develop, rules]
     - !reference [.merge_request_to_apiopenstudio_master, rules]
+    - when: on_success
   variables:
     MYSQL_ROOT_PASSWORD: apiopenstudio
     MYSQL_USERNAME: apiopenstudio
@@ -335,6 +339,7 @@ test-8.2:
 #  rules:
 #    - !reference [.merge_request_to_apiopenstudio_develop, rules]
 #    - !reference [.merge_request_to_apiopenstudio_master, rules]
+#    - when: on_success
 #  variables:
 #    MYSQL_ROOT_PASSWORD: apiopenstudio
 #    MYSQL_USERNAME: apiopenstudio
