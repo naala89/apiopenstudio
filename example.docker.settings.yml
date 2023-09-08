@@ -91,6 +91,7 @@ api:
   jwt_life: "+1 hour"
   jwt_issuer: "api.example.com"
   jwt_permitted_for: "api.example.com"
+  refresh_token_life: "+1 week"
   openapi_version: "3.0.3"
   openapi_directory: "includes/openapiSchema"
 

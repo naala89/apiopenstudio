@@ -209,3 +209,5 @@ ApiOpenStudio 1.0.0-beta5
 =========================
 
 - Add a refresh token, so that admin users do not need to continually login.
+- Deprecated support for PHP7.4.
+- Added CI tests for PHP8.0, PHP8.1, PHP8.2.
