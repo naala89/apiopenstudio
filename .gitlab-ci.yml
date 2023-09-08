@@ -89,7 +89,7 @@ linting:
   rules:
     - !reference [.merge_request_to_apiopenstudio_develop, rules]
     - !reference [.merge_request_to_apiopenstudio_master, rules]
-  image: naala89/nginx-php-8.2:latest
+  image: naala89/ci-nginx-php-8.2:latest
   artifacts:
     when: on_failure
     paths:
