@@ -20,19 +20,30 @@ debug:
       class: StreamHandler
       formatter: default
       level: DEBUG
-      stream: /var/www/html/api/log/api.log
+      stream: /var/log/apiopenstudio/api.log
     db_log_file:
       class: StreamHandler
       formatter: default
       level: DEBUG
-      stream: /var/www/html/api/log/db.log
+      stream: /var/log/apiopenstudio/db.log
+    stdout:
+      class: StreamHandler
+      formatter: default
+      level: ERROR
+      stream: php://stdout
+    error_log:
+      class: ErrorLogHandler
+      formatter: default
   loggers:
     api:
       handlers:
         - api_log_file
+        - stdout
     db:
       handlers:
         - db_log_file
+        - stdout
+
 db:
   definition_path: includes/Db/dbDefinition.yaml
   driver: mysqli
@@ -48,9 +59,9 @@ db:
 
 api:
   protocols:
-    - https
-  base_path: /var/www/html/api/
-  url: localhost
+    - http
+  base_path: /var/www/html/
+  url: api.apiopenstudio.local
   cache:
     active: false
   default_format: json
@@ -62,8 +73,8 @@ api:
   dir_resources: includes/resources/
   dir_uploads: uploads/
   dir_tmp: /tmp/
-  jwt_private_key: /var/www/html/api/jwt.key
-  jwt_public_key: /var/www/html/api/jwt.key.pub
+  jwt_private_key: /var/www/html/jwt.key
+  jwt_public_key: /var/www/html/jwt.key.pub
   jwt_alg_type: Rsa
   jwt_alg: Sha256
   jwt_life: "+6 hour"
