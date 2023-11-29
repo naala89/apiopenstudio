@@ -14,16 +14,13 @@
 
 namespace ApiOpenStudio\Security;
 
-use ADODB_mysqli;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\DataContainer;
-use ApiOpenStudio\Core\MonologWrapper;
 use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\UserMapper;
 use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
-use ApiOpenStudio\Core\Request;
 
 /**
  * Class ValidateToken.

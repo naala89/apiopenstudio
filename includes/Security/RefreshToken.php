@@ -201,9 +201,9 @@ class RefreshToken extends ProcessorEntity
         return [
             'uid' => $user->getUid(),
             'token' => $token->toString(),
-            'token_expiry' => $jwtExpiry->format('d-M-y H:i:s T'),
+            'token_expiry' => $jwtExpiry->format('F d, Y H:i:s T'),
             'refresh_token' => $refreshToken->toString(),
-            'refresh_expiry' => $refreshExpiry->format('d-M-y H:i:s T'),
+            'refresh_expiry' => $refreshExpiry->format('F d, Y H:i:s T'),
         ];
     }
 
