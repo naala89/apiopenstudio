@@ -164,9 +164,9 @@ class GenerateToken extends ProcessorEntity
         $array = [
             'uid' => $user->getUid(),
             'token' => $token->toString(),
-            'token_expiry' => $jwtExpiry->format('d-M-y H:i:s T'),
+            'token_expiry' => $jwtExpiry->format('F d, Y H:i:s T'),
             'refresh_token' => $refreshToken,
-            'refresh_expiry' => $refreshExpiry->format('d-M-y H:i:s T'),
+            'refresh_expiry' => $refreshExpiry->format('F d, Y H:i:s T'),
         ];
         return new DataContainer($array, 'array');
     }
