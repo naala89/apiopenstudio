@@ -42,6 +42,7 @@ class LambdaFunction extends ProcessorEntity
         'menu' => 'Data operation',
         'input' => [
             'data' => [
+                // phpcs:ignore
                 'description' => 'Data input to be processed by the remote lambda. Values will be referenced in the remote Lambda, based on the field key.',
                 'cardinality' => [0, '*'],
                 'literalAllowed' => true,
