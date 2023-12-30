@@ -115,7 +115,7 @@ class Curl
      * @return string
      * @throws ApiException
      */
-    public function post(string $url, array $options = array()): string
+    public function post(string $url, array $options = []): string
     {
         $options[CURLOPT_POST] = true;
         return $this->exec($url, $options);
