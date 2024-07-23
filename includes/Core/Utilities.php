@@ -239,7 +239,7 @@ class Utilities
     }
 
     /**
-     * Return the character left of a substring win a string.
+     * Return the character left of a substring in a string.
      *
      * @param string $s1 String.
      * @param string $s2 Substring.
@@ -331,7 +331,7 @@ class Utilities
         string $dir,
         int $dirAccess = null,
         int $fileAccess = null,
-        array $nomask = array('.', '..')
+        array $nomask = ['.', '..']
     ) {
         $dirAccess = empty($dirAccess) ? 0777 : $dirAccess;
         $fileAccess = empty($dirAccess) ? 0666 : $fileAccess;
