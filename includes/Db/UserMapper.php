@@ -88,8 +88,8 @@ class UserMapper extends Mapper
                 $user->getPhoneWork(),
                 $user->getPasswordReset(),
                 $user->getPasswordResetTtl(),
-                $user->getUid(),
                 $user->getRefreshToken(),
+                $user->getUid(),
             ];
         }
         return $this->saveDelete($sql, $bindParams);

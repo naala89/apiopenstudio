@@ -52,7 +52,7 @@ class AccountRead extends ProcessorEntity
             ],
             'keyword' => [
                 // phpcs:ignore
-                'description' => 'Keyword to filter by in the account name. This is only used iwhen getting "all" accounts.',
+                'description' => 'Keyword to filter by in the account name. This is only used when getting "all" accounts.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
