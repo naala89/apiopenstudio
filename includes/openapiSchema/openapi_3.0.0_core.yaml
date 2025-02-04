@@ -1304,6 +1304,38 @@ paths:
                     $ref: '#/components/responses/Unauthorised'
                 '403':
                     $ref: '#/components/responses/Forbidden'
+    /auth/token/refresh:
+        post:
+            summary: Refresh token
+            description: Refresh a JWT token, user validated by expired token and refresh token.
+            tags:
+                - authentication
+            security:
+                - bearer_token: [ ]
+            requestBody:
+                required: true
+                content:
+                    application/x-www-form-urlencoded:
+                        schema:
+                            properties:
+                                refresh_token:
+                                    description: The refresh token
+                                    type: string
+                            required:
+                                - refresh_token
+            responses:
+                '200':
+                    description: A token object
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/TokenObject'
+                '400':
+                    $ref: '#/components/responses/GeneralError'
+                '401':
+                    $ref: '#/components/responses/Unauthorised'
+                '403':
+                    $ref: '#/components/responses/Forbidden'
     /user:
         post:
             summary: User create
@@ -2034,15 +2066,21 @@ components:
         TokenObject:
             type: object
             properties:
-                token:
-                    description: The JWT auth token
-                    type: string
                 uid:
                     description: The user ID
                     type: integer
                     minimum: 1
-                expires:
-                    description: The JWT exipry date
+                token:
+                    description: The JWT auth token
+                    type: string
+                token_expiry:
+                    description: The JWT auth token expiry date
+                    type: string
+                refresh_token:
+                    description: The JWT refresh token
+                    type: string
+                refresh_expiry:
+                    description: The JWT refresh token expiry date
                     type: string
         ResourceId:
             type: object

@@ -15,9 +15,11 @@ $I->seeResponseIsJson();
 $I->seeResponseMatchesJsonType([
     'result' => 'string',
     'data' => [
-        'token' => 'string',
         'uid' => 'integer',
-        'expires' => 'string',
+        'token' => 'string',
+        'token_expiry' => 'string',
+        'refresh_token' => 'string',
+        'refresh_expiry' => 'string',
     ],
 ]);
 
@@ -35,9 +37,11 @@ $I->seeResponseIsJson();
 $I->seeResponseMatchesJsonType([
     'result' => 'string',
     'data' => [
-        'token' => 'string',
         'uid' => 'integer',
-        'expires' => 'string',
+        'token' => 'string',
+        'token_expiry' => 'string',
+        'refresh_token' => 'string',
+        'refresh_expiry' => 'string',
     ],
 ]);
 
@@ -55,9 +59,11 @@ $I->seeResponseIsJson();
 $I->seeResponseMatchesJsonType([
     'result' => 'string',
     'data' => [
-        'token' => 'string',
         'uid' => 'integer',
-        'expires' => 'string',
+        'token' => 'string',
+        'token_expiry' => 'string',
+        'refresh_token' => 'string',
+        'refresh_expiry' => 'string',
     ],
 ]);
 
@@ -75,9 +81,11 @@ $I->seeResponseIsJson();
 $I->seeResponseMatchesJsonType([
     'result' => 'string',
     'data' => [
-        'token' => 'string',
         'uid' => 'integer',
-        'expires' => 'string',
+        'token' => 'string',
+        'token_expiry' => 'string',
+        'refresh_token' => 'string',
+        'refresh_expiry' => 'string',
     ],
 ]);
 
@@ -95,9 +103,11 @@ $I->seeResponseIsJson();
 $I->seeResponseMatchesJsonType([
     'result' => 'string',
     'data' => [
-        'token' => 'string',
         'uid' => 'integer',
-        'expires' => 'string',
+        'token' => 'string',
+        'token_expiry' => 'string',
+        'refresh_token' => 'string',
+        'refresh_expiry' => 'string',
     ],
 ]);
 

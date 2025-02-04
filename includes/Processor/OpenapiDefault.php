@@ -103,7 +103,7 @@ class OpenapiDefault extends ProcessorEntity
 
         // Only developers for an application can use this processor.
         try {
-            $roles = Utilities::getRolesFromToken();
+            $roles = Utilities::getClaimFromToken('roles');
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }

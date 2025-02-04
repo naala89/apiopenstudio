@@ -76,6 +76,7 @@ workflow:
 ##################################
 
 stages:
+  - lint
   - test
   - deploy_phpdoc
 
@@ -83,30 +84,50 @@ stages:
 ## TESTS
 ##################################
 
-test-7.4:
-  stage: test
+linting:
+  stage: lint
   rules:
     - !reference [.merge_request_to_apiopenstudio_develop, rules]
     - !reference [.merge_request_to_apiopenstudio_master, rules]
-  image: naala89/apiopenstudio-nginx-php-7.4:1.0.1
-  services:
-    - mariadb:latest
-  variables:
-    MYSQL_ROOT_PASSWORD: apiopenstudio
-    MYSQL_USERNAME: apiopenstudio
-    MYSQL_PASSWORD: apiopenstudio
+  image: naala89/ci-nginx-php-8.2:latest
   artifacts:
     when: on_failure
     paths:
       - tests/_output/
       - log/
   script:
-    - echo "Setting up for tests."
+    # Setting up for tests.
     - eval $(ssh-agent -s)
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    # set ApiOpenStudio test .env and settings.yml
+    - composer install
+    # Linting the codebase.
+    - ./vendor/bin/phpcs --standard=PSR12 --report-file=tests/_output/phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
+
+unit:
+  stage: test
+  rules:
+    - !reference [.merge_request_to_apiopenstudio_develop, rules]
+    - !reference [.merge_request_to_apiopenstudio_master, rules]
+    - when: on_success
+  image: naala89/ci-nginx-php-8.2:latest
+  artifacts:
+    when: on_failure
+    paths:
+      - tests/_output/
+      - log/
+  script:
+    # Setting up for tests.
+    - service php8.2-fpm start
+    - ln -s /run/php/php8.2-fpm.sock /run/php/php-fpm.sock
+    - service nginx start
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - composer install
+    # Set ApiOpenStudio test .env and settings.yml.
     - cp tests/ci.env .env
     - cp tests/ci.settings.yml settings.yml
     - CI_ESCAPED_PROJECT_DIR="$(echo "$CI_PROJECT_DIR" | sed -e 's/[\/]/\\&/g')"
@@ -123,55 +144,46 @@ test-7.4:
       if [ -z "$ADMIN_EMAIL" ]; then
         eval export ADMIN_EMAIL="deadletter@apiopenstudio.com"
       fi
-    - composer install
-    # Linting
-    - echo "Linting the codebase."
-    - ./vendor/bin/phpcs --standard=PSR12 --report-file=tests/_output/phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
-    # Unit tests
-    - echo "Running api unit tests."
     - mkdir log
     - touch log/api.log
     - touch log/db.log
     - chmod -R 777 log
+    # Running api unit tests.
     - ./vendor/bin/codecept run --env ci unit
-    # Install MySQL
-    - echo "Setting up the DB for functional tests."
-    - mysql --version
-    - php tests/runner_generate_db.php
-    # Create JWT token keys
-    - ssh-keygen -t rsa -b 4096 -P "" -m PEM -f jwt.key
-    - openssl rsa -in jwt.key -pubout -outform PEM -out jwt.key.pub
-    - chmod 777 jwt.key.pub jwt.key
-    # Run functional tests
-    - echo "Running api functional tests."
-    - cp -Rp ./* /www/
-    - ./vendor/bin/codecept build
-    - ./vendor/bin/codecept run --env ci api
 
 test-8.0:
   stage: test
   rules:
     - !reference [.merge_request_to_apiopenstudio_develop, rules]
     - !reference [.merge_request_to_apiopenstudio_master, rules]
-  image: naala89/apiopenstudio-nginx-php-8.0:1.0.1
-  services:
-    - mariadb:latest
+    - when: on_success
   variables:
     MYSQL_ROOT_PASSWORD: apiopenstudio
     MYSQL_USERNAME: apiopenstudio
     MYSQL_PASSWORD: apiopenstudio
+  image: naala89/ci-nginx-php-8.0:latest
+  services:
+    - mariadb:latest
   artifacts:
     when: on_failure
     paths:
       - tests/_output/
       - log/
   script:
-    - echo "Setting up for tests."
+    # Setting up for 8.0 functional tests.
+    - mkdir log
+    - touch log/api.log
+    - touch log/db.log
+    - chmod -R 777 log
+    - service php8.0-fpm start
+    - ln -s /run/php/php8.0-fpm.sock /run/php/php-fpm.sock
+    - service nginx start
     - eval $(ssh-agent -s)
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    # set ApiOpenStudio test .env and settings.yml
+    - composer install
+    # Set ApiOpenStudio test .env and settings.yml.
     - cp tests/ci.env .env
     - cp tests/ci.settings.yml settings.yml
     - CI_ESCAPED_PROJECT_DIR="$(echo "$CI_PROJECT_DIR" | sed -e 's/[\/]/\\&/g')"
@@ -188,65 +200,235 @@ test-8.0:
       if [ -z "$ADMIN_EMAIL" ]; then
         eval export ADMIN_EMAIL="deadletter@apiopenstudio.com"
       fi
-    - composer install
-    # Linting
-    - echo "Linting the codebase."
-    - ./vendor/bin/phpcs --standard=PSR12 --report-file=tests/_output/phpcs.txt includes/ public/*.php tests/api/ tests/_support/Helper/ tests/runner_generate_db.php
-    # Unit tests
-    - echo "Running api unit tests."
+    # Setting up the DB for functional tests.
+    - mysql --version
+    - php tests/runner_generate_db.php
+    # Create JWT token keys.
+    - ssh-keygen -t rsa -b 4096 -P "" -m PEM -f jwt.key
+    - openssl rsa -in jwt.key -pubout -outform PEM -out jwt.key.pub
+    - chmod 777 jwt.key.pub jwt.key
+    # Running api functional tests.
+    - cp -Rp ./* /www/
+    - ./vendor/bin/codecept build
+    - ./vendor/bin/codecept run --env ci api
+
+test-8.1:
+  stage: test
+  rules:
+    - !reference [.merge_request_to_apiopenstudio_develop, rules]
+    - !reference [.merge_request_to_apiopenstudio_master, rules]
+    - when: on_success
+  variables:
+    MYSQL_ROOT_PASSWORD: apiopenstudio
+    MYSQL_USERNAME: apiopenstudio
+    MYSQL_PASSWORD: apiopenstudio
+  image: naala89/ci-nginx-php-8.1:latest
+  services:
+    - mariadb:latest
+  artifacts:
+    when: on_failure
+    paths:
+      - tests/_output/
+      - log/
+  script:
+    # Setting up for 8.1 functional tests.
     - mkdir log
     - touch log/api.log
     - touch log/db.log
     - chmod -R 777 log
-    - ./vendor/bin/codecept run --env ci unit
-    # Install MySQL
-    - echo "Setting up the DB for functional tests."
+    - service php8.1-fpm start
+    - ln -s /run/php/php8.1-fpm.sock /run/php/php-fpm.sock
+    - service nginx start
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - composer install
+    # Set ApiOpenStudio test .env and settings.yml.
+    - cp tests/ci.env .env
+    - cp tests/ci.settings.yml settings.yml
+    - CI_ESCAPED_PROJECT_DIR="$(echo "$CI_PROJECT_DIR" | sed -e 's/[\/]/\\&/g')"
+    - sed -i 's/CI_PROJECT_DIR/'"${CI_ESCAPED_PROJECT_DIR}"'/g' settings.yml
+    - >
+      if [ -z "$ADMIN_NAME" ]; then
+        eval export ADMIN_NAME="admin"
+      fi
+    - >
+      if [ -z "$ADMIN_PASS" ]; then
+        eval export ADMIN_PASS="secret"
+      fi
+    - >
+      if [ -z "$ADMIN_EMAIL" ]; then
+        eval export ADMIN_EMAIL="deadletter@apiopenstudio.com"
+      fi
+    # Setting up the DB for functional tests.
     - mysql --version
     - php tests/runner_generate_db.php
-    # Create JWT token keys
+    # Create JWT token keys.
     - ssh-keygen -t rsa -b 4096 -P "" -m PEM -f jwt.key
     - openssl rsa -in jwt.key -pubout -outform PEM -out jwt.key.pub
     - chmod 777 jwt.key.pub jwt.key
-    # Run functional tests
-    - echo "Running api functional tests."
+    # Running api functional tests.
     - cp -Rp ./* /www/
     - ./vendor/bin/codecept build
     - ./vendor/bin/codecept run --env ci api
+
+test-8.2:
+  stage: test
+  rules:
+    - !reference [.merge_request_to_apiopenstudio_develop, rules]
+    - !reference [.merge_request_to_apiopenstudio_master, rules]
+    - when: on_success
+  variables:
+    MYSQL_ROOT_PASSWORD: apiopenstudio
+    MYSQL_USERNAME: apiopenstudio
+    MYSQL_PASSWORD: apiopenstudio
+  image: naala89/ci-nginx-php-8.2:latest
+  services:
+    - mariadb:latest
+  artifacts:
+    when: on_failure
+    paths:
+      - tests/_output/
+      - log/
+  script:
+    # Setting up for 8.2 functional tests.
+    - mkdir log
+    - touch log/api.log
+    - touch log/db.log
+    - chmod -R 777 log
+    - service php8.2-fpm start
+    - ln -s /run/php/php8.2-fpm.sock /run/php/php-fpm.sock
+    - service nginx start
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - composer install
+    # Set ApiOpenStudio test .env and settings.yml.
+    - cp tests/ci.env .env
+    - cp tests/ci.settings.yml settings.yml
+    - CI_ESCAPED_PROJECT_DIR="$(echo "$CI_PROJECT_DIR" | sed -e 's/[\/]/\\&/g')"
+    - sed -i 's/CI_PROJECT_DIR/'"${CI_ESCAPED_PROJECT_DIR}"'/g' settings.yml
+    - >
+      if [ -z "$ADMIN_NAME" ]; then
+        eval export ADMIN_NAME="admin"
+      fi
+    - >
+      if [ -z "$ADMIN_PASS" ]; then
+        eval export ADMIN_PASS="secret"
+      fi
+    - >
+      if [ -z "$ADMIN_EMAIL" ]; then
+        eval export ADMIN_EMAIL="deadletter@apiopenstudio.com"
+      fi
+    # Setting up the DB for functional tests.
+    - mysql --version
+    - php tests/runner_generate_db.php
+    # Create JWT token keys.
+    - ssh-keygen -t rsa -b 4096 -P "" -m PEM -f jwt.key
+    - openssl rsa -in jwt.key -pubout -outform PEM -out jwt.key.pub
+    - chmod 777 jwt.key.pub jwt.key
+    # Running api functional tests.
+    - cp -Rp ./* /www/
+    - ./vendor/bin/codecept build
+    - ./vendor/bin/codecept run --env ci api
+
+#test-8.3:
+#  stage: test
+#  rules:
+#    - !reference [.merge_request_to_apiopenstudio_develop, rules]
+#    - !reference [.merge_request_to_apiopenstudio_master, rules]
+#    - when: on_success
+#  variables:
+#    MYSQL_ROOT_PASSWORD: apiopenstudio
+#    MYSQL_USERNAME: apiopenstudio
+#    MYSQL_PASSWORD: apiopenstudio
+#  image: laughingman77/ci-nginx-php-8.3:latest
+#  services:
+#    - mariadb:latest
+#  artifacts:
+#    when: on_failure
+#    paths:
+#      - tests/_output/
+#      - log/
+#  script:
+#    # Setting up for 8.3 functional tests.
+#    - mkdir log
+#    - touch log/api.log
+#    - touch log/db.log
+#    - chmod -R 777 log
+#    - service php8.3-fpm start
+#    - ln -s /run/php/php8.3-fpm.sock /run/php/php-fpm.sock
+#    - service nginx start
+#    - eval $(ssh-agent -s)
+#    - mkdir -p ~/.ssh
+#    - chmod 700 ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+#    - composer install
+#    # Set ApiOpenStudio test .env and settings.yml.
+#    - cp tests/ci.env .env
+#    - cp tests/ci.settings.yml settings.yml
+#    - CI_ESCAPED_PROJECT_DIR="$(echo "$CI_PROJECT_DIR" | sed -e 's/[\/]/\\&/g')"
+#    - sed -i 's/CI_PROJECT_DIR/'"${CI_ESCAPED_PROJECT_DIR}"'/g' settings.yml
+#    - >
+#      if [ -z "$ADMIN_NAME" ]; then
+#        eval export ADMIN_NAME="admin"
+#      fi
+#    - >
+#      if [ -z "$ADMIN_PASS" ]; then
+#        eval export ADMIN_PASS="secret"
+#      fi
+#    - >
+#      if [ -z "$ADMIN_EMAIL" ]; then
+#        eval export ADMIN_EMAIL="deadletter@apiopenstudio.com"
+#      fi
+#    # Setting up the DB for functional tests.
+#    - mysql --version
+#    - php tests/runner_generate_db.php
+#    # Create JWT token keys.
+#    - ssh-keygen -t rsa -b 4096 -P "" -m PEM -f jwt.key
+#    - openssl rsa -in jwt.key -pubout -outform PEM -out jwt.key.pub
+#    - chmod 777 jwt.key.pub jwt.key
+#    # Running api functional tests.
+#    - cp -Rp ./* /www/
+#    - ./vendor/bin/codecept build
+#    - ./vendor/bin/codecept run --env ci api
 
 ##################################
 ## PHPDOC
 ##################################
 
-phpdoc-dev:
-  stage: deploy_phpdoc
-  rules:
-    - !reference [.commit_to_apiopenstudio_develop, rules]
-  image:
-    name: naala89/phpdoc-rsync:3.1
-    entrypoint: [ "" ]
-  script:
-    - echo "Compile and deploy the phpdoc to dev."
-    - eval $(ssh-agent -s)
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-    # Define verbosity
-    - if [ ! -z "$PHPDOC_VERBOSITY" ]; then export PHPDOC_OPTIONS="-$PHPDOC_VERBOSITY $PHPDOC_OPTIONS"; fi
-    # Define template
-    - if [ ! -z "$PHPDOC_TEMPLATE" ]; then export PHPDOC_OPTIONS="--template=$PHPDOC_TEMPLATE $PHPDOC_OPTIONS"; fi
-    # Include config file
-    - if [ ! -z "$PHPDOC_CONFIG_FILE" ]; then export PHPDOC_OPTIONS="--config=$CI_PROJECT_DIR$PHPDOC_CONFIG_FILE $PHPDOC_OPTIONS"; fi
-    # Include hidden files
-    - if [ ! "$PHPDOC_INCLUDE_HIDDEN" = "true" ]; then export PHPDOC_OPTIONS="--hidden $PHPDOC_OPTIONS"; fi
-    # Include if ignore symlinks
-    - if [ ! "$PHPDOC_IGNORE_SYMLINKS" = "true" ]; then export PHPDOC_OPTIONS="--ignore-symlinks $PHPDOC_OPTIONS"; fi
-    # Include markers
-    - if [ ! "$PHPDOC_MARKERS" = "true" ]; then export PHPDOC_OPTIONS="--markers=$PHPDOC_MARKERS $PHPDOC_OPTIONS"; fi
-    - /opt/phpdoc/bin/phpdoc -d ${CI_PROJECT_DIR}${PHPDOC_PROJECT_ROOT} -t ${CI_PROJECT_DIR}${PHPDOC_OUTPUT} --title="$PHPDOC_TITLE" ${PHPDOC_OPTIONS}
-    - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
-    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
+#phpdoc-dev:
+#  stage: deploy_phpdoc
+#  rules:
+#    - !reference [.commit_to_apiopenstudio_develop, rules]
+#  image:
+#    name: naala89/phpdoc-rsync:3.1
+#    entrypoint: [ "" ]
+#  script:
+#    - echo "Compile and deploy the phpdoc to dev."
+#    - eval $(ssh-agent -s)
+#    - mkdir -p ~/.ssh
+#    - chmod 700 ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+#    - ssh-keyscan "$DEV_PHPDOC_URL" >> ~/.ssh/known_hosts
+#    - chmod 644 ~/.ssh/known_hosts
+#    # Define verbosity
+#    - if [ ! -z "$PHPDOC_VERBOSITY" ]; then export PHPDOC_OPTIONS="-$PHPDOC_VERBOSITY $PHPDOC_OPTIONS"; fi
+#    # Define template
+#    - if [ ! -z "$PHPDOC_TEMPLATE" ]; then export PHPDOC_OPTIONS="--template=$PHPDOC_TEMPLATE $PHPDOC_OPTIONS"; fi
+#    # Include config file
+#    - if [ ! -z "$PHPDOC_CONFIG_FILE" ]; then export PHPDOC_OPTIONS="--config=$CI_PROJECT_DIR$PHPDOC_CONFIG_FILE $PHPDOC_OPTIONS"; fi
+#    # Include hidden files
+#    - if [ ! "$PHPDOC_INCLUDE_HIDDEN" = "true" ]; then export PHPDOC_OPTIONS="--hidden $PHPDOC_OPTIONS"; fi
+#    # Include if ignore symlinks
+#    - if [ ! "$PHPDOC_IGNORE_SYMLINKS" = "true" ]; then export PHPDOC_OPTIONS="--ignore-symlinks $PHPDOC_OPTIONS"; fi
+#    # Include markers
+#    - if [ ! "$PHPDOC_MARKERS" = "true" ]; then export PHPDOC_OPTIONS="--markers=$PHPDOC_MARKERS $PHPDOC_OPTIONS"; fi
+#    - /opt/phpdoc/bin/phpdoc -d ${CI_PROJECT_DIR}${PHPDOC_PROJECT_ROOT} -t ${CI_PROJECT_DIR}${PHPDOC_OUTPUT} --title="$PHPDOC_TITLE" ${PHPDOC_OPTIONS}
+#    - rsync -rvI --delete --exclude=".*" "$CI_PROJECT_DIR/public/phpdoc/" "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL":"$DEV_PHPDOC_PATH/"
+#    - ssh "$DEV_DEPLOYER"@"$DEV_PHPDOC_URL" "sudo chown -R $DEV_DEPLOYER:www-data $DEV_PHPDOC_PATH/*"
 
 phpdoc-prod:
   stage: deploy_phpdoc

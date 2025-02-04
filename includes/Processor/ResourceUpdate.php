@@ -358,7 +358,7 @@ class ResourceUpdate extends ProcessorEntity
     protected function validateUserRoleAccess(Application $application, int $newAppid = null)
     {
         try {
-            $uid = Utilities::getUidFromToken();
+            $uid = Utilities::getClaimFromToken('uid');
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }

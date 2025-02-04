@@ -657,7 +657,9 @@ class Install extends Script
                 null,
                 null,
                 null,
-                null
+                null,
+                null,
+                null,
             );
             $user->setPassword($password);
             $userMapper->save($user);

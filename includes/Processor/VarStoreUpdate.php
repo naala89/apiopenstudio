@@ -166,7 +166,7 @@ class VarStoreUpdate extends ProcessorEntity
             $permitted = false;
             $currentAppid = $var->getAppid();
             try {
-                $roles = Utilities::getRolesFromToken();
+                $roles = Utilities::getClaimFromToken('roles');
             } catch (ApiException $e) {
                 throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
             }

@@ -74,7 +74,8 @@
     "league/flysystem": "*",
     "oomphinc/composer-installers-extender": "^2.0",
     "roave/better-reflection": "*",
-    "composer/composer": "^2.4"
+    "composer/composer": "^2.4",
+    "aws/aws-sdk-php": "^3.2"
   },
   "require-dev": {
     "vlucas/phpdotenv": "^3",

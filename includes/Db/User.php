@@ -52,6 +52,13 @@ class User
     protected ?string $hash;
 
     /**
+     * User refresh token.
+     *
+     * @var ?string User refresh token..
+     */
+    protected ?string $refreshToken;
+
+    /**
      * User email.
      *
      * @var ?string User email.
@@ -187,6 +194,7 @@ class User
      * @param string|null $phoneWork Business number.
      * @param string|null $passwordReset Password reset token.
      * @param string|null $passwordResetTtl Password reset token TTL.
+     * @param string|null $refreshToken Refresh token.
      */
     public function __construct(
         int $uid = null,
@@ -208,7 +216,8 @@ class User
         string $phoneMobile = null,
         string $phoneWork = null,
         string $passwordReset = null,
-        string $passwordResetTtl = null
+        string $passwordResetTtl = null,
+        string $refreshToken = null
     ) {
         $this->uid = $uid;
         $this->active = $active;
@@ -230,6 +239,7 @@ class User
         $this->phoneWork = $phoneWork;
         $this->passwordReset = $passwordReset;
         $this->passwordResetTtl = $passwordResetTtl;
+        $this->refreshToken = $refreshToken;
     }
 
     /**
@@ -331,6 +341,28 @@ class User
     public function setHash(string $hash = null)
     {
         $this->hash = $hash;
+    }
+
+    /**
+     * Get the refresh token.
+     *
+     * @return string refresh token.
+     */
+    public function getRefreshToken(): ?string
+    {
+        return $this->refreshToken;
+    }
+
+    /**
+     * Set the refresh token.
+     *
+     * @param string|null $refreshToken refresh token.
+     *
+     * @return void
+     */
+    public function setRefreshToken(string $refreshToken = null)
+    {
+        $this->refreshToken = $refreshToken;
     }
 
     /**
@@ -699,20 +731,21 @@ class User
             'hash' => $this->hash,
             'email' => $this->email,
             'honorific' => $this->honorific,
-            'nameFirst' => $this->nameFirst,
-            'nameLast' => $this->nameLast,
+            'name_first' => $this->nameFirst,
+            'name_last' => $this->nameLast,
             'company' => $this->company,
             'website' => $this->website,
-            'addressStreet' => $this->addressStreet,
-            'addressSuburb' => $this->addressSuburb,
-            'addressCity' => $this->addressCity,
-            'addressState' => $this->addressState,
-            'addressCountry' => $this->addressCountry,
-            'addressPostcode' => $this->addressPostcode,
-            'phoneMobile' => $this->phoneMobile,
-            'phoneWork' => $this->phoneWork,
-            'passwordReset' => $this->passwordReset,
-            'passwordResetTtl' => $this->passwordResetTtl,
+            'address_street' => $this->addressStreet,
+            'address_suburb' => $this->addressSuburb,
+            'address_city' => $this->addressCity,
+            'address_state' => $this->addressState,
+            'address_country' => $this->addressCountry,
+            'address_postcode' => $this->addressPostcode,
+            'phone_mobile' => $this->phoneMobile,
+            'phone_work' => $this->phoneWork,
+            'password_reset' => $this->passwordReset,
+            'password_reset_ttl' => $this->passwordResetTtl,
+            'refresh_token' => $this->refreshToken,
         ];
     }
 }

@@ -1,4 +1,4 @@
-# Example settings file.
+# Settings file for core developers using docker-dev.
 #
 # @package   ApiOpenStudio
 # @license   This Source Code Form is subject to the terms of the ApiOpenStudio Public License.
@@ -19,35 +19,38 @@ debug:
     api_log_file:
       class: StreamHandler
       formatter: default
-      level: ERROR
-      stream: /var/log/nginx/api.log
+      level: DEBUG
+      stream: /var/log/apiopenstudio/api.log
     db_log_file:
       class: StreamHandler
       formatter: default
-      level: ERROR
-      stream: /var/log/nginx/db.log
+      level: DEBUG
+      stream: /var/log/apiopenstudio/db.log
     stdout:
       class: StreamHandler
       formatter: default
       level: ERROR
       stream: php://stdout
+    error_log:
+      class: ErrorLogHandler
+      formatter: default
   loggers:
     api:
       handlers:
-        - stdout
         - api_log_file
+        - stdout
     db:
       handlers:
-        - stdout
         - db_log_file
+        - stdout
 
 db:
-  definition_path: "includes/Db/dbDefinition.yaml"
+  definition_path: includes/Db/dbDefinition.yaml
   driver: mysqli
   host: apiopenstudio-db
-  root_password: my_s3cr3t
+  root_password: apiopenstudio
   username: apiopenstudio
-  password: my_s3cr3t
+  password: apiopenstudio
   database: apiopenstudio
   options:
     debug: false
@@ -56,46 +59,32 @@ db:
 
 api:
   protocols:
-    - https
-  base_path: "/var/www/html/"
-  url: "api.example.com"
+    - http
+  base_path: /var/www/html/
+  url: api.apiopenstudio.local
   cache:
     active: false
-#  cache:
-#    active: true
-#    type: memcached
-#    servers:
-#        host: memcached.example.com
-#        port: 11211
-#        weight: 1
-#  cache:
-#    active: true
-#    type: redis
-#    servers:
-#      host: redis.example.com
-#      port: 6379
-#      password:
   default_format: json
   wrap_json_in_response_object: true
   core_account: apiopenstudio
   core_application: core
   core_resource_lock: false
-  dir_public: "public/"
-  dir_resources: "includes/resources/"
-  dir_uploads: "~/Downloads/"
-  dir_tmp: "/tmp/"
-  jwt_private_key: "/etc/nginx/certs/jwt.key"
-  jwt_public_key: "/etc/nginx/certs/jwt.key.pub"
-  jwt_alg_type: "Rsa"
-  jwt_alg: "Sha256"
-  jwt_life: "+1 hour"
-  jwt_issuer: "api.example.com"
-  jwt_permitted_for: "api.example.com"
+  dir_public: public/
+  dir_resources: includes/resources/
+  dir_uploads: uploads/
+  dir_tmp: /tmp/
+  jwt_private_key: /var/www/html/jwt.key
+  jwt_public_key: /var/www/html/jwt.key.pub
+  jwt_alg_type: Rsa
+  jwt_alg: Sha256
+  jwt_life: "+6 hour"
+  jwt_issuer: localhost
+  jwt_permitted_for: localhost
   refresh_token_life: "+1 week"
   openapi_version: "3.0.3"
   openapi_directory: "includes/openapiSchema"
 
 email:
-  from: "Admin <admin@example.com>"
-  reply_to: "Contact <contact@example.com>"
+  from: "Admin <admin@localhost.com>"
+  reply_to: "Contact <contact@localhost.com>"
   dsn: "smtp://USERNAME:PASSWORD@DOMAIN:PORT"

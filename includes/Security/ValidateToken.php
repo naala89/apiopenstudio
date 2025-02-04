@@ -14,16 +14,13 @@
 
 namespace ApiOpenStudio\Security;
 
-use ADODB_mysqli;
 use ApiOpenStudio\Core\ApiException;
 use ApiOpenStudio\Core\DataContainer;
-use ApiOpenStudio\Core\MonologWrapper;
 use ApiOpenStudio\Core\ProcessorEntity;
 use ApiOpenStudio\Core\Utilities;
 use ApiOpenStudio\Db\UserMapper;
 use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
-use ApiOpenStudio\Core\Request;
 
 /**
  * Class ValidateToken.
@@ -93,11 +90,11 @@ class ValidateToken extends ProcessorEntity
     protected function validateToken()
     {
         try {
-            $this->uid = Utilities::getUidFromToken($this->token);
+            $this->uid = Utilities::getClaimFromToken('uid', $this->token);
             if (!assert(!empty($this->uid))) {
                 throw new RequiredConstraintsViolated('invalid token');
             }
-            $this->roles = Utilities::getRolesFromToken($this->token);
+            $this->roles = Utilities::getClaimFromToken('roles', $this->token);
             if (!assert(!empty($this->roles))) {
                 throw new RequiredConstraintsViolated('invalid token');
             }

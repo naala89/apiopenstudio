@@ -178,6 +178,11 @@ class Api
 
         $request = new Request();
 
+        // In some cases (like Traefik docker-dev), the first get param is still attached to the request param.
+        // We can safely remove this for safety.
+        // @TODO: This is a hacky workaround for docker_dev, and should be resolved in that codebase.
+        $get['request'] = explode('?', $get['request'])[0];
+
         $uriParts = explode('/', trim($get['request'], '/'));
 
         $accName = array_shift($uriParts);

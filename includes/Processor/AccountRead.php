@@ -52,7 +52,7 @@ class AccountRead extends ProcessorEntity
             ],
             'keyword' => [
                 // phpcs:ignore
-                'description' => 'Keyword to filter by in the account name. This is only used iwhen getting "all" accounts.',
+                'description' => 'Keyword to filter by in the account name. This is only used when getting "all" accounts.',
                 'cardinality' => [0, 1],
                 'literalAllowed' => true,
                 'limitProcessors' => [],
@@ -109,7 +109,7 @@ class AccountRead extends ProcessorEntity
         parent::process();
 
         try {
-            $uid = Utilities::getUidFromToken();
+            $uid = Utilities::getClaimFromToken('uid');
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage(), $e->getCode(), $this->id, $e->getHtmlCode());
         }
